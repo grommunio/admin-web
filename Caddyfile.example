@@ -1,0 +1,27 @@
+# This assumes this project was built and the built files are found in `./build`.
+
+https://:8411 {
+	errors stderr
+	log stdout
+
+	tls self_signed
+
+	gzip
+
+	root ./build
+
+	# Never cache the service worker.
+	header /service-worker.js {
+		Cache-Control "no-cache, no-store, must-revalidate"
+		Pragma "no-cache"
+		Expires "0"
+	}
+
+	# Caching for static assets.
+	header /static/ {
+		Cache-Control "max-age=86400"
+	}
+
+	# Backend API.
+	proxy /api/v1/ https://d3u9fxr8qqc6qs.cloudfront.net
+}
