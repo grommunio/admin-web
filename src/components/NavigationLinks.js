@@ -180,11 +180,19 @@ class NavigationLinks extends Component {
           </ListItem>
           <ListItem
             button
-            selected={drawer.selected === 'assets'}
-            onClick={this.handleNavigation('assets')}
+            selected={drawer.selected === ' dataAreaSetup'}
+            onClick={this.handleNavigation('dataAreaSetup')}
             className={classes.li}>
             <Items className={classes.icon}/>
-            <ListItemText primary={t('Assets')} />
+            <ListItemText primary={t('data area setup')} />
+          </ListItem>
+          <ListItem
+            button
+            selected={drawer.selected === 'domainList'}
+            onClick={this.handleNavigation('domainList')}
+            className={classes.li}>
+            <Items className={classes.icon}/>
+            <ListItemText primary={t('domain list')} />
           </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
             <DefaultData className={classes.icon} />

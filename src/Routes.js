@@ -10,6 +10,8 @@ import AsyncComponent from './components/AsyncComponent';
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
+const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
+const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -29,6 +31,21 @@ const Routes = ({ childProps }) => (
       path="/DataAreaSetup"
       exact
       component={AsyncDataAreaSetup}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/DomainList"
+      exact
+      component={AsyncDomainList}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path={[
+        "/DomainList/:domainID",
+        "/DomainList/add",
+      ]}
+      exact
+      component={AsyncDomainListDetails}
       props={childProps}
     />
   </Switch>

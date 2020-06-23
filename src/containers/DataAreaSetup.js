@@ -76,16 +76,6 @@ class DataAreaSetup extends Component {
     });
   }
 
-  handleNumberInput = field => event => {
-    const input = event.target.value;
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: input.match(),
-      },
-    });
-  }
-
   types = [
     { name: 'user data', ID: 0 },
     { name: 'domain data', ID: 1 },
@@ -109,7 +99,7 @@ class DataAreaSetup extends Component {
               <Button variant="contained" color="primary" onClick={() => this.setState({ addOpen: true })}>Add</Button>
             </Grid>
           </Grid>
-          <Dialog open={this.state.addOpen} maxWidth="lg">
+          <Dialog onClose={() => this.setState({ addOpen: false })} open={this.state.addOpen} maxWidth="lg">
             <DialogTitle>Add</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>
               <FormControl className={classes.form}>
@@ -182,7 +172,7 @@ class DataAreaSetup extends Component {
             </DialogActions>
           </Dialog>
           <Paper className={classes.tablePaper}>
-            <Table>
+            <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>master user data area</TableCell>
@@ -193,7 +183,7 @@ class DataAreaSetup extends Component {
                   <TableCell>used space</TableCell>
                   <TableCell>used files</TableCell>
                   <TableCell>user number</TableCell>
-                  <TableCell>operation</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -207,7 +197,7 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell><Button>Delete</Button></TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -221,7 +211,7 @@ class DataAreaSetup extends Component {
                   <TableCell>used space</TableCell>
                   <TableCell>used files</TableCell>
                   <TableCell>domain number</TableCell>
-                  <TableCell>operation</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -235,7 +225,7 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell><Button>Delete</Button></TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -249,7 +239,7 @@ class DataAreaSetup extends Component {
                   <TableCell>used space</TableCell>
                   <TableCell>used files</TableCell>
                   <TableCell>independent storage number</TableCell>
-                  <TableCell>operation</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -263,7 +253,7 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell><Button>Delete</Button></TableCell>
                   </TableRow>
                 )}
               </TableBody>
