@@ -16,6 +16,9 @@ import {
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
+import moment from 'moment';
+import { connect } from 'react-redux';
+import { addDomainData, editDomainData } from '../actions/domains';
 
 const styles = theme => ({
   root: {
@@ -93,6 +96,39 @@ class GroupDetails extends PureComponent {
     });
   }
 
+  handleNumberInput = field => event => {
+    let input = event.target.value;
+    if(input && input.match("^\\d*?$")) input = parseInt(input);
+    if(input <= 100) {
+      this.setState({
+        changes: {
+          ...this.state.changes,
+          [field]: input,
+        },
+      });
+    }
+  }
+
+  handleAdd = () => {
+    const { endDay, createDay } = this.state.changes;
+    this.props.add({
+      ...this.state.changes,
+      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
+      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
+      privilegeBits: 0,
+    });
+  }
+
+  handleEdit = () => {
+    const { endDay, createDay } = this.state.changes;
+    this.props.edit({
+      ...this.state.changes,
+      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
+      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
+      privilegeBits: 0,
+    });
+  }
+
   render() {
     const { classes, t } = this.props;
     const changes = this.state.changes;
@@ -115,16 +151,16 @@ class GroupDetails extends PureComponent {
                 className={classes.input} 
                 label={t("domain")} 
                 fullWidth 
-                value={changes.domain || ''}
-                onChange={this.handleInput('domain')}
+                value={changes.domainname || ''}
+                onChange={this.handleInput('domainname')}
               />
               <TextField
                 select
                 className={classes.input}
-                label={t("storage type")}
+                label={t("domain type")}
                 fullWidth
-                value={changes.storageType || 0}
-                onChange={this.handleInput('storageType')}
+                value={changes.domainType || 0}
+                onChange={this.handleInput('domainType')}
               >
                 {this.storageTypes.map((storageType, key) => (
                   <MenuItem key={key} value={storageType.ID}>
@@ -137,8 +173,8 @@ class GroupDetails extends PureComponent {
                 className={classes.input}
                 label={t("status")}
                 fullWidth
-                value={changes.status || 0}
-                onChange={this.handleInput('status')}
+                value={changes.domainStatus || 0}
+                onChange={this.handleInput('domainStatus')}
               >
                 {this.statuses.map((status, key) => (
                   <MenuItem key={key} value={status.ID}>
@@ -150,15 +186,15 @@ class GroupDetails extends PureComponent {
                 className={classes.input} 
                 label={t("maximum space")} 
                 fullWidth 
-                value={changes.maxSpace || ''}
-                onChange={this.handleInput('maxSpace')}
+                value={changes.maxSize || ''}
+                onChange={this.handleNumberInput('maxSize')}
               />
               <TextField 
                 className={classes.input} 
                 label={t("maximum users")} 
                 fullWidth 
-                value={changes.maxUsers || ''}
-                onChange={this.handleInput('maxUsers')}
+                value={changes.maxUser || ''}
+                onChange={this.handleNumberInput('maxUser')}
               />
               <TextField 
                 className={classes.input} 
@@ -178,22 +214,29 @@ class GroupDetails extends PureComponent {
                 className={classes.input} 
                 label={t("administrator")} 
                 fullWidth 
-                value={changes.administrator || ''}
-                onChange={this.handleInput('administrator')}
+                value={changes.adminName || ''}
+                onChange={this.handleInput('adminName')}
+              />
+              <TextField 
+                className={classes.input} 
+                label={t("telephone")} 
+                fullWidth 
+                value={changes.tel || ''}
+                onChange={this.handleInput('tel')}
               />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <DatePicker
                   className={classes.input} 
                   label="begin date"
-                  value={changes.beginDate || new Date()}
-                  onChange={this.handleDateChange('beginDate')}
+                  value={changes.createDay || new Date()}
+                  onChange={this.handleDateChange('createDay')}
                   autoOk
                 />
                 <DatePicker
                   className={classes.input}
                   label="end date"
-                  value={changes.endDate || new Date()}
-                  onChange={this.handleDateChange('endDate')}
+                  value={changes.endDay || new Date()}
+                  onChange={this.handleDateChange('endDay')}
                   autoOk
                 />
               </MuiPickersUtilsProvider>
@@ -254,7 +297,13 @@ class GroupDetails extends PureComponent {
                 }
               />
             </Grid>
-            <Button variant="contained" color="primary">Save</Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.state.editing ? this.handleEdit: this.handleAdd}
+            >
+              Save
+            </Button>
           </Paper>
         </div>
       </div>
@@ -267,6 +316,20 @@ GroupDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  edit: PropTypes.func.isRequired,
+  add: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(GroupDetails));
+const mapDispatchToProps = dispatch => {
+  return {
+    add: async domain => {
+      await dispatch(addDomainData(domain));
+    },
+    edit: async domain => {
+      await dispatch(editDomainData(domain));
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(GroupDetails)));

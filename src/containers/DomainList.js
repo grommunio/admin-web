@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid, Typography, Button } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { fetchDomainData, deleteDomainData } from '../actions/domains';
 
 const styles = theme => ({
   root: {
@@ -54,6 +56,10 @@ class DomainList extends Component {
     },
   ]
 
+  componentDidMount() {
+    this.props.fetch();
+  }
+
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -71,8 +77,12 @@ class DomainList extends Component {
     this.props.history.push('/DomainList/add', { ...domain });
   }
 
+  handleDelete = id => () => {
+    this.props.delete(id).then(this.props.fetch);
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, domains } = this.props;
 
     return (
       <div className={classes.root}>
@@ -99,15 +109,15 @@ class DomainList extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.data1.map((obj, idx) =>
+                {domains.Domains.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.domain}</TableCell>
-                    <TableCell>{obj.domain}</TableCell>
-                    <TableCell>{obj.domain}</TableCell>
-                    <TableCell>{obj.domain}</TableCell>
+                    <TableCell>{obj.domainname}</TableCell>
+                    <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.maxSize}</TableCell>
+                    <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <Button onClick={this.handleEdit(obj)}>Edit</Button>
-                      <Button>Delete</Button>
+                      <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
                     </TableCell>
                   </TableRow>
                 )}
@@ -124,6 +134,25 @@ DomainList.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  domains: PropTypes.object.isRequired,
+  fetch: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DomainList));
+const mapStateToProps = state => {
+  return { domains: state.domains };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetch: async () => {
+      await dispatch(fetchDomainData());
+    },
+    delete: async id => {
+      await dispatch(deleteDomainData(id));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DomainList)));
