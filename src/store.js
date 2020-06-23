@@ -4,6 +4,7 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 import authReducer from './reducers/auth';
+import drawerReducer from './reducers/drawer';
 
 const loggerMiddleware = createLogger();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -11,6 +12,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   combineReducers({
     auth: authReducer,
+    drawer: drawerReducer,
   }),
   composeEnhancers(applyMiddleware(
     thunkMiddleware,

@@ -314,4 +314,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withTranslation(withStyles(styles)(ResponsiveDrawer))));
+  withRouter(withTranslation()(withStyles(styles)(ResponsiveDrawer))));

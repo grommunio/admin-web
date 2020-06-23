@@ -6,7 +6,7 @@ import {
 
 const defaultState = {
   error: false,
-  authenticated: true,
+  authenticated: false,
   authenticating: true,
 };
 

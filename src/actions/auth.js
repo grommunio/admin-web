@@ -3,13 +3,18 @@ import {
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
-export function authLogin() {
+export function authLogin(user, pw) {
+  window.localStorage.setItem('grammmAuthToken', user + pw);
+  return authAuthenticated(true);
 }
 
 export function authLoginWithToken() {
+  return authAuthenticated(true);
 }
 
 export function authLogout() {
+  window.localStorage.removeItem('grammmAuthToken');
+  return authAuthenticated(false);
 }
 
 

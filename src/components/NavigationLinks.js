@@ -29,6 +29,7 @@ import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   drawerHeader: {
@@ -169,6 +170,7 @@ class NavigationLinks extends Component {
               onClick={this.handleNavigation('')}
               className={classes.dashboard}
             >
+              <Typography variant="h5" color="inherit">GRAMMM</Typography>
             </Button>
           </div>
           <ListItem button onClick={this.handleNavigation('')}

@@ -5,11 +5,10 @@ import {
   DRAWER_CLOSE,
   DRAWER_SELECTION,
 } from '../actions/types';
-import { onMobileDevice } from '../utils';
 
 const defaultState = {
   defaultOpen: false,
-  expanded: !onMobileDevice(),
+  expanded: true,
   selected: '',
 };
 
