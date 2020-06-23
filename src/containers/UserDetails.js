@@ -19,7 +19,7 @@ import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addDomainData, editDomainData } from '../actions/domains';
+import { addUserData, editUserData } from '../actions/users';
 
 const styles = theme => ({
   root: {
@@ -46,12 +46,12 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
   },
   toolbar: theme.mixins.toolbar,
 });
 
-class GroupDetails extends PureComponent {
+class UserDetails extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -61,13 +61,23 @@ class GroupDetails extends PureComponent {
     };
   }
 
-  storageTypes = [
-    { name: 'default storage', ID: 0 },
+  types = [
+    { name: 'normal', ID: 0 },
+    { name: 'room', ID: 1 },
+    { name: 'equipment', ID: 2 },
   ]
 
   statuses = [
     { name: 'normal', ID: 0 },
     { name: 'suspended', ID: 1 },
+  ]
+
+  expires = [
+    { name: '1 week', ID: 0 },
+    { name: '1 month', ID: 1 },
+    { name: '1 year', ID: 2 },
+    { name: '100 years', ID: 3 },
+    { name: 'never', ID: 4 },
   ]
 
   handleInput = field => event => {
@@ -111,21 +121,19 @@ class GroupDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    const { endDay, createDay } = this.state.changes;
     this.props.add({
       ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
+      domainID: 420,
+      groupID: 420,
+      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
   }
 
   handleEdit = () => {
-    const { endDay, createDay } = this.state.changes;
     this.props.edit({
       ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
+      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
   }
@@ -144,28 +152,36 @@ class GroupDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t("Add domain")}
+                {t("Add user")}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("domain")} 
+                label={t("username")} 
                 fullWidth 
-                value={changes.domainname || ''}
-                onChange={this.handleInput('domainname')}
+                value={changes.username || ''}
+                onChange={this.handleInput('username')}
+              />
+              <TextField 
+                className={classes.input} 
+                label={t("password")} 
+                fullWidth
+                type="password"
+                value={changes.password || ''}
+                onChange={this.handleInput('password')}
               />
               <TextField
                 select
                 className={classes.input}
-                label={t("domain type")}
+                label={t("password expiration time")}
                 fullWidth
-                value={changes.domainType || 0}
-                onChange={this.handleInput('domainType')}
+                value={changes.expire || 0}
+                onChange={this.handleInput('expire')}
               >
-                {this.storageTypes.map((storageType, key) => (
-                  <MenuItem key={key} value={storageType.ID}>
-                    {storageType.name}
+                {this.expires.map((expire, key) => (
+                  <MenuItem key={key} value={expire.ID}>
+                    {expire.name}
                   </MenuItem>
                 ))}
               </TextField>
@@ -183,6 +199,44 @@ class GroupDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("types")}
+                fullWidth
+                value={changes.type || 0}
+                onChange={this.handleInput('type')}
+              >
+                {this.types.map((type, key) => (
+                  <MenuItem key={key} value={type.ID}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("language")}
+                fullWidth
+                value={changes.type || 0}
+                onChange={this.handleInput('language')}
+              >
+                <MenuItem value={0}>
+                  {t('english')}
+                </MenuItem>
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("department")}
+                fullWidth
+                value={changes.type || 0}
+                onChange={this.handleInput('department')}
+              >
+                <MenuItem value={0}>
+                  {t('direct user')}
+                </MenuItem>
+              </TextField>
               <TextField 
                 className={classes.input} 
                 label={t("maximum space")} 
@@ -195,31 +249,31 @@ class GroupDetails extends PureComponent {
               />
               <TextField 
                 className={classes.input} 
-                label={t("maximum users")} 
+                label={t("maximum file")} 
                 fullWidth 
-                value={changes.maxUser || ''}
-                onChange={this.handleNumberInput('maxUser')}
+                value={changes.maxFile || ''}
+                onChange={this.handleNumberInput('maxFile')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("title")} 
+                label={t("job title")} 
                 fullWidth 
                 value={changes.title || ''}
                 onChange={this.handleInput('title')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("address")} 
+                label={t("real name")} 
                 fullWidth 
-                value={changes.address || ''}
-                onChange={this.handleInput('address')}
+                value={changes.realName || ''}
+                onChange={this.handleInput('realName')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("administrator")} 
+                label={t("nick name")} 
                 fullWidth 
-                value={changes.adminName || ''}
-                onChange={this.handleInput('adminName')}
+                value={changes.nickname || ''}
+                onChange={this.handleInput('nickname')}
               />
               <TextField 
                 className={classes.input} 
@@ -228,57 +282,71 @@ class GroupDetails extends PureComponent {
                 value={changes.tel || ''}
                 onChange={this.handleInput('tel')}
               />
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DatePicker
-                  className={classes.input} 
-                  label="begin date"
-                  value={changes.createDay || new Date()}
-                  onChange={this.handleDateChange('createDay')}
-                  autoOk
-                />
-                <DatePicker
-                  className={classes.input}
-                  label="end date"
-                  value={changes.endDay || new Date()}
-                  onChange={this.handleDateChange('endDay')}
-                  autoOk
-                />
-              </MuiPickersUtilsProvider>
+              <TextField 
+                className={classes.input} 
+                label={t("mobile phone")} 
+                fullWidth 
+                value={changes.mobilePhone || ''}
+                onChange={this.handleInput('mobilePhone')}
+              />
+              <TextField 
+                className={classes.input} 
+                label={t("home address")} 
+                fullWidth 
+                value={changes.homeaddress || ''}
+                onChange={this.handleInput('homeaddress')}
+              />
+              <TextField 
+                className={classes.input} 
+                label={t("memo")} 
+                fullWidth
+                value={changes.memo || ''}
+                onChange={this.handleInput('memo')}
+              />
             </FormControl>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <DatePicker
+                className={classes.input} 
+                label="begin date"
+                value={changes.createDay || new Date()}
+                onChange={this.handleDateChange('createDay')}
+                autoOk
+              />
+            </MuiPickersUtilsProvider>
             <Grid container className={classes.input}>
               <FormControlLabel
-                label={t('mail archive')}
+                label={t('allow pop3 or imap downloading')}
                 control={
                   <Checkbox
-                    checked={changes.mailArchive || false}
-                    onChange={this.handleCheckbox('mailArchive')}
+                    checked={changes.pop3_imap || false}
+                    onChange={this.handleCheckbox('pop3_imap')}
                   />
                 }
               />
               <FormControlLabel
-                label={t('mail monitor')}
+                label={t('allow smtp sending')}
                 control={
                   <Checkbox
-                    checked={changes.mailMonitor || false}
-                    onChange={this.handleCheckbox('mailMonitor')}
+                    checked={changes.smtp || false}
+                    onChange={this.handleCheckbox('smtp')}
                   />
                 }
               />
               <FormControlLabel
-                label={t('ignore checking user')}
+                label={t('allow change password')}
                 control={
                   <Checkbox
-                    checked={changes.ignoreCheckingUser || false}
-                    onChange={this.handleCheckbox('ignoreCheckingUser')}
+                    checked={changes.changePassword || false}
+                    onChange={this.handleCheckbox('changePassword')}
                   />
                 }
               />
               <FormControlLabel
-                label={t('mail sub system')}
+                label={t('public user information')}
                 control={
                   <Checkbox
-                    checked={changes.mailSubSystem || false}
-                    onChange={this.handleCheckbox('mailSubSystem')}
+                    checked={changes.publicAddress || false}
+                    onChange={this.handleCheckbox('publicAddress')}
                   />
                 }
               />
@@ -288,15 +356,6 @@ class GroupDetails extends PureComponent {
                   <Checkbox
                     checked={changes.netDisk || false}
                     onChange={this.handleCheckbox('netDisk')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('extended cryptosecurity')}
-                control={
-                  <Checkbox
-                    checked={changes.extendedCryptosecurity || false}
-                    onChange={this.handleCheckbox('extendedCryptosecurity')}
                   />
                 }
               />
@@ -315,7 +374,7 @@ class GroupDetails extends PureComponent {
   }
 }
 
-GroupDetails.propTypes = {
+UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -326,14 +385,14 @@ GroupDetails.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async domain => {
-      await dispatch(addDomainData(domain));
+    add: async user => {
+      await dispatch(addUserData(user));
     },
-    edit: async domain => {
-      await dispatch(editDomainData(domain));
+    edit: async user => {
+      await dispatch(editUserData(user));
     },
   };
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails)));
+  withTranslation()(withStyles(styles)(UserDetails)));

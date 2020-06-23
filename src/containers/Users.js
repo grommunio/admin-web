@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid, Typography, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { fetchDomainData, deleteDomainData } from '../actions/domains';
+import { fetchUsersData, deleteUserData } from '../actions/users';
 
 const styles = theme => ({
   root: {
@@ -38,7 +38,7 @@ const styles = theme => ({
   },
 });
 
-class DomainList extends Component {
+class Users extends Component {
 
   state = {
     changes: {},
@@ -58,11 +58,11 @@ class DomainList extends Component {
   }
 
   handleAdd = () => {
-    this.props.history.push('/DomainList/add');
+    this.props.history.push('/users/add');
   }
 
   handleEdit = domain => () => {
-    this.props.history.push('/DomainList/add', { ...domain });
+    this.props.history.push('/users/add', { ...domain });
   }
 
   handleDelete = id => () => {
@@ -70,7 +70,7 @@ class DomainList extends Component {
   }
 
   render() {
-    const { classes, domains } = this.props;
+    const { classes, users } = this.props;
 
     return (
       <div className={classes.root}>
@@ -79,7 +79,7 @@ class DomainList extends Component {
           <Grid className={classes.grid} container>
             <Grid item xs={3}></Grid>
             <Grid item xs={6}>
-              <Typography align="center" variant="h4" color="primary">domain list</Typography>
+              <Typography align="center" variant="h4" color="primary">Users</Typography>
             </Grid>
             <Grid item xs={3} className={classes.flexRowEnd}>
               <Button variant="contained" color="primary" onClick={this.handleAdd}>Add</Button>
@@ -89,20 +89,20 @@ class DomainList extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>domain</TableCell>
-                  <TableCell>title</TableCell>
+                  <TableCell>username</TableCell>
+                  <TableCell>real name</TableCell>
+                  <TableCell>department</TableCell>
                   <TableCell>maximum space</TableCell>
-                  <TableCell>maximum users</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {domains.Domains.map((obj, idx) =>
+                {users.Users.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.domainname}</TableCell>
-                    <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.username}</TableCell>
+                    <TableCell>{obj.realName}</TableCell>
+                    <TableCell>{obj.department}</TableCell>
                     <TableCell>{obj.maxSize}</TableCell>
-                    <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <Button onClick={this.handleEdit(obj)}>Edit</Button>
                       <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
@@ -118,29 +118,29 @@ class DomainList extends Component {
   }
 }
 
-DomainList.propTypes = {
+Users.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  domains: PropTypes.object.isRequired,
+  users: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  return { domains: state.domains };
+  return { users: state.users };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => {
-      await dispatch(fetchDomainData());
+      await dispatch(fetchUsersData());
     },
     delete: async id => {
-      await dispatch(deleteDomainData(id));
+      await dispatch(deleteUserData(id));
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainList)));
+  withTranslation()(withStyles(styles)(Users)));

@@ -6,6 +6,7 @@ import thunkMiddleware from 'redux-thunk';
 import authReducer from './reducers/auth';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
+import usersReducer from './reducers/users';
 
 const loggerMiddleware = createLogger();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,10 +16,10 @@ export const store = createStore(
     auth: authReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
+    users: usersReducer,
   }),
   composeEnhancers(applyMiddleware(
     thunkMiddleware,
-
     loggerMiddleware // Must be last.
   ))
 );

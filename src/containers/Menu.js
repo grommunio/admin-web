@@ -26,7 +26,8 @@ class Menu extends Component {
       <div className={classes.root}>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          This is the Menu
+          This is the FUCKING DASHBOARD
+          <img src="https://pbs.twimg.com/media/DwCx5qKUUAEfMTz.jpg" width="400" alt="fucking donkey" />
         </div>
       </div>
     );

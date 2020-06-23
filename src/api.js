@@ -105,3 +105,27 @@ export function deleteDomain(id) {
     return await apiDelete('/domains/' + id);
   };
 }
+
+export function users() {
+  return async () => {
+    return await get('/users');
+  };
+}
+
+export function addUser(user) {
+  return async () => {
+    return await post('/users', user);
+  };
+}
+
+export function editUser(user) {
+  return async () => {
+    return await patch('/users/' + user.ID, user);
+  };
+}
+
+export function deleteUser(id) {
+  return async () => {
+    return await apiDelete('/users/' + id);
+  };
+}
