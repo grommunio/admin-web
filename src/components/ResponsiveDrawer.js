@@ -2,19 +2,16 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
+import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import {  
-  Dialog,
-  DialogTitle,
-  DialogActions,
+import {
   AppBar,
   Toolbar,
   IconButton,
   Hidden,
   Drawer,
   Grid,
-  DialogContent,
   Paper,
   MenuList,
   MenuItem,
@@ -30,7 +27,6 @@ import AddIcon from '@material-ui/icons/Add';
 import PersonIcon from '@material-ui/icons/Person';
 import MovementIcon from '@material-ui/icons/KeyboardTab';
 import SearchIcon from '@material-ui/icons/Search';
-import CameraIcon from '@material-ui/icons/CameraAlt';
 import NavigationLinks from './NavigationLinks';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
@@ -318,4 +314,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withStyles(styles)(ResponsiveDrawer)));
+  withRouter(withTranslation(withStyles(styles)(ResponsiveDrawer))));

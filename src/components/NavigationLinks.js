@@ -27,15 +27,8 @@ import {
 } from '../actions/drawer';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
-import image from '../img/sidebar-4.jpg';
-import logo from '../img/icons/Delo-icon.svg';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import {
-  Dialog,
-  DialogTitle,
-  DialogActions,
-} from '@material-ui/core';
 
 const styles = theme => ({
   drawerHeader: {
@@ -102,19 +95,6 @@ const styles = theme => ({
   logout: {
     flex: 1,
     flexGrow: 0,
-  },
-  background: {
-    position: 'absolute',
-    zIndex: '-1',
-    height: '100%',
-    width: '100%',
-    display: "block",
-    top: '0',
-    left: '0',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    backgroundImage: 'url(' + image + ')',
-    opacity: '.20',
   },
   expandIcon: {
     float: 'right',
@@ -189,7 +169,6 @@ class NavigationLinks extends Component {
               onClick={this.handleNavigation('')}
               className={classes.dashboard}
             >
-              <img src={logo} alt="DELO" width="60" height="60" style={{ marginBottom: 8 }}/>
             </Button>
           </div>
           <ListItem button onClick={this.handleNavigation('')}
@@ -260,18 +239,6 @@ class NavigationLinks extends Component {
             </ListItem>
           </div>
         </List>
-        <div
-          className={classes.background}
-        />
-        <Dialog open={this.state.alert}>
-          <DialogTitle>
-            {t("Are you sure you want to cancel?")}
-          </DialogTitle>
-          <DialogActions>
-            <Button onClick={() => this.setState({alert: false}) }>{t("No")}</Button>
-            <Button onClick={this.handleSafeNavigation}>{t("Yes")}</Button>
-          </DialogActions>
-        </Dialog>
       </React.Fragment>
     );
   }

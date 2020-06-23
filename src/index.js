@@ -8,6 +8,7 @@ import './index.css';
 import { store } from './store';
 import Loading from './components/Loading';
 import theme from './theme';
+import './i18n';
 //import * as serviceWorker from './serviceWorker';
 //import { serviceWorkerNewContent } from './actions/common';
 
