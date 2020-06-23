@@ -15,23 +15,7 @@ const styles = theme => ({
     display: 'flex',
     overflow: 'auto',
   }, 
-  column: {
-    flex: 1,
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
   toolbar: theme.mixins.toolbar,
-  addFab: {
-    position: 'absolute',
-    bottom: theme.spacing(4),
-    right: theme.spacing(4),
-    width: 70,
-    height: 70,
-    '& svg': {
-      fontSize: 40,
-    },
-    zIndex: 100,
-  },
 });
 
 class Menu extends Component {
