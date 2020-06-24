@@ -19,7 +19,7 @@ import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addDomainData, editDomainData } from '../actions/domains';
+import { addGroupData, editGroupData } from '../actions/groups';
 
 const styles = theme => ({
   root: {
@@ -51,13 +51,13 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class DomainListDetails extends PureComponent {
+class GroupDetails extends PureComponent {
 
   constructor(props) {
     super(props);
     const domain = this.props.location.state;
     if(!domain) {
-      this.props.history.push('/domainList');
+      this.props.history.push('/groups');
       this.state = {
         changes: {},
       };
@@ -67,10 +67,6 @@ class DomainListDetails extends PureComponent {
       editing: !!domain.ID,
     };
   }
-
-  storageTypes = [
-    { name: 'default storage', ID: 0 },
-  ]
 
   statuses = [
     { name: 'normal', ID: 0 },
@@ -116,27 +112,25 @@ class DomainListDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    const { endDay, createDay } = this.state.changes;
+    const { createDay } = this.state.changes;
     this.props.add({
       ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
   }
 
   handleEdit = () => {
-    const { endDay, createDay } = this.state.changes;
+    const { createDay } = this.state.changes;
     this.props.edit({
       ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
   }
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, domains } = this.props;
     const changes = this.state.changes;
 
     return (
@@ -149,42 +143,51 @@ class DomainListDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit domain') : t("Add domain")}
+                {this.state.editing ? t('Edit group') : t("Add group")}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("domain")} 
+                label={t("group name")} 
                 fullWidth 
-                value={changes.domainname || ''}
-                onChange={this.handleInput('domainname')}
+                value={changes.groupname || ''}
+                onChange={this.handleInput('groupname')}
+              />
+              <TextField
+                type="password"
+                className={classes.input}
+                label={t("password")}
+                fullWidth
+                value={changes.password || ''}
+                onChange={this.handleInput('password')}
               />
               <TextField
                 select
                 className={classes.input}
-                label={t("domain type")}
+                label={t("status")}
                 fullWidth
-                value={changes.domainType || 0}
-                onChange={this.handleInput('domainType')}
+                value={changes.groupStatus || 0}
+                onChange={this.handleInput('groupStatus')}
               >
-                {this.storageTypes.map((storageType, key) => (
-                  <MenuItem key={key} value={storageType.ID}>
-                    {storageType.name}
+                {this.statuses.map((status, key) => (
+                  <MenuItem key={key} value={status.ID}>
+                    {status.name}
                   </MenuItem>
                 ))}
               </TextField>
               <TextField
                 select
                 className={classes.input}
-                label={t("status")}
+                label={t("domain")}
                 fullWidth
-                value={changes.domainStatus || 0}
-                onChange={this.handleInput('domainStatus')}
+                value={changes.domainID || 0}
+                onChange={this.handleInput('domainID')}
               >
-                {this.statuses.map((status, key) => (
-                  <MenuItem key={key} value={status.ID}>
-                    {status.name}
+                <MenuItem value={0}>None</MenuItem>
+                {domains.Domains.map((domain, key) => (
+                  <MenuItem key={key} value={domain.ID}>
+                    {domain.domainname}
                   </MenuItem>
                 ))}
               </TextField>
@@ -212,27 +215,6 @@ class DomainListDetails extends PureComponent {
                 value={changes.title || ''}
                 onChange={this.handleInput('title')}
               />
-              <TextField 
-                className={classes.input} 
-                label={t("address")} 
-                fullWidth 
-                value={changes.address || ''}
-                onChange={this.handleInput('address')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("administrator")} 
-                fullWidth 
-                value={changes.adminName || ''}
-                onChange={this.handleInput('adminName')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("telephone")} 
-                fullWidth 
-                value={changes.tel || ''}
-                onChange={this.handleInput('tel')}
-              />
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <DatePicker
                   className={classes.input} 
@@ -241,22 +223,15 @@ class DomainListDetails extends PureComponent {
                   onChange={this.handleDateChange('createDay')}
                   autoOk
                 />
-                <DatePicker
-                  className={classes.input}
-                  label="end date"
-                  value={changes.endDay || new Date()}
-                  onChange={this.handleDateChange('endDay')}
-                  autoOk
-                />
               </MuiPickersUtilsProvider>
             </FormControl>
             <Grid container className={classes.input}>
               <FormControlLabel
-                label={t('mail archive')}
+                label={t('mail backup search')}
                 control={
                   <Checkbox
-                    checked={changes.mailArchive || false}
-                    onChange={this.handleCheckbox('mailArchive')}
+                    checked={changes.backup || false}
+                    onChange={this.handleCheckbox('backup')}
                   />
                 }
               />
@@ -264,8 +239,8 @@ class DomainListDetails extends PureComponent {
                 label={t('mail monitor')}
                 control={
                   <Checkbox
-                    checked={changes.mailMonitor || false}
-                    onChange={this.handleCheckbox('mailMonitor')}
+                    checked={changes.monitor || false}
+                    onChange={this.handleCheckbox('monitor')}
                   />
                 }
               />
@@ -273,8 +248,8 @@ class DomainListDetails extends PureComponent {
                 label={t('ignore checking user')}
                 control={
                   <Checkbox
-                    checked={changes.ignoreCheckingUser || false}
-                    onChange={this.handleCheckbox('ignoreCheckingUser')}
+                    checked={changes.log || false}
+                    onChange={this.handleCheckbox('log')}
                   />
                 }
               />
@@ -282,26 +257,8 @@ class DomainListDetails extends PureComponent {
                 label={t('mail sub system')}
                 control={
                   <Checkbox
-                    checked={changes.mailSubSystem || false}
-                    onChange={this.handleCheckbox('mailSubSystem')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('net disk')}
-                control={
-                  <Checkbox
-                    checked={changes.netDisk || false}
-                    onChange={this.handleCheckbox('netDisk')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('extended cryptosecurity')}
-                control={
-                  <Checkbox
-                    checked={changes.extendedCryptosecurity || false}
-                    onChange={this.handleCheckbox('extendedCryptosecurity')}
+                    checked={changes.account || false}
+                    onChange={this.handleCheckbox('account')}
                   />
                 }
               />
@@ -309,7 +266,7 @@ class DomainListDetails extends PureComponent {
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/domainList')}
+              onClick={() => this.props.history.push('/groups')}
               style={{ marginRight: 8 }}
             >
               Back
@@ -318,6 +275,7 @@ class DomainListDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.state.editing ? this.handleEdit: this.handleAdd}
+              disabled={!changes.domainID}
             >
               Save
             </Button>
@@ -328,25 +286,30 @@ class DomainListDetails extends PureComponent {
   }
 }
 
-DomainListDetails.propTypes = {
+GroupDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  domains: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => {
+  return { domains: state.domains };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
-    add: async domain => {
-      await dispatch(addDomainData(domain));
+    add: async group => {
+      await dispatch(addGroupData(group));
     },
-    edit: async domain => {
-      await dispatch(editDomainData(domain));
+    edit: async group => {
+      await dispatch(editGroupData(group));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainListDetails)));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(GroupDetails)));

@@ -205,6 +205,11 @@ class NavigationLinks extends Component {
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Users')}/>
               </ListItem>
+              <ListItem selected={drawer.selected === 'groups'}
+                className={classes.li} button onClick={this.handleNavigation('groups')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Groups')}/>
+              </ListItem>
             </List>
           </Collapse>
           <div className={classes.logoutContainer}>

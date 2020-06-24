@@ -82,6 +82,10 @@ async function loginPost(path, data) {
     .then(response => response.json());
 }*/
 
+/*
+  DOMAINS
+*/
+
 export function domains() {
   return async () => {
     return await get('/domains');
@@ -106,6 +110,10 @@ export function deleteDomain(id) {
   };
 }
 
+/*
+  USERS
+*/
+
 export function users() {
   return async () => {
     return await get('/users');
@@ -127,5 +135,33 @@ export function editUser(user) {
 export function deleteUser(id) {
   return async () => {
     return await apiDelete('/users/' + id);
+  };
+}
+
+/*
+  GROUPS
+*/
+
+export function groups() {
+  return async () => {
+    return await get('/groups');
+  };
+}
+
+export function addGroup(group) {
+  return async () => {
+    return await post('/groups', group);
+  };
+}
+
+export function editGroup(group) {
+  return async () => {
+    return await patch('/groups/' + group.ID, group);
+  };
+}
+
+export function deleteGroup(id) {
+  return async () => {
+    return await apiDelete('/groups/' + id);
   };
 }

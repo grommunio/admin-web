@@ -368,6 +368,14 @@ class UserDetails extends PureComponent {
               />
             </Grid>
             <Button
+              variant="text"
+              color="secondary"
+              onClick={() => this.props.history.push('/user')}
+              style={{ marginRight: 8 }}
+            >
+              Back
+            </Button>
+            <Button
               variant="contained"
               color="primary"
               onClick={this.state.editing ? this.handleEdit: this.handleAdd}

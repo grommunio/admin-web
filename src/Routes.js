@@ -14,6 +14,8 @@ const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
 const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
 const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
+const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
+const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -58,11 +60,26 @@ const Routes = ({ childProps }) => (
     />
     <AuthenticatedRoute
       path={[
-        "/users/:domainID",
+        "/users/:userID",
         "/users/add",
       ]}
       exact
       component={AsyncUserDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/groups"
+      exact
+      component={AsyncGroups}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path={[
+        "/groups/:groupID",
+        "/groups/add",
+      ]}
+      exact
+      component={AsyncGroupDetails}
       props={childProps}
     />
   </Switch>
