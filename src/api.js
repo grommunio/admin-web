@@ -195,6 +195,34 @@ export function deleteOrg(id) {
 }
 
 /*
+  ALIASES
+*/
+
+export function aliases() {
+  return async () => {
+    return await get('/aliases');
+  };
+}
+
+export function addAlias(alias) {
+  return async () => {
+    return await post('/aliases', alias);
+  };
+}
+
+export function editAlias(alias) {
+  return async () => {
+    return await patch('/aliases/' + alias.ID, alias);
+  };
+}
+
+export function deleteAlias(id) {
+  return async () => {
+    return await apiDelete('/aliases/' + id);
+  };
+}
+
+/*
   FORWARDS
 */
 

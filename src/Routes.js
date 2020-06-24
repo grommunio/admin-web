@@ -16,6 +16,12 @@ const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
 const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
 const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
+const AsyncOrgs = AsyncComponent(() => import("./containers/Orgs"));
+const AsyncOrgDetails = AsyncComponent(() => import("./containers/OrgDetails"));
+const AsyncAliases = AsyncComponent(() => import("./containers/Aliases"));
+const AsyncAliasDetails = AsyncComponent(() => import("./containers/AliasDetails"));
+const AsyncForwards = AsyncComponent(() => import("./containers/Forwards"));
+const AsyncForwardDetails = AsyncComponent(() => import("./containers/ForwardDetails"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -80,6 +86,42 @@ const Routes = ({ childProps }) => (
       ]}
       exact
       component={AsyncGroupDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/orgs"
+      exact
+      component={AsyncOrgs}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/orgs/:orgID"
+      exact
+      component={AsyncOrgDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/aliases"
+      exact
+      component={AsyncAliases}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/aliases/:aliasID"
+      exact
+      component={AsyncAliasDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/forwards"
+      exact
+      component={AsyncForwards}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/forwards/:forwardsID"
+      exact
+      component={AsyncForwardDetails}
       props={childProps}
     />
   </Switch>
