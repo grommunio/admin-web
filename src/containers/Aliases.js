@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Button, List, ListItem, ListItemText,
-  ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Button,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Table} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchAliasesData, deleteAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
@@ -82,21 +86,27 @@ class Aliases extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
-            <List>
-              {aliases.Aliases.map((obj, idx) =>
-                <ListItem key={idx}>
-                  <ListItemText
-                    primary={obj.aliasname}
-                    secondary={obj.mainname}
-                  >
-                  </ListItemText>
-                  <ListItemSecondaryAction className={classes.flexRowEnd}>
-                    <Button onClick={this.handleEdit(obj)}>Edit</Button>
-                    <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )}
-            </List>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>alias name</TableCell>
+                  <TableCell>main name</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {aliases.Aliases.map((obj, idx) =>
+                  <TableRow key={idx}>
+                    <TableCell>{obj.aliasname}</TableCell>
+                    <TableCell>{obj.mainname}</TableCell>
+                    <TableCell className={classes.flexRowEnd}>
+                      <Button onClick={this.handleEdit(obj)}>Edit</Button>
+                      <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </Paper>
         </div>
       </div>

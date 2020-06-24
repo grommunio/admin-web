@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Button, List, ListItem, ListItemText,
-  ListItemSecondaryAction } from '@material-ui/core';
+import { Paper, Button,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchOrgsData, deleteOrgData } from '../actions/orgs';
 import TopBar from '../components/TopBar';
@@ -82,21 +86,25 @@ class Orgs extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
-            <List>
-              {orgs.Orgs.map((obj, idx) =>
-                <ListItem key={idx}>
-                  <ListItemText
-                    primary={obj.name}
-                    secondary={obj.memo}
-                  >
-                  </ListItemText>
-                  <ListItemSecondaryAction className={classes.flexRowEnd}>
-                    <Button onClick={this.handleEdit(obj)}>Edit</Button>
-                    <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )}
-            </List>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>memo</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {orgs.Orgs.map((obj, idx) =>
+                  <TableRow key={idx}>
+                    <TableCell>{obj.memo}</TableCell>
+                    <TableCell className={classes.flexRowEnd}>
+                      <Button onClick={this.handleEdit(obj)}>Edit</Button>
+                      <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </Paper>
         </div>
       </div>
