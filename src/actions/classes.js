@@ -5,7 +5,7 @@ import {
 } from '../actions/types';
 import { classes, addClass, editClass, deleteClass } from '../api';
 
-export function fetchMlistsData() {
+export function fetchClassesData() {
   return async dispatch => {
     await dispatch({ type: CLASSES_DATA_FETCH });
     try {

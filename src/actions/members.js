@@ -5,7 +5,7 @@ import {
 } from '../actions/types';
 import { members, addMember, editMember, deleteMember } from '../api';
 
-export function fetchMemberData() {
+export function fetchMembersData() {
   return async dispatch => {
     await dispatch({ type: MEMBERS_DATA_FETCH });
     try {

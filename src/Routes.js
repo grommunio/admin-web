@@ -22,6 +22,12 @@ const AsyncAliases = AsyncComponent(() => import("./containers/Aliases"));
 const AsyncAliasDetails = AsyncComponent(() => import("./containers/AliasDetails"));
 const AsyncForwards = AsyncComponent(() => import("./containers/Forwards"));
 const AsyncForwardDetails = AsyncComponent(() => import("./containers/ForwardDetails"));
+const AsyncMlists = AsyncComponent(() => import("./containers/Mlists"));
+const AsyncMlistDetails = AsyncComponent(() => import("./containers/MlistDetails"));
+const AsyncClasses = AsyncComponent(() => import("./containers/Classes"));
+const AsyncClassDetails = AsyncComponent(() => import("./containers/ClassDetails"));
+const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
+const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -122,6 +128,42 @@ const Routes = ({ childProps }) => (
       path="/forwards/:forwardsID"
       exact
       component={AsyncForwardDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/mlists"
+      exact
+      component={AsyncMlists}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/mlists/:mlistID"
+      exact
+      component={AsyncMlistDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/classes"
+      exact
+      component={AsyncClasses}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/classes/:classID"
+      exact
+      component={AsyncClassDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/members"
+      exact
+      component={AsyncMembers}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/members/:memberID"
+      exact
+      component={AsyncMemberDetails}
       props={childProps}
     />
   </Switch>

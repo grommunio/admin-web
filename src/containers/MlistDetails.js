@@ -9,9 +9,10 @@ import {
   TextField,
   FormControl,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { addForwardData, editForwardData } from '../actions/forwards';
+import { editMlistData, addMlistData } from '../actions/mlists';
 
 const styles = theme => ({
   root: {
@@ -43,13 +44,13 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class ForwardDetails extends PureComponent {
+class MlistDetails extends PureComponent {
 
   constructor(props) {
     super(props);
     const domain = this.props.location.state;
     if(!domain) {
-      this.props.history.push('/forwards');
+      this.props.history.push('/mlists');
       this.state = {
         changes: {},
       };
@@ -59,6 +60,13 @@ class ForwardDetails extends PureComponent {
       editing: !!domain.ID,
     };
   }
+
+  listTypes = [
+    { name: 'normal', ID: 0 },
+    { name: 'group', ID: 1 },
+    { name: 'domain', ID: 2 },
+    { name: 'class', ID: 3 },
+  ]
 
   handleInput = field => event => {
     this.setState({
@@ -107,7 +115,7 @@ class ForwardDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, domains } = this.props;
     const changes = this.state.changes;
 
     return (
@@ -120,36 +128,57 @@ class ForwardDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit forward') : t('Add forward')}
+                {this.state.editing ? t('Edit mlist') : t('Add mlist')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("username")} 
+                label={t("listname")} 
                 fullWidth 
-                value={changes.username || ''}
-                onChange={this.handleInput('username')}
+                value={changes.listname || ''}
+                onChange={this.handleInput('listname')}
               />
+              <TextField
+                select
+                className={classes.input}
+                label={t("domain")}
+                fullWidth
+                value={changes.domainID || 0}
+                onChange={this.handleInput('domainID')}
+              >
+                {domains.Domains.map((domain, key) => (
+                  <MenuItem key={key} value={domain.ID}>
+                    {domain.domainname}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("list type")}
+                fullWidth
+                value={changes.listType || 0}
+                onChange={this.handleInput('listType')}
+              >
+                {this.listTypes.map((type, key) => (
+                  <MenuItem key={key} value={type.ID}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField 
                 className={classes.input} 
-                label={t("destination")} 
+                label={t("listPrivilege")} 
                 fullWidth 
-                value={changes.destination || ''}
-                onChange={this.handleInput('destination')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("forward type")} 
-                fullWidth 
-                value={changes.forwardType === undefined ? '' : changes.forwardType}
-                onChange={this.handleInput('forwardType')}
+                value={changes.listPrivilege || ''}
+                onChange={this.handleInput('listPrivilege')}
               />
             </FormControl>
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/forwards')}
+              onClick={() => this.props.history.push('/mlists')}
               style={{ marginRight: 8 }}
             >
               Back
@@ -168,25 +197,30 @@ class ForwardDetails extends PureComponent {
   }
 }
 
-ForwardDetails.propTypes = {
+MlistDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  domains: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => {
+  return { domains: state.domains };  //Will be used in the future
+};
+
 const mapDispatchToProps = dispatch => {
   return {
-    add: async forward => {
-      await dispatch(addForwardData(forward));
+    add: async mlist => {
+      await dispatch(addMlistData(mlist));
     },
-    edit: async forward => {
-      await dispatch(editForwardData(forward));
+    edit: async mlist => {
+      await dispatch(editMlistData(mlist));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ForwardDetails)));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(MlistDetails)));

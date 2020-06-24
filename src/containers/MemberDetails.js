@@ -9,9 +9,10 @@ import {
   TextField,
   FormControl,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { addForwardData, editForwardData } from '../actions/forwards';
+import { addMemberData, editMemberData } from '../actions/members';
 
 const styles = theme => ({
   root: {
@@ -43,13 +44,13 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class ForwardDetails extends PureComponent {
+class MemberDetails extends PureComponent {
 
   constructor(props) {
     super(props);
     const domain = this.props.location.state;
     if(!domain) {
-      this.props.history.push('/forwards');
+      this.props.history.push('/members');
       this.state = {
         changes: {},
       };
@@ -107,7 +108,7 @@ class ForwardDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, domains, groups, classesData } = this.props;
     const changes = this.state.changes;
 
     return (
@@ -120,7 +121,7 @@ class ForwardDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit forward') : t('Add forward')}
+                {this.state.editing ? t('Edit class') : t('Add class')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -131,25 +132,53 @@ class ForwardDetails extends PureComponent {
                 value={changes.username || ''}
                 onChange={this.handleInput('username')}
               />
-              <TextField 
-                className={classes.input} 
-                label={t("destination")} 
-                fullWidth 
-                value={changes.destination || ''}
-                onChange={this.handleInput('destination')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("forward type")} 
-                fullWidth 
-                value={changes.forwardType === undefined ? '' : changes.forwardType}
-                onChange={this.handleInput('forwardType')}
-              />
+              <TextField
+                select
+                className={classes.input}
+                label={t("domain")}
+                fullWidth
+                value={changes.domainID || 0}
+                onChange={this.handleInput('domainID')}
+              >
+                {domains.Domains.map((domain, key) => (
+                  <MenuItem key={key} value={domain.ID}>
+                    {domain.domainname}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("group")}
+                fullWidth
+                value={changes.groupID || 0}
+                onChange={this.handleInput('groupID')}
+              >
+                {groups.Groups.map((group, key) => (
+                  <MenuItem key={key} value={group.ID}>
+                    {group.groupname}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("class")}
+                fullWidth
+                value={changes.classID || 0}
+                onChange={this.handleInput('classID')}
+              >
+                {classesData.Classes.map((Class, key) => (
+                  <MenuItem key={key} value={Class.ID}>
+                    {Class.classname}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/forwards')}
+              onClick={() => this.props.history.push('/members')}
               style={{ marginRight: 8 }}
             >
               Back
@@ -168,25 +197,36 @@ class ForwardDetails extends PureComponent {
   }
 }
 
-ForwardDetails.propTypes = {
+MemberDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  domains: PropTypes.object.isRequired,
+  groups: PropTypes.object.isRequired,
+  classesData: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    domains: state.domains,
+    groups: state.groups,
+    classesData: state.classes,
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
-    add: async forward => {
-      await dispatch(addForwardData(forward));
+    add: async member => {
+      await dispatch(addMemberData(member));
     },
-    edit: async forward => {
-      await dispatch(editForwardData(forward));
+    edit: async member => {
+      await dispatch(editMemberData(member));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ForwardDetails)));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(MemberDetails)));
