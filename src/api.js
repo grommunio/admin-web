@@ -165,3 +165,143 @@ export function deleteGroup(id) {
     return await apiDelete('/groups/' + id);
   };
 }
+
+/*
+  ORGS
+*/
+
+export function orgs() {
+  return async () => {
+    return await get('/orgs');
+  };
+}
+
+export function addOrg(org) {
+  return async () => {
+    return await post('/orgs', org);
+  };
+}
+
+export function editOrg(org) {
+  return async () => {
+    return await patch('/orgs/' + org.ID, org);
+  };
+}
+
+export function deleteOrg(id) {
+  return async () => {
+    return await apiDelete('/orgs/' + id);
+  };
+}
+
+/*
+  FORWARDS
+*/
+
+export function forwards() {
+  return async () => {
+    return await get('/forwards');
+  };
+}
+
+export function addForward(forward) {
+  return async () => {
+    return await post('/forwards', forward);
+  };
+}
+
+export function editForward(forward) {
+  return async () => {
+    return await patch('/forwards/' + forward.ID, forward);
+  };
+}
+
+export function deleteForward(id) {
+  return async () => {
+    return await apiDelete('/forwards/' + id);
+  };
+}
+
+/*
+  MLISTS
+*/
+
+export function mlists() {
+  return async () => {
+    return await get('/mlists');
+  };
+}
+
+export function addMlist(mlist) {
+  return async () => {
+    return await post('/mlists', mlist);
+  };
+}
+
+export function editMlist(mlist) {
+  return async () => {
+    return await patch('/mlists/' + mlist.ID, mlist);
+  };
+}
+
+export function deleteMlist(id) {
+  return async () => {
+    return await apiDelete('/mlists/' + id);
+  };
+}
+
+/*
+  CLASSES
+*/
+
+export function classes() {
+  return async () => {
+    return await get('/classes');
+  };
+}
+
+export function addClass(Class) {
+  return async () => {
+    return await post('/classes', Class);
+  };
+}
+
+export function editClass(Class) {
+  return async () => {
+    return await patch('/classes/' + Class.ID, Class);
+  };
+}
+
+export function deleteClass(id) {
+  return async () => {
+    return await apiDelete('/classes/' + id);
+  };
+}
+
+/*
+  MEMBERS
+*/
+
+export function members() {
+  return async () => {
+    return await get('/members');
+  };
+}
+
+export function addMember(member) {
+  return async () => {
+    return await post('/members', member);
+  };
+}
+
+export function editMember(member) {
+  return async () => {
+    return await patch('/members/' + member.ID, member);
+  };
+}
+
+export function deleteMember(id) {
+  return async () => {
+    return await apiDelete('/members/' + id);
+  };
+}
