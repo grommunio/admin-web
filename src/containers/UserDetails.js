@@ -13,6 +13,8 @@ import {
   MenuItem,
   Button,
   InputAdornment,
+  DialogTitle,
+  DialogContent, Dialog, DialogActions,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
@@ -21,6 +23,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
+import { changeUserPassword } from '../api';
 
 const styles = theme => ({
   root: {
@@ -50,6 +53,9 @@ const styles = theme => ({
     marginBottom: theme.spacing(2),
   },
   toolbar: theme.mixins.toolbar,
+  gird: {
+    display: 'flex',
+  },
 });
 
 class UserDetails extends PureComponent {
@@ -66,6 +72,9 @@ class UserDetails extends PureComponent {
     else this.state = {
       changes: user,
       editing: !!user.ID,
+      changingPw: false,
+      oldPw: '',
+      newPw: '',
     };
   }
 
@@ -143,12 +152,18 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
+      password: undefined,
     });
+  }
+
+  handlePasswordChange = async () => {
+    const { changes, oldPw, newPw } = this.state;
+    await changeUserPassword(changes.ID, oldPw, newPw);
   }
 
   render() {
     const { classes, t } = this.props;
-    const changes = this.state.changes;
+    const { editing, changes, changingPw, oldPw, newPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -161,7 +176,7 @@ class UserDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit user') : t('Add user')}
+                {editing ? t('Edit user') : t('Add user')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -170,16 +185,25 @@ class UserDetails extends PureComponent {
                 label={t("username")} 
                 fullWidth 
                 value={changes.username || ''}
+                autoFocus
                 onChange={this.handleInput('username')}
               />
-              <TextField 
-                className={classes.input} 
-                label={t("password")} 
-                fullWidth
-                type="password"
-                value={changes.password || ''}
-                onChange={this.handleInput('password')}
-              />
+              <Grid container className={classes.input}>
+                <TextField 
+                  label={t("password")}
+                  style={{ flex: 1, marginRight: 8 }}
+                  type="password"
+                  disabled={editing}
+                  value={changes.password || ''}
+                />
+                {editing && <Button
+                  variant="contained"
+                  onClick={() => this.setState({ changingPw: true })}
+                  size="small"
+                >
+                  Change Password
+                </Button>}
+              </Grid>
               <TextField
                 select
                 className={classes.input}
@@ -380,12 +404,45 @@ class UserDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.state.editing ? this.handleEdit: this.handleAdd}
+              onClick={editing ? this.handleEdit: this.handleAdd}
             >
               Save
             </Button>
           </Paper>
         </div>
+        <Dialog open={changingPw}>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              className={classes.input} 
+              label={t("Old password")} 
+              autoFocus
+              fullWidth
+              type="password"
+              value={oldPw}
+              onChange={event => this.setState({ oldPw: event.target.value })}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("New password")} 
+              fullWidth
+              type="password"
+              value={newPw}
+              onChange={event => this.setState({ newPw: event.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={this.handlePasswordChange}
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

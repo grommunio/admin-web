@@ -138,6 +138,12 @@ export function deleteUser(id) {
   };
 }
 
+export async function changeUserPassword(id, oldPw, newPw) {
+  try {
+    return await post('/users/' + id + '/password', { old: oldPw, new: newPw });
+  } catch(err) { console.error(err); }
+}
+
 /*
   GROUPS
 */

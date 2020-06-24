@@ -44,21 +44,8 @@ const styles = theme => ({
 
 class Users extends Component {
 
-  state = {
-    changes: {},
-  }
-
   componentDidMount() {
     this.props.fetch();
-  }
-
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
   }
 
   handleAdd = () => {
