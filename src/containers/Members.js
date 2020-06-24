@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Button,
+import IconButton from '@material-ui/core/IconButton';
+import Edit from '@material-ui/icons/Edit';
+import Delete from '@material-ui/icons/Close';
+import { Paper,
   Table,
   TableHead,
   TableRow,
@@ -115,8 +118,12 @@ class Classes extends Component {
                     <TableCell>{obj.groupID}</TableCell>
                     <TableCell>{obj.class}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <Button onClick={this.handleEdit(obj)}>Edit</Button>
-                      <Button onClick={this.handleDelete(obj.ID)}>Delete</Button>
+                      <IconButton onClick={this.handleEdit(obj)}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                        <Delete color="error"/>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 )}

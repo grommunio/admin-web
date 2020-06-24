@@ -5,6 +5,8 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
   Button, DialogActions } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
 
 const styles = theme => ({
@@ -190,7 +192,11 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell><Button>Delete</Button></TableCell>
+                    <TableCell>
+                      <IconButton>
+                        <Delete color="error"/>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -218,7 +224,11 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell><Button>Delete</Button></TableCell>
+                    <TableCell>
+                      <IconButton>
+                        <Delete color="error"/>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -246,7 +256,11 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
                     <TableCell>{obj.example}</TableCell>
-                    <TableCell><Button>Delete</Button></TableCell>
+                    <TableCell>
+                      <IconButton>
+                        <Delete color="error"/>
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
