@@ -51,13 +51,20 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class GroupDetails extends PureComponent {
+class DomainListDetails extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      changes: this.props.location.state || {},
-      editing: !!this.props.location.state,
+    const domain = this.props.location.state;
+    if(!domain) {
+      this.props.history.push('/domainList');
+      this.state = {
+        changes: {},
+      };
+    }
+    else this.state = {
+      changes: domain,
+      editing: !!domain.ID,
     };
   }
 
@@ -100,14 +107,12 @@ class GroupDetails extends PureComponent {
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
-    if(input <= 100) {
-      this.setState({
-        changes: {
-          ...this.state.changes,
-          [field]: input,
-        },
-      });
-    }
+    this.setState({
+      changes: {
+        ...this.state.changes,
+        [field]: input,
+      },
+    });
   }
 
   handleAdd = () => {
@@ -144,7 +149,7 @@ class GroupDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t("Add domain")}
+                {this.state.editing ? t('Edit domain') : t("Add domain")}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -315,7 +320,7 @@ class GroupDetails extends PureComponent {
   }
 }
 
-GroupDetails.propTypes = {
+DomainListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -336,4 +341,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails)));
+  withTranslation()(withStyles(styles)(DomainListDetails)));

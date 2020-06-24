@@ -58,11 +58,11 @@ class Users extends Component {
   }
 
   handleAdd = () => {
-    this.props.history.push('/users/add');
+    this.props.history.push('/users/add', {});
   }
 
-  handleEdit = domain => () => {
-    this.props.history.push('/users/add', { ...domain });
+  handleEdit = user => () => {
+    this.props.history.push('/users/' + user.ID, { ...user });
   }
 
   handleDelete = id => () => {

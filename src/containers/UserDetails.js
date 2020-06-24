@@ -55,9 +55,16 @@ class UserDetails extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {
-      changes: this.props.location.state || {},
-      editing: !!this.props.location.state,
+    const user = this.props.location.state;
+    if(!user) {
+      this.props.history.push('/users');
+      this.state = {
+        changes: {},
+      };
+    }
+    else this.state = {
+      changes: user,
+      editing: !!user.ID,
     };
   }
 
@@ -70,6 +77,8 @@ class UserDetails extends PureComponent {
   statuses = [
     { name: 'normal', ID: 0 },
     { name: 'suspended', ID: 1 },
+    { name: 'out of date', ID: 2 },
+    { name: 'deleted', ID: 3 },
   ]
 
   expires = [
@@ -110,14 +119,12 @@ class UserDetails extends PureComponent {
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
-    if(input <= 100) {
-      this.setState({
-        changes: {
-          ...this.state.changes,
-          [field]: input,
-        },
-      });
-    }
+    this.setState({
+      changes: {
+        ...this.state.changes,
+        [field]: input,
+      },
+    });
   }
 
   handleAdd = () => {
@@ -152,7 +159,7 @@ class UserDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t("Add user")}
+                {this.state.editing ? t('Edit user') : t('Add user')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
