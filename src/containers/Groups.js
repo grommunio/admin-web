@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid, Typography, Button } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchGroupsData, deleteGroupData } from '../actions/groups';
 import { fetchDomainData } from '../actions/domains';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -77,17 +78,9 @@ class Groups extends Component {
 
     return (
       <div className={classes.root}>
+        <TopBar onAdd={this.handleAdd} title="Groups"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Grid className={classes.grid} container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Typography align="center" variant="h4" color="primary">Groups</Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.flexRowEnd}>
-              <Button variant="contained" color="primary" onClick={this.handleAdd}>Add</Button>
-            </Grid>
-          </Grid>
           <Paper className={classes.tablePaper}>
             <Table size="small">
               <TableHead>

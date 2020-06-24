@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { addForwardData, editForwardData } from '../actions/forwards';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -112,6 +113,7 @@ class ForwardDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
+        <TopBar title="Forwards"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>

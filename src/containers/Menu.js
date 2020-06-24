@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -24,9 +25,9 @@ class Menu extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
+        <TopBar onAdd={this.handleAdd} title="FUCKING DASHBOARD"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          This is the FUCKING DASHBOARD
           <img src="https://pbs.twimg.com/media/DwCx5qKUUAEfMTz.jpg" width="400" alt="fucking donkey" />
         </div>
       </div>

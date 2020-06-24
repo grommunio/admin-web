@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Grid, Typography, Button,
+import { Paper, Button,
   Table,
   TableHead,
   TableRow,
@@ -11,6 +11,7 @@ import { Paper, Grid, Typography, Button,
 import { connect } from 'react-redux';
 import { fetchMlistsData, deleteMlistData } from '../actions/mlists';
 import { fetchDomainData } from '../actions/domains';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -82,17 +83,9 @@ class MLists extends Component {
 
     return (
       <div className={classes.root}>
+        <TopBar onAdd={this.handleAdd} title="MLists"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Grid className={classes.grid} container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Typography align="center" variant="h4" color="primary">MLists</Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.flexRowEnd}>
-              <Button variant="contained" color="primary" onClick={this.handleAdd}>Add</Button>
-            </Grid>
-          </Grid>
           <Paper className={classes.tablePaper}>
             <Table size="small">
               <TableHead>

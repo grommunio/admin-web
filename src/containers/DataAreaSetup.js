@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Grid,
-  TextField, FormControl, MenuItem, Typography, Dialog, DialogContent, DialogTitle,
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
+  TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
   Button, DialogActions } from '@material-ui/core';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -88,17 +89,9 @@ class DataAreaSetup extends Component {
 
     return (
       <div className={classes.root}>
+        <TopBar onAdd={() => this.setState({ addOpen: true })} title="Data Area Setup"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Grid className={classes.grid} container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Typography align="center" variant="h4" color="primary">data store area management</Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.flexRowEnd}>
-              <Button variant="contained" color="primary" onClick={() => this.setState({ addOpen: true })}>Add</Button>
-            </Grid>
-          </Grid>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={this.state.addOpen} maxWidth="lg">
             <DialogTitle>Add</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>

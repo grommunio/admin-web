@@ -20,6 +20,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addGroupData, editGroupData } from '../actions/groups';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -135,6 +136,7 @@ class GroupDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
+        <TopBar title="Groups"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>

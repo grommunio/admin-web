@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editMlistData, addMlistData } from '../actions/mlists';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -120,6 +121,7 @@ class MlistDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
+        <TopBar title="Mlist"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>

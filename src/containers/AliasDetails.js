@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { addAliasData, editAliasData } from '../actions/aliases';
+import TopBar from '../components/TopBar';
 
 const styles = theme => ({
   root: {
@@ -117,6 +118,7 @@ class AliasDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
+        <TopBar title="Aliases"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
