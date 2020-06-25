@@ -136,12 +136,26 @@ class DomNavigationLinks extends Component {
               <Collapse in={this.state[domain.name]} unmountOnExit>
                 <List component="div" disablePadding>
                   <ListItem
-                    className={classes.li} button onClick={this.handleNavigation(domain.name + '/users')}>
+                    className={classes.li}
+                    button
+                    onClick={this.handleNavigation(domain.name + '/configuration')}
+                  >
+                    <People className={classes.nestedIcon}/>
+                    <ListItemText primary={t('Configuration')}/>
+                  </ListItem>
+                  <ListItem
+                    className={classes.li}
+                    button
+                    onClick={this.handleNavigation(domain.name + '/users')}
+                  >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Users')}/>
                   </ListItem>
                   <ListItem
-                    className={classes.li} button onClick={this.handleNavigation(domain.name + '/folders')}>
+                    className={classes.li}
+                    button
+                    onClick={this.handleNavigation(domain.name + '/folders')}
+                  >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Folders')}/>
                   </ListItem>
