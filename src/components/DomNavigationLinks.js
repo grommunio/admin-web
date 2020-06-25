@@ -159,6 +159,14 @@ class DomNavigationLinks extends Component {
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Folders')}/>
                   </ListItem>
+                  <ListItem
+                    className={classes.li}
+                    button
+                    onClick={this.handleNavigation(domain.name + '/mailAddresses')}
+                  >
+                    <People className={classes.nestedIcon}/>
+                    <ListItemText primary={t('Mail address list')}/>
+                  </ListItem>
                 </List>
               </Collapse>
             </React.Fragment>
