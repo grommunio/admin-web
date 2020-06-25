@@ -173,6 +173,34 @@ export function deleteGroup(id) {
 }
 
 /*
+  FOLDERS
+*/
+
+export function folders(domain) {
+  return async () => {
+    return await get('/' + domain.ID + '/folders');
+  };
+}
+
+export function addFolder(domain, folder) {
+  return async () => {
+    return await post('/' + domain.ID + '/folders', folder);
+  };
+}
+
+export function editFolder(domain, folder) {
+  return async () => {
+    return await patch('/' + domain.ID + '/folders/' + folder.ID, folder);
+  };
+}
+
+export function deleteFolder(domain, id) {
+  return async () => {
+    return await apiDelete('/' + domain.ID + '/folders/' + id);
+  };
+}
+
+/*
   ORGS
 */
 

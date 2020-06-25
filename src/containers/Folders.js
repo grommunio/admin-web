@@ -7,8 +7,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
-import { fetchUsersData, deleteUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
+import { fetchFolderData, deleteFolderData } from '../actions/folders';
 
 const styles = theme => ({
   root: {
@@ -42,18 +42,18 @@ const styles = theme => ({
   },
 });
 
-class Users extends Component {
+class Folders extends Component {
 
   componentDidMount() {
     this.props.fetch(this.props.domain);
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain + '/users/add', {});
+    this.props.history.push('/' + this.props.domain + '/folders/add', {});
   }
 
-  handleEdit = user => () => {
-    this.props.history.push('/' + this.props.domain + '/users/' + user.ID, { ...user });
+  handleEdit = folder => () => {
+    this.props.history.push('/' + this.props.domain + '/folders/' + folder.ID, { ...folder });
   }
 
   handleDelete = id => () => {
@@ -61,31 +61,29 @@ class Users extends Component {
   }
 
   render() {
-    const { classes, users } = this.props;
+    const { classes, folders } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Users"/>
+        <TopBar onAdd={this.handleAdd} title="Folders"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>username</TableCell>
-                  <TableCell>real name</TableCell>
-                  <TableCell>department</TableCell>
-                  <TableCell>maximum space</TableCell>
+                  <TableCell>folder name</TableCell>
+                  <TableCell>comment</TableCell>
+                  <TableCell>creation time</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.Users.map((obj, idx) =>
+                {folders && folders.Folders.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.username}</TableCell>
-                    <TableCell>{obj.realName}</TableCell>
-                    <TableCell>{obj.department}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
+                    <TableCell>{obj.foldername}</TableCell>
+                    <TableCell>{obj.comment}</TableCell>
+                    <TableCell>{obj.creationTime}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
@@ -105,30 +103,30 @@ class Users extends Component {
   }
 }
 
-Users.propTypes = {
+Folders.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  users: PropTypes.object.isRequired,
   domain: PropTypes.string.isRequired,
+  folders: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  return { users: state.users };
+  return { folders: state.folders };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async domain => {
-      await dispatch(fetchUsersData(domain));
+    fetch: async (domain) => {
+      await dispatch(fetchFolderData(domain));
     },
     delete: async id => {
-      await dispatch(deleteUserData(id));
+      await dispatch(deleteFolderData(id));
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Users)));
+  withTranslation()(withStyles(styles)(Folders)));
