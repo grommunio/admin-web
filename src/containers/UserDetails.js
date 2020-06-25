@@ -62,12 +62,12 @@ class UserDetails extends PureComponent {
 
   constructor(props) {
     super(props);
-    const user = this.props.location.state;
+    const user = props.location.state;
     if(!user) {
-      this.props.history.push('/users');
       this.state = {
         changes: {},
       };
+      props.history.push('/' + props.domain + '/folders');
     }
     else this.state = {
       changes: user,
@@ -138,7 +138,7 @@ class UserDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    this.props.add({
+    this.props.add(this.props.domain, {
       ...this.state.changes,
       domainID: 420,
       groupID: 420,
@@ -148,7 +148,7 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    this.props.edit({
+    this.props.edit(this.props.domain, {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
@@ -180,29 +180,21 @@ class UserDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("username")} 
-                fullWidth 
-                value={changes.username || ''}
-                autoFocus
-                onChange={this.handleInput('username')}
-              />
               <Grid container className={classes.input}>
                 <TextField 
-                  label={t("password")}
+                  label={t("username")}
+                  value={changes.username || ''}
+                  autoFocus
+                  onChange={this.handleInput('username')}
                   style={{ flex: 1, marginRight: 8 }}
-                  type="password"
-                  disabled={editing}
-                  value={changes.password || ''}
                 />
-                {editing && <Button
+                <Button
                   variant="contained"
                   onClick={() => this.setState({ changingPw: true })}
                   size="small"
                 >
                   Change Password
-                </Button>}
+                </Button>
               </Grid>
               <TextField
                 select
@@ -396,7 +388,7 @@ class UserDetails extends PureComponent {
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/user')}
+              onClick={this.props.history.goBack}
               style={{ marginRight: 8 }}
             >
               Back
@@ -452,6 +444,7 @@ UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  domain: PropTypes.string.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
@@ -459,11 +452,11 @@ UserDetails.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async user => {
-      await dispatch(addUserData(user));
+    add: async (domain, user) => {
+      await dispatch(addUserData(domain, user));
     },
-    edit: async user => {
-      await dispatch(editUserData(user));
+    edit: async (domain, user) => {
+      await dispatch(editUserData(domain, user));
     },
   };
 };
