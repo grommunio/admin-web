@@ -14,11 +14,6 @@ import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
 import Dashboard from '@material-ui/icons/Dashboard';
 import Run from '@material-ui/icons/DirectionsRun';
-import Group from '@material-ui/icons/Category';
-import Models from '@material-ui/icons/DevicesOther';
-import MTypes from '@material-ui/icons/KeyboardTab';
-import Location from '@material-ui/icons/LocationOn';
-import Company from '@material-ui/icons/Domain';
 import People from '@material-ui/icons/People';
 import {
   setDrawerDefault,
@@ -29,6 +24,7 @@ import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   drawerHeader: {
@@ -169,6 +165,7 @@ class NavigationLinks extends Component {
               onClick={this.handleNavigation('')}
               className={classes.dashboard}
             >
+              <Typography variant="h5" color="inherit">GRAMMM</Typography>
             </Button>
           </div>
           <ListItem button onClick={this.handleNavigation('')}
@@ -178,11 +175,19 @@ class NavigationLinks extends Component {
           </ListItem>
           <ListItem
             button
-            selected={drawer.selected === 'assets'}
-            onClick={this.handleNavigation('assets')}
+            selected={drawer.selected === 'dataAreaSetup'}
+            onClick={this.handleNavigation('dataAreaSetup')}
             className={classes.li}>
             <Items className={classes.icon}/>
-            <ListItemText primary={t('Assets')} />
+            <ListItemText primary={t('data area setup')} />
+          </ListItem>
+          <ListItem
+            button
+            selected={drawer.selected === 'domainList'}
+            onClick={this.handleNavigation('domainList')}
+            className={classes.li}>
+            <Items className={classes.icon}/>
+            <ListItemText primary={t('domain list')} />
           </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
             <DefaultData className={classes.icon} />
@@ -195,35 +200,45 @@ class NavigationLinks extends Component {
           </ListItem>
           <Collapse in={drawer.defaultOpen} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
+              <ListItem selected={drawer.selected === 'users'}
+                className={classes.li} button onClick={this.handleNavigation('users')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Users')}/>
+              </ListItem>
               <ListItem selected={drawer.selected === 'groups'}
                 className={classes.li} button onClick={this.handleNavigation('groups')}>
-                <Group className={classes.nestedIcon} />
-                <ListItemText primary={t('Asset groups')} />
-              </ListItem>
-              <ListItem selected={drawer.selected === 'models'}
-                className={classes.li} button onClick={this.handleNavigation('models')}>
-                <Models className={classes.nestedIcon} />
-                <ListItemText primary={t('Models')}/>
-              </ListItem>
-              <ListItem selected={drawer.selected === 'movementTypes'}
-                className={classes.li} button onClick={this.handleNavigation('movementTypes')}>
-                <MTypes className={classes.nestedIcon} />
-                <ListItemText primary={t('Movement types')}/>
-              </ListItem>
-              <ListItem selected={drawer.selected === 'locations'}
-                className={classes.li} button onClick={this.handleNavigation('locations')}>
-                <Location className={classes.nestedIcon} />
-                <ListItemText primary={t('Locations')}/>
-              </ListItem>
-              <ListItem selected={drawer.selected === 'companies'}
-                className={classes.li} button onClick={this.handleNavigation('companies')}>
-                <Company className={classes.nestedIcon}/>
-                <ListItemText primary={t('Companies')}/>
-              </ListItem>
-              <ListItem selected={drawer.selected === 'people'}
-                className={classes.li} button onClick={this.handleNavigation('people')}>
                 <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('People')}/>
+                <ListItemText primary={t('Groups')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'orgs'}
+                className={classes.li} button onClick={this.handleNavigation('orgs')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Organizations')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'aliases'}
+                className={classes.li} button onClick={this.handleNavigation('aliases')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Aliases')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'forwards'}
+                className={classes.li} button onClick={this.handleNavigation('forwards')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Forwards')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'mlists'}
+                className={classes.li} button onClick={this.handleNavigation('mlists')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('MLists')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'classes'}
+                className={classes.li} button onClick={this.handleNavigation('classes')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Classes')}/>
+              </ListItem>
+              <ListItem selected={drawer.selected === 'members'}
+                className={classes.li} button onClick={this.handleNavigation('members')}>
+                <People className={classes.nestedIcon}/>
+                <ListItemText primary={t('Members')}/>
               </ListItem>
             </List>
           </Collapse>
