@@ -2,6 +2,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 import grey from './colors/grey';
 import brightBlue from './colors/brightBlue';
+import blue from './colors/blue';
 
 const theme = createMuiTheme({
   overrides: {
@@ -42,6 +43,10 @@ const theme = createMuiTheme({
         fontSize: 14,
       },
     },
+  },
+  palette: {
+    primary: blue,
+    secondary: grey,
   },
 });
 

@@ -9,15 +9,34 @@ import DomainRoutes from './DomainRoutes';
 import ResponsiveDrawer from './components/ResponsiveDrawer';
 import { authAuthenticating } from './actions/auth';
 import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
+import background from './res/bootback.svg';
 
-const styles = theme => ({
+const styles = {
   root: {
     display: 'flex',
     flex: 1,
-    backgroundColor: theme.palette.background.default,
     overflow: 'hidden',
+    backgroundImage: 'url(' + background + ')',
+    backgroundSize: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 1,
   },
-});
+  layer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 10,
+  },
+  mainView: {
+    display: 'flex',
+    flex: 1,
+    overflow: 'hidden',
+    zIndex: 100,
+  },
+};
 
 class App extends Component {
 
@@ -45,14 +64,16 @@ class App extends Component {
 
     return(
       <div className={classes.root}>
-        {authenticated && (role === 'sys' ? <ResponsiveDrawer /> :
-          <ResponsiveDomDrawer domains={domains}/>)
-        }
-        {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
-          <DomainRoutes domains={domains} childProps={routesProps}/>
-        }
+        <div className={classes.layer} />
+        <div className={classes.mainView}>
+          {authenticated && (role === 'sys' ? <ResponsiveDrawer /> :
+            <ResponsiveDomDrawer domains={domains}/>)
+          }
+          {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
+            <DomainRoutes domains={domains} childProps={routesProps}/>
+          }
+        </div>
       </div>
-      
     );
   }
 }

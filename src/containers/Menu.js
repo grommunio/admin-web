@@ -28,12 +28,12 @@ class Menu extends Component {
         <TopBar onAdd={this.handleAdd} title="Dashboard"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <img src="https://pbs.twimg.com/media/DwCx5qKUUAEfMTz.jpg" width="400" alt="fucking donkey" />
         </div>
       </div>
     );
   }
 }
-/*<img src="https://pbs.twimg.com/media/DwCx5qKUUAEfMTz.jpg" width="400" alt="fucking donkey" />*/
 
 Menu.propTypes = {
   classes: PropTypes.object.isRequired,
