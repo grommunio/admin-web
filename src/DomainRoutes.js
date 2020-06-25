@@ -16,6 +16,8 @@ const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetai
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
 const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
+const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
+const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -38,6 +40,26 @@ const Routes = ({ childProps, domains }) => (
         component={AsyncDomainMenu}
         domainName={domain.name}
         props={childProps}
+        key={domain.name}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.name}/mailAddresses`}
+        exact
+        component={AsyncMailAddresses}
+        props={childProps}
+        domainName={domain.name}
+        key={domain.name}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.name}/mailAddresses/:mailID`}
+        exact
+        component={AsyncMailAddressDetails}
+        props={childProps}
+        domainName={domain.name}
         key={domain.name}
       />
     )}

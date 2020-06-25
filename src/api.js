@@ -389,3 +389,30 @@ export async function deleteDataArea(id) {
     return await apiDelete('/area_list/' + id);
   } catch(err) { console.error(err); }
 }
+/*
+  MAIL ADDRESSES
+*/
+
+export async function mailAddresses(domain) {
+  try {
+    return await get('/' + domain + '/mailAddresses');
+  } catch(err) { console.error(err); }
+}
+
+export async function addMailAddress(domain, mail) {
+  try {
+    return await post('/' + domain + '/mailAddresses', mail);
+  } catch(err) { console.error(err); }
+}
+
+export async function editMailAddress(domain, mail) {
+  try {
+    return await patch('/' + domain + '/mailAddresses', mail);
+  } catch(err) { console.error(err); }
+}
+
+export async function deleteMailAddress(domain, id) {
+  try {
+    return await apiDelete('/' + domain + '/mailAddresses/' + id);
+  } catch(err) { console.error(err); }
+}
