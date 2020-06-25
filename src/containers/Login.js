@@ -18,6 +18,7 @@ import {
   authLoginWithToken,
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
+import logo from '../res/grammm_logo.svg';
 
 const styles = theme => ({
   /* || General */
@@ -118,12 +119,13 @@ class Login extends Component {
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm}>
           <div className={classes.logoContainer}>
-            <Typography variant="h4">GRAMMM</Typography>
+            <img src={logo} width="300" alt="GRAMMM"/>
           </div>
           <Paper component="form" onSubmit={this.handleLogin} className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>
             <InputBase
               fullWidth
+              autoFocus
               error={auth.error}
               className={classes.input}
               placeholder={t("Username")}

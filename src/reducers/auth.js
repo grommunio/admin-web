@@ -8,7 +8,7 @@ const defaultState = {
   error: false,
   authenticated: false,
   authenticating: true,
-  role: 'dom',
+  role: 'sys',
 };
 
 function authReducer(state = defaultState, action) {
