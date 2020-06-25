@@ -30,7 +30,6 @@ const styles = theme => ({
   },
   tablePaper: {
     margin: theme.spacing(3, 2),
-    borderRadius: 6,
   },
   paperHeading: {
     margin: theme.spacing(-1, 0, 0, 2),
@@ -180,7 +179,7 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <Paper className={classes.tablePaper}>
+          <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
                 <TableRow>
