@@ -13,8 +13,8 @@ import Settings from '@material-ui/icons/Settings';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import grey from '../colors/grey';
-import { Typography } from '@material-ui/core';
 import blue from '../colors/blue';
+import logo from '../res/grammm_logo_only.svg';
 
 const styles = theme => ({
   drawerHeader: {
@@ -130,7 +130,7 @@ class DomNavigationLinks extends PureComponent {
               onClick={this.handleNavigation('')}
               className={classes.dashboard}
             >
-              <Typography variant="h5" color="inherit">GRAMMM</Typography>
+              <img src={logo} width="80" alt="GRAMMM"/>
             </Button>
           </div>
           {domains.map(({ name }) =>
