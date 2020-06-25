@@ -15,6 +15,7 @@ const AsyncFolders = AsyncComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetails"));
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
+const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -75,6 +76,16 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.name}/folders/:folderID`}
         exact
         component={AsyncFolderDetails}
+        props={childProps}
+        key={domain.name}
+        domainName={domain.name}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.name}/configuration`}
+        exact
+        component={AsyncConfig}
         props={childProps}
         key={domain.name}
         domainName={domain.name}
