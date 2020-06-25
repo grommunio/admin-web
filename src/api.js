@@ -367,3 +367,25 @@ export function deleteMember(id) {
     return await apiDelete('/members/' + id);
   };
 }
+
+/*
+  Sys
+*/
+
+export async function dataArea() {
+  try {
+    return await get('/area_list');
+  } catch(err) { console.error(err); }
+}
+
+export async function addDataArea(data) {
+  try {
+    return await post('/area_list', data);
+  } catch(err) { console.error(err); }
+}
+
+export async function deleteDataArea(id) {
+  try {
+    return await apiDelete('/area_list/' + id);
+  } catch(err) { console.error(err); }
+}

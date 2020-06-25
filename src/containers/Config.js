@@ -89,7 +89,7 @@ class Config extends Component {
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
             <Paper className={classes.paper} elevation={1}>
-              <Typography>Language</Typography>
+              <Typography>What is this category?</Typography>
               <FormControl className={classes.form}>
                 <TextField 
                   className={classes.input} 

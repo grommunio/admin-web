@@ -45,8 +45,8 @@ class App extends Component {
 
     return(
       <div className={classes.root}>
-        {authenticated && role === 'sys' ? <ResponsiveDrawer /> :
-          <ResponsiveDomDrawer domains={domains}/>
+        {authenticated && (role === 'sys' ? <ResponsiveDrawer /> :
+          <ResponsiveDomDrawer domains={domains}/>)
         }
         {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
           <DomainRoutes domains={domains} childProps={routesProps}/>
