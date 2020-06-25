@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import grey from '../colors/grey';
 import { Typography } from '@material-ui/core';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   drawerHeader: {
@@ -49,10 +50,10 @@ const styles = theme => ({
       backgroundColor: `rgba(255, 255, 255, 0.15)`,
     },
     '&.Mui-selected': {
-      background: 'linear-gradient(60deg, #66bb6a, #43a047)',
+      background: `linear-gradient(30deg, ${blue['700']}, ${blue['500']})`,
       color: 'black',
       '&:hover': {
-        background: 'linear-gradient(60deg, #66bb6a, #43a047)',
+        background: `linear-gradient(30deg, ${blue['700']}, ${blue['500']})`,
       },
     },
   },
@@ -87,7 +88,7 @@ const styles = theme => ({
   },
 });
 
-class DomNavigationLinks extends Component {
+class DomNavigationLinks extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -103,12 +104,21 @@ class DomNavigationLinks extends Component {
     history.push(`/${path}`);
   }
 
-  handleDrawer = domain => () => {
-    this.setState({ [domain]: !this.state[domain] });
+  handleDrawer = domain => event => {
+    event.preventDefault();
+    let overwrite = {};
+    for (const key in this.state) {
+      overwrite[key] = false;
+    }
+    overwrite[domain] = !this.state[domain]
+      || this.props.location.pathname !== '/' + domain;
+    this.setState({ ...overwrite });
+    this.props.history.push(`/${domain}`);
   }
 
   render() {
-    const { classes, t, domains } = this.props;
+    const { classes, t, domains, location } = this.props;
+    const { state } = this;
 
     return(
       <React.Fragment>
@@ -123,22 +133,25 @@ class DomNavigationLinks extends Component {
               <Typography variant="h5" color="inherit">GRAMMM</Typography>
             </Button>
           </div>
-          {domains.map(domain =>
-            <React.Fragment key={domain.name}>
+          {domains.map(({ name }) =>
+            <React.Fragment key={name}>
               <ListItem
-                onClick={this.handleDrawer(domain.name)}
+                onClick={this.handleDrawer(name)}
                 button
                 className={classes.li}
+                selected={state[name] && location.pathname === '/' + name}
               >
                 <DefaultData className={classes.icon} />
-                <ListItemText primary={domain.name} />
+                <ListItemText primary={name} />
               </ListItem>
-              <Collapse in={this.state[domain.name]} unmountOnExit>
+              <Collapse in={this.state[name]} unmountOnExit>
                 <List component="div" disablePadding>
                   <ListItem
                     className={classes.li}
                     button
-                    onClick={this.handleNavigation(domain.name + '/configuration')}
+                    onClick={this.handleNavigation(name + '/configuration')}
+                    selected={state[name] &&
+                      location.pathname === '/' + name + '/configuration'}
                   >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Configuration')}/>
@@ -146,7 +159,9 @@ class DomNavigationLinks extends Component {
                   <ListItem
                     className={classes.li}
                     button
-                    onClick={this.handleNavigation(domain.name + '/users')}
+                    onClick={this.handleNavigation(name + '/users')}
+                    selected={state[name] &&
+                      location.pathname === '/' + name + '/users'}
                   >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Users')}/>
@@ -154,7 +169,9 @@ class DomNavigationLinks extends Component {
                   <ListItem
                     className={classes.li}
                     button
-                    onClick={this.handleNavigation(domain.name + '/folders')}
+                    onClick={this.handleNavigation(name + '/folders')}
+                    selected={state[name] &&
+                      location.pathname === '/' + name + '/folders'}
                   >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Folders')}/>
@@ -162,7 +179,9 @@ class DomNavigationLinks extends Component {
                   <ListItem
                     className={classes.li}
                     button
-                    onClick={this.handleNavigation(domain.name + '/mailAddresses')}
+                    onClick={this.handleNavigation(name + '/mailAddresses')}
+                    selected={state[name] &&
+                      location.pathname === '/' + name + '/mailAddresses'}
                   >
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Mail address list')}/>
@@ -192,6 +211,7 @@ DomNavigationLinks.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   domains: PropTypes.array.isRequired,
 };
 
