@@ -8,8 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
-import DefaultData from '@material-ui/icons/AccountTree';
+import Http from '@material-ui/icons/Http';
 import Settings from '@material-ui/icons/Settings';
+import Folder from '@material-ui/icons/Folder';
+import Mail from '@material-ui/icons/Mail';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import grey from '../colors/grey';
@@ -141,7 +143,7 @@ class DomNavigationLinks extends PureComponent {
                 className={classes.li}
                 selected={state[name] && location.pathname === '/' + name}
               >
-                <DefaultData className={classes.icon} />
+                <Http className={classes.icon} />
                 <ListItemText primary={name} />
               </ListItem>
               <Collapse in={this.state[name]} unmountOnExit>
@@ -153,7 +155,7 @@ class DomNavigationLinks extends PureComponent {
                     selected={state[name] &&
                       location.pathname === '/' + name + '/configuration'}
                   >
-                    <People className={classes.nestedIcon}/>
+                    <Settings className={classes.nestedIcon}/>
                     <ListItemText primary={t('Configuration')}/>
                   </ListItem>
                   <ListItem
@@ -173,7 +175,7 @@ class DomNavigationLinks extends PureComponent {
                     selected={state[name] &&
                       location.pathname === '/' + name + '/folders'}
                   >
-                    <People className={classes.nestedIcon}/>
+                    <Folder className={classes.nestedIcon}/>
                     <ListItemText primary={t('Folders')}/>
                   </ListItem>
                   <ListItem
@@ -183,7 +185,7 @@ class DomNavigationLinks extends PureComponent {
                     selected={state[name] &&
                       location.pathname === '/' + name + '/mailAddresses'}
                   >
-                    <People className={classes.nestedIcon}/>
+                    <Mail className={classes.nestedIcon}/>
                     <ListItemText primary={t('Mail address list')}/>
                   </ListItem>
                 </List>

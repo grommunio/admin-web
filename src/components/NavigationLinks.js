@@ -9,12 +9,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
-import Items from '@material-ui/icons/Storage';
 import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
 import Dashboard from '@material-ui/icons/Dashboard';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
+import Lock from '@material-ui/icons/Lock';
+import Http from '@material-ui/icons/Http';
+import Web from '@material-ui/icons/Web';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_only.svg';
@@ -142,21 +144,21 @@ class NavigationLinks extends PureComponent {
             button
             onClick={this.handleNavigation('dataAreaSetup')}
             className={classes.li}>
-            <Items className={classes.icon}/>
+            <Web className={classes.icon}/>
             <ListItemText primary={t('data area setup')} />
           </ListItem>
           <ListItem
             button
             onClick={this.handleNavigation('domainList')}
             className={classes.li}>
-            <Items className={classes.icon}/>
+            <Http className={classes.icon}/>
             <ListItemText primary={t('domain list')} />
           </ListItem>
           <ListItem
             button
             onClick={this.handleNavigation('baseSetup')}
             className={classes.li}>
-            <Items className={classes.icon}/>
+            <Settings className={classes.icon}/>
             <ListItemText primary={t('base setup')} />
           </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
@@ -209,15 +211,10 @@ class NavigationLinks extends PureComponent {
           </Collapse>
           <div className={classes.logoutContainer}>
             <ListItem
-              className={classes.li} button onClick={this.handleNavigation('settings')}>
-              <Settings className={classes.icon} />
-              <ListItemText primary={t('Settings')} />
-            </ListItem>
-            <ListItem
               button
               onClick={this.handleNavigation('changePassword')}
               className={classes.li}>
-              <Items className={classes.icon}/>
+              <Lock className={classes.icon}/>
               <ListItemText primary={t('Change password')} />
             </ListItem>
             <ListItem button onClick={this.handleLogout} className={classes.li}>
