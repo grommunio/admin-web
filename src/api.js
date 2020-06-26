@@ -416,3 +416,19 @@ export async function deleteMailAddress(domain, id) {
     return await apiDelete('/' + domain + '/mailAddresses/' + id);
   } catch(err) { console.error(err); }
 }
+
+/*
+  BASE SUTUP
+*/
+
+export async function baseSetup() {
+  try {
+    return await get('/baseSetup');
+  } catch(err) { console.error(err); }
+}
+
+export async function editBaseSetup(setup) {
+  try {
+    return await patch('/baseSetup', setup);
+  } catch(err) { console.error(err); }
+}
