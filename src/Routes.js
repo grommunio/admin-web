@@ -28,6 +28,7 @@ const AsyncClasses = AsyncComponent(() => import("./containers/Classes"));
 const AsyncClassDetails = AsyncComponent(() => import("./containers/ClassDetails"));
 const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
 const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
+const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -62,6 +63,12 @@ const Routes = ({ childProps }) => (
       ]}
       exact
       component={AsyncDomainListDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/baseSetup"
+      exact
+      component={AsyncBaseSetup}
       props={childProps}
     />
     <AuthenticatedRoute

@@ -152,6 +152,13 @@ class NavigationLinks extends PureComponent {
             <Items className={classes.icon}/>
             <ListItemText primary={t('domain list')} />
           </ListItem>
+          <ListItem
+            button
+            onClick={this.handleNavigation('baseSetup')}
+            className={classes.li}>
+            <Items className={classes.icon}/>
+            <ListItemText primary={t('base setup')} />
+          </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
             <DefaultData className={classes.icon} />
             <ListItemText primary={t('Default data')} />
