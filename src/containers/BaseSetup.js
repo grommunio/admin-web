@@ -60,7 +60,7 @@ class BaseSetup extends Component {
   }
 
   componentDidMount() {
-    baseSetup(this.state.changes);
+    baseSetup();
   }
 
   handleInput = field => event => {
