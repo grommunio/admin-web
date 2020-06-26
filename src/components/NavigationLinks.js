@@ -213,6 +213,13 @@ class NavigationLinks extends PureComponent {
               <Settings className={classes.icon} />
               <ListItemText primary={t('Settings')} />
             </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('changePassword')}
+              className={classes.li}>
+              <Items className={classes.icon}/>
+              <ListItemText primary={t('Change password')} />
+            </ListItem>
             <ListItem button onClick={this.handleLogout} className={classes.li}>
               <Run className={classes.icon} />
               <ListItemText primary={t('Logout')} />

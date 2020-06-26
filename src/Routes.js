@@ -29,6 +29,7 @@ const AsyncClassDetails = AsyncComponent(() => import("./containers/ClassDetails
 const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
 const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
 const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
+const AsyncChangePw = AsyncComponent(() => import("./containers/ChangePw"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -69,6 +70,12 @@ const Routes = ({ childProps }) => (
       path="/baseSetup"
       exact
       component={AsyncBaseSetup}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/changePassword"
+      exact
+      component={AsyncChangePw}
       props={childProps}
     />
     <AuthenticatedRoute

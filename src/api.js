@@ -432,3 +432,13 @@ export async function editBaseSetup(setup) {
     return await patch('/baseSetup', setup);
   } catch(err) { console.error(err); }
 }
+
+/*
+  CHANGE PW
+*/
+
+export async function changePw(oldPw, newPw) {
+  try {
+    return await patch('/changePw', { oldPw, newPw });
+  } catch(err) { console.error(err); }
+}
