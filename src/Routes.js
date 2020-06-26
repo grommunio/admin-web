@@ -8,7 +8,7 @@ import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import AsyncComponent from './components/AsyncComponent';
 
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
-const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
+const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
 const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
