@@ -21,6 +21,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addDomainData, editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
+import { dataArea } from '../api';
 
 const styles = theme => ({
   root: {
@@ -61,12 +62,36 @@ class DomainListDetails extends PureComponent {
       this.props.history.push('/domainList');
       this.state = {
         changes: {},
+        areas: [],
       };
     }
     else this.state = {
-      changes: domain,
+      changes: domain.ID ? domain : {
+        orgID: 1,
+        domainname: '',
+        password: '',
+        media: '',
+        maxSize: 0,
+        maxUser: 0,
+        title: '',
+        address: '',
+        adminName: '',
+        tel: '',
+        domainStatus: 0,
+        domainType: 0,
+        mailBackup: false,
+        mailMonitor: false,
+        ignoreCheckingUser: false,
+        mailSubSystem: false,
+        netDisk: false,
+      },
       editing: !!domain.ID,
+      areas: [],
     };
+  }
+
+  componentDidMount() {
+    dataArea().then(json => this.setState({ areas: json.domain }));
   }
 
   storageTypes = [
@@ -122,7 +147,6 @@ class DomainListDetails extends PureComponent {
       ...this.state.changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      privilegeBits: 0,
     });
   }
 
@@ -132,13 +156,12 @@ class DomainListDetails extends PureComponent {
       ...this.state.changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      privilegeBits: 0,
     });
   }
 
   render() {
     const { classes, t } = this.props;
-    const changes = this.state.changes;
+    const { changes, areas } = this.state;
 
     return (
       <div className={classes.root}>
@@ -162,6 +185,29 @@ class DomainListDetails extends PureComponent {
                 value={changes.domainname || ''}
                 onChange={this.handleInput('domainname')}
               />
+              <TextField 
+                className={classes.input} 
+                label={t("password")}
+                type="password"
+                fullWidth 
+                value={changes.password || ''}
+                onChange={this.handleInput('password')}
+              />
+              <TextField
+                select
+                className={classes.input}
+                label={t("Area")}
+                fullWidth
+                value={changes.areaID || 0}
+                onChange={this.handleInput('areaID')}
+              >
+                <MenuItem value={0}></MenuItem>
+                {areas.map((area, key) => (
+                  <MenuItem key={key} value={area.ID}>
+                    {area.masterPath}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 select
                 className={classes.input}
@@ -223,6 +269,13 @@ class DomainListDetails extends PureComponent {
               />
               <TextField 
                 className={classes.input} 
+                label={t("media")} 
+                fullWidth 
+                value={changes.media || ''}
+                onChange={this.handleInput('media')}
+              />
+              <TextField 
+                className={classes.input} 
                 label={t("administrator")} 
                 fullWidth 
                 value={changes.adminName || ''}
@@ -257,8 +310,8 @@ class DomainListDetails extends PureComponent {
                 label={t('mail archive')}
                 control={
                   <Checkbox
-                    checked={changes.mailArchive || false}
-                    onChange={this.handleCheckbox('mailArchive')}
+                    checked={changes.mailBackup || false}
+                    onChange={this.handleCheckbox('mailBackup')}
                   />
                 }
               />
@@ -295,15 +348,6 @@ class DomainListDetails extends PureComponent {
                   <Checkbox
                     checked={changes.netDisk || false}
                     onChange={this.handleCheckbox('netDisk')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('extended cryptosecurity')}
-                control={
-                  <Checkbox
-                    checked={changes.extendedCryptosecurity || false}
-                    onChange={this.handleCheckbox('extendedCryptosecurity')}
                   />
                 }
               />
