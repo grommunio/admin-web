@@ -44,19 +44,20 @@ const styles = theme => ({
 class Folders extends Component {
 
   componentDidMount() {
-    this.props.fetch(this.props.domain);
+    this.props.fetch(this.props.domain.ID);
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain + '/folders/add', {});
+    this.props.history.push('/' + this.props.domain.name + '/folders/add', {});
   }
 
   handleEdit = folder => () => {
-    this.props.history.push('/' + this.props.domain + '/folders/' + folder.ID, { ...folder });
+    this.props.history.push('/' + this.props.domain.name + '/folders/' + folder.ID, { ...folder });
   }
 
   handleDelete = id => () => {
-    this.props.delete(id).then(this.props.fetch);
+    this.props.delete(this.props.domain.ID, id)
+      .then(() => this.props.fetch(this.props.domain.ID));
   }
 
   render() {
@@ -106,7 +107,7 @@ Folders.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
   folders: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
@@ -118,11 +119,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domain) => {
-      await dispatch(fetchFolderData(domain));
+    fetch: async (domainID) => {
+      await dispatch(fetchFolderData(domainID));
     },
-    delete: async id => {
-      await dispatch(deleteFolderData(id));
+    delete: async (domainID, id) => {
+      await dispatch(deleteFolderData(domainID, id));
     },
   };
 };

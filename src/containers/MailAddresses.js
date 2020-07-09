@@ -47,19 +47,19 @@ class MailAddresses extends Component {
   }
 
   componentDidMount() {
-    mailAddresses(this.props.domain).then(json => this.setState({ mails: json ? json.data : []}));
+    mailAddresses(this.props.domain.ID).then(json => this.setState({ mails: json ? json.data : []}));
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain + '/mailAddresses/add', {});
+    this.props.history.push('/' + this.props.domain.name + '/mailAddresses/add', {});
   }
 
   handleEdit = mail => () => {
-    this.props.history.push('/' + this.props.domain + '/mailAddresses/' + mail.ID, { ...mail });
+    this.props.history.push('/' + this.props.domain.name + '/mailAddresses/' + mail.ID, { ...mail });
   }
 
   handleDelete = id => () => {
-    deleteMailAddress(this.props.domain, id).then(() => mailAddresses(this.props.domain))
+    deleteMailAddress(this.props.domain.ID, id).then(() => mailAddresses(this.props.domain.ID))
       .then(json => this.setState({ mails: json ? json.data : []}));
   }
 
@@ -111,7 +111,7 @@ MailAddresses.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
 };
 
 export default withTranslation()(withStyles(styles)(MailAddresses));

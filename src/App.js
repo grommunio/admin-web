@@ -57,9 +57,9 @@ class App extends Component {
     };
 
     const domains = [
-      { name: 'full-speed.net'},
-      { name: 'netitwork.net'},
-      { name: 'grammm.com'},
+      { name: 'full-speed.net', ID: 0 },
+      { name: 'netitwork.net', ID: 1 },
+      { name: 'grammm.com', ID: 2 },
     ];
 
     return(

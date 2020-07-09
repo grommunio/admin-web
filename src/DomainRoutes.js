@@ -38,9 +38,9 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.name}`}
         exact
         component={AsyncDomainMenu}
-        domainName={domain.name}
+        domain={domain}
         props={childProps}
-        key={domain.name}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -49,8 +49,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncMailAddresses}
         props={childProps}
-        domainName={domain.name}
-        key={domain.name}
+        domain={domain}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -59,8 +59,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncMailAddressDetails}
         props={childProps}
-        domainName={domain.name}
-        key={domain.name}
+        domain={domain}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -69,8 +69,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncUsers}
         props={childProps}
-        domainName={domain.name}
-        key={domain.name}
+        domain={domain}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -79,8 +79,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncUserDetails}
         props={childProps}
-        domainName={domain.name}
-        key={domain.name}
+        domain={domain}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -89,8 +89,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncFolders}
         props={childProps}
-        domainName={domain.name}
-        key={domain.name}
+        domain={domain}
+        key={domain.ID}
       />
     )}
     {domains.map(domain =>
@@ -99,8 +99,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncFolderDetails}
         props={childProps}
-        key={domain.name}
-        domainName={domain.name}
+        key={domain.ID}
+        domain={domain}
       />
     )}
     {domains.map(domain =>
@@ -109,8 +109,8 @@ const Routes = ({ childProps, domains }) => (
         exact
         component={AsyncConfig}
         props={childProps}
-        key={domain.name}
-        domainName={domain.name}
+        key={domain.ID}
+        domain={domain}
       />
     )}
   </Switch>

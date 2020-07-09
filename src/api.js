@@ -114,27 +114,27 @@ export function deleteDomain(id) {
   USERS
 */
 
-export function users() {
+export function users(domainID) {
   return async () => {
-    return await get('/users');
+    return await get('/domain/' + domainID + '/users');
   };
 }
 
-export function addUser(user) {
+export function addUser(domainID, user) {
   return async () => {
-    return await post('/users', user);
+    return await post('/domain/' + domainID + '/users', user);
   };
 }
 
-export function editUser(user) {
+export function editUser(domainID, user) {
   return async () => {
-    return await patch('/users/' + user.ID, user);
+    return await patch('/domain/' + domainID + '/users/' + user.ID, user);
   };
 }
 
-export function deleteUser(id) {
+export function deleteUser(domainID, id) {
   return async () => {
-    return await apiDelete('/users/' + id);
+    return await apiDelete('/domain/' + domainID + '/users/' + id);
   };
 }
 
@@ -176,27 +176,27 @@ export function deleteGroup(id) {
   FOLDERS
 */
 
-export function folders(domain) {
+export function folders(domainID) {
   return async () => {
-    return await get('/' + domain.ID + '/folders');
+    return await get('/' + domainID + '/folders');
   };
 }
 
-export function addFolder(domain, folder) {
+export function addFolder(domainID, folder) {
   return async () => {
-    return await post('/' + domain.ID + '/folders', folder);
+    return await post('/' + domainID + '/folders', folder);
   };
 }
 
-export function editFolder(domain, folder) {
+export function editFolder(domainID, folder) {
   return async () => {
-    return await patch('/' + domain.ID + '/folders/' + folder.ID, folder);
+    return await patch('/' + domainID + '/folders/' + folder.ID, folder);
   };
 }
 
-export function deleteFolder(domain, id) {
+export function deleteFolder(domainID, id) {
   return async () => {
-    return await apiDelete('/' + domain.ID + '/folders/' + id);
+    return await apiDelete('/' + domainID + '/folders/' + id);
   };
 }
 

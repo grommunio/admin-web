@@ -5,11 +5,11 @@ import {
 } from './types';
 import { folders, addFolder, editFolder, deleteFolder } from '../api';
 
-export function fetchFolderData(domain) {
+export function fetchFolderData(domainID) {
   return async dispatch => {
     await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
-      const response = await dispatch(folders(domain));
+      const response = await dispatch(folders(domainID));
       await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
@@ -18,10 +18,10 @@ export function fetchFolderData(domain) {
   };
 }
 
-export function addFolderData(domain, folder) {
+export function addFolderData(domainID, folder) {
   return async dispatch => {
     try {
-      await dispatch(addFolder(domain, folder));
+      await dispatch(addFolder(domainID, folder));
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
@@ -29,10 +29,10 @@ export function addFolderData(domain, folder) {
   };
 }
 
-export function editFolderData(domain, folder) {
+export function editFolderData(domainID, folder) {
   return async dispatch => {
     try {
-      await dispatch(editFolder(domain, folder));
+      await dispatch(editFolder(domainID, folder));
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
@@ -40,10 +40,10 @@ export function editFolderData(domain, folder) {
   };
 }
 
-export function deleteFolderData(domain, id) {
+export function deleteFolderData(domainID, id) {
   return async dispatch => {
     try {
-      await dispatch(deleteFolder(domain, id));
+      await dispatch(deleteFolder(domainID, id));
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
