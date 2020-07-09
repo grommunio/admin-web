@@ -19,6 +19,8 @@ import {
 import { green, yellow, red, blue } from '@material-ui/core/colors';
 import CPUBackground from '../res/memory-black-48dp.svg';
 import RAMBackground from '../res/insert_chart_outlined-black-48dp.svg';
+import StorageBackground from '../res/storage-black-48dp.svg';
+import NetworkBackground from '../res/network_check-black-48dp.svg';
 
 const styles = theme => ({
   root: {
@@ -81,26 +83,55 @@ const styles = theme => ({
     margin: theme.spacing(-9, 12, -22, 0),
     backgroundSize: '100%',
   },
+  networkBackground: {
+    width: 250,
+    height: 250,
+    backgroundImage: 'url(' + NetworkBackground + ')',
+    position: 'relative',
+    zIndex: 0,
+    opacity: 0.06,
+    alignSelf: 'flex-end',
+    margin: theme.spacing(-9, 12, -22, 0),
+    backgroundSize: '100%',
+  },
+  storageBackground: {
+    width: 250,
+    height: 250,
+    backgroundImage: 'url(' + StorageBackground + ')',
+    position: 'relative',
+    zIndex: 0,
+    opacity: 0.1,
+    alignSelf: 'flex-end',
+    margin: theme.spacing(-9, 12, -22, 0),
+    backgroundSize: '100%',
+  },
 });
 
 class Dashboard extends Component {
 
   componentDidMount() {
-    this.updateChart();
+    this.updateRAM();
+    this.updateDisk();
   }
 
-  disk = [
+  disks = [
     {
-      name: "Usage",
-      value: 2400,
+      name: "Disk-1",
+      usage: 2400,
+      read: 1337,
+      write: 420,
     },
     {
-      name: "Read",
-      value: 1398,
+      name: "Disk-2",
+      usage: 3333,
+      read: 2424,
+      write: 4242,
     },
     {
-      name: "Write",
-      value: 9800,
+      name: "Disk-3",
+      usage: 420,
+      read: 500,
+      write: 69,
     },
   ];
 
@@ -139,6 +170,33 @@ class Dashboard extends Component {
     {
       name: "13:13",
       value: 69,
+    },
+  ]
+
+  network = [
+    {
+      name: "08:08",
+      value: 24,
+    },
+    {
+      name: "09:09",
+      value: 11,
+    },
+    {
+      name: "10:10",
+      value: 111,
+    },
+    {
+      name: "11:11",
+      value: 21,
+    },
+    {
+      name: "12:12",
+      value: 420,
+    },
+    {
+      name: "13:13",
+      value: 42,
     },
   ]
 
@@ -187,9 +245,53 @@ class Dashboard extends Component {
         available: 100,
       },
     ],
+    disk: [
+      {
+        name: 1,
+        shared: 69,
+        buffered: 88,
+        used: 10,
+        available: 100,
+      },
+      {
+        name: 2,
+        shared: 65,
+        buffered: 88,
+        used: 10,
+        available: 100,
+      },
+      {
+        name: 3,
+        shared: 53,
+        buffered: 90,
+        used: 10,
+        available: 100,
+      },
+      {
+        name: 4,
+        shared: 56,
+        buffered: 70,
+        used: 10,
+        available: 100,
+      },
+      {
+        name: 5,
+        shared: 42,
+        buffered: 50,
+        used: 10,
+        available: 100,
+      },
+      {
+        name: 6,
+        shared: 50,
+        buffered: 69,
+        used: 10,
+        available: 100,
+      },
+    ],
   }
 
-  updateChart() {
+  updateRAM() {
     setInterval(() => {
       const copy = [...this.state.ram];
       const add = (Math.random() > 0.5 ? 5 : -5);
@@ -202,7 +304,23 @@ class Dashboard extends Component {
       });
       if(copy.length > 12) copy.shift();
       this.setState({ ram: copy });
-    }, 2000);
+    }, 5000);
+  }
+
+  updateDisk() {
+    setInterval(() => {
+      const copy = [...this.state.disk];
+      const add = (Math.random() > 0.5 ? 5 : -5);
+      copy.push({
+        name: copy[copy.length - 1].name + 1,
+        shared: copy[copy.length - 1].shared + add,
+        used: copy[copy.length - 1].used + add,
+        buffered: copy[copy.length - 1].buffered + add,
+        available: 100,
+      });
+      if(copy.length > 12) copy.shift();
+      this.setState({ disk: copy });
+    }, 5000);
   }
 
   render() {
@@ -256,50 +374,124 @@ class Dashboard extends Component {
                     <Tooltip />
                     <Legend />
                     <Area
-                      strokeWidth={4}
+                      strokeWidth={2}
                       type="monotone"
-                      dataKey="shared"
-                      fill={green['500']}
-                    />
+                      dataKey="available"
+                      fill={blue['500']}
+                    /> 
                     <Area
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="used"
-                      fill={yellow['500']}
-                    />
-                    <Area
-                      strokeWidth={4}
+                      strokeWidth={2}
                       type="monotone"
                       dataKey="buffered"
                       fill={red['500']}
                     />
                     <Area
-                      strokeWidth={4}
+                      strokeWidth={2}
                       type="monotone"
-                      dataKey="available"
-                      fill={blue['500']}
+                      dataKey="shared"
+                      fill={green['500']}
+                    />
+                    <Area
+                      strokeWidth={2}
+                      type="monotone"
+                      dataKey="used"
+                      fill={yellow['500']}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
               </Paper>
             </Grid>
             <Grid item xs={6}>
-              <Paper className={classes.chartPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">Disk</Typography>
+              <Paper className={classes.fixedPaper} elevation={2}>
+                <Typography className={classes.chartTitle} variant="h4">Disks</Typography>
+                <div className={classes.storageBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
-                  <BarChart barSize={60} data={this.disk}>
+                  <BarChart barSize={30} data={this.disks}>
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="value" fill={green['500']} />
+                    <Bar dataKey="usage" fill={green['500']} />
+                    <Bar dataKey="read" fill={blue['500']} />
+                    <Bar dataKey="write" fill={red['500']} />
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>
             </Grid>
             <Grid item xs={6}>
-              <Paper className={classes.chartPaper} elevation={2}>
+              <Paper className={classes.fixedPaper} elevation={2}>
+                <Typography className={classes.chartTitle} variant="h4">
+                  Disk: {this.state.disk[this.state.disk.length - 1].used}%
+                </Typography>
+                <div className={classes.storageBackground}></div>
+                <ResponsiveContainer width="100%" height={250} >
+                  <AreaChart
+                    data={this.state.disk}
+                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                    stackOffset="expand"
+                  >
+                    <XAxis dataKey="name" />
+                    <YAxis type="number" domain={[0, 100]}/>
+                    <Tooltip />
+                    <Legend />
+                    <Area
+                      strokeWidth={2}
+                      type="monotone"
+                      dataKey="available"
+                      fill={blue['500']}
+                    /> 
+                    <Area
+                      strokeWidth={2}
+                      type="monotone"
+                      dataKey="buffered"
+                      fill={red['500']}
+                    />
+                    <Area
+                      strokeWidth={2}
+                      type="monotone"
+                      dataKey="shared"
+                      fill={green['500']}
+                    />
+                    <Area
+                      strokeWidth={2}
+                      type="monotone"
+                      dataKey="used"
+                      fill={yellow['500']}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
+            <Grid item xs={6}>
+              <Paper className={classes.fixedPaper} elevation={2}>
+                <Typography className={classes.chartTitle} variant="h4">
+                  Network: 42%
+                </Typography>
+                <div className={classes.networkBackground}></div>
+                <ResponsiveContainer width="100%" height={250} >
+                  <LineChart
+                    data={this.network}
+                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                  >
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      strokeWidth={4}
+                      type="monotone"
+                      dataKey="value"
+                      stroke={green['500']}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Paper className={classes.fixedPaper} elevation={2}>
                 <Typography className={classes.chartTitle} variant="h4">Timing</Typography>
+                <div className={classes.networkBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
                   <BarChart data={this.timing}>
                     <XAxis dataKey="name" />
