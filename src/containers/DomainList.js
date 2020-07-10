@@ -85,6 +85,7 @@ class DomainList extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell>domain</TableCell>
+                  <TableCell>address</TableCell>
                   <TableCell>title</TableCell>
                   <TableCell>maximum space</TableCell>
                   <TableCell>maximum users</TableCell>
@@ -95,6 +96,7 @@ class DomainList extends Component {
                 {domains.Domains.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.domainname}</TableCell>
+                    <TableCell>{obj.address}</TableCell>
                     <TableCell>{obj.title}</TableCell>
                     <TableCell>{obj.maxSize}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>

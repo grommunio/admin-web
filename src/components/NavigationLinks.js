@@ -168,11 +168,6 @@ class NavigationLinks extends PureComponent {
           <Collapse in timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('users')}>
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Users')}/>
-              </ListItem>
-              <ListItem
                 className={classes.li} button onClick={this.handleNavigation('groups')}>
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Groups')}/>

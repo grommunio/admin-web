@@ -54,11 +54,13 @@ const styles = theme => ({
 class DataAreaSetup extends Component {
 
   componentDidMount() {
-    dataArea().then(json => this.setState({ changes: json }));
+    dataArea().then(json => {
+      if(json) this.setState({ table: json });
+    });
   }
 
   state = {
-    changes: {
+    table: {
       user: [],
       domain: [],
       independent: [],
@@ -70,6 +72,7 @@ class DataAreaSetup extends Component {
       accelPath: '', 
       maxSpace: 0, 
       maxFiles: 0,
+      storeLevels: 2,
     },
     addOpen: false,
   }
@@ -91,16 +94,33 @@ class DataAreaSetup extends Component {
 
   handleAdd = () => {
     addDataArea(this.state.newData).then(() => this.setState({ addOpen: false }))
-      .then(() => dataArea().then(json => this.setState({ changes: json })));
+      .then(() => dataArea().then(json => {
+        if(json) this.setState({ table: json });
+      }));
   }
 
   handleDelete = id => () => {
-    deleteDataArea(id).then(() => dataArea().then(json => this.setState({ changes: json })));
+    deleteDataArea(id).then(() => dataArea().then(json => {
+      if(json) this.setState({ table: json });
+    }));
+  }
+
+  handleNumberInput = field => event => {
+    let input = event.target.value;
+    if(input === '' || input.match("^\\d*?$")) {
+      if(input !== '') input = parseInt(input);
+      this.setState({
+        newData: {
+          ...this.state.newData,
+          [field]: input,
+        },
+      });
+    }
   }
 
   render() {
     const { classes, t } = this.props;
-    const { changes, newData } = this.state;
+    const { table, newData } = this.state;
 
     return (
       <div className={classes.root}>
@@ -116,7 +136,7 @@ class DataAreaSetup extends Component {
                   className={classes.input}
                   label={t("data type")}
                   fullWidth
-                  value={newData.dataType || 0}
+                  value={newData.dataType}
                   onChange={this.handleInput('dataType')}
                 >
                   {this.types.map((type, key) => (
@@ -129,36 +149,43 @@ class DataAreaSetup extends Component {
                   className={classes.input} 
                   label={t("master data area")}
                   fullWidth
-                  value={newData.masterPath || ''}
+                  value={newData.masterPath}
                   onChange={this.handleInput('masterPath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("database accelerating storage area")} 
                   fullWidth
-                  value={newData.accelPath || ''}
+                  value={newData.accelPath}
                   onChange={this.handleInput('accelPath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("slave data area")} 
                   fullWidth
-                  value={newData.slavePath || ''}
+                  value={newData.slavePath}
                   onChange={this.handleInput('slavePath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("maximum space")} 
                   fullWidth
-                  value={newData.maxSpace || ''}
-                  onChange={this.handleInput('maxSpace')}
+                  value={newData.maxSpace}
+                  onChange={this.handleNumberInput('maxSpace')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("maximum files")}
                   fullWidth
-                  value={newData.maxFiles || ''}
-                  onChange={this.handleInput('maxFiles')}
+                  value={newData.maxFiles}
+                  onChange={this.handleNumberInput('maxFiles')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Store levels")}
+                  fullWidth
+                  value={newData.storeLevels}
+                  onChange={this.handleNumberInput('storeLevels')}
                 />
               </FormControl>
             </DialogContent>
@@ -195,7 +222,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {changes.user.map((obj, idx) =>
+                {table.user.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -206,8 +233,8 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
-                      <IconButton>
-                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
+                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                        <Delete color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -227,7 +254,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {changes.domain.map((obj, idx) =>
+                {table.domain.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -238,8 +265,8 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
-                      <IconButton>
-                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
+                      <IconButton  onClick={this.handleDelete(obj.ID)} >
+                        <Delete color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -259,7 +286,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {changes.independent.map((obj, idx) =>
+                {table.independent.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -270,8 +297,8 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
-                      <IconButton>
-                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
+                      <IconButton  onClick={this.handleDelete(obj.ID)} >
+                        <Delete color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>

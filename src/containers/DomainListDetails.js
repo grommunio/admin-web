@@ -91,7 +91,9 @@ class DomainListDetails extends PureComponent {
   }
 
   componentDidMount() {
-    dataArea().then(json => this.setState({ areas: json.domain }));
+    dataArea().then(json => {
+      if(json) this.setState({ table: json });
+    });
   }
 
   storageTypes = [
