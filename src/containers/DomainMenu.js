@@ -27,7 +27,7 @@ class DomainMenu extends Component {
 
   state = {
     info: {
-      domainname: this.props.domain.name,
+      domainname: this.props.domain.domainname,
       maxSize: 69,
       allocated: 420,
     },
@@ -39,7 +39,7 @@ class DomainMenu extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title={domain.name}/>
+        <TopBar onAdd={this.handleAdd} title={domain.domainname}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper} elevation={2}>

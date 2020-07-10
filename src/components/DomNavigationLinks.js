@@ -135,7 +135,7 @@ class DomNavigationLinks extends PureComponent {
               <img src={logo} width="80" alt="GRAMMM"/>
             </Button>
           </div>
-          {domains.map(({ name }) =>
+          {domains.map(({ domainname: name }) =>
             <React.Fragment key={name}>
               <ListItem
                 onClick={this.handleDrawer(name)}

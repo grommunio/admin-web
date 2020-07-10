@@ -67,7 +67,7 @@ class UserDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain.name + '/users');
+      props.history.push('/' + props.domain.domainname + '/users');
     }
     else this.state = {
       changes: user,

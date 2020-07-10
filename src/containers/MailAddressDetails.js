@@ -58,7 +58,7 @@ class MailAddressDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain.name + '/mailAddresses');
+      props.history.push('/' + props.domain.domainname + '/mailAddresses');
     }
     else this.state = {
       changes: folder,

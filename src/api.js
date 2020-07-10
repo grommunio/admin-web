@@ -116,25 +116,25 @@ export function deleteDomain(id) {
 
 export function users(domainID) {
   return async () => {
-    return await get('/domain/' + domainID + '/users');
+    return await get('/domains/' + domainID + '/users');
   };
 }
 
 export function addUser(domainID, user) {
   return async () => {
-    return await post('/domain/' + domainID + '/users', user);
+    return await post('/domains/' + domainID + '/users', user);
   };
 }
 
 export function editUser(domainID, user) {
   return async () => {
-    return await patch('/domain/' + domainID + '/users/' + user.ID, user);
+    return await patch('/domains/' + domainID + '/users/' + user.ID, user);
   };
 }
 
 export function deleteUser(domainID, id) {
   return async () => {
-    return await apiDelete('/domain/' + domainID + '/users/' + id);
+    return await apiDelete('/domains/' + domainID + '/users/' + id);
   };
 }
 

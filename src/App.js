@@ -10,6 +10,7 @@ import ResponsiveDrawer from './components/ResponsiveDrawer';
 import { authAuthenticating } from './actions/auth';
 import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
 import background from './res/bootback.svg';
+import { fetchDomainData } from './actions/domains';
 
 const styles = {
   root: {
@@ -44,8 +45,9 @@ class App extends Component {
     const { dispatch } = this.props;
 
     await dispatch(authAuthenticating(false));
+    if(this.props.role !== 'sys') await dispatch(fetchDomainData());
   }
-  
+
   render() {
     const { classes } = this.props;
     const { authenticating, authenticated, role } = this.props;
@@ -56,21 +58,15 @@ class App extends Component {
       role,
     };
 
-    const domains = [
-      { name: 'full-speed.net', ID: 0 },
-      { name: 'netitwork.net', ID: 1 },
-      { name: 'grammm.com', ID: 2 },
-    ];
-
     return(
       <div className={classes.root}>
         <div className={classes.layer} />
         <div className={classes.mainView}>
           {authenticated && (role === 'sys' ? <ResponsiveDrawer /> :
-            <ResponsiveDomDrawer domains={domains}/>)
+            <ResponsiveDomDrawer domains={this.props.domains.Domains}/>)
           }
           {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
-            <DomainRoutes domains={domains} childProps={routesProps}/>
+            <DomainRoutes domains={this.props.domains.Domains} childProps={routesProps}/>
           }
         </div>
       </div>
@@ -81,7 +77,7 @@ class App extends Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-
+  domains: PropTypes.object.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   role: PropTypes.string.isRequired,
@@ -89,12 +85,15 @@ App.propTypes = {
 
 const mapStateToProps = state => {
   const { authenticating, authenticated, role } = state.auth;
+  const { domains } = state;
 
   return {
     authenticating,
     authenticated,
     role,
+    domains,
   };
 };
 
-export default withRouter(connect(mapStateToProps)(withStyles(styles)(App)));
+export default withRouter(connect(mapStateToProps)(
+  withStyles(styles)(App)));

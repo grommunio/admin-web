@@ -48,11 +48,11 @@ class Folders extends Component {
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain.name + '/folders/add', {});
+    this.props.history.push('/' + this.props.domain.domainname + '/folders/add', {});
   }
 
   handleEdit = folder => () => {
-    this.props.history.push('/' + this.props.domain.name + '/folders/' + folder.ID, { ...folder });
+    this.props.history.push('/' + this.props.domain.domainname + '/folders/' + folder.ID, { ...folder });
   }
 
   handleDelete = id => () => {

@@ -35,7 +35,7 @@ const Routes = ({ childProps, domains }) => (
     />
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}`}
+        path={`/${domain.domainname}`}
         exact
         component={AsyncDomainMenu}
         domain={domain}
@@ -45,7 +45,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/mailAddresses`}
+        path={`/${domain.domainname}/mailAddresses`}
         exact
         component={AsyncMailAddresses}
         props={childProps}
@@ -55,7 +55,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/mailAddresses/:mailID`}
+        path={`/${domain.domainname}/mailAddresses/:mailID`}
         exact
         component={AsyncMailAddressDetails}
         props={childProps}
@@ -65,7 +65,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/users`}
+        path={`/${domain.domainname}/users`}
         exact
         component={AsyncUsers}
         props={childProps}
@@ -75,7 +75,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/users/:userID`}
+        path={`/${domain.domainname}/users/:userID`}
         exact
         component={AsyncUserDetails}
         props={childProps}
@@ -85,7 +85,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/folders`}
+        path={`/${domain.domainname}/folders`}
         exact
         component={AsyncFolders}
         props={childProps}
@@ -95,7 +95,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/folders/:folderID`}
+        path={`/${domain.domainname}/folders/:folderID`}
         exact
         component={AsyncFolderDetails}
         props={childProps}
@@ -105,7 +105,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.name}/configuration`}
+        path={`/${domain.domainname}/configuration`}
         exact
         component={AsyncConfig}
         props={childProps}

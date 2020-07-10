@@ -51,11 +51,11 @@ class MailAddresses extends Component {
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain.name + '/mailAddresses/add', {});
+    this.props.history.push('/' + this.props.domain.domainname + '/mailAddresses/add', {});
   }
 
   handleEdit = mail => () => {
-    this.props.history.push('/' + this.props.domain.name + '/mailAddresses/' + mail.ID, { ...mail });
+    this.props.history.push('/' + this.props.domain.domainname + '/mailAddresses/' + mail.ID, { ...mail });
   }
 
   handleDelete = id => () => {

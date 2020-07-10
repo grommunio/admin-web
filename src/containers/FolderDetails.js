@@ -58,7 +58,7 @@ class FolderDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain.name + '/folders');
+      props.history.push('/' + props.domain.domainname + '/folders');
     }
     else this.state = {
       changes: folder,
