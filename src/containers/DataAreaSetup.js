@@ -8,6 +8,7 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
+import { dataArea, addDataArea, deleteDataArea } from '../api';
 
 const styles = theme => ({
   root: {
@@ -29,7 +30,6 @@ const styles = theme => ({
   },
   tablePaper: {
     margin: theme.spacing(3, 2),
-    borderRadius: 6,
   },
   paperHeading: {
     margin: theme.spacing(-1, 0, 0, 2),
@@ -53,27 +53,31 @@ const styles = theme => ({
 
 class DataAreaSetup extends Component {
 
+  componentDidMount() {
+    dataArea().then(json => this.setState({ changes: json }));
+  }
+
   state = {
-    changes: {},
+    changes: {
+      user: [],
+      domain: [],
+      independent: [],
+    },
+    newData: {
+      dataType: 0, 
+      masterPath: '', 
+      slavePath: '', 
+      accelPath: '', 
+      maxSpace: 0, 
+      maxFiles: 0,
+    },
     addOpen: false,
   }
 
-  data1 = [
-    {
-      example: 'hehexd',
-    },
-    {
-      example: '69',
-    },
-    {
-      example: '1337',
-    },
-  ]
-
   handleInput = field => event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      newData: {
+        ...this.state.newData,
         [field]: event.target.value,
       },
     });
@@ -85,9 +89,18 @@ class DataAreaSetup extends Component {
     { name: 'indepoendant sorage', ID: 2 },
   ];
 
+  handleAdd = () => {
+    addDataArea(this.state.newData).then(() => this.setState({ addOpen: false }))
+      .then(() => dataArea().then(json => this.setState({ changes: json })));
+  }
+
+  handleDelete = id => () => {
+    deleteDataArea(id).then(() => dataArea().then(json => this.setState({ changes: json })));
+  }
+
   render() {
     const { classes, t } = this.props;
-    const { changes } = this.state;
+    const { changes, newData } = this.state;
 
     return (
       <div className={classes.root}>
@@ -103,8 +116,8 @@ class DataAreaSetup extends Component {
                   className={classes.input}
                   label={t("data type")}
                   fullWidth
-                  value={changes.parent || 0}
-                  onChange={this.handleInput('parent')}
+                  value={newData.dataType || 0}
+                  onChange={this.handleInput('dataType')}
                 >
                   {this.types.map((type, key) => (
                     <MenuItem key={key} value={type.ID}>
@@ -116,36 +129,36 @@ class DataAreaSetup extends Component {
                   className={classes.input} 
                   label={t("master data area")}
                   fullWidth
-                  value={changes.masterDataArea || ''}
-                  onChange={this.handleInput('masterDataArea')}
+                  value={newData.masterPath || ''}
+                  onChange={this.handleInput('masterPath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("database accelerating storage area")} 
                   fullWidth
-                  value={changes.databaseAcceleratingStorageArea || ''}
-                  onChange={this.handleInput('databaseAcceleratingStorageArea')}
+                  value={newData.accelPath || ''}
+                  onChange={this.handleInput('accelPath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("slave data area")} 
                   fullWidth
-                  value={changes.slaveDataArea || ''}
-                  onChange={this.handleInput('slaveDataArea')}
+                  value={newData.slavePath || ''}
+                  onChange={this.handleInput('slavePath')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("maximum space")} 
                   fullWidth
-                  value={changes.maximumSpace || ''}
-                  onChange={this.handleInput('maximumSpace')}
+                  value={newData.maxSpace || ''}
+                  onChange={this.handleInput('maxSpace')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("maximum files")}
                   fullWidth
-                  value={changes.maximumFiles || ''}
-                  onChange={this.handleInput('maximumFiles')}
+                  value={newData.maxFiles || ''}
+                  onChange={this.handleInput('maxFiles')}
                 />
               </FormControl>
             </DialogContent>
@@ -166,7 +179,7 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <Paper className={classes.tablePaper}>
+          <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
                 <TableRow>
@@ -182,19 +195,19 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.data1.map((obj, idx) =>
+                {changes.user.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell>{obj.masterPath}</TableCell>
+                    <TableCell>{obj.accelPath}</TableCell>
+                    <TableCell>{obj.slavePath}</TableCell>
+                    <TableCell>{obj.maxSpace}</TableCell>
+                    <TableCell>{obj.maxFiles}</TableCell>
+                    <TableCell>{obj.usedSpace}</TableCell>
+                    <TableCell>{obj.usedFiles}</TableCell>
+                    <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
                       <IconButton>
-                        <Delete color="error"/>
+                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -214,19 +227,19 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.data1.map((obj, idx) =>
+                {changes.domain.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell>{obj.masterPath}</TableCell>
+                    <TableCell>{obj.accelPath}</TableCell>
+                    <TableCell>{obj.slavePath}</TableCell>
+                    <TableCell>{obj.maxSpace}</TableCell>
+                    <TableCell>{obj.maxFiles}</TableCell>
+                    <TableCell>{obj.usedSpace}</TableCell>
+                    <TableCell>{obj.usedFiles}</TableCell>
+                    <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
                       <IconButton>
-                        <Delete color="error"/>
+                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>
@@ -246,19 +259,19 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.data1.map((obj, idx) =>
+                {changes.independent.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
-                    <TableCell>{obj.example}</TableCell>
+                    <TableCell>{obj.masterPath}</TableCell>
+                    <TableCell>{obj.accelPath}</TableCell>
+                    <TableCell>{obj.slavePath}</TableCell>
+                    <TableCell>{obj.maxSpace}</TableCell>
+                    <TableCell>{obj.maxFiles}</TableCell>
+                    <TableCell>{obj.usedSpace}</TableCell>
+                    <TableCell>{obj.usedFiles}</TableCell>
+                    <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
                       <IconButton>
-                        <Delete color="error"/>
+                        <Delete onClick={this.handleDelete(obj.ID)} color="error"/>
                       </IconButton>
                     </TableCell>
                   </TableRow>

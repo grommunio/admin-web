@@ -26,7 +26,6 @@ const styles = theme => ({
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
-    borderRadius: 6,
   },
   tablePaper: {
     margin: theme.spacing(3, 2),
@@ -45,15 +44,15 @@ const styles = theme => ({
 class Users extends Component {
 
   componentDidMount() {
-    this.props.fetch();
+    this.props.fetch(this.props.domain);
   }
 
   handleAdd = () => {
-    this.props.history.push('/users/add', {});
+    this.props.history.push('/' + this.props.domain + '/users/add', {});
   }
 
   handleEdit = user => () => {
-    this.props.history.push('/users/' + user.ID, { ...user });
+    this.props.history.push('/' + this.props.domain + '/users/' + user.ID, { ...user });
   }
 
   handleDelete = id => () => {
@@ -68,7 +67,7 @@ class Users extends Component {
         <TopBar onAdd={this.handleAdd} title="Users"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper}>
+          <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
                 <TableRow>
@@ -110,6 +109,7 @@ Users.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
+  domain: PropTypes.string.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
@@ -120,8 +120,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => {
-      await dispatch(fetchUsersData());
+    fetch: async domain => {
+      await dispatch(fetchUsersData(domain));
     },
     delete: async id => {
       await dispatch(deleteUserData(id));

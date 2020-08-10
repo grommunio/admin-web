@@ -12,11 +12,13 @@ import {
 } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Key from '@material-ui/icons/VpnKey';
+import background from '../res/bootback.svg';
 import {
   authLogin,
   authLoginWithToken,
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
+import logo from '../res/grammm_logo.svg';
 
 const styles = theme => ({
   /* || General */
@@ -36,7 +38,7 @@ const styles = theme => ({
     flex: 1,
     maxWidth: 400,
     padding: theme.spacing(2, 3),
-    background: 'rgba(250, 250, 250, 0.6)',
+    background: 'rgba(250, 250, 250, 0.9    )',
     borderRadius: 30,
     zIndex: 1,
   },
@@ -72,7 +74,16 @@ const styles = theme => ({
     backgroundColor: 'black',
     borderRadius: 12,
   },
+  background: {
+    backgroundImage: 'url(' + background + ')',
+    backgroundSize: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 0,
+  },
 });
+
 
 class Login extends Component {
 
@@ -108,12 +119,13 @@ class Login extends Component {
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm}>
           <div className={classes.logoContainer}>
-            <Typography variant="h4">GRAMMM</Typography>
+            <img src={logo} width="300" alt="GRAMMM"/>
           </div>
           <Paper component="form" onSubmit={this.handleLogin} className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>
             <InputBase
               fullWidth
+              autoFocus
               error={auth.error}
               className={classes.input}
               placeholder={t("Username")}
@@ -144,10 +156,11 @@ class Login extends Component {
               onClick={this.handleLogin}
               disabled={!this.state.user || !this.state.pass}
             >
-              {t('Login')}
+              <Typography>{t('Login')}</Typography>
             </Button>
           </Paper>
         </Paper>
+        <div className={classes.background}></div>
       </div>
     );
   }

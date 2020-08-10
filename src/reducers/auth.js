@@ -6,8 +6,9 @@ import {
 
 const defaultState = {
   error: false,
-  authenticated: false,
+  authenticated: false,     
   authenticating: true,
+  role: 'sys',
 };
 
 function authReducer(state = defaultState, action) {

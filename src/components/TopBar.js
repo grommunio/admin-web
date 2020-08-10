@@ -10,6 +10,7 @@ const styles = {
   },
   title: {
     flexGrow: 1,
+    fontWeight: 500,
   },
 };
 

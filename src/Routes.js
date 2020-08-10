@@ -8,7 +8,7 @@ import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import AsyncComponent from './components/AsyncComponent';
 
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
-const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
+const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
 const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
@@ -28,6 +28,8 @@ const AsyncClasses = AsyncComponent(() => import("./containers/Classes"));
 const AsyncClassDetails = AsyncComponent(() => import("./containers/ClassDetails"));
 const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
 const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
+const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
+const AsyncChangePw = AsyncComponent(() => import("./containers/ChangePw"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -62,6 +64,18 @@ const Routes = ({ childProps }) => (
       ]}
       exact
       component={AsyncDomainListDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/baseSetup"
+      exact
+      component={AsyncBaseSetup}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/changePassword"
+      exact
+      component={AsyncChangePw}
       props={childProps}
     />
     <AuthenticatedRoute

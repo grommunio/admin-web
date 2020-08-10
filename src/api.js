@@ -173,6 +173,34 @@ export function deleteGroup(id) {
 }
 
 /*
+  FOLDERS
+*/
+
+export function folders(domain) {
+  return async () => {
+    return await get('/' + domain.ID + '/folders');
+  };
+}
+
+export function addFolder(domain, folder) {
+  return async () => {
+    return await post('/' + domain.ID + '/folders', folder);
+  };
+}
+
+export function editFolder(domain, folder) {
+  return async () => {
+    return await patch('/' + domain.ID + '/folders/' + folder.ID, folder);
+  };
+}
+
+export function deleteFolder(domain, id) {
+  return async () => {
+    return await apiDelete('/' + domain.ID + '/folders/' + id);
+  };
+}
+
+/*
   ORGS
 */
 
@@ -338,4 +366,79 @@ export function deleteMember(id) {
   return async () => {
     return await apiDelete('/members/' + id);
   };
+}
+
+/*
+  Sys
+*/
+
+export async function dataArea() {
+  try {
+    return await get('/area_list');
+  } catch(err) { console.error(err); }
+}
+
+export async function addDataArea(data) {
+  try {
+    return await post('/area_list', data);
+  } catch(err) { console.error(err); }
+}
+
+export async function deleteDataArea(id) {
+  try {
+    return await apiDelete('/area_list/' + id);
+  } catch(err) { console.error(err); }
+}
+/*
+  MAIL ADDRESSES
+*/
+
+export async function mailAddresses(domain) {
+  try {
+    return await get('/' + domain + '/mailAddresses');
+  } catch(err) { console.error(err); }
+}
+
+export async function addMailAddress(domain, mail) {
+  try {
+    return await post('/' + domain + '/mailAddresses', mail);
+  } catch(err) { console.error(err); }
+}
+
+export async function editMailAddress(domain, mail) {
+  try {
+    return await patch('/' + domain + '/mailAddresses', mail);
+  } catch(err) { console.error(err); }
+}
+
+export async function deleteMailAddress(domain, id) {
+  try {
+    return await apiDelete('/' + domain + '/mailAddresses/' + id);
+  } catch(err) { console.error(err); }
+}
+
+/*
+  BASE SUTUP
+*/
+
+export async function baseSetup() {
+  try {
+    return await get('/baseSetup');
+  } catch(err) { console.error(err); }
+}
+
+export async function editBaseSetup(setup) {
+  try {
+    return await patch('/baseSetup', setup);
+  } catch(err) { console.error(err); }
+}
+
+/*
+  CHANGE PW
+*/
+
+export async function changePw(oldPw, newPw) {
+  try {
+    return await patch('/changePw', { oldPw, newPw });
+  } catch(err) { console.error(err); }
 }

@@ -34,7 +34,6 @@ const styles = theme => ({
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
-    borderRadius: 6,
   },
   tablePaper: {
     margin: theme.spacing(3, 2),
@@ -99,7 +98,7 @@ class Classes extends Component {
         <TopBar onAdd={this.handleAdd} title="Members"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper}>
+          <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
                 <TableRow>
