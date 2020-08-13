@@ -12,6 +12,7 @@ import {
   setDrawerSelected,
 } from '../actions/drawer';
 import DomNavigationLinks from './DomNavigationLinks';
+import NavigationLinks from './NavigationLinks';
 
 const drawerWidth = 260;
 
@@ -54,7 +55,6 @@ const styles = theme => ({
 class ResponsiveDomDrawer extends Component {
 
     state = {
-      alert: false,
       path: '',
       drawerOpen: false,
 
@@ -130,7 +130,7 @@ class ResponsiveDomDrawer extends Component {
   }
 
   render() {
-    const { classes, domains } = this.props;
+    const { classes, domains, role } = this.props;
 
     return(
       <nav className={classes.drawer} aria-label="navigation">
@@ -147,10 +147,10 @@ class ResponsiveDomDrawer extends Component {
               keepMounted: true, // Better open performance on mobile.
             }}
           >
-            <DomNavigationLinks domains={domains}/>
+            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation="css">
+        <Hidden mdDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -158,7 +158,7 @@ class ResponsiveDomDrawer extends Component {
             variant="permanent"
             open
           >
-            <DomNavigationLinks domains={domains}/>
+            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
       </nav>
@@ -173,6 +173,7 @@ ResponsiveDomDrawer.propTypes = {
   drawer: PropTypes.object.isRequired,
   setDrawerSelected: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
+  role: PropTypes.string,
 };
 
 const mapStateToProps = state => {

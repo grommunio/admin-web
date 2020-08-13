@@ -8,15 +8,17 @@ import { fetchDomainData } from '../actions/domains';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-const styles = {
+const styles = theme => ({
   root: {
-    marginLeft: 260,
+    [theme.breakpoints.up('lg')]: {
+      marginLeft: 260,
+    },
   },
   title: {
     flexGrow: 1,
     fontWeight: 500,
   },
-};
+});
 
 class TopBar extends PureComponent {
 
