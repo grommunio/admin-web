@@ -23,7 +23,8 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
-import { changeUserPassword } from '../api';
+import { changeUserPassword, dataArea } from '../api';
+import { fetchGroupsData } from '../actions/groups';
 
 const styles = theme => ({
   root: {
@@ -99,6 +100,13 @@ class UserDetails extends PureComponent {
     { name: 'never', ID: 4 },
   ]
 
+  componentDidMount() {
+    dataArea().then(json => {
+      if(json) this.setState({ areas: json.user });
+    });
+    this.props.fetchGroupsData();
+  }
+
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -140,10 +148,10 @@ class UserDetails extends PureComponent {
   handleAdd = () => {
     this.props.add(this.props.domain.ID, {
       ...this.state.changes,
-      domainID: 420,
-      groupID: 420,
+      //domainID: 420,
+      //groupID: 420,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
-      privilegeBits: 0,
+      expire: undefined,
     });
   }
 
@@ -151,7 +159,6 @@ class UserDetails extends PureComponent {
     this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
-      privilegeBits: 0,
       password: undefined,
     });
   }
@@ -162,8 +169,8 @@ class UserDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t } = this.props;
-    const { editing, changes, changingPw, oldPw, newPw } = this.state;
+    const { classes, t, groups } = this.props;
+    const { editing, areas, changes, changingPw, oldPw, newPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -221,6 +228,34 @@ class UserDetails extends PureComponent {
                 {this.statuses.map((status, key) => (
                   <MenuItem key={key} value={status.ID}>
                     {status.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("Data area")}
+                fullWidth
+                value={changes.areaID || ''}
+                onChange={this.handleInput('areaID')}
+              >
+                {areas && areas.map((user, key) => (
+                  <MenuItem key={key} value={user.ID}>
+                    {user.masterPath}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("Group")}
+                fullWidth
+                value={changes.groupID || ''}
+                onChange={this.handleInput('groupID')}
+              >
+                {groups.Groups.map((group, key) => (
+                  <MenuItem key={key} value={group.ID}>
+                    {group.groupname}
                   </MenuItem>
                 ))}
               </TextField>
@@ -444,10 +479,18 @@ UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  fetchGroupsData: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    groups: state.groups,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -458,8 +501,11 @@ const mapDispatchToProps = dispatch => {
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user));
     },
+    fetchGroupsData: async () => {
+      await dispatch(fetchGroupsData());
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(UserDetails)));
