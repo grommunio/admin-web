@@ -21,6 +21,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addDomainData, editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
+import { dataArea } from '../api';
 
 const styles = theme => ({
   root: {
