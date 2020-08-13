@@ -6,6 +6,7 @@ import { Switch } from "react-router-dom";
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import AsyncComponent from './components/AsyncComponent';
+import DefaultRedirect from "./components/DefaultRedirect";
 
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
@@ -167,6 +168,7 @@ const Routes = ({ childProps }) => (
       component={AsyncMemberDetails}
       props={childProps}
     />
+    <DefaultRedirect />
   </Switch>
 );
 

@@ -7,6 +7,7 @@ import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import AsyncComponent from './components/AsyncComponent';
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
+import DefaultRedirect from "./components/DefaultRedirect";
 
 const AsyncDomainMenu = AsyncComponent(() => import("./containers/DomainMenu"));
 const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
@@ -113,6 +114,7 @@ const Routes = ({ childProps, domains }) => (
         domain={domain}
       />
     )}
+    <DefaultRedirect />
   </Switch>
 );
 
