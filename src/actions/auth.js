@@ -17,6 +17,10 @@ export function authLogout() {
   return authAuthenticated(false);
 }
 
+export function switchView() {
+  return { type: 'SWITCH_VIEW' };
+}
+
 
 export function authAuthenticating(authenticating = true) {
   return {
