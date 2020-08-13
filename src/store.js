@@ -15,6 +15,7 @@ import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
 import groupsReducer from './reducers/groups';
+import settingsReducer from './reducers/settings';
 
 const loggerMiddleware = createLogger();
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -32,6 +33,7 @@ export const store = createStore(
     members: membersReducer,
     mlists: mlistsReducer,
     orgs: orgsReducer,
+    settings: settingsReducer,
     users: usersReducer,
   }),
   composeEnhancers(applyMiddleware(

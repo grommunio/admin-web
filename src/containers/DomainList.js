@@ -61,11 +61,11 @@ class DomainList extends Component {
   }
 
   handleAdd = () => {
-    this.props.history.push('/DomainList/add', {});
+    this.props.history.push('/domainList/add', {});
   }
 
   handleEdit = domain => () => {
-    this.props.history.push('/DomainList/' + domain.ID, { ...domain });
+    this.props.history.push('/domainList/' + domain.ID, { ...domain });
   }
 
   handleDelete = id => () => {

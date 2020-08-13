@@ -135,29 +135,39 @@ class NavigationLinks extends PureComponent {
               <img src={logo} width="80" alt="GRAMMM"/>
             </Button>
           </div>
-          <ListItem button onClick={this.handleNavigation('')}
-            className={classes.li}>
+          <ListItem
+            button
+            onClick={this.handleNavigation('')}
+            className={classes.li}
+            selected={location.pathname === '/'}
+          >
             <Dashboard className={classes.icon} />
             <ListItemText primary="Dashboard"/>
           </ListItem>
           <ListItem
             button
             onClick={this.handleNavigation('dataAreaSetup')}
-            className={classes.li}>
+            className={classes.li}
+            selected={location.pathname === '/dataAreaSetup'}
+          >
             <Web className={classes.icon}/>
             <ListItemText primary={t('data area setup')} />
           </ListItem>
           <ListItem
             button
             onClick={this.handleNavigation('domainList')}
-            className={classes.li}>
+            className={classes.li}
+            selected={location.pathname.startsWith('/domainList')}
+          >
             <Http className={classes.icon}/>
             <ListItemText primary={t('domain list')} />
           </ListItem>
           <ListItem
             button
             onClick={this.handleNavigation('baseSetup')}
-            className={classes.li}>
+            className={classes.li}
+            selected={location.pathname === '/baseSetup'}
+          >
             <Settings className={classes.icon}/>
             <ListItemText primary={t('base setup')} />
           </ListItem>
@@ -168,37 +178,65 @@ class NavigationLinks extends PureComponent {
           <Collapse in timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('groups')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('groups')}
+                selected={location.pathname.startsWith('/groups')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Groups')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('orgs')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('orgs')}
+                selected={location.pathname.startsWith('/orgs')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Organizations')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('aliases')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('aliases')}
+                selected={location.pathname.startsWith('/aliases')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Aliases')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('forwards')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('forwards')}
+                selected={location.pathname.startsWith('/forwards')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Forwards')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('mlists')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('mlists')}
+                selected={location.pathname.startsWith('/mlists')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('MLists')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('classes')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('classes')}
+                selected={location.pathname.startsWith('/classes')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Classes')}/>
               </ListItem>
               <ListItem
-                className={classes.li} button onClick={this.handleNavigation('members')}>
+                className={classes.li}
+                button
+                onClick={this.handleNavigation('members')}
+                selected={location.pathname.startsWith('/members')}
+              >
                 <People className={classes.nestedIcon}/>
                 <ListItemText primary={t('Members')}/>
               </ListItem>
