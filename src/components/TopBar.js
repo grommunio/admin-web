@@ -31,10 +31,10 @@ class TopBar extends PureComponent {
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
           <Typography className={classes.title} variant="h6">{title}</Typography>
+          <Button onClick={this.handleViewSwitch}>Switch View</Button>
           {onAdd && <Button onClick={onAdd} color="inherit">
             <Add />Add
           </Button>}
-          <Button onClick={this.handleViewSwitch}>Switch View</Button>
         </Toolbar>
       </AppBar>
     );
