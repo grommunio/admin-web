@@ -14,9 +14,11 @@ import Folder from '@material-ui/icons/Folder';
 import Mail from '@material-ui/icons/Mail';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
+import Search from '@material-ui/icons/Search';
 import grey from '../colors/grey';
 import blue from '../colors/blue';
 import logo from '../res/grammm_logo_only.svg';
+import { TextField, InputAdornment, Grid } from '@material-ui/core';
 
 const styles = theme => ({
   drawerHeader: {
@@ -88,6 +90,13 @@ const styles = theme => ({
     float: 'right',
     marginTop: '2px',
   },
+  textfield: {
+    color: 'white',
+  },
+  input: {
+    color: 'white',
+    borderColor: 'white',
+  },
 });
 
 class DomNavigationLinks extends PureComponent {
@@ -95,9 +104,13 @@ class DomNavigationLinks extends PureComponent {
   constructor(props) {
     super(props);
     // Map domains array to bool obj with domains as keys
-    this.state = this.props.domains.map(obj => obj.name)
+    const domains = this.props.domains.map(obj => obj.name)
       .reduce((a, b) => (a[b] = false, a), {});//eslint-disable-line
     this.listRef = React.createRef();
+    this.state = {
+      stateDomains: domains,
+      filter: '',
+    };
   }
 
   handleNavigation = path => event => {
@@ -114,13 +127,17 @@ class DomNavigationLinks extends PureComponent {
     }
     overwrite[domain] = !this.state[domain]
       || this.props.location.pathname !== '/' + domain;
-    this.setState({ ...overwrite });
+    this.setState({ stateDomains: { ...overwrite } });
     this.props.history.push(`/${domain}`);
+  }
+
+  handleTextInput = event => {
+    this.setState({ filter: event.target.value });
   }
 
   render() {
     const { classes, t, domains, location } = this.props;
-    const { state } = this;
+    const { filter, stateDomains } = this.state;
 
     return(
       <React.Fragment>
@@ -135,63 +152,86 @@ class DomNavigationLinks extends PureComponent {
               <img src={logo} width="80" alt="GRAMMM"/>
             </Button>
           </div>
-          {domains.map(({ domainname: name }) =>
-            <React.Fragment key={name}>
-              <ListItem
-                onClick={this.handleDrawer(name)}
-                button
-                className={classes.li}
-                selected={state[name] && location.pathname === '/' + name}
-              >
-                <Http className={classes.icon} />
-                <ListItemText primary={name} />
-              </ListItem>
-              <Collapse in={this.state[name]} unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItem
-                    className={classes.li}
-                    button
-                    onClick={this.handleNavigation(name + '/configuration')}
-                    selected={state[name] &&
-                      location.pathname === '/' + name + '/configuration'}
-                  >
-                    <Settings className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Configuration')}/>
-                  </ListItem>
-                  <ListItem
-                    className={classes.li}
-                    button
-                    onClick={this.handleNavigation(name + '/users')}
-                    selected={state[name] &&
-                      location.pathname === '/' + name + '/users'}
-                  >
-                    <People className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Users')}/>
-                  </ListItem>
-                  <ListItem
-                    className={classes.li}
-                    button
-                    onClick={this.handleNavigation(name + '/folders')}
-                    selected={state[name] &&
-                      location.pathname === '/' + name + '/folders'}
-                  >
-                    <Folder className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Folders')}/>
-                  </ListItem>
-                  <ListItem
-                    className={classes.li}
-                    button
-                    onClick={this.handleNavigation(name + '/mailAddresses')}
-                    selected={state[name] &&
-                      location.pathname === '/' + name + '/mailAddresses'}
-                  >
-                    <Mail className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Mail address list')}/>
-                  </ListItem>
-                </List>
-              </Collapse>
-            </React.Fragment>
-          )}
+          <Grid container>
+            <TextField
+              variant="outlined"
+              label={t('Search')}
+              value={filter}
+              onChange={this.handleTextInput}
+              InputLabelProps={{
+                className: classes.input,
+                shrink: true,
+              }}
+              InputProps={{
+                classes: { root: classes.input },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              color="primary"
+              className={classes.textfield}
+            />
+          </Grid>
+          {domains.map(({ domainname: name }) => {
+            return name.includes(filter) ?
+              <React.Fragment key={name}>
+                <ListItem
+                  onClick={this.handleDrawer(name)}
+                  button
+                  className={classes.li}
+                  selected={stateDomains[name] && location.pathname === '/' + name}
+                >
+                  <Http className={classes.icon} />
+                  <ListItemText primary={name} />
+                </ListItem>
+                <Collapse in={stateDomains[name]} unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItem
+                      className={classes.li}
+                      button
+                      onClick={this.handleNavigation(name + '/configuration')}
+                      selected={stateDomains[name] &&
+                        location.pathname === '/' + name + '/configuration'}
+                    >
+                      <Settings className={classes.nestedIcon}/>
+                      <ListItemText primary={t('Configuration')}/>
+                    </ListItem>
+                    <ListItem
+                      className={classes.li}
+                      button
+                      onClick={this.handleNavigation(name + '/users')}
+                      selected={stateDomains[name] &&
+                        location.pathname === '/' + name + '/users'}
+                    >
+                      <People className={classes.nestedIcon}/>
+                      <ListItemText primary={t('Users')}/>
+                    </ListItem>
+                    <ListItem
+                      className={classes.li}
+                      button
+                      onClick={this.handleNavigation(name + '/folders')}
+                      selected={stateDomains[name] &&
+                        location.pathname === '/' + name + '/folders'}
+                    >
+                      <Folder className={classes.nestedIcon}/>
+                      <ListItemText primary={t('Folders')}/>
+                    </ListItem>
+                    <ListItem
+                      className={classes.li}
+                      button
+                      onClick={this.handleNavigation(name + '/mailAddresses')}
+                      selected={stateDomains[name] &&
+                        location.pathname === '/' + name + '/mailAddresses'}
+                    >
+                      <Mail className={classes.nestedIcon}/>
+                      <ListItemText primary={t('Mail address list')}/>
+                    </ListItem>
+                  </List>
+                </Collapse>
+              </React.Fragment> : null;
+          })}
           <div className={classes.logoutContainer}>
             <ListItem
               className={classes.li} button>
