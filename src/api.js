@@ -37,7 +37,7 @@ async function post(path, data) {
     .then(response => response.json());
 }
 
-/*async function put(path, data) {
+async function put(path, data) {
   return fetch((baseUrl + path), {
     method: 'PUT',
     body: JSON.stringify(data),
@@ -46,7 +46,7 @@ async function post(path, data) {
     },
   }).then(handleErrors)
     .then(response => response.json());
-}*/
+}
 
 async function apiDelete(path) {
   return fetch((baseUrl + path), {
@@ -138,9 +138,10 @@ export function deleteUser(domainID, id) {
   };
 }
 
-export async function changeUserPassword(id, oldPw, newPw) {
+export async function changeUserPassword(domainID, id, newPw) {
   try {
-    return await post('/users/' + id + '/password', { old: oldPw, new: newPw });
+    return await put('/domains/' + domainID + '/users/' + id + '/password',
+      { new: newPw });
   } catch(err) { console.error(err); }
 }
 

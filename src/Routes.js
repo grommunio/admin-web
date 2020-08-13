@@ -6,11 +6,13 @@ import { Switch } from "react-router-dom";
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import AsyncComponent from './components/AsyncComponent';
+import DefaultRedirect from "./components/DefaultRedirect";
 
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
 const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
+const AsyncAddDomainList = AsyncComponent(() => import("./containers/AddDomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
 const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
@@ -56,10 +58,13 @@ const Routes = ({ childProps }) => (
       props={childProps}
     />
     <AuthenticatedRoute
-      path={[
-        "/domainList/:domainID",
-        "/domainList/add",
-      ]}
+      path="/domainList/add"
+      exact
+      component={AsyncAddDomainList}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/domainList/:domainID*"
       exact
       component={AsyncDomainListDetails}
       props={childProps}
@@ -163,6 +168,7 @@ const Routes = ({ childProps }) => (
       component={AsyncMemberDetails}
       props={childProps}
     />
+    <DefaultRedirect />
   </Switch>
 );
 

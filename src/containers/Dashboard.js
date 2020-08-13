@@ -303,8 +303,9 @@ class Dashboard extends Component {
     ],
   }
 
+  updateInterval = null;
   updateRAM() {
-    setInterval(() => {
+    this.updateInterval = setInterval(() => {
       const copy = [...this.state.ram];
       const add = (Math.random() > 0.5 ? 5 : -5);
       copy.push({
@@ -318,9 +319,10 @@ class Dashboard extends Component {
       this.setState({ ram: copy });
     }, 5000);
   }
-
+  
+  diskInterval = null;
   updateDisk() {
-    setInterval(() => {
+    this.diskInterval = setInterval(() => {
       const copy = [...this.state.disk];
       const add = (Math.random() > 0.5 ? 5 : -5);
       copy.push({
@@ -333,6 +335,11 @@ class Dashboard extends Component {
       if(copy.length > 12) copy.shift();
       this.setState({ disk: copy });
     }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.updateInterval);
+    clearInterval(this.diskInterval);
   }
 
   render() {
