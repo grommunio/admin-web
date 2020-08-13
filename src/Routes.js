@@ -12,8 +12,6 @@ const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
 const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
-const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
-const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
 const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
 const AsyncOrgs = AsyncComponent(() => import("./containers/Orgs"));
@@ -76,21 +74,6 @@ const Routes = ({ childProps }) => (
       path="/changePassword"
       exact
       component={AsyncChangePw}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path="/users"
-      exact
-      component={AsyncUsers}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path={[
-        "/users/:userID",
-        "/users/add",
-      ]}
-      exact
-      component={AsyncUserDetails}
       props={childProps}
     />
     <AuthenticatedRoute

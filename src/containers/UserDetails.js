@@ -67,7 +67,7 @@ class UserDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain + '/folders');
+      props.history.push('/' + props.domain.domainname + '/users');
     }
     else this.state = {
       changes: user,
@@ -138,7 +138,7 @@ class UserDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    this.props.add(this.props.domain, {
+    this.props.add(this.props.domain.ID, {
       ...this.state.changes,
       domainID: 420,
       groupID: 420,
@@ -148,7 +148,7 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    this.props.edit(this.props.domain, {
+    this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
@@ -402,7 +402,7 @@ class UserDetails extends PureComponent {
             </Button>
           </Paper>
         </div>
-        <Dialog open={changingPw}>
+        <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
           <DialogContent>
             <TextField
@@ -444,7 +444,7 @@ UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
@@ -452,11 +452,11 @@ UserDetails.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domain, user) => {
-      await dispatch(addUserData(domain, user));
+    add: async (domainID, user) => {
+      await dispatch(addUserData(domainID, user));
     },
-    edit: async (domain, user) => {
-      await dispatch(editUserData(domain, user));
+    edit: async (domainID, user) => {
+      await dispatch(editUserData(domainID, user));
     },
   };
 };

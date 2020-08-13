@@ -8,11 +8,11 @@ import {
 } from './types';
 import { users, addUser, editUser, deleteUser } from '../api';
 
-export function fetchUsersData() {
+export function fetchUsersData(domainID) {
   return async dispatch => {
     await dispatch({type: USERS_DATA_FETCH});
     try {
-      const data = await dispatch(users());
+      const data = await dispatch(users(domainID));
       await dispatch({type: USERS_DATA_RECEIVED, data});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
@@ -21,10 +21,10 @@ export function fetchUsersData() {
   };
 }
 
-export function addUserData(user) {
+export function addUserData(domainID, user) {
   return async dispatch => {
     try {
-      let resp = await dispatch(addUser(user));
+      let resp = await dispatch(addUser(domainID, user));
       if(resp) await dispatch({type: USER_DATA_ADD, user: resp});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
@@ -33,10 +33,10 @@ export function addUserData(user) {
   };
 }
 
-export function editUserData(user) {
+export function editUserData(domainID, user) {
   return async dispatch => {
     try {
-      const resp = await dispatch(editUser(user));
+      const resp = await dispatch(editUser(domainID, user));
       await dispatch({type: USER_DATA_EDIT, user: resp});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
@@ -45,10 +45,10 @@ export function editUserData(user) {
   };
 }
 
-export function deleteUserData(id) {
+export function deleteUserData(domainID, id) {
   return async dispatch => {
     try {
-      await dispatch(deleteUser(id));
+      await dispatch(deleteUser(domainID, id));
       await dispatch({type: USER_DATA_DELETE, id});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});

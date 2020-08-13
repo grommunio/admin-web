@@ -58,7 +58,7 @@ class MailAddressDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain + '/mailAddresses');
+      props.history.push('/' + props.domain.domainname + '/mailAddresses');
     }
     else this.state = {
       changes: folder,
@@ -95,15 +95,15 @@ class MailAddressDetails extends PureComponent {
   });
 
   handleAdd = () => {
-    addMailAddress(this.props.domain, {
+    addMailAddress({
       ...this.state.changes,
-    });
+    }, this.props.domain.ID);
   }
 
   handleEdit = () => {
-    editMailAddress(this.props.domain, {
+    editMailAddress({
       ...this.state.changes,
-    });
+    }, this.props.domain.ID);
   }
 
   render() {
@@ -228,7 +228,7 @@ class MailAddressDetails extends PureComponent {
 MailAddressDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
 };

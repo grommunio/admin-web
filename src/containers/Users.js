@@ -44,19 +44,20 @@ const styles = theme => ({
 class Users extends Component {
 
   componentDidMount() {
-    this.props.fetch(this.props.domain);
+    this.props.fetch(this.props.domain.ID);
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain + '/users/add', {});
+    this.props.history.push('/' + this.props.domain.domainname + '/users/add', {});
   }
 
   handleEdit = user => () => {
-    this.props.history.push('/' + this.props.domain + '/users/' + user.ID, { ...user });
+    this.props.history.push('/' + this.props.domain.domainname + '/users/' + user.ID, { ...user });
   }
 
   handleDelete = id => () => {
-    this.props.delete(id).then(this.props.fetch);
+    this.props.delete(this.props.domain.ID, id)
+      .then(() => this.props.fetch(this.props.domain.ID));
   }
 
   render() {
@@ -109,7 +110,7 @@ Users.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
@@ -120,11 +121,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async domain => {
-      await dispatch(fetchUsersData(domain));
+    fetch: async domainID => {
+      await dispatch(fetchUsersData(domainID));
     },
-    delete: async id => {
-      await dispatch(deleteUserData(id));
+    delete: async (domainID, id) => {
+      await dispatch(deleteUserData(domainID, id));
     },
   };
 };

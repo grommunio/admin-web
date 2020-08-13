@@ -69,7 +69,7 @@ class DomainListDetails extends PureComponent {
       changes: domain.ID ? domain : {
         orgID: 1,
         domainname: '',
-        password: '',
+        //password: '',
         media: '',
         maxSize: 0,
         maxUser: 0,
@@ -91,10 +91,12 @@ class DomainListDetails extends PureComponent {
   }
 
   componentDidMount() {
-    dataArea().then(json => this.setState({ areas: json.domain }));
+    dataArea().then(json => {
+      if(json) this.setState({ areas: json.domain });
+    });
   }
 
-  storageTypes = [
+  domainTypes = [
     { name: 'default storage', ID: 0 },
   ]
 
@@ -185,14 +187,6 @@ class DomainListDetails extends PureComponent {
                 value={changes.domainname || ''}
                 onChange={this.handleInput('domainname')}
               />
-              <TextField 
-                className={classes.input} 
-                label={t("password")}
-                type="password"
-                fullWidth 
-                value={changes.password || ''}
-                onChange={this.handleInput('password')}
-              />
               <TextField
                 select
                 className={classes.input}
@@ -216,7 +210,7 @@ class DomainListDetails extends PureComponent {
                 value={changes.domainType || 0}
                 onChange={this.handleInput('domainType')}
               >
-                {this.storageTypes.map((storageType, key) => (
+                {this.domainTypes.map((storageType, key) => (
                   <MenuItem key={key} value={storageType.ID}>
                     {storageType.name}
                   </MenuItem>

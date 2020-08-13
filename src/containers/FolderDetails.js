@@ -58,7 +58,7 @@ class FolderDetails extends PureComponent {
       this.state = {
         changes: {},
       };
-      props.history.push('/' + props.domain + '/folders');
+      props.history.push('/' + props.domain.domainname + '/folders');
     }
     else this.state = {
       changes: folder,
@@ -87,14 +87,14 @@ class FolderDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    this.props.add(this.props.domain, {
+    this.props.add(this.props.domain.ID, {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
     });
   }
 
   handleEdit = () => {
-    this.props.edit(this.props.domain, {
+    this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
     });
@@ -173,7 +173,7 @@ class FolderDetails extends PureComponent {
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  domain: PropTypes.string.isRequired,
+  domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
@@ -182,11 +182,11 @@ FolderDetails.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domain, folder) => {
-      await dispatch(addFolderData(domain, folder));
+    add: async (domainID, folder) => {
+      await dispatch(addFolderData(domainID, folder));
     },
-    edit: async (domain, folder) => {
-      await dispatch(editFolderData(domain, folder));
+    edit: async (domainID, folder) => {
+      await dispatch(editFolderData(domainID, folder));
     },
   };
 };

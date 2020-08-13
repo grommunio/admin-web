@@ -88,25 +88,25 @@ async function loginPost(path, data) {
 
 export function domains() {
   return async () => {
-    return await get('/domains');
+    return await get('/system/domains');
   };
 }
 
 export function addDomain(domain) {
   return async () => {
-    return await post('/domains', domain);
+    return await post('/system/domains', domain);
   };
 }
 
 export function editDomain(domain) {
   return async () => {
-    return await patch('/domains/' + domain.ID, domain);
+    return await patch('/system/domains/' + domain.ID, domain);
   };
 }
 
 export function deleteDomain(id) {
   return async () => {
-    return await apiDelete('/domains/' + id);
+    return await apiDelete('/system/domains/' + id);
   };
 }
 
@@ -114,27 +114,27 @@ export function deleteDomain(id) {
   USERS
 */
 
-export function users() {
+export function users(domainID) {
   return async () => {
-    return await get('/users');
+    return await get('/domains/' + domainID + '/users');
   };
 }
 
-export function addUser(user) {
+export function addUser(domainID, user) {
   return async () => {
-    return await post('/users', user);
+    return await post('/domains/' + domainID + '/users', user);
   };
 }
 
-export function editUser(user) {
+export function editUser(domainID, user) {
   return async () => {
-    return await patch('/users/' + user.ID, user);
+    return await patch('/domains/' + domainID + '/users/' + user.ID, user);
   };
 }
 
-export function deleteUser(id) {
+export function deleteUser(domainID, id) {
   return async () => {
-    return await apiDelete('/users/' + id);
+    return await apiDelete('/domains/' + domainID + '/users/' + id);
   };
 }
 
@@ -176,27 +176,27 @@ export function deleteGroup(id) {
   FOLDERS
 */
 
-export function folders(domain) {
+export function folders(domainID) {
   return async () => {
-    return await get('/' + domain.ID + '/folders');
+    return await get('/domains/' + domainID + '/folders');
   };
 }
 
-export function addFolder(domain, folder) {
+export function addFolder(domainID, folder) {
   return async () => {
-    return await post('/' + domain.ID + '/folders', folder);
+    return await post('/domains/' + domainID + '/folders', folder);
   };
 }
 
-export function editFolder(domain, folder) {
+export function editFolder(domainID, folder) {
   return async () => {
-    return await patch('/' + domain.ID + '/folders/' + folder.ID, folder);
+    return await patch('/domains/' + domainID + '/folders/' + folder.ID, folder);
   };
 }
 
-export function deleteFolder(domain, id) {
+export function deleteFolder(domainID, id) {
   return async () => {
-    return await apiDelete('/' + domain.ID + '/folders/' + id);
+    return await apiDelete('/domains/' + domainID + '/folders/' + id);
   };
 }
 
@@ -374,19 +374,19 @@ export function deleteMember(id) {
 
 export async function dataArea() {
   try {
-    return await get('/area_list');
+    return await get('/system/area_list');
   } catch(err) { console.error(err); }
 }
 
 export async function addDataArea(data) {
   try {
-    return await post('/area_list', data);
+    return await post('/system/area_list', data);
   } catch(err) { console.error(err); }
 }
 
 export async function deleteDataArea(id) {
   try {
-    return await apiDelete('/area_list/' + id);
+    return await apiDelete('/system/area_list/' + id);
   } catch(err) { console.error(err); }
 }
 /*
@@ -395,25 +395,25 @@ export async function deleteDataArea(id) {
 
 export async function mailAddresses(domain) {
   try {
-    return await get('/' + domain + '/mailAddresses');
+    return await get('/system/' + domain + '/mailAddresses');
   } catch(err) { console.error(err); }
 }
 
 export async function addMailAddress(domain, mail) {
   try {
-    return await post('/' + domain + '/mailAddresses', mail);
+    return await post('/system/' + domain + '/mailAddresses', mail);
   } catch(err) { console.error(err); }
 }
 
 export async function editMailAddress(domain, mail) {
   try {
-    return await patch('/' + domain + '/mailAddresses', mail);
+    return await patch('/system/' + domain + '/mailAddresses', mail);
   } catch(err) { console.error(err); }
 }
 
 export async function deleteMailAddress(domain, id) {
   try {
-    return await apiDelete('/' + domain + '/mailAddresses/' + id);
+    return await apiDelete('/system/' + domain + '/mailAddresses/' + id);
   } catch(err) { console.error(err); }
 }
 
