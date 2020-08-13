@@ -13,6 +13,10 @@ import {
   MenuItem,
   Button,
   InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
@@ -21,7 +25,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addDomainData, editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
-import { dataArea } from '../api';
+import { dataArea, changeDomainPassword } from '../api';
 
 const styles = theme => ({
   root: {
@@ -62,6 +66,9 @@ class DomainListDetails extends PureComponent {
       this.props.history.push('/domainList');
       this.state = {
         changes: {},
+        changingPw: false,
+        newPw: '',
+        checkPw: '',
       };
     }
     else this.state = {
@@ -84,6 +91,9 @@ class DomainListDetails extends PureComponent {
         mailSubSystem: false,
         netDisk: false,
       },
+      changingPw: false,
+      newPw: '',
+      checkPw: '',
     };
   }
 
@@ -158,9 +168,21 @@ class DomainListDetails extends PureComponent {
     });
   }
 
+  handlePasswordChange = async () => {
+    const { changes, newPw } = this.state;
+    await changeDomainPassword(changes.ID, newPw);
+    this.setState({ changingPw: false });
+  }
+
+  handleKeyPress = event => {
+    const { newPw, checkPw } = this.state;
+    if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
+  }
+
+
   render() {
     const { classes, t } = this.props;
-    const { changes } = this.state;
+    const { changes, checkPw, newPw, changingPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -177,14 +199,22 @@ class DomainListDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("domain")} 
-                fullWidth 
-                value={changes.domainname || ''}
-                onChange={this.handleInput('domainname')}
-                autoFocus
-              />
+              <Grid container className={classes.input}>
+                <TextField
+                  label={t("domain")} 
+                  style={{ flex: 1, marginRight: 8 }} 
+                  value={changes.domainname || ''}
+                  onChange={this.handleInput('domainname')}
+                  autoFocus
+                />
+                <Button
+                  variant="contained"
+                  onClick={() => this.setState({ changingPw: true })}
+                  size="small"
+                >
+                  Change Password
+                </Button>
+              </Grid>
               <TextField
                 select
                 className={classes.input}
@@ -346,6 +376,42 @@ class DomainListDetails extends PureComponent {
             </Button>
           </Paper>
         </div>
+        <Dialog open={!!changingPw}>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <TextField 
+              className={classes.input} 
+              label={t("New password")} 
+              fullWidth
+              type="password"
+              value={newPw}
+              onChange={event => this.setState({ newPw: event.target.value })}
+              autoFocus
+              onKeyPress={this.handleKeyPress}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Repeat password")} 
+              fullWidth
+              type="password"
+              value={checkPw}
+              onChange={event => this.setState({ checkPw: event.target.value })}
+              onKeyPress={this.handleKeyPress}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={this.handlePasswordChange}
+              disabled={checkPw !== newPw}
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

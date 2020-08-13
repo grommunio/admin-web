@@ -61,7 +61,7 @@ class DomainListDetails extends PureComponent {
       changes: {
         orgID: 1,
         domainname: '',
-        //password: '',
+        password: '',
         media: '',
         maxSize: 0,
         maxUser: 0,
@@ -140,6 +140,7 @@ class DomainListDetails extends PureComponent {
       ...this.state.changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
+      password: this.state.changes.password || undefined,
     });
   }
 
@@ -169,6 +170,14 @@ class DomainListDetails extends PureComponent {
                 value={changes.domainname || ''}
                 onChange={this.handleInput('domainname')}
                 autoFocus
+              />
+              <TextField 
+                className={classes.input} 
+                label={t("password")} 
+                fullWidth 
+                value={changes.password || ''}
+                onChange={this.handleInput('password')}
+                type="password"
               />
               <TextField
                 select
