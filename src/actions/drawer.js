@@ -2,7 +2,6 @@ import {
   DRAWER_OPEN_DEFAULT,
   DRAWER_CLOSE_DEFAULT,
   DRAWER_EXPAND,
-  DRAWER_CLOSE,
   DRAWER_SELECTION,
 } from '../actions/types';
 
@@ -18,10 +17,8 @@ export function setDrawerDefault(bool) {
   };
 }
 
-export function setDrawerExpansion(bool) {
-  return async dispatch => {
-    await bool ? dispatch(drawerExpand()) : dispatch(drawerClose());
-  };
+export function setDrawerExpansion() {
+  return  drawerExpand();
 }
 
 function drawerSelection(page) {
@@ -34,12 +31,6 @@ function drawerSelection(page) {
 function drawerExpand() {
   return {
     type: DRAWER_EXPAND,
-  };
-}
-
-function drawerClose() {
-  return {
-    type: DRAWER_CLOSE,
   };
 }
 

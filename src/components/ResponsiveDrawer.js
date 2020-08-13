@@ -38,7 +38,7 @@ const styles = theme => ({
 
   /* || Side Bar */
   drawer: {
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('lg')]: {
       width: drawerWidth,
       flexShrink: 0,
     },
@@ -54,7 +54,6 @@ const styles = theme => ({
 class ResponsiveDrawer extends Component {
 
     state = {
-      alert: false,
       path: '',
       drawerOpen: false,
 
@@ -150,7 +149,7 @@ class ResponsiveDrawer extends Component {
             <NavigationLinks />
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation="css">
+        <Hidden mdDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -178,7 +177,7 @@ const mapStateToProps = state => {
   const { drawer } = state;
 
   return {
-    drawer,
+    ...drawer,
   };
 };
 

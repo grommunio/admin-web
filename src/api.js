@@ -48,7 +48,7 @@ async function put(path, data) {
     .then(response => response.json());
 }
 
-async function apiDelete(path) {
+async function yeet(path) {
   return fetch((baseUrl + path), {
     method: 'DELETE',
   }).then(handleErrors)
@@ -106,8 +106,14 @@ export function editDomain(domain) {
 
 export function deleteDomain(id) {
   return async () => {
-    return await apiDelete('/system/domains/' + id);
+    return await yeet('/system/domains/' + id);
   };
+}
+
+export async function changeDomainPassword(id, newPw) {
+  try {
+    return await put('/system/domains/' + id + '/password', { new: newPw });
+  } catch(err) { console.error(err); }
 }
 
 /*
@@ -134,7 +140,7 @@ export function editUser(domainID, user) {
 
 export function deleteUser(domainID, id) {
   return async () => {
-    return await apiDelete('/domains/' + domainID + '/users/' + id);
+    return await yeet('/domains/' + domainID + '/users/' + id);
   };
 }
 
@@ -169,7 +175,7 @@ export function editGroup(group) {
 
 export function deleteGroup(id) {
   return async () => {
-    return await apiDelete('/groups/' + id);
+    return await yeet('/groups/' + id);
   };
 }
 
@@ -197,7 +203,7 @@ export function editFolder(domainID, folder) {
 
 export function deleteFolder(domainID, id) {
   return async () => {
-    return await apiDelete('/domains/' + domainID + '/folders/' + id);
+    return await yeet('/domains/' + domainID + '/folders/' + id);
   };
 }
 
@@ -225,7 +231,7 @@ export function editOrg(org) {
 
 export function deleteOrg(id) {
   return async () => {
-    return await apiDelete('/orgs/' + id);
+    return await yeet('/orgs/' + id);
   };
 }
 
@@ -253,7 +259,7 @@ export function editAlias(alias) {
 
 export function deleteAlias(id) {
   return async () => {
-    return await apiDelete('/aliases/' + id);
+    return await yeet('/aliases/' + id);
   };
 }
 
@@ -281,7 +287,7 @@ export function editForward(forward) {
 
 export function deleteForward(id) {
   return async () => {
-    return await apiDelete('/forwards/' + id);
+    return await yeet('/forwards/' + id);
   };
 }
 
@@ -309,7 +315,7 @@ export function editMlist(mlist) {
 
 export function deleteMlist(id) {
   return async () => {
-    return await apiDelete('/mlists/' + id);
+    return await yeet('/mlists/' + id);
   };
 }
 
@@ -337,7 +343,7 @@ export function editClass(Class) {
 
 export function deleteClass(id) {
   return async () => {
-    return await apiDelete('/classes/' + id);
+    return await yeet('/classes/' + id);
   };
 }
 
@@ -365,7 +371,7 @@ export function editMember(member) {
 
 export function deleteMember(id) {
   return async () => {
-    return await apiDelete('/members/' + id);
+    return await yeet('/members/' + id);
   };
 }
 
@@ -387,7 +393,7 @@ export async function addDataArea(data) {
 
 export async function deleteDataArea(id) {
   try {
-    return await apiDelete('/system/area_list/' + id);
+    return await yeet('/system/area_list/' + id);
   } catch(err) { console.error(err); }
 }
 /*
@@ -414,7 +420,7 @@ export async function editMailAddress(domain, mail) {
 
 export async function deleteMailAddress(domain, id) {
   try {
-    return await apiDelete('/system/' + domain + '/mailAddresses/' + id);
+    return await yeet('/system/' + domain + '/mailAddresses/' + id);
   } catch(err) { console.error(err); }
 }
 

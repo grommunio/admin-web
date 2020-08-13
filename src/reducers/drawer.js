@@ -8,7 +8,7 @@ import {
 
 const defaultState = {
   defaultOpen: false,
-  expanded: true,
+  expanded: false,
   selected: '',
 };
 
@@ -17,7 +17,7 @@ function drawerReducer(state = defaultState, action) {
     case DRAWER_EXPAND:
       return {
         ...state,
-        expanded: true,
+        expanded: !state.expanded,
       };
 
     case DRAWER_CLOSE:

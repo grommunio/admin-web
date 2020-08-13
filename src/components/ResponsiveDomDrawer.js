@@ -9,9 +9,10 @@ import {
   Drawer,
 } from '@material-ui/core';
 import {
-  setDrawerSelected,
+  setDrawerSelected, setDrawerExpansion,
 } from '../actions/drawer';
 import DomNavigationLinks from './DomNavigationLinks';
+import NavigationLinks from './NavigationLinks';
 
 const drawerWidth = 260;
 
@@ -38,7 +39,7 @@ const styles = theme => ({
 
   /* || Side Bar */
   drawer: {
-    [theme.breakpoints.up('md')]: {
+    [theme.breakpoints.up('lg')]: {
       width: drawerWidth,
       flexShrink: 0,
     },
@@ -54,9 +55,7 @@ const styles = theme => ({
 class ResponsiveDomDrawer extends Component {
 
     state = {
-      alert: false,
       path: '',
-      drawerOpen: false,
 
       menuOpen: false,
       MenuAnchor: null,
@@ -64,12 +63,6 @@ class ResponsiveDomDrawer extends Component {
       dropdownOpen: false,
       dropdownAnchor: null,
     };
-
-  handleDrawerToggle = () => {
-    this.setState({
-      drawerOpen: !this.state.drawerOpen,
-    });
-  }
 
   handleMoveAssetClick = (event) => {
     const { history, setDrawerSelected } = this.props;
@@ -130,7 +123,7 @@ class ResponsiveDomDrawer extends Component {
   }
 
   render() {
-    const { classes, domains } = this.props;
+    const { classes, domains, role, expanded } = this.props;
 
     return(
       <nav className={classes.drawer} aria-label="navigation">
@@ -138,8 +131,8 @@ class ResponsiveDomDrawer extends Component {
           <Drawer
             variant="temporary"
             anchor={"left"}
-            open={this.state.drawerOpen}
-            onClose={this.handleDrawerToggle}
+            open={expanded}
+            onClose={this.props.toggleExpansion}
             classes={{
               paper: classes.drawerPaper,
             }}
@@ -147,10 +140,10 @@ class ResponsiveDomDrawer extends Component {
               keepMounted: true, // Better open performance on mobile.
             }}
           >
-            <DomNavigationLinks domains={domains}/>
+            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
-        <Hidden smDown implementation="css">
+        <Hidden mdDown implementation="css">
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -158,7 +151,7 @@ class ResponsiveDomDrawer extends Component {
             variant="permanent"
             open
           >
-            <DomNavigationLinks domains={domains}/>
+            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
       </nav>
@@ -170,16 +163,18 @@ ResponsiveDomDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  drawer: PropTypes.object.isRequired,
   setDrawerSelected: PropTypes.func.isRequired,
+  toggleExpansion: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
+  role: PropTypes.string,
+  expanded: PropTypes.bool,
 };
 
 const mapStateToProps = state => {
   const { drawer } = state;
 
   return {
-    drawer,
+    ...drawer,
   };
 };
 
@@ -187,6 +182,9 @@ const mapDispatchToProps = dispatch => {
   return {
     setDrawerSelected: async page => {
       await dispatch(setDrawerSelected(page));
+    },
+    toggleExpansion: async () => {
+      await dispatch(setDrawerExpansion());
     },
   };
 };

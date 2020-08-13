@@ -1,22 +1,29 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, Hidden, IconButton } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { switchView } from '../actions/auth';
 import { fetchDomainData } from '../actions/domains';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import Burger from '@material-ui/icons/Menu';
+import { setDrawerExpansion } from '../actions/drawer';
 
-const styles = {
+const styles = theme => ({
   root: {
-    marginLeft: 260,
+    [theme.breakpoints.up('lg')]: {
+      marginLeft: 260,
+    },
   },
   title: {
     flexGrow: 1,
     fontWeight: 500,
   },
-};
+  burger: {
+    marginRight: 16,
+  },
+});
 
 class TopBar extends PureComponent {
 
@@ -27,11 +34,21 @@ class TopBar extends PureComponent {
     await dispatch(switchView());
   }
 
+  handleMenuToggle = async () => {
+    const { dispatch } = this.props;
+    await dispatch(setDrawerExpansion());
+  }
+
   render() {
     const { classes, title, onAdd } = this.props;
     return (
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
+          <Hidden lgUp>
+            <IconButton color="inherit" onClick={this.handleMenuToggle}>
+              <Burger />
+            </IconButton>
+          </Hidden>
           <Typography className={classes.title} variant="h6">{title}</Typography>
           <Button onClick={this.handleViewSwitch}>Switch View</Button>
           {onAdd && <Button onClick={onAdd} color="inherit">

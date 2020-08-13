@@ -6,7 +6,6 @@ import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import AdminRoutes from './Routes';
 import DomainRoutes from './DomainRoutes';
-import ResponsiveDrawer from './components/ResponsiveDrawer';
 import { authAuthenticating } from './actions/auth';
 import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
 import background from './res/bootback.svg';
@@ -62,9 +61,8 @@ class App extends Component {
       <div className={classes.root}>
         <div className={classes.layer} />
         <div className={classes.mainView}>
-          {authenticated && (role === 'sys' ? <ResponsiveDrawer /> :
-            <ResponsiveDomDrawer domains={this.props.domains.Domains}/>)
-          }
+          {authenticated &&
+            <ResponsiveDomDrawer role={role} domains={this.props.domains.Domains}/>}
           {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
             <DomainRoutes domains={this.props.domains.Domains} childProps={routesProps}/>
           }
