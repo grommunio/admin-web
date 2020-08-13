@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Typography, Grid, FormControl, TextField, MenuItem } from '@material-ui/core';
+import { Paper, Typography, Grid, FormControl, TextField, MenuItem, Switch, FormLabel } from '@material-ui/core';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
@@ -56,6 +56,15 @@ class Settings extends Component {
     this.props.changeSettings(field, event.target.value);
   }
 
+  handleCheckbox = field => event => {
+    this.props.changeSettings(field, event.target.checked);
+  }
+
+  handleDarkModeChange = event => {
+    window.localStorage.setItem('darkMode', event.target.checked);
+    window.location.reload();
+  }
+
   render() {
     const { classes, t, settings } = this.props;
 
@@ -88,6 +97,14 @@ class Settings extends Component {
                   </MenuItem>
                 ))}
               </TextField>
+              <FormControl className={classes.formControl}>
+                <FormLabel component="legend">{t('Darkmode')}</FormLabel>
+                <Switch
+                  checked={(window.localStorage.getItem('darkMode') === 'true')}
+                  onChange={this.handleDarkModeChange}
+                  color="primary"
+                />
+              </FormControl>
             </FormControl>
           </Paper>
         </div>

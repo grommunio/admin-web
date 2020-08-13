@@ -4,6 +4,8 @@ import grey from './colors/grey';
 import brightBlue from './colors/brightBlue';
 import blue from './colors/blue';
 
+const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
+
 const theme = createMuiTheme({
   overrides: {
     MuiAppBar: {
@@ -20,7 +22,7 @@ const theme = createMuiTheme({
     MuiTableRow: {
       root: {
         "&:nth-child(odd)": {
-          backgroundColor: '#f0f0f0',
+          backgroundColor: mode === 'light' ? '#f0f0f0' : 'rgba(255, 255, 255, 0.12)',
         },
         '&$hover': {
           "&:hover": {
@@ -45,9 +47,11 @@ const theme = createMuiTheme({
     },
   },
   palette: {
+    type: mode,
     primary: blue,
     secondary: grey,
   },
+  
 });
 
 export default theme;

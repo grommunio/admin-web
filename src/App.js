@@ -9,6 +9,7 @@ import DomainRoutes from './DomainRoutes';
 import { authAuthenticating } from './actions/auth';
 import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
 import background from './res/bootback.svg';
+import darkBackground from './res/bootback-dark.svg';
 import { fetchDomainData } from './actions/domains';
 
 const styles = {
@@ -25,6 +26,24 @@ const styles = {
   },
   layer: {
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 10,
+  },
+  darkRoot: {
+    display: 'flex',
+    flex: 1,
+    overflow: 'hidden',
+    backgroundImage: 'url(' + darkBackground + ')',
+    backgroundSize: 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 1,
+  },
+  darkLayer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     width: '100%',
     height: '100%',
     position: 'absolute',
@@ -58,8 +77,12 @@ class App extends Component {
     };
 
     return(
-      <div className={classes.root}>
-        <div className={classes.layer} />
+      <div className={ window.localStorage.getItem('darkMode') === 'true' ? 
+        classes.darkRoot : classes.root}>
+        <div
+          className={window.localStorage.getItem('darkMode') === 'true' ?
+            classes.darkLayer : classes.layer}
+        />
         <div className={classes.mainView}>
           {authenticated &&
             <ResponsiveDomDrawer role={role} domains={this.props.domains.Domains}/>}

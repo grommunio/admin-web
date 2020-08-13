@@ -50,7 +50,7 @@ class TopBar extends PureComponent {
             </IconButton>
           </Hidden>
           <Typography className={classes.title} variant="h6">{title}</Typography>
-          <Button onClick={this.handleViewSwitch}>Switch View</Button>
+          <Button onClick={this.handleViewSwitch} color="inherit">Switch View</Button>
           {onAdd && <Button onClick={onAdd} color="inherit">
             <Add />Add
           </Button>}
