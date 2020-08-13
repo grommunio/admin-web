@@ -93,7 +93,10 @@ class DataAreaSetup extends Component {
   ];
 
   handleAdd = () => {
-    addDataArea(this.state.newData).then(() => this.setState({ addOpen: false }))
+    addDataArea({
+      ...this.state.newData,
+      accelPath: this.state.accelPath || null,
+    }).then(() => this.setState({ addOpen: false }))
       .then(() => dataArea().then(json => {
         if(json) this.setState({ table: json });
       }));

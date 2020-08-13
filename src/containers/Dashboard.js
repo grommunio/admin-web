@@ -21,6 +21,7 @@ import CPUBackground from '../res/memory-black-48dp.svg';
 import RAMBackground from '../res/insert_chart_outlined-black-48dp.svg';
 import StorageBackground from '../res/storage-black-48dp.svg';
 import NetworkBackground from '../res/network_check-black-48dp.svg';
+import TimingBackground from '../res/schedule-black-48dp.svg';
 
 const styles = theme => ({
   root: {
@@ -98,6 +99,17 @@ const styles = theme => ({
     width: 250,
     height: 250,
     backgroundImage: 'url(' + StorageBackground + ')',
+    position: 'relative',
+    zIndex: 0,
+    opacity: 0.1,
+    alignSelf: 'flex-end',
+    margin: theme.spacing(-9, 12, -22, 0),
+    backgroundSize: '100%',
+  },
+  timingBackground: {
+    width: 250,
+    height: 250,
+    backgroundImage: 'url(' + TimingBackground + ')',
     position: 'relative',
     zIndex: 0,
     opacity: 0.1,
@@ -491,7 +503,7 @@ class Dashboard extends Component {
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
                 <Typography className={classes.chartTitle} variant="h4">Timing</Typography>
-                <div className={classes.networkBackground}></div>
+                <div className={classes.timingBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
                   <BarChart data={this.timing}>
                     <XAxis dataKey="name" />

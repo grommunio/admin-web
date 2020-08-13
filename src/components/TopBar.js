@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
+import { switchView } from '../actions/auth';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 const styles = {
   root: {
@@ -16,6 +19,12 @@ const styles = {
 
 class TopBar extends PureComponent {
 
+  handleViewSwitch = async () => {
+    const { dispatch } = this.props;
+    this.props.history.push('/');
+    await dispatch(switchView());
+  }
+
   render() {
     const { classes, title, onAdd } = this.props;
     return (
@@ -25,6 +34,7 @@ class TopBar extends PureComponent {
           {onAdd && <Button onClick={onAdd} color="inherit">
             <Add />Add
           </Button>}
+          <Button onClick={this.handleViewSwitch}>Switch View</Button>
         </Toolbar>
       </AppBar>
     );
@@ -34,7 +44,9 @@ class TopBar extends PureComponent {
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   title: PropTypes.string,
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   onAdd: PropTypes.func,
 };
 
-export default withStyles(styles)(TopBar);
+export default withRouter(connect()(withStyles(styles)(TopBar)));

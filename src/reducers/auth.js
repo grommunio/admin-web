@@ -35,6 +35,12 @@ function authReducer(state = defaultState, action) {
       };
     }
 
+    case 'SWITCH_VIEW':
+      return {
+        ...state,
+        role: state.role === 'sys' ? 'domain' : 'sys',
+      };
+
     default:
       return state;
   }
