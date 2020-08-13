@@ -120,7 +120,7 @@ class NavigationLinks extends PureComponent {
   }
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, location } = this.props;
 
     return(
       <React.Fragment>

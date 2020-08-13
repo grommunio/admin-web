@@ -13,6 +13,9 @@ function settingsReducer(state = defaultState, action) {
         ...state,
         [action.field]: action.value,
       };
+
+    default:
+      break;
   }
   return state;
 }
