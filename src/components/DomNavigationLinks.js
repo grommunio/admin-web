@@ -193,7 +193,7 @@ class DomNavigationLinks extends PureComponent {
                       button
                       onClick={this.handleNavigation(name + '/configuration')}
                       selected={stateDomains[name] &&
-                        location.pathname === '/' + name + '/configuration'}
+                        location.pathname.startsWith('/' + name + '/configuration')}
                     >
                       <Settings className={classes.nestedIcon}/>
                       <ListItemText primary={t('Configuration')}/>
@@ -203,7 +203,7 @@ class DomNavigationLinks extends PureComponent {
                       button
                       onClick={this.handleNavigation(name + '/users')}
                       selected={stateDomains[name] &&
-                        location.pathname === '/' + name + '/users'}
+                        location.pathname.startsWith('/' + name + '/users')}
                     >
                       <People className={classes.nestedIcon}/>
                       <ListItemText primary={t('Users')}/>
@@ -213,7 +213,7 @@ class DomNavigationLinks extends PureComponent {
                       button
                       onClick={this.handleNavigation(name + '/folders')}
                       selected={stateDomains[name] &&
-                        location.pathname === '/' + name + '/folders'}
+                        location.pathname.startsWith('/' + name + '/folders')}
                     >
                       <Folder className={classes.nestedIcon}/>
                       <ListItemText primary={t('Folders')}/>
@@ -223,7 +223,7 @@ class DomNavigationLinks extends PureComponent {
                       button
                       onClick={this.handleNavigation(name + '/mailAddresses')}
                       selected={stateDomains[name] &&
-                        location.pathname === '/' + name + '/mailAddresses'}
+                        location.pathname.startsWith('/' + name + '/mailAddresses')}
                     >
                       <Mail className={classes.nestedIcon}/>
                       <ListItemText primary={t('Mail address list')}/>
@@ -234,7 +234,10 @@ class DomNavigationLinks extends PureComponent {
           })}
           <div className={classes.logoutContainer}>
             <ListItem
-              className={classes.li} button>
+              className={classes.li}
+              button
+              selected={location.pathname === '/settings'}
+            >
               <Settings className={classes.icon} />
               <ListItemText primary={t('Settings')} />
             </ListItem>
