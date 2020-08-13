@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { switchView } from '../actions/auth';
+import { fetchDomainData } from '../actions/domains';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
@@ -20,8 +21,9 @@ const styles = {
 class TopBar extends PureComponent {
 
   handleViewSwitch = async () => {
-    const { dispatch } = this.props;
+    const { dispatch, Domains } = this.props;
     this.props.history.push('/');
+    if(Domains.length === 0) dispatch(fetchDomainData()); 
     await dispatch(switchView());
   }
 
@@ -46,7 +48,12 @@ TopBar.propTypes = {
   title: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  Domains: PropTypes.array.isRequired,
   onAdd: PropTypes.func,
 };
 
-export default withRouter(connect()(withStyles(styles)(TopBar)));
+const mapStateToProps = state => {
+  return { Domains: state.domains.Domains };
+};
+
+export default withRouter(connect(mapStateToProps)(withStyles(styles)(TopBar)));
