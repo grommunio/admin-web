@@ -89,7 +89,7 @@ class DataAreaSetup extends Component {
   types = [
     { name: 'user data', ID: 0 },
     { name: 'domain data', ID: 1 },
-    { name: 'indepoendant sorage', ID: 2 },
+    { name: 'independant storage', ID: 2 },
   ];
 
   handleAdd = () => {
