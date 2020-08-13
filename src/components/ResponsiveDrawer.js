@@ -177,7 +177,7 @@ const mapStateToProps = state => {
   const { drawer } = state;
 
   return {
-    drawer,
+    ...drawer,
   };
 };
 
