@@ -74,7 +74,6 @@ class UserDetails extends PureComponent {
       changes: user,
       editing: !!user.ID,
       changingPw: false,
-      oldPw: '',
       newPw: '',
     };
   }
@@ -164,13 +163,18 @@ class UserDetails extends PureComponent {
   }
 
   handlePasswordChange = async () => {
-    const { changes, oldPw, newPw } = this.state;
-    await changeUserPassword(changes.ID, oldPw, newPw);
+    const { changes, newPw } = this.state;
+    await changeUserPassword(this.props.domain.ID, changes.ID, newPw);
+    this.setState({ changingPw: false });
+  }
+
+  handleKeyPress = event => {
+    if(event.key === 'Enter') this.handlePasswordChange();
   }
 
   render() {
     const { classes, t, groups } = this.props;
-    const { editing, areas, changes, changingPw, oldPw, newPw } = this.state;
+    const { editing, areas, changes, changingPw, newPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -440,15 +444,6 @@ class UserDetails extends PureComponent {
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
           <DialogContent>
-            <TextField
-              className={classes.input} 
-              label={t("Old password")} 
-              autoFocus
-              fullWidth
-              type="password"
-              value={oldPw}
-              onChange={event => this.setState({ oldPw: event.target.value })}
-            />
             <TextField 
               className={classes.input} 
               label={t("New password")} 
@@ -456,6 +451,8 @@ class UserDetails extends PureComponent {
               type="password"
               value={newPw}
               onChange={event => this.setState({ newPw: event.target.value })}
+              autoFocus
+              onKeyPress={this.handleKeyPress}
             />
           </DialogContent>
           <DialogActions>
