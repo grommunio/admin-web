@@ -57,15 +57,8 @@ class DomainListDetails extends PureComponent {
 
   constructor(props) {
     super(props);
-    const domain = this.props.location.state;
-    if(!domain) {
-      this.props.history.push('/domainList');
-      this.state = {
-        changes: {},
-      };
-    }
-    else this.state = {
-      changes: domain.ID ? domain : {
+    this.state = {
+      changes: {
         orgID: 1,
         domainname: '',
         //password: '',
@@ -84,6 +77,7 @@ class DomainListDetails extends PureComponent {
         mailSubSystem: false,
         netDisk: false,
       },
+      areas: [],
     };
   }
 
@@ -149,18 +143,9 @@ class DomainListDetails extends PureComponent {
     });
   }
 
-  handleEdit = () => {
-    const { endDay, createDay } = this.state.changes;
-    this.props.edit({
-      ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-    });
-  }
-
   render() {
     const { classes, t } = this.props;
-    const { changes } = this.state;
+    const { changes, areas } = this.state;
 
     return (
       <div className={classes.root}>
@@ -173,7 +158,7 @@ class DomainListDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('Edit domain')}
+                {t("Add domain")}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -185,6 +170,21 @@ class DomainListDetails extends PureComponent {
                 onChange={this.handleInput('domainname')}
                 autoFocus
               />
+              <TextField
+                select
+                className={classes.input}
+                label={t("Area")}
+                fullWidth
+                value={changes.areaID || 0}
+                onChange={this.handleInput('areaID')}
+              >
+                <MenuItem value={0}></MenuItem>
+                {areas.map((area, key) => (
+                  <MenuItem key={key} value={area.ID}>
+                    {area.masterPath}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField
                 select
                 className={classes.input}
@@ -340,7 +340,7 @@ class DomainListDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.handleEdit}
+              onClick={this.handleAdd}
             >
               Save
             </Button>
