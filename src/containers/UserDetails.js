@@ -75,6 +75,7 @@ class UserDetails extends PureComponent {
       editing: !!user.ID,
       changingPw: false,
       newPw: '',
+      checkPw: '',
     };
   }
 
@@ -147,8 +148,6 @@ class UserDetails extends PureComponent {
   handleAdd = () => {
     this.props.add(this.props.domain.ID, {
       ...this.state.changes,
-      //domainID: 420,
-      //groupID: 420,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       expire: undefined,
     });
@@ -169,12 +168,13 @@ class UserDetails extends PureComponent {
   }
 
   handleKeyPress = event => {
-    if(event.key === 'Enter') this.handlePasswordChange();
+    const { newPw, checkPw } = this.state;
+    if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
   render() {
     const { classes, t, groups } = this.props;
-    const { editing, areas, changes, changingPw, newPw } = this.state;
+    const { editing, areas, changes, changingPw, newPw, checkPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -454,6 +454,15 @@ class UserDetails extends PureComponent {
               autoFocus
               onKeyPress={this.handleKeyPress}
             />
+            <TextField 
+              className={classes.input} 
+              label={t("Repeat password")} 
+              fullWidth
+              type="password"
+              value={checkPw}
+              onChange={event => this.setState({ checkPw: event.target.value })}
+              onKeyPress={this.handleKeyPress}
+            />
           </DialogContent>
           <DialogActions>
             <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
@@ -462,6 +471,7 @@ class UserDetails extends PureComponent {
             <Button
               color="primary"
               onClick={this.handlePasswordChange}
+              disabled={checkPw !== newPw}
             >
               Save
             </Button>
