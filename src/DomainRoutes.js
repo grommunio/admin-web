@@ -19,6 +19,7 @@ const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
 const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
 const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
 const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
+const AsyncSettings = AsyncComponent(() => import("./containers/Settings"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -114,6 +115,12 @@ const Routes = ({ childProps, domains }) => (
         domain={domain}
       />
     )}
+    <AuthenticatedRoute
+      path={`/settings`}
+      exact
+      component={AsyncSettings}
+      props={childProps}
+    />
     <DefaultRedirect />
   </Switch>
 );

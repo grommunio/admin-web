@@ -237,6 +237,7 @@ class DomNavigationLinks extends PureComponent {
               className={classes.li}
               button
               selected={location.pathname === '/settings'}
+              onClick={this.handleNavigation('settings')}
             >
               <Settings className={classes.icon} />
               <ListItemText primary={t('Settings')} />
