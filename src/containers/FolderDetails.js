@@ -140,13 +140,6 @@ class FolderDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                className={classes.input} 
-                label={t("folder name")} 
-                fullWidth 
-                value={changes.folderName || ''}
-                onChange={this.handleInput('folderName')}
-              />
             </FormControl>
             <Button
               variant="text"
