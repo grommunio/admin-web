@@ -259,9 +259,12 @@ class UserDetails extends PureComponent {
                 className={classes.input}
                 label={t("Group")}
                 fullWidth
-                value={changes.groupID || ''}
+                value={changes.groupID || 0}
                 onChange={this.handleInput('groupID')}
               >
+                <MenuItem value={0}>
+                  {t('Direct user')}
+                </MenuItem>
                 {groups.Groups.map((group, key) => (
                   <MenuItem key={key} value={group.ID}>
                     {group.groupname}
