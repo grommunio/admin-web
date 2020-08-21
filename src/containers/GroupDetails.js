@@ -150,7 +150,8 @@ class GroupDetails extends PureComponent {
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
-                className={classes.input} 
+                className={classes.input}
+                autoFocus
                 label={t("group name")} 
                 fullWidth 
                 value={changes.groupname || ''}

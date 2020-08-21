@@ -138,6 +138,7 @@ class ForwardDetails extends PureComponent {
                 fullWidth 
                 value={changes.username || ''}
                 onChange={this.handleInput('username')}
+                autoFocus
               />
               <TextField 
                 className={classes.input} 

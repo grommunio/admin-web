@@ -125,6 +125,7 @@ class FolderDetails extends PureComponent {
                 fullWidth 
                 value={changes.folderName || ''}
                 onChange={this.handleInput('folderName')}
+                autoFocus
               />
               <TextField
                 select

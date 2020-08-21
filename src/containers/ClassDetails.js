@@ -133,6 +133,7 @@ class ClassDetails extends PureComponent {
                 fullWidth 
                 value={changes.classname || ''}
                 onChange={this.handleInput('classname')}
+                autoFocus
               />
               <TextField 
                 className={classes.input} 

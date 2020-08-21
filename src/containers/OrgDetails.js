@@ -131,7 +131,8 @@ class OrgDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField 
+              <TextField
+                autoFocus
                 className={classes.input} 
                 label={t("memo")} 
                 fullWidth 

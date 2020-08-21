@@ -145,6 +145,7 @@ class MlistDetails extends PureComponent {
                 fullWidth 
                 value={changes.listname || ''}
                 onChange={this.handleInput('listname')}
+                autoFocus
               />
               <TextField
                 select

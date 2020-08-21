@@ -115,6 +115,7 @@ class BaseSetup extends Component {
                   fullWidth 
                   value={changes.defaultDomain || ''}
                   onChange={this.handleInput('defaultDomain')}
+                  autoFocus
                 />
               </FormControl>
             </Paper>

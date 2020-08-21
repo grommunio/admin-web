@@ -137,6 +137,7 @@ class AliasDetails extends PureComponent {
                 fullWidth 
                 value={changes.aliasname || ''}
                 onChange={this.handleInput('aliasname')}
+                autoFocus
               />
               <TextField 
                 className={classes.input} 

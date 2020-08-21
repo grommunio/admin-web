@@ -131,6 +131,7 @@ class MailAddressDetails extends PureComponent {
                 fullWidth 
                 value={changes.listName || ''}
                 onChange={this.handleInput('listName')}
+                autoFocus
               />
               <TextField
                 select
