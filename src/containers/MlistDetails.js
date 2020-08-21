@@ -69,6 +69,11 @@ class MlistDetails extends PureComponent {
     { name: 'class', ID: 3 },
   ]
 
+  priviledges = [
+    { name: 'normal', ID: 0 },
+    { name: 'admin', ID: 1 },
+  ];
+
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -169,13 +174,20 @@ class MlistDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
+              <TextField
+                select
                 className={classes.input} 
                 label={t("listPrivilege")} 
                 fullWidth 
                 value={changes.listPrivilege || ''}
                 onChange={this.handleInput('listPrivilege')}
-              />
+              >
+                {this.priviledges.map((priviledge, key) => (
+                  <MenuItem key={key} value={priviledge.ID}>
+                    {priviledge.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
             <Button
               variant="text"
