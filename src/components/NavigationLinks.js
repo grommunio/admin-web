@@ -216,11 +216,11 @@ class NavigationLinks extends PureComponent {
               <ListItem
                 className={classes.li}
                 button
-                onClick={this.handleNavigation('mlists')}
-                selected={location.pathname.startsWith('/mlists')}
+                onClick={this.handleNavigation('mailLists')}
+                selected={location.pathname.startsWith('/mailLists')}
               >
                 <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('MLists')}/>
+                <ListItemText primary={t('Mail lists')}/>
               </ListItem>
               <ListItem
                 className={classes.li}

@@ -68,12 +68,12 @@ class MLists extends Component {
 
   handleAdd = () => {
     const { history, fetchDomains } = this.props;
-    fetchDomains().then(() => history.push('/mlists/add', {}));
+    fetchDomains().then(() => history.push('/mailLists/add', {}));
   }
 
   handleEdit = mlist => () => {
     const { history, fetchDomains } = this.props;
-    fetchDomains().then(() => history.push('/mlists/' + mlist.ID, { ...mlist }));
+    fetchDomains().then(() => history.push('/mailLists/' + mlist.ID, { ...mlist }));
   }
 
   handleDelete = id => () => {
@@ -85,7 +85,7 @@ class MLists extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="MLists"/>
+        <TopBar onAdd={this.handleAdd} title="Mail lists"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper} elevation={2}>

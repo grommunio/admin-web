@@ -51,7 +51,7 @@ class MlistDetails extends PureComponent {
     super(props);
     const domain = this.props.location.state;
     if(!domain) {
-      this.props.history.push('/mlists');
+      this.props.history.push('/mailLists');
       this.state = {
         changes: {},
       };
@@ -121,7 +121,7 @@ class MlistDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Mlist"/>
+        <TopBar title="Mail lists"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -130,7 +130,7 @@ class MlistDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit mlist') : t('Add mlist')}
+                {this.state.editing ? t('Edit mail list') : t('Add mail list')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -180,7 +180,7 @@ class MlistDetails extends PureComponent {
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/mlists')}
+              onClick={() => this.props.history.push('/mailLists')}
               style={{ marginRight: 8 }}
             >
               Back
