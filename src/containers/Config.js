@@ -97,6 +97,7 @@ class Config extends Component {
                   fullWidth 
                   value={changes.adminEmail || ''}
                   onChange={this.handleInput('adminEmail')}
+                  autoFocus
                 />
                 <TextField
                   select

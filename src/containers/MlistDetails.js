@@ -51,7 +51,7 @@ class MlistDetails extends PureComponent {
     super(props);
     const domain = this.props.location.state;
     if(!domain) {
-      this.props.history.push('/mlists');
+      this.props.history.push('/mailLists');
       this.state = {
         changes: {},
       };
@@ -68,6 +68,11 @@ class MlistDetails extends PureComponent {
     { name: 'domain', ID: 2 },
     { name: 'class', ID: 3 },
   ]
+
+  priviledges = [
+    { name: 'normal', ID: 0 },
+    { name: 'admin', ID: 1 },
+  ];
 
   handleInput = field => event => {
     this.setState({
@@ -109,6 +114,7 @@ class MlistDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/mailLists');
   }
 
   handleEdit = () => {
@@ -121,7 +127,7 @@ class MlistDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Mlist"/>
+        <TopBar title="Mail lists"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -130,7 +136,7 @@ class MlistDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {this.state.editing ? t('Edit mlist') : t('Add mlist')}
+                {this.state.editing ? t('Edit mail list') : t('Add mail list')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -140,6 +146,7 @@ class MlistDetails extends PureComponent {
                 fullWidth 
                 value={changes.listname || ''}
                 onChange={this.handleInput('listname')}
+                autoFocus
               />
               <TextField
                 select
@@ -169,18 +176,25 @@ class MlistDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
+              <TextField
+                select
                 className={classes.input} 
                 label={t("listPrivilege")} 
                 fullWidth 
                 value={changes.listPrivilege || ''}
                 onChange={this.handleInput('listPrivilege')}
-              />
+              >
+                {this.priviledges.map((priviledge, key) => (
+                  <MenuItem key={key} value={priviledge.ID}>
+                    {priviledge.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
             <Button
               variant="text"
               color="secondary"
-              onClick={() => this.props.history.push('/mlists')}
+              onClick={() => this.props.history.push('/mailLists')}
               style={{ marginRight: 8 }}
             >
               Back

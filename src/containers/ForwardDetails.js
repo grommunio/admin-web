@@ -9,6 +9,7 @@ import {
   TextField,
   FormControl,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { addForwardData, editForwardData } from '../actions/forwards';
@@ -61,6 +62,11 @@ class ForwardDetails extends PureComponent {
     };
   }
 
+  types = [
+    { name: 'normal', ID: 0 },
+    { name: 'fast', ID: 1 },
+  ];
+
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -101,6 +107,7 @@ class ForwardDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/forwards');
   }
 
   handleEdit = () => {
@@ -132,6 +139,7 @@ class ForwardDetails extends PureComponent {
                 fullWidth 
                 value={changes.username || ''}
                 onChange={this.handleInput('username')}
+                autoFocus
               />
               <TextField 
                 className={classes.input} 
@@ -140,13 +148,20 @@ class ForwardDetails extends PureComponent {
                 value={changes.destination || ''}
                 onChange={this.handleInput('destination')}
               />
-              <TextField 
+              <TextField
+                select
                 className={classes.input} 
                 label={t("forward type")} 
                 fullWidth 
                 value={changes.forwardType === undefined ? '' : changes.forwardType}
                 onChange={this.handleInput('forwardType')}
-              />
+              >
+                {this.types.map((type, key) => (
+                  <MenuItem key={key} value={type.ID}>
+                    {type.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
             <Button
               variant="text"

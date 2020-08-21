@@ -91,6 +91,7 @@ class FolderDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
     });
+    this.props.history.push('/' + this.props.domain.domainname + '/folders');
   }
 
   handleEdit = () => {
@@ -125,6 +126,7 @@ class FolderDetails extends PureComponent {
                 fullWidth 
                 value={changes.folderName || ''}
                 onChange={this.handleInput('folderName')}
+                autoFocus
               />
               <TextField
                 select
@@ -140,13 +142,6 @@ class FolderDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                className={classes.input} 
-                label={t("folder name")} 
-                fullWidth 
-                value={changes.folderName || ''}
-                onChange={this.handleInput('folderName')}
-              />
             </FormControl>
             <Button
               variant="text"

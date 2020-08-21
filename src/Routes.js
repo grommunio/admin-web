@@ -133,13 +133,13 @@ const Routes = ({ childProps }) => (
       props={childProps}
     />
     <AuthenticatedRoute
-      path="/mlists"
+      path="/mailLists"
       exact
       component={AsyncMlists}
       props={childProps}
     />
     <AuthenticatedRoute
-      path="/mlists/:mlistID"
+      path="/mailLists/:mlistID"
       exact
       component={AsyncMlistDetails}
       props={childProps}

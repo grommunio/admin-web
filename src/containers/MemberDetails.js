@@ -102,6 +102,7 @@ class MemberDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/members');
   }
 
   handleEdit = () => {
@@ -133,6 +134,7 @@ class MemberDetails extends PureComponent {
                 fullWidth 
                 value={changes.username || ''}
                 onChange={this.handleInput('username')}
+                autoFocus
               />
               <TextField
                 select

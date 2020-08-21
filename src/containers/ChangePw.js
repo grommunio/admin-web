@@ -78,6 +78,7 @@ class BaseSetup extends Component {
                 value={oldPw || ''}
                 onChange={this.handleInput('oldPw')}
                 type="password"
+                autoFocus
               />
             </FormControl>
             <FormControl className={classes.form}>

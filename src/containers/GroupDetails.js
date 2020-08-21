@@ -119,6 +119,7 @@ class GroupDetails extends PureComponent {
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
+    this.props.history.push('/groups');
   }
 
   handleEdit = () => {
@@ -150,7 +151,8 @@ class GroupDetails extends PureComponent {
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
-                className={classes.input} 
+                className={classes.input}
+                autoFocus
                 label={t("group name")} 
                 fullWidth 
                 value={changes.groupname || ''}

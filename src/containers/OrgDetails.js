@@ -106,6 +106,7 @@ class OrgDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/orgs');
   }
 
   handleEdit = () => {
@@ -131,7 +132,8 @@ class OrgDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField 
+              <TextField
+                autoFocus
                 className={classes.input} 
                 label={t("memo")} 
                 fullWidth 
