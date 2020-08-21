@@ -14,7 +14,7 @@ import {
   Button,
   InputAdornment,
   DialogTitle,
-  DialogContent, Dialog, DialogActions,
+  DialogContent, Dialog, DialogActions, Select, FormLabel,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
@@ -25,6 +25,7 @@ import { addUserData, editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword, dataArea } from '../api';
 import { fetchGroupsData } from '../actions/groups';
+import { timezones } from '../res/timezones';
 
 const styles = theme => ({
   root: {
@@ -99,6 +100,9 @@ class UserDetails extends PureComponent {
     { name: '100 years', ID: 3 },
     { name: 'never', ID: 4 },
   ]
+
+  timeZones = [-12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, 1, 0,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   componentDidMount() {
     dataArea().then(json => {
@@ -226,8 +230,8 @@ class UserDetails extends PureComponent {
                 className={classes.input}
                 label={t("status")}
                 fullWidth
-                value={changes.domainStatus || 0}
-                onChange={this.handleInput('domainStatus')}
+                value={changes.addressStatus || 0}
+                onChange={this.handleInput('addressStatus')}
               >
                 {this.statuses.map((status, key) => (
                   <MenuItem key={key} value={status.ID}>
@@ -268,8 +272,8 @@ class UserDetails extends PureComponent {
                 className={classes.input}
                 label={t("types")}
                 fullWidth
-                value={changes.type || 0}
-                onChange={this.handleInput('type')}
+                value={changes.subType || 0}
+                onChange={this.handleInput('subType')}
               >
                 {this.types.map((type, key) => (
                   <MenuItem key={key} value={type.ID}>
@@ -282,25 +286,29 @@ class UserDetails extends PureComponent {
                 className={classes.input}
                 label={t("language")}
                 fullWidth
-                value={changes.type || 0}
-                onChange={this.handleInput('language')}
+                value={changes.lang || 0}
+                onChange={this.handleInput('lang')}
               >
                 <MenuItem value={0}>
                   {t('english')}
                 </MenuItem>
               </TextField>
-              <TextField
-                select
-                className={classes.input}
-                label={t("department")}
-                fullWidth
-                value={changes.type || 0}
-                onChange={this.handleInput('department')}
-              >
-                <MenuItem value={0}>
-                  {t('direct user')}
-                </MenuItem>
-              </TextField>
+              <FormControl>
+                <FormLabel>{t("timezone")}</FormLabel>
+                <Select
+                  className={classes.input}
+                  fullWidth
+                  native
+                  value={changes.timezone || 427} // Default: Berlin
+                  onChange={this.handleInput('timezone')}
+                >
+                  {timezones.map((zone, key) => (
+                    <option key={key} value={key}>
+                      {zone.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
               <TextField 
                 className={classes.input} 
                 label={t("maximum space")} 
@@ -353,6 +361,14 @@ class UserDetails extends PureComponent {
                 value={changes.mobilePhone || ''}
                 onChange={this.handleInput('mobilePhone')}
               />
+              <TextField
+                select
+                className={classes.input}
+                label={t("cell")}
+                fullWidth
+                value={changes.cell || ''}
+                onChange={this.handleInput('cell')}
+              />
               <TextField 
                 className={classes.input} 
                 label={t("home address")} 
@@ -375,6 +391,7 @@ class UserDetails extends PureComponent {
                 value={changes.createDay || new Date()}
                 onChange={this.handleDateChange('createDay')}
                 autoOk
+                fullWidth
               />
             </MuiPickersUtilsProvider>
             <Grid container className={classes.input}>
