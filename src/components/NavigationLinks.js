@@ -17,10 +17,17 @@ import People from '@material-ui/icons/People';
 import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
 import Web from '@material-ui/icons/Web';
+import Orgs from '@material-ui/icons/GroupWork';
+import Aliases from '@material-ui/icons/AssignmentInd';
+import Forwards from '@material-ui/icons/Forward';
+import MLists from '@material-ui/icons/Email';
+import Classes from '@material-ui/icons/Class';
+import Members from '@material-ui/icons/Contacts';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_only.svg';
 import blue from '../colors/blue';
+import { Grid } from '@material-ui/core';
 
 const styles = theme => ({
   drawerHeader: {
@@ -141,8 +148,10 @@ class NavigationLinks extends PureComponent {
             className={classes.li}
             selected={location.pathname === '/'}
           >
-            <Dashboard className={classes.icon} />
-            <ListItemText primary="Dashboard"/>
+            <Grid container alignItems="center">
+              <Dashboard className={classes.icon} />
+              <ListItemText primary="Dashboard"/>
+            </Grid>
           </ListItem>
           <ListItem
             button
@@ -150,8 +159,10 @@ class NavigationLinks extends PureComponent {
             className={classes.li}
             selected={location.pathname === '/dataAreaSetup'}
           >
-            <Web className={classes.icon}/>
-            <ListItemText primary={t('data area setup')} />
+            <Grid container alignItems="center">
+              <Web className={classes.icon}/>
+              <ListItemText primary={t('data area setup')} />
+            </Grid>
           </ListItem>
           <ListItem
             button
@@ -159,8 +170,10 @@ class NavigationLinks extends PureComponent {
             className={classes.li}
             selected={location.pathname.startsWith('/domainList')}
           >
-            <Http className={classes.icon}/>
-            <ListItemText primary={t('domain list')} />
+            <Grid container alignItems="center">
+              <Http className={classes.icon}/>
+              <ListItemText primary={t('domain list')} />
+            </Grid>
           </ListItem>
           <ListItem
             button
@@ -168,8 +181,10 @@ class NavigationLinks extends PureComponent {
             className={classes.li}
             selected={location.pathname === '/baseSetup'}
           >
-            <Settings className={classes.icon}/>
-            <ListItemText primary={t('base setup')} />
+            <Grid container alignItems="center">
+              <Settings className={classes.icon}/>
+              <ListItemText primary={t('base setup')} />
+            </Grid>
           </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
             <DefaultData className={classes.icon} />
@@ -183,8 +198,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('groups')}
                 selected={location.pathname.startsWith('/groups')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Groups')}/>
+                <Grid container alignItems="center">
+                  <People className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Groups')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -192,8 +209,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('orgs')}
                 selected={location.pathname.startsWith('/orgs')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Organizations')}/>
+                <Grid container alignItems="center">
+                  <Orgs className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Organizations')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -201,8 +220,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('aliases')}
                 selected={location.pathname.startsWith('/aliases')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Aliases')}/>
+                <Grid container alignItems="center">
+                  <Aliases className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Aliases')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -210,8 +231,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('forwards')}
                 selected={location.pathname.startsWith('/forwards')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Forwards')}/>
+                <Grid container alignItems="center">
+                  <Forwards className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Forwards')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -219,8 +242,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('mailLists')}
                 selected={location.pathname.startsWith('/mailLists')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Mail lists')}/>
+                <Grid container alignItems="center">
+                  <MLists className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Mail lists')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -228,8 +253,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('classes')}
                 selected={location.pathname.startsWith('/classes')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Classes')}/>
+                <Grid container alignItems="center">
+                  <Classes className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Classes')}/>
+                </Grid>
               </ListItem>
               <ListItem
                 className={classes.li}
@@ -237,8 +264,10 @@ class NavigationLinks extends PureComponent {
                 onClick={this.handleNavigation('members')}
                 selected={location.pathname.startsWith('/members')}
               >
-                <People className={classes.nestedIcon}/>
-                <ListItemText primary={t('Members')}/>
+                <Grid container alignItems="center">
+                  <Members className={classes.nestedIcon}/>
+                  <ListItemText primary={t('Members')}/>
+                </Grid>
               </ListItem>
             </List>
           </Collapse>
@@ -246,13 +275,18 @@ class NavigationLinks extends PureComponent {
             <ListItem
               button
               onClick={this.handleNavigation('changePassword')}
-              className={classes.li}>
-              <Lock className={classes.icon}/>
-              <ListItemText primary={t('Change password')} />
+              className={classes.li}
+            >
+              <Grid container alignItems="center">
+                <Lock className={classes.icon}/>
+                <ListItemText primary={t('Change password')} />
+              </Grid>
             </ListItem>
             <ListItem button onClick={this.handleLogout} className={classes.li}>
-              <Run className={classes.icon} />
-              <ListItemText primary={t('Logout')} />
+              <Grid container alignItems="center">
+                <Run className={classes.icon} />
+                <ListItemText primary={t('Logout')} />
+              </Grid>
             </ListItem>
           </div>
         </List>

@@ -183,8 +183,10 @@ class DomNavigationLinks extends PureComponent {
                   className={classes.li}
                   selected={stateDomains[name] && location.pathname === '/' + name}
                 >
-                  <Http className={classes.icon} />
-                  <ListItemText primary={name} />
+                  <Grid container alignItems="center">
+                    <Http className={classes.icon} />
+                    <ListItemText primary={name} />
+                  </Grid>
                 </ListItem>
                 <Collapse in={stateDomains[name]} unmountOnExit>
                   <List component="div" disablePadding>
@@ -195,8 +197,10 @@ class DomNavigationLinks extends PureComponent {
                       selected={stateDomains[name] &&
                         location.pathname.startsWith('/' + name + '/configuration')}
                     >
-                      <Settings className={classes.nestedIcon}/>
-                      <ListItemText primary={t('Configuration')}/>
+                      <Grid container alignItems="center">
+                        <Settings className={classes.nestedIcon}/>
+                        <ListItemText primary={t('Configuration')}/>
+                      </Grid>
                     </ListItem>
                     <ListItem
                       className={classes.li}
@@ -205,8 +209,10 @@ class DomNavigationLinks extends PureComponent {
                       selected={stateDomains[name] &&
                         location.pathname.startsWith('/' + name + '/users')}
                     >
-                      <People className={classes.nestedIcon}/>
-                      <ListItemText primary={t('Users')}/>
+                      <Grid container alignItems="center">
+                        <People className={classes.nestedIcon}/>
+                        <ListItemText primary={t('Users')}/>
+                      </Grid>
                     </ListItem>
                     <ListItem
                       className={classes.li}
@@ -215,8 +221,10 @@ class DomNavigationLinks extends PureComponent {
                       selected={stateDomains[name] &&
                         location.pathname.startsWith('/' + name + '/folders')}
                     >
-                      <Folder className={classes.nestedIcon}/>
-                      <ListItemText primary={t('Folders')}/>
+                      <Grid container alignItems="center">
+                        <Folder className={classes.nestedIcon}/>
+                        <ListItemText primary={t('Folders')}/>
+                      </Grid>
                     </ListItem>
                     <ListItem
                       className={classes.li}
@@ -225,8 +233,10 @@ class DomNavigationLinks extends PureComponent {
                       selected={stateDomains[name] &&
                         location.pathname.startsWith('/' + name + '/mailAddresses')}
                     >
-                      <Mail className={classes.nestedIcon}/>
-                      <ListItemText primary={t('Mail address list')}/>
+                      <Grid container alignItems="center">
+                        <Mail className={classes.nestedIcon}/>
+                        <ListItemText primary={t('Mail address list')}/>
+                      </Grid>
                     </ListItem>
                   </List>
                 </Collapse>
@@ -239,12 +249,16 @@ class DomNavigationLinks extends PureComponent {
               selected={location.pathname === '/settings'}
               onClick={this.handleNavigation('settings')}
             >
-              <Settings className={classes.icon} />
-              <ListItemText primary={t('Settings')} />
+              <Grid container alignItems="center">
+                <Settings className={classes.icon} />
+                <ListItemText primary={t('Settings')} />
+              </Grid>
             </ListItem>
             <ListItem button onClick={this.handleLogout} className={classes.li}>
-              <Run className={classes.icon} />
-              <ListItemText primary={t('Logout')} />
+              <Grid container alignItems="center">
+                <Run className={classes.icon} />
+                <ListItemText primary={t('Logout')} />
+              </Grid>
             </ListItem>
           </div>
         </List>
