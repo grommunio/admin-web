@@ -155,6 +155,7 @@ class UserDetails extends PureComponent {
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       expire: undefined,
     });
+    this.props.history.push('/' + this.props.domain.domainname + '/users');
   }
 
   handleEdit = () => {
@@ -362,7 +363,6 @@ class UserDetails extends PureComponent {
                 onChange={this.handleInput('mobilePhone')}
               />
               <TextField
-                select
                 className={classes.input}
                 label={t("cell")}
                 fullWidth
@@ -482,7 +482,7 @@ class UserDetails extends PureComponent {
             />
           </DialogContent>
           <DialogActions>
-            <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
+            <Button onClick={() => this.setState({ changingPw: false })}>
               Cancel
             </Button>
             <Button

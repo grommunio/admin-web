@@ -119,6 +119,7 @@ class GroupDetails extends PureComponent {
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       privilegeBits: 0,
     });
+    this.props.history.push('/groups');
   }
 
   handleEdit = () => {

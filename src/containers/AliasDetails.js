@@ -106,6 +106,7 @@ class AliasDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/aliases');
   }
 
   handleEdit = () => {

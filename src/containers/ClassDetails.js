@@ -102,6 +102,7 @@ class ClassDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/classes');
   }
 
   handleEdit = () => {

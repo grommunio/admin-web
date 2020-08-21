@@ -91,6 +91,7 @@ class FolderDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
     });
+    this.props.history.push('/' + this.props.domain.domainname + '/folders');
   }
 
   handleEdit = () => {

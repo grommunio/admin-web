@@ -102,6 +102,7 @@ class MemberDetails extends PureComponent {
 
   handleAdd = () => {
     this.props.add(this.state.changes);
+    this.props.history.push('/members');
   }
 
   handleEdit = () => {
