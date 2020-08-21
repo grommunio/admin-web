@@ -91,7 +91,7 @@ const styles = theme => ({
     marginTop: '2px',
   },
   textfield: {
-    color: 'white',
+    margin: theme.spacing(0, 1),
   },
   input: {
     color: 'white',
