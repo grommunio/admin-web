@@ -15,6 +15,20 @@ async function get(path) {
     });
 }
 
+async function getNoErrorHandling(path) {
+  return await fetch(baseUrl + path)
+    .then(async response => {
+      if (response.ok) {
+        return response.json();
+      }
+      let resp = '';
+      await response.json().then(json => {
+        resp = json.message;
+      });
+      return Promise.reject(new Error(resp));
+    });
+}
+
 async function patch(path, data) {
   return fetch((baseUrl + path), {
     method: 'PATCH',
@@ -37,6 +51,25 @@ async function post(path, data) {
     .then(response => response.json());
 }
 
+async function postNoErrorHandling(path, data) {
+  return await fetch(baseUrl + path, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }).then(async response => {
+    if (response.ok) {
+      return response.json();
+    }
+    let resp = '';
+    await response.json().then(json => {
+      resp = json.message;
+    });
+    return Promise.reject(new Error(resp));
+  });
+}
+
 async function put(path, data) {
   return fetch((baseUrl + path), {
     method: 'PUT',
@@ -53,6 +86,22 @@ async function yeet(path) {
     method: 'DELETE',
   }).then(handleErrors)
     .then(response => response.json());
+}
+
+async function yeetNoErrorHandling(path) {
+  return await fetch(baseUrl + path, {
+    method: 'DELETE',
+  })
+    .then(async response => {
+      if (response.ok) {
+        return response.json();
+      }
+      let resp = '';
+      await response.json().then(json => {
+        resp = json.message;
+      });
+      return Promise.reject(new Error(resp));
+    });
 }
 /*
 async function upload(path, data) {
@@ -380,21 +429,15 @@ export function deleteMember(id) {
 */
 
 export async function dataArea() {
-  try {
-    return await get('/system/area_list');
-  } catch(err) { console.error(err); }
+  return await getNoErrorHandling('/system/area_list');
 }
 
 export async function addDataArea(data) {
-  try {
-    return await post('/system/area_list', data);
-  } catch(err) { console.error(err); }
+  return postNoErrorHandling('/system/area_list', data);
 }
 
 export async function deleteDataArea(id) {
-  try {
-    return await yeet('/system/area_list/' + id);
-  } catch(err) { console.error(err); }
+  return await yeetNoErrorHandling('/system/area_list/' + id);
 }
 /*
   MAIL ADDRESSES
