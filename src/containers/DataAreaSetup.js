@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions } from '@material-ui/core';
+  Button, DialogActions, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
@@ -54,12 +54,15 @@ const styles = theme => ({
 class DataAreaSetup extends Component {
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ table: json });
-    });
+    try {
+      this.getDataAreaData();
+    } catch(err) {
+      console.error("synchronous error", err);
+    }
   }
 
   state = {
+    snackbar: null,
     table: {
       user: [],
       domain: [],
@@ -75,6 +78,16 @@ class DataAreaSetup extends Component {
       storeLevels: 2,
     },
     addOpen: false,
+  }
+
+  getDataAreaData = () => {
+    dataArea()
+      .then(json => {
+        if(json) this.setState({ table: json });
+      })
+      .catch(err => {
+        this.setState({ snackbar: err.message || 'Unknown error' });
+      });
   }
 
   handleInput = field => event => {
@@ -93,19 +106,40 @@ class DataAreaSetup extends Component {
   ];
 
   handleAdd = () => {
-    addDataArea({
-      ...this.state.newData,
-      accelPath: this.state.accelPath || null,
-    }).then(() => this.setState({ addOpen: false }))
-      .then(() => dataArea().then(json => {
-        if(json) this.setState({ table: json });
-      }));
+    this.setState({ addOpen: false });
+    try {
+      addDataArea({
+        ...this.state.newData,
+        accelPath: this.state.accelPath || null,
+      })
+        .then(() => {
+          this.setState({ 
+            newData: {
+              dataType: 0, 
+              masterPath: '', 
+              slavePath: '', 
+              accelPath: '', 
+              maxSpace: 0, 
+              maxFiles: 0,
+              storeLevels: 2,
+            },
+          });
+        })
+        .catch(json => {
+          this.setState({ snackbar: json.message || 'Unknown error' });
+        })
+        .then(this.getDataAreaData);
+    } catch(err) { console.error("synchronous error", err); }
   }
 
   handleDelete = id => () => {
-    deleteDataArea(id).then(() => dataArea().then(json => {
-      if(json) this.setState({ table: json });
-    }));
+    try {
+      deleteDataArea(id)
+        .then(this.getDataAreaData)
+        .catch(json => {
+          this.setState({ snackbar: json.message || 'Unknown error' });
+        });
+    } catch(err) { console.error(err); }
   }
 
   handleNumberInput = field => event => {
@@ -309,6 +343,16 @@ class DataAreaSetup extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            color="error"
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
