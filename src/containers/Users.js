@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -43,8 +43,13 @@ const styles = theme => ({
 
 class Users extends Component {
 
+  state = {
+    snackbar: null,
+  }
+
   componentDidMount() {
-    this.props.fetch(this.props.domain.ID);
+    this.props.fetch(this.props.domain.ID)
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleAdd = () => {
@@ -57,7 +62,8 @@ class Users extends Component {
 
   handleDelete = id => () => {
     this.props.delete(this.props.domain.ID, id)
-      .then(() => this.props.fetch(this.props.domain.ID));
+      .then(() => this.props.fetch(this.props.domain.ID))
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   render() {
@@ -99,6 +105,15 @@ class Users extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -122,10 +137,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async domainID => {
-      await dispatch(fetchUsersData(domainID));
+      await dispatch(fetchUsersData(domainID)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
-      await dispatch(deleteUserData(domainID, id));
+      await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },
   };
 };
