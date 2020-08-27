@@ -16,6 +16,7 @@ export function fetchDomainData() {
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }

@@ -15,6 +15,7 @@ export function fetchGroupsData() {
     } catch(err) {
       console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }

@@ -344,7 +344,6 @@ class DataAreaSetup extends Component {
             </Table>
           </Paper>
           <Snackbar
-            color="error"
             open={!!this.state.snackbar}
             message={this.state.snackbar}
             action={
