@@ -13,14 +13,17 @@ import {
   MenuItem,
   Button,
   InputAdornment,
+  Snackbar,
+  IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addDomainData, editDomainData } from '../actions/domains';
+import { addDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
+import Delete from '@material-ui/icons/Close';
 import { dataArea } from '../api';
 
 const styles = theme => ({
@@ -78,6 +81,7 @@ class DomainListDetails extends PureComponent {
         netDisk: false,
       },
       areas: [],
+      snackbar: null,
     };
   }
 
@@ -141,7 +145,9 @@ class DomainListDetails extends PureComponent {
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: this.state.changes.password || undefined,
-    });
+    })
+      .then(() => this.props.history.push('/domainList'))
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   render() {
@@ -184,10 +190,9 @@ class DomainListDetails extends PureComponent {
                 className={classes.input}
                 label={t("Area")}
                 fullWidth
-                value={changes.areaID || 0}
+                value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
-                <MenuItem value={0}></MenuItem>
                 {areas.map((area, key) => (
                   <MenuItem key={key} value={area.ID}>
                     {area.masterPath}
@@ -354,6 +359,15 @@ class DomainListDetails extends PureComponent {
               Save
             </Button>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -365,17 +379,13 @@ DomainListDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     add: async domain => {
-      await dispatch(addDomainData(domain));
-    },
-    edit: async domain => {
-      await dispatch(editDomainData(domain));
+      await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };

@@ -71,7 +71,9 @@ class DomainList extends Component {
   }
 
   handleDelete = id => () => {
-    this.props.delete(id).then(this.props.fetch);
+    this.props.delete(id)
+      .then(this.props.fetch)
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   render() {
@@ -149,7 +151,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchDomainData()).catch(error => Promise.reject(error));
     },
     delete: async id => {
-      await dispatch(deleteDomainData(id));
+      await dispatch(deleteDomainData(id)).catch(error => Promise.reject(error));
     },
   };
 };

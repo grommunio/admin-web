@@ -2,7 +2,7 @@ const baseUrl = '//' + window.location.host + '/api/v1';
 
 async function handleErrors(response) {
   if (response.ok) {
-    return response.json();
+    return await response.json();
   }
   let resp = '';
   await response.json().then(json => {
@@ -28,18 +28,17 @@ async function patch(path, data) {
 }
 
 async function post(path, data) {
-  return fetch((baseUrl + path), {
+  return await fetch((baseUrl + path), {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(handleErrors)
-    .then(response => response.json());
+  }).then(handleErrors);
 }
 
 async function put(path, data) {
-  return fetch((baseUrl + path), {
+  return await fetch((baseUrl + path), {
     method: 'PUT',
     body: JSON.stringify(data),
     headers: {
@@ -50,10 +49,9 @@ async function put(path, data) {
 }
 
 async function yeet(path) {
-  return fetch((baseUrl + path), {
+  return await fetch((baseUrl + path), {
     method: 'DELETE',
-  }).then(handleErrors)
-    .then(response => response.json());
+  }).then(handleErrors);
 }
 
 /*
@@ -386,7 +384,7 @@ export async function dataArea() {
 }
 
 export async function addDataArea(data) {
-  return post('/system/area_list', data);
+  return await post('/system/area_list', data);
 }
 
 export async function deleteDataArea(id) {

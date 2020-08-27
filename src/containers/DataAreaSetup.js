@@ -54,11 +54,7 @@ const styles = theme => ({
 class DataAreaSetup extends Component {
 
   componentDidMount() {
-    try {
-      this.getDataAreaData();
-    } catch(err) {
-      console.error("synchronous error", err);
-    }
+    this.getDataAreaData();
   }
 
   state = {
@@ -81,13 +77,17 @@ class DataAreaSetup extends Component {
   }
 
   getDataAreaData = () => {
-    dataArea()
-      .then(json => {
-        if(json) this.setState({ table: json });
-      })
-      .catch(err => {
-        this.setState({ snackbar: err.message || 'Unknown error' });
-      });
+    try {
+      dataArea()
+        .then(json => {
+          if(json) this.setState({ table: json });
+        })
+        .catch(err => {
+          this.setState({ snackbar: err.message || 'Unknown error' });
+        });
+    } catch(err) {
+      console.error("synchronous error", err);
+    }
   }
 
   handleInput = field => event => {
@@ -135,10 +135,10 @@ class DataAreaSetup extends Component {
   handleDelete = id => () => {
     try {
       deleteDataArea(id)
-        .then(this.getDataAreaData)
         .catch(json => {
           this.setState({ snackbar: json.message || 'Unknown error' });
-        });
+        })
+        .then(this.getDataAreaData);
     } catch(err) { console.error(err); }
   }
 
