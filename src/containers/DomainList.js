@@ -9,6 +9,7 @@ import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchDomainData, deleteDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -53,6 +54,11 @@ class DomainList extends Component {
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
+  fetchDomains() {
+    this.props.fetch()
+      .catch(msg => this.setState({ snackbar: msg }));
+  }
+
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -72,7 +78,10 @@ class DomainList extends Component {
 
   handleDelete = id => () => {
     this.props.delete(id)
-      .then(this.props.fetch)
+      .then(() => {
+        this.fetchDomains();
+        this.setState({ snackbar: 'Success!' });
+      })
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
@@ -119,13 +128,19 @@ class DomainList extends Component {
           </Paper>
           <Snackbar
             open={!!this.state.snackbar}
-            message={this.state.snackbar}
-            action={
-              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
-                <Delete color="error" />
-              </IconButton>
-            }
-          />
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
         </div>
       </div>
     );
