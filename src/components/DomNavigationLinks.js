@@ -92,6 +92,17 @@ const styles = theme => ({
   },
   textfield: {
     margin: theme.spacing(0, 1),
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'grey',
+      },
+      '&:hover fieldset': {
+        borderColor: 'white',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+    },
   },
   input: {
     color: 'white',

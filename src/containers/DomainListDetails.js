@@ -18,17 +18,16 @@ import {
   DialogContent,
   DialogActions,
   Snackbar,
-  IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
-import Delete from '@material-ui/icons/Close';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import { changeDomainPassword } from '../api';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -155,6 +154,7 @@ class DomainListDetails extends PureComponent {
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
     })
+      .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
@@ -367,13 +367,19 @@ class DomainListDetails extends PureComponent {
           </Paper>
           <Snackbar
             open={!!this.state.snackbar}
-            message={this.state.snackbar}
-            action={
-              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
-                <Delete color="error" />
-              </IconButton>
-            }
-          />
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
         </div>
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>

@@ -6,6 +6,7 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
   Button, DialogActions, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
+import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
 import { fetchAreasData, addAreaData, deleteAreaData } from '../actions/areas';
@@ -59,7 +60,7 @@ class DataAreaSetup extends Component {
   }
 
   state = {
-    snackbar: null,
+    snackbar: '',
     newData: {
       dataType: 0, 
       masterPath: '', 
@@ -111,6 +112,7 @@ class DataAreaSetup extends Component {
             maxFiles: 0,
             storeLevels: 2,
           },
+          snackbar: 'Success!',
         });
       })
       .catch(msg => {
@@ -121,7 +123,10 @@ class DataAreaSetup extends Component {
 
   handleDelete = id => () => {
     this.props.delete(id)
-      .then(this.getDataAreaData)
+      .then(() => {
+        this.getDataAreaData();
+        this.setState({ snackbar: 'Success!' });
+      })
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -330,13 +335,19 @@ class DataAreaSetup extends Component {
           </Paper>
           <Snackbar
             open={!!this.state.snackbar}
-            message={this.state.snackbar}
-            action={
-              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
-                <Delete color="error" />
-              </IconButton>
-            }
-          />
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
         </div>
       </div>
     );

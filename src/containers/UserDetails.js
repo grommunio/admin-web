@@ -14,12 +14,11 @@ import {
   Button,
   InputAdornment,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, IconButton,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
-import Delete from '@material-ui/icons/Close';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
@@ -28,6 +27,7 @@ import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
 import { timezones } from '../res/timezones';
 import { fetchAreasData } from '../actions/areas';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -170,7 +170,9 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
-    }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    })
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   handlePasswordChange = async () => {
@@ -469,13 +471,19 @@ class UserDetails extends PureComponent {
           </Paper>
           <Snackbar
             open={!!this.state.snackbar}
-            message={this.state.snackbar}
-            action={
-              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
-                <Delete color="error" />
-              </IconButton>
-            }
-          />
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
         </div>
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
