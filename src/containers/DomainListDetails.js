@@ -17,13 +17,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
+  IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
+import Delete from '@material-ui/icons/Close';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addDomainData, editDomainData } from '../actions/domains';
+import { editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import { dataArea, changeDomainPassword } from '../api';
 
@@ -94,6 +97,7 @@ class DomainListDetails extends PureComponent {
       changingPw: false,
       newPw: '',
       checkPw: '',
+      snackbar: null,
     };
   }
 
@@ -150,22 +154,14 @@ class DomainListDetails extends PureComponent {
     });
   }
 
-  handleAdd = () => {
-    const { endDay, createDay } = this.state.changes;
-    this.props.add({
-      ...this.state.changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-    });
-  }
-
   handleEdit = () => {
     const { endDay, createDay } = this.state.changes;
     this.props.edit({
       ...this.state.changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-    });
+    })
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   handlePasswordChange = async () => {
@@ -375,6 +371,15 @@ class DomainListDetails extends PureComponent {
               Save
             </Button>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
@@ -423,16 +428,12 @@ DomainListDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async domain => {
-      await dispatch(addDomainData(domain));
-    },
     edit: async domain => {
-      await dispatch(editDomainData(domain));
+      await dispatch(editDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };
