@@ -28,15 +28,15 @@ const styles = theme => ({
 class TopBar extends PureComponent {
 
   handleViewSwitch = async () => {
-    const { dispatch, Domains } = this.props;
+    const { fetchDomains, switchView, Domains } = this.props;
     this.props.history.push('/');
-    if(Domains.length === 0) dispatch(fetchDomainData()); 
-    await dispatch(switchView());
+    if(Domains.length === 0) fetchDomains(); 
+    switchView();
   }
 
   handleMenuToggle = async () => {
-    const { dispatch } = this.props;
-    await dispatch(setDrawerExpansion());
+    const { setDrawerExpansion } = this.props;
+    setDrawerExpansion();
   }
 
   render() {
@@ -63,7 +63,9 @@ class TopBar extends PureComponent {
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   title: PropTypes.string,
-  dispatch: PropTypes.func.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
+  setDrawerExpansion: PropTypes.func.isRequired,
+  switchView: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   Domains: PropTypes.array.isRequired,
   onAdd: PropTypes.func,
@@ -73,4 +75,19 @@ const mapStateToProps = state => {
   return { Domains: state.domains.Domains };
 };
 
-export default withRouter(connect(mapStateToProps)(withStyles(styles)(TopBar)));
+const mapDispatchToProps = dispatch => {
+  return {
+    setDrawer: () => {
+      dispatch(setDrawerExpansion());
+    },
+    switchView: () => {
+      dispatch(switchView());
+    },
+    fetchDomains: async () => {
+      await dispatch(fetchDomainData()).catch(() => { });
+    },
+  };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withStyles(styles)(TopBar)));
