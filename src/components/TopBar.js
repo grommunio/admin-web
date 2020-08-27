@@ -77,7 +77,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setDrawer: () => {
+    setDrawerExpansion: () => {
       dispatch(setDrawerExpansion());
     },
     switchView: () => {

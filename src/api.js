@@ -23,8 +23,7 @@ async function patch(path, data) {
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(handleErrors)
-    .then(response => response.json());
+  }).then(handleErrors);
 }
 
 async function post(path, data) {
@@ -44,8 +43,7 @@ async function put(path, data) {
     headers: {
       'Content-Type': 'application/json',
     },
-  }).then(handleErrors)
-    .then(response => response.json());
+  }).then(handleErrors);
 }
 
 async function yeet(path) {

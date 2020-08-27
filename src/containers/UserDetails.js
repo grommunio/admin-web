@@ -14,11 +14,12 @@ import {
   Button,
   InputAdornment,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
+import Delete from '@material-ui/icons/Close';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
@@ -69,6 +70,10 @@ class UserDetails extends PureComponent {
     if(!user) {
       this.state = {
         changes: {},
+        changingPw: false,
+        newPw: '',
+        checkPw: '',
+        snackbar: '',
       };
       props.history.push('/' + props.domain.domainname + '/users');
     }
@@ -78,6 +83,7 @@ class UserDetails extends PureComponent {
       changingPw: false,
       newPw: '',
       checkPw: '',
+      snackbar: '',
     };
   }
 
@@ -107,9 +113,7 @@ class UserDetails extends PureComponent {
 
   componentDidMount() {
     this.props.fetchAreas()
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.props.fetchGroupsData();
   }
 
@@ -156,8 +160,9 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       expire: undefined,
-    });
-    this.props.history.push('/' + this.props.domain.domainname + '/users');
+    })
+      .then(() => this.props.history.push('/' + this.props.domain.domainname + '/users'))
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleEdit = () => {
@@ -165,7 +170,7 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
-    });
+    }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   handlePasswordChange = async () => {
@@ -462,6 +467,15 @@ class UserDetails extends PureComponent {
               Save
             </Button>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
@@ -528,13 +542,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, user) => {
-      await dispatch(addUserData(domainID, user));
+      await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
     },
     fetchAreas: async () => {
       await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
     edit: async (domainID, user) => {
-      await dispatch(editUserData(domainID, user));
+      await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
     },
     fetchGroupsData: async () => {
       await dispatch(fetchGroupsData());

@@ -17,6 +17,7 @@ export function fetchUsersData(domainID) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
+      return Promise.reject(err.message);
     }
   };
 }
@@ -29,6 +30,7 @@ export function addUserData(domainID, user) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
       console.error('Failed to add user', err);
+      return Promise.reject(err.message);
     }
   };
 }
@@ -41,6 +43,7 @@ export function editUserData(domainID, user) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
       console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
     }
   };
 }
@@ -53,6 +56,7 @@ export function deleteUserData(domainID, id) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});
       console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
     }
   };
 }
