@@ -1,18 +1,19 @@
-const baseUrl = '//' + window.location.host + '/api/v1';
+const baseUrl = '//' + window.location.host + '/api/v1/s';
 
-function handleErrors(response) {
-  if (!response.ok) {
-    throw Error(response.statusText);
+async function handleErrors(response) {
+  if (response.ok) {
+    return response.json();
   }
-  return response;
+  let resp = '';
+  await response.json().then(json => {
+    resp = json.message;
+  });
+  return Promise.reject(new Error(resp));
 }
 
 async function get(path) {
   return await fetch(baseUrl + path)
-    .then(handleErrors)
-    .then(response => {
-      return response.json();
-    });
+    .then(handleErrors);
 }
 
 async function getNoErrorHandling(path) {
