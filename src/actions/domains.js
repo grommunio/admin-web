@@ -16,6 +16,7 @@ export function fetchDomainData() {
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -28,6 +29,7 @@ export function addDomainData(domain) {
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -40,6 +42,7 @@ export function editDomainData(domain) {
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -51,6 +54,7 @@ export function deleteDomainData(id) {
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }

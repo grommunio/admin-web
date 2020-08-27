@@ -14,18 +14,20 @@ import {
   Button,
   InputAdornment,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
+import Delete from '@material-ui/icons/Close';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
-import { changeUserPassword, dataArea } from '../api';
+import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
 import { timezones } from '../res/timezones';
+import { fetchAreasData } from '../actions/areas';
 
 const styles = theme => ({
   root: {
@@ -68,6 +70,10 @@ class UserDetails extends PureComponent {
     if(!user) {
       this.state = {
         changes: {},
+        changingPw: false,
+        newPw: '',
+        checkPw: '',
+        snackbar: '',
       };
       props.history.push('/' + props.domain.domainname + '/users');
     }
@@ -77,6 +83,7 @@ class UserDetails extends PureComponent {
       changingPw: false,
       newPw: '',
       checkPw: '',
+      snackbar: '',
     };
   }
 
@@ -105,9 +112,8 @@ class UserDetails extends PureComponent {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ areas: json.user });
-    });
+    this.props.fetchAreas()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.props.fetchGroupsData();
   }
 
@@ -154,8 +160,9 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       expire: undefined,
-    });
-    this.props.history.push('/' + this.props.domain.domainname + '/users');
+    })
+      .then(() => this.props.history.push('/' + this.props.domain.domainname + '/users'))
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleEdit = () => {
@@ -163,7 +170,7 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
-    });
+    }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   handlePasswordChange = async () => {
@@ -178,8 +185,8 @@ class UserDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, groups } = this.props;
-    const { editing, areas, changes, changingPw, newPw, checkPw } = this.state;
+    const { classes, t, groups, userAreas } = this.props;
+    const { editing, changes, changingPw, newPw, checkPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -248,9 +255,9 @@ class UserDetails extends PureComponent {
                 value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
-                {areas && areas.map((user, key) => (
-                  <MenuItem key={key} value={user.ID}>
-                    {user.masterPath}
+                {userAreas.map((area, key) => (
+                  <MenuItem key={key} value={area.ID}>
+                    {area.masterPath}
                   </MenuItem>
                 ))}
               </TextField>
@@ -460,6 +467,15 @@ class UserDetails extends PureComponent {
               Save
             </Button>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
         <Dialog open={!!changingPw}>
           <DialogTitle>Change Password</DialogTitle>
@@ -507,26 +523,32 @@ UserDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
+  userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   fetchGroupsData: PropTypes.func.isRequired,
+  fetchAreas: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
+    userAreas: state.areas.Areas.user || [],
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, user) => {
-      await dispatch(addUserData(domainID, user));
+      await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
+    },
+    fetchAreas: async () => {
+      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
     edit: async (domainID, user) => {
-      await dispatch(editUserData(domainID, user));
+      await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
     },
     fetchGroupsData: async () => {
       await dispatch(fetchGroupsData());

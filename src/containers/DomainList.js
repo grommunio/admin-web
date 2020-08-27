@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -45,10 +45,12 @@ class DomainList extends Component {
 
   state = {
     changes: {},
+    snackbar: null,
   }
 
   componentDidMount() {
-    this.props.fetch();
+    this.props.fetch()
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleInput = field => event => {
@@ -69,7 +71,9 @@ class DomainList extends Component {
   }
 
   handleDelete = id => () => {
-    this.props.delete(id).then(this.props.fetch);
+    this.props.delete(id)
+      .then(this.props.fetch)
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   render() {
@@ -113,6 +117,15 @@ class DomainList extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -135,10 +148,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => {
-      await dispatch(fetchDomainData());
+      await dispatch(fetchDomainData()).catch(error => Promise.reject(error));
     },
     delete: async id => {
-      await dispatch(deleteDomainData(id));
+      await dispatch(deleteDomainData(id)).catch(error => Promise.reject(error));
     },
   };
 };

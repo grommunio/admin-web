@@ -4,11 +4,12 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions } from '@material-ui/core';
+  Button, DialogActions, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
-import { dataArea, addDataArea, deleteDataArea } from '../api';
+import { fetchAreasData, addAreaData, deleteAreaData } from '../actions/areas';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   root: {
@@ -54,17 +55,11 @@ const styles = theme => ({
 class DataAreaSetup extends Component {
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ table: json });
-    });
+    this.getDataAreaData();
   }
 
   state = {
-    table: {
-      user: [],
-      domain: [],
-      independent: [],
-    },
+    snackbar: null,
     newData: {
       dataType: 0, 
       masterPath: '', 
@@ -75,6 +70,13 @@ class DataAreaSetup extends Component {
       storeLevels: 2,
     },
     addOpen: false,
+  }
+
+  getDataAreaData = () => {
+    this.props.fetch()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
   }
 
   handleInput = field => event => {
@@ -93,19 +95,36 @@ class DataAreaSetup extends Component {
   ];
 
   handleAdd = () => {
-    addDataArea({
+    this.setState({ addOpen: false });
+    this.props.add({
       ...this.state.newData,
       accelPath: this.state.accelPath || null,
-    }).then(() => this.setState({ addOpen: false }))
-      .then(() => dataArea().then(json => {
-        if(json) this.setState({ table: json });
-      }));
+    })
+      .then(() => {
+        this.setState({ 
+          newData: {
+            dataType: 0, 
+            masterPath: '', 
+            slavePath: '', 
+            accelPath: '', 
+            maxSpace: 0, 
+            maxFiles: 0,
+            storeLevels: 2,
+          },
+        });
+      })
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      })
+      .then(this.getDataAreaData);
   }
 
   handleDelete = id => () => {
-    deleteDataArea(id).then(() => dataArea().then(json => {
-      if(json) this.setState({ table: json });
-    }));
+    this.props.delete(id)
+      .then(this.getDataAreaData)
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
   }
 
   handleNumberInput = field => event => {
@@ -122,8 +141,8 @@ class DataAreaSetup extends Component {
   }
 
   render() {
-    const { classes, t } = this.props;
-    const { table, newData } = this.state;
+    const { classes, t, areas } = this.props;
+    const { newData } = this.state;
 
     return (
       <div className={classes.root}>
@@ -225,7 +244,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {table.user.map((obj, idx) =>
+                {areas.user.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -257,7 +276,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {table.domain.map((obj, idx) =>
+                {areas.domain.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -289,7 +308,7 @@ class DataAreaSetup extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {table.independent.map((obj, idx) =>
+                {areas.independent.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
@@ -309,6 +328,15 @@ class DataAreaSetup extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -318,6 +346,31 @@ class DataAreaSetup extends Component {
 DataAreaSetup.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  areas: PropTypes.object.isRequired,
+  fetch: PropTypes.func.isRequired,
+  add: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DataAreaSetup));
+const mapStateToProps = state => {
+  return {
+    areas: state.areas.Areas,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetch: async () => {
+      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
+    },
+    add: async area => {
+      await dispatch(addAreaData(area)).catch(msg => Promise.reject(msg));
+    },
+    delete: async id => {
+      await dispatch(deleteAreaData(id)).catch(msg => Promise.reject(msg));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DataAreaSetup)));

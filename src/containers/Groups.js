@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchGroupsData, deleteGroupData } from '../actions/groups';
 import { fetchDomainData } from '../actions/domains';
@@ -46,10 +46,12 @@ class Groups extends Component {
 
   state = {
     changes: {},
+    snackbar: null,
   }
 
   componentDidMount() {
-    this.props.fetch();
+    this.props.fetch()
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleInput = field => event => {
@@ -114,6 +116,15 @@ class Groups extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -137,10 +148,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => {
-      await dispatch(fetchGroupsData());
+      await dispatch(fetchGroupsData()).catch(error => Promise.reject(error));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData());
+      await dispatch(fetchDomainData()).catch(() => { });
     },
     delete: async id => {
       await dispatch(deleteGroupData(id));

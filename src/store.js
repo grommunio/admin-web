@@ -4,6 +4,7 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 import aliasesReducer from './reducers/aliases';
+import areasReducer from './reducers/areas';
 import authReducer from './reducers/auth';
 import classesReducer from './reducers/classes';
 import domainsReducer from './reducers/domains';
@@ -23,6 +24,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   combineReducers({
     aliases: aliasesReducer,
+    areas: areasReducer,
     auth: authReducer,
     classes: classesReducer,
     domains: domainsReducer,

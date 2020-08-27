@@ -13,15 +13,18 @@ import {
   MenuItem,
   Button,
   InputAdornment,
+  Snackbar,
+  IconButton,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addDomainData, editDomainData } from '../actions/domains';
+import { addDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
-import { dataArea } from '../api';
+import Delete from '@material-ui/icons/Close';
+import { fetchAreasData } from '../actions/areas';
 
 const styles = theme => ({
   root: {
@@ -77,14 +80,15 @@ class DomainListDetails extends PureComponent {
         mailSubSystem: false,
         netDisk: false,
       },
-      areas: [],
+      snackbar: null,
     };
   }
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ areas: json.domain });
-    });
+    this.props.fetchAreas()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
   }
 
   domainTypes = [
@@ -141,12 +145,14 @@ class DomainListDetails extends PureComponent {
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: this.state.changes.password || undefined,
-    });
+    })
+      .then(() => this.props.history.push('/domainList'))
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   render() {
-    const { classes, t } = this.props;
-    const { changes, areas } = this.state;
+    const { classes, t, domainAreas } = this.props;
+    const { changes } = this.state;
 
     return (
       <div className={classes.root}>
@@ -184,11 +190,10 @@ class DomainListDetails extends PureComponent {
                 className={classes.input}
                 label={t("Area")}
                 fullWidth
-                value={changes.areaID || 0}
+                value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
-                <MenuItem value={0}></MenuItem>
-                {areas.map((area, key) => (
+                {domainAreas.map((area, key) => (
                   <MenuItem key={key} value={area.ID}>
                     {area.masterPath}
                   </MenuItem>
@@ -354,6 +359,15 @@ class DomainListDetails extends PureComponent {
               Save
             </Button>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            message={this.state.snackbar}
+            action={
+              <IconButton size="small" onClick={() => this.setState({ snackbar: '' })}>
+                <Delete color="error" />
+              </IconButton>
+            }
+          />
         </div>
       </div>
     );
@@ -363,22 +377,29 @@ class DomainListDetails extends PureComponent {
 DomainListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  domainAreas: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  fetchAreas: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    domainAreas: state.areas.Areas.domain || [],
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async domain => {
-      await dispatch(addDomainData(domain));
+    fetchAreas: async () => {
+      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
-    edit: async domain => {
-      await dispatch(editDomainData(domain));
+    add: async domain => {
+      await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(DomainListDetails)));
