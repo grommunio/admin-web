@@ -28,7 +28,7 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
-import { dataArea, changeDomainPassword } from '../api';
+import { changeDomainPassword } from '../api';
 
 const styles = theme => ({
   root: {
@@ -99,12 +99,6 @@ class DomainListDetails extends PureComponent {
       checkPw: '',
       snackbar: null,
     };
-  }
-
-  componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ areas: json.domain });
-    });
   }
 
   domainTypes = [

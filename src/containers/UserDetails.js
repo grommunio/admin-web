@@ -23,9 +23,10 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
-import { changeUserPassword, dataArea } from '../api';
+import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
 import { timezones } from '../res/timezones';
+import { fetchAreasData } from '../actions/areas';
 
 const styles = theme => ({
   root: {
@@ -105,9 +106,10 @@ class UserDetails extends PureComponent {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ areas: json.user });
-    });
+    this.props.fetchAreas()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
     this.props.fetchGroupsData();
   }
 
@@ -178,8 +180,8 @@ class UserDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, groups } = this.props;
-    const { editing, areas, changes, changingPw, newPw, checkPw } = this.state;
+    const { classes, t, groups, userAreas } = this.props;
+    const { editing, changes, changingPw, newPw, checkPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -248,9 +250,9 @@ class UserDetails extends PureComponent {
                 value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
-                {areas && areas.map((user, key) => (
-                  <MenuItem key={key} value={user.ID}>
-                    {user.masterPath}
+                {userAreas.map((area, key) => (
+                  <MenuItem key={key} value={area.ID}>
+                    {area.masterPath}
                   </MenuItem>
                 ))}
               </TextField>
@@ -507,16 +509,19 @@ UserDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
+  userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   fetchGroupsData: PropTypes.func.isRequired,
+  fetchAreas: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
+    userAreas: state.areas.Areas.user || [],
   };
 };
 
@@ -524,6 +529,9 @@ const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, user) => {
       await dispatch(addUserData(domainID, user));
+    },
+    fetchAreas: async () => {
+      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user));
