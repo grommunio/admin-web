@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import { addDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import Delete from '@material-ui/icons/Close';
-import { dataArea } from '../api';
+import { fetchAreasData } from '../actions/areas';
 
 const styles = theme => ({
   root: {
@@ -80,15 +80,15 @@ class DomainListDetails extends PureComponent {
         mailSubSystem: false,
         netDisk: false,
       },
-      areas: [],
       snackbar: null,
     };
   }
 
   componentDidMount() {
-    dataArea().then(json => {
-      if(json) this.setState({ areas: json.domain });
-    });
+    this.props.fetchAreas()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
   }
 
   domainTypes = [
@@ -151,8 +151,8 @@ class DomainListDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t } = this.props;
-    const { changes, areas } = this.state;
+    const { classes, t, domainAreas } = this.props;
+    const { changes } = this.state;
 
     return (
       <div className={classes.root}>
@@ -193,7 +193,7 @@ class DomainListDetails extends PureComponent {
                 value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
-                {areas.map((area, key) => (
+                {domainAreas.map((area, key) => (
                   <MenuItem key={key} value={area.ID}>
                     {area.masterPath}
                   </MenuItem>
@@ -377,18 +377,29 @@ class DomainListDetails extends PureComponent {
 DomainListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  domainAreas: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   add: PropTypes.func.isRequired,
+  fetchAreas: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    domainAreas: state.areas.Areas.domain || [],
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchAreas: async () => {
+      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
+    },
     add: async domain => {
       await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(DomainListDetails)));
