@@ -69,7 +69,7 @@ class DomainListDetails extends PureComponent {
         adminName: '',
         tel: '',
         domainStatus: 0,
-        domainType: 0,
+        storageType: 0,
         mailBackup: false,
         mailMonitor: false,
         ignoreCheckingUser: false,
@@ -87,7 +87,7 @@ class DomainListDetails extends PureComponent {
       });
   }
 
-  domainTypes = [
+  storageTypes = [
     { name: 'default storage', ID: 0 },
   ]
 
@@ -151,7 +151,7 @@ class DomainListDetails extends PureComponent {
 
   render() {
     const { classes, t, domainAreas } = this.props;
-    const { domainname, password, domainType, areaID, domainStatus,
+    const { domainname, password, storageType, areaID, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser } = this.state.changes;
     const domainError = !domainname.match(
@@ -208,12 +208,12 @@ class DomainListDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("domain type")}
+                label={t("storage type")}
                 fullWidth
-                value={domainType || 0}
-                onChange={this.handleInput('domainType')}
+                value={storageType || 0}
+                onChange={this.handleInput('storageType')}
               >
-                {this.domainTypes.map((storageType, key) => (
+                {this.storageTypes.map((storageType, key) => (
                   <MenuItem key={key} value={storageType.ID}>
                     {storageType.name}
                   </MenuItem>
