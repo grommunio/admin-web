@@ -20,6 +20,9 @@ const styles = theme => ({
     marginBottom: theme.spacing(3),
   },
   toolbar: theme.mixins.toolbar,
+  select: {
+    minWidth: 60,
+  },
 });
 
 class AddDomain extends PureComponent {
