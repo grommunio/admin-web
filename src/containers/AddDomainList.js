@@ -12,13 +12,10 @@ import {
   FormControlLabel,
   MenuItem,
   Button,
-  InputAdornment,
   Snackbar,
   IconButton,
+  Select,
 } from '@material-ui/core';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { DatePicker } from "@material-ui/pickers";
-import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addDomainData } from '../actions/domains';
@@ -65,7 +62,6 @@ class DomainListDetails extends PureComponent {
         orgID: 1,
         domainname: '',
         password: '',
-        media: '',
         maxSize: 0,
         maxUser: 0,
         title: '',
@@ -73,14 +69,14 @@ class DomainListDetails extends PureComponent {
         adminName: '',
         tel: '',
         domainStatus: 0,
-        domainType: 0,
+        storageType: 0,
         mailBackup: false,
         mailMonitor: false,
         ignoreCheckingUser: false,
-        mailSubSystem: false,
-        netDisk: false,
+        mailSubSystem: true,
       },
       snackbar: null,
+      sizeUnit: 0,
     };
   }
 
@@ -91,7 +87,7 @@ class DomainListDetails extends PureComponent {
       });
   }
 
-  domainTypes = [
+  storageTypes = [
     { name: 'default storage', ID: 0 },
   ]
 
@@ -139,20 +135,27 @@ class DomainListDetails extends PureComponent {
   }
 
   handleAdd = () => {
-    const { endDay, createDay } = this.state.changes;
+    const { endDay, createDay, password, maxSize } = this.state.changes;
     this.props.add({
       ...this.state.changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      password: this.state.changes.password || undefined,
+      password: password || undefined,
+      maxSize: maxSize << (10 * this.state.sizeUnit),
     })
       .then(() => this.props.history.push('/domainList'))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
+
   render() {
     const { classes, t, domainAreas } = this.props;
-    const { changes } = this.state;
+    const { domainname, password, storageType, areaID, domainStatus,
+      maxSize, maxUser, title, address, adminName, tel, mailBackup,
+      mailMonitor, mailSubSystem, ignoreCheckingUser } = this.state.changes;
+    const domainError = !domainname.match(
+      /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
     return (
       <div className={classes.root}>
@@ -173,41 +176,44 @@ class DomainListDetails extends PureComponent {
                 className={classes.input} 
                 label={t("domain")} 
                 fullWidth 
-                value={changes.domainname || ''}
+                value={domainname || ''}
                 onChange={this.handleInput('domainname')}
                 autoFocus
+                required
+                error={domainError && domainname}
               />
               <TextField 
                 className={classes.input} 
                 label={t("password")} 
                 fullWidth 
-                value={changes.password || ''}
+                value={password || ''}
                 onChange={this.handleInput('password')}
                 type="password"
+                required
               />
               <TextField
                 select
                 className={classes.input}
                 label={t("Area")}
                 fullWidth
-                value={changes.areaID || ''}
+                value={areaID || ''}
                 onChange={this.handleInput('areaID')}
               >
                 {domainAreas.map((area, key) => (
                   <MenuItem key={key} value={area.ID}>
-                    {area.masterPath}
+                    {area.name} {area.masterPath}
                   </MenuItem>
                 ))}
               </TextField>
               <TextField
                 select
                 className={classes.input}
-                label={t("domain type")}
+                label={t("storage type")}
                 fullWidth
-                value={changes.domainType || 0}
-                onChange={this.handleInput('domainType')}
+                value={storageType || 0}
+                onChange={this.handleInput('storageType')}
               >
-                {this.domainTypes.map((storageType, key) => (
+                {this.storageTypes.map((storageType, key) => (
                   <MenuItem key={key} value={storageType.ID}>
                     {storageType.name}
                   </MenuItem>
@@ -218,7 +224,7 @@ class DomainListDetails extends PureComponent {
                 className={classes.input}
                 label={t("status")}
                 fullWidth
-                value={changes.domainStatus || 0}
+                value={domainStatus || 0}
                 onChange={this.handleInput('domainStatus')}
               >
                 {this.statuses.map((status, key) => (
@@ -231,77 +237,65 @@ class DomainListDetails extends PureComponent {
                 className={classes.input} 
                 label={t("maximum space")} 
                 fullWidth 
-                value={changes.maxSize || ''}
+                value={maxSize || ''}
                 onChange={this.handleNumberInput('maxSize')}
                 InputProps={{
-                  endAdornment: <InputAdornment position="start">G</InputAdornment>,
+                  endAdornment:
+                    <FormControl>
+                      <Select
+                        onChange={this.handleUnitChange}
+                        value={this.state.sizeUnit}
+                        className={classes.select}
+                      >
+                        <MenuItem value={0}>MB</MenuItem>
+                        <MenuItem value={1}>GB</MenuItem>
+                        <MenuItem value={2}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }}
               />
               <TextField 
                 className={classes.input} 
                 label={t("maximum users")} 
                 fullWidth 
-                value={changes.maxUser || ''}
+                value={maxUser || ''}
                 onChange={this.handleNumberInput('maxUser')}
               />
               <TextField 
                 className={classes.input} 
                 label={t("title")} 
                 fullWidth 
-                value={changes.title || ''}
+                value={title || ''}
                 onChange={this.handleInput('title')}
               />
               <TextField 
                 className={classes.input} 
                 label={t("address")} 
                 fullWidth 
-                value={changes.address || ''}
+                value={address || ''}
                 onChange={this.handleInput('address')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("media")} 
-                fullWidth 
-                value={changes.media || ''}
-                onChange={this.handleInput('media')}
               />
               <TextField 
                 className={classes.input} 
                 label={t("administrator")} 
                 fullWidth 
-                value={changes.adminName || ''}
+                value={adminName || ''}
                 onChange={this.handleInput('adminName')}
               />
               <TextField 
                 className={classes.input} 
                 label={t("telephone")} 
                 fullWidth 
-                value={changes.tel || ''}
+                value={tel || ''}
                 onChange={this.handleInput('tel')}
               />
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DatePicker
-                  className={classes.input} 
-                  label="begin date"
-                  value={changes.createDay || new Date()}
-                  onChange={this.handleDateChange('createDay')}
-                  autoOk
-                />
-                <DatePicker
-                  className={classes.input}
-                  label="end date"
-                  value={changes.endDay || new Date()}
-                  onChange={this.handleDateChange('endDay')}
-                  autoOk
-                />
-              </MuiPickersUtilsProvider>
             </FormControl>
             <Grid container className={classes.input}>
               <FormControlLabel
                 label={t('mail archive')}
                 control={
                   <Checkbox
-                    checked={changes.mailBackup || false}
+                    checked={mailBackup || false}
                     onChange={this.handleCheckbox('mailBackup')}
                   />
                 }
@@ -310,7 +304,7 @@ class DomainListDetails extends PureComponent {
                 label={t('mail monitor')}
                 control={
                   <Checkbox
-                    checked={changes.mailMonitor || false}
+                    checked={mailMonitor || false}
                     onChange={this.handleCheckbox('mailMonitor')}
                   />
                 }
@@ -319,7 +313,7 @@ class DomainListDetails extends PureComponent {
                 label={t('ignore checking user')}
                 control={
                   <Checkbox
-                    checked={changes.ignoreCheckingUser || false}
+                    checked={ignoreCheckingUser || false}
                     onChange={this.handleCheckbox('ignoreCheckingUser')}
                   />
                 }
@@ -328,17 +322,8 @@ class DomainListDetails extends PureComponent {
                 label={t('mail sub system')}
                 control={
                   <Checkbox
-                    checked={changes.mailSubSystem || false}
+                    checked={mailSubSystem || false}
                     onChange={this.handleCheckbox('mailSubSystem')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('net disk')}
-                control={
-                  <Checkbox
-                    checked={changes.netDisk || false}
-                    onChange={this.handleCheckbox('netDisk')}
                   />
                 }
               />
@@ -355,6 +340,7 @@ class DomainListDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              disabled={!domainname || password.length < 6 || domainError}
             >
               Save
             </Button>
