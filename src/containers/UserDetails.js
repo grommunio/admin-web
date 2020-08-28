@@ -56,6 +56,9 @@ const styles = theme => ({
   gird: {
     display: 'flex',
   },
+  select: {
+    minWidth: 60,
+  },
 });
 
 class UserDetails extends PureComponent {
