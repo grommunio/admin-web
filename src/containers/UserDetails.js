@@ -12,7 +12,6 @@ import {
   FormControlLabel,
   MenuItem,
   Button,
-  InputAdornment,
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
 } from '@material-ui/core';
@@ -71,6 +70,7 @@ class UserDetails extends PureComponent {
         newPw: '',
         checkPw: '',
         snackbar: '',
+        sizeUnit: 0,
       };
       props.history.push('/' + props.domain.domainname + '/users');
     }
@@ -80,6 +80,7 @@ class UserDetails extends PureComponent {
       newPw: '',
       checkPw: '',
       snackbar: '',
+      sizeUnit: 0,
     };
   }
 
@@ -156,6 +157,7 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
+      maxSize: this.state.changes.maxSize << (10 * this.state.sizeUnit),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -171,6 +173,8 @@ class UserDetails extends PureComponent {
     const { newPw, checkPw } = this.state;
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
+
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
     const { classes, t, groups, userAreas, domain } = this.props;
@@ -318,7 +322,18 @@ class UserDetails extends PureComponent {
                 value={changes.maxSize || ''}
                 onChange={this.handleNumberInput('maxSize')}
                 InputProps={{
-                  endAdornment: <InputAdornment position="start">G</InputAdornment>,
+                  endAdornment:
+                    <FormControl>
+                      <Select
+                        onChange={this.handleUnitChange}
+                        value={this.state.sizeUnit}
+                        className={classes.select}
+                      >
+                        <MenuItem value={0}>MiB</MenuItem>
+                        <MenuItem value={1}>GiB</MenuItem>
+                        <MenuItem value={2}>TiB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }}
               />
               <TextField 

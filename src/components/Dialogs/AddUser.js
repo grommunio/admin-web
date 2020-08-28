@@ -56,13 +56,14 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { createDay, lang } = this.state;
+    const { createDay, lang, maxSize } = this.state;
     this.props.add(this.props.domain.ID, {
       ...this.state,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
       sizeUnit: undefined,
       maxFile: 0,
+      maxSize: maxSize << (10 * this.state.sizeUnit),
     })
       .then(() => {
         this.setState({
