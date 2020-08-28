@@ -92,7 +92,6 @@ class DataAreaSetup extends Component {
   types = [
     { name: 'user data', ID: 0 },
     { name: 'domain data', ID: 1 },
-    { name: 'independant storage', ID: 2 },
   ];
 
   handleAdd = () => {
@@ -200,20 +199,6 @@ class DataAreaSetup extends Component {
                   value={newData.maxSpace}
                   onChange={this.handleNumberInput('maxSpace')}
                 />
-                <TextField 
-                  className={classes.input} 
-                  label={t("maximum files")}
-                  fullWidth
-                  value={newData.maxFiles}
-                  onChange={this.handleNumberInput('maxFiles')}
-                />
-                <TextField 
-                  className={classes.input} 
-                  label={t("Store levels")}
-                  fullWidth
-                  value={newData.storeLevels}
-                  onChange={this.handleNumberInput('storeLevels')}
-                />
               </FormControl>
             </DialogContent>
             <DialogActions>
@@ -282,38 +267,6 @@ class DataAreaSetup extends Component {
               </TableHead>
               <TableBody>
                 {areas.domain.map((obj, idx) =>
-                  <TableRow key={idx}>
-                    <TableCell>{obj.masterPath}</TableCell>
-                    <TableCell>{obj.accelPath}</TableCell>
-                    <TableCell>{obj.slavePath}</TableCell>
-                    <TableCell>{obj.maxSpace}</TableCell>
-                    <TableCell>{obj.maxFiles}</TableCell>
-                    <TableCell>{obj.usedSpace}</TableCell>
-                    <TableCell>{obj.usedFiles}</TableCell>
-                    <TableCell>{obj.usedNumber}</TableCell>
-                    <TableCell>
-                      <IconButton  onClick={this.handleDelete(obj.ID)} >
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableHead>
-                <TableRow>
-                  <TableCell>master independent storage area</TableCell>
-                  <TableCell>master accelerated storage area</TableCell>
-                  <TableCell>slave independent storage data area</TableCell>
-                  <TableCell>maximum space</TableCell>
-                  <TableCell>maximum files</TableCell>
-                  <TableCell>used space</TableCell>
-                  <TableCell>used files</TableCell>
-                  <TableCell>independent storage number</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {areas.independent.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>

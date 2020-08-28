@@ -160,6 +160,7 @@ class UserDetails extends PureComponent {
       ...this.state.changes,
       createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       expire: undefined,
+      lang: this.state.changes.lang || 0,
     })
       .then(() => this.props.history.push('/' + this.props.domain.domainname + '/users'))
       .catch(msg => this.setState({ snackbar: msg }));
