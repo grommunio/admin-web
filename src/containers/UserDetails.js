@@ -16,9 +16,6 @@ import {
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
 } from '@material-ui/core';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import { DatePicker } from "@material-ui/pickers";
-import DateFnsUtils from '@date-io/date-fns';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { addUserData, editUserData } from '../actions/users';
@@ -188,7 +185,7 @@ class UserDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, groups, userAreas } = this.props;
+    const { classes, t, groups, userAreas, domain } = this.props;
     const { editing, changes, changingPw, newPw, checkPw } = this.state;
 
     return (
@@ -213,6 +210,9 @@ class UserDetails extends PureComponent {
                   autoFocus
                   onChange={this.handleInput('username')}
                   style={{ flex: 1, marginRight: 8 }}
+                  InputProps={{
+                    endAdornment: <div>@{domain.domainname}</div>,
+                  }}
                 />
                 <Button
                   variant="contained"
@@ -334,26 +334,28 @@ class UserDetails extends PureComponent {
                 }}
               />
               <TextField 
-                className={classes.input} 
-                label={t("maximum file")} 
-                fullWidth 
-                value={changes.maxFile || ''}
-                onChange={this.handleNumberInput('maxFile')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("job title")} 
-                fullWidth 
+                className={classes.input}
+                label={t("job title")}
+                fullWidth
                 value={changes.title || ''}
                 onChange={this.handleInput('title')}
               />
-              <TextField 
-                className={classes.input} 
-                label={t("real name")} 
-                fullWidth 
-                value={changes.realName || ''}
-                onChange={this.handleInput('realName')}
-              />
+              <div style={{ display: 'flex' }}>
+                <TextField
+                  className={classes.input}
+                  label={t("first name")}
+                  value={changes.firstName || ''}
+                  onChange={this.handleInput('firstName')}
+                  style={{ flex: 1, marginRight: 8 }}
+                />
+                <TextField 
+                  className={classes.input}
+                  label={t("last name")}
+                  value={changes.lastName || ''}
+                  onChange={this.handleInput('lastName')}
+                  style={{ flex: 1, marginLeft: 8 }}
+                />
+              </div>
               <TextField 
                 className={classes.input} 
                 label={t("nick name")} 
@@ -397,16 +399,6 @@ class UserDetails extends PureComponent {
                 onChange={this.handleInput('memo')}
               />
             </FormControl>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <DatePicker
-                className={classes.input} 
-                label="begin date"
-                value={changes.createDay || new Date()}
-                onChange={this.handleDateChange('createDay')}
-                autoOk
-                fullWidth
-              />
-            </MuiPickersUtilsProvider>
             <Grid container className={classes.input}>
               <FormControlLabel
                 label={t('allow pop3 or imap downloading')}
@@ -441,15 +433,6 @@ class UserDetails extends PureComponent {
                   <Checkbox
                     checked={changes.publicAddress || false}
                     onChange={this.handleCheckbox('publicAddress')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('net disk')}
-                control={
-                  <Checkbox
-                    checked={changes.netDisk || false}
-                    onChange={this.handleCheckbox('netDisk')}
                   />
                 }
               />
