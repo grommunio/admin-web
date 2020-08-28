@@ -48,8 +48,9 @@ class AddDomain extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
-  storageTypes = [
-    { name: 'default storage', ID: 0 },
+  domainTypes = [
+    { name: 'normal', ID: 0 },
+    { name: 'alias', ID: 1 },
   ]
 
   statuses = [
@@ -89,7 +90,7 @@ class AddDomain extends PureComponent {
         this.setState({
           domainname: '',
           password: '',
-          storageType: 0,
+          domainType: 0,
           areaID: '',
           domainStatus: 0,
           maxSize: '',
@@ -165,14 +166,14 @@ class AddDomain extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("storage type")}
+              label={t("domain type")}
               fullWidth
               value={domainType || 0}
               onChange={this.handleInput('domainType')}
             >
-              {this.storageTypes.map((storageType, key) => (
-                <MenuItem key={key} value={storageType.ID}>
-                  {storageType.name}
+              {this.domainTypes.map((domainType, key) => (
+                <MenuItem key={key} value={domainType.ID}>
+                  {domainType.name}
                 </MenuItem>
               ))}
             </TextField>
