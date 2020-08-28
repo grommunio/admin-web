@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { addUserData, editUserData } from '../actions/users';
+import { editUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
@@ -76,7 +76,6 @@ class UserDetails extends PureComponent {
     }
     else this.state = {
       changes: user,
-      editing: !!user.ID,
       changingPw: false,
       newPw: '',
       checkPw: '',
@@ -152,17 +151,6 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleAdd = () => {
-    this.props.add(this.props.domain.ID, {
-      ...this.state.changes,
-      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
-      expire: undefined,
-      lang: this.state.changes.lang || 0,
-    })
-      .then(() => this.props.history.push('/' + this.props.domain.domainname + '/users'))
-      .catch(msg => this.setState({ snackbar: msg }));
-  }
-
   handleEdit = () => {
     this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
@@ -186,7 +174,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, groups, userAreas, domain } = this.props;
-    const { editing, changes, changingPw, newPw, checkPw } = this.state;
+    const { changes, changingPw, newPw, checkPw } = this.state;
 
     return (
       <div className={classes.root}>
@@ -199,7 +187,7 @@ class UserDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {editing ? t('Edit user') : t('Add user')}
+                {t('Edit user')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -448,7 +436,7 @@ class UserDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={editing ? this.handleEdit: this.handleAdd}
+              onClick={this.handleEdit}
             >
               Save
             </Button>
@@ -519,7 +507,6 @@ UserDetails.propTypes = {
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
   fetchGroupsData: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
 };
@@ -533,9 +520,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, user) => {
-      await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
     fetchAreas: async () => {
       await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },

@@ -204,9 +204,9 @@ class AddDomain extends PureComponent {
                       value={sizeUnit}
                       className={classes.select}
                     >
-                      <MenuItem value={0}>MB</MenuItem>
-                      <MenuItem value={1}>GB</MenuItem>
-                      <MenuItem value={2}>TB</MenuItem>
+                      <MenuItem value={0}>MiB</MenuItem>
+                      <MenuItem value={1}>GiB</MenuItem>
+                      <MenuItem value={2}>TiB</MenuItem>
                     </Select>
                   </FormControl>,
               }}
@@ -288,7 +288,7 @@ class AddDomain extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => this.setState({ addOpen: false })}
+            onClick={onSuccess}
             variant="contained"
             color="secondary"
           >
