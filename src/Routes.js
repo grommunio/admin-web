@@ -12,7 +12,6 @@ const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
 const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
 const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
-const AsyncAddDomainList = AsyncComponent(() => import("./containers/AddDomainList"));
 const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
 const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
@@ -55,12 +54,6 @@ const Routes = ({ childProps }) => (
       path="/domainList"
       exact
       component={AsyncDomainList}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path="/domainList/add"
-      exact
-      component={AsyncAddDomainList}
       props={childProps}
     />
     <AuthenticatedRoute

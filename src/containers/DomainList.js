@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { fetchDomainData, deleteDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
+import AddDomain from '../components/Dialogs/AddDomain';
 
 const styles = theme => ({
   root: {
@@ -45,8 +46,8 @@ const styles = theme => ({
 class DomainList extends Component {
 
   state = {
-    changes: {},
     snackbar: null,
+    adding: false,
   }
 
   componentDidMount() {
@@ -59,18 +60,11 @@ class DomainList extends Component {
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
-  }
+  handleAdd = () => this.setState({ adding: true });
 
-  handleAdd = () => {
-    this.props.history.push('/domainList/add', {});
-  }
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
 
   handleEdit = domain => () => {
     this.props.history.push('/domainList/' + domain.ID, { ...domain });
@@ -126,22 +120,29 @@ class DomainList extends Component {
               </TableBody>
             </Table>
           </Paper>
-          <Snackbar
-            open={!!this.state.snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!this.state.snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {this.state.snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {this.state.snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
         </div>
+        <AddDomain
+          open={this.state.adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+        />
       </div>
     );
   }

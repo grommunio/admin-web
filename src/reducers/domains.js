@@ -2,7 +2,9 @@ import {
   DOMAIN_DATA_FETCH,
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ERROR,
+  DOMAIN_DATA_ADD,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -26,12 +28,17 @@ function domainsReducer(state = defaultState, action) {
         Domains: action.data.data,
       };
     
-    case DOMAIN_DATA_ERROR: {
+    case DOMAIN_DATA_ERROR:
       return {
         ...state,
         error: action.error,
       };
-    }
+
+    case DOMAIN_DATA_ADD:
+      return {
+        ...state,
+        Domains: addItem(state.Domains, action.data),
+      };
 
     default:
       return state;
