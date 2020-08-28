@@ -54,6 +54,9 @@ const styles = theme => ({
     marginBottom: theme.spacing(3),
   },
   toolbar: theme.mixins.toolbar,
+  select: {
+    minWidth: 60,
+  },
 });
 
 class DomainListDetails extends PureComponent {
@@ -81,8 +84,9 @@ class DomainListDetails extends PureComponent {
     };
   }
 
-  storageTypes = [
-    { name: 'default storage', ID: 0 },
+  domainTypes = [
+    { name: 'normal', ID: 0 },
+    { name: 'alias', ID: 1 },
   ]
 
   statuses = [
@@ -177,7 +181,7 @@ class DomainListDetails extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { checkPw, newPw, changingPw } = this.state;
-    const { domainname, storageType, domainStatus,
+    const { domainname, domainType, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser } = this.state.changes;
 
@@ -216,14 +220,14 @@ class DomainListDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("storage type")}
+                label={t("domain type")}
                 fullWidth
-                value={storageType || 0}
-                onChange={this.handleInput('storageType')}
+                value={domainType || 0}
+                onChange={this.handleInput('domainType')}
               >
-                {this.storageTypes.map((storageType, key) => (
-                  <MenuItem key={key} value={storageType.ID}>
-                    {storageType.name}
+                {this.domainTypes.map((domainType, key) => (
+                  <MenuItem key={key} value={domainType.ID}>
+                    {domainType.name}
                   </MenuItem>
                 ))}
               </TextField>
@@ -255,9 +259,9 @@ class DomainListDetails extends PureComponent {
                         value={this.state.sizeUnit}
                         className={classes.select}
                       >
-                        <MenuItem value={0}>MB</MenuItem>
-                        <MenuItem value={1}>GB</MenuItem>
-                        <MenuItem value={2}>TB</MenuItem>
+                        <MenuItem value={0}>MiB</MenuItem>
+                        <MenuItem value={1}>GiB</MenuItem>
+                        <MenuItem value={2}>TiB</MenuItem>
                       </Select>
                     </FormControl>,
                 }}

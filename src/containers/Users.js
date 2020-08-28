@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
+import AddUser from '../components/Dialogs/AddUser';
 
 const styles = theme => ({
   root: {
@@ -46,6 +47,7 @@ class Users extends Component {
 
   state = {
     snackbar: null,
+    adding: false,
   }
 
   componentDidMount() {
@@ -57,9 +59,11 @@ class Users extends Component {
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
-  handleAdd = () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/users/add', {});
-  }
+  handleAdd = () => this.setState({ adding: true });
+
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
 
   handleEdit = user => () => {
     this.props.history.push('/' + this.props.domain.domainname + '/users/' + user.ID, { ...user });
@@ -129,6 +133,12 @@ class Users extends Component {
             </Alert>
           </Snackbar>
         </div>
+        <AddUser
+          open={this.state.adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={this.props.domain}
+        />
       </div>
     );
   }

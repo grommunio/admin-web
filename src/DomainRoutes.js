@@ -77,7 +77,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/users/:userID`}
+        path={`/${domain.domainname}/users/:userID*`}
         exact
         component={AsyncUserDetails}
         props={childProps}

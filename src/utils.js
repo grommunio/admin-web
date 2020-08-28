@@ -25,3 +25,9 @@ export function parseParams(s) {
 
   return data;
 }
+
+export function addItem(arr, item) {
+  const copy = [...arr];
+  copy.push(item);
+  return copy;
+}
