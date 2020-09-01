@@ -252,6 +252,7 @@ class UserDetails extends PureComponent {
                 fullWidth
                 value={changes.areaID || ''}
                 onChange={this.handleInput('areaID')}
+                disabled
               >
                 {userAreas.map((area, key) => (
                   <MenuItem key={key} value={area.ID}>
