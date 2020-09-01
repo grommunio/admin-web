@@ -346,22 +346,13 @@ class UserDetails extends PureComponent {
                 value={changes.title || ''}
                 onChange={this.handleInput('title')}
               />
-              <div style={{ display: 'flex' }}>
-                <TextField
-                  className={classes.input}
-                  label={t("first name")}
-                  value={changes.firstName || ''}
-                  onChange={this.handleInput('firstName')}
-                  style={{ flex: 1, marginRight: 8 }}
-                />
-                <TextField 
-                  className={classes.input}
-                  label={t("last name")}
-                  value={changes.lastName || ''}
-                  onChange={this.handleInput('lastName')}
-                  style={{ flex: 1, marginLeft: 8 }}
-                />
-              </div>
+              <TextField 
+                className={classes.input}
+                label={t("real name")}
+                fullWidth
+                value={changes.realName || ''}
+                onChange={this.handleInput('realName')}
+              />
               <TextField 
                 className={classes.input} 
                 label={t("nick name")} 
