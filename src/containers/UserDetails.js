@@ -396,13 +396,6 @@ class UserDetails extends PureComponent {
                 value={changes.mobilePhone || ''}
                 onChange={this.handleInput('mobilePhone')}
               />
-              <TextField
-                className={classes.input}
-                label={t("cell")}
-                fullWidth
-                value={changes.cell || ''}
-                onChange={this.handleInput('cell')}
-              />
               <TextField 
                 className={classes.input} 
                 label={t("home address")} 
