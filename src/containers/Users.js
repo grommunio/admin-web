@@ -90,10 +90,10 @@ class Users extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>username</TableCell>
-                  <TableCell>real name</TableCell>
-                  <TableCell>department</TableCell>
-                  <TableCell>maximum space</TableCell>
+                  <TableCell>Username</TableCell>
+                  <TableCell>Display name</TableCell>
+                  <TableCell>Nickname</TableCell>
+                  <TableCell>Max size</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -102,7 +102,7 @@ class Users extends Component {
                   <TableRow key={idx}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{obj.realName}</TableCell>
-                    <TableCell>{obj.department}</TableCell>
+                    <TableCell>{obj.nickname}</TableCell>
                     <TableCell>{obj.maxSize}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>
