@@ -78,7 +78,10 @@ class UserDetails extends PureComponent {
       props.history.push('/' + props.domain.domainname + '/users');
     }
     else this.state = {
-      changes: user,
+      changes: {
+        ...user,
+        username: user.username.slice(0, user.username.indexOf('@')),
+      },
       changingPw: false,
       newPw: '',
       checkPw: '',
@@ -115,6 +118,24 @@ class UserDetails extends PureComponent {
     this.props.fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.props.fetchGroupsData();
+    const maxSize = this.state.changes.maxSize;
+    if(maxSize % 1048576 === 0) {
+      this.setState({
+        changes: {
+          ...this.state.changes,
+          maxSize: maxSize / 1048576,
+        },
+        sizeUnit: 2,
+      });
+    } else if (maxSize % 1024 === 0) {
+      this.setState({
+        changes: {
+          ...this.state.changes,
+          maxSize: maxSize / 1024,
+        },
+        sizeUnit: 1,
+      });
+    }
   }
 
   handleInput = field => event => {
