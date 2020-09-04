@@ -161,7 +161,7 @@ class NavigationLinks extends PureComponent {
           >
             <Grid container alignItems="center">
               <Web className={classes.icon}/>
-              <ListItemText primary={t('data area setup')} />
+              <ListItemText primary={t('Data area setup')} />
             </Grid>
           </ListItem>
           <ListItem
@@ -172,7 +172,7 @@ class NavigationLinks extends PureComponent {
           >
             <Grid container alignItems="center">
               <Http className={classes.icon}/>
-              <ListItemText primary={t('domain list')} />
+              <ListItemText primary={t('Domain list')} />
             </Grid>
           </ListItem>
           <ListItem
@@ -183,7 +183,7 @@ class NavigationLinks extends PureComponent {
           >
             <Grid container alignItems="center">
               <Settings className={classes.icon}/>
-              <ListItemText primary={t('base setup')} />
+              <ListItemText primary={t('Base setup')} />
             </Grid>
           </ListItem>
           <ListItem button onClick={this.toggleDefaultData} className={classes.li}>

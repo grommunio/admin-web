@@ -91,7 +91,7 @@ class AddUser extends PureComponent {
       <Dialog
         onClose={onSuccess}
         open={open}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
       >
         <DialogTitle>Add</DialogTitle>
@@ -141,7 +141,7 @@ class AddUser extends PureComponent {
             </TextField>
             <TextField 
               className={classes.input} 
-              label={t("maximum space")} 
+              label={t("Maximum space")} 
               fullWidth 
               value={maxSize || ''}
               onChange={this.handleNumberInput('maxSize')}

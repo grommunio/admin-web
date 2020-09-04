@@ -91,11 +91,11 @@ class DomainList extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>domain</TableCell>
-                  <TableCell>address</TableCell>
-                  <TableCell>title</TableCell>
-                  <TableCell>maximum space</TableCell>
-                  <TableCell>maximum users</TableCell>
+                  <TableCell>Domain</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Ttitle</TableCell>
+                  <TableCell>Maximum space</TableCell>
+                  <TableCell>Maximum users</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
