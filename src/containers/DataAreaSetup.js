@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions, Snackbar } from '@material-ui/core';
+  Button, DialogActions, Snackbar, CircularProgress } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Close';
@@ -71,6 +71,7 @@ class DataAreaSetup extends Component {
       storeLevels: 2,
     },
     addOpen: false,
+    loading: false,
   }
 
   getDataAreaData = () => {
@@ -95,7 +96,7 @@ class DataAreaSetup extends Component {
   ];
 
   handleAdd = () => {
-    this.setState({ addOpen: false });
+    this.setState({ loading: true });
     this.props.add({
       ...this.state.newData,
       accelPath: this.state.accelPath || null,
@@ -112,10 +113,15 @@ class DataAreaSetup extends Component {
             storeLevels: 2,
           },
           snackbar: 'Success!',
+          loading: false,
+          addOpen: false,
         });
       })
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        this.setState({
+          snackbar: msg || 'Unknown error',
+          loading: false,
+        });
       })
       .then(this.getDataAreaData);
   }
@@ -146,7 +152,7 @@ class DataAreaSetup extends Component {
 
   render() {
     const { classes, t, areas } = this.props;
-    const { newData } = this.state;
+    const { newData, loading } = this.state;
 
     return (
       <div className={classes.root}>
@@ -214,7 +220,7 @@ class DataAreaSetup extends Component {
                 variant="contained"
                 color="primary"
               >
-                Add
+                {loading ? <CircularProgress size={24}/> : 'Add'}
               </Button>
             </DialogActions>
           </Dialog>
