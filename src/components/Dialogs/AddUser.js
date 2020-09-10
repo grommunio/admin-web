@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, Select, 
+  MenuItem, Button, DialogActions, Select, CircularProgress, 
 } from '@material-ui/core';
 import { fetchAreasData } from '../../actions/areas';
 import { withTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ class AddUser extends PureComponent {
     groupID: 0,
     maxSize: '',
     sizeUnit: 0,
+    loading: false,
   }
 
   componentDidMount() {
@@ -59,12 +60,14 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { createDay, lang, maxSize } = this.state;
+    const { username, areaID, groupID, createDay, lang, maxSize } = this.state;
+    this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
-      ...this.state,
+      username,
+      areaID,
+      groupID,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
-      sizeUnit: undefined,
       maxFile: 0,
       maxSize: maxSize << (10 * this.state.sizeUnit),
     })
@@ -75,17 +78,21 @@ class AddUser extends PureComponent {
           groupID: 0,
           maxSize: '',
           sizeUnit: 0,
+          loading: false,
         });
         this.props.onSuccess();
       })
-      .catch(error => this.props.onError(error));
+      .catch(error => {
+        this.props.onError(error);
+        this.setState({ loading: false });
+      });
   }
 
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
     const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
-    const { username, areaID, groupID, maxSize, sizeUnit } = this.state;
+    const { username, areaID, groupID, maxSize, sizeUnit,loading } = this.state;
 
     return (
       <Dialog
@@ -174,9 +181,9 @@ class AddUser extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username}
+            disabled={!username || loading}
           >
-            Add
+            {loading ? <CircularProgress size={24}/> : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>
