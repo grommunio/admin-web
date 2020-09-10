@@ -85,13 +85,13 @@ class DomainListDetails extends PureComponent {
   }
 
   domainTypes = [
-    { name: 'normal', ID: 0 },
-    { name: 'alias', ID: 1 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Alias', ID: 1 },
   ]
 
   statuses = [
-    { name: 'normal', ID: 0 },
-    { name: 'suspended', ID: 1 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Suspended', ID: 1 },
   ]
 
   componentDidMount() {
@@ -202,7 +202,7 @@ class DomainListDetails extends PureComponent {
             <FormControl className={classes.form}>
               <Grid container className={classes.input}>
                 <TextField
-                  label={t("domain")} 
+                  label={t("Domain")} 
                   style={{ flex: 1, marginRight: 8 }} 
                   value={domainname || ''}
                   onChange={this.handleInput('domainname')}
@@ -220,7 +220,7 @@ class DomainListDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("domain type")}
+                label={t("Domain type")}
                 fullWidth
                 value={domainType || 0}
                 onChange={this.handleInput('domainType')}
@@ -234,7 +234,7 @@ class DomainListDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("status")}
+                label={t("Status")}
                 fullWidth
                 value={domainStatus || 0}
                 onChange={this.handleInput('domainStatus')}
@@ -247,7 +247,7 @@ class DomainListDetails extends PureComponent {
               </TextField>
               <TextField 
                 className={classes.input} 
-                label={t("maximum space")} 
+                label={t("Maximum space")} 
                 fullWidth 
                 value={maxSize || ''}
                 onChange={this.handleNumberInput('maxSize')}
@@ -268,35 +268,35 @@ class DomainListDetails extends PureComponent {
               />
               <TextField 
                 className={classes.input} 
-                label={t("maximum users")} 
+                label={t("Maximum users")} 
                 fullWidth 
                 value={maxUser || ''}
                 onChange={this.handleNumberInput('maxUser')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("title")} 
+                label={t("Title")} 
                 fullWidth 
                 value={title || ''}
                 onChange={this.handleInput('title')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("address")} 
+                label={t("Address")} 
                 fullWidth 
                 value={address || ''}
                 onChange={this.handleInput('address')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("administrator")} 
+                label={t("Administrator")} 
                 fullWidth 
                 value={adminName || ''}
                 onChange={this.handleInput('adminName')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("telephone")} 
+                label={t("Telephone")} 
                 fullWidth 
                 value={tel || ''}
                 onChange={this.handleInput('tel')}
@@ -304,7 +304,7 @@ class DomainListDetails extends PureComponent {
             </FormControl>
             <Grid container className={classes.input}>
               <FormControlLabel
-                label={t('mail archive')}
+                label={t('Mail archive')}
                 control={
                   <Checkbox
                     checked={mailBackup || false}
@@ -313,7 +313,7 @@ class DomainListDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('mail monitor')}
+                label={t('Mail monitor')}
                 control={
                   <Checkbox
                     checked={mailMonitor || false}
@@ -322,7 +322,7 @@ class DomainListDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('ignore checking user')}
+                label={t('Ignore checking user')}
                 control={
                   <Checkbox
                     checked={ignoreCheckingUser || false}
@@ -331,7 +331,7 @@ class DomainListDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('mail sub system')}
+                label={t('Mail sub system')}
                 control={
                   <Checkbox
                     checked={mailSubSystem || false}

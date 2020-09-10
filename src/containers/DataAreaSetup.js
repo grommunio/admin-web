@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions, Snackbar } from '@material-ui/core';
+  Button, DialogActions, Snackbar, CircularProgress } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Close';
@@ -71,6 +71,7 @@ class DataAreaSetup extends Component {
       storeLevels: 2,
     },
     addOpen: false,
+    loading: false,
   }
 
   getDataAreaData = () => {
@@ -90,12 +91,12 @@ class DataAreaSetup extends Component {
   }
 
   types = [
-    { name: 'user data', ID: 0 },
-    { name: 'domain data', ID: 1 },
+    { name: 'User data', ID: 0 },
+    { name: 'Domain data', ID: 1 },
   ];
 
   handleAdd = () => {
-    this.setState({ addOpen: false });
+    this.setState({ loading: true });
     this.props.add({
       ...this.state.newData,
       accelPath: this.state.accelPath || null,
@@ -112,10 +113,15 @@ class DataAreaSetup extends Component {
             storeLevels: 2,
           },
           snackbar: 'Success!',
+          loading: false,
+          addOpen: false,
         });
       })
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        this.setState({
+          snackbar: msg || 'Unknown error',
+          loading: false,
+        });
       })
       .then(this.getDataAreaData);
   }
@@ -146,7 +152,7 @@ class DataAreaSetup extends Component {
 
   render() {
     const { classes, t, areas } = this.props;
-    const { newData } = this.state;
+    const { newData, loading } = this.state;
 
     return (
       <div className={classes.root}>
@@ -160,7 +166,7 @@ class DataAreaSetup extends Component {
                 <TextField
                   select
                   className={classes.input}
-                  label={t("data type")}
+                  label={t("Data type")}
                   fullWidth
                   value={newData.dataType}
                   onChange={this.handleInput('dataType')}
@@ -173,28 +179,28 @@ class DataAreaSetup extends Component {
                 </TextField>
                 <TextField 
                   className={classes.input} 
-                  label={t("master data area")}
+                  label={t("Master data area")}
                   fullWidth
                   value={newData.masterPath}
                   onChange={this.handleInput('masterPath')}
                 />
                 <TextField 
                   className={classes.input} 
-                  label={t("database accelerating storage area")} 
+                  label={t("Database accelerating storage area")} 
                   fullWidth
                   value={newData.accelPath}
                   onChange={this.handleInput('accelPath')}
                 />
                 <TextField 
                   className={classes.input} 
-                  label={t("slave data area")} 
+                  label={t("Slave data area")} 
                   fullWidth
                   value={newData.slavePath}
                   onChange={this.handleInput('slavePath')}
                 />
                 <TextField 
                   className={classes.input} 
-                  label={t("maximum space")} 
+                  label={t("Maximum space")} 
                   fullWidth
                   value={newData.maxSpace}
                   onChange={this.handleNumberInput('maxSpace')}
@@ -214,7 +220,7 @@ class DataAreaSetup extends Component {
                 variant="contained"
                 color="primary"
               >
-                Add
+                {loading ? <CircularProgress size={24}/> : 'Add'}
               </Button>
             </DialogActions>
           </Dialog>
@@ -222,14 +228,14 @@ class DataAreaSetup extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>master user data area</TableCell>
-                  <TableCell>master accelerated storage area</TableCell>
-                  <TableCell>slave user data area</TableCell>
-                  <TableCell>maximum space</TableCell>
-                  <TableCell>maximum files</TableCell>
-                  <TableCell>used space</TableCell>
-                  <TableCell>used files</TableCell>
-                  <TableCell>user number</TableCell>
+                  <TableCell>Master user data area</TableCell>
+                  <TableCell>Master accelerated storage area</TableCell>
+                  <TableCell>Slave user data area</TableCell>
+                  <TableCell>Maximum space</TableCell>
+                  <TableCell>Maximum files</TableCell>
+                  <TableCell>Used space</TableCell>
+                  <TableCell>Used files</TableCell>
+                  <TableCell>User number</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -254,14 +260,14 @@ class DataAreaSetup extends Component {
               </TableBody>
               <TableHead>
                 <TableRow>
-                  <TableCell>master domain data area</TableCell>
-                  <TableCell>master accelerated storage area</TableCell>
-                  <TableCell>slave domain data area</TableCell>
-                  <TableCell>maximum space</TableCell>
-                  <TableCell>maximum files</TableCell>
-                  <TableCell>used space</TableCell>
-                  <TableCell>used files</TableCell>
-                  <TableCell>domain number</TableCell>
+                  <TableCell>Master domain data area</TableCell>
+                  <TableCell>Master accelerated storage area</TableCell>
+                  <TableCell>Slave domain data area</TableCell>
+                  <TableCell>Maximum space</TableCell>
+                  <TableCell>Maximum files</TableCell>
+                  <TableCell>Used space</TableCell>
+                  <TableCell>Used files</TableCell>
+                  <TableCell>Domain number</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>

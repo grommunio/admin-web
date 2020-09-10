@@ -73,7 +73,7 @@ class BaseSetup extends Component {
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("old password")} 
+                label={t("Old password")} 
                 fullWidth 
                 value={oldPw || ''}
                 onChange={this.handleInput('oldPw')}
@@ -84,7 +84,7 @@ class BaseSetup extends Component {
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("new password")} 
+                label={t("New password")} 
                 fullWidth 
                 value={newPw || ''}
                 onChange={this.handleInput('newPw')}

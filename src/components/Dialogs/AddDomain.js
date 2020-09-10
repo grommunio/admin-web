@@ -3,7 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, FormControlLabel, Grid, Checkbox, Button, DialogActions,
-  Select, 
+  Select,
+  CircularProgress, 
 } from '@material-ui/core';
 import { fetchAreasData } from '../../actions/areas';
 import { addDomainData } from '../../actions/domains';
@@ -44,6 +45,7 @@ class AddDomain extends PureComponent {
     mailSubSystem: true,
     ignoreCheckingUser: false,
     sizeUnit: 0,
+    loading: false,
   }
 
   componentDidMount() {
@@ -52,13 +54,13 @@ class AddDomain extends PureComponent {
   }
 
   domainTypes = [
-    { name: 'normal', ID: 0 },
-    { name: 'alias', ID: 1 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Alias', ID: 1 },
   ]
 
   statuses = [
-    { name: 'normal', ID: 0 },
-    { name: 'suspended', ID: 1 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Suspended', ID: 1 },
   ]
 
   handleInput = field => event => {
@@ -80,14 +82,29 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { endDay, createDay, password, maxSize } = this.state;
+    const { domainname, password, domainType, areaID, domainStatus, maxUser,
+      title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
+      ignoreCheckingUser, sizeUnit, endDay, createDay, maxSize } = this.state;
+    this.setState({ loading: true });
     this.props.add({
-      ...this.state,
-      sizeUnit: undefined,
+      domainname,
+      password: password || undefined,
+      domainType,
+      areaID,
+      domainStatus,
+      maxUser,
+      title,
+      address,
+      adminName,
+      tel,
+      mailBackup,
+      mailMonitor,
+      mailSubSystem,
+      ignoreCheckingUser,
+      // Dates should be removed soon
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      password: password || undefined,
-      maxSize: maxSize << (10 * this.state.sizeUnit),
+      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
@@ -107,10 +124,14 @@ class AddDomain extends PureComponent {
           mailSubSystem: true,
           ignoreCheckingUser: false,
           sizeUnit: 0,
+          loading: false,
         });
         this.props.onSuccess();
       })
-      .catch(error => this.props.onError(error));
+      .catch(error => {
+        this.props.onError(error);
+        this.setState({ loading: false });
+      });
   }
 
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
@@ -119,7 +140,7 @@ class AddDomain extends PureComponent {
     const { classes, t, domainAreas, open, onSuccess } = this.props;
     const { domainname, password, domainType, areaID, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, sizeUnit } = this.state;
+      mailMonitor, mailSubSystem, ignoreCheckingUser, sizeUnit, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
@@ -135,7 +156,7 @@ class AddDomain extends PureComponent {
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
-              label={t("domain")} 
+              label={t("Domain")} 
               fullWidth 
               value={domainname || ''}
               onChange={this.handleInput('domainname')}
@@ -145,7 +166,7 @@ class AddDomain extends PureComponent {
             />
             <TextField 
               className={classes.input} 
-              label={t("password")} 
+              label={t("Password")} 
               fullWidth 
               value={password || ''}
               onChange={this.handleInput('password')}
@@ -169,7 +190,7 @@ class AddDomain extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("domain type")}
+              label={t("Domain type")}
               fullWidth
               value={domainType || 0}
               onChange={this.handleInput('domainType')}
@@ -183,7 +204,7 @@ class AddDomain extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("status")}
+              label={t("Status")}
               fullWidth
               value={domainStatus || 0}
               onChange={this.handleInput('domainStatus')}
@@ -196,7 +217,7 @@ class AddDomain extends PureComponent {
             </TextField>
             <TextField 
               className={classes.input} 
-              label={t("maximum space")} 
+              label={t("Maximum space")} 
               fullWidth 
               value={maxSize || ''}
               onChange={this.handleNumberInput('maxSize')}
@@ -217,35 +238,35 @@ class AddDomain extends PureComponent {
             />
             <TextField 
               className={classes.input} 
-              label={t("maximum users")} 
+              label={t("Maximum users")} 
               fullWidth 
               value={maxUser || ''}
               onChange={this.handleNumberInput('maxUser')}
             />
             <TextField 
               className={classes.input} 
-              label={t("title")} 
+              label={t("Title")} 
               fullWidth 
               value={title || ''}
               onChange={this.handleInput('title')}
             />
             <TextField 
               className={classes.input} 
-              label={t("address")} 
+              label={t("Address")} 
               fullWidth 
               value={address || ''}
               onChange={this.handleInput('address')}
             />
             <TextField 
               className={classes.input} 
-              label={t("administrator")} 
+              label={t("Administrator")} 
               fullWidth 
               value={adminName || ''}
               onChange={this.handleInput('adminName')}
             />
             <TextField 
               className={classes.input} 
-              label={t("telephone")} 
+              label={t("Telephone")} 
               fullWidth 
               value={tel || ''}
               onChange={this.handleInput('tel')}
@@ -253,7 +274,7 @@ class AddDomain extends PureComponent {
           </FormControl>
           <Grid container className={classes.input}>
             <FormControlLabel
-              label={t('mail archive')}
+              label={t('Mail archive')}
               control={
                 <Checkbox
                   checked={mailBackup || false}
@@ -262,7 +283,7 @@ class AddDomain extends PureComponent {
               }
             />
             <FormControlLabel
-              label={t('mail monitor')}
+              label={t('Mail monitor')}
               control={
                 <Checkbox
                   checked={mailMonitor || false}
@@ -271,7 +292,7 @@ class AddDomain extends PureComponent {
               }
             />
             <FormControlLabel
-              label={t('ignore checking user')}
+              label={t('Ignore checking user')}
               control={
                 <Checkbox
                   checked={ignoreCheckingUser || false}
@@ -280,7 +301,7 @@ class AddDomain extends PureComponent {
               }
             />
             <FormControlLabel
-              label={t('mail sub system')}
+              label={t('Mail sub system')}
               control={
                 <Checkbox
                   checked={mailSubSystem || false}
@@ -302,9 +323,9 @@ class AddDomain extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!domainname || password.length < 6 || domainError}
+            disabled={loading || !domainname || password.length < 6 || domainError}
           >
-            Add
+            {loading ? <CircularProgress size={24}/> : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>

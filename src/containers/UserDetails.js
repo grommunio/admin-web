@@ -78,7 +78,10 @@ class UserDetails extends PureComponent {
       props.history.push('/' + props.domain.domainname + '/users');
     }
     else this.state = {
-      changes: user,
+      changes: {
+        ...user,
+        username: user.username.slice(0, user.username.indexOf('@')),
+      },
       changingPw: false,
       newPw: '',
       checkPw: '',
@@ -88,16 +91,16 @@ class UserDetails extends PureComponent {
   }
 
   types = [
-    { name: 'normal', ID: 0 },
-    { name: 'room', ID: 1 },
-    { name: 'equipment', ID: 2 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Room', ID: 1 },
+    { name: 'Equipment', ID: 2 },
   ]
 
   statuses = [
-    { name: 'normal', ID: 0 },
-    { name: 'suspended', ID: 1 },
-    { name: 'out of date', ID: 2 },
-    { name: 'deleted', ID: 3 },
+    { name: 'Normal', ID: 0 },
+    { name: 'Suspended', ID: 1 },
+    { name: 'Out of date', ID: 2 },
+    { name: 'Deleted', ID: 3 },
   ]
 
   expires = [
@@ -105,7 +108,7 @@ class UserDetails extends PureComponent {
     { name: '1 month', ID: 1 },
     { name: '1 year', ID: 2 },
     { name: '100 years', ID: 3 },
-    { name: 'never', ID: 4 },
+    { name: 'Never', ID: 4 },
   ]
 
   timeZones = [-12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, 1, 0,
@@ -115,6 +118,24 @@ class UserDetails extends PureComponent {
     this.props.fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.props.fetchGroupsData();
+    const maxSize = this.state.changes.maxSize;
+    if(maxSize % 1048576 === 0) {
+      this.setState({
+        changes: {
+          ...this.state.changes,
+          maxSize: maxSize / 1048576,
+        },
+        sizeUnit: 2,
+      });
+    } else if (maxSize % 1024 === 0) {
+      this.setState({
+        changes: {
+          ...this.state.changes,
+          maxSize: maxSize / 1024,
+        },
+        sizeUnit: 1,
+      });
+    }
   }
 
   handleInput = field => event => {
@@ -342,21 +363,21 @@ class UserDetails extends PureComponent {
               />
               <TextField 
                 className={classes.input}
-                label={t("job title")}
+                label={t("Job title")}
                 fullWidth
                 value={changes.title || ''}
                 onChange={this.handleInput('title')}
               />
               <TextField 
                 className={classes.input}
-                label={t("real name")}
+                label={t("Display name")}
                 fullWidth
                 value={changes.realName || ''}
                 onChange={this.handleInput('realName')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("nick name")} 
+                label={t("Nick name")} 
                 fullWidth 
                 value={changes.nickname || ''}
                 onChange={this.handleInput('nickname')}
@@ -374,13 +395,6 @@ class UserDetails extends PureComponent {
                 fullWidth 
                 value={changes.mobilePhone || ''}
                 onChange={this.handleInput('mobilePhone')}
-              />
-              <TextField
-                className={classes.input}
-                label={t("cell")}
-                fullWidth
-                value={changes.cell || ''}
-                onChange={this.handleInput('cell')}
               />
               <TextField 
                 className={classes.input} 
