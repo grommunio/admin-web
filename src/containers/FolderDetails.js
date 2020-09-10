@@ -11,7 +11,6 @@ import {
   MenuItem,
   Button,
 } from '@material-ui/core';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
 import { addFolderData, editFolderData } from '../actions/folders';
@@ -67,13 +66,11 @@ class FolderDetails extends PureComponent {
   }
 
   types = [
-    { name: 'mail and post items', ID: 0 },
-    { name: 'contact', ID: 1 },
-    { name: 'journal', ID: 2 },
-    { name: 'calendar', ID: 3 },
-    { name: 'note', ID: 4 },
-    { name: 'task', ID: 5 },
-    { name: 'infopath items', ID: 6 },
+    { name: 'Mail and post items', ID: 'IPF.Note' },
+    { name: 'Contact', ID: 'IPF.Contact' },
+    { name: 'Appointment', ID: 'IPF.Appointment' },
+    { name: 'Sticky note', ID: 'IPF.Stickynote' },
+    { name: 'Task', ID: 'IPF.Task' },
   ]
 
   handleInput = field => event => {
@@ -87,9 +84,11 @@ class FolderDetails extends PureComponent {
   }
 
   handleAdd = () => {
+    const { name, container, comment } = this.state.changes;
     this.props.add(this.props.domain.ID, {
-      ...this.state.changes,
-      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
+      name: name || '',
+      container: container || 'IPF.Note',
+      comment: comment || '',
     });
     this.props.history.push('/' + this.props.domain.domainname + '/folders');
   }
@@ -97,7 +96,6 @@ class FolderDetails extends PureComponent {
   handleEdit = () => {
     this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
-      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
     });
   }
 
@@ -122,19 +120,19 @@ class FolderDetails extends PureComponent {
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("folder name")} 
+                label={t("name")} 
                 fullWidth 
-                value={changes.folderName || ''}
-                onChange={this.handleInput('folderName')}
+                value={changes.name || ''}
+                onChange={this.handleInput('name')}
                 autoFocus
               />
               <TextField
                 select
                 className={classes.input}
-                label={t("folder type")}
+                label={t("Container")}
                 fullWidth
-                value={changes.folderType || 0}
-                onChange={this.handleInput('folderType')}
+                value={changes.container || 'IPF.Note'}
+                onChange={this.handleInput('container')}
               >
                 {this.types.map((type, key) => (
                   <MenuItem key={key} value={type.ID}>
@@ -142,6 +140,15 @@ class FolderDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
+              <TextField 
+                className={classes.input} 
+                label={t("Comment")} 
+                fullWidth
+                multiline
+                rows={4}
+                value={changes.comment || ''}
+                onChange={this.handleInput('comment')}
+              />
             </FormControl>
             <Button
               variant="text"
