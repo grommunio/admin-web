@@ -40,12 +40,12 @@ class DeleteUser extends PureComponent {
   }
 
   render() {
-    const { t, open, item, onSuccess } = this.props;
+    const { t, open, item, onClose } = this.props;
     const { loading } = this.state;
 
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -53,7 +53,7 @@ class DeleteUser extends PureComponent {
         <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
             color="secondary"
           >
@@ -79,6 +79,7 @@ DeleteUser.propTypes = {
   id: PropTypes.number.isRequired,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };

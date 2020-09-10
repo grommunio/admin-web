@@ -69,7 +69,11 @@ class Users extends Component {
 
   handleDelete = user => () => this.setState({ deleting: user });
 
-  handleDeleteSuccess = () => this.setState({ deleting: false });
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+  }
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
@@ -141,6 +145,7 @@ class Users extends Component {
         <DeleteUser
           open={!!this.state.deleting}
           onSuccess={this.handleDeleteSuccess}
+          onClose={this.handleDeleteClose}
           onError={this.handleDeleteError}
           domainID={this.props.domain.ID}
           user={this.state.deleting}
