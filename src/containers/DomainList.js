@@ -11,6 +11,7 @@ import { fetchDomainData, deleteDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddDomain from '../components/Dialogs/AddDomain';
+import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
 const styles = theme => ({
   root: {
@@ -48,6 +49,7 @@ class DomainList extends Component {
   state = {
     snackbar: null,
     adding: false,
+    deleting: false,
   }
 
   componentDidMount() {
@@ -70,14 +72,15 @@ class DomainList extends Component {
     this.props.history.push('/domainList/' + domain.ID, { ...domain });
   }
 
-  handleDelete = id => () => {
-    this.props.delete(id)
-      .then(() => {
-        this.fetchDomains();
-        this.setState({ snackbar: 'Success!' });
-      })
-      .catch(msg => this.setState({ snackbar: msg }));
+  handleDelete = domain => () => this.setState({ deleting: domain });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false });
+    this.fetchDomains();
+    this.setState({ snackbar: 'Success!' });
   }
+
+  handleDeleteError = error => this.setState({ snackbar: error });
 
   render() {
     const { classes, domains } = this.props;
@@ -108,10 +111,10 @@ class DomainList extends Component {
                     <TableCell>{obj.maxSize}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
+                      <IconButton onClick={this}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                      <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
@@ -142,6 +145,14 @@ class DomainList extends Component {
           open={this.state.adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
+        />
+        <GeneralDelete
+          open={!!this.state.deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          item={this.state.deleting.domainname}
+          id={this.state.deleting.ID}
         />
       </div>
     );
