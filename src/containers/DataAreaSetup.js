@@ -11,6 +11,7 @@ import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
 import { fetchAreasData, addAreaData, deleteAreaData } from '../actions/areas';
 import { connect } from 'react-redux';
+import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
 const styles = theme => ({
   root: {
@@ -72,6 +73,7 @@ class DataAreaSetup extends Component {
     },
     addOpen: false,
     loading: false,
+    deleting: false,
   }
 
   getDataAreaData = () => {
@@ -126,16 +128,16 @@ class DataAreaSetup extends Component {
       .then(this.getDataAreaData);
   }
 
-  handleDelete = id => () => {
-    this.props.delete(id)
-      .then(() => {
-        this.getDataAreaData();
-        this.setState({ snackbar: 'Success!' });
-      })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
+  handleDelete = area => () => this.setState({ deleting: area });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+    this.getDataAreaData();
   }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteError = error => this.setState({ snackbar: error });
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -224,6 +226,15 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
+          <GeneralDelete
+            open={!!this.state.deleting}
+            delete={this.props.delete}
+            onSuccess={this.handleDeleteSuccess}
+            onError={this.handleDeleteError}
+            onClose={this.handleDeleteClose}
+            item={this.state.deleting.masterPath}
+            id={this.state.deleting.ID}
+          />
           <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
@@ -251,7 +262,7 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                      <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
@@ -283,7 +294,7 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
-                      <IconButton  onClick={this.handleDelete(obj.ID)} >
+                      <IconButton  onClick={this.handleDelete(obj)} >
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>

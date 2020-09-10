@@ -11,6 +11,7 @@ import { fetchUsersData, deleteUserData } from '../actions/users';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddUser from '../components/Dialogs/AddUser';
+import DeleteUser from '../components/Dialogs/DeleteUser';
 
 const styles = theme => ({
   root: {
@@ -48,6 +49,7 @@ class Users extends Component {
   state = {
     snackbar: null,
     adding: false,
+    deleting: false,
   }
 
   componentDidMount() {
@@ -65,17 +67,18 @@ class Users extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleEdit = user => () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/users/' + user.ID, { ...user });
+  handleDelete = user => () => this.setState({ deleting: user });
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
   }
 
-  handleDelete = id => () => {
-    this.props.delete(this.props.domain.ID, id)
-      .then(() => {
-        this.fetchUsers();
-        this.setState({ snackbar: 'Success!' });
-      })
-      .catch(msg => this.setState({ snackbar: msg }));
+  handleDeleteError = error => this.setState({ snackbar: error });
+
+  handleEdit = user => () => {
+    this.props.history.push('/' + this.props.domain.domainname + '/users/' + user.ID, { ...user });
   }
 
   render() {
@@ -108,7 +111,7 @@ class Users extends Component {
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                      <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
@@ -138,6 +141,14 @@ class Users extends Component {
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={this.props.domain}
+        />
+        <DeleteUser
+          open={!!this.state.deleting}
+          onSuccess={this.handleDeleteSuccess}
+          onClose={this.handleDeleteClose}
+          onError={this.handleDeleteError}
+          domainID={this.props.domain.ID}
+          user={this.state.deleting}
         />
       </div>
     );
