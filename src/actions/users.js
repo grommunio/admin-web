@@ -48,10 +48,10 @@ export function editUserData(domainID, user) {
   };
 }
 
-export function deleteUserData(domainID, id) {
+export function deleteUserData(domainID, id, deleteFiles) {
   return async dispatch => {
     try {
-      await dispatch(deleteUser(domainID, id));
+      await dispatch(deleteUser(domainID, id, deleteFiles));
       await dispatch({type: USER_DATA_DELETE, id});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});
