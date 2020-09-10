@@ -75,10 +75,11 @@ class DomainList extends Component {
   handleDelete = domain => () => this.setState({ deleting: domain });
 
   handleDeleteSuccess = () => {
-    this.setState({ deleting: false });
+    this.setState({ deleting: false, snackbar: 'Success!' });
     this.fetchDomains();
-    this.setState({ snackbar: 'Success!' });
   }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
@@ -151,6 +152,7 @@ class DomainList extends Component {
           delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
           item={this.state.deleting.domainname}
           id={this.state.deleting.ID}
         />
