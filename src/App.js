@@ -63,7 +63,6 @@ class App extends Component {
     const { dispatch } = this.props;
 
     await dispatch(authAuthenticating(false));
-    if(this.props.role !== 'sys') await dispatch(fetchDomainData()).catch(() => { });
   }
 
   render() {

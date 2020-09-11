@@ -3,9 +3,9 @@ import {
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
-export function authLogin(user, pw) {
+export function authLogin(user, pw, role) {
   window.localStorage.setItem('grammmAuthToken', user + pw);
-  return authAuthenticated(true);
+  return authAuthenticated(true, role);
 }
 
 export function authLoginWithToken() {
@@ -29,9 +29,10 @@ export function authAuthenticating(authenticating = true) {
   };
 }
 
-export function authAuthenticated(authenticated = true) {
+export function authAuthenticated(authenticated = true, role) {
   return {
     type: AUTH_AUTHENTICATED,
     authenticated,
+    role,
   };
 }
