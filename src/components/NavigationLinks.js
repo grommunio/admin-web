@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
+import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Dashboard from '@material-ui/icons/Dashboard';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
@@ -182,7 +183,7 @@ class NavigationLinks extends PureComponent {
             selected={location.pathname === '/baseSetup'}
           >
             <Grid container alignItems="center">
-              <Settings className={classes.icon}/>
+              <Setup className={classes.icon}/>
               <ListItemText primary={t('Base setup')} />
             </Grid>
           </ListItem>
@@ -272,6 +273,17 @@ class NavigationLinks extends PureComponent {
             </List>
           </Collapse>
           <div className={classes.logoutContainer}>
+            <ListItem
+              className={classes.li}
+              button
+              selected={location.pathname === '/settings'}
+              onClick={this.handleNavigation('settings')}
+            >
+              <Grid container alignItems="center">
+                <Settings className={classes.icon} />
+                <ListItemText primary={t('Settings')} />
+              </Grid>
+            </ListItem>
             <ListItem
               button
               onClick={this.handleNavigation('changePassword')}

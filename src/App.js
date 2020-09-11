@@ -10,7 +10,6 @@ import { authAuthenticating } from './actions/auth';
 import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
 import background from './res/bootback.svg';
 import darkBackground from './res/bootback-dark.svg';
-import { fetchDomainData } from './actions/domains';
 
 const styles = {
   root: {

@@ -29,6 +29,7 @@ const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
 const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
 const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
 const AsyncChangePw = AsyncComponent(() => import("./containers/ChangePw"));
+const AsyncSettings = AsyncComponent(() => import("./containers/Settings"));
 
 const Routes = ({ childProps }) => (
   <Switch>
@@ -159,6 +160,12 @@ const Routes = ({ childProps }) => (
       path="/members/:memberID"
       exact
       component={AsyncMemberDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/settings"
+      exact
+      component={AsyncSettings}
       props={childProps}
     />
     <DefaultRedirect />
