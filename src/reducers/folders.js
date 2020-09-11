@@ -23,7 +23,7 @@ function foldersReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        FOLDERS_DATA_RECEIVED: action.data.data,
+        Folders: action.data.data,
       };
     
     case FOLDERS_DATA_ERROR: {

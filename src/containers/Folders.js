@@ -81,9 +81,9 @@ class Folders extends Component {
               <TableBody>
                 {folders && folders.Folders.map((obj, idx) =>
                   <TableRow key={idx}>
-                    <TableCell>{obj.foldername}</TableCell>
+                    <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>
-                    <TableCell>{obj.creationTime}</TableCell>
+                    <TableCell>{obj.creationtime}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
