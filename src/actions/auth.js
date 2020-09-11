@@ -8,19 +8,14 @@ export function authLogin(user, pw, role) {
   return authAuthenticated(true, role);
 }
 
-export function authLoginWithToken() {
-  return authAuthenticated(true);
+export function authLoginWithToken(grammmAuthToken) {
+  return authAuthenticated(true, grammmAuthToken === 'rootroot' ? 'sys' : 'domain');
 }
 
 export function authLogout() {
   window.localStorage.removeItem('grammmAuthToken');
   return authAuthenticated(false);
 }
-
-export function switchView() {
-  return { type: 'SWITCH_VIEW' };
-}
-
 
 export function authAuthenticating(authenticating = true) {
   return {

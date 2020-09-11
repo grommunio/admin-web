@@ -123,7 +123,7 @@ class ResponsiveDomDrawer extends Component {
   }
 
   render() {
-    const { classes, domains, role, expanded } = this.props;
+    const { classes, domains, role, expanded, view } = this.props;
 
     return(
       <nav className={classes.drawer} aria-label="navigation">
@@ -140,7 +140,8 @@ class ResponsiveDomDrawer extends Component {
               keepMounted: true, // Better open performance on mobile.
             }}
           >
-            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
+            {role === 'sys' && view === 'sys' ? <NavigationLinks domains={domains}/>
+              : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
         <Hidden mdDown implementation="css">
@@ -151,7 +152,7 @@ class ResponsiveDomDrawer extends Component {
             variant="permanent"
             open
           >
-            {role === 'sys' ? <NavigationLinks /> : <DomNavigationLinks domains={domains}/>}
+            {role === 'sys' ? <NavigationLinks domains={domains}/> : <DomNavigationLinks domains={domains}/>}
           </Drawer>
         </Hidden>
       </nav>
@@ -167,6 +168,7 @@ ResponsiveDomDrawer.propTypes = {
   toggleExpansion: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
   role: PropTypes.string,
+  view: PropTypes.string,
   expanded: PropTypes.bool,
 };
 

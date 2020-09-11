@@ -97,7 +97,7 @@ class Login extends Component {
     let grammmAuthToken = window.localStorage.getItem("grammmAuthToken");
     if(grammmAuthToken) {
       const { authLoginWithToken, fetchDomainData } = this.props;
-      authLoginWithToken();
+      authLoginWithToken(grammmAuthToken);
       fetchDomainData();
     }
   }

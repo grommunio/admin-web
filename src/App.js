@@ -65,7 +65,7 @@ class App extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, domains } = this.props;
     const { authenticating, authenticated, role } = this.props;
 
     const routesProps = {
@@ -83,10 +83,10 @@ class App extends Component {
         />
         <div className={classes.mainView}>
           {authenticated &&
-            <ResponsiveDomDrawer role={role} domains={this.props.domains.Domains}/>}
-          {role === 'sys' ? <AdminRoutes childProps={routesProps}/> :
-            <DomainRoutes domains={this.props.domains.Domains} childProps={routesProps}/>
-          }
+            <ResponsiveDomDrawer role={role} domains={domains.Domains}/>}
+          {role === 'sys' ?
+            <AdminRoutes domains={domains.Domains} childProps={routesProps}/> :
+            <DomainRoutes domains={domains.Domains} childProps={routesProps}/>}
         </div>
       </div>
     );
