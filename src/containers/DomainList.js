@@ -112,7 +112,7 @@ class DomainList extends Component {
                     <TableCell>{obj.maxSize}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this}>
+                      <IconButton onClick={this.handleEdit}>
                         <Edit />
                       </IconButton>
                       <IconButton onClick={this.handleDelete(obj)}>
