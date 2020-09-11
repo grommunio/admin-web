@@ -29,6 +29,7 @@ class AddUser extends PureComponent {
 
   state = {
     username: '',
+    realName: '',
     areaID: 0,
     groupID: 0,
     maxSize: '',
@@ -74,6 +75,7 @@ class AddUser extends PureComponent {
       .then(() => {
         this.setState({
           username: '',
+          realName: '',
           areaID: 0,
           groupID: 0,
           maxSize: '',
@@ -92,7 +94,7 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
-    const { username, areaID, groupID, maxSize, sizeUnit,loading } = this.state;
+    const { username, areaID, groupID, maxSize, sizeUnit,loading, realName } = this.state;
 
     return (
       <Dialog
@@ -105,7 +107,7 @@ class AddUser extends PureComponent {
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
-              label={t("username")}
+              label={t("Username")}
               value={username || ''}
               autoFocus
               onChange={this.handleInput('username')}
@@ -113,6 +115,13 @@ class AddUser extends PureComponent {
               InputProps={{
                 endAdornment: <div>@{domain.domainname}</div>,
               }}
+              className={classes.input}
+            />
+            <TextField 
+              label={t("Display/Real name")}
+              value={realName || ''}
+              onChange={this.handleInput('realName')}
+              style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
             />
             <TextField
