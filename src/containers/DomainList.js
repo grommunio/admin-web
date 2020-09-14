@@ -98,7 +98,7 @@ class DomainList extends Component {
                 <TableRow>
                   <TableCell>Domain</TableCell>
                   <TableCell>Address</TableCell>
-                  <TableCell>Ttitle</TableCell>
+                  <TableCell>Title</TableCell>
                   <TableCell>Maximum space</TableCell>
                   <TableCell>Maximum users</TableCell>
                   <TableCell></TableCell>
