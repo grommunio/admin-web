@@ -267,20 +267,13 @@ class UserDetails extends PureComponent {
                 ))}
               </TextField>
               <TextField
-                select
                 className={classes.input}
                 label={t("Data area")}
                 fullWidth
-                value={changes.areaID || ''}
+                value={changes.maildir || ''}
                 onChange={this.handleInput('areaID')}
                 disabled
-              >
-                {userAreas.map((area, key) => (
-                  <MenuItem key={key} value={area.ID}>
-                    {area.masterPath}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
               <TextField
                 select
                 className={classes.input}
