@@ -2,6 +2,7 @@ import {
   FOLDERS_DATA_ERROR,
   FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
+  FOLDER_DATA_ADD,
 } from './types';
 import { folders, addFolder, editFolder, deleteFolder } from '../api';
 
@@ -21,7 +22,8 @@ export function fetchFolderData(domainID) {
 export function addFolderData(domainID, folder) {
   return async dispatch => {
     try {
-      await dispatch(addFolder(domainID, folder));
+      const folderData = await dispatch(addFolder(domainID, folder));
+      await dispatch({ type: FOLDER_DATA_ADD, data: folderData });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

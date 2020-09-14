@@ -195,7 +195,7 @@ export function addFolder(domainID, folder) {
 
 export function editFolder(domainID, folder) {
   return async () => {
-    return await patch('/domains/' + domainID + '/folders/' + folder.ID, folder);
+    return await patch('/domains/' + domainID + '/folders/' + folder.folderid, folder);
   };
 }
 

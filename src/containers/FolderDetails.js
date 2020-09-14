@@ -61,7 +61,6 @@ class FolderDetails extends PureComponent {
     }
     else this.state = {
       changes: folder,
-      editing: !!folder.ID,
     };
   }
 
@@ -83,16 +82,6 @@ class FolderDetails extends PureComponent {
     });
   }
 
-  handleAdd = () => {
-    const { name, container, comment } = this.state.changes;
-    this.props.add(this.props.domain.ID, {
-      name: name || '',
-      container: container || 'IPF.Note',
-      comment: comment || '',
-    });
-    this.props.history.push('/' + this.props.domain.domainname + '/folders');
-  }
-
   handleEdit = () => {
     this.props.edit(this.props.domain.ID, {
       ...this.state.changes,
@@ -101,7 +90,7 @@ class FolderDetails extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { editing, changes } = this.state;
+    const { changes } = this.state;
 
     return (
       <div className={classes.root}>
@@ -114,16 +103,16 @@ class FolderDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {editing ? t('Edit folder') : t('Add folder')}
+                {t('Edit folder')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("name")} 
+                label={t("Folder name")} 
                 fullWidth 
-                value={changes.name || ''}
-                onChange={this.handleInput('name')}
+                value={changes.displayname || ''}
+                onChange={this.handleInput('displayname')}
                 autoFocus
               />
               <TextField
@@ -161,7 +150,7 @@ class FolderDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={editing ? this.handleEdit: this.handleAdd}
+              onClick={this.handleEdit}
             >
               Save
             </Button>
