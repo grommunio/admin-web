@@ -44,20 +44,24 @@ const styles = theme => ({
 class Folders extends Component {
 
   componentDidMount() {
-    this.props.fetch(this.props.domain.ID);
+    const { fetch, domain } = this.props;
+    fetch(domain.ID);
   }
 
   handleAdd = () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/folders/add', {});
+    const { history, domain } = this.props;
+    history.push('/' + domain.domainname + '/folders/add', {});
   }
 
   handleEdit = folder => () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/folders/' + folder.ID, { ...folder });
+    const { history, domain } = this.props;
+    history.push('/' + domain.domainname + '/folders/' + folder.ID, { ...folder });
   }
 
   handleDelete = id => () => {
-    this.props.delete(this.props.domain.ID, id)
-      .then(() => this.props.fetch(this.props.domain.ID));
+    const { domain, fetch } = this.props;
+    this.props.delete(domain.ID, id)
+      .then(() => fetch(domain.ID));
   }
 
   render() {
@@ -88,7 +92,7 @@ class Folders extends Component {
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                      <IconButton onClick={this.handleDelete(obj.folderid)}>
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
