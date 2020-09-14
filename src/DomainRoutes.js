@@ -15,7 +15,7 @@ const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails")
 const AsyncFolders = AsyncComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetails"));
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
-const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
+const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
 const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
 const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
 const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
