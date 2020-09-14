@@ -201,7 +201,7 @@ class UserDetails extends PureComponent {
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
-    const { classes, t, groups, userAreas, domain } = this.props;
+    const { classes, t, groups, domain } = this.props;
     const { changes, changingPw, newPw, checkPw } = this.state;
 
     return (
