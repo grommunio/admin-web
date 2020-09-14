@@ -2,7 +2,9 @@ import {
   FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
   FOLDERS_DATA_ERROR,
+  FOLDER_DATA_ADD,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -30,8 +32,15 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         error: action.error,
+        Folders: [],
       };
     }
+
+    case FOLDER_DATA_ADD:
+      return {
+        ...state,
+        Folders: addItem(state.Folders, action.data),
+      };
 
     default:
       return state;

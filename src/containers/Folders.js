@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
+import AddFolder from '../components/Dialogs/AddFolder';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -43,25 +45,47 @@ const styles = theme => ({
 
 class Folders extends Component {
 
-  componentDidMount() {
-    this.props.fetch(this.props.domain.ID);
+  state = {
+    adding: false,
+    deleting: false,
+    snackbar: null,
   }
 
-  handleAdd = () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/folders/add', {});
+  componentDidMount() {
+    this.fetchFolders();
   }
+
+  fetchFolders() {
+    const { fetch, domain } = this.props;
+    fetch(domain.ID);
+  }
+
+  handleAdd = () => this.setState({ adding: true });
+
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
+
+  handleDelete = folder => () => {
+    this.setState({ deleting: folder });
+  }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+    this.fetchFolders();
+  }
+
+  handleDeleteError = error => this.setState({ snackbar: error });
 
   handleEdit = folder => () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/folders/' + folder.ID, { ...folder });
-  }
-
-  handleDelete = id => () => {
-    this.props.delete(this.props.domain.ID, id)
-      .then(() => this.props.fetch(this.props.domain.ID));
+    const { history, domain } = this.props;
+    history.push('/' + domain.domainname + '/folders/' + folder.folderid, { ...folder });
   }
 
   render() {
-    const { classes, folders } = this.props;
+    const { classes, folders, domain } = this.props;
 
     return (
       <div className={classes.root}>
@@ -72,9 +96,9 @@ class Folders extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>folder name</TableCell>
-                  <TableCell>comment</TableCell>
-                  <TableCell>creation time</TableCell>
+                  <TableCell>Folder name</TableCell>
+                  <TableCell>Comment</TableCell>
+                  <TableCell>Creation time</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -85,10 +109,7 @@ class Folders extends Component {
                     <TableCell>{obj.comment}</TableCell>
                     <TableCell>{obj.creationtime}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
+                      <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
@@ -97,7 +118,38 @@ class Folders extends Component {
               </TableBody>
             </Table>
           </Paper>
+          <Snackbar
+            open={!!this.state.snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
         </div>
+        <AddFolder
+          open={this.state.adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={this.props.domain}
+        />
+        <DomainDataDelete
+          open={!!this.state.deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={this.state.deleting.displayname}
+          id={this.state.deleting.folderid}
+          domainID={domain.ID}
+        />
       </div>
     );
   }
@@ -120,10 +172,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID) => {
-      await dispatch(fetchFolderData(domainID));
+      await dispatch(fetchFolderData(domainID)).catch(msg => Promise.reject(msg));
     },
     delete: async (domainID, id) => {
-      await dispatch(deleteFolderData(domainID, id));
+      await dispatch(deleteFolderData(domainID, id)).catch(msg => Promise.reject(msg));
     },
   };
 };
