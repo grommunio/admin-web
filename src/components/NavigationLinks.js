@@ -102,6 +102,14 @@ const styles = theme => ({
     float: 'right',
     marginTop: '2px',
   },
+  tabs: {
+    width: 260,
+    minWidth: 260,
+  },
+  tab: {
+    width: 130,
+    minWidth: 130,
+  },
 });
 
 class NavigationLinks extends PureComponent {
@@ -165,9 +173,14 @@ class NavigationLinks extends PureComponent {
               <img src={logo} width="80" alt="GRAMMM"/>
             </Button>
           </div>
-          <Tabs variant="fullWidth" onChange={(event, tab) => this.setState({ tab: tab })} value={this.state.tab}>
-            <Tab value={0} label="Admin" />
-            <Tab value={1} label="Domains" />
+          <Tabs
+            variant="fullWidth"
+            onChange={(event, tab) => this.setState({ tab: tab })}
+            value={this.state.tab}
+            className={classes.tabs}
+          >
+            <Tab className={classes.tab} value={0} label="Admin" />
+            <Tab className={classes.tab} value={1} label="Domains" />
           </Tabs>
           {this.state.tab === 1 && 
             domains.map(({ domainname: name }) => {
