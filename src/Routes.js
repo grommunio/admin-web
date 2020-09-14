@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Switch } from "react-router-dom";
 
 import AuthenticatedRoute from './components/AuthenticatedRoute';
+import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import AsyncComponent from './components/AsyncComponent';
 import DefaultRedirect from "./components/DefaultRedirect";
@@ -29,8 +30,17 @@ const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
 const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
 const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
 const AsyncChangePw = AsyncComponent(() => import("./containers/ChangePw"));
+const AsyncSettings = AsyncComponent(() => import("./containers/Settings"));
+const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
+const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
+const AsyncFolders = AsyncComponent(() => import("./containers/Folders"));
+const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetails"));
+const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
+const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
+const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
+const AsyncDomainMenu = AsyncComponent(() => import("./containers/DomainMenu"));
 
-const Routes = ({ childProps }) => (
+const Routes = ({ childProps, domains }) => (
   <Switch>
     <AuthenticatedRoute
       path="/"
@@ -161,12 +171,99 @@ const Routes = ({ childProps }) => (
       component={AsyncMemberDetails}
       props={childProps}
     />
+    <AuthenticatedRoute
+      path="/settings"
+      exact
+      component={AsyncSettings}
+      props={childProps}
+    />
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}`}
+        exact
+        component={AsyncDomainMenu}
+        domain={domain}
+        props={childProps}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/mailAddresses`}
+        exact
+        component={AsyncMailAddresses}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/mailAddresses/:mailID`}
+        exact
+        component={AsyncMailAddressDetails}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/users`}
+        exact
+        component={AsyncUsers}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/users/:userID*`}
+        exact
+        component={AsyncUserDetails}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/folders`}
+        exact
+        component={AsyncFolders}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/folders/:folderID`}
+        exact
+        component={AsyncFolderDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/configuration`}
+        exact
+        component={AsyncConfig}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
     <DefaultRedirect />
   </Switch>
 );
 
 Routes.propTypes = {
   childProps: PropTypes.object,
+  domains: PropTypes.array.isRequired,
 };
 
 export default Routes;

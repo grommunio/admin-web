@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 });
 
-class DeleteUser extends PureComponent {
+class GeneralDelete extends PureComponent {
 
   state = {
     loading: false,
@@ -72,11 +72,11 @@ class DeleteUser extends PureComponent {
   }
 }
 
-DeleteUser.propTypes = {
+GeneralDelete.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   item: PropTypes.string,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -84,4 +84,4 @@ DeleteUser.propTypes = {
   delete: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DeleteUser));
+export default withTranslation()(withStyles(styles)(GeneralDelete));

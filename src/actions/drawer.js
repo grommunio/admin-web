@@ -3,6 +3,7 @@ import {
   DRAWER_CLOSE_DEFAULT,
   DRAWER_EXPAND,
   DRAWER_SELECTION,
+  DRAWER_VIEW,
 } from '../actions/types';
 
 export function setDrawerSelected(page) {
@@ -18,7 +19,13 @@ export function setDrawerDefault(bool) {
 }
 
 export function setDrawerExpansion() {
-  return  drawerExpand();
+  return drawerExpand();
+}
+
+export function toggleView() {
+  return {
+    type: DRAWER_VIEW,
+  };
 }
 
 function drawerSelection(page) {

@@ -91,8 +91,8 @@ class DeleteUser extends PureComponent {
 
 DeleteUser.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
+  user: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

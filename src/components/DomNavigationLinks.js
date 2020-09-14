@@ -19,6 +19,8 @@ import grey from '../colors/grey';
 import blue from '../colors/blue';
 import logo from '../res/grammm_logo_only.svg';
 import { TextField, InputAdornment, Grid } from '@material-ui/core';
+import { authLogout } from '../actions/auth';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   drawerHeader: {
@@ -144,6 +146,12 @@ class DomNavigationLinks extends PureComponent {
 
   handleTextInput = event => {
     this.setState({ filter: event.target.value });
+  }
+
+  handleLogout = () => {
+    const { history, authLogout } = this.props;
+    history.push('/');
+    authLogout();
   }
 
   render() {
@@ -284,6 +292,16 @@ DomNavigationLinks.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   domains: PropTypes.array.isRequired,
+  authLogout: PropTypes.func.isRequired,
 };
 
-export default withRouter(withTranslation()(withStyles(styles)(DomNavigationLinks)));
+const mapDispatchToProps = dispatch => {
+  return {
+    authLogout: async () => {
+      await dispatch(authLogout());
+    },
+  };
+};
+
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DomNavigationLinks))));

@@ -3,24 +3,19 @@ import {
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
-export function authLogin(user, pw) {
+export function authLogin(user, pw, role) {
   window.localStorage.setItem('grammmAuthToken', user + pw);
-  return authAuthenticated(true);
+  return authAuthenticated(true, role);
 }
 
-export function authLoginWithToken() {
-  return authAuthenticated(true);
+export function authLoginWithToken(grammmAuthToken) {
+  return authAuthenticated(true, grammmAuthToken === 'rootroot' ? 'sys' : 'domain');
 }
 
 export function authLogout() {
   window.localStorage.removeItem('grammmAuthToken');
   return authAuthenticated(false);
 }
-
-export function switchView() {
-  return { type: 'SWITCH_VIEW' };
-}
-
 
 export function authAuthenticating(authenticating = true) {
   return {
@@ -29,9 +24,10 @@ export function authAuthenticating(authenticating = true) {
   };
 }
 
-export function authAuthenticated(authenticated = true) {
+export function authAuthenticated(authenticated = true, role) {
   return {
     type: AUTH_AUTHENTICATED,
     authenticated,
+    role,
   };
 }

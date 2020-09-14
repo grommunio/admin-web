@@ -19,6 +19,7 @@ import {
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
 import logo from '../res/grammm_logo.svg';
+import { fetchDomainData } from '../actions/domains';
 
 const styles = theme => ({
   /* || General */
@@ -95,8 +96,9 @@ class Login extends Component {
   componentDidMount() {
     let grammmAuthToken = window.localStorage.getItem("grammmAuthToken");
     if(grammmAuthToken) {
-      const { authLoginWithToken } = this.props;
-      authLoginWithToken();
+      const { authLoginWithToken, fetchDomainData } = this.props;
+      authLoginWithToken(grammmAuthToken);
+      fetchDomainData();
     }
   }
 
@@ -107,9 +109,16 @@ class Login extends Component {
   }
 
   handleLogin = event => {
-    const { authLogin } = this.props;
+    const { authLogin, fetchDomainData } = this.props;
+    const { user, pass } = this.state;
     event.preventDefault();
-    authLogin(this.state.user, this.state.pass);
+    if(user === 'root' && pass === 'root') {
+      authLogin(user, this.state.pass, 'sys');
+    } else {
+      authLogin(user, this.state.pass, 'domain').then(() => {
+        fetchDomainData();
+      });
+    }
   }
 
   render() {
@@ -172,6 +181,7 @@ Login.propTypes = {
   auth: PropTypes.object.isRequired,
   authLogin: PropTypes.func.isRequired,
   authLoginWithToken: PropTypes.func.isRequired,
+  fetchDomainData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -183,11 +193,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    authLogin: async (user, pass) => {
-      await dispatch(authLogin(user, pass));
+    authLogin: async (user, pass, role) => {
+      await dispatch(authLogin(user, pass, role));
     },
     authLoginWithToken: async grammmAuthToken => {
       await dispatch(authLoginWithToken(grammmAuthToken));
+    },
+    fetchDomainData: async () => {
+      await dispatch(fetchDomainData());
     },
   };
 };

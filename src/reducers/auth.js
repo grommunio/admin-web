@@ -24,6 +24,7 @@ function authReducer(state = defaultState, action) {
       return {
         ...state,
         authenticated: action.authenticated,
+        role: action.role || 'domain',
         error: false,
       };
     

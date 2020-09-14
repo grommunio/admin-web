@@ -68,8 +68,9 @@ class DomainList extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleEdit = domain => () => {
+  handleEdit = domain => event => {
     this.props.history.push('/domainList/' + domain.ID, { ...domain });
+    event.stopPropagation();
   }
 
   handleDelete = domain => () => this.setState({ deleting: domain });
@@ -105,7 +106,7 @@ class DomainList extends Component {
               </TableHead>
               <TableBody>
                 {domains.Domains.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow key={idx} onClick={() => this.props.history.push(`/${obj.domainname}`)}>
                     <TableCell>{obj.domainname}</TableCell>
                     <TableCell>{obj.address}</TableCell>
                     <TableCell>{obj.title}</TableCell>
