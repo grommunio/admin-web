@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions, Snackbar, CircularProgress } from '@material-ui/core';
+  Button, DialogActions, Snackbar, CircularProgress, Select } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Close';
@@ -67,13 +67,13 @@ class DataAreaSetup extends Component {
       masterPath: '', 
       slavePath: '', 
       accelPath: '', 
-      maxSpace: 0, 
-      maxFiles: 0,
+      maxSpace: 0,
       storeLevels: 2,
     },
     addOpen: false,
     loading: false,
     deleting: false,
+    sizeUnit: 0,
   }
 
   getDataAreaData = () => {
@@ -98,10 +98,12 @@ class DataAreaSetup extends Component {
   ];
 
   handleAdd = () => {
+    const { newData, sizeUnit } = this.state;
     this.setState({ loading: true });
     this.props.add({
-      ...this.state.newData,
-      accelPath: this.state.accelPath || null,
+      ...newData,
+      accelPath: newData.accelPath || null,
+      maxSpace: newData.maxSpace << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({ 
@@ -110,13 +112,13 @@ class DataAreaSetup extends Component {
             masterPath: '', 
             slavePath: '', 
             accelPath: '', 
-            maxSpace: 0, 
-            maxFiles: 0,
+            maxSpace: 0,
             storeLevels: 2,
           },
           snackbar: 'Success!',
           loading: false,
           addOpen: false,
+          sizeUnit: 0,
         });
       })
       .catch(msg => {
@@ -152,16 +154,18 @@ class DataAreaSetup extends Component {
     }
   }
 
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
+
   render() {
     const { classes, t, areas } = this.props;
-    const { newData, loading } = this.state;
+    const { newData, loading, sizeUnit, addOpen } = this.state;
 
     return (
       <div className={classes.root}>
         <TopBar onAdd={() => this.setState({ addOpen: true })} title="Data Area Setup"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Dialog onClose={() => this.setState({ addOpen: false })} open={this.state.addOpen} maxWidth="lg">
+          <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
             <DialogTitle>Add</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>
               <FormControl className={classes.form}>
@@ -203,9 +207,23 @@ class DataAreaSetup extends Component {
                 <TextField 
                   className={classes.input} 
                   label={t("Maximum space")} 
-                  fullWidth
+                  fullWidth 
                   value={newData.maxSpace}
                   onChange={this.handleNumberInput('maxSpace')}
+                  InputProps={{
+                    endAdornment:
+                      <FormControl>
+                        <Select
+                          onChange={this.handleUnitChange}
+                          value={sizeUnit}
+                          className={classes.select}
+                        >
+                          <MenuItem value={0}>MiB</MenuItem>
+                          <MenuItem value={1}>GiB</MenuItem>
+                          <MenuItem value={2}>TiB</MenuItem>
+                        </Select>
+                      </FormControl>,
+                  }}
                 />
               </FormControl>
             </DialogContent>
@@ -243,7 +261,6 @@ class DataAreaSetup extends Component {
                   <TableCell>Master accelerated storage area</TableCell>
                   <TableCell>Slave user data area</TableCell>
                   <TableCell>Maximum space</TableCell>
-                  <TableCell>Maximum files</TableCell>
                   <TableCell>Used space</TableCell>
                   <TableCell>Used files</TableCell>
                   <TableCell>User number</TableCell>
@@ -257,7 +274,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.accelPath}</TableCell>
                     <TableCell>{obj.slavePath}</TableCell>
                     <TableCell>{obj.maxSpace}</TableCell>
-                    <TableCell>{obj.maxFiles}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
@@ -275,7 +291,6 @@ class DataAreaSetup extends Component {
                   <TableCell>Master accelerated storage area</TableCell>
                   <TableCell>Slave domain data area</TableCell>
                   <TableCell>Maximum space</TableCell>
-                  <TableCell>Maximum files</TableCell>
                   <TableCell>Used space</TableCell>
                   <TableCell>Used files</TableCell>
                   <TableCell>Domain number</TableCell>
@@ -289,7 +304,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.accelPath}</TableCell>
                     <TableCell>{obj.slavePath}</TableCell>
                     <TableCell>{obj.maxSpace}</TableCell>
-                    <TableCell>{obj.maxFiles}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
