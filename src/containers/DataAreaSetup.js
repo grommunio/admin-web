@@ -262,7 +262,6 @@ class DataAreaSetup extends Component {
                   <TableCell>Slave user data area</TableCell>
                   <TableCell>Maximum space</TableCell>
                   <TableCell>Used space</TableCell>
-                  <TableCell>Used files</TableCell>
                   <TableCell>User number</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -275,7 +274,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.slavePath}</TableCell>
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
-                    <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
                       <IconButton onClick={this.handleDelete(obj)}>
@@ -292,7 +290,6 @@ class DataAreaSetup extends Component {
                   <TableCell>Slave domain data area</TableCell>
                   <TableCell>Maximum space</TableCell>
                   <TableCell>Used space</TableCell>
-                  <TableCell>Used files</TableCell>
                   <TableCell>Domain number</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -305,7 +302,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.slavePath}</TableCell>
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
-                    <TableCell>{obj.usedFiles}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
                     <TableCell>
                       <IconButton  onClick={this.handleDelete(obj)} >
