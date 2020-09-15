@@ -176,7 +176,7 @@ class AddDomain extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("Area")}
+              label={t("Data area")}
               fullWidth
               value={areaID || ''}
               onChange={this.handleInput('areaID')}

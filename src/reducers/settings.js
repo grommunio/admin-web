@@ -3,7 +3,7 @@ import {
 } from '../actions/types';
 
 const defaultState = {
-  language: 1,
+  language: 'en-US',
 };
 
 function settingsReducer(state = defaultState, action) {

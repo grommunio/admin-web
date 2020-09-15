@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Burger from '@material-ui/icons/Menu';
 import { setDrawerExpansion } from '../actions/drawer';
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -32,7 +33,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, title, onAdd, fetching } = this.props;
+    const { classes, t, title, onAdd, fetching } = this.props;
     return (
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
@@ -43,7 +44,7 @@ class TopBar extends PureComponent {
           </Hidden>
           <Typography className={classes.title} variant="h6">{title}</Typography>
           {onAdd && <Button onClick={onAdd} color="inherit">
-            <Add />Add
+            <Add />{t('Add')}
           </Button>}
         </Toolbar>
         <Fade
@@ -61,6 +62,7 @@ class TopBar extends PureComponent {
 
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   title: PropTypes.string,
   fetchDomains: PropTypes.func.isRequired,
   setDrawerExpansion: PropTypes.func.isRequired,
@@ -90,4 +92,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(styles)(TopBar)));
+  withTranslation()(withStyles(styles)(TopBar))));

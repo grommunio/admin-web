@@ -178,7 +178,7 @@ class DomainListDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Domain List"/>
+        <TopBar title={t("Domain list")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -187,7 +187,7 @@ class DomainListDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('Edit domain')}
+                {t('editHeadline', { item: 'Domain' })}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -205,7 +205,7 @@ class DomainListDetails extends PureComponent {
                   onClick={() => this.setState({ changingPw: true })}
                   size="small"
                 >
-                  Change Password
+                  {t('Change password')}
                 </Button>
               </Grid>
               <TextField
@@ -337,14 +337,14 @@ class DomainListDetails extends PureComponent {
               onClick={() => this.props.history.push('/domainList')}
               style={{ marginRight: 8 }}
             >
-              Back
+              {t('Back')}
             </Button>
             <Button
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
             >
-              Save
+              {t('Save')}
             </Button>
           </Paper>
           <Snackbar
@@ -364,7 +364,7 @@ class DomainListDetails extends PureComponent {
           </Snackbar>
         </div>
         <Dialog open={!!changingPw}>
-          <DialogTitle>Change Password</DialogTitle>
+          <DialogTitle>{t('Change password')}</DialogTitle>
           <DialogContent>
             <TextField 
               className={classes.input} 
@@ -388,14 +388,14 @@ class DomainListDetails extends PureComponent {
           </DialogContent>
           <DialogActions>
             <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               color="primary"
               onClick={this.handlePasswordChange}
               disabled={checkPw !== newPw}
             >
-              Save
+              {t('Save')}
             </Button>
           </DialogActions>
         </Dialog>
