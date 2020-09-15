@@ -39,6 +39,7 @@ function usersReducer(state=defaultState, action) {
     case USERS_DATA_RECEIVED: 
       return {
         ...state,
+        loading: false,
         Users: action.data.data,
       };
 
