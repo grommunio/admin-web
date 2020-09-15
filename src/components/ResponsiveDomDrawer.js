@@ -50,6 +50,7 @@ const styles = theme => ({
     color: '#e6e6e6',
     boxShadow: '0 10px 30px -12px #000',
     overflowX: 'hidden',
+    overflowY: 'scroll',
   },
 });
 
