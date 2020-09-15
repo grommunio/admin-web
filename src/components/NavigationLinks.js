@@ -124,6 +124,7 @@ class NavigationLinks extends PureComponent {
       tab: 0,
       stateDomains: domains,
       filter: '',
+      defaultsIn: false,
     };
   }
 
@@ -151,9 +152,11 @@ class NavigationLinks extends PureComponent {
     this.props.history.push(`/${domain}`);
   }
 
+  toggleDefaults = () => this.setState({ defaultsIn: !this.state.defaultsIn });
+
   render() {
     const { classes, t, location, domains } = this.props;
-    const { filter, stateDomains } = this.state;
+    const { filter, stateDomains, defaultsIn } = this.state;
 
     return(
       <React.Fragment>
@@ -291,11 +294,11 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Base setup')} />
               </Grid>
             </ListItem>
-            <ListItem button onClick={this.toggleDefaultData} className={classes.li}>
+            <ListItem button onClick={this.toggleDefaults} className={classes.li}>
               <DefaultData className={classes.icon} />
               <ListItemText primary={t('Default data')} />
             </ListItem>
-            <Collapse in timeout="auto" unmountOnExit>
+            <Collapse in={defaultsIn} unmountOnExit>
               <List component="div" disablePadding>
                 <ListItem
                   className={classes.li}
