@@ -85,7 +85,7 @@ class DomainList extends Component {
   handleDeleteError = error => this.setState({ snackbar: error });
 
   render() {
-    const { classes, domains } = this.props;
+    const { classes, t, domains } = this.props;
 
     return (
       <div className={classes.root}>
@@ -96,11 +96,11 @@ class DomainList extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Domain</TableCell>
-                  <TableCell>Address</TableCell>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Maximum space</TableCell>
-                  <TableCell>Maximum users</TableCell>
+                  <TableCell>{t('Domain')}</TableCell>
+                  <TableCell>{t('Address')}</TableCell>
+                  <TableCell>{t('Title')}</TableCell>
+                  <TableCell>{t('Maximum space')}</TableCell>
+                  <TableCell>{t('Maximum users')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
