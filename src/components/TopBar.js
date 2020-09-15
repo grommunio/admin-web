@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, Button, Hidden, IconButton } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { fetchDomainData } from '../actions/domains';
 import { connect } from 'react-redux';
@@ -32,7 +32,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, title, onAdd } = this.props;
+    const { classes, title, onAdd, fetching } = this.props;
     return (
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
@@ -46,6 +46,14 @@ class TopBar extends PureComponent {
             <Add />Add
           </Button>}
         </Toolbar>
+        <Fade
+          in={fetching}
+          style={{
+            transitionDelay: '500ms',
+          }}
+        >
+          <LinearProgress variant="indeterminate" color="primary"/>
+        </Fade>
       </AppBar>
     );
   }
@@ -59,10 +67,15 @@ TopBar.propTypes = {
   history: PropTypes.object.isRequired,
   Domains: PropTypes.array.isRequired,
   onAdd: PropTypes.func,
+  fetching: PropTypes.bool,
 };
 
 const mapStateToProps = state => {
-  return { Domains: state.domains.Domains };
+  const { domains, areas, users, folders } = state;
+  return {
+    Domains: state.domains.Domains,
+    fetching: domains.loading || areas.loading || users.loading || folders.loading,
+  };
 };
 
 const mapDispatchToProps = dispatch => {

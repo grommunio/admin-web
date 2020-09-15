@@ -4,22 +4,32 @@ import PropTypes from 'prop-types';
 import { Switch } from "react-router-dom";
 
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
-import AsyncComponent from './components/AsyncComponent';
+import Loadable from 'react-loadable';
+import Loader from './components/LoadingMainView';
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 import DefaultRedirect from "./components/DefaultRedirect";
 
-const AsyncDomainMenu = AsyncComponent(() => import("./containers/DomainMenu"));
-const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
-const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
-const AsyncFolders = AsyncComponent(() => import("./containers/Folders"));
-const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetails"));
-const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
-const AsyncMenu = AsyncComponent(() => import("./containers/Menu"));
-const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
-const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
-const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
-const AsyncSettings = AsyncComponent(() => import("./containers/Settings"));
+function makeLoadableComponent(loader) {
+  return Loadable({
+    loader,
+    loading: Loader,
+    timeout: 20000,
+    delay: 300,
+  });
+}
+
+const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
+const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
+const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
+const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
+const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
+const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
+const AsyncMenu = makeLoadableComponent(() => import("./containers/Menu"));
+const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
+const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
+const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
+const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
