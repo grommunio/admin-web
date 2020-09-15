@@ -162,11 +162,11 @@ class DataAreaSetup extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={() => this.setState({ addOpen: true })} title="Data Areas"/>
+        <TopBar onAdd={() => this.setState({ addOpen: true })} title={t("Data areas")}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
-            <DialogTitle>Add</DialogTitle>
+            <DialogTitle>{t('Add')}</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>
               <FormControl className={classes.form}>
                 <TextField
@@ -192,7 +192,7 @@ class DataAreaSetup extends Component {
                 />
                 <TextField 
                   className={classes.input} 
-                  label={t("Database accelerating storage area")} 
+                  label={t("Accelerated storage area")} 
                   fullWidth
                   value={newData.accelPath}
                   onChange={this.handleInput('accelPath')}
@@ -233,14 +233,14 @@ class DataAreaSetup extends Component {
                 variant="contained"
                 color="secondary"
               >
-                Cancel
+                {t('Cancel')}
               </Button>
               <Button
                 onClick={this.handleAdd}
                 variant="contained"
                 color="primary"
               >
-                {loading ? <CircularProgress size={24}/> : 'Add'}
+                {loading ? <CircularProgress size={24}/> : t('Add')}
               </Button>
             </DialogActions>
           </Dialog>
@@ -257,12 +257,12 @@ class DataAreaSetup extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Master user data area</TableCell>
-                  <TableCell>Master accelerated storage area</TableCell>
-                  <TableCell>Slave user data area</TableCell>
-                  <TableCell>Maximum space</TableCell>
-                  <TableCell>Used space</TableCell>
-                  <TableCell>User number</TableCell>
+                  <TableCell>{t('Master user data area')}</TableCell>
+                  <TableCell>{t('Accelerated storage area')}</TableCell>
+                  <TableCell>{t('Slave user data area')}</TableCell>
+                  <TableCell>{t('Maximum space')}</TableCell>
+                  <TableCell>{t('Used space')}</TableCell>
+                  <TableCell>{t('User number')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -285,12 +285,12 @@ class DataAreaSetup extends Component {
               </TableBody>
               <TableHead>
                 <TableRow>
-                  <TableCell>Master domain data area</TableCell>
-                  <TableCell>Master accelerated storage area</TableCell>
-                  <TableCell>Slave domain data area</TableCell>
-                  <TableCell>Maximum space</TableCell>
-                  <TableCell>Used space</TableCell>
-                  <TableCell>Domain number</TableCell>
+                  <TableCell>{t('Master domain data area')}</TableCell>
+                  <TableCell>{t('Accelerated storage area')}</TableCell>
+                  <TableCell>{t('Slave domain data area')}</TableCell>
+                  <TableCell>{t('Maximum space')}</TableCell>
+                  <TableCell>{t('Used space')}</TableCell>
+                  <TableCell>{t('Domain number')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
