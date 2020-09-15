@@ -89,7 +89,7 @@ class DomainList extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Domain List"/>
+        <TopBar onAdd={this.handleAdd} title="Domain list"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper} elevation={2}>

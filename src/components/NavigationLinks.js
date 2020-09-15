@@ -266,7 +266,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Web className={classes.icon}/>
-                <ListItemText primary={t('Data area setup')} />
+                <ListItemText primary={t('Data areas')} />
               </Grid>
             </ListItem>
             <ListItem

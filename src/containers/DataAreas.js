@@ -162,7 +162,7 @@ class DataAreaSetup extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={() => this.setState({ addOpen: true })} title="Data Area Setup"/>
+        <TopBar onAdd={() => this.setState({ addOpen: true })} title="Data Areas"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
