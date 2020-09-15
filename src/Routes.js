@@ -11,9 +11,9 @@ import DefaultRedirect from "./components/DefaultRedirect";
 
 const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
 const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
-const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreaSetup"));
-const AsyncDomainList = AsyncComponent(() => import("./containers/DomainList"));
-const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainListDetails"));
+const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreas"));
+const AsyncDomainList = AsyncComponent(() => import("./containers/Domains"));
+const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainDetails"));
 const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
 const AsyncOrgs = AsyncComponent(() => import("./containers/Orgs"));
