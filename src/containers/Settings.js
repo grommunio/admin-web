@@ -6,6 +6,7 @@ import { Paper, Typography, Grid, FormControl, TextField, MenuItem, Switch, Form
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
+import i18n from '../i18n';
 
 const styles = theme => ({
   root: {
@@ -48,8 +49,8 @@ const styles = theme => ({
 class Settings extends Component {
 
   langs = [
-    { ID: 1, name: 'English' },
-    { ID: 2, name: 'Deutsch' },
+    { ID: 'en-US', name: 'English' },
+    { ID: 'de-DE', name: 'Deutsch' },
   ]
 
   handleInput = field => event => {
@@ -59,6 +60,14 @@ class Settings extends Component {
   handleDarkModeChange = event => {
     window.localStorage.setItem('darkMode', event.target.checked);
     window.location.reload();
+  }
+
+  handleLangChange = event => {
+    const { changeSettings } = this.props;
+    const lang = event.target.value;
+    i18n.changeLanguage(lang);
+    changeSettings('language', lang);
+    window.localStorage.setItem('lang', lang);
   }
 
   render() {
@@ -84,8 +93,8 @@ class Settings extends Component {
                 className={classes.input}
                 label={t("Language")}
                 fullWidth
-                value={settings.language || ''}
-                onChange={this.handleInput('language')}
+                value={settings.language || 'en-US'}
+                onChange={this.handleLangChange}
               >
                 {this.langs.map((lang, key) => (
                   <MenuItem key={key} value={lang.ID}>

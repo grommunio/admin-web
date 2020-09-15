@@ -177,8 +177,8 @@ class NavigationLinks extends PureComponent {
             value={this.state.tab}
             className={classes.tabs}
           >
-            <Tab className={classes.tab} value={0} label="Admin" />
-            <Tab className={classes.tab} value={1} label="Domains" />
+            <Tab className={classes.tab} value={0} label={t('Admin')} />
+            <Tab className={classes.tab} value={1} label={t('Domains')} />
           </Tabs>
           {this.state.tab === 1 && 
             domains.map(({ domainname: name }) => {
@@ -242,7 +242,7 @@ class NavigationLinks extends PureComponent {
                       >
                         <Grid container alignItems="center">
                           <Mail className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Mail address list')}/>
+                          <ListItemText primary={t('Mail addresses')}/>
                         </Grid>
                       </ListItem>
                     </List>
