@@ -54,15 +54,6 @@ class Groups extends Component {
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
-  }
-
   handleAdd = () => {
     const { history, fetchDomains } = this.props;
     fetchDomains().then(() => history.push('/groups/add', {}));

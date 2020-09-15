@@ -58,15 +58,6 @@ class Aliases extends Component {
     this.props.fetch();
   }
 
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
-  }
-
   handleAdd = () => {
     const { history } = this.props;
     history.push('/aliases/add', {});

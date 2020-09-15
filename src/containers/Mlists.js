@@ -57,15 +57,6 @@ class MLists extends Component {
     this.props.fetch();
   }
 
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
-  }
-
   handleAdd = () => {
     const { history, fetchDomains } = this.props;
     fetchDomains().then(() => history.push('/mailLists/add', {}));

@@ -59,15 +59,6 @@ class Classes extends Component {
     this.props.fetch();
   }
 
-  handleInput = field => event => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: event.target.value,
-      },
-    });
-  }
-
   handleAdd = () => {
     const { history, fetchDomains, fetchGroups, fetchClasses } = this.props;
     Promise.all([

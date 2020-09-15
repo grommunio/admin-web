@@ -133,11 +133,6 @@ class NavigationLinks extends PureComponent {
     history.push(`/${path}`);
   }
 
-  handleDrawer = domain => event => {
-    event.preventDefault();
-    this.props.history.push(`/${domain}`);
-  }
-
   handleLogout = () => {
     const { history, authLogout } = this.props;
     history.push('/');
