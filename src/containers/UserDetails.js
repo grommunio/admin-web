@@ -197,7 +197,7 @@ class UserDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Users"/>
+        <TopBar title={t("Users")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -206,13 +206,13 @@ class UserDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('Edit user')}
+                {t('editHeadline', { item: 'User' })}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
               <Grid container className={classes.input}>
                 <TextField 
-                  label={t("username")}
+                  label={t("Username")}
                   value={changes.username || ''}
                   autoFocus
                   onChange={this.handleInput('username')}
@@ -226,13 +226,13 @@ class UserDetails extends PureComponent {
                   onClick={() => this.setState({ changingPw: true })}
                   size="small"
                 >
-                  Change Password
+                  {t('Change password')}
                 </Button>
               </Grid>
               <TextField
                 select
                 className={classes.input}
-                label={t("password expiration time")}
+                label={t("Password expiration time")}
                 fullWidth
                 value={changes.expire || 0}
                 onChange={this.handleInput('expire')}
@@ -246,7 +246,7 @@ class UserDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("status")}
+                label={t("Status")}
                 fullWidth
                 value={changes.addressStatus || 0}
                 onChange={this.handleInput('addressStatus')}
@@ -285,7 +285,7 @@ class UserDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("types")}
+                label={t("Type")}
                 fullWidth
                 value={changes.subType || 0}
                 onChange={this.handleInput('subType')}
@@ -299,7 +299,7 @@ class UserDetails extends PureComponent {
               <TextField
                 select
                 className={classes.input}
-                label={t("language")}
+                label={t("Language")}
                 fullWidth
                 value={changes.lang || 0}
                 onChange={this.handleInput('lang')}
@@ -309,7 +309,7 @@ class UserDetails extends PureComponent {
                 </MenuItem>
               </TextField>
               <FormControl>
-                <FormLabel>{t("timezone")}</FormLabel>
+                <FormLabel>{t("Timezone")}</FormLabel>
                 <Select
                   className={classes.input}
                   fullWidth
@@ -326,7 +326,7 @@ class UserDetails extends PureComponent {
               </FormControl>
               <TextField 
                 className={classes.input} 
-                label={t("maximum space")} 
+                label={t("Maximum space")} 
                 fullWidth 
                 value={changes.maxSize || ''}
                 onChange={this.handleNumberInput('maxSize')}
@@ -361,35 +361,35 @@ class UserDetails extends PureComponent {
               />
               <TextField 
                 className={classes.input} 
-                label={t("Nick name")} 
+                label={t("Nickname")} 
                 fullWidth 
                 value={changes.nickname || ''}
                 onChange={this.handleInput('nickname')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("telephone")} 
+                label={t("Telephone")} 
                 fullWidth 
                 value={changes.tel || ''}
                 onChange={this.handleInput('tel')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("mobile phone")} 
+                label={t("Mobile phone")} 
                 fullWidth 
                 value={changes.mobilePhone || ''}
                 onChange={this.handleInput('mobilePhone')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("home address")} 
+                label={t("Home address")} 
                 fullWidth 
                 value={changes.homeaddress || ''}
                 onChange={this.handleInput('homeaddress')}
               />
               <TextField 
                 className={classes.input} 
-                label={t("memo")} 
+                label={t("Memo")} 
                 fullWidth
                 value={changes.memo || ''}
                 onChange={this.handleInput('memo')}
@@ -397,7 +397,7 @@ class UserDetails extends PureComponent {
             </FormControl>
             <Grid container className={classes.input}>
               <FormControlLabel
-                label={t('allow pop3 or imap downloading')}
+                label={t('Allow pop3 or imap downloading')}
                 control={
                   <Checkbox
                     checked={changes.pop3_imap || false}
@@ -406,7 +406,7 @@ class UserDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('allow smtp sending')}
+                label={t('Allow smtp sending')}
                 control={
                   <Checkbox
                     checked={changes.smtp || false}
@@ -415,7 +415,7 @@ class UserDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('allow change password')}
+                label={t('Allow change password')}
                 control={
                   <Checkbox
                     checked={changes.changePassword || false}
@@ -424,7 +424,7 @@ class UserDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('public user information')}
+                label={t('Public user information')}
                 control={
                   <Checkbox
                     checked={changes.publicAddress || false}
@@ -439,14 +439,14 @@ class UserDetails extends PureComponent {
               onClick={this.props.history.goBack}
               style={{ marginRight: 8 }}
             >
-              Back
+              {t('Back')}
             </Button>
             <Button
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
             >
-              Save
+              {('Save')}
             </Button>
           </Paper>
           <Snackbar
@@ -466,7 +466,7 @@ class UserDetails extends PureComponent {
           </Snackbar>
         </div>
         <Dialog open={!!changingPw}>
-          <DialogTitle>Change Password</DialogTitle>
+          <DialogTitle>{t('Change password')}</DialogTitle>
           <DialogContent>
             <TextField 
               className={classes.input} 
@@ -490,14 +490,14 @@ class UserDetails extends PureComponent {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => this.setState({ changingPw: false })}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button
               color="primary"
               onClick={this.handlePasswordChange}
               disabled={checkPw !== newPw}
             >
-              Save
+              {('Save')}
             </Button>
           </DialogActions>
         </Dialog>

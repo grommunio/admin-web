@@ -82,21 +82,21 @@ class Users extends Component {
   }
 
   render() {
-    const { classes, users } = this.props;
+    const { classes, t, users } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Users"/>
+        <TopBar onAdd={this.handleAdd} title={t("Users")}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Username</TableCell>
-                  <TableCell>Display name</TableCell>
-                  <TableCell>Nickname</TableCell>
-                  <TableCell>Max size</TableCell>
+                  <TableCell>{t('Username')}</TableCell>
+                  <TableCell>{t('Display name')}</TableCell>
+                  <TableCell>{t('Nickname')}</TableCell>
+                  <TableCell>{t('Max size')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>

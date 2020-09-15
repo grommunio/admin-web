@@ -136,7 +136,7 @@ class AddUser extends PureComponent {
               className={classes.input}
             />
             <TextField 
-              label={t("Display/Real name")}
+              label={t("Display name")}
               value={realName || ''}
               onChange={this.handleInput('realName')}
               style={{ flex: 1, marginRight: 8 }}
@@ -196,7 +196,7 @@ class AddUser extends PureComponent {
             />
             <Grid container className={classes.input}>
               <FormControlLabel
-                label={t('allow pop3 or imap downloading')}
+                label={t('Allow pop3 or imap downloading')}
                 control={
                   <Checkbox
                     // eslint-disable-next-line camelcase
@@ -206,7 +206,7 @@ class AddUser extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('allow smtp sending')}
+                label={t('Allow smtp sending')}
                 control={
                   <Checkbox
                     checked={smtp || false}
@@ -215,7 +215,7 @@ class AddUser extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('allow change password')}
+                label={t('Allow change password')}
                 control={
                   <Checkbox
                     checked={changePassword || false}
@@ -224,7 +224,7 @@ class AddUser extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('public user information')}
+                label={t('Public user information')}
                 control={
                   <Checkbox
                     checked={publicAddress || false}
@@ -241,7 +241,7 @@ class AddUser extends PureComponent {
             variant="contained"
             color="secondary"
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleAdd}
@@ -249,7 +249,7 @@ class AddUser extends PureComponent {
             color="primary"
             disabled={!username || loading}
           >
-            {loading ? <CircularProgress size={24}/> : 'Add'}
+            {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
         </DialogActions>
       </Dialog>
