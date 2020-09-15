@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import Loadable from 'react-loadable';
+import Loader from './components/LoadingMainView';
 import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
-import AdminRoutes from './Routes';
-import DomainRoutes from './DomainRoutes';
 import { authAuthenticating } from './actions/auth';
-import ResponsiveDomDrawer from './components/ResponsiveDomDrawer';
 import background from './res/bootback.svg';
 import darkBackground from './res/bootback-dark.svg';
 
@@ -56,6 +55,13 @@ const styles = {
   },
 };
 
+let MainView = Loadable({
+  loader: () => import('./components/LoadableMainView'),
+  loading: Loader,
+  timeout: 20000,
+  delay: 300,
+});
+
 class App extends Component {
 
   async componentDidMount() {
@@ -81,13 +87,13 @@ class App extends Component {
           className={window.localStorage.getItem('darkMode') === 'true' ?
             classes.darkLayer : classes.layer}
         />
-        <div className={classes.mainView}>
-          {authenticated &&
-            <ResponsiveDomDrawer role={role} domains={domains.Domains}/>}
-          {role === 'sys' ?
-            <AdminRoutes domains={domains.Domains} childProps={routesProps}/> :
-            <DomainRoutes domains={domains.Domains} childProps={routesProps}/>}
-        </div>
+        <MainView
+          classes={classes}
+          authenticated={authenticated}
+          role={role}
+          domains={domains.Domains}
+          routesProps={routesProps}
+        />
       </div>
     );
   }

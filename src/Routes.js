@@ -6,39 +6,49 @@ import { Switch } from "react-router-dom";
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
-import AsyncComponent from './components/AsyncComponent';
 import DefaultRedirect from "./components/DefaultRedirect";
+import Loadable from 'react-loadable';
+import Loader from './components/LoadingMainView';
 
-const AsyncLogin = AsyncComponent(() => import("./containers/Login"));
-const AsyncMenu = AsyncComponent(() => import("./containers/Dashboard"));
-const AsyncDataAreaSetup = AsyncComponent(() => import("./containers/DataAreas"));
-const AsyncDomainList = AsyncComponent(() => import("./containers/Domains"));
-const AsyncDomainListDetails = AsyncComponent(() => import("./containers/DomainDetails"));
-const AsyncGroups = AsyncComponent(() => import("./containers/Groups"));
-const AsyncGroupDetails = AsyncComponent(() => import("./containers/GroupDetails"));
-const AsyncOrgs = AsyncComponent(() => import("./containers/Orgs"));
-const AsyncOrgDetails = AsyncComponent(() => import("./containers/OrgDetails"));
-const AsyncAliases = AsyncComponent(() => import("./containers/Aliases"));
-const AsyncAliasDetails = AsyncComponent(() => import("./containers/AliasDetails"));
-const AsyncForwards = AsyncComponent(() => import("./containers/Forwards"));
-const AsyncForwardDetails = AsyncComponent(() => import("./containers/ForwardDetails"));
-const AsyncMlists = AsyncComponent(() => import("./containers/Mlists"));
-const AsyncMlistDetails = AsyncComponent(() => import("./containers/MlistDetails"));
-const AsyncClasses = AsyncComponent(() => import("./containers/Classes"));
-const AsyncClassDetails = AsyncComponent(() => import("./containers/ClassDetails"));
-const AsyncMembers = AsyncComponent(() => import("./containers/Members"));
-const AsyncMemberDetails = AsyncComponent(() => import("./containers/MemberDetails"));
-const AsyncBaseSetup = AsyncComponent(() => import("./containers/BaseSetup"));
-const AsyncChangePw = AsyncComponent(() => import("./containers/ChangePw"));
-const AsyncSettings = AsyncComponent(() => import("./containers/Settings"));
-const AsyncUsers = AsyncComponent(() => import("./containers/Users"));
-const AsyncUserDetails = AsyncComponent(() => import("./containers/UserDetails"));
-const AsyncFolders = AsyncComponent(() => import("./containers/Folders"));
-const AsyncFolderDetails = AsyncComponent(() => import("./containers/FolderDetails"));
-const AsyncConfig = AsyncComponent(() => import("./containers/Config"));
-const AsyncMailAddresses = AsyncComponent(() => import("./containers/MailAddresses"));
-const AsyncMailAddressDetails = AsyncComponent(() => import("./containers/MailAddressDetails"));
-const AsyncDomainMenu = AsyncComponent(() => import("./containers/DomainMenu"));
+function makeLoadableComponent(loader) {
+  return Loadable({
+    loader,
+    loading: Loader,
+    timeout: 20000,
+    delay: 300,
+  });
+}
+
+const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
+const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
+const AsyncDataAreaSetup = makeLoadableComponent(() => import("./containers/DataAreas"));
+const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
+const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
+const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
+const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
+const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
+const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
+const AsyncAliases = makeLoadableComponent(() => import("./containers/Aliases"));
+const AsyncAliasDetails = makeLoadableComponent(() => import("./containers/AliasDetails"));
+const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
+const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
+const AsyncMlists = makeLoadableComponent(() => import("./containers/Mlists"));
+const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MlistDetails"));
+const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
+const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
+const AsyncMembers = makeLoadableComponent(() => import("./containers/Members"));
+const AsyncMemberDetails = makeLoadableComponent(() => import("./containers/MemberDetails"));
+const AsyncBaseSetup = makeLoadableComponent(() => import("./containers/BaseSetup"));
+const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"));
+const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
+const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
+const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
+const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
+const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
+const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
+const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
+const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
+const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>

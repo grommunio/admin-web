@@ -33,7 +33,6 @@ class TopBar extends PureComponent {
 
   render() {
     const { classes, title, onAdd, fetching } = this.props;
-    console.log(fetching);
     return (
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
