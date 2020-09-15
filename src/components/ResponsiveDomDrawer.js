@@ -50,6 +50,7 @@ const styles = theme => ({
     color: '#e6e6e6',
     boxShadow: '0 10px 30px -12px #000',
     overflowX: 'hidden',
+    overflowY: 'scroll',
   },
 });
 
@@ -65,100 +66,42 @@ class ResponsiveDomDrawer extends Component {
       dropdownAnchor: null,
     };
 
-  handleMoveAssetClick = (event) => {
-    const { history, setDrawerSelected } = this.props;
-    setDrawerSelected('assets');
-    this.setState({
-      dropdownOpen: false,
-    });
+    render() {
+      const { classes, domains, role, expanded, view } = this.props;
 
-    event.preventDefault();
-    history.push(`/moveAsset`);
-  }
-
-  handleAddAssetClick = event => {
-    const { history, setDrawerSelected } = this.props;
-    setDrawerSelected('assets');
-    this.setState({
-      dropdownOpen: false,
-    });
-
-    event.preventDefault();
-    history.push(`/addAsset`);
-  }
-
-  handleProfileClick = (event) => {
-    this.setState({
-      menuOpen: !this.state.menuOpen,
-      menuAnchor: event.currentTarget,
-    });
-  }
-
-  handleDropdownMenu = (event) => {
-    this.setState({
-      dropdownOpen: !this.state.menuOpen,
-      dropdownAnchor: event.currentTarget,
-    });
-  }
-
-  handleCloseProfileMenu = () => {
-    this.setState({
-      menuOpen: false,
-    });
-  }
-
-  handleCloseDropdownMenu = () => {
-    this.setState({
-      dropdownOpen: false,
-    });
-  }
-
-  handleNavigation = path => event => {
-    const { history, setDrawerSelected } = this.props;
-    setDrawerSelected(path);
-    event.preventDefault();
-    history.push(`/${path}`);
-    this.setState({
-      menuOpen: false,
-    });
-  }
-
-  render() {
-    const { classes, domains, role, expanded, view } = this.props;
-
-    return(
-      <nav className={classes.drawer} aria-label="navigation">
-        <Hidden mdUp implementation="css">
-          <Drawer
-            variant="temporary"
-            anchor={"left"}
-            open={expanded}
-            onClose={this.props.toggleExpansion}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {role === 'sys' && view === 'sys' ? <NavigationLinks domains={domains}/>
-              : <DomNavigationLinks domains={domains}/>}
-          </Drawer>
-        </Hidden>
-        <Hidden mdDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {role === 'sys' ? <NavigationLinks domains={domains}/> : <DomNavigationLinks domains={domains}/>}
-          </Drawer>
-        </Hidden>
-      </nav>
-    );
-  }
+      return(
+        <nav className={classes.drawer} aria-label="navigation">
+          <Hidden mdUp implementation="css">
+            <Drawer
+              variant="temporary"
+              anchor={"left"}
+              open={expanded}
+              onClose={this.props.toggleExpansion}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+            >
+              {role === 'sys' && view === 'sys' ? <NavigationLinks domains={domains}/>
+                : <DomNavigationLinks domains={domains}/>}
+            </Drawer>
+          </Hidden>
+          <Hidden mdDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {role === 'sys' ? <NavigationLinks domains={domains}/> : <DomNavigationLinks domains={domains}/>}
+            </Drawer>
+          </Hidden>
+        </nav>
+      );
+    }
 }
 
 ResponsiveDomDrawer.propTypes = {

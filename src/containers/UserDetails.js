@@ -156,15 +156,6 @@ class UserDetails extends PureComponent {
     unsaved: true,
   });
 
-  handleDateChange = field => date => {
-    this.setState({
-      changes: {
-        ...this.state.changes,
-        [field]: date,
-      },
-    });
-  }
-
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);

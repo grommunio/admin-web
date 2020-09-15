@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, Select, CircularProgress, 
+  MenuItem, Button, DialogActions, Select, CircularProgress, Grid, FormControlLabel, Checkbox, 
 } from '@material-ui/core';
 import { fetchAreasData } from '../../actions/areas';
 import { withTranslation } from 'react-i18next';
@@ -32,6 +32,11 @@ class AddUser extends PureComponent {
     realName: '',
     areaID: 0,
     groupID: 0,
+    // eslint-disable-next-line camelcase
+    pop3_imap: true,
+    smtp: true,
+    changePassword: true,
+    publicAddress: true,
     maxSize: '',
     sizeUnit: 0,
     loading: false,
@@ -48,9 +53,7 @@ class AddUser extends PureComponent {
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
+  handleCheckbox = field => event => this.setState({ [field]: event.target.checked });
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -61,17 +64,24 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, areaID, groupID, createDay, lang, realName, maxSize } = this.state;
+    const { username, areaID, groupID, createDay, lang, realName, maxSize,
+      // eslint-disable-next-line camelcase
+      pop3_imap, smtp, changePassword, publicAddress, sizeUnit } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
       areaID,
       groupID,
       realName,
+      // eslint-disable-next-line camelcase
+      pop3_imap,
+      smtp,
+      changePassword,
+      publicAddress,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
       maxFile: 0,
-      maxSize: maxSize << (10 * this.state.sizeUnit),
+      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
@@ -80,6 +90,11 @@ class AddUser extends PureComponent {
           areaID: 0,
           groupID: 0,
           maxSize: '',
+          // eslint-disable-next-line camelcase
+          pop3_imap: true,
+          smtp: true,
+          changePassword: true,
+          publicAddress: true,
           sizeUnit: 0,
           loading: false,
         });
@@ -95,7 +110,9 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
-    const { username, areaID, groupID, maxSize, sizeUnit,loading, realName } = this.state;
+    const { username, areaID, groupID, maxSize, sizeUnit,loading, realName,
+      // eslint-disable-next-line camelcase
+      pop3_imap, smtp, changePassword, publicAddress} = this.state;
 
     return (
       <Dialog
@@ -177,6 +194,45 @@ class AddUser extends PureComponent {
                   </FormControl>,
               }}
             />
+            <Grid container className={classes.input}>
+              <FormControlLabel
+                label={t('allow pop3 or imap downloading')}
+                control={
+                  <Checkbox
+                    // eslint-disable-next-line camelcase
+                    checked={pop3_imap || false}
+                    onChange={this.handleCheckbox('pop3_imap')}
+                  />
+                }
+              />
+              <FormControlLabel
+                label={t('allow smtp sending')}
+                control={
+                  <Checkbox
+                    checked={smtp || false}
+                    onChange={this.handleCheckbox('smtp')}
+                  />
+                }
+              />
+              <FormControlLabel
+                label={t('allow change password')}
+                control={
+                  <Checkbox
+                    checked={changePassword || false}
+                    onChange={this.handleCheckbox('changePassword')}
+                  />
+                }
+              />
+              <FormControlLabel
+                label={t('public user information')}
+                control={
+                  <Checkbox
+                    checked={publicAddress || false}
+                    onChange={this.handleCheckbox('publicAddress')}
+                  />
+                }
+              />
+            </Grid>
           </FormControl>
         </DialogContent>
         <DialogActions>

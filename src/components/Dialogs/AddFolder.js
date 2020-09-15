@@ -49,14 +49,6 @@ class AddFolder extends PureComponent {
     [field]: event.target.checked,
   });
 
-  handleNumberInput = field => event => {
-    let input = event.target.value;
-    if(input && input.match("^\\d*?$")) input = parseInt(input);
-    this.setState({
-      [field]: input,
-    });
-  }
-
   handleAdd = () => {
     const { add, onSuccess, onError, domain } = this.props;
     this.setState({ loading: true });

@@ -56,10 +56,6 @@ class Settings extends Component {
     this.props.changeSettings(field, event.target.value);
   }
 
-  handleCheckbox = field => event => {
-    this.props.changeSettings(field, event.target.checked);
-  }
-
   handleDarkModeChange = event => {
     window.localStorage.setItem('darkMode', event.target.checked);
     window.location.reload();
