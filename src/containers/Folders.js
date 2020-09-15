@@ -85,7 +85,7 @@ class Folders extends Component {
   }
 
   render() {
-    const { classes, folders, domain } = this.props;
+    const { classes, t, folders, domain } = this.props;
 
     return (
       <div className={classes.root}>
@@ -96,9 +96,9 @@ class Folders extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Folder name</TableCell>
-                  <TableCell>Comment</TableCell>
-                  <TableCell>Creation time</TableCell>
+                  <TableCell>{t('Folder name')}</TableCell>
+                  <TableCell>{t('Comment')}</TableCell>
+                  <TableCell>{t('Creation time')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>

@@ -82,7 +82,7 @@ class AddFolder extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add</DialogTitle>
+        <DialogTitle>{t('Add')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
