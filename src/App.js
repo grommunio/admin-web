@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { authAuthenticating } from './actions/auth';
 import background from './res/bootback.svg';
 import darkBackground from './res/bootback-dark.svg';
+import i18n from './i18n';
 
 const styles = {
   root: {
@@ -66,7 +67,7 @@ class App extends Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-
+    i18n.changeLanguage(localStorage.getItem('lang'));
     await dispatch(authAuthenticating(false));
   }
 
