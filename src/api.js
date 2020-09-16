@@ -80,6 +80,29 @@ async function loginPost(path, data) {
     .then(response => response.json());
 }*/
 
+
+/*
+  DASHBOARD
+*/
+
+export function dashboard() {
+  return async () => {
+    return await get('/system/dashboard');
+  };
+}
+
+export function services() {
+  return async () => {
+    return await get('/system/dashboard/services');
+  };
+}
+
+export function postServices(service, action) {
+  return async () => {
+    return await post('/system/dashboard/services/' + service + '/' + action);
+  };
+}
+
 /*
   DOMAINS
 */
