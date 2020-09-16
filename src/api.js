@@ -91,6 +91,18 @@ export function dashboard() {
   };
 }
 
+export function services() {
+  return async () => {
+    return await get('/system/dashboard/services');
+  };
+}
+
+export function postServices(service, action) {
+  return async () => {
+    return await post('/system/dashboard/services/' + service + '/' + action);
+  };
+}
+
 /*
   DOMAINS
 */

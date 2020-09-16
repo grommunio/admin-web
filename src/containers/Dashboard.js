@@ -31,7 +31,7 @@ import StorageBackground from '../res/storage-black-48dp.svg';
 import NetworkBackground from '../res/network_check-black-48dp.svg';
 import TimingBackground from '../res/schedule-black-48dp.svg';
 import { connect } from 'react-redux';
-import { fetchDashboardData } from '../actions/dashboard';
+import { fetchDashboardData, serviceAction } from '../actions/dashboard';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
@@ -170,6 +170,16 @@ class Dashboard extends Component {
     this.fetchDashboard();
   }
 
+  state = {
+    snackbar: null,
+  }
+
+  swapColors = [green['500'], grey['700']];
+
+  ramColors = [green['500'], blue['500'], yellow['500'], grey['700']];
+
+  cpuColors = [green['500'], red['500'], grey['400'], teal['500'], yellow['500'], grey['700']];
+
   fetchInterval = null;
   fetchDashboard() {
     this.updateInterval = setInterval(() => {
@@ -178,37 +188,6 @@ class Dashboard extends Component {
     }, 3000);
   }
 
-  network = [
-    {
-      name: "08:08",
-      value: 24,
-    },
-    {
-      name: "09:09",
-      value: 11,
-    },
-    {
-      name: "10:10",
-      value: 111,
-    },
-    {
-      name: "11:11",
-      value: 21,
-    },
-    {
-      name: "12:12",
-      value: 420,
-    },
-    {
-      name: "13:13",
-      value: 42,
-    },
-  ]
-
-  state = {
-    snackbar: null,
-  }
-  
   diskInterval = null;
   updateDisk() {
     this.diskInterval = setInterval(() => {
@@ -254,11 +233,6 @@ class Dashboard extends Component {
     }
   }
 
-  swapColors = [green['500'], grey['700']];
-
-  ramColors = [green['500'], blue['500'], yellow['500'], grey['700']];
-
-  cpuColors = [green['500'], red['500'], grey['400'], teal['500'], blue['500'], grey['700']];
 
   formatLastMemory(unformatted) {
     return [
@@ -267,6 +241,10 @@ class Dashboard extends Component {
       { name: 'cache', value: unformatted.cache },
       { name: 'free', value: unformatted.free },
     ];
+  }
+
+  handleServiceAction = (service, action) => () => {
+    this.props.serviceAction(service, action).catch(msg => this.setState({ snackbar: msg }));
   }
 
   render() {
@@ -302,13 +280,22 @@ class Dashboard extends Component {
                           colorSecondary: this.getChipColor(service.state),
                         }}
                       />
-                      <IconButton className={classes.chipButton}>
+                      <IconButton
+                        onClick={this.handleServiceAction(service.unit, 'stop')}
+                        className={classes.chipButton}
+                      >
                         <Stop fontSize="small"/>
                       </IconButton>
-                      <IconButton className={classes.chipButton}>
+                      <IconButton
+                        onClick={this.handleServiceAction(service.unit, 'restart')}
+                        className={classes.chipButton}
+                      >
                         <Restart fontSize="small"/>
                       </IconButton>
-                      <IconButton className={classes.chipButton}>
+                      <IconButton
+                        onClick={this.handleServiceAction(service.unit, 'start')}
+                        className={classes.chipButton}
+                      >
                         <Start fontSize="small"/>
                       </IconButton>
                     </div>
@@ -603,6 +590,7 @@ Dashboard.propTypes = {
   swapPercent: PropTypes.number,
   load: PropTypes.array.isRequired,
   services: PropTypes.array.isRequired,
+  serviceAction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -614,6 +602,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => await dispatch(fetchDashboardData())
+      .catch(error => Promise.reject(error)),
+    serviceAction: async (service, action) => await dispatch(serviceAction(service, action))
       .catch(error => Promise.reject(error)),
   };
 };
