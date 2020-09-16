@@ -21,7 +21,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
-import { green, yellow, red, blue, orange, grey } from '@material-ui/core/colors';
+import { green, yellow, red, blue, orange, grey, teal } from '@material-ui/core/colors';
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
@@ -32,6 +32,7 @@ import NetworkBackground from '../res/network_check-black-48dp.svg';
 import TimingBackground from '../res/schedule-black-48dp.svg';
 import { connect } from 'react-redux';
 import { fetchDashboardData } from '../actions/dashboard';
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -253,10 +254,29 @@ class Dashboard extends Component {
     }
   }
 
-  COLORS = [green['500'], grey['700']];
+  swapColors = [green['500'], grey['700']];
+
+  ramColors = [green['500'], blue['500'], yellow['500'], grey['700']];
+
+  cpuColors = [green['500'], red['500'], grey['400'], teal['500'], blue['500'], grey['700']];
+
+  formatLastMemory(unformatted) {
+    return [
+      { name: 'used', value: unformatted.used },
+      { name: 'buffer', value: unformatted.buffer },
+      { name: 'cache', value: unformatted.cache },
+      { name: 'free', value: unformatted.free },
+    ];
+  }
 
   render() {
-    const { classes, cpuPercent, disks, memory, swap, swapPercent, load, services } = this.props;
+    const { classes, t, cpuPercent, disks, memory, swap, swapPercent, load, services } = this.props;
+    const lastCpu = cpuPercent.length > 0 ? 
+      Object.entries(cpuPercent[cpuPercent.length - 1])
+        .map(arr => { return { name: arr[0], value: arr[1] }; })
+      : [];
+    const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
+
     return(
       <div className={classes.root}>
         <TopBar title="Dashboard"/>
@@ -264,29 +284,135 @@ class Dashboard extends Component {
         <div className={classes.base}>
           <Grid container spacing={4}>
             <Grid item xs={12}>
+              <Paper className={classes.fixedPaper} elevation={2}>
+                <div style={{ flex: 1 }}>
+                  <Typography className={classes.chartTitle} variant="h4">
+                    {t('Services')}
+                  </Typography>
+                </div>
+                <div className={classes.chipsPaper}>
+                  {services.map((service, idx) =>
+                    <div key={idx} className={classes.chipContainer}>
+                      <Chip
+                        label={service.name}
+                        color="secondary"
+                        className={classes.chip}
+                        classes={{
+                          root: classes.chip,
+                          colorSecondary: this.getChipColor(service.state),
+                        }}
+                      />
+                      <IconButton className={classes.chipButton}>
+                        <Stop fontSize="small"/>
+                      </IconButton>
+                      <IconButton className={classes.chipButton}>
+                        <Restart fontSize="small"/>
+                      </IconButton>
+                      <IconButton className={classes.chipButton}>
+                        <Start fontSize="small"/>
+                      </IconButton>
+                    </div>
+                  )}
+                </div>
+              </Paper>
+            </Grid>
+            <Grid item xs={12}>
               <Paper className={classes.chipsPaper} elevation={2}>
-                {services.map((service, idx) =>
-                  <div key={idx} className={classes.chipContainer}>
-                    <Chip
-                      label={service.name}
-                      color="secondary"
-                      className={classes.chip}
-                      classes={{
-                        root: classes.chip,
-                        colorSecondary: this.getChipColor(service.state),
-                      }}
-                    />
-                    <IconButton className={classes.chipButton}>
-                      <Stop fontSize="small"/>
-                    </IconButton>
-                    <IconButton className={classes.chipButton}>
-                      <Restart fontSize="small"/>
-                    </IconButton>
-                    <IconButton className={classes.chipButton}>
-                      <Start fontSize="small"/>
-                    </IconButton>
-                  </div>
-                )}
+                <Grid container>
+                  <Grid item xs={4} className={classes.fixedPaper}>
+                    <Typography className={classes.chartTitle} variant="h4">
+                      {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart height={250}>
+                        <Pie
+                          data={lastMemory}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={180}
+                          endAngle={-180}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill={green['500']}
+                          label={data => this.formatLabel(data.payload.value)}
+                        >
+                          {lastMemory.map((entry, index) => 
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={this.ramColors[index  % this.ramColors.length]}
+                            />
+                          )}
+                        </Pie>
+                        <Tooltip formatter={this.formatLabel}/>
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Typography className={classes.chartTitle} variant="h4">
+                      {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart height={250}>
+                        <Pie
+                          data={lastCpu}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={180}
+                          endAngle={-180}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill={green['500']}
+                          label
+                        >
+                          {lastCpu.map((entry, index) => 
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={this.cpuColors[index % this.cpuColors.length]}
+                            />
+                          )}
+                        </Pie>
+                        <Tooltip/>
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Grid>
+                  <Grid item xs={4} className={classes.fixedPaper}>
+                    <Typography className={classes.chartTitle} variant="h4">
+                      Swap: {swapPercent}%
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart height={250}>
+                        <Pie
+                          data={swap}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={180}
+                          endAngle={-180}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill={green['500']}
+                          label={data => this.formatLabel(data.payload.value)}
+                        >
+                          {swap.map((entry, index) => 
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={this.swapColors[index % this.swapColors.length]}
+                            />
+                          )}
+                        </Pie>
+                        <Tooltip formatter={this.formatLabel}/>
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Grid>
+                </Grid> 
               </Paper>
             </Grid>
             <Grid item xs={6}>
@@ -431,66 +557,6 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
-                  Swap: {swapPercent}%
-                </Typography>
-                <div className={classes.storageBackground}></div>
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart width={730} height={250}>
-                    <Pie
-                      data={swap}
-                      dataKey="value"
-                      nameKey="name"
-                      startAngle={180}
-                      endAngle={-180}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      fill={green['500']}
-                      label={data => this.formatLabel(data.payload.value)}
-                    >
-                      {swap.map((entry, index) => 
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={this.COLORS[index % this.COLORS.length]}
-                        />
-                      )}
-                    </Pie>
-                    <Tooltip formatter={this.formatLabel}/>
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
-                  Network: 42%
-                </Typography>
-                <div className={classes.networkBackground}></div>
-                <ResponsiveContainer width="100%" height={250} >
-                  <LineChart
-                    data={this.network}
-                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
-                  >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip/>
-                    <Legend />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="value"
-                      stroke={green['500']}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </Paper>
-            </Grid>
-
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={2}>
                 <Typography className={classes.chartTitle} variant="h4">Load</Typography>
                 <div className={classes.timingBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
@@ -528,6 +594,7 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
   disks: PropTypes.array.isRequired,
@@ -552,4 +619,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(styles)(Dashboard));
+  withTranslation()(withStyles(styles)(Dashboard)));
