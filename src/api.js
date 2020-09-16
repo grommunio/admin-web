@@ -80,6 +80,17 @@ async function loginPost(path, data) {
     .then(response => response.json());
 }*/
 
+
+/*
+  DASHBOARD
+*/
+
+export function dashboard() {
+  return async () => {
+    return await get('/system/dashboard');
+  };
+}
+
 /*
   DOMAINS
 */
