@@ -193,9 +193,9 @@ class Dashboard extends Component {
   }
 
   formatLabel(value, descimals) {
-    if (value > 1000000000) return (value / 1000000000).toFixed(descimals) + 'Gb';
-    if (value > 1000000) return (value / 1000000).toFixed(descimals) + 'Mb';
-    if (value > 1000) return (value / 1000).toFixed(descimals) + 'Kb';
+    if (value > 1000000000) return (value / 1000000000).toFixed(descimals) + 'GB';
+    if (value > 1000000) return (value / 1000000).toFixed(descimals) + 'MB';
+    if (value > 1000) return (value / 1000).toFixed(descimals) + 'KB';
     return value + 'B';
   }
 
@@ -244,6 +244,27 @@ class Dashboard extends Component {
   handleServiceAction = (service, action) => () => {
     this.props.serviceAction(service, action).catch(msg => this.setState({ snackbar: msg }));
   }
+
+  renderDiskLabel = (props) => {
+    const {
+      x, y, width, value,
+    } = props;
+    const radius = 12;
+  
+    return (
+      <g>
+        <text
+          textAnchor="end"
+          style={{ fontSize: 12 }}
+          x={x + width - 4}
+          y={y + radius}
+          fill="#000"
+        >
+          {value}
+        </text>
+      </g>
+    );
+  };
 
   render() {
     const { classes, t, cpuPercent, disks, memory, swap, swapPercent, load, services } = this.props;
@@ -534,22 +555,26 @@ class Dashboard extends Component {
                     margin={{ top: 4, right: 32, left: 40, bottom: 4 }}
                   >
                     <YAxis type="category" dataKey="device" />
-                    <XAxis type="number" tickFormatter={this.formatTick}/>
+                    <XAxis type="number"/>
                     <Bar
                       dataKey="percent"
                       stackId="a"
                       fill={red['500']}
+                      isAnimationActive={false}
                     >
-                      <LabelList formatter={this.formatLabel} dataKey="used" position="insideRight"/>
+                      <LabelList
+                        formatter={this.formatLabel}
+                        dataKey="label"
+                        position="right"
+                        content={this.renderDiskLabel}
+                      />
                     </Bar>
                     <Bar
                       dataKey="freePercent" 
                       stackId="a"
-                      fill={green['500']}
-                    >
-                      <LabelList formatter={this.formatLabel} dataKey="free" position="insideLeft"/>
-                    </Bar>
-                    
+                      fill={"rgba(0, 0, 0, 0)"}
+                      isAnimationActive={false}
+                    >                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>
@@ -564,7 +589,12 @@ class Dashboard extends Component {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar barSize={60} dataKey="value" fill={green['500']} />
+                    <Bar
+                      isAnimationActive={false}
+                      barSize={60}
+                      dataKey="value"
+                      fill={green['500']}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>

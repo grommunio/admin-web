@@ -37,7 +37,11 @@ function formatSwap(obj) {
 function formatDisks(arr) {
   const formattedArr = [];
   for(let i = 0; i < arr.length; i++) {
-    formattedArr.push({ ...arr[i], freePercent: 100 - arr[i].percent });
+    formattedArr.push({
+      ...arr[i],
+      label: `${(arr[i].used / 1000000000).toFixed(1)}GB / ${(arr[i].total / 1000000000).toFixed(1)}GB`,
+      freePercent: 100 - arr[i].percent,
+    });
   }
   return formattedArr;
 }
