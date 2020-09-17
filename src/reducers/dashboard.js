@@ -9,7 +9,6 @@ const defaultState = {
   loading: false,
   error: null,
   Dashboard: {
-    services: [],
     disks: [],
     load: [],
     cpuPercent: [],

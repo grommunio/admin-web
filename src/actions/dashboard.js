@@ -19,15 +19,3 @@ export function fetchDashboardData() {
     }
   };
 }
-
-export function serviceAction(service, action) {
-  return async dispatch => {
-    try {
-      await dispatch(postServices(service, action));
-    } catch(error) {
-      await dispatch({ type: DASHBOARD_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
-}

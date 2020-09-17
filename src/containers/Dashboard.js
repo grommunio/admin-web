@@ -25,6 +25,7 @@ import { green, yellow, red, blue, orange, grey, teal } from '@material-ui/core/
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
+import Refresh from '@material-ui/icons/Update';
 import CPUBackground from '../res/memory-black-48dp.svg';
 import RAMBackground from '../res/insert_chart_outlined-black-48dp.svg';
 import StorageBackground from '../res/storage-black-48dp.svg';
@@ -33,6 +34,7 @@ import TimingBackground from '../res/schedule-black-48dp.svg';
 import { connect } from 'react-redux';
 import { fetchDashboardData, serviceAction } from '../actions/dashboard';
 import { withTranslation } from 'react-i18next';
+import { fetchServicesData } from '../actions/services';
 
 const styles = theme => ({
   root: {
@@ -56,6 +58,17 @@ const styles = theme => ({
   chartPaper: {
     padding: theme.spacing(1),
     flex: 1,
+  },
+  flexRow: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+  },
+  flexRowEnd: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   chartTitle: {
     margin: theme.spacing(2, 3),
@@ -175,6 +188,8 @@ class Dashboard extends Component {
   componentDidMount() {
     this.props.fetch()
       .catch(msg => this.setState({ snackbar: msg }));
+    this.props.fetchServices()
+      .catch(msg => this.setState({ snackbar: msg }));
     this.fetchDashboard();
   }
 
@@ -265,7 +280,8 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { classes, t, cpuPercent, disks, memory, swap, swapPercent, load, services } = this.props;
+    const { classes, t, cpuPercent, disks, memory, swap,
+      swapPercent, load, Services, fetchServices } = this.props;
     const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
     const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
@@ -277,13 +293,18 @@ class Dashboard extends Component {
           <Grid container spacing={4}>
             <Grid item xs={12}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <div style={{ flex: 1 }}>
+                <div className={classes.flexRow}>
                   <Typography className={classes.chartTitle} variant="h4">
                     {t('Services')}
                   </Typography>
+                  <div className={classes.flexRowEnd}>
+                    <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
+                      <Refresh color="primary"/>
+                    </IconButton>
+                  </div>
                 </div>
                 <div className={classes.chipsPaper}>
-                  {services.map((service, idx) =>
+                  {Services.map((service, idx) =>
                     <div key={idx} className={classes.chipContainer}>
                       <Chip
                         label={
@@ -660,19 +681,21 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchServices: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
   disks: PropTypes.array.isRequired,
   memory: PropTypes.array.isRequired,
   swap: PropTypes.array.isRequired,
   swapPercent: PropTypes.number,
   load: PropTypes.array.isRequired,
-  services: PropTypes.array.isRequired,
+  Services: PropTypes.array.isRequired,
   serviceAction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     ...state.dashboard.Dashboard,
+    Services: state.services.Services,
   };
 };
 
@@ -681,6 +704,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => await dispatch(fetchDashboardData())
       .catch(error => Promise.reject(error)),
     serviceAction: async (service, action) => await dispatch(serviceAction(service, action))
+      .catch(error => Promise.reject(error)),
+    fetchServices: async () => await dispatch(fetchServicesData())
       .catch(error => Promise.reject(error)),
   };
 };
