@@ -586,9 +586,15 @@ class Dashboard extends Component {
                     <Bar
                       dataKey="percent"
                       stackId="a"
-                      fill={red['500']}
+                      //fill={red['500']}
                       isAnimationActive={false}
                     >
+                      {disks.map((entry, index) =>
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.percent > 90 ? red['500'] : entry.percent > 80 ? yellow['500'] : green['500']}
+                        />
+                      )}
                       <LabelList
                         formatter={this.formatLabel}
                         dataKey="label"
@@ -601,7 +607,7 @@ class Dashboard extends Component {
                       stackId="a"
                       fill={"rgba(0, 0, 0, 0)"}
                       isAnimationActive={false}
-                    >                    </Bar>
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>
