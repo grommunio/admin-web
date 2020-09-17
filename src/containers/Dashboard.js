@@ -586,7 +586,6 @@ class Dashboard extends Component {
                     <Bar
                       dataKey="percent"
                       stackId="a"
-                      //fill={red['500']}
                       isAnimationActive={false}
                     >
                       {disks.map((entry, index) =>
@@ -596,10 +595,14 @@ class Dashboard extends Component {
                         />
                       )}
                       <LabelList
-                        formatter={this.formatLabel}
-                        dataKey="label"
+                        dataKey="insideLabel"
+                        position="insideRight"
+                        style={{ fill: 'black' }}
+                      />
+                      <LabelList
+                        dataKey="outsideLabel"
                         position="right"
-                        content={this.renderDiskLabel}
+                        style={{ fill: 'black' }}
                       />
                     </Bar>
                     <Bar
