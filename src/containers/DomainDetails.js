@@ -378,7 +378,7 @@ class DomainListDetails extends PureComponent {
             />
             <TextField 
               className={classes.input} 
-              label={t("Repeat password")} 
+              label={t("Repeat new password")} 
               fullWidth
               type="password"
               value={checkPw}

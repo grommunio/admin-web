@@ -317,7 +317,7 @@ class AddDomain extends PureComponent {
             variant="contained"
             color="secondary"
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleAdd}
@@ -325,7 +325,7 @@ class AddDomain extends PureComponent {
             color="primary"
             disabled={loading || !domainname || password.length < 6 || domainError}
           >
-            {loading ? <CircularProgress size={24}/> : 'Add'}
+            {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
         </DialogActions>
       </Dialog>

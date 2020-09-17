@@ -10,8 +10,8 @@ const resources = {
   },
   "de-DE": {
     translation: {
-      "addHeadline": "{{item}} hinzufügen",
-      "editHeadline": "{{item}} bearbeiten",
+      "addHeadline": "$t({{item}}) hinzufügen",
+      "editHeadline": "$t({{item}}) bearbeiten",
       "Add": "Hinzufügen",
       "Configuration": "Konfiguration",
       "Admin": "Admin",
@@ -91,7 +91,7 @@ const resources = {
       "Change password": "Passwort ändern",
       "New password": "Neues Passwort",
       "Old password": "Altes Passwort",
-      "Repeat password": "Passwort wiederholen",
+      "Repeat new password": "Neues Passwort wiederholen",
       "Save": "Speichern",
       "Back": "Zurück",
       "Cancel": "Abbrechen",
