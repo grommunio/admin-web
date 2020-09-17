@@ -18,6 +18,7 @@ import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
 import groupsReducer from './reducers/groups';
+import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
 
 const loggerMiddleware = createLogger();
@@ -39,6 +40,7 @@ export const store = createStore(
     members: membersReducer,
     mlists: mlistsReducer,
     orgs: orgsReducer,
+    services: servicesReducer,
     settings: settingsReducer,
     users: usersReducer,
   }),
