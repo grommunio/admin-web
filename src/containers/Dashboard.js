@@ -74,6 +74,8 @@ const styles = theme => ({
     margin: theme.spacing(1, 2),
     display: 'flex',
     alignItems: 'center',
+    flex: '0 1 auto',
+    minWidth: 250,
   },
   chipButton: {
     padding: 6,
@@ -422,30 +424,35 @@ class Dashboard extends Component {
                       type="monotone"
                       dataKey="user"
                       stroke={blue['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="system"
                       stroke={green['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="steal"
                       stroke={yellow['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="io"
                       stroke={orange['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="interupt"
                       stroke={red['500']}
+                      isAnimationActive={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -522,7 +529,6 @@ class Dashboard extends Component {
                   >
                     <YAxis type="category" dataKey="device" />
                     <XAxis type="number" tickFormatter={this.formatTick}/>
-                    <Legend />
                     <Bar
                       dataKey="percent"
                       stackId="a"
