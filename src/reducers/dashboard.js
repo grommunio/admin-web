@@ -3,6 +3,7 @@ import {
   DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
 } from '../actions/types';
+import { green, grey } from '@material-ui/core/colors';
 
 const defaultState = {
   loading: false,
@@ -28,8 +29,8 @@ function addUsageData(arr, item) {
 
 function formatSwap(obj) {
   return [
-    { name: 'used', value: obj.used },
-    { name: 'free', value: obj.free },
+    { name: 'used', value: obj.used, color: green['500'] },
+    { name: 'free', value: obj.free, color: grey['700'] },
     //{ name: 'total', value: obj.total },
   ];
 }

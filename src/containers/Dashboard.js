@@ -182,14 +182,12 @@ class Dashboard extends Component {
     snackbar: null,
   }
 
-  swapColors = [green['500'], grey['700']];
-
   fetchInterval = null;
   fetchDashboard() {
     this.updateInterval = setInterval(() => {
       this.props.fetch()
         .catch(msg => this.setState({ snackbar: msg }));
-    }, 3000);
+    }, 10000);
   }
 
   formatLabel(value, descimals) {
@@ -234,8 +232,8 @@ class Dashboard extends Component {
     return [
       { name: 'user', value: unformatted.user, color: green['500'] },
       { name: 'system', value: unformatted.system, color: red['500'] },
-      { name: 'steal', value: unformatted.steal, color: grey['500'] },
-      { name: 'io', value: unformatted.io, color: teal['500'] },
+      { name: 'io', value: unformatted.io, color: grey['500'] },
+      { name: 'steal', value: unformatted.steal, color: teal['500'] },
       { name: 'interrupt', value: unformatted.interrupt, color: yellow['500'] },
       { name: 'idle', value: unformatted.idle, color: grey['700'] },
     ].filter(obj => obj.value !== 0);
@@ -260,7 +258,7 @@ class Dashboard extends Component {
           y={y + radius}
           fill="#000"
         >
-          {value}
+          {width > 80 ? value : ''}
         </text>
       </g>
     );
@@ -354,7 +352,11 @@ class Dashboard extends Component {
                             />
                           )}
                         </Pie>
-                        <Tooltip/>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: grey['700'],
+                          }}
+                        />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -386,14 +388,19 @@ class Dashboard extends Component {
                             />
                           )}
                         </Pie>
-                        <Tooltip formatter={this.formatLabel}/>
+                        <Tooltip
+                          formatter={this.formatLabel}
+                          contentStyle={{
+                            backgroundColor: grey['700'],
+                          }}
+                        />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
                     <Typography className={classes.chartTitle} variant="h4">
-                      Swap: {swap-length && swap[1].value ? swapPercent + '%' : 'None'}
+                      Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
                       <PieChart height={250}>
@@ -414,12 +421,17 @@ class Dashboard extends Component {
                           {swap.map((entry, index) => 
                             <Cell
                               key={`cell-${index}`}
-                              fill={this.swapColors[index % this.swapColors.length]}
+                              fill={entry.color}
                             />
                           )}
                         </Pie>
-                        {swap-length && swap[1].value && <Tooltip formatter={this.formatLabel}/>}
-                        {swap-length && swap[1].value && <Legend />}
+                        {swap.length > 0 && swap[1].value && <Tooltip
+                          contentStyle={{
+                            backgroundColor: grey['700'],
+                          }} 
+                          formatter={this.formatLabel}
+                        />}
+                        {swap.length > 0 && swap[1].value && <Legend />}
                       </PieChart>
                     </ResponsiveContainer>
                   </Grid>
@@ -439,7 +451,11 @@ class Dashboard extends Component {
                   >
                     <XAxis dataKey="usage" />
                     <YAxis domain={[0, 100]}/>
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: grey['900'],
+                      }}
+                    />
                     <Legend />
                     <Line
                       strokeWidth={4}
@@ -498,7 +514,13 @@ class Dashboard extends Component {
                       domain={[0, memory[0] ? memory[0].total : 0]}
                       tickFormatter={this.formatTick}
                     />
-                    <Tooltip formatter={value => (value / 1000000).toFixed(0) + 'Mb'} />
+                    <Tooltip
+                      formatter={value => (value / 1000000).toFixed(0) + 'MB'}
+                      contentStyle={{
+                        backgroundColor: grey['500'],
+                        color: 'white',
+                      }}
+                    />
                     <Legend />
                     <Area
                       strokeWidth={2}
@@ -556,6 +578,11 @@ class Dashboard extends Component {
                   >
                     <YAxis type="category" dataKey="device" />
                     <XAxis type="number"/>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: grey['900'],
+                      }}
+                    />
                     <Bar
                       dataKey="percent"
                       stackId="a"
@@ -587,7 +614,6 @@ class Dashboard extends Component {
                   <BarChart data={load}>
                     <XAxis dataKey="time" />
                     <YAxis />
-                    <Tooltip />
                     <Legend />
                     <Bar
                       isAnimationActive={false}
