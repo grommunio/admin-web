@@ -74,6 +74,8 @@ const styles = theme => ({
     margin: theme.spacing(1, 2),
     display: 'flex',
     alignItems: 'center',
+    flex: '0 1 auto',
+    minWidth: 250,
   },
   chipButton: {
     padding: 6,
@@ -141,6 +143,9 @@ const styles = theme => ({
     margin: theme.spacing(-9, 12, -22, 0),
     backgroundSize: '100%',
   },
+  iconButton: {
+    color: 'black',
+  },
   activeChip: {
     backgroundColor: green['500'],
   },
@@ -160,6 +165,9 @@ const styles = theme => ({
   deactivatingChip: {
     backgroundColor: grey['300'],
   },
+  serviceName: {
+    fontWeight: 300,
+  },
 });
 
 class Dashboard extends Component {
@@ -176,10 +184,6 @@ class Dashboard extends Component {
 
   swapColors = [green['500'], grey['700']];
 
-  ramColors = [green['500'], blue['500'], yellow['500'], grey['700']];
-
-  cpuColors = [green['500'], red['500'], grey['400'], teal['500'], yellow['500'], grey['700']];
-
   fetchInterval = null;
   fetchDashboard() {
     this.updateInterval = setInterval(() => {
@@ -188,27 +192,10 @@ class Dashboard extends Component {
     }, 3000);
   }
 
-  diskInterval = null;
-  updateDisk() {
-    this.diskInterval = setInterval(() => {
-      const copy = [...this.state.disk];
-      const add = (Math.random() > 0.5 ? 5 : -5);
-      copy.push({
-        name: copy[copy.length - 1].name + 1,
-        shared: copy[copy.length - 1].shared + add,
-        used: copy[copy.length - 1].used + add,
-        buffered: copy[copy.length - 1].buffered + add,
-        available: 100,
-      });
-      if(copy.length > 12) copy.shift();
-      this.setState({ disk: copy });
-    }, 5000);
-  }
-
   formatLabel(value, descimals) {
-    if (value > 1000000000) return (value / 1000000000).toFixed(descimals) + 'Gb';
-    if (value > 1000000) return (value / 1000000).toFixed(descimals) + 'Mb';
-    if (value > 1000) return (value / 1000).toFixed(descimals) + 'Kb';
+    if (value > 1000000000) return (value / 1000000000).toFixed(descimals) + 'GB';
+    if (value > 1000000) return (value / 1000000).toFixed(descimals) + 'MB';
+    if (value > 1000) return (value / 1000).toFixed(descimals) + 'KB';
     return value + 'B';
   }
 
@@ -236,23 +223,52 @@ class Dashboard extends Component {
 
   formatLastMemory(unformatted) {
     return [
-      { name: 'used', value: unformatted.used },
-      { name: 'buffer', value: unformatted.buffer },
-      { name: 'cache', value: unformatted.cache },
-      { name: 'free', value: unformatted.free },
+      { name: 'free', value: unformatted.free, color: grey['700'] },
+      { name: 'used', value: unformatted.used, color: green['500'] },
+      { name: 'cache', value: unformatted.cache, color: yellow['500'] },
+      { name: 'buffer', value: unformatted.buffer, color: blue['500'] },
     ];
+  }
+
+  formatLastCPU(unformatted) {
+    return [
+      { name: 'user', value: unformatted.user, color: green['500'] },
+      { name: 'system', value: unformatted.system, color: red['500'] },
+      { name: 'steal', value: unformatted.steal, color: grey['500'] },
+      { name: 'io', value: unformatted.io, color: teal['500'] },
+      { name: 'interrupt', value: unformatted.interrupt, color: yellow['500'] },
+      { name: 'idle', value: unformatted.idle, color: grey['700'] },
+    ].filter(obj => obj.value !== 0);
   }
 
   handleServiceAction = (service, action) => () => {
     this.props.serviceAction(service, action).catch(msg => this.setState({ snackbar: msg }));
   }
 
+  renderDiskLabel = (props) => {
+    const {
+      x, y, width, value,
+    } = props;
+    const radius = 12;
+  
+    return (
+      <g>
+        <text
+          textAnchor="end"
+          style={{ fontSize: 12 }}
+          x={x + width - 4}
+          y={y + radius}
+          fill="#000"
+        >
+          {value}
+        </text>
+      </g>
+    );
+  };
+
   render() {
     const { classes, t, cpuPercent, disks, memory, swap, swapPercent, load, services } = this.props;
-    const lastCpu = cpuPercent.length > 0 ? 
-      Object.entries(cpuPercent[cpuPercent.length - 1])
-        .map(arr => { return { name: arr[0], value: arr[1] }; })
-      : [];
+    const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
     const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
     return(
@@ -272,7 +288,29 @@ class Dashboard extends Component {
                   {services.map((service, idx) =>
                     <div key={idx} className={classes.chipContainer}>
                       <Chip
-                        label={service.name}
+                        label={
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography className={classes.serviceName} variant="inherit">{service.name}</Typography>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'stop')}
+                              className={classes.chipButton}
+                            >
+                              <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'restart')}
+                              className={classes.chipButton}
+                            >
+                              <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'start')}
+                              className={classes.chipButton}
+                            >
+                              <Start className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                          </div>
+                        }
                         color="secondary"
                         className={classes.chip}
                         classes={{
@@ -280,24 +318,6 @@ class Dashboard extends Component {
                           colorSecondary: this.getChipColor(service.state),
                         }}
                       />
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'stop')}
-                        className={classes.chipButton}
-                      >
-                        <Stop fontSize="small"/>
-                      </IconButton>
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'restart')}
-                        className={classes.chipButton}
-                      >
-                        <Restart fontSize="small"/>
-                      </IconButton>
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'start')}
-                        className={classes.chipButton}
-                      >
-                        <Start fontSize="small"/>
-                      </IconButton>
                     </div>
                   )}
                 </div>
@@ -306,37 +326,6 @@ class Dashboard extends Component {
             <Grid item xs={12}>
               <Paper className={classes.chipsPaper} elevation={2}>
                 <Grid container>
-                  <Grid item xs={4} className={classes.fixedPaper}>
-                    <Typography className={classes.chartTitle} variant="h4">
-                      {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
-                    </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart height={250}>
-                        <Pie
-                          data={lastMemory}
-                          dataKey="value"
-                          nameKey="name"
-                          startAngle={180}
-                          endAngle={-180}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          fill={green['500']}
-                          label={data => this.formatLabel(data.payload.value)}
-                        >
-                          {lastMemory.map((entry, index) => 
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={this.ramColors[index  % this.ramColors.length]}
-                            />
-                          )}
-                        </Pie>
-                        <Tooltip formatter={this.formatLabel}/>
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </Grid>
                   <Grid item xs={4}>
                     <Typography className={classes.chartTitle} variant="h4">
                       {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
@@ -355,11 +344,13 @@ class Dashboard extends Component {
                           outerRadius={80}
                           fill={green['500']}
                           label
+                          minAngle={1}
+                          isAnimationActive={false}
                         >
-                          {lastCpu.map((entry, index) => 
+                          {lastCpu.map((entry, index) =>
                             <Cell
                               key={`cell-${index}`}
-                              fill={this.cpuColors[index % this.cpuColors.length]}
+                              fill={entry.color}
                             />
                           )}
                         </Pie>
@@ -370,7 +361,39 @@ class Dashboard extends Component {
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
                     <Typography className={classes.chartTitle} variant="h4">
-                      Swap: {swapPercent}%
+                      {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
+                    </Typography>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart height={250}>
+                        <Pie
+                          data={lastMemory}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={180}
+                          endAngle={540}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill={green['500']}
+                          label={data => this.formatLabel(data.payload.value)}
+                          isAnimationActive={false}
+                        >
+                          {lastMemory.map((entry, index) => 
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={entry.color}
+                            />
+                          )}
+                        </Pie>
+                        <Tooltip formatter={this.formatLabel}/>
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Grid>
+                  <Grid item xs={4} className={classes.fixedPaper}>
+                    <Typography className={classes.chartTitle} variant="h4">
+                      Swap: {swap-length && swap[1].value ? swapPercent + '%' : 'None'}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
                       <PieChart height={250}>
@@ -386,6 +409,7 @@ class Dashboard extends Component {
                           outerRadius={80}
                           fill={green['500']}
                           label={data => this.formatLabel(data.payload.value)}
+                          isAnimationActive={false}
                         >
                           {swap.map((entry, index) => 
                             <Cell
@@ -394,8 +418,8 @@ class Dashboard extends Component {
                             />
                           )}
                         </Pie>
-                        <Tooltip formatter={this.formatLabel}/>
-                        <Legend />
+                        {swap-length && swap[1].value && <Tooltip formatter={this.formatLabel}/>}
+                        {swap-length && swap[1].value && <Legend />}
                       </PieChart>
                     </ResponsiveContainer>
                   </Grid>
@@ -414,38 +438,43 @@ class Dashboard extends Component {
                     margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
                   >
                     <XAxis dataKey="usage" />
-                    <YAxis />
+                    <YAxis domain={[0, 100]}/>
                     <Tooltip />
                     <Legend />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="user"
-                      stroke={blue['500']}
+                      stroke={green['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="system"
-                      stroke={green['500']}
-                    />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="steal"
-                      stroke={yellow['500']}
+                      stroke={red['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="io"
-                      stroke={orange['500']}
+                      stroke={grey['500']}
+                      isAnimationActive={false}
+                    />
+                    <Line
+                      strokeWidth={4}
+                      type="monotone"
+                      dataKey="steal"
+                      stroke={teal['500']}
+                      isAnimationActive={false}
                     />
                     <Line
                       strokeWidth={4}
                       type="monotone"
                       dataKey="interupt"
-                      stroke={red['500']}
+                      stroke={yellow['500']}
+                      isAnimationActive={false}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -475,36 +504,41 @@ class Dashboard extends Component {
                       strokeWidth={2}
                       type="monotone"
                       dataKey="total"
-                      fill={blue['500']}
-                      stroke={blue['500']}
+                      fill={grey['900']}
+                      stroke={grey['900']}
+                      isAnimationActive={false}
                     /> 
                     <Area
                       strokeWidth={2}
                       type="monotone"
-                      dataKey="available"
-                      fill={green['500']}
-                      stroke={green['500']}
+                      dataKey="free"
+                      fill={grey['700']}
+                      stroke={grey['700']}
+                      isAnimationActive={false}
                     />
                     <Area
                       strokeWidth={2}
                       type="monotone"
                       dataKey="used"
-                      fill={yellow['500']}
-                      stroke={yellow['500']}
+                      fill={green['500']}
+                      stroke={green['500']}
+                      isAnimationActive={false}
                     />
                     <Area
                       strokeWidth={2}
                       type="monotone"
                       dataKey="cache"
-                      fill={orange['500']}
-                      stroke={orange['500']}
+                      fill={yellow['500']}
+                      stroke={yellow['500']}
+                      isAnimationActive={false}
                     />
                     <Area
                       strokeWidth={2}
                       type="monotone"
                       dataKey="buffer"
-                      fill={red['500']}
-                      stroke={red['500']}
+                      fill={blue['500']}
+                      stroke={blue['500']}
+                      isAnimationActive={false}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -521,23 +555,26 @@ class Dashboard extends Component {
                     margin={{ top: 4, right: 32, left: 40, bottom: 4 }}
                   >
                     <YAxis type="category" dataKey="device" />
-                    <XAxis type="number" tickFormatter={this.formatTick}/>
-                    <Legend />
+                    <XAxis type="number"/>
                     <Bar
                       dataKey="percent"
                       stackId="a"
                       fill={red['500']}
+                      isAnimationActive={false}
                     >
-                      <LabelList formatter={this.formatLabel} dataKey="used" position="insideRight"/>
+                      <LabelList
+                        formatter={this.formatLabel}
+                        dataKey="label"
+                        position="right"
+                        content={this.renderDiskLabel}
+                      />
                     </Bar>
                     <Bar
                       dataKey="freePercent" 
                       stackId="a"
-                      fill={green['500']}
-                    >
-                      <LabelList formatter={this.formatLabel} dataKey="free" position="insideLeft"/>
-                    </Bar>
-                    
+                      fill={"rgba(0, 0, 0, 0)"}
+                      isAnimationActive={false}
+                    >                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>
@@ -552,7 +589,12 @@ class Dashboard extends Component {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar barSize={60} dataKey="value" fill={green['500']} />
+                    <Bar
+                      isAnimationActive={false}
+                      barSize={60}
+                      dataKey="value"
+                      fill={green['500']}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </Paper>
