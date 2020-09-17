@@ -32,7 +32,8 @@ import StorageBackground from '../res/storage-black-48dp.svg';
 import NetworkBackground from '../res/network_check-black-48dp.svg';
 import TimingBackground from '../res/schedule-black-48dp.svg';
 import { connect } from 'react-redux';
-import { fetchDashboardData, serviceAction } from '../actions/dashboard';
+import { fetchDashboardData } from '../actions/dashboard';
+import { serviceAction } from '../actions/services';
 import { withTranslation } from 'react-i18next';
 import { fetchServicesData } from '../actions/services';
 
@@ -255,7 +256,8 @@ class Dashboard extends Component {
   }
 
   handleServiceAction = (service, action) => () => {
-    this.props.serviceAction(service, action).catch(msg => this.setState({ snackbar: msg }));
+    this.props.serviceAction(service, action)
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   renderDiskLabel = (props) => {

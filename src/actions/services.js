@@ -14,6 +14,7 @@ export function fetchServicesData() {
     } catch(error) {
       await dispatch({ type: SERVICES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
