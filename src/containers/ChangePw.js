@@ -94,7 +94,7 @@ class BaseSetup extends Component {
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 
-                label={t("Re-enter new password")} 
+                label={t("Repeat new password")} 
                 fullWidth 
                 value={reType || ''}
                 onChange={this.handleInput('reType')}
@@ -107,7 +107,7 @@ class BaseSetup extends Component {
               onClick={this.handleSave}
               disabled={!newPw || !oldPw || !reType || newPw !== reType}
             >
-              Save
+              {t('Save')}
             </Button>
           </Paper>
         </div>

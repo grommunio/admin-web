@@ -480,7 +480,7 @@ class UserDetails extends PureComponent {
             />
             <TextField 
               className={classes.input} 
-              label={t("Repeat password")} 
+              label={t("Repeat new password")} 
               fullWidth
               type="password"
               value={checkPw}
@@ -497,7 +497,7 @@ class UserDetails extends PureComponent {
               onClick={this.handlePasswordChange}
               disabled={checkPw !== newPw}
             >
-              {('Save')}
+              {t('Save')}
             </Button>
           </DialogActions>
         </Dialog>
