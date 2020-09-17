@@ -379,6 +379,7 @@ class Dashboard extends Component {
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }}
+                          isAnimationActive={false}
                         />
                         <Legend />
                       </PieChart>
@@ -416,6 +417,7 @@ class Dashboard extends Component {
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }}
+                          isAnimationActive={false}
                         />
                         <Legend />
                       </PieChart>
@@ -453,6 +455,7 @@ class Dashboard extends Component {
                             backgroundColor: grey['700'],
                           }} 
                           formatter={this.formatLabel}
+                          isAnimationActive={false}
                         />}
                         {swap.length > 0 && swap[1].value && <Legend />}
                       </PieChart>
@@ -478,6 +481,7 @@ class Dashboard extends Component {
                       contentStyle={{
                         backgroundColor: grey['900'],
                       }}
+                      isAnimationActive={false}
                     />
                     <Legend />
                     <Line
@@ -543,6 +547,7 @@ class Dashboard extends Component {
                         backgroundColor: grey['500'],
                         color: 'white',
                       }}
+                      isAnimationActive={false}
                     />
                     <Legend />
                     <Area
@@ -605,6 +610,7 @@ class Dashboard extends Component {
                       contentStyle={{
                         backgroundColor: grey['900'],
                       }}
+                      isAnimationActive={false}
                     />
                     <Bar
                       dataKey="percent"
