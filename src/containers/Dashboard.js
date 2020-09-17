@@ -143,6 +143,9 @@ const styles = theme => ({
     margin: theme.spacing(-9, 12, -22, 0),
     backgroundSize: '100%',
   },
+  iconButton: {
+    color: 'black',
+  },
   activeChip: {
     backgroundColor: green['500'],
   },
@@ -161,6 +164,9 @@ const styles = theme => ({
   },
   deactivatingChip: {
     backgroundColor: grey['300'],
+  },
+  serviceName: {
+    fontWeight: 300,
   },
 });
 
@@ -274,7 +280,29 @@ class Dashboard extends Component {
                   {services.map((service, idx) =>
                     <div key={idx} className={classes.chipContainer}>
                       <Chip
-                        label={service.name}
+                        label={
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography className={classes.serviceName} variant="inherit">{service.name}</Typography>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'stop')}
+                              className={classes.chipButton}
+                            >
+                              <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'restart')}
+                              className={classes.chipButton}
+                            >
+                              <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                            <IconButton
+                              onClick={this.handleServiceAction(service.unit, 'start')}
+                              className={classes.chipButton}
+                            >
+                              <Start className={classes.iconButton} color="inherit" fontSize="small"/>
+                            </IconButton>
+                          </div>
+                        }
                         color="secondary"
                         className={classes.chip}
                         classes={{
@@ -282,24 +310,6 @@ class Dashboard extends Component {
                           colorSecondary: this.getChipColor(service.state),
                         }}
                       />
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'stop')}
-                        className={classes.chipButton}
-                      >
-                        <Stop fontSize="small"/>
-                      </IconButton>
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'restart')}
-                        className={classes.chipButton}
-                      >
-                        <Restart fontSize="small"/>
-                      </IconButton>
-                      <IconButton
-                        onClick={this.handleServiceAction(service.unit, 'start')}
-                        className={classes.chipButton}
-                      >
-                        <Start fontSize="small"/>
-                      </IconButton>
                     </div>
                   )}
                 </div>
