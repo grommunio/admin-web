@@ -73,10 +73,11 @@ TopBar.propTypes = {
 };
 
 const mapStateToProps = state => {
-  const { domains, areas, users, folders } = state;
+  const { domains, areas, users, folders, dashboard, services } = state;
   return {
     Domains: state.domains.Domains,
-    fetching: domains.loading || areas.loading || users.loading || folders.loading,
+    fetching: domains.loading || areas.loading || users.loading || folders.loading
+      || dashboard.loading || services.loading ,
   };
 };
 

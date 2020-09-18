@@ -29,6 +29,7 @@ function membersReducer(state = defaultState, action) {
     case MEMBERS_DATA_ERROR: {
       return {
         ...state,
+        loading: false,
         error: action.error,
       };
     }

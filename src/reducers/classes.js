@@ -30,6 +30,7 @@ function classesReducer(state = defaultState, action) {
       return {
         ...state,
         error: action.error,
+        loading: false,
       };
     }
 

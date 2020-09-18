@@ -29,6 +29,7 @@ function associationsReducer(state = defaultState, action) {
     case ORGS_DATA_ERROR: {
       return {
         ...state,
+        loading: false,
         error: action.error,
       };
     }

@@ -32,6 +32,7 @@ function domainsReducer(state = defaultState, action) {
       return {
         ...state,
         error: action.error,
+        loading: false,
       };
 
     case DOMAIN_DATA_ADD:
