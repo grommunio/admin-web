@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
@@ -32,96 +32,93 @@ const styles = theme => ({
   },
 });
 
-class DomainMenu extends Component {
+function DomainMenu(props) {
+  const { classes, domain } = props;
 
-  render() {
-    const { classes, domain } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title={domain.domainname}/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={2}>
-            <Table size="small">
-              <TableBody>
-                <TableRow>
-                  <TableCell>Domain name</TableCell>
-                  <TableCell>{domain.domainname}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>{domain.title}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Address</TableCell>
-                  <TableCell>{domain.address}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Admin</TableCell>
-                  <TableCell>{domain.adminName}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Create day</TableCell>
-                  <TableCell>{domain.createDay}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>End day</TableCell>
-                  <TableCell>{domain.endDay}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Home dir</TableCell>
-                  <TableCell>{domain.homedir}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Maximum Size</TableCell>
-                  <TableCell>{domain.maxSize}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Maximum users</TableCell>
-                  <TableCell>{domain.maxUser}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Telephone</TableCell>
-                  <TableCell>{domain.tel}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Ignore checking user</TableCell>
-                  <TableCell>
-                    {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Mail Backup</TableCell>
-                  <TableCell>
-                    {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Mail monitor</TableCell>
-                  <TableCell>
-                    {domain.mailMonitor ? <True className={classes.true} /> : <False className={classes.false} />}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Mail subsystem</TableCell>
-                  <TableCell>
-                    {domain.mailBackup ? <True className={classes.true} /> : <False className={classes.false} />}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Net disk</TableCell>
-                  <TableCell>
-                    {domain.netDisk ? <True className={classes.true} /> : <False className={classes.false} />}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </Paper>
-        </div>
+  return (
+    <div className={classes.root}>
+      <TopBar title={domain.domainname}/>
+      <div className={classes.toolbar}></div>
+      <div className={classes.base}>
+        <Paper className={classes.tablePaper} elevation={2}>
+          <Table size="small">
+            <TableBody>
+              <TableRow>
+                <TableCell>Domain name</TableCell>
+                <TableCell>{domain.domainname}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>{domain.title}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Address</TableCell>
+                <TableCell>{domain.address}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Admin</TableCell>
+                <TableCell>{domain.adminName}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Create day</TableCell>
+                <TableCell>{domain.createDay}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>End day</TableCell>
+                <TableCell>{domain.endDay}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Home dir</TableCell>
+                <TableCell>{domain.homedir}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Maximum Size</TableCell>
+                <TableCell>{domain.maxSize}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Maximum users</TableCell>
+                <TableCell>{domain.maxUser}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Telephone</TableCell>
+                <TableCell>{domain.tel}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Ignore checking user</TableCell>
+                <TableCell>
+                  {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Mail Backup</TableCell>
+                <TableCell>
+                  {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Mail monitor</TableCell>
+                <TableCell>
+                  {domain.mailMonitor ? <True className={classes.true} /> : <False className={classes.false} />}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Mail subsystem</TableCell>
+                <TableCell>
+                  {domain.mailBackup ? <True className={classes.true} /> : <False className={classes.false} />}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Net disk</TableCell>
+                <TableCell>
+                  {domain.netDisk ? <True className={classes.true} /> : <False className={classes.false} />}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 DomainMenu.propTypes = {
