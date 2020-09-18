@@ -80,6 +80,12 @@ const styles = theme => ({
     flexDirection: 'column',
     borderRadius: 16,
   },
+  chipLabel: {
+    width: 220,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   chipsPaper: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -93,7 +99,7 @@ const styles = theme => ({
     flex: '0 1 auto',
     minWidth: 250,
   },
-  chipButton: {
+  chipIcon: {
     padding: 6,
   },
   textContainer: {
@@ -103,6 +109,9 @@ const styles = theme => ({
   },
   hugeIcon: {
     fontSize: 140,
+  },
+  cp: {
+
   },
   cpuBackground: {
     width: 250,
@@ -390,30 +399,42 @@ class Dashboard extends Component {
                     <div key={idx} className={classes.chipContainer}>
                       <Chip
                         label={
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Typography className={classes.serviceName} variant="inherit">{service.name}</Typography>
-                            {stoping !== service.name ? <IconButton
-                              onClick={this.handleServiceAction(service, 'stop')}
-                              className={classes.chipButton}
-                            >
-                              <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton> : <CircularProgress size={16}/>}
-                            {restarting !== service.name ? <IconButton
-                              onClick={this.handleServiceAction(service, 'restart')}
-                              className={classes.chipButton}
-                            >
-                              <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton> : <CircularProgress size={16}/>}
-                            {starting !== service.name ? <IconButton
-                              onClick={this.handleServiceAction(service, 'start')}
-                              className={classes.chipButton}
-                            >
-                              <Start className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton> : <CircularProgress size={16}/>}
+                          <div className={classes.chipLabel}>
+                            <Typography className={classes.serviceName} variant="inherit">
+                              {service.name}
+                            </Typography>
+                            <div>
+                              {stoping !== service.name ? <IconButton
+                                onClick={this.handleServiceAction(service, 'stop')}
+                                className={classes.chipIcon}
+                              >
+                                <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
+                              </IconButton> : 
+                                <IconButton disabled className={classes.chipIcon}>
+                                  <CircularProgress className={classes.cp} size={18}/>
+                                </IconButton>}
+                              {restarting !== service.name ? <IconButton
+                                onClick={this.handleServiceAction(service, 'restart')}
+                                className={classes.chipIcon}
+                              >
+                                <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
+                              </IconButton> : 
+                                <IconButton disabled className={classes.chipIcon}>
+                                  <CircularProgress className={classes.cp} size={18}/>
+                                </IconButton>}
+                              {starting !== service.name ? <IconButton
+                                onClick={this.handleServiceAction(service, 'start')}
+                                className={classes.chipIcon}
+                              >
+                                <Start className={classes.iconButton} color="inherit" fontSize="small"/>
+                              </IconButton> : 
+                                <IconButton disabled className={classes.chipIcon}>
+                                  <CircularProgress className={classes.cp} size={18}/>
+                                </IconButton>}
+                            </div>
                           </div>
                         }
                         color="secondary"
-                        className={classes.chip}
                         classes={{
                           root: classes.chip,
                           colorSecondary: this.getChipColor(service.state),
