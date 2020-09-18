@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
 import { Paper, Table, TableRow, TableCell, TableBody } from '@material-ui/core';
+import True from '@material-ui/icons/Done';
+import False from '@material-ui/icons/Clear';
+import { green, red } from '@material-ui/core/colors';
 
 const styles = theme => ({
   root: {
@@ -21,21 +24,18 @@ const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2),
   },
+  true: {
+    color: green['500'],
+  },
+  false: {
+    color: red['500'],
+  },
 });
 
 class DomainMenu extends Component {
 
-  state = {
-    info: {
-      domainname: this.props.domain.domainname,
-      maxSize: 69,
-      allocated: 420,
-    },
-  }
-
   render() {
     const { classes, domain } = this.props;
-    const { info } = this.state;
 
     return (
       <div className={classes.root}>
@@ -46,56 +46,74 @@ class DomainMenu extends Component {
             <Table size="small">
               <TableBody>
                 <TableRow>
-                  <TableCell>domain name</TableCell>
-                  <TableCell>{info.domainname}</TableCell>
+                  <TableCell>Domain name</TableCell>
+                  <TableCell>{domain.domainname}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>beginning day</TableCell>
-                  <TableCell>{info.beginDay}</TableCell>
+                  <TableCell>Title</TableCell>
+                  <TableCell>{domain.title}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>ending day</TableCell>
-                  <TableCell>{info.endDay}</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>{domain.address}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>maximum space</TableCell>
-                  <TableCell>{info.maxSize}</TableCell>
+                  <TableCell>Admin</TableCell>
+                  <TableCell>{domain.adminName}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>allocated space</TableCell>
-                  <TableCell>{info.allocated}</TableCell>
+                  <TableCell>Create day</TableCell>
+                  <TableCell>{domain.createDay}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>alias addresses</TableCell>
-                  <TableCell>{info.aliasAddresses}</TableCell>
+                  <TableCell>End day</TableCell>
+                  <TableCell>{domain.endDay}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>departments</TableCell>
-                  <TableCell>{info.departments}</TableCell>
+                  <TableCell>Home dir</TableCell>
+                  <TableCell>{domain.homedir}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>mail lists</TableCell>
-                  <TableCell>{info.mailLists}</TableCell>
+                  <TableCell>Maximum Size</TableCell>
+                  <TableCell>{domain.maxSize}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>mail backup</TableCell>
-                  <TableCell>{info.mailBackup}</TableCell>
+                  <TableCell>Maximum users</TableCell>
+                  <TableCell>{domain.maxUser}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>mail monitor</TableCell>
-                  <TableCell>{info.mailMonitor}</TableCell>
+                  <TableCell>Telephone</TableCell>
+                  <TableCell>{domain.tel}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>unavailable user collecting</TableCell>
-                  <TableCell>{info.unavailable}</TableCell>
+                  <TableCell>Ignore checking user</TableCell>
+                  <TableCell>
+                    {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>mail sub-system</TableCell>
-                  <TableCell>{info.subSystem}</TableCell>
+                  <TableCell>Mail Backup</TableCell>
+                  <TableCell>
+                    {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>extended user cryptosecurity</TableCell>
-                  <TableCell>{info.extended}</TableCell>
+                  <TableCell>Mail monitor</TableCell>
+                  <TableCell>
+                    {domain.mailMonitor ? <True className={classes.true} /> : <False className={classes.false} />}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Mail subsystem</TableCell>
+                  <TableCell>
+                    {domain.mailBackup ? <True className={classes.true} /> : <False className={classes.false} />}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Net disk</TableCell>
+                  <TableCell>
+                    {domain.netDisk ? <True className={classes.true} /> : <False className={classes.false} />}
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
