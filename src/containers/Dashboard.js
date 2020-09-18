@@ -22,7 +22,7 @@ import {
   LabelList,
 } from 'recharts';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
-import { green, yellow, red, blue, orange, grey, teal } from '@material-ui/core/colors';
+import { green, yellow, red, blue, grey, teal } from '@material-ui/core/colors';
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
@@ -173,13 +173,18 @@ const styles = theme => ({
     backgroundColor: grey['700'],
   },
   failedChip: {
-    backgroundColor: red['700'],
+    backgroundColor: red['800'],
   },
   activatingChip: {
-    backgroundColor: orange['500'],
+    backgroundColor: yellow['500'],
   },
   deactivatingChip: {
     backgroundColor: grey['300'],
+  },
+  legendContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing(0, 0, 2, 0),
   },
   serviceName: {
     fontWeight: 300,
@@ -416,6 +421,17 @@ class Dashboard extends Component {
                       />
                     </div>
                   )}
+                </div>
+                <div className={classes.legendContainer}>
+                  <BarChart width={498} height={24} data={[{ name: "hehe", value: 1 }]}>
+                    <Bar dataKey="active" fill={green['500']} />
+                    <Bar dataKey="inactive" fill={grey['700']} />
+                    <Bar dataKey="error" fill={red['500']} />
+                    <Bar dataKey="failed" fill={red['800']} />
+                    <Bar dataKey="activating" fill={yellow['500']} />
+                    <Bar dataKey="deactivating" fill={grey['300']} />
+                    <Legend />
+                  </BarChart>
                 </div>
               </Paper>
             </Grid>
