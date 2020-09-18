@@ -51,6 +51,7 @@ const resources = {
       "Administrator": "Administrator",
       "Telephone": "Telefon",
       "Home dir": "Home-Verzeichnis",
+      "Home directory": "Home-Verzeichnis",
       "Mail archive": "Mail Archiv",
       "Mail monitor": "Mail Überwachung",
       "Ignore checking user": "Benutzerprüfung ignorieren",
