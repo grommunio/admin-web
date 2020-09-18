@@ -371,7 +371,7 @@ class Dashboard extends Component {
             <Grid item xs={12}>
               <Paper className={classes.fixedPaper} elevation={2}>
                 <div className={classes.flexRow}>
-                  <Typography className={classes.chartTitle} variant="h4">
+                  <Typography className={classes.chartTitle} variant="h5">
                     {t('Services')}
                   </Typography>
                   <div className={classes.flexRowEnd}>
@@ -423,7 +423,7 @@ class Dashboard extends Component {
               <Paper className={classes.chipsPaper} elevation={2}>
                 <Grid container>
                   <Grid item xs={4}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -462,7 +462,7 @@ class Dashboard extends Component {
                     </ResponsiveContainer>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -501,7 +501,7 @@ class Dashboard extends Component {
                     </ResponsiveContainer>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -544,7 +544,7 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
+                <Typography className={classes.chartTitle} variant="h5">
                   {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                 </Typography>
                 <div className={classes.cpuBackground}></div>
@@ -603,7 +603,7 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
+                <Typography className={classes.chartTitle} variant="h5">
                   {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
                 </Typography>
                 <div className={classes.ramBackground}></div>
@@ -674,7 +674,7 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">Disks</Typography>
+                <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
                 <div className={classes.storageBackground}></div>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart
@@ -725,7 +725,7 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">Load</Typography>
+                <Typography className={classes.chartTitle} variant="h5">Load</Typography>
                 <div className={classes.timingBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
                   <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
