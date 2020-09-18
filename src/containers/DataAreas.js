@@ -52,6 +52,9 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  select: {
+    minWidth: 60,
+  },
 });
 
 class DataAreaSetup extends Component {
