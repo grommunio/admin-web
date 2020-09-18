@@ -6,6 +6,7 @@ import { Paper, Table, TableRow, TableCell, TableBody } from '@material-ui/core'
 import True from '@material-ui/icons/Done';
 import False from '@material-ui/icons/Clear';
 import { green, red } from '@material-ui/core/colors';
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -33,7 +34,7 @@ const styles = theme => ({
 });
 
 function DomainMenu(props) {
-  const { classes, domain } = props;
+  const { classes, domain, t } = props;
 
   return (
     <div className={classes.root}>
@@ -44,71 +45,71 @@ function DomainMenu(props) {
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell>Domain name</TableCell>
+                <TableCell>{t('Domain name')}</TableCell>
                 <TableCell>{domain.domainname}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Title</TableCell>
+                <TableCell>{t('Title')}</TableCell>
                 <TableCell>{domain.title}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Address</TableCell>
+                <TableCell>{t('Address')}</TableCell>
                 <TableCell>{domain.address}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Admin</TableCell>
+                <TableCell>{t('Admin')}</TableCell>
                 <TableCell>{domain.adminName}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Create day</TableCell>
+                <TableCell>{t('Create day')}</TableCell>
                 <TableCell>{domain.createDay}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>End day</TableCell>
+                <TableCell>{t('End day')}</TableCell>
                 <TableCell>{domain.endDay}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Home dir</TableCell>
+                <TableCell>{t('Home dir')}</TableCell>
                 <TableCell>{domain.homedir}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Maximum Size</TableCell>
+                <TableCell>{t('Maximum size')}</TableCell>
                 <TableCell>{domain.maxSize}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Maximum users</TableCell>
+                <TableCell>{t('Maximum users')}</TableCell>
                 <TableCell>{domain.maxUser}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Telephone</TableCell>
+                <TableCell>{t('Telephone')}</TableCell>
                 <TableCell>{domain.tel}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Ignore checking user</TableCell>
+                <TableCell>{t('Ignore checking user')}</TableCell>
                 <TableCell>
                   {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Mail Backup</TableCell>
+                <TableCell>{t('Mail backup')}</TableCell>
                 <TableCell>
                   {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Mail monitor</TableCell>
+                <TableCell>{t('Mail monitor')}</TableCell>
                 <TableCell>
                   {domain.mailMonitor ? <True className={classes.true} /> : <False className={classes.false} />}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Mail subsystem</TableCell>
+                <TableCell>{t('Mail subsystem')}</TableCell>
                 <TableCell>
                   {domain.mailBackup ? <True className={classes.true} /> : <False className={classes.false} />}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>Net disk</TableCell>
+                <TableCell>{t('Net disk')}</TableCell>
                 <TableCell>
                   {domain.netDisk ? <True className={classes.true} /> : <False className={classes.false} />}
                 </TableCell>
@@ -123,7 +124,8 @@ function DomainMenu(props) {
 
 DomainMenu.propTypes = {
   classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   domain: PropTypes.object,
 };
 
-export default withStyles(styles)(DomainMenu);
+export default withTranslation()(withStyles(styles)(DomainMenu));

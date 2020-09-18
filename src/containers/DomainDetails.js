@@ -174,7 +174,7 @@ class DomainListDetails extends PureComponent {
     const { checkPw, newPw, changingPw } = this.state;
     const { domainname, domainType, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser } = this.state.changes;
+      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk } = this.state.changes;
 
     return (
       <div className={classes.root}>
@@ -322,11 +322,20 @@ class DomainListDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('Mail sub system')}
+                label={t('Mail subsystem')}
                 control={
                   <Checkbox
                     checked={mailSubSystem || false}
                     onChange={this.handleCheckbox('mailSubSystem')}
+                  />
+                }
+              />
+              <FormControlLabel
+                label={t('Net disk')}
+                control={
+                  <Checkbox
+                    checked={netDisk || false}
+                    onChange={this.handleCheckbox('netDisk')}
                   />
                 }
               />

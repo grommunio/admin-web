@@ -106,7 +106,7 @@ class DomainList extends Component {
               </TableHead>
               <TableBody>
                 {domains.Domains.map((obj, idx) =>
-                  <TableRow key={idx} onClick={() => this.props.history.push(`/${obj.domainname}`)}>
+                  <TableRow key={idx}>
                     <TableCell>{obj.domainname}</TableCell>
                     <TableCell>{obj.address}</TableCell>
                     <TableCell>{obj.title}</TableCell>
