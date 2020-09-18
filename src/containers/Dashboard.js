@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
-import { Paper, Grid, Typography, Snackbar, Chip, IconButton } from '@material-ui/core';
+import { Paper, Grid, Typography, Snackbar, Chip, IconButton, CircularProgress } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {
   BarChart,
@@ -197,6 +197,9 @@ class Dashboard extends Component {
 
   state = {
     snackbar: null,
+    starting: false,
+    restarting: false,
+    stoping: false,
   }
 
   fetchInterval = null;
@@ -213,6 +216,8 @@ class Dashboard extends Component {
     if (value > 1000) return (value / 1000).toFixed(descimals) + 'KB';
     return value + 'B';
   }
+
+  formatMB = value => (value / 1000000).toFixed(0) + 'MB';
 
   formatTick = value => {
     return this.formatLabel(value, 0);
@@ -257,8 +262,10 @@ class Dashboard extends Component {
   }
 
   handleServiceAction = (service, action) => () => {
-    this.props.serviceAction(service, action)
-      .catch(msg => this.setState({ snackbar: msg }));
+    this.setState({ [action + 'ing']: service.name });
+    this.props.serviceAction(service.unit, action)
+      .then(() => this.setState({ [action + 'ing']: false }))
+      .catch(msg => this.setState({ snackbar: msg, [action + 'ing']: false }));
   }
 
   renderDiskLabel = (props) => {
@@ -282,13 +289,62 @@ class Dashboard extends Component {
     );
   };
 
+  CPUTooltip = props => {
+    if (props.active) {
+      const lastIndex =  props.content._self.props.cpuPercent.length - 1;
+      const newPayload = [
+        { name: 'Idle', value: props.content._self.props.cpuPercent[lastIndex].idle + '%' },
+        { name: 'User', value: props.content._self.props.cpuPercent[lastIndex].user + '%' },
+        { name: 'System', value: props.content._self.props.cpuPercent[lastIndex].system + '%' },
+        { name: 'IO', value: props.content._self.props.cpuPercent[lastIndex].io + '%' },
+        { name: 'Steal', value: props.content._self.props.cpuPercent[lastIndex].steal + '%' },
+        { name: 'Interrupt', value: props.content._self.props.cpuPercent[lastIndex].interrupt + '%' },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
+  MemoryTooltip = props => {
+    if (props.active) {
+      const lastIndex =  props.content._self.props.memory.length - 1;
+      const newPayload = [
+        { name: 'Free', value: this.formatMB(props.content._self.props.memory[lastIndex].free) },
+        { name: 'Used', value: this.formatMB(props.content._self.props.memory[lastIndex].used) },
+        { name: 'Cache', value: this.formatMB(props.content._self.props.memory[lastIndex].cache) },
+        { name: 'Buffer', value: this.formatMB(props.content._self.props.memory[lastIndex].buffer) },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
+  SwapTooltip = props => {
+    if (props.active) {
+      const newPayload = [
+        { name: 'Used', value: this.formatLabel(props.content._self.props.swap[0].value) },
+        { name: 'Free', value: this.formatLabel(props.content._self.props.swap[1].value) },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
   DiskTooltip = props => {
     if (props.active) {
       const newPayload = [
         { name: 'Percentage', value: props.payload[0].payload.percent },
         { name: 'Device', value: props.payload[0].payload.device },
         { name: 'Filesystem', value: props.payload[0].payload.filesystem },
-        ...props.payload,
       ];
       return <DefaultTooltipContent
         {...props}
@@ -301,6 +357,7 @@ class Dashboard extends Component {
   render() {
     const { classes, t, cpuPercent, disks, memory, swap,
       swapPercent, load, Services, fetchServices } = this.props;
+    const { starting, restarting, stoping } = this.state;
     const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
     const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
@@ -329,24 +386,24 @@ class Dashboard extends Component {
                         label={
                           <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Typography className={classes.serviceName} variant="inherit">{service.name}</Typography>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'stop')}
+                            {stoping !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'stop')}
                               className={classes.chipButton}
                             >
                               <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'restart')}
+                            </IconButton> : <CircularProgress size={16}/>}
+                            {restarting !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'restart')}
                               className={classes.chipButton}
                             >
                               <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'start')}
+                            </IconButton> : <CircularProgress size={16}/>}
+                            {starting !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'start')}
                               className={classes.chipButton}
                             >
                               <Start className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
+                            </IconButton> : <CircularProgress size={16}/>}
                           </div>
                         }
                         color="secondary"
@@ -397,6 +454,7 @@ class Dashboard extends Component {
                             backgroundColor: grey['700'],
                           }}
                           isAnimationActive={false}
+                          content={<this.CPUTooltip />}
                         />
                         <Legend />
                       </PieChart>
@@ -430,11 +488,12 @@ class Dashboard extends Component {
                           )}
                         </Pie>
                         <Tooltip
-                          formatter={this.formatLabel}
+                          //formatter={this.formatLabel}
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }}
                           isAnimationActive={false}
+                          content={<this.MemoryTooltip />}
                         />
                         <Legend />
                       </PieChart>
@@ -471,8 +530,9 @@ class Dashboard extends Component {
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }} 
-                          formatter={this.formatLabel}
+                          //formatter={this.formatLabel}
                           isAnimationActive={false}
+                          content={<this.SwapTooltip />}
                         />}
                         {swap.length > 0 && swap[1].value && <Legend />}
                       </PieChart>
@@ -559,7 +619,7 @@ class Dashboard extends Component {
                       tickFormatter={this.formatTick}
                     />
                     <Tooltip
-                      formatter={value => (value / 1000000).toFixed(0) + 'MB'}
+                      formatter={this.formatMB}
                       contentStyle={{
                         backgroundColor: grey['500'],
                         color: 'white',
