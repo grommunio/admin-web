@@ -232,6 +232,13 @@ class Dashboard extends Component {
     return value + 'B';
   }
 
+  formatRamLabel(value) {
+    if (value > 1000000000) return (value / 1000000000).toFixed(1) + 'GB';
+    if (value > 1000000) return (value / 1000000).toFixed(0) + 'MB';
+    if (value > 1000) return (value / 1000).toFixed(0) + 'KB';
+    return value + 'B';
+  }
+
   formatMB = value => (value / 1000000).toFixed(0) + 'MB';
 
   formatTick = value => {
@@ -444,7 +451,7 @@ class Dashboard extends Component {
                   )}
                 </div>
                 <div className={classes.legendContainer}>
-                  <BarChart width={498} height={24} data={[{ name: "hehe", value: 1 }]}>
+                  <BarChart width={510} height={24} data={[{ name: "hehe", value: 1 }]}>
                     <Bar dataKey="active" fill={green['500']} />
                     <Bar dataKey="inactive" fill={grey['700']} />
                     <Bar dataKey="error" fill={red['500']} />
@@ -515,7 +522,7 @@ class Dashboard extends Component {
                           innerRadius={60}
                           outerRadius={80}
                           fill={green['500']}
-                          label={data => this.formatLabel(data.payload.value)}
+                          label={data => this.formatRamLabel(data.payload.value)}
                           isAnimationActive={false}
                         >
                           {lastMemory.map((entry, index) => 
