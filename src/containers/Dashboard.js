@@ -84,6 +84,7 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     borderRadius: 16,
+    padding: theme.spacing(0, 0, 2, 0),
   },
   chipContainer: {
     margin: theme.spacing(1, 2),
@@ -550,7 +551,7 @@ class Dashboard extends Component {
                 <ResponsiveContainer width="100%" height={250} >
                   <LineChart
                     data={cpuPercent}
-                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
                   >
                     <XAxis dataKey="usage" />
                     <YAxis domain={[0, 100]}/>
@@ -609,7 +610,7 @@ class Dashboard extends Component {
                 <ResponsiveContainer width="100%" height={250} >
                   <AreaChart
                     data={memory}
-                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
                     stackOffset="expand"
                   >
                     <XAxis dataKey="name" />
@@ -679,7 +680,7 @@ class Dashboard extends Component {
                   <BarChart
                     data={disks}
                     layout="vertical"
-                    margin={{ top: 4, right: 32, left: 40, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
                   >
                     <YAxis type="category" dataKey="mountpoint" />
                     <XAxis type="number"/>
@@ -727,7 +728,7 @@ class Dashboard extends Component {
                 <Typography className={classes.chartTitle} variant="h4">Load</Typography>
                 <div className={classes.timingBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
-                  <BarChart data={load}>
+                  <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
                     <XAxis dataKey="time" />
                     <YAxis />
                     <Legend />
