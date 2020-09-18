@@ -21,6 +21,7 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
+import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import { green, yellow, red, blue, orange, grey, teal } from '@material-ui/core/colors';
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
@@ -279,6 +280,22 @@ class Dashboard extends Component {
         </text>
       </g>
     );
+  };
+
+  DiskTooltip = props => {
+    if (props.active) {
+      const newPayload = [
+        { name: 'Percentage', value: props.payload[0].payload.percent },
+        { name: 'Device', value: props.payload[0].payload.device },
+        { name: 'Filesystem', value: props.payload[0].payload.filesystem },
+        ...props.payload,
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
   };
 
   render() {
@@ -604,13 +621,14 @@ class Dashboard extends Component {
                     layout="vertical"
                     margin={{ top: 4, right: 32, left: 40, bottom: 4 }}
                   >
-                    <YAxis type="category" dataKey="device" />
+                    <YAxis type="category" dataKey="mountpoint" />
                     <XAxis type="number"/>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: grey['900'],
+                        backgroundColor: grey['500'],
                       }}
                       isAnimationActive={false}
+                      content={<this.DiskTooltip />}
                     />
                     <Bar
                       dataKey="percent"
