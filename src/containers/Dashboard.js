@@ -451,7 +451,7 @@ class Dashboard extends Component {
                   )}
                 </div>
                 <div className={classes.legendContainer}>
-                  <BarChart width={498} height={24} data={[{ name: "hehe", value: 1 }]}>
+                  <BarChart width={510} height={24} data={[{ name: "hehe", value: 1 }]}>
                     <Bar dataKey="active" fill={green['500']} />
                     <Bar dataKey="inactive" fill={grey['700']} />
                     <Bar dataKey="error" fill={red['500']} />
