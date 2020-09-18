@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
-import { Paper, Grid, Typography, Snackbar, Chip, IconButton } from '@material-ui/core';
+import { Paper, Grid, Typography, Snackbar, Chip, IconButton, CircularProgress } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {
   BarChart,
@@ -21,7 +21,8 @@ import {
   Cell,
   LabelList,
 } from 'recharts';
-import { green, yellow, red, blue, orange, grey, teal } from '@material-ui/core/colors';
+import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+import { green, yellow, red, blue, grey, teal } from '@material-ui/core/colors';
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
@@ -83,6 +84,7 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap',
     borderRadius: 16,
+    padding: theme.spacing(0, 0, 2, 0),
   },
   chipContainer: {
     margin: theme.spacing(1, 2),
@@ -171,13 +173,18 @@ const styles = theme => ({
     backgroundColor: grey['700'],
   },
   failedChip: {
-    backgroundColor: red['700'],
+    backgroundColor: red['800'],
   },
   activatingChip: {
-    backgroundColor: orange['500'],
+    backgroundColor: yellow['500'],
   },
   deactivatingChip: {
     backgroundColor: grey['300'],
+  },
+  legendContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: theme.spacing(0, 0, 2, 0),
   },
   serviceName: {
     fontWeight: 300,
@@ -196,6 +203,9 @@ class Dashboard extends Component {
 
   state = {
     snackbar: null,
+    starting: false,
+    restarting: false,
+    stoping: false,
   }
 
   fetchInterval = null;
@@ -212,6 +222,8 @@ class Dashboard extends Component {
     if (value > 1000) return (value / 1000).toFixed(descimals) + 'KB';
     return value + 'B';
   }
+
+  formatMB = value => (value / 1000000).toFixed(0) + 'MB';
 
   formatTick = value => {
     return this.formatLabel(value, 0);
@@ -256,8 +268,10 @@ class Dashboard extends Component {
   }
 
   handleServiceAction = (service, action) => () => {
-    this.props.serviceAction(service, action)
-      .catch(msg => this.setState({ snackbar: msg }));
+    this.setState({ [action + 'ing']: service.name });
+    this.props.serviceAction(service.unit, action)
+      .then(() => this.setState({ [action + 'ing']: false }))
+      .catch(msg => this.setState({ snackbar: msg, [action + 'ing']: false }));
   }
 
   renderDiskLabel = (props) => {
@@ -281,9 +295,75 @@ class Dashboard extends Component {
     );
   };
 
+  CPUTooltip = props => {
+    if (props.active) {
+      const lastIndex =  props.content._self.props.cpuPercent.length - 1;
+      const newPayload = [
+        { name: 'Idle', value: props.content._self.props.cpuPercent[lastIndex].idle + '%' },
+        { name: 'User', value: props.content._self.props.cpuPercent[lastIndex].user + '%' },
+        { name: 'System', value: props.content._self.props.cpuPercent[lastIndex].system + '%' },
+        { name: 'IO', value: props.content._self.props.cpuPercent[lastIndex].io + '%' },
+        { name: 'Steal', value: props.content._self.props.cpuPercent[lastIndex].steal + '%' },
+        { name: 'Interrupt', value: props.content._self.props.cpuPercent[lastIndex].interrupt + '%' },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
+  MemoryTooltip = props => {
+    if (props.active) {
+      const lastIndex =  props.content._self.props.memory.length - 1;
+      const newPayload = [
+        { name: 'Free', value: this.formatMB(props.content._self.props.memory[lastIndex].free) },
+        { name: 'Used', value: this.formatMB(props.content._self.props.memory[lastIndex].used) },
+        { name: 'Cache', value: this.formatMB(props.content._self.props.memory[lastIndex].cache) },
+        { name: 'Buffer', value: this.formatMB(props.content._self.props.memory[lastIndex].buffer) },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
+  SwapTooltip = props => {
+    if (props.active) {
+      const newPayload = [
+        { name: 'Used', value: this.formatLabel(props.content._self.props.swap[0].value) },
+        { name: 'Free', value: this.formatLabel(props.content._self.props.swap[1].value) },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
+  DiskTooltip = props => {
+    if (props.active) {
+      const newPayload = [
+        { name: 'Percentage', value: props.payload[0].payload.percent },
+        { name: 'Device', value: props.payload[0].payload.device },
+        { name: 'Filesystem', value: props.payload[0].payload.filesystem },
+      ];
+      return <DefaultTooltipContent
+        {...props}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
+
   render() {
     const { classes, t, cpuPercent, disks, memory, swap,
       swapPercent, load, Services, fetchServices } = this.props;
+    const { starting, restarting, stoping } = this.state;
     const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
     const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
@@ -296,7 +376,7 @@ class Dashboard extends Component {
             <Grid item xs={12}>
               <Paper className={classes.fixedPaper} elevation={2}>
                 <div className={classes.flexRow}>
-                  <Typography className={classes.chartTitle} variant="h4">
+                  <Typography className={classes.chartTitle} variant="h5">
                     {t('Services')}
                   </Typography>
                   <div className={classes.flexRowEnd}>
@@ -312,24 +392,24 @@ class Dashboard extends Component {
                         label={
                           <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Typography className={classes.serviceName} variant="inherit">{service.name}</Typography>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'stop')}
+                            {stoping !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'stop')}
                               className={classes.chipButton}
                             >
                               <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'restart')}
+                            </IconButton> : <CircularProgress size={16}/>}
+                            {restarting !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'restart')}
                               className={classes.chipButton}
                             >
                               <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
-                            <IconButton
-                              onClick={this.handleServiceAction(service.unit, 'start')}
+                            </IconButton> : <CircularProgress size={16}/>}
+                            {starting !== service.name ? <IconButton
+                              onClick={this.handleServiceAction(service, 'start')}
                               className={classes.chipButton}
                             >
                               <Start className={classes.iconButton} color="inherit" fontSize="small"/>
-                            </IconButton>
+                            </IconButton> : <CircularProgress size={16}/>}
                           </div>
                         }
                         color="secondary"
@@ -342,13 +422,24 @@ class Dashboard extends Component {
                     </div>
                   )}
                 </div>
+                <div className={classes.legendContainer}>
+                  <BarChart width={498} height={24} data={[{ name: "hehe", value: 1 }]}>
+                    <Bar dataKey="active" fill={green['500']} />
+                    <Bar dataKey="inactive" fill={grey['700']} />
+                    <Bar dataKey="error" fill={red['500']} />
+                    <Bar dataKey="failed" fill={red['800']} />
+                    <Bar dataKey="activating" fill={yellow['500']} />
+                    <Bar dataKey="deactivating" fill={grey['300']} />
+                    <Legend />
+                  </BarChart>
+                </div>
               </Paper>
             </Grid>
             <Grid item xs={12}>
               <Paper className={classes.chipsPaper} elevation={2}>
                 <Grid container>
                   <Grid item xs={4}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -380,13 +471,14 @@ class Dashboard extends Component {
                             backgroundColor: grey['700'],
                           }}
                           isAnimationActive={false}
+                          content={<this.CPUTooltip />}
                         />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -413,18 +505,19 @@ class Dashboard extends Component {
                           )}
                         </Pie>
                         <Tooltip
-                          formatter={this.formatLabel}
+                          //formatter={this.formatLabel}
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }}
                           isAnimationActive={false}
+                          content={<this.MemoryTooltip />}
                         />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
-                    <Typography className={classes.chartTitle} variant="h4">
+                    <Typography className={classes.chartTitle} variant="h5">
                       Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
                     </Typography>
                     <ResponsiveContainer width="100%" height={250}>
@@ -454,8 +547,9 @@ class Dashboard extends Component {
                           contentStyle={{
                             backgroundColor: grey['700'],
                           }} 
-                          formatter={this.formatLabel}
+                          //formatter={this.formatLabel}
                           isAnimationActive={false}
+                          content={<this.SwapTooltip />}
                         />}
                         {swap.length > 0 && swap[1].value && <Legend />}
                       </PieChart>
@@ -466,14 +560,14 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
+                <Typography className={classes.chartTitle} variant="h5">
                   {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                 </Typography>
                 <div className={classes.cpuBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
                   <LineChart
                     data={cpuPercent}
-                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
                   >
                     <XAxis dataKey="usage" />
                     <YAxis domain={[0, 100]}/>
@@ -525,14 +619,14 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">
+                <Typography className={classes.chartTitle} variant="h5">
                   {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
                 </Typography>
                 <div className={classes.ramBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
                   <AreaChart
                     data={memory}
-                    margin={{ top: 4, right: 32, left: 10, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
                     stackOffset="expand"
                   >
                     <XAxis dataKey="name" />
@@ -542,7 +636,7 @@ class Dashboard extends Component {
                       tickFormatter={this.formatTick}
                     />
                     <Tooltip
-                      formatter={value => (value / 1000000).toFixed(0) + 'MB'}
+                      formatter={this.formatMB}
                       contentStyle={{
                         backgroundColor: grey['500'],
                         color: 'white',
@@ -596,21 +690,22 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">Disks</Typography>
+                <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
                 <div className={classes.storageBackground}></div>
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart
                     data={disks}
                     layout="vertical"
-                    margin={{ top: 4, right: 32, left: 40, bottom: 4 }}
+                    margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
                   >
-                    <YAxis type="category" dataKey="device" />
+                    <YAxis type="category" dataKey="mountpoint" />
                     <XAxis type="number"/>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: grey['900'],
+                        backgroundColor: grey['500'],
                       }}
                       isAnimationActive={false}
+                      content={<this.DiskTooltip />}
                     />
                     <Bar
                       dataKey="percent"
@@ -646,10 +741,10 @@ class Dashboard extends Component {
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h4">Load</Typography>
+                <Typography className={classes.chartTitle} variant="h5">Load</Typography>
                 <div className={classes.timingBackground}></div>
                 <ResponsiveContainer width="100%" height={250} >
-                  <BarChart data={load}>
+                  <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
                     <XAxis dataKey="time" />
                     <YAxis />
                     <Legend />
