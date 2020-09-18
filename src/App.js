@@ -10,6 +10,7 @@ import { authAuthenticating } from './actions/auth';
 import background from './res/bootback.svg';
 import darkBackground from './res/bootback-dark.svg';
 import i18n from './i18n';
+import { changeSettings } from './actions/settings';
 
 const styles = {
   root: {
@@ -67,7 +68,11 @@ class App extends Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    i18n.changeLanguage(localStorage.getItem('lang'));
+    const lang = localStorage.getItem('lang');
+    if(lang) {
+      i18n.changeLanguage(lang);
+      await dispatch(changeSettings('language', lang));
+    }
     await dispatch(authAuthenticating(false));
   }
 

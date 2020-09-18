@@ -30,6 +30,7 @@ function aliasesReducer(state = defaultState, action) {
       return {
         ...state,
         error: action.error,
+        loading: false,
       };
     }
 

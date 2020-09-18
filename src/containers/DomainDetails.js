@@ -174,7 +174,7 @@ class DomainListDetails extends PureComponent {
     const { checkPw, newPw, changingPw } = this.state;
     const { domainname, domainType, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser } = this.state.changes;
+      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.changes;
 
     return (
       <div className={classes.root}>
@@ -208,6 +208,14 @@ class DomainListDetails extends PureComponent {
                   {t('Change password')}
                 </Button>
               </Grid>
+              <TextField 
+                className={classes.input} 
+                label={t("Home directory")} 
+                fullWidth 
+                disabled
+                value={homedir || ''}
+                onChange={this.handleNumberInput('homedir')}
+              />
               <TextField
                 select
                 className={classes.input}
@@ -322,11 +330,20 @@ class DomainListDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('Mail sub system')}
+                label={t('Mail subsystem')}
                 control={
                   <Checkbox
                     checked={mailSubSystem || false}
                     onChange={this.handleCheckbox('mailSubSystem')}
+                  />
+                }
+              />
+              <FormControlLabel
+                label={t('Net disk')}
+                control={
+                  <Checkbox
+                    checked={netDisk || false}
+                    onChange={this.handleCheckbox('netDisk')}
                   />
                 }
               />

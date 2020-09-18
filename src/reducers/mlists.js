@@ -29,6 +29,7 @@ function mlistsReducer(state = defaultState, action) {
     case MLISTS_DATA_ERROR: {
       return {
         ...state,
+        loading: false,
         error: action.error,
       };
     }

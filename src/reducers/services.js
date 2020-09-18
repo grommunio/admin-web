@@ -29,6 +29,7 @@ function domainsReducer(state = defaultState, action) {
     case SERVICES_DATA_ERROR:
       return {
         ...state,
+        loading: false,
         error: action.error,
       };
 

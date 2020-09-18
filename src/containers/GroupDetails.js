@@ -258,7 +258,7 @@ class GroupDetails extends PureComponent {
                 }
               />
               <FormControlLabel
-                label={t('mail sub system')}
+                label={t('mail subsystem')}
                 control={
                   <Checkbox
                     checked={changes.account || false}

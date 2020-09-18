@@ -34,6 +34,7 @@ function areasReducer(state = defaultState, action) {
       return {
         ...state,
         error: action.error,
+        loading: false,
       };
 
     default:

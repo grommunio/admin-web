@@ -44,6 +44,7 @@ class AddDomain extends PureComponent {
     mailMonitor: false,
     mailSubSystem: true,
     ignoreCheckingUser: false,
+    netDisk: false,
     sizeUnit: 0,
     loading: false,
   }
@@ -84,7 +85,7 @@ class AddDomain extends PureComponent {
   handleAdd = () => {
     const { domainname, password, domainType, areaID, domainStatus, maxUser,
       title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
-      ignoreCheckingUser, sizeUnit, endDay, createDay, maxSize } = this.state;
+      ignoreCheckingUser, sizeUnit, endDay, createDay, maxSize, netDisk } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
@@ -101,6 +102,7 @@ class AddDomain extends PureComponent {
       mailMonitor,
       mailSubSystem,
       ignoreCheckingUser,
+      netDisk,
       // Dates should be removed soon
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
@@ -123,6 +125,7 @@ class AddDomain extends PureComponent {
           mailMonitor: false,
           mailSubSystem: true,
           ignoreCheckingUser: false,
+          netDisk: false,
           sizeUnit: 0,
           loading: false,
         });
@@ -140,7 +143,7 @@ class AddDomain extends PureComponent {
     const { classes, t, domainAreas, open, onSuccess } = this.props;
     const { domainname, password, domainType, areaID, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, sizeUnit, loading } = this.state;
+      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, sizeUnit, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
@@ -301,11 +304,20 @@ class AddDomain extends PureComponent {
               }
             />
             <FormControlLabel
-              label={t('Mail sub system')}
+              label={t('Mail subsystem')}
               control={
                 <Checkbox
                   checked={mailSubSystem || false}
                   onChange={this.handleCheckbox('mailSubSystem')}
+                />
+              }
+            />
+            <FormControlLabel
+              label={t('Net disk')}
+              control={
+                <Checkbox
+                  checked={netDisk || false}
+                  onChange={this.handleCheckbox('netDisk')}
                 />
               }
             />

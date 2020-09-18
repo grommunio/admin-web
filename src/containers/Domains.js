@@ -99,6 +99,7 @@ class DomainList extends Component {
                   <TableCell>{t('Domain')}</TableCell>
                   <TableCell>{t('Address')}</TableCell>
                   <TableCell>{t('Title')}</TableCell>
+                  <TableCell>{t('Home directory')}</TableCell>
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Maximum users')}</TableCell>
                   <TableCell></TableCell>
@@ -106,10 +107,11 @@ class DomainList extends Component {
               </TableHead>
               <TableBody>
                 {domains.Domains.map((obj, idx) =>
-                  <TableRow key={idx} onClick={() => this.props.history.push(`/${obj.domainname}`)}>
+                  <TableRow key={idx}>
                     <TableCell>{obj.domainname}</TableCell>
                     <TableCell>{obj.address}</TableCell>
                     <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.homedir}</TableCell>
                     <TableCell>{obj.maxSize}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
