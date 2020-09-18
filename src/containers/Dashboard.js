@@ -312,7 +312,7 @@ class Dashboard extends Component {
   };
 
   CPUTooltip = props => {
-    if (props.active) {
+    if (props.active && props.content && props.content._self) {
       const lastIndex =  props.content._self.props.cpuPercent.length - 1;
       const newPayload = [
         { name: 'Idle', value: props.content._self.props.cpuPercent[lastIndex].idle + '%' },
@@ -331,7 +331,7 @@ class Dashboard extends Component {
   };
 
   MemoryTooltip = props => {
-    if (props.active) {
+    if (props.active && props.content && props.content._self) {
       const lastIndex =  props.content._self.props.memory.length - 1;
       const newPayload = [
         { name: 'Free', value: this.formatMB(props.content._self.props.memory[lastIndex].free) },
@@ -348,7 +348,7 @@ class Dashboard extends Component {
   };
 
   SwapTooltip = props => {
-    if (props.active) {
+    if (props.active && props.content && props.content._self) {
       const newPayload = [
         { name: 'Used', value: this.formatLabel(props.content._self.props.swap[0].value) },
         { name: 'Free', value: this.formatLabel(props.content._self.props.swap[1].value) },
@@ -362,7 +362,7 @@ class Dashboard extends Component {
   };
 
   DiskTooltip = props => {
-    if (props.active) {
+    if (props.active && props.content && props.content._self) {
       const newPayload = [
         { name: 'Percentage', value: props.payload[0].payload.percent },
         { name: 'Device', value: props.payload[0].payload.device },
