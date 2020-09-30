@@ -15,6 +15,7 @@ import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchAliasesData, deleteAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
+import AddAlias from '../components/Dialogs/AddAlias';
 
 const styles = theme => ({
   root: {
@@ -51,17 +52,15 @@ const styles = theme => ({
 class Aliases extends Component {
 
   state = {
-    changes: {},
+    adding: false,
+    deleting: false,
   }
 
   componentDidMount() {
     this.props.fetch();
   }
 
-  handleAdd = () => {
-    const { history } = this.props;
-    history.push('/aliases/add', {});
-  }
+  handleAdd = () => this.setState({ adding: true });
 
   handleEdit = alias => () => {
     const { history } = this.props;
@@ -72,8 +71,13 @@ class Aliases extends Component {
     this.props.delete(id).then(this.props.fetch);
   }
 
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
+
   render() {
     const { classes, aliases } = this.props;
+    const { adding } = this.state;
 
     return (
       <div className={classes.root}>
@@ -108,6 +112,11 @@ class Aliases extends Component {
             </Table>
           </Paper>
         </div>
+        <AddAlias
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+        />
       </div>
     );
   }

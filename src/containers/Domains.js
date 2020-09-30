@@ -50,6 +50,7 @@ class DomainList extends Component {
   state = {
     snackbar: null,
     showAliases: false,
+    showDeleted: false,
     adding: false,
     deleting: false,
   }
@@ -92,7 +93,7 @@ class DomainList extends Component {
 
   render() {
     const { classes, t, domains } = this.props;
-    const { showAliases, snackbar, adding, deleting } = this.state;
+    const { showAliases, showDeleted, snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -119,27 +120,37 @@ class DomainList extends Component {
                         />
                       }
                     />
+                    <FormControlLabel
+                      label={t('Show deleted')}
+                      control={
+                        <Checkbox
+                          checked={showDeleted || false}
+                          onChange={this.handleCheckbox('showDeleted')}
+                        />
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {domains.Domains.map((obj, idx) => {
-                  return (obj.domainType === 1 && showAliases) || !obj.domainType ? <TableRow key={idx}>
-                    <TableCell>{obj.domainname}</TableCell>
-                    <TableCell>{obj.address}</TableCell>
-                    <TableCell>{obj.title}</TableCell>
-                    <TableCell>{obj.homedir}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
-                    <TableCell>{obj.maxUser}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow> : null;
+                  return (obj.domainType === 1 && !showAliases) || (obj.domainStatus === 3 && !showDeleted) ?
+                    null : <TableRow key={idx}>
+                      <TableCell>{obj.domainname}</TableCell>
+                      <TableCell>{obj.address}</TableCell>
+                      <TableCell>{obj.title}</TableCell>
+                      <TableCell>{obj.homedir}</TableCell>
+                      <TableCell>{obj.maxSize}</TableCell>
+                      <TableCell>{obj.maxUser}</TableCell>
+                      <TableCell className={classes.flexRowEnd}>
+                        <IconButton onClick={this.handleEdit(obj)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton onClick={this.handleDelete(obj)}>
+                          <Delete color="error"/>
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>;
                 })}
               </TableBody>
             </Table>

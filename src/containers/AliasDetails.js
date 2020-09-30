@@ -67,11 +67,6 @@ class AliasDetails extends PureComponent {
     this.props.fetchDomains();
   }
 
-  statuses = [
-    { name: 'normal', ID: 0 },
-    { name: 'suspended', ID: 1 },
-  ]
-
   handleInput = field => event => {
     this.setState({
       changes: {
@@ -80,12 +75,6 @@ class AliasDetails extends PureComponent {
       },
       unsaved: true,
     });
-  }
-
-  handleAdd = () => {
-    const { domainID, alias } = this.state.changes;
-    this.props.add(domainID, alias);
-    this.props.history.push('/aliases');
   }
 
   handleEdit = () => {
@@ -145,7 +134,7 @@ class AliasDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.state.editing ? this.handleEdit: this.handleAdd}
+              onClick={this.handleEdit}
             >
               Save
             </Button>
