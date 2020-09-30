@@ -230,7 +230,7 @@ class NavigationLinks extends PureComponent {
                       >
                         <Grid container alignItems="center">
                           <Aliases className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Users Aliases')}/>
+                          <ListItemText primary={t('Aliases')}/>
                         </Grid>
                       </ListItem>
                       <ListItem

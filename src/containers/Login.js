@@ -146,7 +146,7 @@ class Login extends Component {
             <Key className={classes.inputAdornment}/>
             <InputBase
               fullWidth
-              type={t("Password")}
+              type="password"
               className={classes.input}
               error={auth.error}
               placeholder={t("Password")}

@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Http from '@material-ui/icons/Http';
 import Settings from '@material-ui/icons/Settings';
+import Aliases from '@material-ui/icons/AssignmentInd';
 import Folder from '@material-ui/icons/Folder';
 import Mail from '@material-ui/icons/Mail';
 import Run from '@material-ui/icons/DirectionsRun';
@@ -231,6 +232,18 @@ class DomNavigationLinks extends PureComponent {
                       <Grid container alignItems="center">
                         <People className={classes.nestedIcon}/>
                         <ListItemText primary={t('Users')}/>
+                      </Grid>
+                    </ListItem>
+                    <ListItem
+                      className={classes.li}
+                      button
+                      onClick={this.handleNavigation(name + '/userAliases')}
+                      selected={stateDomains[name] &&
+                        location.pathname.startsWith('/' + name + '/userAliases')}
+                    >
+                      <Grid container alignItems="center">
+                        <Aliases className={classes.nestedIcon}/>
+                        <ListItemText primary={t('Aliases')}/>
                       </Grid>
                     </ListItem>
                     <ListItem
