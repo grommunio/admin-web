@@ -172,6 +172,12 @@ export async function changeUserPassword(domainID, id, newPw) {
   } catch(err) { console.error(err); }
 }
 
+export function userAliases(domainID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/aliases');
+  };
+}
+
 /*
   GROUPS
 */
