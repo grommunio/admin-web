@@ -3,7 +3,7 @@ import {
   USER_ALIASES_DATA_FETCH,
   USER_ALIASES_DATA_ERROR,
 } from './types';
-import { userAliases, addUserAlias, deleteUserAlias, editUserAlias } from '../api';
+import { userAliases, addUserAlias } from '../api';
 
 export function fetchUserAliasesData(domainID) {
   return async dispatch => {
@@ -29,10 +29,10 @@ export function addUserAliasData(domainID, userID, alias) {
   };
 }
 
-export function deleteUserAliasData(id) {
+export function deleteUserAliasData() {
   return async dispatch => {
     try {
-      await dispatch(deleteUserAlias(id));
+      //await dispatch(deleteUserAlias(id));
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(userAliasDataError(err));
@@ -40,10 +40,10 @@ export function deleteUserAliasData(id) {
   };
 }
 
-export function editUserAliasData(domainID, userID, newValue) {
+export function editUserAliasData() {
   return async dispatch => {
     try {
-      await dispatch(editUserAlias(domainID, userID, newValue));
+      //await dispatch(editUserAlias(domainID, userID, newValue));
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(userAliasDataError(err));

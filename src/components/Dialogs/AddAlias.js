@@ -81,7 +81,7 @@ class AddAlias extends PureComponent {
               value={domainID || ''}
               onChange={this.handleInput('domainID')}
             >
-              {domains.filter(domain => domain.domainType == 0).map((domain, key) => (
+              {domains.filter(domain => domain.domainType === 0).map((domain, key) => (
                 <MenuItem key={key} value={domain.ID}>
                   {domain.domainname}
                 </MenuItem>
