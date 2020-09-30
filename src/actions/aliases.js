@@ -18,10 +18,10 @@ export function fetchAliasesData() {
   };
 }
 
-export function addAliasData(data) {
+export function addAliasData(domainID, alias) {
   return async dispatch => {
     try {
-      await dispatch(addAlias(data));
+      await dispatch(addAlias(domainID, alias));
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));

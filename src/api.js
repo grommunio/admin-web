@@ -262,25 +262,25 @@ export function deleteOrg(id) {
 
 export function aliases() {
   return async () => {
-    return await get('/aliases');
+    return await get('/system/aliases');
   };
 }
 
-export function addAlias(alias) {
+export function addAlias(domainID, aliasname) {
   return async () => {
-    return await post('/aliases', alias);
+    return await post('/system/domains/' + domainID + '/aliases', { aliasname });
   };
 }
 
 export function editAlias(alias) {
   return async () => {
-    return await patch('/aliases/' + alias.ID, alias);
+    return await patch('/system/aliases/' + alias.ID, alias);
   };
 }
 
 export function deleteAlias(id) {
   return async () => {
-    return await yeet('/aliases/' + id);
+    return await yeet('/system/aliases/' + id);
   };
 }
 

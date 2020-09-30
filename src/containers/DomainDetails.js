@@ -221,6 +221,7 @@ class DomainListDetails extends PureComponent {
                 className={classes.input}
                 label={t("Domain type")}
                 fullWidth
+                disabled
                 value={domainType || 0}
                 onChange={this.handleInput('domainType')}
               >
