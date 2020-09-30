@@ -15,6 +15,7 @@ import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchUserAliasesData, deleteUserAliasData } from '../actions/userAliases';
 import TopBar from '../components/TopBar';
+import AddUserAlias from '../components/Dialogs/AddUserAlias';
 
 const styles = theme => ({
   root: {
@@ -51,7 +52,8 @@ const styles = theme => ({
 class UserAliases extends Component {
 
   state = {
-    changes: {},
+    adding: false,
+    deleting: false,
   }
 
   componentDidMount() {
@@ -59,19 +61,26 @@ class UserAliases extends Component {
     fetch(domain.ID);
   }
 
-  handleAdd = () => {
-    const { history } = this.props;
-    history.push('/aliases/add', {});
-  }
+  handleAdd = () => this.setState({ adding: true });
+
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
+
+  handleDelete = user => () => this.setState({ deleting: user });
+
+  handleDeleteClose = () => this.setState({ deleting: false });
 
   handleEdit = alias => () => {
     const { history } = this.props;
     history.push('/aliases/' + alias.ID, { ...alias });
   }
 
-  handleDelete = id => () => {
-    this.props.delete(id).then(this.props.fetch);
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
   }
+
+  handleDeleteError = error => this.setState({ snackbar: error });
 
   render() {
     const { classes, aliases } = this.props;
@@ -109,6 +118,12 @@ class UserAliases extends Component {
             </Table>
           </Paper>
         </div>
+        <AddUserAlias
+          open={this.state.adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={this.props.domain}
+        />
       </div>
     );
   }
@@ -131,10 +146,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async domainID => {
-      await dispatch(fetchUserAliasesData(domainID));
+      await dispatch(fetchUserAliasesData(domainID)).catch(error => Promise.reject(error));
     },
     delete: async id => {
-      await dispatch(deleteUserAliasData(id));
+      await dispatch(deleteUserAliasData(id)).catch(error => Promise.reject(error));
     },
   };
 };

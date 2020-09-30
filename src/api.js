@@ -178,6 +178,12 @@ export function userAliases(domainID) {
   };
 }
 
+export function addUserAlias(domainID, userID, aliasname) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/' + userID + '/aliases', { aliasname });
+  };
+}
+
 /*
   GROUPS
 */

@@ -6,7 +6,8 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { addAliasData } from '../../actions/aliases';
+import { addUserAliasData } from '../../actions/userAliases';
+import { fetchUsersData } from '../../actions/users';
 
 const styles = theme => ({
   form: {
@@ -22,12 +23,16 @@ const styles = theme => ({
   },
 });
 
-class AddAlias extends PureComponent {
+class AddUserAlias extends PureComponent {
 
   state = {
-    domainID: '',
+    userID: '',
     aliasname: '',
     loading: false,
+  }
+
+  componentDidMount() {
+    this.props.fetchUsers(this.props.domain.ID);
   }
 
   handleInput = field => event => {
@@ -41,13 +46,13 @@ class AddAlias extends PureComponent {
   });
 
   handleAdd = () => {
-    const { add, onSuccess, onError } = this.props;
-    const { domainID, aliasname } = this.state;
+    const { add, onSuccess, onError, domain } = this.props;
+    const { userID, aliasname } = this.state;
     this.setState({ loading: true });
-    add(domainID, aliasname)
+    add(domain.ID, userID, aliasname)
       .then(() => {
         this.setState({
-          domainID: '',
+          userID: '',
           aliasname: '',
           loading: false,
         });
@@ -60,8 +65,8 @@ class AddAlias extends PureComponent {
   }
 
   render() {
-    const { classes, t, domains, open, onSuccess } = this.props;
-    const { domainID, aliasname, loading } = this.state;
+    const { classes, t, open, onSuccess, users } = this.props;
+    const { userID, aliasname, loading } = this.state;
 
     return (
       <Dialog
@@ -76,19 +81,19 @@ class AddAlias extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("Domain")}
+              label={t("Username")}
               fullWidth
-              value={domainID || ''}
-              onChange={this.handleInput('domainID')}
+              value={userID || ''}
+              onChange={this.handleInput('userID')}
             >
-              {domains.filter(domain => domain.domainType == 0).map((domain, key) => (
-                <MenuItem key={key} value={domain.ID}>
-                  {domain.domainname}
+              {users.map((user, key) => (
+                <MenuItem key={key} value={user.ID}>
+                  {user.username}
                 </MenuItem>
               ))}
             </TextField>
             <TextField 
-              className={classes.input} 
+              className={classes.input}
               label={t("Alias name")} 
               fullWidth 
               value={aliasname || ''}
@@ -108,7 +113,7 @@ class AddAlias extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!domainID || loading}
+            disabled={!userID || loading}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
@@ -118,10 +123,12 @@ class AddAlias extends PureComponent {
   }
 }
 
-AddAlias.propTypes = {
+AddUserAlias.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  domains: PropTypes.array.isRequired,
+  domain: PropTypes.object.isRequired,
+  fetchUsers: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
@@ -130,17 +137,20 @@ AddAlias.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    domains: state.domains.Domains,
+    users: state.users.Users,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, alias) => {
-      await dispatch(addAliasData(domainID, alias));
+    add: async (domainID, userID, aliasname) => {
+      await dispatch(addUserAliasData(domainID, userID, aliasname)).catch(error => Promise.reject(error));
+    },
+    fetchUsers: async domainID => {
+      await dispatch(fetchUsersData(domainID)).catch(error => Promise.reject(error));
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddAlias)));
+  withTranslation()(withStyles(styles)(AddUserAlias)));
