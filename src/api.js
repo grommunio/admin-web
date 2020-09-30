@@ -174,7 +174,7 @@ export async function changeUserPassword(domainID, id, newPw) {
 
 export function userAliases(domainID) {
   return async () => {
-    return await get('/domains/' + domainID + '/aliases');
+    return await get('/domains/' + domainID + '/users/aliases');
   };
 }
 
@@ -274,7 +274,7 @@ export function deleteOrg(id) {
 
 export function aliases() {
   return async () => {
-    return await get('/system/aliases');
+    return await get('/system/domains/aliases');
   };
 }
 

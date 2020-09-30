@@ -7,7 +7,7 @@ import {
 const defaultState = {
   loading: false,
   error: null,
-  Aliases: [],
+  Aliases: {},
 };
 
 function aliasesReducer(state = defaultState, action) {

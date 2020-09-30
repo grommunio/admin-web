@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Table,
+  List,
+  ListItem,
 } from '@material-ui/core';
+import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchAliasesData, deleteAliasData } from '../actions/aliases';
@@ -47,6 +47,9 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
 });
 
 class Aliases extends Component {
@@ -54,6 +57,7 @@ class Aliases extends Component {
   state = {
     adding: false,
     deleting: false,
+    open: [],
   }
 
   componentDidMount() {
@@ -67,7 +71,8 @@ class Aliases extends Component {
     history.push('/aliases/' + alias.ID, { ...alias });
   }
 
-  handleDelete = id => () => {
+  handleDelete = id => event => {
+    event.stopPropagation();
     this.props.delete(id).then(this.props.fetch);
   }
 
@@ -75,9 +80,21 @@ class Aliases extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
+  handleDomainClicked = domainname => () => {
+    const { open } = this.state;
+    const idx = open.findIndex(d => d === domainname);
+    if(idx === -1) {
+      this.setState({ open: [...open, domainname] });
+    } else {
+      const copy = [...open];
+      copy.splice(idx, 1);
+      this.setState({ open: copy });
+    }
+  };
+
   render() {
     const { classes, aliases } = this.props;
-    const { adding } = this.state;
+    const { adding, open } = this.state;
 
     return (
       <div className={classes.root}>
@@ -85,31 +102,28 @@ class Aliases extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>alias name</TableCell>
-                  <TableCell>main name</TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {aliases.Aliases.map((obj, idx) =>
-                  <TableRow key={idx}>
-                    <TableCell>{obj.aliasname}</TableCell>
-                    <TableCell>{obj.mainname}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={this.handleDelete(obj.ID)}>
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+            <List>
+              {Object.entries(aliases).map(([key, value]) => <React.Fragment key={key}>
+                <ListItem button onClick={this.handleDomainClicked(key)}>
+                  <ListItemText primary={key} />
+                  {open.includes(key) ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse in={open.includes(key)} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {value.map(val =>
+                      <ListItem key={val} button className={classes.nested}>
+                        <ListItemText primary={val} />
+                        <IconButton onClick={this.handleDelete} /*wont work yet*/ >
+                          <Delete fontSize="small" /> 
+                        </IconButton>
+                      </ListItem>
+                    )}
+                    
+                  </List>
+                </Collapse>
+              </React.Fragment>
+              )}
+            </List>
           </Paper>
         </div>
         <AddAlias
@@ -132,7 +146,7 @@ Aliases.propTypes = {
 };
 
 const mapStateToProps = state => {
-  return { aliases: state.aliases };
+  return { aliases: state.aliases.Aliases };
 };
 
 const mapDispatchToProps = dispatch => {

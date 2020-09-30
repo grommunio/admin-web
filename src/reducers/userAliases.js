@@ -7,10 +7,10 @@ import {
 const defaultState = {
   loading: false,
   error: null,
-  Aliases: [],
+  Aliases: {},
 };
 
-function aliasesReducer(state = defaultState, action) {
+function userAliasesReducer(state = defaultState, action) {
   switch (action.type) {
     case USER_ALIASES_DATA_FETCH:
       return {
@@ -39,4 +39,4 @@ function aliasesReducer(state = defaultState, action) {
   }
 }
 
-export default aliasesReducer;
+export default userAliasesReducer;

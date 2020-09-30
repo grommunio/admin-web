@@ -17,6 +17,7 @@ import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
+import userAliasesReducer from './reducers/userAliases';
 import groupsReducer from './reducers/groups';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
@@ -43,6 +44,7 @@ export const store = createStore(
     services: servicesReducer,
     settings: settingsReducer,
     users: usersReducer,
+    userAliases: userAliasesReducer,
   }),
   composeEnhancers(applyMiddleware(
     thunkMiddleware,
