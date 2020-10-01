@@ -109,7 +109,7 @@ export function postServices(service, action) {
 
 export function domains() {
   return async () => {
-    return await get('/system/domains');
+    return await get('/system/domains?domainType=0');
   };
 }
 
@@ -143,7 +143,7 @@ export async function changeDomainPassword(id, newPw) {
 
 export function users(domainID) {
   return async () => {
-    return await get('/domains/' + domainID + '/users');
+    return await get('/domains/' + domainID + '/users?addressType=0');
   };
 }
 

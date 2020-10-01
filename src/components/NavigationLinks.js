@@ -181,7 +181,7 @@ class NavigationLinks extends PureComponent {
             <Tab className={classes.tab} value={1} label={t('Domains')} />
           </Tabs>
           {this.state.tab === 1 && 
-            domains.filter(domain => domain.domainType === 0).map(({ domainname: name }) => {
+            domains.map(({ domainname: name }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
                   <ListItem
