@@ -9,7 +9,7 @@ export function authLogin(user, pw, role) {
 }
 
 export function authLoginWithToken(grammmAuthToken) {
-  return authAuthenticated(true, grammmAuthToken === 'rootroot' ? 'sys' : 'domain');
+  return authAuthenticated(true, grammmAuthToken === 'rootwerDasLiestIstDoof69' ? 'sys' : 'domain');
 }
 
 export function authLogout() {
