@@ -5,11 +5,9 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
   Button, DialogActions, Snackbar, CircularProgress, Select } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
-import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
-import { fetchAreasData, addAreaData, deleteAreaData } from '../actions/areas';
+import { fetchAreasData, addAreaData } from '../actions/areas';
 import { connect } from 'react-redux';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
@@ -266,7 +264,6 @@ class DataAreaSetup extends Component {
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Used space')}</TableCell>
                   <TableCell>{t('User number')}</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -278,11 +275,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -294,7 +286,6 @@ class DataAreaSetup extends Component {
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Used space')}</TableCell>
                   <TableCell>{t('Domain number')}</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -306,11 +297,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
-                    <TableCell>
-                      <IconButton  onClick={this.handleDelete(obj)} >
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -359,9 +345,6 @@ const mapDispatchToProps = dispatch => {
     },
     add: async area => {
       await dispatch(addAreaData(area)).catch(msg => Promise.reject(msg));
-    },
-    delete: async id => {
-      await dispatch(deleteAreaData(id)).catch(msg => Promise.reject(msg));
     },
   };
 };

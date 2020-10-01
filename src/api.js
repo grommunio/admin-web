@@ -420,9 +420,6 @@ export async function addDataArea(data) {
   return await post('/system/area_list', data);
 }
 
-export async function deleteDataArea(id) {
-  return await yeet('/system/area_list/' + id);
-}
 /*
   MAIL ADDRESSES
 */
