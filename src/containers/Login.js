@@ -112,10 +112,10 @@ class Login extends Component {
     const { authLogin, fetchDomainData } = this.props;
     const { user, pass } = this.state;
     event.preventDefault();
-    if(user === 'root' && pass === 'root') {
-      authLogin(user, this.state.pass, 'sys');
+    if(user === 'root' && pass === 'werDasLiestIstDoof69') {
+      authLogin(user, pass, 'sys');
     } else {
-      authLogin(user, this.state.pass, 'domain').then(() => {
+      authLogin(user, pass, 'domain').then(() => {
         fetchDomainData();
       });
     }
@@ -146,7 +146,7 @@ class Login extends Component {
             <Key className={classes.inputAdornment}/>
             <InputBase
               fullWidth
-              type={t("Password")}
+              type="password"
               className={classes.input}
               error={auth.error}
               placeholder={t("Password")}

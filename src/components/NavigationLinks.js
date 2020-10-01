@@ -224,6 +224,18 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
+                        onClick={this.handleNavigation(name + '/userAliases')}
+                        selected={stateDomains[name] &&
+                          location.pathname.startsWith('/' + name + '/userAliases')}
+                      >
+                        <Grid container alignItems="center">
+                          <Aliases className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Aliases')}/>
+                        </Grid>
+                      </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
                         onClick={this.handleNavigation(name + '/folders')}
                         selected={stateDomains[name] &&
                           location.pathname.startsWith('/' + name + '/folders')}

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal,
+  Checkbox, FormControlLabel } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -48,6 +49,8 @@ class DomainList extends Component {
 
   state = {
     snackbar: null,
+    showAliases: false,
+    showDeleted: false,
     adding: false,
     deleting: false,
   }
@@ -84,8 +87,13 @@ class DomainList extends Component {
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
+  handleCheckbox = field => event => this.setState({
+    [field]: event.target.checked,
+  });
+
   render() {
     const { classes, t, domains } = this.props;
+    const { showAliases, showDeleted, snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -102,62 +110,82 @@ class DomainList extends Component {
                   <TableCell>{t('Home directory')}</TableCell>
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Maximum users')}</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <FormControlLabel
+                      label={t('Show aliases')}
+                      control={
+                        <Checkbox
+                          checked={showAliases || false}
+                          onChange={this.handleCheckbox('showAliases')}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label={t('Show deleted')}
+                      control={
+                        <Checkbox
+                          checked={showDeleted || false}
+                          onChange={this.handleCheckbox('showDeleted')}
+                        />
+                      }
+                    />
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {domains.Domains.map((obj, idx) =>
-                  <TableRow key={idx}>
-                    <TableCell>{obj.domainname}</TableCell>
-                    <TableCell>{obj.address}</TableCell>
-                    <TableCell>{obj.title}</TableCell>
-                    <TableCell>{obj.homedir}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
-                    <TableCell>{obj.maxUser}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )}
+                {domains.Domains.map((obj, idx) => {
+                  return (obj.domainType === 1 && !showAliases) || (obj.domainStatus === 3 && !showDeleted) ?
+                    null : <TableRow key={idx}>
+                      <TableCell>{obj.domainname}</TableCell>
+                      <TableCell>{obj.address}</TableCell>
+                      <TableCell>{obj.title}</TableCell>
+                      <TableCell>{obj.homedir}</TableCell>
+                      <TableCell>{obj.maxSize}</TableCell>
+                      <TableCell>{obj.maxUser}</TableCell>
+                      <TableCell className={classes.flexRowEnd}>
+                        <IconButton onClick={this.handleEdit(obj)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton onClick={this.handleDelete(obj)}>
+                          <Delete color="error"/>
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>;
+                })}
               </TableBody>
             </Table>
           </Paper>
           <Portal>
             <Snackbar
-              open={!!this.state.snackbar}
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
               transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
               <Alert
                 onClose={() => this.setState({ snackbar: '' })}
-                severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+                severity={snackbar === 'Success!' ? "success" : "error"}
                 elevation={6}
                 variant="filled"
               >
-                {this.state.snackbar}
+                {snackbar}
               </Alert>
             </Snackbar>
           </Portal>
         </div>
         <AddDomain
-          open={this.state.adding}
+          open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
         />
         <GeneralDelete
-          open={!!this.state.deleting}
+          open={!!deleting}
           delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
-          item={this.state.deleting.domainname}
-          id={this.state.deleting.ID}
+          item={deleting.domainname}
+          id={deleting.ID}
         />
       </div>
     );

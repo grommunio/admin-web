@@ -9,10 +9,12 @@ import {
   TextField,
   FormControl,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { addAliasData, editAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
+import { fetchDomainData } from '../actions/domains';
 
 const styles = theme => ({
   root: {
@@ -61,10 +63,9 @@ class AliasDetails extends PureComponent {
     };
   }
 
-  statuses = [
-    { name: 'normal', ID: 0 },
-    { name: 'suspended', ID: 1 },
-  ]
+  componentDidMount() {
+    this.props.fetchDomains();
+  }
 
   handleInput = field => event => {
     this.setState({
@@ -76,18 +77,13 @@ class AliasDetails extends PureComponent {
     });
   }
 
-  handleAdd = () => {
-    this.props.add(this.state.changes);
-    this.props.history.push('/aliases');
-  }
-
   handleEdit = () => {
     this.props.edit(this.state.changes);
   }
 
   render() {
-    const { classes, t } = this.props;
-    const changes = this.state.changes;
+    const { classes, t, domains } = this.props;
+    const { alias, domainID } = this.state.changes;
 
     return (
       <div className={classes.root}>
@@ -104,20 +100,27 @@ class AliasDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
+              <TextField
+                select
+                className={classes.input}
+                label={t("Domain")}
+                fullWidth
+                value={domainID || ''}
+                onChange={this.handleInput('domainID')}
+              >
+                {domains.map((domain, key) => (
+                  <MenuItem key={key} value={domain.ID}>
+                    {domain.domainname}
+                  </MenuItem>
+                ))}
+              </TextField>
               <TextField 
                 className={classes.input} 
-                label={t("alias name")} 
+                label={t("Alias name")} 
                 fullWidth 
-                value={changes.aliasname || ''}
-                onChange={this.handleInput('aliasname')}
+                value={alias || ''}
+                onChange={this.handleInput('alias')}
                 autoFocus
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("main name")} 
-                fullWidth 
-                value={changes.mainname || ''}
-                onChange={this.handleInput('mainname')}
               />
             </FormControl>
             <Button
@@ -131,7 +134,7 @@ class AliasDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.state.editing ? this.handleEdit: this.handleAdd}
+              onClick={this.handleEdit}
             >
               Save
             </Button>
@@ -149,18 +152,29 @@ AliasDetails.propTypes = {
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
+  domains: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    domains: state.domains.Domains,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async org => {
-      await dispatch(addAliasData(org));
+    add: async (domainID, alias) => {
+      await dispatch(addAliasData(domainID, alias));
     },
     edit: async org => {
       await dispatch(editAliasData(org));
     },
+    fetchDomains: async () => {
+      await dispatch(fetchDomainData());
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AliasDetails)));

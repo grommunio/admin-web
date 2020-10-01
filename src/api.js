@@ -109,7 +109,7 @@ export function postServices(service, action) {
 
 export function domains() {
   return async () => {
-    return await get('/system/domains');
+    return await get('/system/domains?domainType=0');
   };
 }
 
@@ -143,7 +143,7 @@ export async function changeDomainPassword(id, newPw) {
 
 export function users(domainID) {
   return async () => {
-    return await get('/domains/' + domainID + '/users');
+    return await get('/domains/' + domainID + '/users?addressType=0');
   };
 }
 
@@ -170,6 +170,24 @@ export async function changeUserPassword(domainID, id, newPw) {
     return await put('/domains/' + domainID + '/users/' + id + '/password',
       { new: newPw });
   } catch(err) { console.error(err); }
+}
+
+export function userAliases(domainID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/aliases');
+  };
+}
+
+export function addUserAlias(domainID, aliasID, aliasname) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/' + aliasID + '/aliases', { aliasname });
+  };
+}
+
+export function deleteUserAlias(domainID, aliasID) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/aliases/' + aliasID);
+  };
 }
 
 /*
@@ -229,6 +247,28 @@ export function deleteFolder(domainID, id) {
 }
 
 /*
+  OWNERS
+*/
+
+export function owners(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/' + folderID + '/owners');
+  };
+}
+
+export function addOwner(domainID, folderID, username) {
+  return async () => {
+    return await post('/domains/' + domainID + '/folders/' + folderID + '/owners', username);
+  };
+}
+
+export function deleteOwner(domainID, folderID, memberID) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID);
+  };
+}
+
+/*
   ORGS
 */
 
@@ -262,25 +302,25 @@ export function deleteOrg(id) {
 
 export function aliases() {
   return async () => {
-    return await get('/aliases');
+    return await get('/system/domains/aliases');
   };
 }
 
-export function addAlias(alias) {
+export function addAlias(domainID, aliasname) {
   return async () => {
-    return await post('/aliases', alias);
+    return await post('/system/domains/' + domainID + '/aliases', { aliasname });
   };
 }
 
 export function editAlias(alias) {
   return async () => {
-    return await patch('/aliases/' + alias.ID, alias);
+    return await patch('/system/domains/aliases/' + alias.ID, alias);
   };
 }
 
 export function deleteAlias(id) {
   return async () => {
-    return await yeet('/aliases/' + id);
+    return await yeet('/system/domains/aliases/' + id);
   };
 }
 
@@ -408,9 +448,6 @@ export async function addDataArea(data) {
   return await post('/system/area_list', data);
 }
 
-export async function deleteDataArea(id) {
-  return await yeet('/system/area_list/' + id);
-}
 /*
   MAIL ADDRESSES
 */

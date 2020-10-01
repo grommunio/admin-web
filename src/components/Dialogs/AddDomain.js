@@ -10,7 +10,6 @@ import { fetchAreasData } from '../../actions/areas';
 import { addDomainData } from '../../actions/domains';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import moment from 'moment';
 
 const styles = theme => ({
   form: {
@@ -31,7 +30,6 @@ class AddDomain extends PureComponent {
   state = {
     domainname: '',
     password: '',
-    domainType: 0,
     areaID: '',
     domainStatus: 0,
     maxSize: '',
@@ -53,11 +51,6 @@ class AddDomain extends PureComponent {
     this.props.fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
-
-  domainTypes = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Alias', ID: 1 },
-  ]
 
   statuses = [
     { name: 'Normal', ID: 0 },
@@ -83,14 +76,13 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, password, domainType, areaID, domainStatus, maxUser,
+    const { domainname, password, areaID, domainStatus, maxUser,
       title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
-      ignoreCheckingUser, sizeUnit, endDay, createDay, maxSize, netDisk } = this.state;
+      ignoreCheckingUser, sizeUnit, maxSize, netDisk } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
       password: password || undefined,
-      domainType,
       areaID,
       domainStatus,
       maxUser,
@@ -103,16 +95,12 @@ class AddDomain extends PureComponent {
       mailSubSystem,
       ignoreCheckingUser,
       netDisk,
-      // Dates should be removed soon
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
           domainname: '',
           password: '',
-          domainType: 0,
           areaID: '',
           domainStatus: 0,
           maxSize: '',
@@ -141,7 +129,7 @@ class AddDomain extends PureComponent {
 
   render() {
     const { classes, t, domainAreas, open, onSuccess } = this.props;
-    const { domainname, password, domainType, areaID, domainStatus,
+    const { domainname, password, areaID, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, sizeUnit, loading } = this.state;
     const domainError = !domainname.match(
@@ -187,20 +175,6 @@ class AddDomain extends PureComponent {
               {domainAreas.map((area, key) => (
                 <MenuItem key={key} value={area.ID}>
                   {area.name} {area.masterPath}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Domain type")}
-              fullWidth
-              value={domainType || 0}
-              onChange={this.handleInput('domainType')}
-            >
-              {this.domainTypes.map((domainType, key) => (
-                <MenuItem key={key} value={domainType.ID}>
-                  {domainType.name}
                 </MenuItem>
               ))}
             </TextField>

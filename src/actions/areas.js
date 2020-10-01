@@ -4,7 +4,7 @@ import {
   AREAS_DATA_RECEIVED,
   AREA_DATA_ADD,
 } from '../actions/types';
-import { dataArea, addDataArea, deleteDataArea } from '../api';
+import { dataArea, addDataArea } from '../api';
 
 export function fetchAreasData() {
   return async dispatch => {
@@ -25,18 +25,6 @@ export function addAreaData(area) {
     try {
       const areaData = await addDataArea(area);
       await dispatch({ type: AREA_DATA_ADD, data: areaData });
-    } catch(error) {
-      await dispatch({ type: AREAS_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
-}
-
-export function deleteAreaData(id) {
-  return async dispatch => {
-    try {
-      await deleteDataArea(id);
     } catch(error) {
       await dispatch({ type: AREAS_DATA_ERROR, error});
       console.error(error);

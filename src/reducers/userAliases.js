@@ -1,8 +1,9 @@
 import {
-  ALIASES_DATA_ERROR,
-  ALIASES_DATA_FETCH,
-  ALIASES_DATA_RECEIVED,
-  ALIAS_DATA_ADD,
+  USER_ALIASES_DATA_ERROR,
+  USER_ALIASES_DATA_FETCH,
+  USER_ALIASES_DATA_RECEIVED,
+  USER_ALIAS_DATA_ADD,
+  USER_ALIAS_DATA_DELETE,
 } from '../actions/types';
 
 const defaultState = {
@@ -18,15 +19,22 @@ function addItem(obj, data) {
   return objCopy;
 }
 
-function aliasesReducer(state = defaultState, action) {
+function removeItem(obj, aliasID, mainname) {
+  const copy = { ...obj };
+  copy[mainname].splice(copy[mainname].findIndex(alias => alias.ID === aliasID), 1);
+  if(copy[mainname].length === 0) delete copy[mainname];
+  return copy;
+}
+
+function userAliasesReducer(state = defaultState, action) {
   switch (action.type) {
-    case ALIASES_DATA_FETCH:
+    case USER_ALIASES_DATA_FETCH:
       return {
         ...state,
         loading: true,
       };
 
-    case ALIASES_DATA_RECEIVED:
+    case USER_ALIASES_DATA_RECEIVED:
       return {
         ...state,
         loading: false,
@@ -34,17 +42,23 @@ function aliasesReducer(state = defaultState, action) {
         Aliases: action.data.data,
       };
     
-    case ALIASES_DATA_ERROR:
+    case USER_ALIASES_DATA_ERROR:
       return {
         ...state,
         error: action.error,
         loading: false,
       };
-
-    case ALIAS_DATA_ADD:
+    
+    case USER_ALIAS_DATA_ADD:
       return {
         ...state,
         Aliases: addItem(state.Aliases, action.data), 
+      };
+
+    case USER_ALIAS_DATA_DELETE:
+      return {
+        ...state,
+        Aliases: removeItem(state.Aliases, action.aliasID, action.mainName), 
       };
 
     default:
@@ -52,4 +66,4 @@ function aliasesReducer(state = defaultState, action) {
   }
 }
 
-export default aliasesReducer;
+export default userAliasesReducer;

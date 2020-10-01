@@ -101,7 +101,7 @@ class Users extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.Users.map((obj, idx) =>
+                {!users.loading && users.Users.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{obj.realName}</TableCell>

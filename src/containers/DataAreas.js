@@ -5,13 +5,10 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
   Button, DialogActions, Snackbar, CircularProgress, Select } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
 import Alert from '@material-ui/lab/Alert';
-import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
-import { fetchAreasData, addAreaData, deleteAreaData } from '../actions/areas';
+import { fetchAreasData, addAreaData } from '../actions/areas';
 import { connect } from 'react-redux';
-import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
 const styles = theme => ({
   root: {
@@ -75,7 +72,6 @@ class DataAreaSetup extends Component {
     },
     addOpen: false,
     loading: false,
-    deleting: false,
     sizeUnit: 0,
   }
 
@@ -132,17 +128,6 @@ class DataAreaSetup extends Component {
       })
       .then(this.getDataAreaData);
   }
-
-  handleDelete = area => () => this.setState({ deleting: area });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-    this.getDataAreaData();
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = error => this.setState({ snackbar: error });
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -247,15 +232,6 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <GeneralDelete
-            open={!!this.state.deleting}
-            delete={this.props.delete}
-            onSuccess={this.handleDeleteSuccess}
-            onError={this.handleDeleteError}
-            onClose={this.handleDeleteClose}
-            item={this.state.deleting.masterPath}
-            id={this.state.deleting.ID}
-          />
           <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
@@ -266,7 +242,6 @@ class DataAreaSetup extends Component {
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Used space')}</TableCell>
                   <TableCell>{t('User number')}</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -278,11 +253,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -294,7 +264,6 @@ class DataAreaSetup extends Component {
                   <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Used space')}</TableCell>
                   <TableCell>{t('Domain number')}</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -306,11 +275,6 @@ class DataAreaSetup extends Component {
                     <TableCell>{obj.maxSpace}</TableCell>
                     <TableCell>{obj.usedSpace}</TableCell>
                     <TableCell>{obj.usedNumber}</TableCell>
-                    <TableCell>
-                      <IconButton  onClick={this.handleDelete(obj)} >
-                        <Delete color="error"/>
-                      </IconButton>
-                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -343,7 +307,6 @@ DataAreaSetup.propTypes = {
   areas: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -359,9 +322,6 @@ const mapDispatchToProps = dispatch => {
     },
     add: async area => {
       await dispatch(addAreaData(area)).catch(msg => Promise.reject(msg));
-    },
-    delete: async id => {
-      await dispatch(deleteAreaData(id)).catch(msg => Promise.reject(msg));
     },
   };
 };

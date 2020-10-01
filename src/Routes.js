@@ -43,6 +43,7 @@ const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
 const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
+const AsyncUserAliases = makeLoadableComponent(() => import("./containers/UserAliases"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
 const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
@@ -232,6 +233,16 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.domainname}/users/:userID*`}
         exact
         component={AsyncUserDetails}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.domainname}/userAliases`}
+        exact
+        component={AsyncUserAliases}
         props={childProps}
         domain={domain}
         key={domain.ID}
