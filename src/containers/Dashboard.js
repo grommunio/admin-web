@@ -219,7 +219,7 @@ class Dashboard extends Component {
 
   fetchInterval = null;
   fetchDashboard() {
-    this.updateInterval = setInterval(() => {
+    this.fetchInterval = setInterval(() => {
       this.props.fetch()
         .catch(msg => this.setState({ snackbar: msg }));
     }, 10000);

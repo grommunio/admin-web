@@ -9,7 +9,6 @@ import Alert from '@material-ui/lab/Alert';
 import TopBar from '../components/TopBar';
 import { fetchAreasData, addAreaData } from '../actions/areas';
 import { connect } from 'react-redux';
-import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
 const styles = theme => ({
   root: {
@@ -73,7 +72,6 @@ class DataAreaSetup extends Component {
     },
     addOpen: false,
     loading: false,
-    deleting: false,
     sizeUnit: 0,
   }
 
@@ -130,17 +128,6 @@ class DataAreaSetup extends Component {
       })
       .then(this.getDataAreaData);
   }
-
-  handleDelete = area => () => this.setState({ deleting: area });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-    this.getDataAreaData();
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = error => this.setState({ snackbar: error });
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -245,15 +232,6 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <GeneralDelete
-            open={!!this.state.deleting}
-            delete={this.props.delete}
-            onSuccess={this.handleDeleteSuccess}
-            onError={this.handleDeleteError}
-            onClose={this.handleDeleteClose}
-            item={this.state.deleting.masterPath}
-            id={this.state.deleting.ID}
-          />
           <Paper className={classes.tablePaper} elevation={2}>
             <Table size="small">
               <TableHead>
@@ -329,7 +307,6 @@ DataAreaSetup.propTypes = {
   areas: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
