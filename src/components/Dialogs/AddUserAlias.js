@@ -65,7 +65,7 @@ class AddUserAlias extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, users } = this.props;
+    const { classes, t, open, onSuccess, users, domain } = this.props;
     const { userID, aliasname, loading } = this.state;
 
     return (
@@ -98,6 +98,9 @@ class AddUserAlias extends PureComponent {
               fullWidth 
               value={aliasname || ''}
               onChange={this.handleInput('aliasname')}
+              InputProps={{
+                endAdornment: <div>@{domain.domainname}</div>,
+              }}
             />
           </FormControl>
         </DialogContent>
@@ -113,7 +116,7 @@ class AddUserAlias extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!userID || loading}
+            disabled={!userID || !aliasname || loading}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>

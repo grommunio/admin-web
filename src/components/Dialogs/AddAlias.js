@@ -108,7 +108,7 @@ class AddAlias extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!domainID || loading}
+            disabled={!domainID || !aliasname || loading}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
