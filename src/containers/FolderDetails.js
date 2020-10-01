@@ -13,7 +13,8 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { addFolderData, editFolderData } from '../actions/folders';
+import { addFolderData, fetchOwnersData } from '../actions/folders';
+import AddOwner from '../components/Dialogs/AddOwner';
 
 const styles = theme => ({
   root: {
@@ -56,12 +57,19 @@ class FolderDetails extends PureComponent {
     if(!folder) {
       this.state = {
         changes: {},
+        adding: false,
+        snackbar: '',
       };
       props.history.push('/' + props.domain.domainname + '/folders');
     }
-    else this.state = {
-      changes: folder,
-    };
+    else {
+      props.fetchOwners(props.domain.ID, folder.folderid);
+      this.state = {
+        changes: folder,
+        adding: false,
+        snackbar: '',
+      };
+    }
   }
 
   types = [
@@ -82,19 +90,19 @@ class FolderDetails extends PureComponent {
     });
   }
 
-  handleEdit = () => {
-    this.props.edit(this.props.domain.ID, {
-      ...this.state.changes,
-    });
-  }
+  handleAdd = () => this.setState({ adding: true });
+
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
 
   render() {
-    const { classes, t } = this.props;
-    const { changes } = this.state;
+    const { classes, t, domain, owners } = this.props;
+    const { changes, adding } = this.state;
 
     return (
       <div className={classes.root}>
-        <TopBar title="Folders"/>
+        <TopBar title="Folders" onAdd={this.handleAdd}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -114,6 +122,7 @@ class FolderDetails extends PureComponent {
                 value={changes.displayname || ''}
                 onChange={this.handleInput('displayname')}
                 autoFocus
+                disabled
               />
               <TextField
                 select
@@ -122,6 +131,7 @@ class FolderDetails extends PureComponent {
                 fullWidth
                 value={changes.container || 'IPF.Note'}
                 onChange={this.handleInput('container')}
+                disabled
               >
                 {this.types.map((type, key) => (
                   <MenuItem key={key} value={type.ID}>
@@ -131,31 +141,39 @@ class FolderDetails extends PureComponent {
               </TextField>
               <TextField 
                 className={classes.input} 
+                label={t("Owners")} 
+                fullWidth
+                value={owners.map(obj => obj.displayName).toString()}
+                disabled
+              />
+              <TextField 
+                className={classes.input} 
                 label={t("Comment")} 
                 fullWidth
                 multiline
                 rows={4}
                 value={changes.comment || ''}
                 onChange={this.handleInput('comment')}
+                disabled
               />
             </FormControl>
             <Button
               variant="text"
-              color="secondary"
+              color="primary"
               onClick={this.props.history.goBack}
               style={{ marginRight: 8 }}
             >
               Back
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-            >
-              Save
-            </Button>
           </Paper>
         </div>
+        <AddOwner
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={domain}
+          folderID={changes.folderid}
+        />
       </div>
     );
   }
@@ -164,23 +182,30 @@ class FolderDetails extends PureComponent {
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  owners: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
-  edit: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  fetchOwners: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    owners: state.folders.Owners,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, folder) => {
-      await dispatch(addFolderData(domainID, folder));
+      await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
     },
-    edit: async (domainID, folder) => {
-      await dispatch(editFolderData(domainID, folder));
+    fetchOwners: async (domainID, folderID) => {
+      await dispatch(fetchOwnersData(domainID, folderID)).catch(msg => Promise.reject(msg));
     },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(FolderDetails)));

@@ -247,6 +247,22 @@ export function deleteFolder(domainID, id) {
 }
 
 /*
+  OWNERS
+*/
+
+export function owners(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/' + folderID + '/owners');
+  };
+}
+
+export function addOwner(domainID, folderID, username) {
+  return async () => {
+    return await post('/domains/' + domainID + '/folders/' + folderID + '/owners', username);
+  };
+}
+
+/*
   ORGS
 */
 

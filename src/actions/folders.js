@@ -3,8 +3,10 @@ import {
   FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
   FOLDER_DATA_ADD,
+  OWNERS_DATA_RECEIVED,
+  OWNER_DATA_ADD,
 } from './types';
-import { folders, addFolder, editFolder, deleteFolder } from '../api';
+import { folders, addFolder, editFolder, deleteFolder, owners, addOwner } from '../api';
 
 export function fetchFolderData(domainID) {
   return async dispatch => {
@@ -15,6 +17,7 @@ export function fetchFolderData(domainID) {
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -27,6 +30,7 @@ export function addFolderData(domainID, folder) {
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -38,6 +42,7 @@ export function editFolderData(domainID, folder) {
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -49,6 +54,34 @@ export function deleteFolderData(domainID, id) {
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function fetchOwnersData(domainID, folderID) {
+  return async dispatch => {
+    await dispatch({ type: FOLDERS_DATA_FETCH });
+    try {
+      const response = await dispatch(owners(domainID, folderID));
+      await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
+    } catch(error) {
+      await dispatch({ type: FOLDERS_DATA_ERROR, error});
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function addOwnerData(domainID, folderID, username) {
+  return async dispatch => {
+    try {
+      await dispatch(addOwner(domainID, folderID, username));
+      await dispatch({ type: OWNER_DATA_ADD, data: { displayName: username.username } });
+    } catch(error) {
+      await dispatch({ type: FOLDERS_DATA_ERROR, error});
+      console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
