@@ -5,7 +5,9 @@ import { withTranslation } from 'react-i18next';
 import { Paper,
   List,
   ListItem,
+  Snackbar,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -16,6 +18,7 @@ import { connect } from 'react-redux';
 import { fetchAliasesData, deleteAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
 import AddAlias from '../components/Dialogs/AddAlias';
+import GeneralDelete from '../components/Dialogs/GeneralDelete';
 
 const styles = theme => ({
   root: {
@@ -50,6 +53,9 @@ const styles = theme => ({
   nested: {
     paddingLeft: theme.spacing(4),
   },
+  expandIcon: {
+    paddingRight: 10,
+  },
 });
 
 class Aliases extends Component {
@@ -71,10 +77,16 @@ class Aliases extends Component {
     history.push('/aliases/' + alias.ID, { ...alias });
   }
 
-  handleDelete = id => event => {
-    event.stopPropagation();
-    this.props.delete(id).then(this.props.fetch);
+  handleDelete = alias => () => this.setState({ deleting: alias });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+    this.props.fetch();
   }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteError = error => this.setState({ snackbar: error });
 
   handleAddingSuccess = () => this.setState({ adding: false });
 
@@ -94,7 +106,7 @@ class Aliases extends Component {
 
   render() {
     const { classes, aliases } = this.props;
-    const { adding, open } = this.state;
+    const { adding, deleting, open, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -103,33 +115,58 @@ class Aliases extends Component {
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
             <List>
-              {Object.entries(aliases).map(([key, value]) => <React.Fragment key={key}>
-                <ListItem button onClick={this.handleDomainClicked(key)}>
-                  <ListItemText primary={key} />
-                  {open.includes(key) ? <ExpandLess /> : <ExpandMore />}
+              {Object.entries(aliases).map(([mainName, aliases]) => <React.Fragment key={mainName}>
+                <ListItem button onClick={this.handleDomainClicked(mainName)}>
+                  <ListItemText primary={mainName} />
+                  {open.includes(mainName) ?
+                    <ExpandLess className={classes.expandIcon}/> :
+                    <ExpandMore className={classes.expandIcon}/>}
                 </ListItem>
-                <Collapse in={open.includes(key)} timeout="auto" unmountOnExit>
+                <Collapse in={open.includes(mainName)} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {value.map(val =>
-                      <ListItem key={val} button className={classes.nested}>
-                        <ListItemText primary={val} />
-                        <IconButton onClick={this.handleDelete} /*wont work yet*/ >
-                          <Delete fontSize="small" /> 
+                    {aliases.map(alias =>
+                      <ListItem key={alias.ID} disabled={alias.domainStatus === 3} className={classes.nested}>
+                        <ListItemText primary={alias.aliasname} />
+                        <IconButton onClick={this.handleDelete(alias)} >
+                          <Delete fontSize="small" color="error"/> 
                         </IconButton>
                       </ListItem>
-                    )}
-                    
+                    )}        
                   </List>
                 </Collapse>
               </React.Fragment>
               )}
             </List>
           </Paper>
+          <Snackbar
+            open={!!snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {snackbar}
+            </Alert>
+          </Snackbar>
         </div>
         <AddAlias
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
+        />
+        <GeneralDelete
+          open={!!deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting.aliasname}
+          id={deleting.ID}
         />
       </div>
     );

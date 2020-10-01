@@ -178,9 +178,15 @@ export function userAliases(domainID) {
   };
 }
 
-export function addUserAlias(domainID, userID, aliasname) {
+export function addUserAlias(domainID, aliasID, aliasname) {
   return async () => {
-    return await post('/domains/' + domainID + '/users/' + userID + '/aliases', { aliasname });
+    return await post('/domains/' + domainID + '/users/' + aliasID + '/aliases', { aliasname });
+  };
+}
+
+export function deleteUserAlias(domainID, aliasID) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/aliases/' + aliasID);
   };
 }
 
@@ -286,13 +292,13 @@ export function addAlias(domainID, aliasname) {
 
 export function editAlias(alias) {
   return async () => {
-    return await patch('/system/aliases/' + alias.ID, alias);
+    return await patch('/system/domains/aliases/' + alias.ID, alias);
   };
 }
 
 export function deleteAlias(id) {
   return async () => {
-    return await yeet('/system/aliases/' + id);
+    return await yeet('/system/domains/aliases/' + id);
   };
 }
 

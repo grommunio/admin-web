@@ -3,8 +3,9 @@ import {
   USER_ALIASES_DATA_FETCH,
   USER_ALIASES_DATA_ERROR,
   USER_ALIAS_DATA_ADD,
+  USER_ALIAS_DATA_DELETE,
 } from './types';
-import { userAliases, addUserAlias } from '../api';
+import { userAliases, addUserAlias, deleteUserAlias } from '../api';
 
 export function fetchUserAliasesData(domainID) {
   return async dispatch => {
@@ -15,6 +16,7 @@ export function fetchUserAliasesData(domainID) {
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(userAliasDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }
@@ -27,17 +29,20 @@ export function addUserAliasData(domainID, userID, alias) {
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(userAliasDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }
 
-export function deleteUserAliasData() {
+export function deleteUserAliasData(domainID, aliasID, mainName) {
   return async dispatch => {
     try {
-      //await dispatch(deleteUserAlias(id));
+      await dispatch(deleteUserAlias(domainID, aliasID));
+      await dispatch({ type: USER_ALIAS_DATA_DELETE, aliasID, mainName });
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(userAliasDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }

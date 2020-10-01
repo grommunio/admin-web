@@ -13,8 +13,8 @@ const defaultState = {
 
 function addItem(obj, data) {
   const objCopy = { ...obj };
-  if(objCopy[data.mainname])objCopy[data.mainname].push(data.aliasname);
-  else objCopy[data.mainname] = [data.aliasname];
+  if(objCopy[data.mainname])objCopy[data.mainname].push({ ID: data.ID, aliasname: data.aliasname });
+  else objCopy[data.mainname] = [{ ID: data.ID, aliasname: data.aliasname }];
   return objCopy;
 }
 

@@ -15,6 +15,7 @@ export function fetchAliasesData() {
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }
@@ -27,6 +28,7 @@ export function addAliasData(domainID, alias) {
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }
@@ -38,6 +40,7 @@ export function deleteAliasData(id) {
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
+      return Promise.reject(err.message);
     }
   };
 }
