@@ -8,6 +8,7 @@ import { Paper,
   Collapse,
   List,
   Snackbar,
+  Divider,
 } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -119,15 +120,18 @@ class UserAliases extends Component {
                     <ExpandLess className={classes.expandIcon}/> :
                     <ExpandMore className={classes.expandIcon}/>}
                 </ListItem>
+                <Divider />
                 <Collapse in={open.includes(mainName)} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {aliases.map(alias =>
-                      <ListItem key={alias.ID} className={classes.nested}>
+                    {aliases.map(alias => <React.Fragment key={alias.ID}>
+                      <ListItem className={classes.nested}>
                         <ListItemText primary={alias.aliasname} />
                         <IconButton onClick={this.handleDelete(alias, mainName)} >
                           <Delete fontSize="small" color="error" /> 
                         </IconButton>
                       </ListItem>
+                      <Divider />
+                    </React.Fragment>
                     )}
                   </List>
                 </Collapse>

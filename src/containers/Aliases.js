@@ -6,6 +6,7 @@ import { Paper,
   List,
   ListItem,
   Snackbar,
+  Divider,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -122,15 +123,18 @@ class Aliases extends Component {
                     <ExpandLess className={classes.expandIcon}/> :
                     <ExpandMore className={classes.expandIcon}/>}
                 </ListItem>
+                <Divider />
                 <Collapse in={open.includes(mainName)} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {aliases.map(alias =>
-                      <ListItem key={alias.ID} disabled={alias.domainStatus === 3} className={classes.nested}>
+                    {aliases.map(alias => <React.Fragment key={alias.ID}>
+                      <ListItem disabled={alias.domainStatus === 3} className={classes.nested}>
                         <ListItemText primary={alias.aliasname} />
                         <IconButton onClick={this.handleDelete(alias)} >
                           <Delete fontSize="small" color="error"/> 
                         </IconButton>
                       </ListItem>
+                      <Divider />
+                    </React.Fragment>
                     )}        
                   </List>
                 </Collapse>
