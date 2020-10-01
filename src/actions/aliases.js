@@ -2,6 +2,7 @@ import {
   ALIASES_DATA_RECEIVED,
   ALIASES_DATA_FETCH,
   ALIASES_DATA_ERROR,
+  ALIAS_DATA_ADD,
 } from './types';
 import { aliases, addAlias, deleteAlias, editAlias } from '../api';
 
@@ -21,7 +22,8 @@ export function fetchAliasesData() {
 export function addAliasData(domainID, alias) {
   return async dispatch => {
     try {
-      await dispatch(addAlias(domainID, alias));
+      const resp = await dispatch(addAlias(domainID, alias));
+      await dispatch({ type: ALIAS_DATA_ADD, data: resp });
     } catch(err) {
       console.error(err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
