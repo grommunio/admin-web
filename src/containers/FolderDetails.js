@@ -16,6 +16,7 @@ import {
   IconButton,
   Divider,
 } from '@material-ui/core';
+import Add from '@material-ui/icons/AddCircleOutline';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
@@ -51,8 +52,9 @@ const styles = theme => ({
     marginBottom: theme.spacing(2),
   },
   toolbar: theme.mixins.toolbar,
-  gird: {
+  grid: {
     display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -125,7 +127,7 @@ class FolderDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Folders" onAdd={this.handleAdd}/>
+        <TopBar title="Folders"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={2}>
@@ -173,13 +175,16 @@ class FolderDetails extends PureComponent {
                 disabled
               />
             </FormControl>
-            <Grid container>
+            <Grid container className={classes.grid}>
               <Typography
                 color="primary"
                 variant="h5"
               >
                 {t('Owners')}
               </Typography>
+              <IconButton onClick={this.handleAdd}>
+                <Add fontSize="small" color="primary" />
+              </IconButton>
             </Grid>
             <List dense>
               {owners.map(owner => <React.Fragment key={owner.memberID}>

@@ -89,7 +89,7 @@ class AddAlias extends PureComponent {
             </TextField>
             <TextField 
               className={classes.input} 
-              label={t("Alias name")} 
+              label={t("Alias domain")} 
               fullWidth 
               value={aliasname || ''}
               onChange={this.handleInput('aliasname')}
