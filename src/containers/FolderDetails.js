@@ -136,7 +136,7 @@ class FolderDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('Edit folder')}
+                {t('Folder details')}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
@@ -204,7 +204,7 @@ class FolderDetails extends PureComponent {
               onClick={this.props.history.goBack}
               style={{ marginRight: 8 }}
             >
-              Back
+              {t('Back')}
             </Button>
           </Paper>
         </div>
