@@ -110,7 +110,7 @@ class AddUserAlias extends PureComponent {
             variant="contained"
             color="secondary"
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleAdd}

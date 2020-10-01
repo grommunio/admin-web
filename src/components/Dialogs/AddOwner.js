@@ -99,7 +99,7 @@ class AddOwner extends PureComponent {
             variant="contained"
             color="secondary"
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleAdd}
@@ -132,7 +132,7 @@ const mapStateToProps = state => {
   return {
     users: state.users.Users,
   };
-}
+};
 
 const mapDispatchToProps = dispatch => {
   return {
