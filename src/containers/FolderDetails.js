@@ -10,11 +10,18 @@ import {
   FormControl,
   MenuItem,
   Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Divider,
 } from '@material-ui/core';
+import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { addFolderData, fetchOwnersData } from '../actions/folders';
+import { addFolderData, fetchOwnersData, deleteOwnerData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 
 const styles = theme => ({
   root: {
@@ -58,6 +65,7 @@ class FolderDetails extends PureComponent {
       this.state = {
         changes: {},
         adding: false,
+        deleting: false,
         snackbar: '',
       };
       props.history.push('/' + props.domain.domainname + '/folders');
@@ -67,6 +75,7 @@ class FolderDetails extends PureComponent {
       this.state = {
         changes: folder,
         adding: false,
+        deleting: false,
         snackbar: '',
       };
     }
@@ -96,9 +105,23 @@ class FolderDetails extends PureComponent {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
+  handleDelete = folder => () => {
+    this.setState({ deleting: folder });
+  }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteSuccess = () => {
+    const { fetchOwners, domain } = this.props;
+    this.setState({ deleting: false, snackbar: 'Success!' });
+    fetchOwners(domain.ID, this.state.changes.folderid);
+  }
+
+  handleDeleteError = error => this.setState({ snackbar: error });
+
   render() {
     const { classes, t, domain, owners } = this.props;
-    const { changes, adding } = this.state;
+    const { changes, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -141,13 +164,6 @@ class FolderDetails extends PureComponent {
               </TextField>
               <TextField 
                 className={classes.input} 
-                label={t("Owners")} 
-                fullWidth
-                value={owners.map(obj => obj.displayName).toString()}
-                disabled
-              />
-              <TextField 
-                className={classes.input} 
                 label={t("Comment")} 
                 fullWidth
                 multiline
@@ -157,6 +173,26 @@ class FolderDetails extends PureComponent {
                 disabled
               />
             </FormControl>
+            <Grid container>
+              <Typography
+                color="primary"
+                variant="h5"
+              >
+                {t('Owners')}
+              </Typography>
+            </Grid>
+            <List dense>
+              {owners.map(owner => <React.Fragment key={owner.memberID}>
+                <ListItem>
+                  <ListItemText primary={owner.displayName} />
+                  <IconButton onClick={this.handleDelete(owner)}>
+                    <Delete fontSize="small" color="error"/>
+                  </IconButton>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+              )}
+            </List>
             <Button
               variant="text"
               color="primary"
@@ -174,6 +210,16 @@ class FolderDetails extends PureComponent {
           domain={domain}
           folderID={changes.folderid}
         />
+        <DomainDataDelete
+          open={!!deleting}
+          delete={() => this.props.delete(domain.ID, changes.folderid, deleting.memberID)}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting.displayName}
+          id={deleting.memberID}
+          domainID={domain.ID}
+        />
       </div>
     );
   }
@@ -187,6 +233,7 @@ FolderDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   add: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
   fetchOwners: PropTypes.func.isRequired,
 };
 
@@ -203,6 +250,9 @@ const mapDispatchToProps = dispatch => {
     },
     fetchOwners: async (domainID, folderID) => {
       await dispatch(fetchOwnersData(domainID, folderID)).catch(msg => Promise.reject(msg));
+    },
+    delete: async (domainID, folderID, memberID) => {
+      await dispatch(deleteOwnerData(domainID, folderID, memberID)).catch(msg => Promise.reject(msg));
     },
   };
 };

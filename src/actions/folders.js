@@ -6,7 +6,7 @@ import {
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
 } from './types';
-import { folders, addFolder, editFolder, deleteFolder, owners, addOwner } from '../api';
+import { folders, addFolder, editFolder, deleteFolder, owners, addOwner, deleteOwner } from '../api';
 
 export function fetchFolderData(domainID) {
   return async dispatch => {
@@ -78,6 +78,18 @@ export function addOwnerData(domainID, folderID, username) {
     try {
       await dispatch(addOwner(domainID, folderID, username));
       await dispatch({ type: OWNER_DATA_ADD, data: { displayName: username.username } });
+    } catch(error) {
+      await dispatch({ type: FOLDERS_DATA_ERROR, error});
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function deleteOwnerData(domainID, folderID, member) {
+  return async dispatch => {
+    try {
+      await dispatch(deleteOwner(domainID, folderID, member));
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

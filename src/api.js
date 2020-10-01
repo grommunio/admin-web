@@ -262,6 +262,12 @@ export function addOwner(domainID, folderID, username) {
   };
 }
 
+export function deleteOwner(domainID, folderID, memberID) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID);
+  };
+}
+
 /*
   ORGS
 */
