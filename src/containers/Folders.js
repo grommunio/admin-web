@@ -103,7 +103,7 @@ class Folders extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {folders && folders.Folders.map((obj, idx) =>
+                {!folders.loading && folders.Folders.map((obj, idx) =>
                   <TableRow key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>

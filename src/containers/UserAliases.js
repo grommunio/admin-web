@@ -99,7 +99,7 @@ class UserAliases extends Component {
   };
 
   render() {
-    const { classes, aliases } = this.props;
+    const { classes, aliases, loading } = this.props;
     const { open } = this.state;
   
     return (
@@ -109,7 +109,7 @@ class UserAliases extends Component {
         <div className={classes.base}>
           <Paper className={classes.tablePaper}>
             <List>
-              {Object.entries(aliases).map(([key, value]) => <React.Fragment key={key}>
+              {!loading && Object.entries(aliases).map(([key, value]) => <React.Fragment key={key}>
                 <ListItem button onClick={this.handleDomainClicked(key)}>
                   <ListItemText primary={key} />
                   {open.includes(key) ? <ExpandLess /> : <ExpandMore />}
@@ -149,12 +149,16 @@ UserAliases.propTypes = {
   domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   aliases: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  return { aliases: state.userAliases.Aliases };
+  return {
+    aliases: state.userAliases.Aliases,
+    loading: state.userAliases.loading,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
