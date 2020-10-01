@@ -2,11 +2,12 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  Button, DialogActions, CircularProgress, 
+  Button, DialogActions, CircularProgress, MenuItem, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
+import { fetchUsersData } from '../../actions/users';
 
 const styles = theme => ({
   form: {
@@ -29,13 +30,10 @@ class AddOwner extends PureComponent {
     loading: false,
   }
 
-  types = [
-    { name: 'Mail and post items', ID: 'IPF.Note' },
-    { name: 'Contact', ID: 'IPF.Contact' },
-    { name: 'Appointment', ID: 'IPF.Appointment' },
-    { name: 'Sticky note', ID: 'IPF.Stickynote' },
-    { name: 'Task', ID: 'IPF.Task' },
-  ]
+  componentDidMount() {
+    const { fetchUsers, domain } = this.props;
+    fetchUsers(domain.ID);
+  }
 
   handleInput = field => event => {
     this.setState({
@@ -65,7 +63,7 @@ class AddOwner extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess } = this.props;
+    const { classes, t, users, open, onSuccess } = this.props;
     const { username, loading } = this.state;
 
     return (
@@ -78,13 +76,21 @@ class AddOwner extends PureComponent {
         <DialogTitle>{t('Add')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
-            <TextField 
-              label={t("Username")}
-              value={username}
-              onChange={this.handleInput('username')}
-              className={classes.input}
+            <TextField
               autoFocus
-            />
+              select
+              className={classes.input}
+              label={t("Username")}
+              fullWidth
+              value={username || ''}
+              onChange={this.handleInput('username')}
+            >
+              {users.map((user, key) => (
+                <MenuItem key={key} value={user.username} /* highly unconventional, should be changed to ID @f */>
+                  {user.username}
+                </MenuItem>
+              ))}
+            </TextField>
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -113,6 +119,8 @@ AddOwner.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
+  fetchUsers: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
   folderID: PropTypes.number.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
@@ -120,13 +128,22 @@ AddOwner.propTypes = {
   open: PropTypes.bool.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    users: state.users.Users,
+  };
+}
+
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, folderID, username) => {
       await dispatch(addOwnerData(domainID, folderID, username));
     },
+    fetchUsers: async domainID => {
+      await dispatch(fetchUsersData(domainID));
+    },
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddOwner)));
