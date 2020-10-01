@@ -77,6 +77,7 @@ const resources = {
       "Organizations": "Organisationen",
       "Alias": "Pseudonym",
       "Aliases": "Pseudonyme",
+      "Alias domain": "Pseudonym Domain",
       "Forward": "Weiterleitung",
       "Forwards": "Weiterleitungen",
       "Mail lists": "Mail Listen",
