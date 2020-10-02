@@ -105,10 +105,11 @@ const styles = theme => ({
   tabs: {
     width: 260,
     minWidth: 260,
+    marginLeft: 8,
   },
   tab: {
-    width: 130,
-    minWidth: 130,
+    width: 122,
+    minWidth: 122,
   },
 });
 
@@ -172,10 +173,11 @@ class NavigationLinks extends PureComponent {
             </Button>
           </div>
           <Tabs
-            variant="fullWidth"
             onChange={(event, tab) => this.setState({ tab: tab })}
             value={tab}
             className={classes.tabs}
+            indicatorColor="primary"
+            textColor="primary"
           >
             <Tab className={classes.tab} value={0} label={t('Admin')} />
             <Tab className={classes.tab} value={1} label={t('Domains')} />
