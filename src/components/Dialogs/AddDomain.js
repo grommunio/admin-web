@@ -142,7 +142,7 @@ class AddDomain extends PureComponent {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Add</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 

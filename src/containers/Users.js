@@ -83,6 +83,7 @@ class Users extends Component {
 
   render() {
     const { classes, t, users } = this.props;
+    const { snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -121,34 +122,34 @@ class Users extends Component {
             </Table>
           </Paper>
           <Snackbar
-            open={!!this.state.snackbar}
+            open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
             transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
             <Alert
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              severity={snackbar === 'Success!' ? "success" : "error"}
               elevation={6}
               variant="filled"
             >
-              {this.state.snackbar}
+              {snackbar}
             </Alert>
           </Snackbar>
         </div>
         <AddUser
-          open={this.state.adding}
+          open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={this.props.domain}
         />
         <DeleteUser
-          open={!!this.state.deleting}
+          open={!!deleting}
           onSuccess={this.handleDeleteSuccess}
           onClose={this.handleDeleteClose}
           onError={this.handleDeleteError}
           domainID={this.props.domain.ID}
-          user={this.state.deleting}
+          user={deleting}
         />
       </div>
     );

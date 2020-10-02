@@ -105,10 +105,11 @@ const styles = theme => ({
   tabs: {
     width: 260,
     minWidth: 260,
+    marginLeft: 8,
   },
   tab: {
-    width: 130,
-    minWidth: 130,
+    width: 122,
+    minWidth: 122,
   },
 });
 
@@ -156,7 +157,7 @@ class NavigationLinks extends PureComponent {
 
   render() {
     const { classes, t, location, domains } = this.props;
-    const { filter, stateDomains, defaultsIn } = this.state;
+    const { filter, stateDomains, defaultsIn, tab } = this.state;
 
     return(
       <React.Fragment>
@@ -172,15 +173,16 @@ class NavigationLinks extends PureComponent {
             </Button>
           </div>
           <Tabs
-            variant="fullWidth"
             onChange={(event, tab) => this.setState({ tab: tab })}
-            value={this.state.tab}
+            value={tab}
             className={classes.tabs}
+            indicatorColor="primary"
+            textColor="primary"
           >
             <Tab className={classes.tab} value={0} label={t('Admin')} />
             <Tab className={classes.tab} value={1} label={t('Domains')} />
           </Tabs>
-          {this.state.tab === 1 && 
+          {tab === 1 && 
             domains.map(({ domainname: name }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
@@ -261,7 +263,7 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment> : null;
             })}
-          {this.state.tab === 0 && <React.Fragment>
+          {tab === 0 && <React.Fragment>
             <ListItem
               button
               onClick={this.handleNavigation('')}

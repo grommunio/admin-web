@@ -146,7 +146,7 @@ class DataAreaSetup extends Component {
 
   render() {
     const { classes, t, areas } = this.props;
-    const { newData, loading, sizeUnit, addOpen } = this.state;
+    const { newData, loading, sizeUnit, addOpen, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -154,7 +154,7 @@ class DataAreaSetup extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
-            <DialogTitle>{t('Add')}</DialogTitle>
+            <DialogTitle>{t('addHeadline', { item: 'Data area' })}</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>
               <FormControl className={classes.form}>
                 <TextField
@@ -281,18 +281,18 @@ class DataAreaSetup extends Component {
             </Table>
           </Paper>
           <Snackbar
-            open={!!this.state.snackbar}
+            open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
             transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
             <Alert
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              severity={snackbar === 'Success!' ? "success" : "error"}
               elevation={6}
               variant="filled"
             >
-              {this.state.snackbar}
+              {snackbar}
             </Alert>
           </Snackbar>
         </div>

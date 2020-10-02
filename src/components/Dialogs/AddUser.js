@@ -66,7 +66,7 @@ class AddUser extends PureComponent {
   handleAdd = () => {
     const { username, areaID, groupID, createDay, lang, realName, maxSize,
       // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress, sizeUnit } = this.state;
+      pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
@@ -78,6 +78,7 @@ class AddUser extends PureComponent {
       smtp,
       changePassword,
       publicAddress,
+      password,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
       maxFile: 0,
@@ -112,7 +113,7 @@ class AddUser extends PureComponent {
     const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
     const { username, areaID, groupID, maxSize, sizeUnit,loading, realName,
       // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress} = this.state;
+      pop3_imap, smtp, changePassword, publicAddress, password, repeatPw } = this.state;
 
     return (
       <Dialog
@@ -121,7 +122,7 @@ class AddUser extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
@@ -134,6 +135,22 @@ class AddUser extends PureComponent {
                 endAdornment: <div>@{domain.domainname}</div>,
               }}
               className={classes.input}
+            />
+            <TextField 
+              label={t("Password")}
+              value={password || ''}
+              onChange={this.handleInput('password')}
+              style={{ flex: 1, marginRight: 8 }}
+              className={classes.input}
+              type="password"
+            />
+            <TextField 
+              label={t("Repeat password")}
+              value={repeatPw || ''}
+              onChange={this.handleInput('repeatPw')}
+              style={{ flex: 1, marginRight: 8 }}
+              className={classes.input}
+              type="password"
             />
             <TextField 
               label={t("Display name")}
@@ -247,7 +264,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username || loading}
+            disabled={!username || loading || password !== repeatPw}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
