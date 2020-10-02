@@ -115,14 +115,15 @@ class UserDetails extends PureComponent {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   componentDidMount() {
+    const { changes } = this.state;
     this.props.fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.props.fetchGroupsData();
-    const maxSize = this.state.changes.maxSize;
+    const maxSize = changes.maxSize;
     if(maxSize % 1048576 === 0) {
       this.setState({
         changes: {
-          ...this.state.changes,
+          ...changes,
           maxSize: maxSize / 1048576,
         },
         sizeUnit: 2,
@@ -130,7 +131,7 @@ class UserDetails extends PureComponent {
     } else if (maxSize % 1024 === 0) {
       this.setState({
         changes: {
-          ...this.state.changes,
+          ...changes,
           maxSize: maxSize / 1024,
         },
         sizeUnit: 1,
@@ -168,11 +169,12 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
+    const { changes, sizeUnit } = this.state;
     this.props.edit(this.props.domain.ID, {
-      ...this.state.changes,
-      createDay: moment(this.state.changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
+      ...changes,
+      createDay: moment(changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
-      maxSize: this.state.changes.maxSize << (10 * this.state.sizeUnit),
+      maxSize: changes.maxSize << (10 * sizeUnit),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -193,7 +195,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, groups, domain } = this.props;
-    const { changes, changingPw, newPw, checkPw } = this.state;
+    const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -335,7 +337,7 @@ class UserDetails extends PureComponent {
                     <FormControl>
                       <Select
                         onChange={this.handleUnitChange}
-                        value={this.state.sizeUnit}
+                        value={sizeUnit}
                         className={classes.select}
                       >
                         <MenuItem value={0}>MiB</MenuItem>
@@ -450,18 +452,18 @@ class UserDetails extends PureComponent {
             </Button>
           </Paper>
           <Snackbar
-            open={!!this.state.snackbar}
+            open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
             transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
             <Alert
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              severity={snackbar === 'Success!' ? "success" : "error"}
               elevation={6}
               variant="filled"
             >
-              {this.state.snackbar}
+              {snackbar}
             </Alert>
           </Snackbar>
         </div>

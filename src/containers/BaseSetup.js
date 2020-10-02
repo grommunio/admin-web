@@ -91,7 +91,7 @@ class BaseSetup extends Component {
 
   render() {
     const { classes, t } = this.props;
-    const { changes } = this.state;
+    const { changes, help } = this.state;
 
     return (
       <div className={classes.root}>
@@ -105,7 +105,7 @@ class BaseSetup extends Component {
               </IconButton>
             </Grid>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>default domain, referenced by bounce mail, statistics mail ...</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -120,7 +120,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>administrator&quot;s mailbox, destination for alram mail, complaining mail ...</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -134,7 +134,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>maximum allowed mail numbers on one SMTP session</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -148,7 +148,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>rcpt limitation</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -162,7 +162,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>maximum mail length by SMTP transferring</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -191,7 +191,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>maximum time-out value for SMTP connection</Typography>
               </Collapse>
               <FormControl className={classes.form}>
@@ -220,7 +220,7 @@ class BaseSetup extends Component {
               </FormControl>
             </Paper>
             <Paper className={classes.paper} elevation={1}>
-              <Collapse timeout={100} in={this.state.help}>
+              <Collapse timeout={100} in={help}>
                 <Typography>anti-virus scanning size, over this size, anti-virus will not scan the mail</Typography>
               </Collapse>
               <FormControl className={classes.form}>

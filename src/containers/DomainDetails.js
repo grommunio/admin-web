@@ -95,11 +95,12 @@ class DomainListDetails extends PureComponent {
   ]
 
   componentDidMount() {
-    const maxSize = this.state.changes.maxSize;
+    const { changes } = this.state;
+    const maxSize = changes.maxSize;
     if(maxSize % 1048576 === 0) {
       this.setState({
         changes: {
-          ...this.state.changes,
+          ...changes,
           maxSize: maxSize / 1048576,
         },
         sizeUnit: 2,
@@ -107,7 +108,7 @@ class DomainListDetails extends PureComponent {
     } else if (maxSize % 1024 === 0) {
       this.setState({
         changes: {
-          ...this.state.changes,
+          ...changes,
           maxSize: maxSize / 1024,
         },
         sizeUnit: 1,
@@ -145,12 +146,13 @@ class DomainListDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { endDay, createDay, maxSize } = this.state.changes;
+    const { changes, sizeUnit } = this.state;
+    const { endDay, createDay, maxSize } = changes;
     this.props.edit({
-      ...this.state.changes,
+      ...changes,
       endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      maxSize: maxSize << (10 * this.state.sizeUnit),
+      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -171,7 +173,7 @@ class DomainListDetails extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { checkPw, newPw, changingPw } = this.state;
+    const { checkPw, newPw, changingPw, sizeUnit, snackbar } = this.state;
     const { domainname, domainType, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.changes;
@@ -256,7 +258,7 @@ class DomainListDetails extends PureComponent {
                     <FormControl>
                       <Select
                         onChange={this.handleUnitChange}
-                        value={this.state.sizeUnit}
+                        value={sizeUnit}
                         className={classes.select}
                       >
                         <MenuItem value={0}>MiB</MenuItem>
@@ -366,18 +368,18 @@ class DomainListDetails extends PureComponent {
             </Button>
           </Paper>
           <Snackbar
-            open={!!this.state.snackbar}
+            open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
             transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
             <Alert
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              severity={snackbar === 'Success!' ? "success" : "error"}
               elevation={6}
               variant="filled"
             >
-              {this.state.snackbar}
+              {snackbar}
             </Alert>
           </Snackbar>
         </div>

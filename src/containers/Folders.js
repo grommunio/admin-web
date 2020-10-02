@@ -89,6 +89,7 @@ class Folders extends Component {
 
   render() {
     const { classes, t, folders, domain } = this.props;
+    const { snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -122,35 +123,35 @@ class Folders extends Component {
             </Table>
           </Paper>
           <Snackbar
-            open={!!this.state.snackbar}
+            open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
             transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
             <Alert
               onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              severity={snackbar === 'Success!' ? "success" : "error"}
               elevation={6}
               variant="filled"
             >
-              {this.state.snackbar}
+              {snackbar}
             </Alert>
           </Snackbar>
         </div>
         <AddFolder
-          open={this.state.adding}
+          open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
-          domain={this.props.domain}
+          domain={domain}
         />
         <DomainDataDelete
-          open={!!this.state.deleting}
+          open={!!deleting}
           delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
-          item={this.state.deleting.displayname}
-          id={this.state.deleting.folderid}
+          item={deleting.displayname}
+          id={deleting.folderid}
           domainID={domain.ID}
         />
       </div>

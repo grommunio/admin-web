@@ -123,6 +123,7 @@ class Login extends Component {
 
   render() {
     const { classes, t, auth } = this.props;
+    const { user, pass } = this.state;
 
     return (
       <div className={classes.root}>
@@ -138,7 +139,7 @@ class Login extends Component {
               error={auth.error}
               className={classes.input}
               placeholder={t("Username")}
-              value={this.state.user}
+              value={user}
               onChange={this.handleTextinput('user')}
             />
           </Paper>
@@ -150,7 +151,7 @@ class Login extends Component {
               className={classes.input}
               error={auth.error}
               placeholder={t("Password")}
-              value={this.state.pass}
+              value={pass}
               onChange={this.handleTextinput('pass')}
             />
           </Paper>
@@ -163,7 +164,7 @@ class Login extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleLogin}
-              disabled={!this.state.user || !this.state.pass}
+              disabled={!user || !pass}
             >
               <Typography>{t('Login')}</Typography>
             </Button>
