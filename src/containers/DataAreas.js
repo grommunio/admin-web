@@ -154,7 +154,7 @@ class DataAreaSetup extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
-            <DialogTitle>{t('Add')}</DialogTitle>
+            <DialogTitle>{t('addHeadline', { item: 'Data area' })}</DialogTitle>
             <DialogContent style={{ minWidth: 400 }}>
               <FormControl className={classes.form}>
                 <TextField

@@ -121,7 +121,7 @@ class AddUser extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 

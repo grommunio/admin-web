@@ -70,7 +70,7 @@ class AddAlias extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>{t('Add')}</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'Alias' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField
