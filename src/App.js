@@ -79,7 +79,7 @@ class App extends Component {
   render() {
     const { classes, domains } = this.props;
     const { authenticating, authenticated, role } = this.props;
-
+    const darkMode = window.localStorage.getItem('darkMode');
     const routesProps = {
       authenticating,
       authenticated,
@@ -87,11 +87,10 @@ class App extends Component {
     };
 
     return(
-      <div className={ window.localStorage.getItem('darkMode') === 'true' ? 
+      <div className={darkMode === 'true' ? 
         classes.darkRoot : classes.root}>
-        <div
-          className={window.localStorage.getItem('darkMode') === 'true' ?
-            classes.darkLayer : classes.layer}
+        <div className={darkMode === 'true' ?
+          classes.darkLayer : classes.layer}
         />
         <MainView
           classes={classes}

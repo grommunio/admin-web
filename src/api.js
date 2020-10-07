@@ -67,7 +67,7 @@ async function uploadPut(path, data) {
     body: data,
   }).then(handleErrors)
     .then(response => response.json());
-}
+}*/
 
 async function loginPost(path, data) {
   return await fetch((baseUrl + path), {
@@ -76,10 +76,18 @@ async function loginPost(path, data) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-  }).then(handleErrors)
-    .then(response => response.json());
-}*/
+  }).then(handleErrors);
+}
 
+/*
+  LOGIN
+*/
+
+export function login(user, pass) {
+  return async () => {
+    return await loginPost('/login', `user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
+  };
+}
 
 /*
   DASHBOARD
