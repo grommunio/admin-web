@@ -4,6 +4,7 @@ import {
   ROLES_DATA_RECEIVED,
   PERMISSIONS_DATA_RECEIVED,
   ROLE_DATA_ADD,
+  ROLE_DATA_DELETE,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -50,6 +51,12 @@ function rolesReducer(state = defaultState, action) {
       return {
         ...state,
         Roles: addItem(state.Roles, action.data),
+      };
+
+    case ROLE_DATA_DELETE:
+      return {
+        ...state,
+        Roles: state.Roles.filter(role => role.ID === action.ID),
       };
     
     default:

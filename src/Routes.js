@@ -51,6 +51,7 @@ const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/Mail
 const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
 const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
 const AsyncRoles = makeLoadableComponent(() => import("./containers/Roles"));
+const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDetails"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -193,6 +194,12 @@ const Routes = ({ childProps, domains }) => (
       path="/roles"
       exact
       component={AsyncRoles}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/roles/:roleID"
+      exact
+      component={AsyncRoleDetails}
       props={childProps}
     />
     {domains.map(domain =>

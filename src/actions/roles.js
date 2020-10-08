@@ -3,9 +3,10 @@ import {
   ROLES_DATA_FETCH,
   ROLES_DATA_RECEIVED,
   ROLE_DATA_ADD,
+  ROLE_DATA_DELETE,
   PERMISSIONS_DATA_RECEIVED,
 } from '../actions/types';
-import { roles, permissions, addRole, deleteRole } from '../api';
+import { roles, editRole, permissions, addRole, deleteRole } from '../api';
 
 export function fetchRolesData() {
   return async dispatch => {
@@ -16,6 +17,7 @@ export function fetchRolesData() {
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -28,6 +30,7 @@ export function fetchPermissionsData() {
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -40,17 +43,19 @@ export function addRolesData(role) {
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
 
-export function editRolesData() {
+export function editRoleData(role) {
   return async dispatch => {
     try {
-      //await dispatch(editMlist(mlist));
+      await dispatch(editRole(role));
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -59,9 +64,11 @@ export function deleteRolesData(id) {
   return async dispatch => {
     try {
       await dispatch(deleteRole(id));
+      await dispatch({ type: ROLE_DATA_DELETE, ID: id });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
+      return Promise.reject(error.message);
     }
   };
 }

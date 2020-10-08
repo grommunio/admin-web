@@ -85,7 +85,11 @@ class AddRole extends PureComponent {
 
   handleSelectPermission = idx => event => {
     const copy = [...this.state.permissions];
-    copy[idx].permission = event.target.value;
+    const input = event.target.value;
+    copy[idx].permission = input;
+    if(input === 'SystemAdmin') {
+      copy[idx].params = '';
+    }
     this.setState({ permissions: copy });
   }
 

@@ -155,6 +155,12 @@ export async function changeDomainPassword(id, newPw) {
   USERS
 */
 
+export function allUsers() {
+  return async () => {
+    return await get('/system/users?addressType=0');
+  };
+}
+
 export function users(domainID) {
   return async () => {
     return await get('/domains/' + domainID + '/users?addressType=0&level=2');
@@ -210,7 +216,7 @@ export function deleteUserAlias(domainID, aliasID) {
 
 export function roles() {
   return async () => {
-    return await get('/system/roles');
+    return await get('/system/roles?level=2');
   };
 }
 
@@ -220,9 +226,15 @@ export function addRole(role) {
   };
 }
 
+export function editRole(role) {
+  return async () => {
+    return await patch('/system/roles/' + role.ID, { ...role, ID: undefined });
+  };
+}
+
 export function deleteRole(id) {
   return async () => {
-    return await post('/system/roles/' + id);
+    return await yeet('/system/roles/' + id);
   };
 }
 

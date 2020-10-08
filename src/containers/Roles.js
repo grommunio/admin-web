@@ -84,16 +84,15 @@ class Roles extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  /*handleEdit = domain => event => {
-    this.props.history.push('/domainList/' + domain.ID, { ...domain });
+  handleEdit = role => event => {
+    this.props.history.push('/roles/' + role.ID, { ...role });
     event.stopPropagation();
-  }*/
+  }
 
-  handleDelete = domain => () => this.setState({ deleting: domain });
+  handleDelete = role => () => this.setState({ deleting: role });
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
-    this.fetchDomains();
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
@@ -115,6 +114,7 @@ class Roles extends Component {
                 <TableRow>
                   <TableCell>{t('Name')}</TableCell>
                   <TableCell>{t('Description')}</TableCell>
+                  <TableCell>{t('Permissions')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -123,8 +123,9 @@ class Roles extends Component {
                   <TableRow key={idx}>
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
+                    <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton>
+                      <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
                       </IconButton>
                       <IconButton onClick={this.handleDelete(obj)}>
@@ -174,6 +175,7 @@ class Roles extends Component {
 Roles.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   Roles: PropTypes.array.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
