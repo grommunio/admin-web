@@ -6,7 +6,7 @@ import {
   USER_DATA_EDIT,
   USER_DATA_DELETE,
 } from './types';
-import { allUsers, users, addUser, editUser, deleteUser } from '../api';
+import { allUsers, users, addUser, editUser, editUserRole, deleteUser } from '../api';
 
 export function fetchUsersData(domainID) {
   return async dispatch => {
@@ -54,6 +54,18 @@ export function editUserData(domainID, user) {
     try {
       const resp = await dispatch(editUser(domainID, user));
       await dispatch({type: USER_DATA_EDIT, user: resp});
+    } catch(err) {
+      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
+      console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function editUserRoles(domainID, userID, roles) {
+  return async dispatch => {
+    try {
+      await dispatch(editUserRole(domainID, userID, roles));
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
       console.error('Failed to edit user', err);

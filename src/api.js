@@ -210,6 +210,12 @@ export function deleteUserAlias(domainID, aliasID) {
   };
 }
 
+export function editUserRole(domainID, userID, roles) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/' + userID + '/roles', roles);
+  };
+}
+
 /*
   ROLES
 */

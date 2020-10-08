@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { editUserData } from '../actions/users';
+import { editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
@@ -213,6 +213,13 @@ class UserDetails extends PureComponent {
     });
   };
 
+  handleSaveRoles = () => {
+    const { editUserRoles, domain } = this.props;
+    const { ID, roles } = this.state.changes;
+    editUserRoles(domain.ID, ID, { roles: roles.map(role => role.ID) })
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+  }
+
   render() {
     const { classes, t, groups, domain, Roles } = this.props;
     const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
@@ -279,31 +286,6 @@ class UserDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <FormControl className={classes.input}>
-                <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
-                <Select
-                  labelId="demo-mutiple-chip-label"
-                  id="demo-mutiple-chip"
-                  multiple
-                  value={changes.roles || []}
-                  onChange={this.handleMultiSelect}
-                  input={<Input id="select-multiple-chip" />}
-                  disabled
-                  renderValue={selected => 
-                    <div className={classes.chips}>
-                      {selected.map(value => 
-                        <Chip key={value.ID} label={value.name} className={classes.chip} />
-                      )}
-                    </div>
-                  }
-                >
-                  {(Roles || []).map(role => (
-                    <MenuItem selected={changes.roles.includes(role)} key={role.ID} value={role}>
-                      {role.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
               <TextField
                 className={classes.input}
                 label={t("Data area")}
@@ -496,6 +478,50 @@ class UserDetails extends PureComponent {
               {('Save')}
             </Button>
           </Paper>
+          <Paper className={classes.paper} elevation={2}>
+            <Grid container>
+              <Typography
+                color="primary"
+                variant="h5"
+              >
+                {t('Roles')}
+              </Typography>
+              <FormControl className={classes.form}>
+                <FormControl className={classes.input}>
+                  <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
+                  <Select
+                    labelId="demo-mutiple-chip-label"
+                    id="demo-mutiple-chip"
+                    multiple
+                    fullWidth
+                    value={changes.roles || []}
+                    onChange={this.handleMultiSelect}
+                    input={<Input id="select-multiple-chip" />}
+                    renderValue={selected => 
+                      <div className={classes.chips}>
+                        {selected.map(value => 
+                          <Chip key={value.ID} label={value.name} className={classes.chip} />
+                        )}
+                      </div>
+                    }
+                  >
+                    {(Roles || []).map(role => (
+                      <MenuItem selected={changes.roles.includes(role)} key={role.ID} value={role}>
+                        {role.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </FormControl>
+            </Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSaveRoles}
+            >
+              {('Save')}
+            </Button>
+          </Paper>
           <Snackbar
             open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
@@ -566,6 +592,7 @@ UserDetails.propTypes = {
   fetchGroupsData: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
+  editUserRoles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -586,6 +613,9 @@ const mapDispatchToProps = dispatch => {
     },
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
+    },
+    editUserRoles: async (domainID, userID, roles) => {
+      await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
     },
     fetchGroupsData: async () => {
       await dispatch(fetchGroupsData());
