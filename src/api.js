@@ -157,7 +157,7 @@ export async function changeDomainPassword(id, newPw) {
 
 export function users(domainID) {
   return async () => {
-    return await get('/domains/' + domainID + '/users?addressType=0');
+    return await get('/domains/' + domainID + '/users?addressType=0&level=2');
   };
 }
 
@@ -169,7 +169,7 @@ export function addUser(domainID, user) {
 
 export function editUser(domainID, user) {
   return async () => {
-    return await patch('/domains/' + domainID + '/users/' + user.ID, user);
+    return await patch('/domains/' + domainID + '/users/' + user.ID, { ...user, ID: undefined, roles: undefined });
   };
 }
 
