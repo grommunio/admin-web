@@ -2,24 +2,20 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
+import LoadChart from '../components/LoadChart';
+import MemoryChart from '../components/MemoryChart';
+import CPUPieChart from '../components/CPUPieChart';
+import MemoryPieChart from '../components/MemoryPieChart';
+import SwapPieChart from '../components/SwapPieChart';
+import DisksChart from '../components/DisksChart';
+import CPULineChart from '../components/CPULineChart';
+import ServicesChart from '../components/ServicesChart';
 import { Paper, Grid, Typography, Snackbar, Chip, IconButton, CircularProgress } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import {
   BarChart,
-  XAxis,
-  YAxis,
   Bar,
-  Tooltip,
   Legend,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-  PieChart,
-  Pie,
-  Cell,
-  LabelList,
 } from 'recharts';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import { green, yellow, red, blue, grey, teal } from '@material-ui/core/colors';
@@ -27,11 +23,6 @@ import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
 import Refresh from '@material-ui/icons/Update';
-import CPUBackground from '../res/memory-black-48dp.svg';
-import RAMBackground from '../res/insert_chart_outlined-black-48dp.svg';
-import StorageBackground from '../res/storage-black-48dp.svg';
-import NetworkBackground from '../res/network_check-black-48dp.svg';
-import TimingBackground from '../res/schedule-black-48dp.svg';
 import { connect } from 'react-redux';
 import { fetchDashboardData } from '../actions/dashboard';
 import { serviceAction } from '../actions/services';
@@ -78,7 +69,7 @@ const styles = theme => ({
   fixedPaper: {
     display: 'flex',
     flexDirection: 'column',
-    borderRadius: 16,
+    borderRadius: 8,
   },
   chipLabel: {
     width: 220,
@@ -89,7 +80,7 @@ const styles = theme => ({
   chipsPaper: {
     display: 'flex',
     flexWrap: 'wrap',
-    borderRadius: 16,
+    borderRadius: 8,
     padding: theme.spacing(0, 0, 2, 0),
   },
   chipContainer: {
@@ -109,64 +100,6 @@ const styles = theme => ({
   },
   hugeIcon: {
     fontSize: 140,
-  },
-  cp: {
-
-  },
-  cpuBackground: {
-    width: 250,
-    height: 250,
-    backgroundImage: 'url(' + CPUBackground + ')',
-    position: 'relative',
-    zIndex: 0,
-    opacity: 0.06,
-    alignSelf: 'flex-end',
-    margin: theme.spacing(-9, 12, -22, 0),
-    backgroundSize: '100%',
-  },
-  ramBackground: {
-    width: 250,
-    height: 250,
-    backgroundImage: 'url(' + RAMBackground + ')',
-    position: 'relative',
-    zIndex: 0,
-    opacity: 0.1,
-    alignSelf: 'flex-end',
-    margin: theme.spacing(-9, 12, -22, 0),
-    backgroundSize: '100%',
-  },
-  networkBackground: {
-    width: 250,
-    height: 250,
-    backgroundImage: 'url(' + NetworkBackground + ')',
-    position: 'relative',
-    zIndex: 0,
-    opacity: 0.06,
-    alignSelf: 'flex-end',
-    margin: theme.spacing(-9, 12, -22, 0),
-    backgroundSize: '100%',
-  },
-  storageBackground: {
-    width: 250,
-    height: 250,
-    backgroundImage: 'url(' + StorageBackground + ')',
-    position: 'relative',
-    zIndex: 0,
-    opacity: 0.1,
-    alignSelf: 'flex-end',
-    margin: theme.spacing(-9, 12, -22, 0),
-    backgroundSize: '100%',
-  },
-  timingBackground: {
-    width: 250,
-    height: 250,
-    backgroundImage: 'url(' + TimingBackground + ')',
-    position: 'relative',
-    zIndex: 0,
-    opacity: 0.1,
-    alignSelf: 'flex-end',
-    margin: theme.spacing(-9, 12, -22, 0),
-    backgroundSize: '100%',
   },
   iconButton: {
     color: 'black',
@@ -262,7 +195,6 @@ class Dashboard extends Component {
     }
   }
 
-
   formatLastMemory(unformatted) {
     return [
       { name: 'free', value: unformatted.free, color: grey['700'] },
@@ -330,58 +262,10 @@ class Dashboard extends Component {
     return <DefaultTooltipContent {...props} />;
   };
 
-  MemoryTooltip = props => {
-    if (props.active && props.content && props.content._self) {
-      const lastIndex =  props.content._self.props.memory.length - 1;
-      const newPayload = [
-        { name: 'Free', value: this.formatMB(props.content._self.props.memory[lastIndex].free) },
-        { name: 'Used', value: this.formatMB(props.content._self.props.memory[lastIndex].used) },
-        { name: 'Cache', value: this.formatMB(props.content._self.props.memory[lastIndex].cache) },
-        { name: 'Buffer', value: this.formatMB(props.content._self.props.memory[lastIndex].buffer) },
-      ];
-      return <DefaultTooltipContent
-        {...props}
-        payload={newPayload}
-      />;
-    }
-    return <DefaultTooltipContent {...props} />;
-  };
-
-  SwapTooltip = props => {
-    if (props.active && props.content && props.content._self) {
-      const newPayload = [
-        { name: 'Used', value: this.formatLabel(props.content._self.props.swap[0].value) },
-        { name: 'Free', value: this.formatLabel(props.content._self.props.swap[1].value) },
-      ];
-      return <DefaultTooltipContent
-        {...props}
-        payload={newPayload}
-      />;
-    }
-    return <DefaultTooltipContent {...props} />;
-  };
-
-  DiskTooltip = props => {
-    if (props.active && props.content && props.content._self) {
-      const newPayload = [
-        { name: 'Percentage', value: props.payload[0].payload.percent },
-        { name: 'Device', value: props.payload[0].payload.device },
-        { name: 'Filesystem', value: props.payload[0].payload.filesystem },
-      ];
-      return <DefaultTooltipContent
-        {...props}
-        payload={newPayload}
-      />;
-    }
-    return <DefaultTooltipContent {...props} />;
-  };
-
   render() {
     const { classes, t, cpuPercent, disks, memory, swap,
       swapPercent, load, Services, fetchServices } = this.props;
     const { starting, restarting, stoping } = this.state;
-    const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
-    const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
     return(
       <div className={classes.root}>
@@ -390,7 +274,7 @@ class Dashboard extends Component {
         <div className={classes.base}>
           <Grid container spacing={4}>
             <Grid item xs={12}>
-              <Paper className={classes.fixedPaper} elevation={2}>
+              <Paper className={classes.fixedPaper} elevation={1}>
                 <div className={classes.flexRow}>
                   <Typography className={classes.chartTitle} variant="h5">
                     {t('Services')}
@@ -401,66 +285,7 @@ class Dashboard extends Component {
                     </IconButton>
                   </div>
                 </div>
-                <div className={classes.chipsPaper}>
-                  {Services.map((service, idx) =>
-                    <div key={idx} className={classes.chipContainer}>
-                      <Chip
-                        label={
-                          <div className={classes.chipLabel}>
-                            <Typography className={classes.serviceName} variant="inherit">
-                              {service.name}
-                            </Typography>
-                            <div>
-                              {stoping !== service.name ? <IconButton
-                                onClick={this.handleServiceAction(service, 'stop')}
-                                className={classes.chipIcon}
-                              >
-                                <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
-                              </IconButton> : 
-                                <IconButton disabled className={classes.chipIcon}>
-                                  <CircularProgress className={classes.cp} size={18}/>
-                                </IconButton>}
-                              {restarting !== service.name ? <IconButton
-                                onClick={this.handleServiceAction(service, 'restart')}
-                                className={classes.chipIcon}
-                              >
-                                <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
-                              </IconButton> : 
-                                <IconButton disabled className={classes.chipIcon}>
-                                  <CircularProgress className={classes.cp} size={18}/>
-                                </IconButton>}
-                              {starting !== service.name ? <IconButton
-                                onClick={this.handleServiceAction(service, 'start')}
-                                className={classes.chipIcon}
-                              >
-                                <Start className={classes.iconButton} color="inherit" fontSize="small"/>
-                              </IconButton> : 
-                                <IconButton disabled className={classes.chipIcon}>
-                                  <CircularProgress className={classes.cp} size={18}/>
-                                </IconButton>}
-                            </div>
-                          </div>
-                        }
-                        color="secondary"
-                        classes={{
-                          root: classes.chip,
-                          colorSecondary: this.getChipColor(service.state),
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-                <div className={classes.legendContainer}>
-                  <BarChart width={510} height={24} data={[{ name: "fake", value: 1 }]}>
-                    <Bar dataKey="active" fill={green['500']} />
-                    <Bar dataKey="inactive" fill={grey['700']} />
-                    <Bar dataKey="error" fill={red['500']} />
-                    <Bar dataKey="failed" fill={red['800']} />
-                    <Bar dataKey="activating" fill={yellow['500']} />
-                    <Bar dataKey="deactivating" fill={grey['300']} />
-                    <Legend />
-                  </BarChart>
-                </div>
+                <ServicesChart Services={Services} />
               </Paper>
             </Grid>
             <Grid item xs={12}>
@@ -470,118 +295,19 @@ class Dashboard extends Component {
                     <Typography className={classes.chartTitle} variant="h5">
                       {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                     </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart height={250}>
-                        <Pie
-                          data={lastCpu}
-                          dataKey="value"
-                          nameKey="name"
-                          startAngle={180}
-                          endAngle={-180}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          fill={green['500']}
-                          label
-                          minAngle={1}
-                          isAnimationActive={false}
-                        >
-                          {lastCpu.map((entry, index) =>
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={entry.color}
-                            />
-                          )}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: grey['700'],
-                          }}
-                          isAnimationActive={false}
-                          content={<this.CPUTooltip />}
-                        />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    <CPUPieChart cpuPercent={cpuPercent}/>
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
                     <Typography className={classes.chartTitle} variant="h5">
                       {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
                     </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart height={250}>
-                        <Pie
-                          data={lastMemory}
-                          dataKey="value"
-                          nameKey="name"
-                          startAngle={180}
-                          endAngle={540}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          fill={green['500']}
-                          label={data => this.formatRamLabel(data.payload.value)}
-                          isAnimationActive={false}
-                        >
-                          {lastMemory.map((entry, index) => 
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={entry.color}
-                            />
-                          )}
-                        </Pie>
-                        <Tooltip
-                          //formatter={this.formatLabel}
-                          contentStyle={{
-                            backgroundColor: grey['700'],
-                          }}
-                          isAnimationActive={false}
-                          content={<this.MemoryTooltip />}
-                        />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
+                    <MemoryPieChart memory={memory} />
                   </Grid>
                   <Grid item xs={4} className={classes.fixedPaper}>
                     <Typography className={classes.chartTitle} variant="h5">
                       Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
                     </Typography>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart height={250}>
-                        <Pie
-                          data={swap}
-                          dataKey="value"
-                          nameKey="name"
-                          startAngle={180}
-                          endAngle={-180}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          fill={green['500']}
-                          label={data => this.formatLabel(data.payload.value)}
-                          isAnimationActive={false}
-                        >
-                          {swap.map((entry, index) => 
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={entry.color}
-                            />
-                          )}
-                        </Pie>
-                        {swap.length > 0 && swap[1].value && <Tooltip
-                          contentStyle={{
-                            backgroundColor: grey['700'],
-                          }} 
-                          //formatter={this.formatLabel}
-                          isAnimationActive={false}
-                          content={<this.SwapTooltip />}
-                        />}
-                        {swap.length > 0 && swap[1].value && <Legend />}
-                      </PieChart>
-                    </ResponsiveContainer>
+                    <SwapPieChart swap={swap} />
                   </Grid>
                 </Grid> 
               </Paper>
@@ -591,199 +317,23 @@ class Dashboard extends Component {
                 <Typography className={classes.chartTitle} variant="h5">
                   {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
                 </Typography>
-                <div className={classes.cpuBackground}></div>
-                <ResponsiveContainer width="100%" height={250} >
-                  <LineChart
-                    data={cpuPercent}
-                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
-                  >
-                    <XAxis dataKey="usage" />
-                    <YAxis domain={[0, 100]}/>
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: grey['900'],
-                      }}
-                      isAnimationActive={false}
-                    />
-                    <Legend />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="user"
-                      stroke={green['500']}
-                      isAnimationActive={false}
-                    />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="system"
-                      stroke={red['500']}
-                      isAnimationActive={false}
-                    />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="io"
-                      stroke={grey['500']}
-                      isAnimationActive={false}
-                    />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="steal"
-                      stroke={teal['500']}
-                      isAnimationActive={false}
-                    />
-                    <Line
-                      strokeWidth={4}
-                      type="monotone"
-                      dataKey="interupt"
-                      stroke={yellow['500']}
-                      isAnimationActive={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+                <CPULineChart cpuPercent={cpuPercent}/>
               </Paper>
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h5">
-                  {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
-                </Typography>
-                <div className={classes.ramBackground}></div>
-                <ResponsiveContainer width="100%" height={250} >
-                  <AreaChart
-                    data={memory}
-                    margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
-                    stackOffset="expand"
-                  >
-                    <XAxis dataKey="name" />
-                    <YAxis
-                      type="number"
-                      domain={[0, memory[0] ? memory[0].total : 0]}
-                      tickFormatter={this.formatTick}
-                    />
-                    <Tooltip
-                      formatter={this.formatMB}
-                      contentStyle={{
-                        backgroundColor: grey['500'],
-                        color: 'white',
-                      }}
-                      isAnimationActive={false}
-                    />
-                    <Legend />
-                    <Area
-                      strokeWidth={2}
-                      type="monotone"
-                      dataKey="total"
-                      fill={grey['900']}
-                      stroke={grey['900']}
-                      isAnimationActive={false}
-                    /> 
-                    <Area
-                      strokeWidth={2}
-                      type="monotone"
-                      dataKey="free"
-                      fill={grey['700']}
-                      stroke={grey['700']}
-                      isAnimationActive={false}
-                    />
-                    <Area
-                      strokeWidth={2}
-                      type="monotone"
-                      dataKey="used"
-                      fill={green['500']}
-                      stroke={green['500']}
-                      isAnimationActive={false}
-                    />
-                    <Area
-                      strokeWidth={2}
-                      type="monotone"
-                      dataKey="cache"
-                      fill={yellow['500']}
-                      stroke={yellow['500']}
-                      isAnimationActive={false}
-                    />
-                    <Area
-                      strokeWidth={2}
-                      type="monotone"
-                      dataKey="buffer"
-                      fill={blue['500']}
-                      stroke={blue['500']}
-                      isAnimationActive={false}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <MemoryChart memory={memory} />
               </Paper>
             </Grid>
             <Grid item xs={6}>
               <Paper className={classes.fixedPaper} elevation={2}>
                 <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
-                <div className={classes.storageBackground}></div>
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart
-                    data={disks}
-                    layout="vertical"
-                    margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
-                  >
-                    <YAxis type="category" dataKey="mountpoint" />
-                    <XAxis type="number"/>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: grey['500'],
-                      }}
-                      isAnimationActive={false}
-                      content={<this.DiskTooltip />}
-                    />
-                    <Bar
-                      dataKey="percent"
-                      stackId="a"
-                      isAnimationActive={false}
-                    >
-                      {disks.map((entry, index) =>
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={entry.percent > 90 ? red['500'] : entry.percent > 80 ? yellow['500'] : green['500']}
-                        />
-                      )}
-                      <LabelList
-                        dataKey="insideLabel"
-                        position="insideRight"
-                        style={{ fill: 'black' }}
-                      />
-                      <LabelList
-                        dataKey="outsideLabel"
-                        position="right"
-                        style={{ fill: 'black' }}
-                      />
-                    </Bar>
-                    <Bar
-                      dataKey="freePercent" 
-                      stackId="a"
-                      fill={"rgba(0, 0, 0, 0)"}
-                      isAnimationActive={false}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+                <DisksChart disks={disks}/>
               </Paper>
             </Grid>
             <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={2}>
-                <Typography className={classes.chartTitle} variant="h5">Load</Typography>
-                <div className={classes.timingBackground}></div>
-                <ResponsiveContainer width="100%" height={250} >
-                  <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Legend />
-                    <Bar
-                      isAnimationActive={false}
-                      barSize={60}
-                      dataKey="value"
-                      fill={green['500']}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+              <Paper className={classes.fixedPaper} elevation={1}>
+                <LoadChart load={load} />
               </Paper>
             </Grid>
           </Grid>
