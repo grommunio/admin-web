@@ -107,7 +107,7 @@ class App extends Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  Domains: PropTypes.object.isRequired,
+  Domains: PropTypes.array.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   role: PropTypes.string.isRequired,

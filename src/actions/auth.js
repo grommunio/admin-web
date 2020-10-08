@@ -19,7 +19,9 @@ export function authLogin(user, pass) {
         window.localStorage.setItem('grammmAuthJwt', token);
         document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
         const profileData = await dispatch(profile());
-        if(profileData) await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystenAdmin')));
+        if(profileData) {
+          await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+        }
       } else {
         window.localStorage.removeItem('grammmAuthJwt');
         document.cookie = "grammmAuthJwt=;path=/;secure";
@@ -36,7 +38,12 @@ export function authLogin(user, pass) {
 }
 
 export function authLoginWithToken() {
-  return authAuthenticated(true, 'sys');
+  return async dispatch => {
+    const profileData = await dispatch(profile());
+    if(profileData) {
+      await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+    }
+  };
 }
 
 export function authLogout() {
