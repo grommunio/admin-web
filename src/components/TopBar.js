@@ -12,6 +12,7 @@ import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
+    backgroundColor: 'white',
     [theme.breakpoints.up('lg')]: {
       marginLeft: 260,
     },

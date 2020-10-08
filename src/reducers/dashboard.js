@@ -3,7 +3,8 @@ import {
   DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
 } from '../actions/types';
-import { green, grey } from '@material-ui/core/colors';
+import blue from '../colors/blue';
+import green from '../colors/green';
 
 const defaultState = {
   loading: false,
@@ -29,7 +30,7 @@ function addUsageData(arr, item) {
 function formatSwap(obj) {
   return [
     { name: 'used', value: obj.used, color: green['500'] },
-    { name: 'free', value: obj.free, color: grey['700'] },
+    { name: 'free', value: obj.free, color: blue['800'] },
     //{ name: 'total', value: obj.total },
   ];
 }
@@ -37,7 +38,7 @@ function formatSwap(obj) {
 function formatDisks(arr) {
   const formattedArr = [];
   for(let i = 0; i < arr.length; i++) {
-    formattedArr.push({
+    formattedArr.push({                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
       ...arr[i],
       insideLabel: arr[i].percent > 20 ?
         `${(arr[i].used / 1000000000).toFixed(1)}/${(arr[i].total / 1000000000).toFixed(1)}GB` :

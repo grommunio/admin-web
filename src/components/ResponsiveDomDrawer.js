@@ -13,6 +13,7 @@ import {
 } from '../actions/drawer';
 import DomNavigationLinks from './DomNavigationLinks';
 import NavigationLinks from './NavigationLinks';
+import blue from '../colors/blue.js';
 
 const drawerWidth = 260;
 
@@ -46,9 +47,8 @@ const styles = theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: 'black',
+    backgroundColor: `${blue['900']}`,
     color: '#e6e6e6',
-    boxShadow: '0 10px 30px -12px #000',
     overflowX: 'hidden',
     overflowY: 'scroll',
   },

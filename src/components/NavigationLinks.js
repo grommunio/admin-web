@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
-import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
@@ -28,9 +27,10 @@ import Classes from '@material-ui/icons/Class';
 import Members from '@material-ui/icons/Contacts';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
-import logo from '../res/grammm_logo_only.svg';
+import logo from '../res/grammm_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab } from '@material-ui/core';
+import image from '../res/bootback-dark.svg';
 
 const styles = theme => ({
   drawerHeader: {
@@ -42,7 +42,7 @@ const styles = theme => ({
   },
   dashboard: {
     '&:hover': {
-      backgroundColor: `${grey['900']}`,
+      backgroundColor: `${grey['900']}`, 
     },
     flex: 1,
   },
@@ -61,15 +61,17 @@ const styles = theme => ({
     position: 'relative',
     display: 'block',
     padding: '9px 14px',
-    transition: 'all 350ms linear',
+    transition: 'all 200ms linear',
     '&:hover': {
-      backgroundColor: `rgba(255, 255, 255, 0.15)`,
+      backgroundColor: 'transparent',
+      textShadow: '0px 0px 1px white',
+      color: 'white',
     },
     '&.Mui-selected': {
-      background: `linear-gradient(30deg, ${blue['700']}, ${blue['500']})`,
-      color: 'black',
+      background: `linear-gradient(90deg, ${blue['700']}, ${blue['900']})`,
+      color: 'white',
       '&:hover': {
-        background: `linear-gradient(30deg, ${blue['700']}, ${blue['500']})`,
+
       },
     },
   },
@@ -110,6 +112,19 @@ const styles = theme => ({
   tab: {
     width: 122,
     minWidth: 122,
+  },
+  background: {
+    position: 'absolute',
+    zIndex: '-1',
+    height: '100%',
+    width: '100%',
+    display: "block",
+    top: '0',
+    left: '0',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundImage: 'url(' + image + ')',
+    opacity: '0', // deactivated background Image
   },
 });
 
@@ -163,14 +178,7 @@ class NavigationLinks extends PureComponent {
       <React.Fragment>
         <List className={classes.list} ref={this.listRef}>
           <div className={classes.drawerHeader}>
-            <Button
-              variant="text"
-              color="primary"
-              onClick={this.handleNavigation('')}
-              className={classes.dashboard}
-            >
-              <img src={logo} width="80" alt="GRAMMM"/>
-            </Button>
+            <img src={logo} width="180" alt="GRAMMM"/>
           </div>
           <Tabs
             onChange={(event, tab) => this.setState({ tab: tab })}
@@ -425,6 +433,7 @@ class NavigationLinks extends PureComponent {
             </ListItem>
           </div>
         </List>
+        <div className={classes.background} />
       </React.Fragment>
     );
   }

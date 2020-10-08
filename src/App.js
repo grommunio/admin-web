@@ -17,7 +17,10 @@ const styles = {
     display: 'flex',
     flex: 1,
     overflow: 'hidden',
-    backgroundImage: 'url(' + background + ')',
+    backgroundColor: '#fafafa',
+    backgroundImage: `
+      linear-gradient(rgba(240,240,240,0.9), rgba(240, 240, 240, 0.7)),
+      url(${background})`,
     backgroundSize: 'cover',
     width: '100%',
     height: '100%',
