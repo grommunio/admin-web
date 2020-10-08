@@ -183,6 +183,9 @@ class UserDetails extends PureComponent {
       createDay: moment(changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
       maxSize: changes.maxSize << (10 * sizeUnit),
+      roles: undefined,
+      addressStatus: undefined,
+      addressType: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));

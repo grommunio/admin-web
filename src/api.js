@@ -169,7 +169,7 @@ export function addUser(domainID, user) {
 
 export function editUser(domainID, user) {
   return async () => {
-    return await patch('/domains/' + domainID + '/users/' + user.ID, { ...user, ID: undefined, roles: undefined });
+    return await patch('/domains/' + domainID + '/users/' + user.ID, { ...user, ID: undefined });
   };
 }
 
