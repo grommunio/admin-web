@@ -113,7 +113,7 @@ class Login extends Component {
     const { authLogin, fetchDomainData } = this.props;
     const { user, pass } = this.state;
     event.preventDefault();
-    authLogin(user, pass, user === 'root' && pass === 'werDasLiestIstDoof69' ? 'sys' : 'domain')
+    authLogin(user, pass)
       .then(() => {
         fetchDomainData();
       })
@@ -195,8 +195,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    authLogin: async (user, pass, role) => {
-      await dispatch(authLogin(user, pass, role)).catch(msg => Promise.reject(msg));
+    authLogin: async (user, pass) => {
+      await dispatch(authLogin(user, pass)).catch(msg => Promise.reject(msg));
     },
     authLoginWithToken: async grammmAuthJwt => {
       await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));

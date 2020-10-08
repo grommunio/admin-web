@@ -3,7 +3,7 @@ import {
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
 } from '../actions/types';
-import { login } from '../api';
+import { login, profile } from '../api';
 
 /*export function authLogin(user, pw, role) {
   window.localStorage.setItem('grammmAuthJwt', user + pw);
@@ -18,7 +18,8 @@ export function authLogin(user, pass) {
       if(token) {
         window.localStorage.setItem('grammmAuthJwt', token);
         document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
-        await dispatch(authAuthenticated(true, 'sys'));
+        const profileData = await dispatch(profile());
+        if(profileData) await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystenAdmin')));
       } else {
         window.localStorage.removeItem('grammmAuthJwt');
         document.cookie = "grammmAuthJwt=;path=/;secure";
