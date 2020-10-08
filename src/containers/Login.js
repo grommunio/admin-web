@@ -19,7 +19,7 @@ import {
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
 import logo from '../res/grammm_logo.svg';
-import { fetchDomainData } from '../actions/domains';
+import { fetchDrawerDomains } from '../actions/drawer';
 
 const styles = theme => ({
   /* || General */
@@ -202,7 +202,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));
     },
     fetchDomainData: async () => {
-      await dispatch(fetchDomainData()).catch(msg => Promise.reject(msg));
+      await dispatch(fetchDrawerDomains()).catch(msg => Promise.reject(msg));
     },
   };
 };

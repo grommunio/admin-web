@@ -4,12 +4,14 @@ import {
   DRAWER_EXPAND,
   DRAWER_CLOSE,
   DRAWER_SELECTION,
+  DRAWER_DOMAINS_REVEICED,
 } from '../actions/types';
 
 const defaultState = {
   defaultOpen: false,
   expanded: false,
   selected: '',
+  Domains: [],
 };
 
 function drawerReducer(state = defaultState, action) {
@@ -44,6 +46,12 @@ function drawerReducer(state = defaultState, action) {
         selected: action.page,
       };
     }
+
+    case DRAWER_DOMAINS_REVEICED:
+      return {
+        ...state,
+        Domains: action.data.data,
+      };
 
     default:
       return state;

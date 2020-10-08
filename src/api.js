@@ -121,6 +121,12 @@ export function postServices(service, action) {
   DOMAINS
 */
 
+export function drawerDomains() {
+  return async () => {
+    return await get('/domains?domainType=0');
+  };
+}
+
 export function domains() {
   return async () => {
     return await get('/system/domains?domainType=0');

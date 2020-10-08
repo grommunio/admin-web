@@ -4,7 +4,23 @@ import {
   DRAWER_EXPAND,
   DRAWER_SELECTION,
   DRAWER_VIEW,
+  DOMAIN_DATA_ERROR,
+  DRAWER_DOMAINS_REVEICED,
 } from '../actions/types';
+import { drawerDomains } from '../api';
+
+export function fetchDrawerDomains() {
+  return async dispatch => {
+    try {
+      const domains = await dispatch(drawerDomains());
+      await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
+    } catch (err) {
+      await dispatch({type: DOMAIN_DATA_ERROR, error: 'Failed to fetch domains'});
+      console.error('Failed to fetch domains', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
 
 export function setDrawerSelected(page) {
   return async dispatch => {
