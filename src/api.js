@@ -89,6 +89,12 @@ export function login(user, pass) {
   };
 }
 
+export function profile() {
+  return async () => {
+    return await get('/profile');
+  };
+}
+
 /*
   DASHBOARD
 */
@@ -195,6 +201,38 @@ export function addUserAlias(domainID, aliasID, aliasname) {
 export function deleteUserAlias(domainID, aliasID) {
   return async () => {
     return await yeet('/domains/' + domainID + '/users/aliases/' + aliasID);
+  };
+}
+
+/*
+  ROLES
+*/
+
+export function roles() {
+  return async () => {
+    return await get('/system/roles');
+  };
+}
+
+export function addRole(role) {
+  return async () => {
+    return await post('/system/roles', role);
+  };
+}
+
+export function deleteRole(id) {
+  return async () => {
+    return await post('/system/roles/' + id);
+  };
+}
+
+/*
+  PERMISSIONS
+*/
+
+export function permissions() {
+  return async () => {
+    return await get('/system/roles/permissions');
   };
 }
 

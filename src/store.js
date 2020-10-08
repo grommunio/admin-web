@@ -19,6 +19,7 @@ import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
 import userAliasesReducer from './reducers/userAliases';
 import groupsReducer from './reducers/groups';
+import rolesReducer from './reducers/roles';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
 
@@ -41,6 +42,7 @@ export const store = createStore(
     members: membersReducer,
     mlists: mlistsReducer,
     orgs: orgsReducer,
+    roles: rolesReducer,
     services: servicesReducer,
     settings: settingsReducer,
     users: usersReducer,

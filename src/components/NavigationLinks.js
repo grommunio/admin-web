@@ -26,6 +26,7 @@ import Mail from '@material-ui/icons/Mail';
 import MLists from '@material-ui/icons/Email';
 import Classes from '@material-ui/icons/Class';
 import Members from '@material-ui/icons/Contacts';
+import Roles from '@material-ui/icons/VerifiedUser';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_only.svg';
@@ -306,6 +307,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Setup className={classes.icon}/>
                 <ListItemText primary={t('Base setup')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('roles')}
+              className={classes.li}
+              selected={location.pathname === '/roles'}
+            >
+              <Grid container alignItems="center">
+                <Roles className={classes.icon}/>
+                <ListItemText primary={t('Roles')} />
               </Grid>
             </ListItem>
             <ListItem button onClick={this.toggleDefaults} className={classes.li}>

@@ -1,0 +1,200 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import { withTranslation } from 'react-i18next';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton} from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import Edit from '@material-ui/icons/Edit';
+import Delete from '@material-ui/icons/Close';
+import TopBar from '../components/TopBar';
+import { connect } from 'react-redux';
+import { fetchRolesData, deleteRolesData } from '../actions/roles';
+import AddRoles from '../components/Dialogs/AddRole';
+import GeneralDelete from '../components/Dialogs/GeneralDelete';
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+  },
+  base: {
+    flexDirection: 'column',
+    padding: theme.spacing(2),
+    flex: 1,
+    display: 'flex',
+    overflowY: 'auto',
+  },
+  paper: {
+    margin: theme.spacing(3, 2),
+    padding: theme.spacing(2),
+    borderRadius: 6,
+  },
+  tablePaper: {
+    margin: theme.spacing(3, 2),
+  },
+  paperHeading: {
+    margin: theme.spacing(-1, 0, 0, 2),
+  },
+  grid: {
+    padding: theme.spacing(0, 2),
+  },
+  form: {
+    width: '100%',
+    marginTop: theme.spacing(4),
+  },
+  input: {
+    marginBottom: theme.spacing(3),
+  },
+  toolbar: theme.mixins.toolbar,
+  flexRowEnd: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  select: {
+    minWidth: 60,
+  },
+});
+
+class Roles extends Component {
+
+  componentDidMount() {
+    this.props.fetch()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+  }
+
+  state = {
+    snackbar: '',
+    adding: false,
+    deleting: false,
+  }
+
+  handleInput = field => event => {
+    this.setState({
+      newData: {
+        ...this.state.newData,
+        [field]: event.target.value,
+      },
+    });
+  }
+
+  handleAddingSuccess = () => this.setState({ adding: false });
+
+  handleAddingError = error => this.setState({ snackbar: error });
+
+  /*handleEdit = domain => event => {
+    this.props.history.push('/domainList/' + domain.ID, { ...domain });
+    event.stopPropagation();
+  }*/
+
+  handleDelete = domain => () => this.setState({ deleting: domain });
+
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+    this.fetchDomains();
+  }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteError = error => this.setState({ snackbar: error });
+
+  render() {
+    const { classes, t, Roles } = this.props;
+    const { adding, snackbar, deleting } = this.state;
+
+    return (
+      <div className={classes.root}>
+        <TopBar onAdd={() => this.setState({ adding: true })} title={t("Roles")}/>
+        <div className={classes.toolbar}></div>
+        <div className={classes.base}>
+          <Paper className={classes.tablePaper} elevation={2}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t('Name')}</TableCell>
+                  <TableCell>{t('Description')}</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Roles.map((obj, idx) =>
+                  <TableRow key={idx}>
+                    <TableCell>{obj.name}</TableCell>
+                    <TableCell>{obj.description}</TableCell>
+                    <TableCell className={classes.flexRowEnd}>
+                      <IconButton>
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={this.handleDelete(obj)}>
+                        <Delete color="error"/>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </Paper>
+          <Snackbar
+            open={!!snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {snackbar}
+            </Alert>
+          </Snackbar>
+        </div>
+        <AddRoles
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+        />
+        <GeneralDelete
+          open={!!deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting.name}
+          id={deleting.ID}
+        />
+      </div>
+    );
+  }
+}
+
+Roles.propTypes = {
+  classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
+  Roles: PropTypes.array.isRequired,
+  fetch: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    Roles: state.roles.Roles,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetch: async () => {
+      await dispatch(fetchRolesData()).catch(msg => Promise.reject(msg));
+    },
+    delete: async id => {
+      await dispatch(deleteRolesData(id)).catch(msg => Promise.reject(msg));
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(Roles)));
