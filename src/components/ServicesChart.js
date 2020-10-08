@@ -1,68 +1,25 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { Typography, Chip, IconButton, CircularProgress } from '@material-ui/core';
+import { Typography, Chip, IconButton, CircularProgress, Snackbar } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import {
   BarChart,
   Bar,
   Legend,
 } from 'recharts';
-import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 import Stop from '@material-ui/icons/HighlightOff';
 import Restart from '@material-ui/icons/Replay';
 import Start from '@material-ui/icons/PlayCircleFilledOutlined';
 import { connect } from 'react-redux';
-import { fetchDashboardData } from '../actions/dashboard';
 import { serviceAction } from '../actions/services';
 import { withTranslation } from 'react-i18next';
-import { fetchServicesData } from '../actions/services';
 import green from '../colors/green';
 import red from '../colors/red';
 import grey from '../colors/grey';
 import orange from '../colors/orange';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-    overflow: 'auto',
-  }, 
-  toolbar: theme.mixins.toolbar,
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-    borderRadius: 16,
-  },
-  chartPaper: {
-    padding: theme.spacing(1),
-    flex: 1,
-  },
-  flexRow: {
-    display: 'flex',
-    flex: 1,
-    alignItems: 'center',
-  },
-  flexRowEnd: {
-    display: 'flex',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  chartTitle: {
-    margin: theme.spacing(2, 3),
-  },
-  fixedPaper: {
-    display: 'flex',
-    flexDirection: 'column',
-    borderRadius: 8,
-  },
   chipLabel: {
     width: 220,
     display: 'flex',
@@ -84,14 +41,6 @@ const styles = theme => ({
   },
   chipIcon: {
     padding: 6,
-  },
-  textContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  },
-  hugeIcon: {
-    fontSize: 140,
   },
   iconButton: {
     color: 'black',
@@ -134,27 +83,6 @@ class ServicesChart extends Component {
     stoping: false,
   }
 
-  SwapTooltip = props => {
-    if (props.active && props.content && props.content._self) {
-      const newPayload = [
-        { name: 'Used', value: this.formatLabel(props.content._self.props.swap[0].value) },
-        { name: 'Free', value: this.formatLabel(props.content._self.props.swap[1].value) },
-      ];
-      return <DefaultTooltipContent
-        {...props}
-        payload={newPayload}
-      />;
-    }
-    return <DefaultTooltipContent {...props} />;
-  };
-
-  formatLabel(value, descimals) {
-    if (value > 1000000000) return (value / 1000000000).toFixed(descimals) + 'GB';
-    if (value > 1000000) return (value / 1000000).toFixed(descimals) + 'MB';
-    if (value > 1000) return (value / 1000).toFixed(descimals) + 'KB';
-    return value + 'B';
-  }
-
   handleServiceAction = (service, action) => () => {
     this.setState({ [action + 'ing']: service.name });
     this.props.serviceAction(service.unit, action)
@@ -179,7 +107,6 @@ class ServicesChart extends Component {
     const { classes, Services } = this.props;
     const { starting, restarting, stoping } = this.state;
 
-    console.log(Services);
     return (
       <div>
         <div className={classes.chipsPaper}>
@@ -242,6 +169,21 @@ class ServicesChart extends Component {
             <Legend />
           </BarChart>
         </div>
+        <Snackbar
+          open={!!this.state.snackbar}
+          onClose={() => this.setState({ snackbar: '' })}
+          autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+          transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+        >
+          <Alert
+            onClose={() => this.setState({ snackbar: '' })}
+            severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+            elevation={6}
+            variant="filled"
+          >
+            {this.state.snackbar}
+          </Alert>
+        </Snackbar>
       </div>
     );
   }
@@ -262,11 +204,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => await dispatch(fetchDashboardData())
-      .catch(error => Promise.reject(error)),
     serviceAction: async (service, action) => await dispatch(serviceAction(service, action))
-      .catch(error => Promise.reject(error)),
-    fetchServices: async () => await dispatch(fetchServicesData())
       .catch(error => Promise.reject(error)),
   };
 };

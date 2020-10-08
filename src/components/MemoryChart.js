@@ -39,7 +39,7 @@ class MemoryChart extends Component {
   formatMB = value => (value / 1000000).toFixed(0) + 'MB';
 
   render() {
-    const { classes, t, memory } = this.props;
+    const { classes, memory } = this.props;
     return (
       <div>
         <Typography className={classes.chartTitle} variant="h5">
@@ -116,7 +116,6 @@ class MemoryChart extends Component {
 
 MemoryChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   memory: PropTypes.array.isRequired,
 };
 

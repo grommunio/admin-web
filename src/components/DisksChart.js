@@ -49,16 +49,11 @@ class MemoryChart extends Component {
     return <DefaultTooltipContent {...props} />;
   };
 
-  formatTick = value => {
-    return this.formatLabel(value, 0);
-  }
-
-  formatMB = value => (value / 1000000).toFixed(0) + 'MB';
-
   render() {
-    const { classes, t, disks } = this.props;
+    const { classes, disks } = this.props;
     return (
       <div>
+        <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart
             data={disks}
@@ -108,7 +103,6 @@ class MemoryChart extends Component {
 
 MemoryChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   disks: PropTypes.array.isRequired,
 };
 

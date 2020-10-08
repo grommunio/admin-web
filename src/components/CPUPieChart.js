@@ -17,6 +17,7 @@ import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
@@ -57,11 +58,14 @@ class CPUPieChart extends Component {
   };
 
   render() {
-    const { classes, t, cpuPercent } = this.props;
+    const { classes, cpuPercent } = this.props;
     const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
 
     return (
       <div>
+        <Typography className={classes.chartTitle} variant="h5">
+          {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
+        </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart height={250}>
             <Pie
@@ -100,7 +104,6 @@ class CPUPieChart extends Component {
 
 CPUPieChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
 };
 

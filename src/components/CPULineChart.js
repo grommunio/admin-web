@@ -10,7 +10,6 @@ import {
   YAxis,
   Line,
 } from 'recharts';
-import grey from '../colors/grey';
 import red from '../colors/red';
 import green from '../colors/green';
 import blue from '../colors/blue';
@@ -18,6 +17,7 @@ import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
@@ -26,17 +26,6 @@ const styles = theme => ({
 });
 
 class CPULineChart extends Component {
-
-  formatLastCPU(unformatted) {
-    return [
-      { name: 'user', value: unformatted.user, color: green['500'] },
-      { name: 'system', value: unformatted.system, color: red['500'] },
-      { name: 'io', value: unformatted.io, color: grey['500'] },
-      { name: 'steal', value: unformatted.steal, color: blue['500'] },
-      { name: 'interrupt', value: unformatted.interrupt, color: orange['500'] },
-      { name: 'idle', value: unformatted.idle, color: blue['800'] },
-    ].filter(obj => obj.value !== 0);
-  }
 
   CPUTooltip = props => {
     if (props.active && props.content && props.content._self) {
@@ -58,11 +47,13 @@ class CPULineChart extends Component {
   };
 
   render() {
-    const { classes, t, cpuPercent } = this.props;
-    const lastCpu = cpuPercent.length > 0 ? this.formatLastCPU(cpuPercent[cpuPercent.length -1]) : [];
+    const { classes, cpuPercent } = this.props;
 
     return (
       <div>
+        <Typography className={classes.chartTitle} variant="h5">
+          {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
+        </Typography>
         <ResponsiveContainer width="100%" height={250} >
           <LineChart
             data={cpuPercent}
@@ -118,7 +109,6 @@ class CPULineChart extends Component {
 
 CPULineChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
 };
 

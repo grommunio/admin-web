@@ -13,6 +13,7 @@ import green from '../colors/green';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
@@ -44,12 +45,13 @@ class SwapPieChart extends Component {
   }
 
   render() {
-    const { classes, t, swap } = this.props;
+    const { classes, swap, swapPercent } = this.props;
 
-
-    console.log(swap);
     return (
       <div>
+        <Typography className={classes.chartTitle} variant="h5">
+          Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
+        </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart height={250}>
             <Pie
@@ -88,8 +90,8 @@ class SwapPieChart extends Component {
 
 SwapPieChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   swap: PropTypes.array.isRequired,
+  swapPercent: PropTypes.number,
 };
 
 export default connect(null, null)(

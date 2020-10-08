@@ -15,6 +15,7 @@ import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
@@ -67,11 +68,14 @@ class MemoryPieChart extends Component {
   }
 
   render() {
-    const { classes, t, memory } = this.props;
+    const { classes, memory } = this.props;
     const lastMemory = memory.length > 0 ? this.formatLastMemory(memory[memory.length - 1]) : [];
 
     return (
       <div>
+        <Typography className={classes.chartTitle} variant="h5">
+          {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
+        </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart height={250}>
             <Pie
@@ -110,7 +114,6 @@ class MemoryPieChart extends Component {
 
 MemoryPieChart.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   memory: PropTypes.array.isRequired,
 };
 
