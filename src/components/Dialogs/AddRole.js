@@ -67,6 +67,13 @@ class AddRole extends PureComponent {
     add({
       ...this.state,
       loading: undefined,
+      permissions: this.state.permissions.map(permission => {
+        const params = permission.params;
+        return {
+          ...permission,
+          params: params === '*' || params === '' ? params : parseInt(params),
+        };
+      }),
     })
       .then(() => {
         this.setState({

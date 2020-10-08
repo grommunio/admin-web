@@ -39,7 +39,7 @@ export function addRolesData(role) {
   return async dispatch => {
     try {
       const resp = await dispatch(addRole(role));
-      await dispatch({ ROLE_DATA_ADD, data: resp });
+      await dispatch({ type: ROLE_DATA_ADD, data: resp });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
