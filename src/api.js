@@ -135,7 +135,7 @@ export function addDomain(domain) {
 
 export function editDomain(domain) {
   return async () => {
-    return await patch('/system/domains/' + domain.ID, domain);
+    return await patch('/system/domains/' + domain.ID, { ...domain, ID: undefined });
   };
 }
 

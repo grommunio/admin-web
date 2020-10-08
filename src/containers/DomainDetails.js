@@ -19,7 +19,6 @@ import {
   Snackbar,
   Select,
 } from '@material-ui/core';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { editDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
@@ -147,12 +146,13 @@ class DomainListDetails extends PureComponent {
 
   handleEdit = () => {
     const { changes, sizeUnit } = this.state;
-    const { endDay, createDay, maxSize } = changes;
+    const { maxSize } = changes;
     this.props.edit({
       ...changes,
-      endDay: moment(endDay).format('YYYY-MM-DD HH:mm').toString(),
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       maxSize: maxSize << (10 * sizeUnit),
+      domainname: undefined,
+      domainType: undefined,
+      createDay: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
