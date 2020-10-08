@@ -5,11 +5,6 @@ import {
 } from '../actions/types';
 import { login, profile } from '../api';
 
-/*export function authLogin(user, pw, role) {
-  window.localStorage.setItem('grammmAuthJwt', user + pw);
-  return authAuthenticated(true, role);
-}*/
-
 export function authLogin(user, pass) {
   return async dispatch => {
     try {
