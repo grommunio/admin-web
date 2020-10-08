@@ -13,16 +13,17 @@ import {
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Chip,
 } from '@material-ui/core';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import { editUserData } from '../actions/users';
+import { editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchGroupsData } from '../actions/groups';
 import { timezones } from '../res/timezones';
 import { fetchAreasData } from '../actions/areas';
+import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
@@ -68,7 +69,9 @@ class UserDetails extends PureComponent {
     const user = props.location.state;
     if(!user) {
       this.state = {
-        changes: {},
+        changes: {
+          roles: [],
+        },
         changingPw: false,
         newPw: '',
         checkPw: '',
@@ -81,6 +84,7 @@ class UserDetails extends PureComponent {
       changes: {
         ...user,
         username: user.username.slice(0, user.username.indexOf('@')),
+        roles: user.roles || [],
       },
       changingPw: false,
       newPw: '',
@@ -116,9 +120,13 @@ class UserDetails extends PureComponent {
 
   componentDidMount() {
     const { changes } = this.state;
-    this.props.fetchAreas()
+    const { fetchAreas, fetchRoles, fetchGroupsData } = this.props;
+    fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    this.props.fetchGroupsData();
+    fetchRoles()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    fetchGroupsData()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const maxSize = changes.maxSize;
     if(maxSize % 1048576 === 0) {
       this.setState({
@@ -175,6 +183,9 @@ class UserDetails extends PureComponent {
       createDay: moment(changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
       maxSize: changes.maxSize << (10 * sizeUnit),
+      roles: undefined,
+      addressStatus: undefined,
+      addressType: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -191,10 +202,26 @@ class UserDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+
+  handleMultiSelect = event => {
+    this.setState({
+      changes: {
+        ...this.state.changes,
+        roles: event.target.value,
+      },
+    });
+  };
+
+  handleSaveRoles = () => {
+    const { editUserRoles, domain } = this.props;
+    const { ID, roles } = this.state.changes;
+    editUserRoles(domain.ID, ID, { roles: roles.map(role => role.ID) })
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+  }
 
   render() {
-    const { classes, t, groups, domain } = this.props;
+    const { classes, t, groups, domain, Roles } = this.props;
     const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
 
     return (
@@ -451,6 +478,50 @@ class UserDetails extends PureComponent {
               {('Save')}
             </Button>
           </Paper>
+          <Paper className={classes.paper} elevation={2}>
+            <Grid container>
+              <Typography
+                color="primary"
+                variant="h5"
+              >
+                {t('Roles')}
+              </Typography>
+              <FormControl className={classes.form}>
+                <FormControl className={classes.input}>
+                  <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
+                  <Select
+                    labelId="demo-mutiple-chip-label"
+                    id="demo-mutiple-chip"
+                    multiple
+                    fullWidth
+                    value={changes.roles || []}
+                    onChange={this.handleMultiSelect}
+                    input={<Input id="select-multiple-chip" />}
+                    renderValue={selected => 
+                      <div className={classes.chips}>
+                        {selected.map(value => 
+                          <Chip key={value.ID} label={value.name} className={classes.chip} />
+                        )}
+                      </div>
+                    }
+                  >
+                    {(Roles || []).map(role => (
+                      <MenuItem selected={changes.roles.includes(role)} key={role.ID} value={role}>
+                        {role.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </FormControl>
+            </Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSaveRoles}
+            >
+              {('Save')}
+            </Button>
+          </Paper>
           <Snackbar
             open={!!snackbar}
             onClose={() => this.setState({ snackbar: '' })}
@@ -513,18 +584,22 @@ UserDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
+  Roles: PropTypes.array.isRequired,
   userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   fetchGroupsData: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
+  fetchRoles: PropTypes.func.isRequired,
+  editUserRoles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
     userAreas: state.areas.Areas.user || [],
+    Roles: state.roles.Roles || [],
   };
 };
 
@@ -533,8 +608,14 @@ const mapDispatchToProps = dispatch => {
     fetchAreas: async () => {
       await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
+    fetchRoles: async () => {
+      await dispatch(fetchRolesData()).catch(msg => Promise.reject(msg));
+    },
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
+    },
+    editUserRoles: async (domainID, userID, roles) => {
+      await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
     },
     fetchGroupsData: async () => {
       await dispatch(fetchGroupsData());

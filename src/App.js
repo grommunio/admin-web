@@ -80,9 +80,9 @@ class App extends Component {
   }
 
   render() {
-    const { classes, domains } = this.props;
+    const { classes, Domains } = this.props;
     const { authenticating, authenticated, role } = this.props;
-
+    const darkMode = window.localStorage.getItem('darkMode');
     const routesProps = {
       authenticating,
       authenticated,
@@ -90,17 +90,16 @@ class App extends Component {
     };
 
     return(
-      <div className={ window.localStorage.getItem('darkMode') === 'true' ? 
+      <div className={darkMode === 'true' ? 
         classes.darkRoot : classes.root}>
-        <div
-          className={window.localStorage.getItem('darkMode') === 'true' ?
-            classes.darkLayer : classes.layer}
+        <div className={darkMode === 'true' ?
+          classes.darkLayer : classes.layer}
         />
         <MainView
           classes={classes}
           authenticated={authenticated}
           role={role}
-          domains={domains.Domains}
+          domains={Domains}
           routesProps={routesProps}
         />
       </div>
@@ -111,7 +110,7 @@ class App extends Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  domains: PropTypes.object.isRequired,
+  Domains: PropTypes.array.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   role: PropTypes.string.isRequired,
@@ -119,13 +118,13 @@ App.propTypes = {
 
 const mapStateToProps = state => {
   const { authenticating, authenticated, role } = state.auth;
-  const { domains } = state;
+  const { Domains } = state.drawer;
 
   return {
     authenticating,
     authenticated,
     role,
-    domains,
+    Domains,
   };
 };
 

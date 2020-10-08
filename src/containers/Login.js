@@ -19,7 +19,7 @@ import {
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
 import logo from '../res/grammm_logo.svg';
-import { fetchDomainData } from '../actions/domains';
+import { fetchDrawerDomains } from '../actions/drawer';
 
 const styles = theme => ({
   /* || General */
@@ -91,14 +91,15 @@ class Login extends Component {
   state = {
     user: '',
     pass: '',
+
   }
   
   componentDidMount() {
-    let grammmAuthToken = window.localStorage.getItem("grammmAuthToken");
-    if(grammmAuthToken) {
+    let grammmAuthJwt = window.localStorage.getItem("grammmAuthJwt");
+    if(grammmAuthJwt) {
       const { authLoginWithToken, fetchDomainData } = this.props;
-      authLoginWithToken(grammmAuthToken);
-      fetchDomainData();
+      authLoginWithToken(grammmAuthJwt).catch(err => console.error(err));
+      fetchDomainData().catch(err => console.error(err));
     }
   }
 
@@ -112,14 +113,14 @@ class Login extends Component {
     const { authLogin, fetchDomainData } = this.props;
     const { user, pass } = this.state;
     event.preventDefault();
-    if(user === 'root' && pass === 'werDasLiestIstDoof69') {
-      authLogin(user, pass, 'sys');
-    } else {
-      authLogin(user, pass, 'domain').then(() => {
+    authLogin(user, pass)
+      .then(() => {
         fetchDomainData();
+      })
+      .catch(err => {
+        console.error(err);
       });
-    }
-  }
+  }  
 
   render() {
     const { classes, t, auth } = this.props;
@@ -194,14 +195,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    authLogin: async (user, pass, role) => {
-      await dispatch(authLogin(user, pass, role));
+    authLogin: async (user, pass) => {
+      await dispatch(authLogin(user, pass)).catch(msg => Promise.reject(msg));
     },
-    authLoginWithToken: async grammmAuthToken => {
-      await dispatch(authLoginWithToken(grammmAuthToken));
+    authLoginWithToken: async grammmAuthJwt => {
+      await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));
     },
     fetchDomainData: async () => {
-      await dispatch(fetchDomainData());
+      await dispatch(fetchDrawerDomains()).catch(msg => Promise.reject(msg));
     },
   };
 };

@@ -106,7 +106,7 @@ class Aliases extends Component {
   };
 
   render() {
-    const { classes, aliases } = this.props;
+    const { classes, aliases, t } = this.props;
     const { adding, deleting, open, snackbar } = this.state;
 
     return (
@@ -128,7 +128,7 @@ class Aliases extends Component {
                   <List component="div" disablePadding>
                     {aliases.map(alias => <React.Fragment key={alias.ID}>
                       <ListItem disabled={alias.domainStatus === 3} className={classes.nested}>
-                        <ListItemText primary={alias.aliasname} />
+                        <ListItemText primary={alias.aliasname + alias.domainStatus === 3 ? `[${t('Deleted')}]`  : ''} />
                         <IconButton onClick={this.handleDelete(alias)} >
                           <Delete fontSize="small" color="error"/> 
                         </IconButton>

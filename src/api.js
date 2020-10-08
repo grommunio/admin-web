@@ -67,7 +67,7 @@ async function uploadPut(path, data) {
     body: data,
   }).then(handleErrors)
     .then(response => response.json());
-}
+}*/
 
 async function loginPost(path, data) {
   return await fetch((baseUrl + path), {
@@ -76,10 +76,24 @@ async function loginPost(path, data) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-  }).then(handleErrors)
-    .then(response => response.json());
-}*/
+  }).then(handleErrors);
+}
 
+/*
+  LOGIN
+*/
+
+export function login(user, pass) {
+  return async () => {
+    return await loginPost('/login', `user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
+  };
+}
+
+export function profile() {
+  return async () => {
+    return await get('/profile');
+  };
+}
 
 /*
   DASHBOARD
@@ -107,6 +121,12 @@ export function postServices(service, action) {
   DOMAINS
 */
 
+export function drawerDomains() {
+  return async () => {
+    return await get('/domains?domainType=0');
+  };
+}
+
 export function domains() {
   return async () => {
     return await get('/system/domains?domainType=0');
@@ -121,7 +141,7 @@ export function addDomain(domain) {
 
 export function editDomain(domain) {
   return async () => {
-    return await patch('/system/domains/' + domain.ID, domain);
+    return await patch('/system/domains/' + domain.ID, { ...domain, ID: undefined });
   };
 }
 
@@ -141,9 +161,15 @@ export async function changeDomainPassword(id, newPw) {
   USERS
 */
 
+export function allUsers() {
+  return async () => {
+    return await get('/system/users?addressType=0');
+  };
+}
+
 export function users(domainID) {
   return async () => {
-    return await get('/domains/' + domainID + '/users?addressType=0');
+    return await get('/domains/' + domainID + '/users?addressType=0&level=2');
   };
 }
 
@@ -155,7 +181,7 @@ export function addUser(domainID, user) {
 
 export function editUser(domainID, user) {
   return async () => {
-    return await patch('/domains/' + domainID + '/users/' + user.ID, user);
+    return await patch('/domains/' + domainID + '/users/' + user.ID, { ...user, ID: undefined });
   };
 }
 
@@ -187,6 +213,50 @@ export function addUserAlias(domainID, aliasID, aliasname) {
 export function deleteUserAlias(domainID, aliasID) {
   return async () => {
     return await yeet('/domains/' + domainID + '/users/aliases/' + aliasID);
+  };
+}
+
+export function editUserRole(domainID, userID, roles) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/' + userID + '/roles', roles);
+  };
+}
+
+/*
+  ROLES
+*/
+
+export function roles() {
+  return async () => {
+    return await get('/system/roles?level=2');
+  };
+}
+
+export function addRole(role) {
+  return async () => {
+    return await post('/system/roles', role);
+  };
+}
+
+export function editRole(role) {
+  return async () => {
+    return await patch('/system/roles/' + role.ID, { ...role, ID: undefined });
+  };
+}
+
+export function deleteRole(id) {
+  return async () => {
+    return await yeet('/system/roles/' + id);
+  };
+}
+
+/*
+  PERMISSIONS
+*/
+
+export function permissions() {
+  return async () => {
+    return await get('/system/roles/permissions');
   };
 }
 

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
-import { fetchDomainData } from '../actions/domains';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Burger from '@material-ui/icons/Menu';
@@ -65,7 +64,6 @@ TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   title: PropTypes.string,
-  fetchDomains: PropTypes.func.isRequired,
   setDrawerExpansion: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   Domains: PropTypes.array.isRequired,
@@ -86,9 +84,6 @@ const mapDispatchToProps = dispatch => {
   return {
     setDrawerExpansion: () => {
       dispatch(setDrawerExpansion());
-    },
-    fetchDomains: async () => {
-      await dispatch(fetchDomainData()).catch(() => { });
     },
   };
 };
