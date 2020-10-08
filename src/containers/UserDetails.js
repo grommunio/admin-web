@@ -13,7 +13,7 @@ import {
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Chip,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input,
 } from '@material-ui/core';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -84,7 +84,7 @@ class UserDetails extends PureComponent {
       changes: {
         ...user,
         username: user.username.slice(0, user.username.indexOf('@')),
-        roles: user.roles || [],
+        roles: (user.roles && user.roles.map(role => role.ID)) || [],
       },
       changingPw: false,
       newPw: '',
@@ -216,14 +216,14 @@ class UserDetails extends PureComponent {
   handleSaveRoles = () => {
     const { editUserRoles, domain } = this.props;
     const { ID, roles } = this.state.changes;
-    editUserRoles(domain.ID, ID, { roles: roles.map(role => role.ID) })
+    editUserRoles(domain.ID, ID, { roles: roles })
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   render() {
     const { classes, t, groups, domain, Roles } = this.props;
     const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
-
+    console.log(Roles, changes.roles);
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -497,17 +497,14 @@ class UserDetails extends PureComponent {
                     value={changes.roles || []}
                     onChange={this.handleMultiSelect}
                     input={<Input id="select-multiple-chip" />}
-                    renderValue={selected => 
-                      <div className={classes.chips}>
-                        {selected.map(value => 
-                          <Chip key={value.ID} label={value.name} className={classes.chip} />
-                        )}
-                      </div>
-                    }
                   >
-                    {(Roles || []).map(role => (
-                      <MenuItem selected={changes.roles.includes(role)} key={role.ID} value={role}>
-                        {role.name}
+                    {(Roles || []).map(Role => (
+                      <MenuItem
+                        selected={changes.roles.find(role => role === Role.ID)}
+                        key={Role.ID}
+                        value={Role.ID}
+                      >
+                        {Role.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -618,7 +615,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
     },
     fetchGroupsData: async () => {
-      await dispatch(fetchGroupsData());
+      await dispatch(fetchGroupsData()).catch(msg => Promise.reject(msg));
     },
   };
 };
