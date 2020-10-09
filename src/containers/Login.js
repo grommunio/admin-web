@@ -115,7 +115,9 @@ class Login extends Component {
     event.preventDefault();
     authLogin(user, pass)
       .then(() => {
-        fetchDomainData();
+        fetchDomainData().catch(err => {
+          console.error(err);
+        });
       })
       .catch(err => {
         console.error(err);

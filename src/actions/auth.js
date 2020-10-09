@@ -16,15 +16,15 @@ export function authLogin(user, pass) {
         const profileData = await dispatch(profile());
         if(profileData) {
           await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+        } else {
+          clearStorage();
         }
       } else {
-        window.localStorage.removeItem('grammmAuthJwt');
-        document.cookie = "grammmAuthJwt=;path=/;secure";
+        clearStorage();
         await dispatch(authError());
       }
     } catch(err) {
-      window.localStorage.removeItem('grammmAuthJwt');
-      document.cookie = "grammmAuthJwt=;path=/;secure";
+      clearStorage();
       console.error(err);
       await dispatch(authError());
       return Promise.reject(err);
@@ -35,9 +35,18 @@ export function authLogin(user, pass) {
 export function authLoginWithToken(token) {
   return async dispatch => {
     document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
-    const profileData = await dispatch(profile());
-    if(profileData) {
-      await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+    try {
+      const profileData = await dispatch(profile());
+      if(profileData) {
+        await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+      } else {
+        clearStorage();
+        await dispatch(authError());
+      }
+    } catch(err) {
+      clearStorage();
+      await dispatch(authError());
+      return Promise.reject(err);
     }
   };
 }
@@ -66,4 +75,9 @@ function authError() {
   return {
     type: AUTH_ERROR,
   };
+}
+
+function clearStorage() {
+  window.localStorage.removeItem('grammmAuthJwt');
+  document.cookie = "grammmAuthJwt=;path=/;secure";
 }
