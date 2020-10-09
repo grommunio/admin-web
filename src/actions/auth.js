@@ -32,8 +32,9 @@ export function authLogin(user, pass) {
   };
 }
 
-export function authLoginWithToken() {
+export function authLoginWithToken(token) {
   return async dispatch => {
+    document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
     const profileData = await dispatch(profile());
     if(profileData) {
       await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
