@@ -79,6 +79,15 @@ async function loginPost(path, data) {
   }).then(handleErrors);
 }
 
+async function renew() {
+  return await fetch((baseUrl + '/login'), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  }).then(handleErrors);
+}
+
 /*
   LOGIN
 */
@@ -86,6 +95,12 @@ async function loginPost(path, data) {
 export function login(user, pass) {
   return async () => {
     return await loginPost('/login', `user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
+  };
+}
+
+export function renewToken() {
+  return async () => {
+    return await renew();
   };
 }
 

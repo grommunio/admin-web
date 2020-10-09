@@ -3,8 +3,8 @@ import {
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
 } from '../actions/types';
-import { login, profile } from '../api';
 import { SYS_ADMIN, DOM_ADMIN } from '../constants';
+import { login, renewToken, profile } from '../api';
 
 export function authLogin(user, pass) {
   return async dispatch => {
@@ -38,6 +38,11 @@ export function authLoginWithToken(token) {
   return async dispatch => {
     document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
     try {
+      const { grammmAuthJwt: newToken } = await dispatch(renewToken());
+      if(newToken) {
+        document.cookie = "grammmAuthJwt=" + newToken + ';path=/;secure';
+        window.localStorage.setItem('grammmAuthJwt', newToken);
+      }
       const profileData = await dispatch(profile());
       if(profileData) {
         await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
