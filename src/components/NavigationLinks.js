@@ -127,6 +127,9 @@ const styles = theme => ({
     backgroundImage: 'url(' + image + ')',
     opacity: '0', // deactivated background Image
   },
+  cursor: {
+    cursor: 'pointer',
+  },
 });
 
 class NavigationLinks extends PureComponent {
@@ -179,7 +182,13 @@ class NavigationLinks extends PureComponent {
       <React.Fragment>
         <List className={classes.list} ref={this.listRef}>
           <div className={classes.drawerHeader}>
-            <img src={logo} width="180" alt="GRAMMM"/>
+            <img
+              src={logo}
+              width="180"
+              alt="GRAMMM"
+              onClick={this.handleNavigation('')}
+              className={classes.cursor}
+            />
           </div>
           <Tabs
             onChange={(event, tab) => this.setState({ tab: tab })}

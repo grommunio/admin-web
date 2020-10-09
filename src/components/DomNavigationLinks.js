@@ -6,7 +6,6 @@ import { withRouter } from 'react-router-dom';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
-import Button from '@material-ui/core/Button';
 import Collapse from '@material-ui/core/Collapse';
 import Http from '@material-ui/icons/Http';
 import Settings from '@material-ui/icons/Settings';
@@ -111,6 +110,9 @@ const styles = theme => ({
     color: 'white',
     borderColor: 'white',
   },
+  cursor: {
+    cursor: 'pointer',
+  },
 });
 
 class DomNavigationLinks extends PureComponent {
@@ -163,14 +165,13 @@ class DomNavigationLinks extends PureComponent {
       <React.Fragment>
         <List className={classes.list} ref={this.listRef}>
           <div className={classes.drawerHeader}>
-            <Button
-              variant="text"
-              color="primary"
+            <img
+              src={logo}
+              width="180"
+              alt="GRAMMM"
               onClick={this.handleNavigation('')}
-              className={classes.dashboard}
-            >
-              <img src={logo} width="80" alt="GRAMMM"/>
-            </Button>
+              className={classes.cursor}
+            />
           </div>
           <Grid container>
             <TextField
