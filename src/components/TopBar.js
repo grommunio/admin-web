@@ -23,6 +23,13 @@ const styles = theme => ({
   burger: {
     marginRight: 16,
   },
+  divider: {
+    height: 40,
+    width: 2,
+    marginLeft: 16,
+    backgroundColor: '#000',
+    backgroundImage: `linear-gradient(rgba(250,250,250,1) 4%, rgba(120, 120, 120, 0.7), rgba(250,250,250,1) 96%)`,
+  },
 });
 
 class TopBar extends PureComponent {
@@ -33,7 +40,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, title, onAdd, fetching } = this.props;
+    const { classes, t, profile, title, onAdd, fetching } = this.props;
     return (
       <AppBar className={classes.root}>
         <Toolbar className={classes.root}>
@@ -43,6 +50,8 @@ class TopBar extends PureComponent {
             </IconButton>
           </Hidden>
           <Typography className={classes.title} variant="h6">{title}</Typography>
+          <Typography>{profile.Profile.user.username}</Typography>
+          {onAdd && <div className={classes.divider}></div>}
           {onAdd && <Button onClick={onAdd} color="inherit">
             <Add />{t('Add')}
           </Button>}
@@ -63,6 +72,7 @@ class TopBar extends PureComponent {
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired,
   title: PropTypes.string,
   setDrawerExpansion: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -75,6 +85,7 @@ const mapStateToProps = state => {
   const { domains, areas, users, folders, dashboard, services } = state;
   return {
     Domains: state.domains.Domains,
+    profile: state.profile,
     fetching: domains.loading || areas.loading || users.loading || folders.loading
       || dashboard.loading || services.loading ,
   };

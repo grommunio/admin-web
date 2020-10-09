@@ -7,7 +7,10 @@ import {
 const defaultState = {
   loading: false,
   error: null,
-  Profile: {},
+  Profile: {
+    capabilities: [],
+    user: {},
+  },
 };
 
 function profileReducer(state = defaultState, action) {

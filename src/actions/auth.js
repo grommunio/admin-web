@@ -2,6 +2,7 @@ import {
   AUTH_AUTHENTICATING,
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
+  PROFILE_DATA_RECEIVED,
 } from '../actions/types';
 import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 import { login, renewToken, profile } from '../api';
@@ -9,12 +10,12 @@ import { login, renewToken, profile } from '../api';
 export function authLogin(user, pass) {
   return async dispatch => {
     try {
-      const responseJSON = await dispatch(login(user, pass));
-      const token = responseJSON.grammmAuthJwt;
+      const { grammmAuthJwt: token } = await dispatch(login(user, pass));
       if(token) {
         window.localStorage.setItem('grammmAuthJwt', token);
         document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
         const profileData = await dispatch(profile());
+        await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
           await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
             ? SYS_ADMIN : DOM_ADMIN));
@@ -44,6 +45,7 @@ export function authLoginWithToken(token) {
         window.localStorage.setItem('grammmAuthJwt', newToken);
       }
       const profileData = await dispatch(profile());
+      await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
       if(profileData) {
         await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
           ? SYS_ADMIN : DOM_ADMIN));
@@ -60,7 +62,7 @@ export function authLoginWithToken(token) {
 }
 
 export function authLogout() {
-  window.localStorage.removeItem('grammmAuthJwt');
+  clearStorage();
   return authAuthenticated(false);
 }
 
