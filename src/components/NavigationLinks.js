@@ -11,6 +11,7 @@ import Collapse from '@material-ui/core/Collapse';
 import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
+import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
@@ -30,8 +31,9 @@ import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_light.svg';
 import blue from '../colors/blue';
-import { Grid, Tabs, Tab } from '@material-ui/core';
+import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
+import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 
 const styles = theme => ({
   drawerHeader: {
@@ -127,6 +129,23 @@ const styles = theme => ({
     backgroundImage: 'url(' + image + ')',
     opacity: '0', // deactivated background Image
   },
+  cursor: {
+    cursor: 'pointer',
+  },
+  textfield: {
+    margin: theme.spacing(1),
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'grey',
+      },
+      '&:hover fieldset': {
+        borderColor: 'white',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+  },
 });
 
 class NavigationLinks extends PureComponent {
@@ -136,7 +155,6 @@ class NavigationLinks extends PureComponent {
     // Map domains array to bool obj with domains as keys
     const domains = this.props.domains.map(obj => obj.name)
       .reduce((a, b) => (a[b] = false, a), {});//eslint-disable-line
-    this.listRef = React.createRef();
     this.state = {
       tab: 0,
       stateDomains: domains,
@@ -171,17 +189,27 @@ class NavigationLinks extends PureComponent {
 
   toggleDefaults = () => this.setState({ defaultsIn: !this.state.defaultsIn });
 
+  handleTextInput = event => {
+    this.setState({ filter: event.target.value });
+  }
+
   render() {
-    const { classes, t, location, domains } = this.props;
+    const { classes, t, location, domains, role } = this.props;
     const { filter, stateDomains, defaultsIn, tab } = this.state;
 
     return(
       <React.Fragment>
-        <List className={classes.list} ref={this.listRef}>
+        <List className={classes.list}>
           <div className={classes.drawerHeader}>
-            <img src={logo} width="180" alt="GRAMMM"/>
+            <img
+              src={logo}
+              width="180"
+              alt="GRAMMM"
+              onClick={this.handleNavigation('')}
+              className={classes.cursor}
+            />
           </div>
-          <Tabs
+          {role === SYS_ADMIN && <Tabs
             onChange={(event, tab) => this.setState({ tab: tab })}
             value={tab}
             className={classes.tabs}
@@ -190,8 +218,31 @@ class NavigationLinks extends PureComponent {
           >
             <Tab className={classes.tab} value={0} label={t('Admin')} />
             <Tab className={classes.tab} value={1} label={t('Domains')} />
-          </Tabs>
-          {tab === 1 && 
+          </Tabs>}
+          {(tab === 1 || role === DOM_ADMIN) &&
+            <Grid container>
+              <TextField
+                variant="outlined"
+                label={t('Search')}
+                value={filter}
+                onChange={this.handleTextInput}
+                InputLabelProps={{
+                  className: classes.input,
+                  shrink: true,
+                }}
+                InputProps={{
+                  classes: { root: classes.input },
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                color="primary"
+                className={classes.textfield}
+              />
+            </Grid>}
+          {(tab === 1 || role === DOM_ADMIN) &&
             domains.map(({ domainname: name }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
@@ -272,7 +323,7 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment> : null;
             })}
-          {tab === 0 && <React.Fragment>
+          {tab === 0 && role === SYS_ADMIN && <React.Fragment>
             <ListItem
               button
               onClick={this.handleNavigation('')}
@@ -457,9 +508,15 @@ NavigationLinks.propTypes = {
   history: PropTypes.object.isRequired,
   authLogout: PropTypes.func.isRequired,
   domains: PropTypes.array,
+  role: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    role: state.auth.role,
+  };
+};
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -469,5 +526,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withRouter(withTranslation()(withStyles(styles)(NavigationLinks))));

@@ -3,12 +3,13 @@ import {
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
 } from '../actions/types';
+import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 
 const defaultState = {
   error: false,
   authenticated: false,     
   authenticating: true,
-  role: 'sys',
+  role: SYS_ADMIN,
 };
 
 function authReducer(state = defaultState, action) {
@@ -24,7 +25,7 @@ function authReducer(state = defaultState, action) {
       return {
         ...state,
         authenticated: action.authenticated,
-        role: action.role || 'domain',
+        role: action.role || DOM_ADMIN,
         error: false,
       };
     
