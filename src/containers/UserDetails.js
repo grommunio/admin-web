@@ -217,13 +217,14 @@ class UserDetails extends PureComponent {
     const { editUserRoles, domain } = this.props;
     const { ID, roles } = this.state.changes;
     editUserRoles(domain.ID, ID, { roles: roles })
+      .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   render() {
     const { classes, t, groups, domain, Roles } = this.props;
     const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
-    console.log(Roles, changes.roles);
+
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -498,10 +499,10 @@ class UserDetails extends PureComponent {
                     onChange={this.handleMultiSelect}
                     input={<Input id="select-multiple-chip" />}
                   >
-                    {(Roles || []).map(Role => (
+                    {(Roles || []).map((Role, key) => (
                       <MenuItem
                         selected={changes.roles.find(role => role === Role.ID)}
-                        key={Role.ID}
+                        key={key}
                         value={Role.ID}
                       >
                         {Role.name}
