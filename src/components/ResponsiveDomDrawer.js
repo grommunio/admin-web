@@ -9,9 +9,8 @@ import {
   Drawer,
 } from '@material-ui/core';
 import {
-  setDrawerSelected, setDrawerExpansion,
+  setDrawerExpansion,
 } from '../actions/drawer';
-import DomNavigationLinks from './DomNavigationLinks';
 import NavigationLinks from './NavigationLinks';
 import blue from '../colors/blue.js';
 
@@ -67,7 +66,7 @@ class ResponsiveDomDrawer extends Component {
     };
 
     render() {
-      const { classes, domains, role, expanded, view } = this.props;
+      const { classes, domains, expanded } = this.props;
 
       return(
         <nav className={classes.drawer} aria-label="navigation">
@@ -84,8 +83,7 @@ class ResponsiveDomDrawer extends Component {
                 keepMounted: true, // Better open performance on mobile.
               }}
             >
-              {role === 'sys' && view === 'sys' ? <NavigationLinks domains={domains}/>
-                : <DomNavigationLinks domains={domains}/>}
+              <NavigationLinks domains={domains}/>
             </Drawer>
           </Hidden>
           <Hidden mdDown implementation="css">
@@ -96,7 +94,7 @@ class ResponsiveDomDrawer extends Component {
               variant="permanent"
               open
             >
-              {role === 'sys' ? <NavigationLinks domains={domains}/> : <DomNavigationLinks domains={domains}/>}
+              <NavigationLinks domains={domains}/>
             </Drawer>
           </Hidden>
         </nav>
@@ -108,11 +106,8 @@ ResponsiveDomDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  setDrawerSelected: PropTypes.func.isRequired,
   toggleExpansion: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
-  role: PropTypes.string,
-  view: PropTypes.string,
   expanded: PropTypes.bool,
 };
 
@@ -126,9 +121,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setDrawerSelected: async page => {
-      await dispatch(setDrawerSelected(page));
-    },
     toggleExpansion: async () => {
       await dispatch(setDrawerExpansion());
     },

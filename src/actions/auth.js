@@ -4,6 +4,7 @@ import {
   AUTH_ERROR,
 } from '../actions/types';
 import { login, profile } from '../api';
+import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 
 export function authLogin(user, pass) {
   return async dispatch => {
@@ -15,7 +16,8 @@ export function authLogin(user, pass) {
         document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
         const profileData = await dispatch(profile());
         if(profileData) {
-          await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+          await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
+            ? SYS_ADMIN : DOM_ADMIN));
         } else {
           clearStorage();
         }
@@ -38,7 +40,8 @@ export function authLoginWithToken(token) {
     try {
       const profileData = await dispatch(profile());
       if(profileData) {
-        await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin') ? 'sys' : 'domain'));
+        await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
+          ? SYS_ADMIN : DOM_ADMIN));
       } else {
         clearStorage();
         await dispatch(authError());
