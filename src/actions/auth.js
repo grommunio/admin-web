@@ -12,7 +12,7 @@ export function authLogin(user, pass) {
     try {
       const { grammmAuthJwt: token } = await dispatch(login(user, pass));
       if(token) {
-        document.cookie = "grammmAuthJwt=" + token + ';path=/';
+        document.cookie = "grammmAuthJwt=" + token + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', token);
         const profileData = await dispatch(profile());
         await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
@@ -38,11 +38,11 @@ export function authLogin(user, pass) {
 
 export function authLoginWithToken(token) {
   return async dispatch => {
-    document.cookie = "grammmAuthJwt=" + token + ';path=/';
+    document.cookie = "grammmAuthJwt=" + token + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
     try {
       const { grammmAuthJwt: newToken } = await dispatch(renewToken());
       if(newToken) {
-        document.cookie = "grammmAuthJwt=" + newToken + ';path=/';
+        document.cookie = "grammmAuthJwt=" + newToken + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', newToken);
       }
       const profileData = await dispatch(profile());
@@ -90,5 +90,5 @@ function authError() {
 
 function clearStorage() {
   window.localStorage.removeItem('grammmAuthJwt');
-  document.cookie = "grammmAuthJwt=;path=/";
+  document.cookie = "grammmAuthJwt=;path=/" + (location.protocol === 'https:' ? ';secure' : '');
 }
