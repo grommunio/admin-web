@@ -32,7 +32,10 @@ class AddOwner extends PureComponent {
 
   componentDidMount() {
     const { fetchUsers, domain } = this.props;
-    fetchUsers(domain.ID);
+    fetchUsers(domain.ID)
+      .catch(() => {
+        this.setState({ loading: false });
+      });
   }
 
   handleInput = field => event => {
@@ -137,10 +140,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, folderID, username) => {
-      await dispatch(addOwnerData(domainID, folderID, username));
+      await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
     },
     fetchUsers: async domainID => {
-      await dispatch(fetchUsersData(domainID));
+      await dispatch(fetchUsersData(domainID)).catch(msg => Promise.reject(msg));
     },
   };
 };
