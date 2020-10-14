@@ -12,8 +12,8 @@ export function authLogin(user, pass) {
     try {
       const { grammmAuthJwt: token } = await dispatch(login(user, pass));
       if(token) {
+        document.cookie = "grammmAuthJwt=" + token + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', token);
-        document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
         const profileData = await dispatch(profile());
         await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
@@ -21,6 +21,7 @@ export function authLogin(user, pass) {
             ? SYS_ADMIN : DOM_ADMIN));
         } else {
           clearStorage();
+          await dispatch(authError());
         }
       } else {
         clearStorage();
@@ -37,11 +38,11 @@ export function authLogin(user, pass) {
 
 export function authLoginWithToken(token) {
   return async dispatch => {
-    document.cookie = "grammmAuthJwt=" + token + ';path=/;secure';
+    document.cookie = "grammmAuthJwt=" + token + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
     try {
       const { grammmAuthJwt: newToken } = await dispatch(renewToken());
       if(newToken) {
-        document.cookie = "grammmAuthJwt=" + newToken + ';path=/;secure';
+        document.cookie = "grammmAuthJwt=" + newToken + ';path=/' + (location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', newToken);
       }
       const profileData = await dispatch(profile());
@@ -89,5 +90,5 @@ function authError() {
 
 function clearStorage() {
   window.localStorage.removeItem('grammmAuthJwt');
-  document.cookie = "grammmAuthJwt=;path=/;secure";
+  document.cookie = "grammmAuthJwt=;path=/" + (location.protocol === 'https:' ? ';secure' : '');
 }

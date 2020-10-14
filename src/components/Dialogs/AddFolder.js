@@ -2,11 +2,12 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, 
+  MenuItem, Button, DialogActions, CircularProgress, InputLabel, Select, Input, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { addFolderData } from '../../actions/folders';
+import { addFolderData, addOwnerData } from '../../actions/folders';
+import { fetchAllUsers } from '../../actions/users';
 
 const styles = theme => ({
   form: {
@@ -27,8 +28,14 @@ class AddFolder extends PureComponent {
   state = {
     displayname: '',
     container: 'IPF.Note',
+    owners: [],
     comment: '',
     loading: false,
+  }
+
+  componentDidMount() {
+    this.props.fetchUsers()
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   types = [
@@ -72,8 +79,8 @@ class AddFolder extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess } = this.props;
-    const { displayname, container, comment, loading } = this.state;
+    const { classes, t, open, onSuccess, Users } = this.props;
+    const { displayname, owners, container, comment, loading } = this.state;
 
     return (
       <Dialog
@@ -115,6 +122,28 @@ class AddFolder extends PureComponent {
               value={comment}
               onChange={this.handleInput('comment')}
             />
+            <FormControl className={classes.input}>
+              <InputLabel id="demo-mutiple-chip-label">{t("Owners")}</InputLabel>
+              <Select
+                labelId="demo-mutiple-chip-label"
+                id="demo-mutiple-chip"
+                multiple
+                fullWidth
+                value={owners || []}
+                onChange={this.handleInput('owners')}
+                input={<Input id="select-multiple-chip" />}
+              >
+                {Users.map((user, key) => (
+                  <MenuItem
+                    key={key}
+                    value={user.username} /* highly unconventional, should be changed to ID @f */
+                    selected={owners.find(owner => owner.ID === user.ID)}
+                  >
+                    {user.username}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -143,23 +172,32 @@ AddFolder.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
+  Users: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  fetchUsers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
     userAreas: state.areas.Areas.user || [],
+    Users: state.users.Users,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, folder) => {
-      await dispatch(addFolderData(domainID, folder));
+      await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
+    },
+    addOwner: async (domainID, folderID, username) => {
+      await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
+    },
+    fetchUsers: async () => {
+      await dispatch(fetchAllUsers()).catch(msg => Promise.reject(msg));
     },
   };
 };

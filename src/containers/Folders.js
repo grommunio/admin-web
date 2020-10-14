@@ -69,7 +69,8 @@ class Folders extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleDelete = folder => () => {
+  handleDelete = folder => event => {
+    event.stopPropagation();
     this.setState({ deleting: folder });
   }
 

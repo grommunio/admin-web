@@ -24,11 +24,16 @@ export function fetchFolderData(domainID) {
 
 export function addFolderData(domainID, folder) {
   return async dispatch => {
+    const owners = folder.owners;
+    delete folder.owners;
     try {
       const folderData = await dispatch(addFolder(domainID, folder));
       await dispatch({ type: FOLDER_DATA_ADD, data: folderData });
+      for(let i = 0; i < owners.length; i++) {
+        await dispatch(addOwner(domainID, folderData.folderid, { username: owners[i] }));
+      }
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
+      await dispatch({ type: FOLDERS_DATA_ERROR, error });
       console.error(error);
       return Promise.reject(error.message);
     }
