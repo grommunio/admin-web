@@ -116,7 +116,8 @@ class FolderDetails extends PureComponent {
   handleDeleteSuccess = () => {
     const { fetchOwners, domain } = this.props;
     this.setState({ deleting: false, snackbar: 'Success!' });
-    fetchOwners(domain.ID, this.state.changes.folderid);
+    fetchOwners(domain.ID, this.state.changes.folderid)
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleDeleteError = error => this.setState({ snackbar: error });

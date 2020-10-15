@@ -68,7 +68,8 @@ class Aliases extends Component {
   }
 
   componentDidMount() {
-    this.props.fetch();
+    this.props.fetch()
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -82,7 +83,8 @@ class Aliases extends Component {
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
-    this.props.fetch();
+    this.props.fetch()
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
@@ -195,10 +197,10 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => {
-      await dispatch(fetchAliasesData());
+      await dispatch(fetchAliasesData()).catch(msg => Promise.reject(msg));
     },
     delete: async id => {
-      await dispatch(deleteAliasData(id));
+      await dispatch(deleteAliasData(id)).catch(msg => Promise.reject(msg));
     },
   };
 };

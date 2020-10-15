@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { addAliasData, editAliasData } from '../actions/aliases';
+import { editAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
 import { fetchDomainData } from '../actions/domains';
 
@@ -64,7 +64,8 @@ class AliasDetails extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetchDomains();
+    this.props.fetchDomains()
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleInput = field => event => {
@@ -78,7 +79,8 @@ class AliasDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    this.props.edit(this.state.changes);
+    this.props.edit(this.state.changes)
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   render() {
@@ -151,7 +153,6 @@ AliasDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
 };
@@ -164,14 +165,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, alias) => {
-      await dispatch(addAliasData(domainID, alias));
-    },
     edit: async org => {
-      await dispatch(editAliasData(org));
+      await dispatch(editAliasData(org)).catch(msg => Promise.reject(msg));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData());
+      await dispatch(fetchDomainData()).catch(msg => Promise.reject(msg));
     },
   };
 };

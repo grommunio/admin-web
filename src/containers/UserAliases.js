@@ -66,7 +66,8 @@ class UserAliases extends Component {
 
   componentDidMount() {
     const { fetch, domain } = this.props;
-    fetch(domain.ID);
+    fetch(domain.ID)
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
