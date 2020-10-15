@@ -3,6 +3,7 @@ import {
   FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
   FOLDER_DATA_ADD,
+  FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
 } from './types';
@@ -56,6 +57,7 @@ export function deleteFolderData(domainID, id) {
   return async dispatch => {
     try {
       await dispatch(deleteFolder(domainID, id));
+      await dispatch({ type: FOLDER_DATA_DELETE, id });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

@@ -67,6 +67,7 @@ class AddFolder extends PureComponent {
         this.setState({
           displayname: '',
           container: 'IPF.Note',
+          owners: [],
           comment: '',
           loading: false,
         });

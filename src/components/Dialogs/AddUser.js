@@ -9,7 +9,6 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
-import { fetchGroupsData } from '../../actions/groups';
 
 const styles = theme => ({
   form: {
@@ -284,7 +283,6 @@ AddUser.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  fetchGroupsData: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
 };
 
@@ -302,9 +300,6 @@ const mapDispatchToProps = dispatch => {
     },
     fetchAreas: async () => {
       await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
-    },
-    fetchGroupsData: async () => {
-      await dispatch(fetchGroupsData());
     },
   };
 };

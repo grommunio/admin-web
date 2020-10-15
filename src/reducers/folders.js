@@ -3,6 +3,7 @@ import {
   FOLDERS_DATA_RECEIVED,
   FOLDERS_DATA_ERROR,
   FOLDER_DATA_ADD,
+  FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
 } from '../actions/types';
@@ -44,6 +45,12 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Folders: addItem(state.Folders, action.data),
+      };
+
+    case FOLDER_DATA_DELETE:
+      return {
+        ...state,
+        Folders: state.Folders.splice(state.Folders.findIndex(folder => folder.ID !== action.id), 1),
       };
 
     case OWNERS_DATA_RECEIVED:

@@ -358,6 +358,28 @@ class NavigationLinks extends PureComponent {
               </Grid>
             </ListItem>
             <ListItem
+              className={classes.li}
+              button
+              onClick={this.handleNavigation('orgs')}
+              selected={location.pathname.startsWith('/orgs')}
+            >
+              <Grid container alignItems="center">
+                <Orgs className={classes.icon}/>
+                <ListItemText primary={t('Organizations')}/>
+              </Grid>
+            </ListItem>
+            <ListItem
+              className={classes.li}
+              button
+              onClick={this.handleNavigation('aliases')}
+              selected={location.pathname.startsWith('/aliases')}
+            >
+              <Grid container alignItems="center">
+                <Aliases className={classes.icon}/>
+                <ListItemText primary={t('Aliases')}/>
+              </Grid>
+            </ListItem>
+            <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}
               className={classes.li}
@@ -394,28 +416,6 @@ class NavigationLinks extends PureComponent {
                   <Grid container alignItems="center">
                     <People className={classes.nestedIcon}/>
                     <ListItemText primary={t('Groups')}/>
-                  </Grid>
-                </ListItem>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('orgs')}
-                  selected={location.pathname.startsWith('/orgs')}
-                >
-                  <Grid container alignItems="center">
-                    <Orgs className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Organizations')}/>
-                  </Grid>
-                </ListItem>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('aliases')}
-                  selected={location.pathname.startsWith('/aliases')}
-                >
-                  <Grid container alignItems="center">
-                    <Aliases className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Aliases')}/>
                   </Grid>
                 </ListItem>
                 <ListItem
