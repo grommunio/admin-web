@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
@@ -53,56 +53,43 @@ const styles = theme => ({
   },
 });
 
-class ResponsiveDomDrawer extends Component {
+function ResponsiveDrawer(props) {
 
-    state = {
-      path: '',
-
-      menuOpen: false,
-      MenuAnchor: null,
-
-      dropdownOpen: false,
-      dropdownAnchor: null,
-    };
-
-    render() {
-      const { classes, domains, expanded } = this.props;
-
-      return(
-        <nav className={classes.drawer} aria-label="navigation">
-          <Hidden mdUp implementation="css">
-            <Drawer
-              variant="temporary"
-              anchor={"left"}
-              open={expanded}
-              onClose={this.props.toggleExpansion}
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-              }}
-            >
-              <NavigationLinks domains={domains}/>
-            </Drawer>
-          </Hidden>
-          <Hidden mdDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              <NavigationLinks domains={domains}/>
-            </Drawer>
-          </Hidden>
-        </nav>
-      );
-    }
+  const { classes, domains, expanded } = props;
+  return (
+    <nav className={classes.drawer} aria-label="navigation">
+      <Hidden mdUp implementation="css">
+        <Drawer
+          variant="temporary"
+          anchor={"left"}
+          open={expanded}
+          onClose={props.toggleExpansion}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          <NavigationLinks domains={domains}/>
+        </Drawer>
+      </Hidden>
+      <Hidden mdDown implementation="css">
+        <Drawer
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open
+        >
+          <NavigationLinks domains={domains}/>
+        </Drawer>
+      </Hidden>
+    </nav>
+  );
 }
 
-ResponsiveDomDrawer.propTypes = {
+ResponsiveDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -128,4 +115,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withTranslation()(withStyles(styles)(ResponsiveDomDrawer))));
+  withRouter(withTranslation()(withStyles(styles)(ResponsiveDrawer))));

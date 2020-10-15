@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ResponsiveDomDrawer from './ResponsiveDomDrawer';
+import Drawer from './Drawer';
 import AdminRoutes from '../Routes';
 import DomainRoutes from '../DomainRoutes';
 import { SYS_ADMIN } from '../constants';
@@ -10,7 +10,7 @@ export default function LoadableMainView(props) {
   return (
     <div className={classes.mainView}>
       {authenticated &&
-        <ResponsiveDomDrawer domains={domains}/>}
+        <Drawer domains={domains}/>}
       {role === SYS_ADMIN ?
         <AdminRoutes domains={domains} childProps={routesProps}/> :
         <DomainRoutes domains={domains} childProps={routesProps}/>}
