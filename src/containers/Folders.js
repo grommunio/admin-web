@@ -60,7 +60,7 @@ class Folders extends Component {
 
   fetchFolders() {
     const { fetch, domain } = this.props;
-    fetch(domain.ID);
+    fetch(domain.ID).catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
