@@ -69,7 +69,7 @@ class BaseSetup extends Component {
         <TopBar title="Change password"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <FormControl className={classes.form}>
               <TextField 
                 className={classes.input} 

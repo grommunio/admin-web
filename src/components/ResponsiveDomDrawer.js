@@ -12,31 +12,10 @@ import {
   setDrawerExpansion,
 } from '../actions/drawer';
 import NavigationLinks from './NavigationLinks';
-import blue from '../colors/blue.js';
 
 const drawerWidth = 260;
 
 const styles = theme => ({
-  /* || Top Bar */
-  appBar: {
-    [theme.breakpoints.up('md')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
-  burgerButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
-    },
-  },
-  profileMenu: {
-    marginRight: theme.spacing(2),
-  },
-  dropdownMenu: {
-    float: 'right',
-  },
-
   /* || Side Bar */
   drawer: {
     [theme.breakpoints.up('lg')]: {
@@ -46,7 +25,8 @@ const styles = theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: `${blue['900']}`,
+    backgroundColor: '#2b3559',
+    boxShadow: 'rgba(0, 0, 0, 0.06) 0px 5px 5px -3px, rgba(0, 0, 0, 0.043) 0px 8px 10px 1px, rgba(0, 0, 0, 0.035) 0px 3px 14px 2px',
     color: '#e6e6e6',
     overflowX: 'hidden',
     overflowY: 'scroll',

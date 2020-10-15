@@ -102,7 +102,7 @@ class MlistDetails extends PureComponent {
         <TopBar title="Mail lists"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <Grid container>
               <Typography
                 color="primary"

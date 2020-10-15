@@ -137,12 +137,12 @@ code {
 
 /* Scrollbar width */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 
 /* Scrollbar Track */
 ::-webkit-scrollbar-track {
-  background: #dbd9d9; 
+  background:#2b3559; 
 }
  
 /* Scrollbar Handle */
@@ -153,5 +153,5 @@ code {
 
 /* Scrollbar-Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #888; 
 }

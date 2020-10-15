@@ -11,7 +11,6 @@ import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
-    backgroundColor: 'white',
     [theme.breakpoints.up('lg')]: {
       marginLeft: 260,
     },
@@ -42,7 +41,7 @@ class TopBar extends PureComponent {
   render() {
     const { classes, t, profile, title, onAdd, fetching } = this.props;
     return (
-      <AppBar className={classes.root}>
+      <AppBar position="fixed" className={classes.root}>
         <Toolbar className={classes.root}>
           <Hidden lgUp>
             <IconButton color="inherit" onClick={this.handleMenuToggle}>

@@ -34,6 +34,8 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
 import { SYS_ADMIN, DOM_ADMIN } from '../constants';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const styles = theme => ({
   drawerHeader: {
@@ -42,6 +44,7 @@ const styles = theme => ({
     padding: theme.spacing(0, 2),
     ...theme.mixins.toolbar,
     justifyContent: 'center',
+    height: 68,
   },
   dashboard: {
     '&:hover': {
@@ -62,7 +65,7 @@ const styles = theme => ({
     margin: '6px 12px 6px',
     borderRadius: '3px',
     position: 'relative',
-    display: 'block',
+    display: 'flex',
     padding: '9px 14px',
     transition: 'all 200ms linear',
     '&:hover': {
@@ -71,10 +74,9 @@ const styles = theme => ({
       color: 'white',
     },
     '&.Mui-selected': {
-      background: `linear-gradient(90deg, ${blue['700']}, ${blue['900']})`,
-      color: 'white',
+      background: `linear-gradient(90deg, ${blue['300']}, #2b3559)`,
+      color: '#fff',
       '&:hover': {
-
       },
     },
   },
@@ -111,10 +113,12 @@ const styles = theme => ({
     width: 260,
     minWidth: 260,
     marginLeft: 8,
+    color: '#333',
   },
   tab: {
     width: 122,
     minWidth: 122,
+    color: '#ccc',
   },
   background: {
     position: 'absolute',
@@ -129,7 +133,7 @@ const styles = theme => ({
     backgroundImage: 'url(' + image + ')',
     opacity: '0', // deactivated background Image
   },
-  cursor: {
+  logo: {
     cursor: 'pointer',
   },
   textfield: {
@@ -199,27 +203,26 @@ class NavigationLinks extends PureComponent {
 
     return(
       <React.Fragment>
-        <List className={classes.list}>
-          <div className={classes.drawerHeader}>
-            <img
-              src={logo}
-              width="180"
-              alt="GRAMMM"
-              onClick={this.handleNavigation('')}
-              className={classes.cursor}
-            />
-          </div>
-          {role === SYS_ADMIN && <Tabs
-            onChange={(event, tab) => this.setState({ tab: tab })}
-            value={tab}
-            className={classes.tabs}
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tab className={classes.tab} value={0} label={t('Admin')} />
-            <Tab className={classes.tab} value={1} label={t('Domains')} />
-          </Tabs>}
-          {(tab === 1 || role === DOM_ADMIN) &&
+        <div className={classes.drawerHeader}>
+          <img
+            src={logo}
+            width="140"
+            alt="GRAMMM"
+            onClick={this.handleNavigation('')}
+            className={classes.logo}
+          />
+        </div>
+        {role === SYS_ADMIN && <Tabs
+          onChange={(event, tab) => this.setState({ tab: tab })}
+          value={tab}
+          className={classes.tabs}
+          indicatorColor="primary"
+          textColor="primary"
+        >
+          <Tab className={classes.tab} value={0} label={t('Admin')} />
+          <Tab className={classes.tab} value={1} label={t('Domains')} />
+        </Tabs>}
+        {(tab === 1 || role === DOM_ADMIN) &&
             <Grid container>
               <TextField
                 variant="outlined"
@@ -242,6 +245,7 @@ class NavigationLinks extends PureComponent {
                 className={classes.textfield}
               />
             </Grid>}
+        <List className={classes.list}>
           {(tab === 1 || role === DOM_ADMIN) &&
             domains.map(({ domainname: name }) => {
               return name.includes(filter) ?
@@ -382,6 +386,7 @@ class NavigationLinks extends PureComponent {
             <ListItem button onClick={this.toggleDefaults} className={classes.li}>
               <DefaultData className={classes.icon} />
               <ListItemText primary={t('Default data')} />
+              { defaultsIn ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
             </ListItem>
             <Collapse in={defaultsIn} unmountOnExit>
               <List component="div" disablePadding>
@@ -480,6 +485,7 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <ListItem
               button
+              selected={location.pathname === '/changePassword'}
               onClick={this.handleNavigation('changePassword')}
               className={classes.li}
             >

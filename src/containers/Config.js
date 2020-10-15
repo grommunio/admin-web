@@ -87,7 +87,7 @@ class Config extends Component {
         <TopBar title="Configuration"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <Paper className={classes.paper} elevation={1}>
               <Typography>What is this category?</Typography>
               <FormControl className={classes.form}>

@@ -90,7 +90,7 @@ class ClassDetails extends PureComponent {
         <TopBar title="Classes"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <Grid container>
               <Typography
                 color="primary"

@@ -1,13 +1,17 @@
 const blue = {
-  //300:
-  500: '#5acbff', //gramm blue
-  600: '#1976d2', // standard blue
-  700: '#4191b2', // extra blue
-  800: '#0d58a3', // dark standard blue
-  900: '#222A45', // navigation bar blue
-  //A200:
-  //A400:
-  //A700:
+  100: '#BBDEFB',
+  200: '#90CAF9',
+  300: '#64B5F6',
+  400: '#42A5F5',
+  500: '#2196F3',
+  600: '#1E88E5',
+  700: '#1976D2',
+  800: '#1565C0',
+  900: '#0D47A1',
+  A100: '#82B1FF',
+  A200: '#448AFF',
+  A400: '#2979FF',
+  A700: '#2962FF',
 };
 
 export default blue;

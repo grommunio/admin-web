@@ -78,7 +78,7 @@ class Forwards extends Component {
         <TopBar onAdd={this.handleAdd} title="Forwards"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={2}>
+          <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
                 <TableRow>
