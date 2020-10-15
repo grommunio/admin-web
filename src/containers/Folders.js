@@ -76,10 +76,7 @@ class Folders extends Component {
 
   handleDeleteClose = () => this.setState({ deleting: false });
 
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-    this.fetchFolders();
-  }
+  handleDeleteSuccess = () => this.setState({ deleting: false, snackbar: 'Success!' });
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
