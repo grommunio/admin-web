@@ -128,10 +128,12 @@ class Aliases extends Component {
                   <List component="div" disablePadding>
                     {aliases.map(alias => <React.Fragment key={alias.ID}>
                       <ListItem disabled={alias.domainStatus === 3} className={classes.nested}>
-                        <ListItemText primary={alias.aliasname + alias.domainStatus === 3 ? `[${t('Deleted')}]`  : ''} />
-                        <IconButton onClick={this.handleDelete(alias)} >
+                        <ListItemText
+                          primary={alias.aliasname + (alias.domainStatus === 3 ? ` [${t('Deleted')}]`  : '')}
+                        />
+                        {alias.domainStatus !== 3 &&<IconButton onClick={this.handleDelete(alias)} >
                           <Delete fontSize="small" color="error"/> 
-                        </IconButton>
+                        </IconButton>}
                       </ListItem>
                       <Divider />
                     </React.Fragment>
