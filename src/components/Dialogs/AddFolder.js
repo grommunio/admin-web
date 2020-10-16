@@ -7,7 +7,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
-import { fetchAllUsers } from '../../actions/users';
+import { fetchUsersData } from '../../actions/users';
 
 const styles = theme => ({
   form: {
@@ -34,7 +34,7 @@ class AddFolder extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetchUsers()
+    this.props.fetchUsers(this.props.domain.ID)
       .catch(error => this.setState({ snackbar: error }));
   }
 
@@ -197,8 +197,8 @@ const mapDispatchToProps = dispatch => {
     addOwner: async (domainID, folderID, username) => {
       await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
     },
-    fetchUsers: async () => {
-      await dispatch(fetchAllUsers()).catch(msg => Promise.reject(msg));
+    fetchUsers: async domainID => {
+      await dispatch(fetchUsersData(domainID)).catch(msg => Promise.reject(msg));
     },
   };
 };
