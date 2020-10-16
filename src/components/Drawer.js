@@ -25,7 +25,7 @@ const styles = theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: '#2b3559',
+    backgroundColor: '#2d323b',
     boxShadow: 'rgba(0, 0, 0, 0.06) 0px 5px 5px -3px, rgba(0, 0, 0, 0.043) 0px 8px 10px 1px, rgba(0, 0, 0, 0.035) 0px 3px 14px 2px',
     color: '#e6e6e6',
     overflowX: 'hidden',

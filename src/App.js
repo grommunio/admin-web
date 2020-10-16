@@ -8,6 +8,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { authAuthenticating } from './actions/auth';
 import background from './res/bootback.svg';
+import backgroundDark from './res/bootback-dark.svg';
 import i18n from './i18n';
 import { changeSettings } from './actions/settings';
 
@@ -37,7 +38,10 @@ const styles = {
     display: 'flex',
     flex: 1,
     overflow: 'hidden',
-    backgroundColor: '#1a2038',
+    backgroundColor: '#1c2025',
+    backgroundImage: `
+      linear-gradient(#1c2025, rgba(28, 32, 37, 0.97)),
+      url(${backgroundDark})`,
     backgroundSize: 'cover',
     width: '100%',
     height: '100%',
