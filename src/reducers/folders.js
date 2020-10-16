@@ -50,7 +50,7 @@ function foldersReducer(state = defaultState, action) {
     case FOLDER_DATA_DELETE:
       return {
         ...state,
-        Folders: state.Folders.splice(state.Folders.findIndex(folder => folder.ID !== action.id), 1),
+        Folders: state.Folders.filter(folder => folder.folderid !== action.id),
       };
 
     case OWNERS_DATA_RECEIVED:
