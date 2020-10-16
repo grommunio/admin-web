@@ -74,7 +74,7 @@ const styles = theme => ({
       color: 'white',
     },
     '&.Mui-selected': {
-      background: `linear-gradient(90deg, ${blue['300']}, #2b3559)`,
+      background: `linear-gradient(90deg, ${blue['400']}, #2d323b)`,
       color: '#fff',
       '&:hover': {
       },
