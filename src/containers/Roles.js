@@ -108,7 +108,7 @@ class Roles extends Component {
         <TopBar onAdd={() => this.setState({ adding: true })} title={t("Roles")}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={2}>
+          <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
                 <TableRow>

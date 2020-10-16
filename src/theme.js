@@ -1,36 +1,37 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import grey from './colors/grey';
-import brightBlue from './colors/brightBlue';
 import blue from './colors/blue';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
 const theme = createMuiTheme({
   overrides: {
+    MuiPaper: {
+      elevation1: {
+        boxShadow: '0px 3px 5px -1px rgba(0, 0, 0, 0.06),0px 6px 10px 0px rgba(0, 0, 0, 0.042),0px 1px 18px 0px rgba(0, 0, 0, 0.036)',
+      },
+    },
     MuiAppBar: {
-      positionAbsolute: {
-        boxShadow: 'none',
+      colorPrimary: {
+        backgroundColor: mode === 'light' ? '#fff' : blue[700],
+        color: mode === 'light' ? '#333' : '#fff',
+        boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
       },
     },
     MuiTableCell: {
       head: {
-        backgroundColor: grey['900'],
-        color: 'white',
+        padding: '12px 16px',
+      },
+      body: {
+        padding: '20px 16px',
+        border: 'none',
       },
     },
     MuiTableRow: {
-      root: {
-        "&:nth-child(odd)": {
-          backgroundColor: mode === 'light' ? '#f0f0f0' : 'rgba(255, 255, 255, 0.12)',
-        },
-        '&$hover': {
-          "&:hover": {
-            backgroundColor: '#e0e0e0',
-          },
-        },
-        '&$selected': {
-          backgroundColor: brightBlue['300'],
+      hover: {
+        '&:hover': {
+          backgroundColor: '#ddd',
         },
       },
     },
@@ -50,8 +51,10 @@ const theme = createMuiTheme({
     type: mode,
     primary: blue,
     secondary: grey,
+    background: {
+      paper: mode === 'light' ? '#fff' : '#2b3559',
+    },
   },
-  
 });
 
 export default theme;

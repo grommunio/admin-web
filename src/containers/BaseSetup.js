@@ -98,7 +98,7 @@ class BaseSetup extends Component {
         <TopBar title="Base Setup"/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <Grid container justify="flex-end">
               <IconButton onClick={this.toggleHelp}>
                 <InfoIcon />

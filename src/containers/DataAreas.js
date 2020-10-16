@@ -29,7 +29,8 @@ const styles = theme => ({
     borderRadius: 6,
   },
   tablePaper: {
-    margin: theme.spacing(3, 2),
+    margin: theme.spacing(2, 2),
+    borderRadius: 8,
   },
   paperHeading: {
     margin: theme.spacing(-1, 0, 0, 2),
@@ -232,8 +233,8 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <Paper className={classes.tablePaper} elevation={2}>
-            <Table size="small">
+          <Paper className={classes.tablePaper} elevation={1}>
+            <Table size="medium" className={classes.table}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t('Master user data area')}</TableCell>
@@ -246,7 +247,7 @@ class DataAreaSetup extends Component {
               </TableHead>
               <TableBody>
                 {areas.user.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow hover key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
                     <TableCell>{obj.slavePath}</TableCell>
@@ -256,6 +257,10 @@ class DataAreaSetup extends Component {
                   </TableRow>
                 )}
               </TableBody>
+            </Table>
+          </Paper>
+          <Paper className={classes.tablePaper} elevation={1}>
+            <Table size="medium">
               <TableHead>
                 <TableRow>
                   <TableCell>{t('Master domain data area')}</TableCell>
@@ -268,7 +273,7 @@ class DataAreaSetup extends Component {
               </TableHead>
               <TableBody>
                 {areas.domain.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow hover key={idx}>
                     <TableCell>{obj.masterPath}</TableCell>
                     <TableCell>{obj.accelPath}</TableCell>
                     <TableCell>{obj.slavePath}</TableCell>

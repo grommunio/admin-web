@@ -112,7 +112,7 @@ class UserAliases extends Component {
         <TopBar onAdd={this.handleAdd} title="Aliases"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper}>
+          <Paper className={classes.tablePaper} elevation={1}>
             <List>
               {!loading && Object.entries(aliases).map(([mainName, aliases]) => <React.Fragment key={mainName}>
                 <ListItem button onClick={this.handleDomainClicked(mainName)}>

@@ -78,7 +78,7 @@ class Settings extends Component {
         <TopBar onAdd={this.handleAdd} title="Domain List"/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.paper} elevation={2}>
+          <Paper className={classes.paper} elevation={1}>
             <Grid container>
               <Typography
                 color="primary"
