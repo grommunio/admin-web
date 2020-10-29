@@ -10,10 +10,15 @@ import { Paper,
   TableHead,
   TableRow,
   TableCell,
-  TableBody} from '@material-ui/core';
+  TableBody,
+  Typography,
+  Button,
+  Grid} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchOrgsData, deleteOrgData } from '../actions/orgs';
 import TopBar from '../components/TopBar';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -28,14 +33,6 @@ const styles = theme => ({
     display: 'flex',
     overflowY: 'auto',
   },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
-    borderRadius: 6,
-  },
   grid: {
     padding: theme.spacing(0, 2),
   },
@@ -43,6 +40,22 @@ const styles = theme => ({
   flexRowEnd: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -70,16 +83,36 @@ class Orgs extends Component {
     this.props.delete(id).then(this.props.fetch);
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
-    const { classes, orgs } = this.props;
+    const { classes, orgs, t } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Organizations"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Organizations")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              Add new organization
+            </Button>
+          </Grid>
+          <Paper elevation={1}>
+            <Table size="medium">
               <TableHead>
                 <TableRow>
                   <TableCell>memo</TableCell>
@@ -88,7 +121,7 @@ class Orgs extends Component {
               </TableHead>
               <TableBody>
                 {orgs.Orgs.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow key={idx} hover>
                     <TableCell>{obj.memo}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>

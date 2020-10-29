@@ -7,7 +7,10 @@ import { Paper,
   TableHead,
   TableRow,
   TableCell,
-  TableBody} from '@material-ui/core';
+  TableBody,
+  Grid,
+  Typography,
+  Button} from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -16,6 +19,8 @@ import { fetchClassesData, deleteClassData } from '../actions/classes';
 import { fetchDomainData } from '../actions/domains';
 import { fetchGroupsData } from '../actions/groups';
 import TopBar from '../components/TopBar';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -47,6 +52,22 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
+  },
 });
 
 class Classes extends Component {
@@ -73,14 +94,34 @@ class Classes extends Component {
     this.props.delete(id).then(this.props.fetch);
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
-    const { classes, classesData } = this.props;
+    const { classes, classesData, t } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Classes"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Classes ")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              {t("Add new class")}
+            </Button>
+          </Grid>
           <Paper className={classes.tablePaper}>
             <Table size="small">
               <TableHead>

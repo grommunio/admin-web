@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal,
-  Checkbox, FormControlLabel } from '@material-ui/core';
+  Checkbox, FormControlLabel, Typography, Button, Grid } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -13,6 +13,8 @@ import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddDomain from '../components/Dialogs/AddDomain';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -27,14 +29,6 @@ const styles = theme => ({
     display: 'flex',
     overflowY: 'auto',
   },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
-    borderRadius: 6,
-  },
   grid: {
     padding: theme.spacing(0, 2),
   },
@@ -42,6 +36,22 @@ const styles = theme => ({
   flexRowEnd: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -91,17 +101,37 @@ class DomainList extends Component {
     [field]: event.target.checked,
   });
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
     const { classes, t, domains } = this.props;
     const { showAliases, showDeleted, snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Domain list"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Domain list")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              Add new domain
+            </Button>
+          </Grid>
+          <Paper elevation={1}>
+            <Table size="medium">
               <TableHead>
                 <TableRow>
                   <TableCell>{t('Domain')}</TableCell>
@@ -135,7 +165,7 @@ class DomainList extends Component {
               <TableBody>
                 {domains.Domains.map((obj, idx) => {
                   return (obj.domainType === 1 && !showAliases) || (obj.domainStatus === 3 && !showDeleted) ?
-                    null : <TableRow key={idx}>
+                    null : <TableRow key={idx} hover>
                       <TableCell>{obj.domainname}</TableCell>
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>

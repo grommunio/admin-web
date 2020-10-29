@@ -37,8 +37,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    maxWidth: 400,
-    padding: theme.spacing(2, 3),
+    maxWidth: 450,
     background: 'rgba(250, 250, 250, 0.9    )',
     borderRadius: 30,
     zIndex: 1,
@@ -55,10 +54,9 @@ const styles = theme => ({
     borderRadius: 10,
   },
   inputContainer: {
-    marginTop: theme.spacing(3),
     display: 'flex',
     alignItems: 'Center',
-    width: '100%',
+    maxWidth: '100%',
     borderRadius: 10,
   },
   input: {

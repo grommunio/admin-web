@@ -10,11 +10,17 @@ import { Paper,
   TableHead,
   TableRow,
   TableCell,
-  TableBody} from '@material-ui/core';
+  TableBody,
+  Typography,
+  Button,
+  Grid,
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchMlistsData, deleteMlistData } from '../actions/mlists';
 import { fetchDomainData } from '../actions/domains';
 import TopBar from '../components/TopBar';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -45,6 +51,22 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
+  },
 });
 
 class MLists extends Component {
@@ -71,14 +93,34 @@ class MLists extends Component {
     this.props.delete(id).then(this.props.fetch);
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
-    const { classes, mlists } = this.props;
+    const { classes, mlists, t } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Mail lists"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Maillists ")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              {t("Add new Maillist")}
+            </Button>
+          </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>

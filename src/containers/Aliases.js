@@ -7,6 +7,9 @@ import { Paper,
   ListItem,
   Snackbar,
   Divider,
+  Typography,
+  Grid,
+  Button,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,6 +23,8 @@ import { fetchAliasesData, deleteAliasData } from '../actions/aliases';
 import TopBar from '../components/TopBar';
 import AddAlias from '../components/Dialogs/AddAlias';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -34,15 +39,6 @@ const styles = theme => ({
     display: 'flex',
     overflowY: 'auto',
   },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-    borderRadius: 6,
-  },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
-    borderRadius: 6,
-  },
   grid: {
     padding: theme.spacing(0, 2),
   },
@@ -56,6 +52,22 @@ const styles = theme => ({
   },
   expandIcon: {
     paddingRight: 10,
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -107,16 +119,36 @@ class Aliases extends Component {
     }
   };
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
     const { classes, aliases, t } = this.props;
     const { adding, deleting, open, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Aliases"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
-          <Paper className={classes.tablePaper}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Aliases")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              Add new alias
+            </Button>
+          </Grid>
+          <Paper>
             <List>
               {Object.entries(aliases).map(([mainName, aliases]) => <React.Fragment key={mainName}>
                 <ListItem button onClick={this.handleDomainClicked(mainName)}>
