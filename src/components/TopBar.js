@@ -1,13 +1,20 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade, Grid,
+  Box } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Burger from '@material-ui/icons/Menu';
 import { setDrawerExpansion } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import SearchIcon from '@material-ui/icons/Search';
+
+const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
 const styles = theme => ({
   root: {
@@ -29,6 +36,25 @@ const styles = theme => ({
     backgroundColor: '#000',
     backgroundImage: `linear-gradient(rgba(250,250,250,1) 4%, rgba(120, 120, 120, 0.7), rgba(250,250,250,1) 96%)`,
   },
+  iconButton: {
+    color: mode === 'light' ? '#777' : '#fff',
+    cursor: 'pointer',
+  },
+  profileButton: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '2px 4px 2px 8px',
+    borderRadius: 25,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: mode === 'light' ? '#f3f3f3' : 'rgba(255, 255, 255, 0.1)',
+    },
+  },
+  profileIcon: {
+    fontSize: 40,
+    color: mode === 'light' ? '#aaa' : '#444',
+    marginLeft: 4,
+  },
 });
 
 class TopBar extends PureComponent {
@@ -48,8 +74,16 @@ class TopBar extends PureComponent {
               <Burger />
             </IconButton>
           </Hidden>
-          <Typography className={classes.title} variant="h6">{title}</Typography>
-          <Typography>{profile.Profile.user.username}</Typography>
+          <IconButton className={classes.iconButton}><MailOutlineIcon></MailOutlineIcon></IconButton>
+          <IconButton className={classes.iconButton}><StarBorderIcon></StarBorderIcon></IconButton>
+          <IconButton className={classes.iconButton}><SearchIcon></SearchIcon></IconButton>
+          {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
+          <Grid container justify="flex-end">
+            <Box className={classes.profileButton}>
+              <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
+              <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
+            </Box>
+          </Grid>
           {onAdd && <div className={classes.divider}></div>}
           {onAdd && <Button onClick={onAdd} color="inherit">
             <Add />{t('Add')}

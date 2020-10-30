@@ -60,6 +60,9 @@ const styles = theme => ({
   iconButton: {
     color: 'black',
   },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
 });
 
 class Dashboard extends Component {
@@ -95,10 +98,13 @@ class Dashboard extends Component {
 
     return(
       <div className={classes.root}>
-        <TopBar title="Dashboard"/>
+        <TopBar/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
-          <Grid container spacing={4}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Dashboard")}
+          </Typography>
+          <Grid container>
             <Grid item xs={12}>
               <Paper className={classes.fixedPaper} elevation={1}>
                 <div className={classes.flexRow}>

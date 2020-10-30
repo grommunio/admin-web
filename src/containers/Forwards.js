@@ -10,10 +10,16 @@ import { Paper,
   TableHead,
   TableRow,
   TableCell,
-  TableBody} from '@material-ui/core';
+  TableBody,
+  Typography,
+  Grid,
+  Button,
+} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchForwardsData, deleteForwardData } from '../actions/forwards';
 import TopBar from '../components/TopBar';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -44,6 +50,22 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
+  },
 });
 
 class Forwards extends Component {
@@ -70,14 +92,34 @@ class Forwards extends Component {
     this.props.delete(id).then(this.props.fetch);
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
-    const { classes, forwards } = this.props;
+    const { classes, forwards, t } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Forwards"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Forwards ")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              {t("Add new forward")}
+            </Button>
+          </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>

@@ -4,11 +4,13 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   TextField, FormControl, MenuItem, Dialog, DialogContent, DialogTitle,
-  Button, DialogActions, Snackbar, CircularProgress, Select } from '@material-ui/core';
+  Button, DialogActions, Snackbar, CircularProgress, Select, Grid, Typography} from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import TopBar from '../components/TopBar';
 import { fetchAreasData, addAreaData } from '../actions/areas';
 import { connect } from 'react-redux';
+import blue from '../colors/blue';
+import HomeIcon from '@material-ui/icons/Home';
 
 const styles = theme => ({
   root: {
@@ -22,18 +24,6 @@ const styles = theme => ({
     flex: 1,
     display: 'flex',
     overflowY: 'auto',
-  },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-    borderRadius: 6,
-  },
-  tablePaper: {
-    margin: theme.spacing(2, 2),
-    borderRadius: 8,
-  },
-  paperHeading: {
-    margin: theme.spacing(-1, 0, 0, 2),
   },
   grid: {
     padding: theme.spacing(0, 2),
@@ -52,6 +42,22 @@ const styles = theme => ({
   },
   select: {
     minWidth: 60,
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -143,6 +149,13 @@ class DataAreaSetup extends Component {
     }
   }
 
+
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
@@ -151,7 +164,7 @@ class DataAreaSetup extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={() => this.setState({ addOpen: true })} title={t("Data areas")}/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Dialog onClose={() => this.setState({ addOpen: false })} open={addOpen} maxWidth="lg">
@@ -233,8 +246,22 @@ class DataAreaSetup extends Component {
               </Button>
             </DialogActions>
           </Dialog>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="medium" className={classes.table}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Data areas ")}
+            <span className={classes.pageTitleSecondary}>|</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.setState({ addOpen: true })}
+            >
+              Add new data area
+            </Button>
+          </Grid>
+          <Paper elevation={1}>
+            <Table size="medium">
               <TableHead>
                 <TableRow>
                   <TableCell>{t('Master user data area')}</TableCell>
@@ -259,7 +286,7 @@ class DataAreaSetup extends Component {
               </TableBody>
             </Table>
           </Paper>
-          <Paper className={classes.tablePaper} elevation={1}>
+          <Paper elevation={1}>
             <Table size="medium">
               <TableHead>
                 <TableRow>
@@ -312,6 +339,7 @@ DataAreaSetup.propTypes = {
   areas: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {

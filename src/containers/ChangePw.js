@@ -66,7 +66,7 @@ class BaseSetup extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar title="Change password"/>
+        <TopBar/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>

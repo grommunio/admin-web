@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Typography, Grid, FormControl, TextField, MenuItem, Switch, FormLabel } from '@material-ui/core';
+import { Paper, Typography, FormControl, TextField, MenuItem, Switch, FormLabel } from '@material-ui/core';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -44,6 +46,19 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
+  },
 });
 
 class Settings extends Component {
@@ -70,23 +85,26 @@ class Settings extends Component {
     window.localStorage.setItem('lang', lang);
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
     const { classes, t, settings } = this.props;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title="Domain List"/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Settings")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
           <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('Settings')}
-              </Typography>
-            </Grid>
             <FormControl className={classes.form}>
               <TextField
                 select
@@ -123,6 +141,7 @@ Settings.propTypes = {
   t: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {

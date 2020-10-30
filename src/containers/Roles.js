@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton} from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
+  Typography, Button, Grid } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -11,6 +12,8 @@ import { connect } from 'react-redux';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -53,6 +56,22 @@ const styles = theme => ({
   },
   select: {
     minWidth: 60,
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -99,15 +118,35 @@ class Roles extends Component {
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   render() {
     const { classes, t, Roles } = this.props;
     const { adding, snackbar, deleting } = this.state;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={() => this.setState({ adding: true })} title={t("Roles")}/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Roles ")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.setState({ adding: true })}
+            >
+              {t("Add new role")}
+            </Button>
+          </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
