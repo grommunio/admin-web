@@ -52,10 +52,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(2),
   },
-  roles: {
-    margin: theme.spacing(2, 0),
-    width: '100%',
-  },
   toolbar: theme.mixins.toolbar,
   gird: {
     display: 'flex',
@@ -422,103 +418,93 @@ class UserDetails extends PureComponent {
                   onChange={this.handleInput('memo')}
                 />
               </React.Fragment>}
+              {tab === 2 && <React.Fragment>
+                <Grid container className={classes.input}>
+                  <FormControlLabel
+                    label={t('Allow pop3 or imap downloading')}
+                    control={
+                      <Checkbox
+                        checked={changes.pop3_imap || false}
+                        onChange={this.handleCheckbox('pop3_imap')}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label={t('Allow smtp sending')}
+                    control={
+                      <Checkbox
+                        checked={changes.smtp || false}
+                        onChange={this.handleCheckbox('smtp')}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label={t('Allow change password')}
+                    control={
+                      <Checkbox
+                        checked={changes.changePassword || false}
+                        onChange={this.handleCheckbox('changePassword')}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label={t('Public user information')}
+                    control={
+                      <Checkbox
+                        checked={changes.publicAddress || false}
+                        onChange={this.handleCheckbox('publicAddress')}
+                      />
+                    }
+                  />
+                </Grid>
+              </React.Fragment>}
+              {tab === 3 && <React.Fragment>
+                <FormControl className={classes.input}>
+                  <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
+                  <Select
+                    labelId="demo-mutiple-chip-label"
+                    id="demo-mutiple-chip"
+                    multiple
+                    fullWidth
+                    value={changes.roles || []}
+                    onChange={this.handleMultiSelect}
+                    input={<Input id="select-multiple-chip" />}
+                  >
+                    {(Roles || []).map((Role, key) => (
+                      <MenuItem
+                        selected={changes.roles.find(role => role === Role.ID)}
+                        key={key}
+                        value={Role.ID}
+                      >
+                        {Role.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </React.Fragment>}
             </FormControl>
-            {tab === 2 && <React.Fragment>
-              <Grid container className={classes.input}>
-                <FormControlLabel
-                  label={t('Allow pop3 or imap downloading')}
-                  control={
-                    <Checkbox
-                      checked={changes.pop3_imap || false}
-                      onChange={this.handleCheckbox('pop3_imap')}
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label={t('Allow smtp sending')}
-                  control={
-                    <Checkbox
-                      checked={changes.smtp || false}
-                      onChange={this.handleCheckbox('smtp')}
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label={t('Allow change password')}
-                  control={
-                    <Checkbox
-                      checked={changes.changePassword || false}
-                      onChange={this.handleCheckbox('changePassword')}
-                    />
-                  }
-                />
-                <FormControlLabel
-                  label={t('Public user information')}
-                  control={
-                    <Checkbox
-                      checked={changes.publicAddress || false}
-                      onChange={this.handleCheckbox('publicAddress')}
-                    />
-                  }
-                />
-              </Grid>
-            </React.Fragment>}
-            {[0, 1, 2].includes(tab) && <React.Fragment>
-              <Button
-                variant="text"
-                color="secondary"
-                onClick={this.props.history.goBack}
-                style={{ marginRight: 8 }}
-              >
-                {t('Back')}
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleEdit}
-              >
-                {('Save')}
-              </Button>
-            </React.Fragment>}
-            {tab === 3 && <React.Fragment>
-              <FormControl className={classes.roles}>
-                <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
-                <Select
-                  labelId="demo-mutiple-chip-label"
-                  id="demo-mutiple-chip"
-                  multiple
-                  fullWidth
-                  value={changes.roles || []}
-                  onChange={this.handleMultiSelect}
-                  input={<Input id="select-multiple-chip" />}
-                >
-                  {(Roles || []).map((Role, key) => (
-                    <MenuItem
-                      selected={changes.roles.find(role => role === Role.ID)}
-                      key={key}
-                      value={Role.ID}
-                    >
-                      {Role.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <Button
-                variant="text"
-                color="secondary"
-                onClick={this.props.history.goBack}
-                style={{ marginRight: 8 }}
-              >
-                {t('Back')}
-              </Button>
+            <Button
+              variant="text"
+              color="secondary"
+              onClick={this.props.history.goBack}
+              style={{ marginRight: 8 }}
+            >
+              {t('Back')}
+            </Button>
+            {[0, 1, 2].includes(tab) ? <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleEdit}
+            >
+              {('Save')}
+            </Button> :
               <Button
                 variant="contained"
                 color="primary"
                 onClick={this.handleSaveRoles}
               >
                 {('Save')}
-              </Button>
-            </React.Fragment>}
+              </Button>}
           </Paper>
           <Snackbar
             open={!!snackbar}
