@@ -116,7 +116,7 @@ App.propTypes = {
   Domains: PropTypes.array.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
-  role: PropTypes.string.isRequired,
+  role: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => {
