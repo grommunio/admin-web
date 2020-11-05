@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import { Switch } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import Loadable from 'react-loadable';
@@ -9,6 +9,7 @@ import Loader from './components/LoadingMainView';
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 import DefaultRedirect from "./components/DefaultRedirect";
+import NotFound from "./containers/NotFound";
 
 function makeLoadableComponent(loader) {
   return Loadable({
@@ -142,7 +143,12 @@ const Routes = ({ childProps, domains }) => (
       component={AsyncSettings}
       props={childProps}
     />
-    <DefaultRedirect />
+    {!childProps.loading ?
+      <Route
+        route="*"
+        render={(props) => <NotFound {...props} />} />
+      : <DefaultRedirect />
+    }
   </Switch>
 );
 
