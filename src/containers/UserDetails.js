@@ -181,7 +181,9 @@ class UserDetails extends PureComponent {
 
   handlePasswordChange = async () => {
     const { user, newPw } = this.state;
-    await changeUserPassword(this.props.domain.ID, user.ID, newPw);
+    await changeUserPassword(this.props.domain.ID, user.ID, newPw)
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));
     this.setState({ changingPw: false });
   }
 

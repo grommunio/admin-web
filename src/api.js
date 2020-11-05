@@ -222,7 +222,7 @@ export async function changeUserPassword(domainID, id, newPw) {
   try {
     return await put('/domains/' + domainID + '/users/' + id + '/password',
       { new: newPw });
-  } catch(err) { console.error(err); }
+  } catch(err) { return Promise.reject(err); }
 }
 
 export function userAliases(domainID) {
@@ -607,6 +607,6 @@ export async function editBaseSetup(setup) {
 
 export async function changePw(oldPw, newPw) {
   try {
-    return await patch('/changePw', { oldPw, newPw });
-  } catch(err) { console.error(err); }
+    return await patch('/passwd', { oldPw, newPw });
+  } catch(err) { return Promise.reject(err); }
 }
