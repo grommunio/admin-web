@@ -148,6 +148,12 @@ export function domains() {
   };
 }
 
+export function domain(id) {
+  return async () => {
+    return await get('/system/domains/' + id);
+  };
+}
+
 export function addDomain(domain) {
   return async () => {
     return await post('/system/domains', domain);

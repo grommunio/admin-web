@@ -176,7 +176,6 @@ Login.propTypes = {
   auth: PropTypes.object.isRequired,
   authLogin: PropTypes.func.isRequired,
   authLoginWithToken: PropTypes.func.isRequired,
-  fetchDomainData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

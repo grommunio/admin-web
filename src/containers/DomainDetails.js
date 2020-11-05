@@ -20,10 +20,11 @@ import {
   Select,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { editDomainData } from '../actions/domains';
+import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import { changeDomainPassword } from '../api';
 import Alert from '@material-ui/lab/Alert';
+import { getStringAfterLastSlash } from '../utils';
 
 const styles = theme => ({
   root: {
@@ -60,27 +61,12 @@ const styles = theme => ({
 
 class DomainListDetails extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    const domain = this.props.location.state;
-    if(!domain) {
-      this.props.history.push('/domainList');
-      this.state = {
-        changes: {},
-        changingPw: false,
-        newPw: '',
-        checkPw: '',
-        sizeUnit: 0,
-      };
-    }
-    else this.state = {
-      changes: domain,
-      sizeUnit: 0,
-      changingPw: false,
-      newPw: '',
-      checkPw: '',
-      snackbar: null,
-    };
+  state = {
+    domain: {},
+    changingPw: false,
+    newPw: '',
+    checkPw: '',
+    sizeUnit: 0,
   }
 
   domainTypes = [
@@ -93,21 +79,21 @@ class DomainListDetails extends PureComponent {
     { name: 'Suspended', ID: 1 },
   ]
 
-  componentDidMount() {
-    const { changes } = this.state;
-    const maxSize = changes.maxSize;
+  async componentDidMount() {
+    const domain = await this.props.fetch(getStringAfterLastSlash());
+    const maxSize = domain.maxSize;
     if(maxSize % 1048576 === 0) {
       this.setState({
-        changes: {
-          ...changes,
+        domain: {
+          ...domain,
           maxSize: maxSize / 1048576,
         },
         sizeUnit: 2,
       });
     } else if (maxSize % 1024 === 0) {
       this.setState({
-        changes: {
-          ...changes,
+        domain: {
+          ...domain,
           maxSize: maxSize / 1024,
         },
         sizeUnit: 1,
@@ -117,8 +103,8 @@ class DomainListDetails extends PureComponent {
 
   handleInput = field => event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      domain: {
+        ...this.state.domain,
         [field]: event.target.value,
       },
       unsaved: true,
@@ -126,8 +112,8 @@ class DomainListDetails extends PureComponent {
   }
 
   handleCheckbox = field => event => this.setState({
-    changes: {
-      ...this.state.changes,
+    domain: {
+      ...this.state.domain,
       [field]: event.target.checked,
     },
     unsaved: true,
@@ -137,18 +123,18 @@ class DomainListDetails extends PureComponent {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
     this.setState({
-      changes: {
-        ...this.state.changes,
+      domain: {
+        ...this.state.domain,
         [field]: input,
       },
     });
   }
 
   handleEdit = () => {
-    const { changes, sizeUnit } = this.state;
-    const { maxSize } = changes;
+    const { domain, sizeUnit } = this.state;
+    const { maxSize } = domain;
     this.props.edit({
-      ...changes,
+      ...domain,
       maxSize: maxSize << (10 * sizeUnit),
       domainname: undefined,
       domainType: undefined,
@@ -159,8 +145,8 @@ class DomainListDetails extends PureComponent {
   }
 
   handlePasswordChange = async () => {
-    const { changes, newPw } = this.state;
-    await changeDomainPassword(changes.ID, newPw);
+    const { domain, newPw } = this.state;
+    await changeDomainPassword(domain.ID, newPw);
     this.setState({ changingPw: false });
   }
 
@@ -176,7 +162,7 @@ class DomainListDetails extends PureComponent {
     const { checkPw, newPw, changingPw, sizeUnit, snackbar } = this.state;
     const { domainname, domainType, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.changes;
+      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.domain;
 
     return (
       <div className={classes.root}>
@@ -429,6 +415,7 @@ DomainListDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
 };
 
@@ -437,6 +424,9 @@ const mapDispatchToProps = dispatch => {
     edit: async domain => {
       await dispatch(editDomainData(domain)).catch(message => Promise.reject(message));
     },
+    fetch: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(message => Promise.reject(message)),
   };
 };
 
