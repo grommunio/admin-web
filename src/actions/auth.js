@@ -3,20 +3,24 @@ import {
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
   PROFILE_DATA_RECEIVED,
+  DRAWER_DOMAINS_REVEICED,
 } from '../actions/types';
 import { SYS_ADMIN, DOM_ADMIN } from '../constants';
-import { login, renewToken, profile } from '../api';
+import { login, renewToken, profile, drawerDomains } from '../api';
 
 export function authLogin(user, pass) {
   return async dispatch => {
     try {
       const { grammmAuthJwt: token } = await dispatch(login(user, pass));
       if(token) {
-        document.cookie = "grammmAuthJwt=" + token + ';path=/' + (window.location.protocol === 'https:' ? ';secure' : '');
+        document.cookie = "grammmAuthJwt=" + token + ';path=/'
+          + (window.location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', token);
         const profileData = await dispatch(profile());
         await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
+          const domains = await dispatch(drawerDomains());
+          await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
           await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
             ? SYS_ADMIN : DOM_ADMIN));
         } else {
@@ -38,16 +42,20 @@ export function authLogin(user, pass) {
 
 export function authLoginWithToken(token) {
   return async dispatch => {
-    document.cookie = "grammmAuthJwt=" + token + ';path=/' + (window.location.protocol === 'https:' ? ';secure' : '');
+    document.cookie = "grammmAuthJwt=" + token + ';path=/'
+      + (window.location.protocol === 'https:' ? ';secure' : '');
     try {
       const { grammmAuthJwt: newToken } = await dispatch(renewToken());
       if(newToken) {
-        document.cookie = "grammmAuthJwt=" + newToken + ';path=/' + (window.location.protocol === 'https:' ? ';secure' : '');
+        document.cookie = "grammmAuthJwt=" + newToken + ';path=/'
+          + (window.location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grammmAuthJwt', newToken);
       }
       const profileData = await dispatch(profile());
       await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
       if(profileData) {
+        const domains = await dispatch(drawerDomains());
+        await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
         await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
           ? SYS_ADMIN : DOM_ADMIN));
       } else {

@@ -5,8 +5,9 @@ import { Route, Redirect } from "react-router-dom";
 
 const DefaultRedirect = () => (
   <Route
+    path="*"
     render={() => <Redirect
-      to={`/`}
+      to={`/login?redirect=${window.location.pathname}`}
     />}
   />
 );
