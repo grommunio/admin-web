@@ -30,7 +30,7 @@ class AddUser extends PureComponent {
     username: '',
     realName: '',
     areaID: 0,
-    groupID: 0,
+    subType: 0,
     // eslint-disable-next-line camelcase
     pop3_imap: true,
     smtp: true,
@@ -40,6 +40,12 @@ class AddUser extends PureComponent {
     sizeUnit: 0,
     loading: false,
   }
+
+  types = [
+    { name: 'Normal', ID: 0 },
+    { name: 'Room', ID: 1 },
+    { name: 'Equipment', ID: 2 },
+  ]
 
   componentDidMount() {
     this.props.fetchAreas()
@@ -63,14 +69,13 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, areaID, groupID, createDay, lang, realName, maxSize,
+    const { username, areaID, createDay, lang, realName, maxSize,
       // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password } = this.state;
+      pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password, subType } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
       areaID,
-      groupID,
       realName,
       // eslint-disable-next-line camelcase
       pop3_imap,
@@ -78,6 +83,7 @@ class AddUser extends PureComponent {
       changePassword,
       publicAddress,
       password,
+      subType,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
       maxFile: 0,
@@ -88,7 +94,6 @@ class AddUser extends PureComponent {
           username: '',
           realName: '',
           areaID: 0,
-          groupID: 0,
           maxSize: '',
           // eslint-disable-next-line camelcase
           pop3_imap: true,
@@ -96,6 +101,7 @@ class AddUser extends PureComponent {
           changePassword: true,
           publicAddress: true,
           sizeUnit: 0,
+          subType: 0,
           loading: false,
         });
         this.props.onSuccess();
@@ -109,8 +115,8 @@ class AddUser extends PureComponent {
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
-    const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
-    const { username, areaID, groupID, maxSize, sizeUnit,loading, realName,
+    const { classes, t, userAreas, domain, open, onSuccess } = this.props;
+    const { username, areaID, maxSize, sizeUnit,loading, realName, subType,
       // eslint-disable-next-line camelcase
       pop3_imap, smtp, changePassword, publicAddress, password, repeatPw } = this.state;
 
@@ -175,17 +181,14 @@ class AddUser extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("Group")}
+              label={t("Type")}
               fullWidth
-              value={groupID || 0}
-              onChange={this.handleInput('groupID')}
+              value={subType || 0}
+              onChange={this.handleInput('subType')}
             >
-              <MenuItem value={0}>
-                {t('Direct user')}
-              </MenuItem>
-              {groups.Groups.map((group, key) => (
-                <MenuItem key={key} value={group.ID}>
-                  {group.groupname}
+              {this.types.map((type, key) => (
+                <MenuItem key={key} value={type.ID}>
+                  {type.name}
                 </MenuItem>
               ))}
             </TextField>
