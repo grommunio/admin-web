@@ -84,12 +84,13 @@ class App extends Component {
 
   render() {
     const { classes, Domains } = this.props;
-    const { authenticating, authenticated, role } = this.props;
+    const { loading, authenticating, authenticated, role } = this.props;
     const darkMode = window.localStorage.getItem('darkMode');
     const routesProps = {
       authenticating,
       authenticated,
       role,
+      loading,
     };
 
     return(
@@ -117,17 +118,19 @@ App.propTypes = {
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   role: PropTypes.number.isRequired,
+  loading: PropTypes.bool,
 };
 
 const mapStateToProps = state => {
   const { authenticating, authenticated, role } = state.auth;
-  const { Domains } = state.drawer;
+  const { Domains, loading } = state.drawer;
 
   return {
     authenticating,
     authenticated,
     role,
     Domains,
+    loading,
   };
 };
 
