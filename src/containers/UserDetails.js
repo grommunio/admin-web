@@ -15,7 +15,6 @@ import {
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Tabs, Tab,
 } from '@material-ui/core';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import { editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
@@ -179,7 +178,6 @@ class UserDetails extends PureComponent {
     const { changes, sizeUnit } = this.state;
     this.props.edit(this.props.domain.ID, {
       ...changes,
-      createDay: moment(changes.createDay).format('YYYY-MM-DD HH:mm').toString(),
       password: undefined,
       maxSize: changes.maxSize << (10 * sizeUnit),
       roles: undefined,
@@ -303,6 +301,27 @@ class UserDetails extends PureComponent {
                   onChange={this.handleInput('areaID')}
                   disabled
                 />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Maximum space")} 
+                  fullWidth 
+                  value={changes.maxSize || ''}
+                  onChange={this.handleNumberInput('maxSize')}
+                  InputProps={{
+                    endAdornment:
+                    <FormControl>
+                      <Select
+                        onChange={this.handleUnitChange}
+                        value={sizeUnit}
+                        className={classes.select}
+                      >
+                        <MenuItem value={0}>MiB</MenuItem>
+                        <MenuItem value={1}>GiB</MenuItem>
+                        <MenuItem value={2}>TiB</MenuItem>
+                      </Select>
+                    </FormControl>,
+                  }}
+                />
                 <TextField
                   select
                   className={classes.input}
@@ -347,27 +366,6 @@ class UserDetails extends PureComponent {
                     ))}
                   </Select>
                 </FormControl>
-                <TextField 
-                  className={classes.input} 
-                  label={t("Maximum space")} 
-                  fullWidth 
-                  value={changes.maxSize || ''}
-                  onChange={this.handleNumberInput('maxSize')}
-                  InputProps={{
-                    endAdornment:
-                    <FormControl>
-                      <Select
-                        onChange={this.handleUnitChange}
-                        value={sizeUnit}
-                        className={classes.select}
-                      >
-                        <MenuItem value={0}>MiB</MenuItem>
-                        <MenuItem value={1}>GiB</MenuItem>
-                        <MenuItem value={2}>TiB</MenuItem>
-                      </Select>
-                    </FormControl>,
-                  }}
-                />
                 <TextField 
                   className={classes.input}
                   label={t("Job title")}

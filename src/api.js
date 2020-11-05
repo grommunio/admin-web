@@ -253,6 +253,12 @@ export function roles() {
   };
 }
 
+export function role(id) {
+  return async () => {
+    return await get('/system/roles/' + id);
+  };
+}
+
 export function addRole(role) {
   return async () => {
     return await post('/system/roles', role);

@@ -98,7 +98,7 @@ class MailAddressDetails extends PureComponent {
     addMailAddress({
       ...this.state.changes,
     }, this.props.domain.ID);
-    this.props.history.push('/' + this.props.domain.domainname + '/mailAddresses');
+    this.props.history.push('/' + this.props.domain.ID + '/mailAddresses');
   }
 
   handleEdit = () => {

@@ -78,7 +78,7 @@ class Users extends Component {
   handleDeleteError = error => this.setState({ snackbar: error });
 
   handleEdit = user => () => {
-    this.props.history.push('/' + this.props.domain.domainname + '/users/' + user.ID, { ...user });
+    this.props.history.push('/' + this.props.domain.ID + '/users/' + user.ID, { ...user });
   }
 
   render() {
