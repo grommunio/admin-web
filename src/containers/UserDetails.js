@@ -16,7 +16,7 @@ import {
   DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Tabs, Tab,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { editUserData, editUserRoles } from '../actions/users';
+import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { timezones } from '../res/timezones';
@@ -62,37 +62,15 @@ const styles = theme => ({
 
 class UserDetails extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    const user = props.location.state;
-    if(!user) {
-      this.state = {
-        changes: {
-          roles: [],
-        },
-        changingPw: false,
-        newPw: '',
-        checkPw: '',
-        snackbar: '',
-        sizeUnit: 0,
-        tab: 0,
-      };
-      props.history.push('/' + props.domain.domainname + '/users');
-    }
-    else this.state = {
-      changes: {
-        ...user,
-        username: user.username.slice(0, user.username.indexOf('@')),
-        roles: (user.roles && user.roles.map(role => role.ID)) || [],
-      },
-      changingPw: false,
-      newPw: '',
-      checkPw: '',
-      snackbar: '',
-      sizeUnit: 0,
-      tab: 0,
-    };
-  }
+  state = {
+    user: {},
+    changingPw: false,
+    newPw: '',
+    checkPw: '',
+    snackbar: '',
+    sizeUnit: 0,
+    tab: 0,
+  };
 
   types = [
     { name: 'Normal', ID: 0 },
@@ -118,37 +96,50 @@ class UserDetails extends PureComponent {
   timeZones = [-12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, 1, 0,
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  componentDidMount() {
-    const { changes } = this.state;
-    const { fetchAreas, fetchRoles } = this.props;
+  async componentDidMount() {
+    const { fetch, fetchAreas, fetchRoles } = this.props;
+    const splits = window.location.pathname.split('/');
+    const user = await fetch(splits[1], splits[3]);
     fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const maxSize = changes.maxSize;
+    const maxSize = user.maxSize;
     if(maxSize % 1048576 === 0) {
       this.setState({
-        changes: {
-          ...changes,
+        user: {
+          ...user,
+          username: user.username.slice(0, user.username.indexOf('@')),
+          roles: (user.roles && user.roles.map(role => role.ID)) || [],
           maxSize: maxSize / 1048576,
         },
         sizeUnit: 2,
       });
     } else if (maxSize % 1024 === 0) {
       this.setState({
-        changes: {
-          ...changes,
+        user: {
+          ...user,
+          username: user.username.slice(0, user.username.indexOf('@')),
+          roles: (user.roles && user.roles.map(role => role.ID)) || [],
           maxSize: maxSize / 1024,
         },
         sizeUnit: 1,
+      });
+    } else {
+      this.setState({
+        user: {
+          ...user,
+          username: user.username.slice(0, user.username.indexOf('@')),
+          roles: (user.roles && user.roles.map(role => role.ID)) || [],
+        },
       });
     }
   }
 
   handleInput = field => event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      user: {
+        ...this.state.user,
         [field]: event.target.value,
       },
       unsaved: true,
@@ -156,8 +147,8 @@ class UserDetails extends PureComponent {
   }
 
   handleCheckbox = field => event => this.setState({
-    changes: {
-      ...this.state.changes,
+    user: {
+      ...this.state.user,
       [field]: event.target.checked,
     },
     unsaved: true,
@@ -167,19 +158,19 @@ class UserDetails extends PureComponent {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
     this.setState({
-      changes: {
-        ...this.state.changes,
+      user: {
+        ...this.state.user,
         [field]: input,
       },
     });
   }
 
   handleEdit = () => {
-    const { changes, sizeUnit } = this.state;
+    const { user, sizeUnit } = this.state;
     this.props.edit(this.props.domain.ID, {
-      ...changes,
+      ...user,
       password: undefined,
-      maxSize: changes.maxSize << (10 * sizeUnit),
+      maxSize: user.maxSize << (10 * sizeUnit),
       roles: undefined,
       addressStatus: undefined,
       addressType: undefined,
@@ -189,8 +180,8 @@ class UserDetails extends PureComponent {
   }
 
   handlePasswordChange = async () => {
-    const { changes, newPw } = this.state;
-    await changeUserPassword(this.props.domain.ID, changes.ID, newPw);
+    const { user, newPw } = this.state;
+    await changeUserPassword(this.props.domain.ID, user.ID, newPw);
     this.setState({ changingPw: false });
   }
 
@@ -203,8 +194,8 @@ class UserDetails extends PureComponent {
 
   handleMultiSelect = event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      user: {
+        ...this.state.user,
         roles: event.target.value,
       },
     });
@@ -212,7 +203,7 @@ class UserDetails extends PureComponent {
 
   handleSaveRoles = () => {
     const { editUserRoles, domain } = this.props;
-    const { ID, roles } = this.state.changes;
+    const { ID, roles } = this.state.user;
     editUserRoles(domain.ID, ID, { roles: roles })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -222,8 +213,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, Roles } = this.props;
-    const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar, tab } = this.state;
-
+    const { user, changingPw, newPw, checkPw, sizeUnit, snackbar, tab } = this.state;
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -249,7 +239,7 @@ class UserDetails extends PureComponent {
                 <Grid container className={classes.input}>
                   <TextField 
                     label={t("Username")}
-                    value={changes.username || ''}
+                    value={user.username || ''}
                     autoFocus
                     onChange={this.handleInput('username')}
                     style={{ flex: 1, marginRight: 8 }}
@@ -270,7 +260,7 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Password expiration time")}
                   fullWidth
-                  value={changes.expire || 0}
+                  value={user.expire || 0}
                   onChange={this.handleInput('expire')}
                 >
                   {this.expires.map((expire, key) => (
@@ -284,7 +274,7 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Status")}
                   fullWidth
-                  value={changes.addressStatus || 0}
+                  value={user.addressStatus || 0}
                   onChange={this.handleInput('addressStatus')}
                 >
                   {this.statuses.map((status, key) => (
@@ -297,7 +287,7 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Data area")}
                   fullWidth
-                  value={changes.maildir || ''}
+                  value={user.maildir || ''}
                   onChange={this.handleInput('areaID')}
                   disabled
                 />
@@ -305,7 +295,7 @@ class UserDetails extends PureComponent {
                   className={classes.input} 
                   label={t("Maximum space")} 
                   fullWidth 
-                  value={changes.maxSize || ''}
+                  value={user.maxSize || ''}
                   onChange={this.handleNumberInput('maxSize')}
                   InputProps={{
                     endAdornment:
@@ -327,7 +317,7 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Type")}
                   fullWidth
-                  value={changes.subType || 0}
+                  value={user.subType || 0}
                   onChange={this.handleInput('subType')}
                 >
                   {this.types.map((type, key) => (
@@ -343,7 +333,7 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Language")}
                   fullWidth
-                  value={changes.lang || 0}
+                  value={user.lang || 0}
                   onChange={this.handleInput('lang')}
                 >
                   <MenuItem value={0}>
@@ -356,7 +346,7 @@ class UserDetails extends PureComponent {
                     className={classes.input}
                     fullWidth
                     native
-                    value={changes.timezone || 427} // Default: Berlin
+                    value={user.timezone || 427} // Default: Berlin
                     onChange={this.handleInput('timezone')}
                   >
                     {timezones.map((zone, key) => (
@@ -370,49 +360,49 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Job title")}
                   fullWidth
-                  value={changes.title || ''}
+                  value={user.title || ''}
                   onChange={this.handleInput('title')}
                 />
                 <TextField 
                   className={classes.input}
                   label={t("Display name")}
                   fullWidth
-                  value={changes.realName || ''}
+                  value={user.realName || ''}
                   onChange={this.handleInput('realName')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Nickname")} 
                   fullWidth 
-                  value={changes.nickname || ''}
+                  value={user.nickname || ''}
                   onChange={this.handleInput('nickname')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Telephone")} 
                   fullWidth 
-                  value={changes.tel || ''}
+                  value={user.tel || ''}
                   onChange={this.handleInput('tel')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Mobile phone")} 
                   fullWidth 
-                  value={changes.mobilePhone || ''}
+                  value={user.mobilePhone || ''}
                   onChange={this.handleInput('mobilePhone')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Home address")} 
                   fullWidth 
-                  value={changes.homeaddress || ''}
+                  value={user.homeaddress || ''}
                   onChange={this.handleInput('homeaddress')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Memo")} 
                   fullWidth
-                  value={changes.memo || ''}
+                  value={user.memo || ''}
                   onChange={this.handleInput('memo')}
                 />
               </React.Fragment>}
@@ -422,7 +412,7 @@ class UserDetails extends PureComponent {
                     label={t('Allow pop3 or imap downloading')}
                     control={
                       <Checkbox
-                        checked={changes.pop3_imap || false}
+                        checked={user.pop3_imap || false}
                         onChange={this.handleCheckbox('pop3_imap')}
                       />
                     }
@@ -431,7 +421,7 @@ class UserDetails extends PureComponent {
                     label={t('Allow smtp sending')}
                     control={
                       <Checkbox
-                        checked={changes.smtp || false}
+                        checked={user.smtp || false}
                         onChange={this.handleCheckbox('smtp')}
                       />
                     }
@@ -440,7 +430,7 @@ class UserDetails extends PureComponent {
                     label={t('Allow change password')}
                     control={
                       <Checkbox
-                        checked={changes.changePassword || false}
+                        checked={user.changePassword || false}
                         onChange={this.handleCheckbox('changePassword')}
                       />
                     }
@@ -449,7 +439,7 @@ class UserDetails extends PureComponent {
                     label={t('Public user information')}
                     control={
                       <Checkbox
-                        checked={changes.publicAddress || false}
+                        checked={user.publicAddress || false}
                         onChange={this.handleCheckbox('publicAddress')}
                       />
                     }
@@ -464,13 +454,13 @@ class UserDetails extends PureComponent {
                     id="demo-mutiple-chip"
                     multiple
                     fullWidth
-                    value={changes.roles || []}
+                    value={user.roles || []}
                     onChange={this.handleMultiSelect}
                     input={<Input id="select-multiple-chip" />}
                   >
                     {(Roles || []).map((Role, key) => (
                       <MenuItem
-                        selected={changes.roles.find(role => role === Role.ID)}
+                        selected={user.roles.find(role => role === Role.ID)}
                         key={key}
                         value={Role.ID}
                       >
@@ -570,6 +560,7 @@ UserDetails.propTypes = {
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
@@ -584,6 +575,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetch: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
+      .then(user => user)
+      .catch(msg => Promise.reject(msg)),
     fetchAreas: async () => {
       await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },

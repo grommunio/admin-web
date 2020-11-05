@@ -20,7 +20,7 @@ import Add from '@material-ui/icons/AddCircleOutline';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { addFolderData, fetchOwnersData, deleteOwnerData } from '../actions/folders';
+import { fetchFolderDetails, addFolderData, fetchOwnersData, deleteOwnerData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 
@@ -60,28 +60,12 @@ const styles = theme => ({
 
 class FolderDetails extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    const folder = props.location.state;
-    if(!folder) {
-      this.state = {
-        changes: {},
-        adding: false,
-        deleting: false,
-        snackbar: '',
-      };
-      props.history.push('/' + props.domain.domainname + '/folders');
-    }
-    else {
-      props.fetchOwners(props.domain.ID, folder.folderid);
-      this.state = {
-        changes: folder,
-        adding: false,
-        deleting: false,
-        snackbar: '',
-      };
-    }
-  }
+  state = {
+    folder: {},
+    adding: false,
+    deleting: false,
+    snackbar: '',
+  };
 
   types = [
     { name: 'Mail and post items', ID: 'IPF.Note' },
@@ -91,10 +75,18 @@ class FolderDetails extends PureComponent {
     { name: 'Task', ID: 'IPF.Task' },
   ]
 
+  async componentDidMount() {
+    const { fetch, fetchOwners } = this.props;
+    const splits = window.location.pathname.split('/');
+    const folder = await fetch(splits[1], splits[3]);
+    this.setState({ folder });
+    fetchOwners(splits[1], folder.folderid);
+  }
+
   handleInput = field => event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      folder: {
+        ...this.state.folder,
         [field]: event.target.value,
       },
       unsaved: true,
@@ -116,7 +108,7 @@ class FolderDetails extends PureComponent {
   handleDeleteSuccess = () => {
     const { fetchOwners, domain } = this.props;
     this.setState({ deleting: false, snackbar: 'Success!' });
-    fetchOwners(domain.ID, this.state.changes.folderid)
+    fetchOwners(domain.ID, this.state.folder.folderid)
       .catch(error => this.setState({ snackbar: error }));
   }
 
@@ -124,7 +116,7 @@ class FolderDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, owners } = this.props;
-    const { changes, adding, deleting } = this.state;
+    const { folder, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -145,7 +137,7 @@ class FolderDetails extends PureComponent {
                 className={classes.input} 
                 label={t("Folder name")} 
                 fullWidth 
-                value={changes.displayname || ''}
+                value={folder.displayname || ''}
                 onChange={this.handleInput('displayname')}
                 autoFocus
                 disabled
@@ -155,7 +147,7 @@ class FolderDetails extends PureComponent {
                 className={classes.input}
                 label={t("Container")}
                 fullWidth
-                value={changes.container || 'IPF.Note'}
+                value={folder.container || 'IPF.Note'}
                 onChange={this.handleInput('container')}
                 disabled
               >
@@ -171,7 +163,7 @@ class FolderDetails extends PureComponent {
                 fullWidth
                 multiline
                 rows={4}
-                value={changes.comment || ''}
+                value={folder.comment || ''}
                 onChange={this.handleInput('comment')}
                 disabled
               />
@@ -209,23 +201,23 @@ class FolderDetails extends PureComponent {
             </Button>
           </Paper>
         </div>
-        <AddOwner
+        {folder.folderid && <AddOwner
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={domain}
-          folderID={changes.folderid}
-        />
-        <DomainDataDelete
+          folderID={folder.folderid}
+        />}
+        {folder.folderid && <DomainDataDelete
           open={!!deleting}
-          delete={() => this.props.delete(domain.ID, changes.folderid, deleting.memberID)}
+          delete={() => this.props.delete(domain.ID, folder.folderid, deleting.memberID)}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
           item={deleting.displayName}
           id={deleting.memberID}
           domainID={domain.ID}
-        />
+        />}
       </div>
     );
   }
@@ -234,11 +226,12 @@ class FolderDetails extends PureComponent {
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  owners: PropTypes.object.isRequired,
+  owners: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   add: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   fetchOwners: PropTypes.func.isRequired,
 };
@@ -251,6 +244,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetch: async (domainID, folderID) => await dispatch(fetchFolderDetails(domainID, folderID))
+      .then(folder => folder)
+      .catch(msg => Promise.reject(msg)),
     add: async (domainID, folder) => {
       await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
     },

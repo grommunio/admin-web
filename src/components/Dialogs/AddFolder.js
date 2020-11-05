@@ -173,7 +173,7 @@ AddFolder.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-  Users: PropTypes.func.isRequired,
+  Users: PropTypes.array.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,

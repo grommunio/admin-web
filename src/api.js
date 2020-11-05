@@ -194,6 +194,12 @@ export function users(domainID) {
   };
 }
 
+export function user(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID);
+  };
+}
+
 export function addUser(domainID, user) {
   return async () => {
     return await post('/domains/' + domainID + '/users', user);
@@ -322,6 +328,12 @@ export function deleteGroup(id) {
 export function folders(domainID) {
   return async () => {
     return await get('/domains/' + domainID + '/folders');
+  };
+}
+
+export function folder(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/'+ folderID);
   };
 }
 
