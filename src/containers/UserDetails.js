@@ -13,14 +13,13 @@ import {
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Tabs, Tab,
 } from '@material-ui/core';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
-import { fetchGroupsData } from '../actions/groups';
 import { timezones } from '../res/timezones';
 import { fetchAreasData } from '../actions/areas';
 import { fetchRolesData } from '../actions/roles';
@@ -77,6 +76,7 @@ class UserDetails extends PureComponent {
         checkPw: '',
         snackbar: '',
         sizeUnit: 0,
+        tab: 0,
       };
       props.history.push('/' + props.domain.domainname + '/users');
     }
@@ -91,6 +91,7 @@ class UserDetails extends PureComponent {
       checkPw: '',
       snackbar: '',
       sizeUnit: 0,
+      tab: 0,
     };
   }
 
@@ -120,12 +121,10 @@ class UserDetails extends PureComponent {
 
   componentDidMount() {
     const { changes } = this.state;
-    const { fetchAreas, fetchRoles, fetchGroupsData } = this.props;
+    const { fetchAreas, fetchRoles } = this.props;
     fetchAreas()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    fetchGroupsData()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const maxSize = changes.maxSize;
     if(maxSize % 1048576 === 0) {
@@ -221,9 +220,11 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
+  handleTabChange = (e, tab) => this.setState({ tab });
+
   render() {
-    const { classes, t, groups, domain, Roles } = this.props;
-    const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar } = this.state;
+    const { classes, t, domain, Roles } = this.props;
+    const { changes, changingPw, newPw, checkPw, sizeUnit, snackbar, tab } = this.state;
 
     return (
       <div className={classes.root}>
@@ -239,129 +240,121 @@ class UserDetails extends PureComponent {
                 {t('editHeadline', { item: 'User' })}
               </Typography>
             </Grid>
+            <Tabs value={tab} onChange={this.handleTabChange}>
+              <Tab label="System info" />
+              <Tab label="User info" />
+              <Tab label="Permissions" />
+              <Tab label="Roles" />
+            </Tabs>
             <FormControl className={classes.form}>
-              <Grid container className={classes.input}>
-                <TextField 
-                  label={t("Username")}
-                  value={changes.username || ''}
-                  autoFocus
-                  onChange={this.handleInput('username')}
-                  style={{ flex: 1, marginRight: 8 }}
-                  InputProps={{
-                    endAdornment: <div>@{domain.domainname}</div>,
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  onClick={() => this.setState({ changingPw: true })}
-                  size="small"
-                >
-                  {t('Change password')}
-                </Button>
-              </Grid>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Password expiration time")}
-                fullWidth
-                value={changes.expire || 0}
-                onChange={this.handleInput('expire')}
-              >
-                {this.expires.map((expire, key) => (
-                  <MenuItem key={key} value={expire.ID}>
-                    {expire.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Status")}
-                fullWidth
-                value={changes.addressStatus || 0}
-                onChange={this.handleInput('addressStatus')}
-              >
-                {this.statuses.map((status, key) => (
-                  <MenuItem key={key} value={status.ID}>
-                    {status.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                className={classes.input}
-                label={t("Data area")}
-                fullWidth
-                value={changes.maildir || ''}
-                onChange={this.handleInput('areaID')}
-                disabled
-              />
-              <TextField
-                select
-                className={classes.input}
-                label={t("Group")}
-                fullWidth
-                value={changes.groupID || 0}
-                onChange={this.handleInput('groupID')}
-              >
-                <MenuItem value={0}>
-                  {t('Direct user')}
-                </MenuItem>
-                {groups.Groups.map((group, key) => (
-                  <MenuItem key={key} value={group.ID}>
-                    {group.groupname}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Type")}
-                fullWidth
-                value={changes.subType || 0}
-                onChange={this.handleInput('subType')}
-              >
-                {this.types.map((type, key) => (
-                  <MenuItem key={key} value={type.ID}>
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Language")}
-                fullWidth
-                value={changes.lang || 0}
-                onChange={this.handleInput('lang')}
-              >
-                <MenuItem value={0}>
-                  {t('english')}
-                </MenuItem>
-              </TextField>
-              <FormControl>
-                <FormLabel>{t("Timezone")}</FormLabel>
-                <Select
+              {tab === 0 && <React.Fragment>
+                <Grid container className={classes.input}>
+                  <TextField 
+                    label={t("Username")}
+                    value={changes.username || ''}
+                    autoFocus
+                    onChange={this.handleInput('username')}
+                    style={{ flex: 1, marginRight: 8 }}
+                    InputProps={{
+                      endAdornment: <div>@{domain.domainname}</div>,
+                    }}
+                  />
+                  <Button
+                    variant="contained"
+                    onClick={() => this.setState({ changingPw: true })}
+                    size="small"
+                  >
+                    {t('Change password')}
+                  </Button>
+                </Grid>
+                <TextField
+                  select
                   className={classes.input}
+                  label={t("Password expiration time")}
                   fullWidth
-                  native
-                  value={changes.timezone || 427} // Default: Berlin
-                  onChange={this.handleInput('timezone')}
+                  value={changes.expire || 0}
+                  onChange={this.handleInput('expire')}
                 >
-                  {timezones.map((zone, key) => (
-                    <option key={key} value={key}>
-                      {zone.name}
-                    </option>
+                  {this.expires.map((expire, key) => (
+                    <MenuItem key={key} value={expire.ID}>
+                      {expire.name}
+                    </MenuItem>
                   ))}
-                </Select>
-              </FormControl>
-              <TextField 
-                className={classes.input} 
-                label={t("Maximum space")} 
-                fullWidth 
-                value={changes.maxSize || ''}
-                onChange={this.handleNumberInput('maxSize')}
-                InputProps={{
-                  endAdornment:
+                </TextField>
+                <TextField
+                  select
+                  className={classes.input}
+                  label={t("Status")}
+                  fullWidth
+                  value={changes.addressStatus || 0}
+                  onChange={this.handleInput('addressStatus')}
+                >
+                  {this.statuses.map((status, key) => (
+                    <MenuItem key={key} value={status.ID}>
+                      {status.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  className={classes.input}
+                  label={t("Data area")}
+                  fullWidth
+                  value={changes.maildir || ''}
+                  onChange={this.handleInput('areaID')}
+                  disabled
+                />
+                <TextField
+                  select
+                  className={classes.input}
+                  label={t("Type")}
+                  fullWidth
+                  value={changes.subType || 0}
+                  onChange={this.handleInput('subType')}
+                >
+                  {this.types.map((type, key) => (
+                    <MenuItem key={key} value={type.ID}>
+                      {type.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </React.Fragment>}
+              {tab === 1 && <React.Fragment>
+                <TextField
+                  select
+                  className={classes.input}
+                  label={t("Language")}
+                  fullWidth
+                  value={changes.lang || 0}
+                  onChange={this.handleInput('lang')}
+                >
+                  <MenuItem value={0}>
+                    {t('english')}
+                  </MenuItem>
+                </TextField>
+                <FormControl>
+                  <FormLabel>{t("Timezone")}</FormLabel>
+                  <Select
+                    className={classes.input}
+                    fullWidth
+                    native
+                    value={changes.timezone || 427} // Default: Berlin
+                    onChange={this.handleInput('timezone')}
+                  >
+                    {timezones.map((zone, key) => (
+                      <option key={key} value={key}>
+                        {zone.name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField 
+                  className={classes.input} 
+                  label={t("Maximum space")} 
+                  fullWidth 
+                  value={changes.maxSize || ''}
+                  onChange={this.handleNumberInput('maxSize')}
+                  InputProps={{
+                    endAdornment:
                     <FormControl>
                       <Select
                         onChange={this.handleUnitChange}
@@ -373,121 +366,99 @@ class UserDetails extends PureComponent {
                         <MenuItem value={2}>TiB</MenuItem>
                       </Select>
                     </FormControl>,
-                }}
-              />
-              <TextField 
-                className={classes.input}
-                label={t("Job title")}
-                fullWidth
-                value={changes.title || ''}
-                onChange={this.handleInput('title')}
-              />
-              <TextField 
-                className={classes.input}
-                label={t("Display name")}
-                fullWidth
-                value={changes.realName || ''}
-                onChange={this.handleInput('realName')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Nickname")} 
-                fullWidth 
-                value={changes.nickname || ''}
-                onChange={this.handleInput('nickname')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Telephone")} 
-                fullWidth 
-                value={changes.tel || ''}
-                onChange={this.handleInput('tel')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Mobile phone")} 
-                fullWidth 
-                value={changes.mobilePhone || ''}
-                onChange={this.handleInput('mobilePhone')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Home address")} 
-                fullWidth 
-                value={changes.homeaddress || ''}
-                onChange={this.handleInput('homeaddress')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Memo")} 
-                fullWidth
-                value={changes.memo || ''}
-                onChange={this.handleInput('memo')}
-              />
-            </FormControl>
-            <Grid container className={classes.input}>
-              <FormControlLabel
-                label={t('Allow pop3 or imap downloading')}
-                control={
-                  <Checkbox
-                    checked={changes.pop3_imap || false}
-                    onChange={this.handleCheckbox('pop3_imap')}
+                  }}
+                />
+                <TextField 
+                  className={classes.input}
+                  label={t("Job title")}
+                  fullWidth
+                  value={changes.title || ''}
+                  onChange={this.handleInput('title')}
+                />
+                <TextField 
+                  className={classes.input}
+                  label={t("Display name")}
+                  fullWidth
+                  value={changes.realName || ''}
+                  onChange={this.handleInput('realName')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Nickname")} 
+                  fullWidth 
+                  value={changes.nickname || ''}
+                  onChange={this.handleInput('nickname')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Telephone")} 
+                  fullWidth 
+                  value={changes.tel || ''}
+                  onChange={this.handleInput('tel')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Mobile phone")} 
+                  fullWidth 
+                  value={changes.mobilePhone || ''}
+                  onChange={this.handleInput('mobilePhone')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Home address")} 
+                  fullWidth 
+                  value={changes.homeaddress || ''}
+                  onChange={this.handleInput('homeaddress')}
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Memo")} 
+                  fullWidth
+                  value={changes.memo || ''}
+                  onChange={this.handleInput('memo')}
+                />
+              </React.Fragment>}
+              {tab === 2 && <React.Fragment>
+                <Grid container className={classes.input}>
+                  <FormControlLabel
+                    label={t('Allow pop3 or imap downloading')}
+                    control={
+                      <Checkbox
+                        checked={changes.pop3_imap || false}
+                        onChange={this.handleCheckbox('pop3_imap')}
+                      />
+                    }
                   />
-                }
-              />
-              <FormControlLabel
-                label={t('Allow smtp sending')}
-                control={
-                  <Checkbox
-                    checked={changes.smtp || false}
-                    onChange={this.handleCheckbox('smtp')}
+                  <FormControlLabel
+                    label={t('Allow smtp sending')}
+                    control={
+                      <Checkbox
+                        checked={changes.smtp || false}
+                        onChange={this.handleCheckbox('smtp')}
+                      />
+                    }
                   />
-                }
-              />
-              <FormControlLabel
-                label={t('Allow change password')}
-                control={
-                  <Checkbox
-                    checked={changes.changePassword || false}
-                    onChange={this.handleCheckbox('changePassword')}
+                  <FormControlLabel
+                    label={t('Allow change password')}
+                    control={
+                      <Checkbox
+                        checked={changes.changePassword || false}
+                        onChange={this.handleCheckbox('changePassword')}
+                      />
+                    }
                   />
-                }
-              />
-              <FormControlLabel
-                label={t('Public user information')}
-                control={
-                  <Checkbox
-                    checked={changes.publicAddress || false}
-                    onChange={this.handleCheckbox('publicAddress')}
+                  <FormControlLabel
+                    label={t('Public user information')}
+                    control={
+                      <Checkbox
+                        checked={changes.publicAddress || false}
+                        onChange={this.handleCheckbox('publicAddress')}
+                      />
+                    }
                   />
-                }
-              />
-            </Grid>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={this.props.history.goBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-            >
-              {('Save')}
-            </Button>
-          </Paper>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('Roles')}
-              </Typography>
-              <FormControl className={classes.form}>
+                </Grid>
+              </React.Fragment>}
+              {tab === 3 && <React.Fragment>
                 <FormControl className={classes.input}>
                   <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
                   <Select
@@ -510,15 +481,30 @@ class UserDetails extends PureComponent {
                     ))}
                   </Select>
                 </FormControl>
-              </FormControl>
-            </Grid>
+              </React.Fragment>}
+            </FormControl>
             <Button
+              variant="text"
+              color="secondary"
+              onClick={this.props.history.goBack}
+              style={{ marginRight: 8 }}
+            >
+              {t('Back')}
+            </Button>
+            {[0, 1, 2].includes(tab) ? <Button
               variant="contained"
               color="primary"
-              onClick={this.handleSaveRoles}
+              onClick={this.handleEdit}
             >
               {('Save')}
-            </Button>
+            </Button> :
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleSaveRoles}
+              >
+                {('Save')}
+              </Button>}
           </Paper>
           <Snackbar
             open={!!snackbar}
@@ -581,13 +567,11 @@ UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  groups: PropTypes.object.isRequired,
   Roles: PropTypes.array.isRequired,
   userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
-  fetchGroupsData: PropTypes.func.isRequired,
   fetchAreas: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
@@ -595,7 +579,6 @@ UserDetails.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    groups: state.groups,
     userAreas: state.areas.Areas.user || [],
     Roles: state.roles.Roles || [],
   };
@@ -614,9 +597,6 @@ const mapDispatchToProps = dispatch => {
     },
     editUserRoles: async (domainID, userID, roles) => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
-    },
-    fetchGroupsData: async () => {
-      await dispatch(fetchGroupsData()).catch(msg => Promise.reject(msg));
     },
   };
 };
