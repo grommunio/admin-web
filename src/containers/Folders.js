@@ -82,7 +82,7 @@ class Folders extends Component {
 
   handleRowClicked = folder => () => {
     const { history, domain } = this.props;
-    history.push('/' + domain.domainname + '/folders/' + folder.folderid, { ...folder });
+    history.push('/' + domain.ID + '/folders/' + folder.folderid, { ...folder });
   }
 
   render() {

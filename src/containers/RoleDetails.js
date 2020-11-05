@@ -23,7 +23,8 @@ import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import Add from '@material-ui/icons/AddCircle';
 import Delete from '@material-ui/icons/Close';
-import { fetchPermissionsData, editRoleData } from '../actions/roles';
+import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
+import { getStringAfterLastSlash } from '../utils';
 
 const styles = theme => ({
   root: {
@@ -70,31 +71,26 @@ const styles = theme => ({
 
 class RoleDetails extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    const role = this.props.location.state;
-    if(!role) {
-      this.props.history.push('/roles');
-      this.state = {
-        changes: {},
-      };
-    }
-    else this.state = {
-      changes: role,
-      snackbar: null,
-    };
-  }
+  state = {
+    role: {
+      users: [],
+      permissions: [],
+    },
+    snackbar: '',
+  };
 
 
-  componentDidMount() {
+  async componentDidMount() {
+    const role = await this.props.fetch(getStringAfterLastSlash());
+    this.setState({ role });
     this.props.fetchUser().catch(err => this.setState({ snackbar: err }));
     this.props.fetchPermissions().catch(err => this.setState({ snackbar: err }));
   }
 
   handleInput = field => event => {
     this.setState({
-      changes: {
-        ...this.state.changes,
+      role: {
+        ...this.state.role,
         [field]: event.target.value,
       },
       unsaved: true,
@@ -102,58 +98,58 @@ class RoleDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { changes } = this.state;
+    const { role } = this.state;
     this.props.edit({
-      ...changes,
-      users: changes.users.map(user => user.ID),
+      ...role,
+      users: role.users.map(user => user.ID),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   handleSelectPermission = idx => event => {
-    const copy = [...this.state.changes.permissions];
+    const copy = [...this.state.role.permissions];
     const input = event.target.value;
     copy[idx].permission = input;
     if(input === 'SystemAdmin') {
       copy[idx].params = '';
     }
     this.setState({
-      changes: {
-        ...this.state.changes,
+      role: {
+        ...this.state.role,
         permissions: copy,
       },
     });
   }
 
   handleSetParams = idx => event => {
-    const copy = [...this.state.changes.permissions];
+    const copy = [...this.state.role.permissions];
     copy[idx].params = event.target.value;
     this.setState({
-      changes: {
-        ...this.state.changes,
+      role: {
+        ...this.state.role,
         permissions: copy,
       },
     });
   }
 
   handleNewRow = () => {
-    const copy = [...this.state.changes.permissions];
+    const copy = [...this.state.role.permissions];
     copy.push({ permission: '', params: '' });
     this.setState({
-      changes: {
-        ...this.state.changes,
+      role: {
+        ...this.state.role,
         permissions: copy,
       },
     });
   }
 
   removeRow = idx => () => {
-    const copy = [...this.state.changes.permissions];
+    const copy = [...this.state.role.permissions];
     copy.splice(idx, 1);
     this.setState({
-      changes: {
-        ...this.state.changes,
+      role: {
+        ...this.state.role,
         permissions: copy,
       },
     });
@@ -161,12 +157,12 @@ class RoleDetails extends PureComponent {
 
   render() {
     const { classes, t, Users, Permissions } = this.props;
-    const { snackbar, changes } = this.state;
-    const { name, description, users, permissions } = changes;
+    const { snackbar, role } = this.state;
+    const { name, description, users, permissions } = role;
 
     return (
       <div className={classes.root}>
-        <TopBar title={t("Domain list")}/>
+        <TopBar title={t("Role")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
@@ -297,6 +293,7 @@ RoleDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
   fetchUser: PropTypes.func.isRequired,
   fetchPermissions: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
@@ -321,6 +318,9 @@ const mapDispatchToProps = dispatch => {
     fetchPermissions: async () => {
       await dispatch(fetchPermissionsData()).catch(message => Promise.reject(message));
     },
+    fetch: async id => await dispatch(fetchRoleData(id))
+      .then(role => role)
+      .catch(message => Promise.reject(message)),
   };
 };
 

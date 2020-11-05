@@ -23,6 +23,20 @@ export function fetchFolderData(domainID) {
   };
 }
 
+export function fetchFolderDetails(domainID, folderID) {
+  return async dispatch => {
+    try {
+      const foldersData = await dispatch(folders(domainID));
+      const folder = foldersData.data.find(f => f.folderid == folderID);
+      return folder ? Promise.resolve(folder) : Promise.reject('Folder not found');
+    } catch(error) {
+      await dispatch({ type: FOLDERS_DATA_ERROR, error});
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
 export function addFolderData(domainID, folder) {
   return async dispatch => {
     const owners = folder.owners;

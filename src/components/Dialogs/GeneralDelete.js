@@ -33,8 +33,8 @@ class GeneralDelete extends PureComponent {
         if(onSuccess) onSuccess();
         this.setState({ loading: false });
       })
-      .catch(() => {
-        if(onError) onError();
+      .catch(err => {
+        if(onError) onError(err);
         this.setState({ loading: false });
       });
   }

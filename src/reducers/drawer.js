@@ -5,6 +5,7 @@ import {
   DRAWER_CLOSE,
   DRAWER_SELECTION,
   DRAWER_DOMAINS_REVEICED,
+  DRAWER_DOMAINS_FETCH,
 } from '../actions/types';
 
 const defaultState = {
@@ -12,6 +13,7 @@ const defaultState = {
   expanded: false,
   selected: '',
   Domains: [],
+  loading: true,
 };
 
 function drawerReducer(state = defaultState, action) {
@@ -47,10 +49,17 @@ function drawerReducer(state = defaultState, action) {
       };
     }
 
+    case DRAWER_DOMAINS_FETCH:
+      return {
+        ...state,
+        loading: true,
+      };
+
     case DRAWER_DOMAINS_REVEICED:
       return {
         ...state,
         Domains: action.data.data,
+        loading: false,
       };
 
     default:

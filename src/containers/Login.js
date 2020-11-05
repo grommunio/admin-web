@@ -19,7 +19,6 @@ import {
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
 import logo from '../res/grammm_logo.svg';
-import { fetchDrawerDomains } from '../actions/drawer';
 
 const styles = theme => ({
   /* || General */
@@ -95,9 +94,8 @@ class Login extends Component {
   componentDidMount() {
     let grammmAuthJwt = window.localStorage.getItem("grammmAuthJwt");
     if(grammmAuthJwt) {
-      const { authLoginWithToken, fetchDomainData } = this.props;
+      const { authLoginWithToken } = this.props;
       authLoginWithToken(grammmAuthJwt).catch(err => console.error(err));
-      fetchDomainData().catch(err => console.error(err));
     }
   }
 
@@ -108,15 +106,10 @@ class Login extends Component {
   }
 
   handleLogin = event => {
-    const { authLogin, fetchDomainData } = this.props;
+    const { authLogin } = this.props;
     const { user, pass } = this.state;
     event.preventDefault();
     authLogin(user, pass)
-      .then(() => {
-        fetchDomainData().catch(err => {
-          console.error(err);
-        });
-      })
       .catch(err => {
         console.error(err);
       });
@@ -183,7 +176,6 @@ Login.propTypes = {
   auth: PropTypes.object.isRequired,
   authLogin: PropTypes.func.isRequired,
   authLoginWithToken: PropTypes.func.isRequired,
-  fetchDomainData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -200,9 +192,6 @@ const mapDispatchToProps = dispatch => {
     },
     authLoginWithToken: async grammmAuthJwt => {
       await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));
-    },
-    fetchDomainData: async () => {
-      await dispatch(fetchDrawerDomains()).catch(msg => Promise.reject(msg));
     },
   };
 };

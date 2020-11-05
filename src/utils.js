@@ -31,3 +31,7 @@ export function addItem(arr, item) {
   copy.push(item);
   return copy;
 }
+
+export function getStringAfterLastSlash() {
+  return /[^/]*$/.exec(window.location.href)[0];
+}

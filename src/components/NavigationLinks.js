@@ -157,7 +157,7 @@ class NavigationLinks extends PureComponent {
   constructor(props) {
     super(props);
     // Map domains array to bool obj with domains as keys
-    const domains = this.props.domains.map(obj => obj.name)
+    const domains = this.props.domains.map(obj => obj.ID)
       .reduce((a, b) => (a[b] = false, a), {});//eslint-disable-line
     this.state = {
       tab: 0,
@@ -247,28 +247,28 @@ class NavigationLinks extends PureComponent {
             </Grid>}
         <List className={classes.list}>
           {(tab === 1 || role === DOM_ADMIN) &&
-            domains.map(({ domainname: name }) => {
+            domains.map(({ domainname: name, ID }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
                   <ListItem
-                    onClick={this.handleDrawer(name)}
+                    onClick={this.handleDrawer(ID)}
                     button
                     className={classes.li}
-                    selected={stateDomains[name] && location.pathname === '/' + name}
+                    selected={stateDomains[ID] && location.pathname === '/' + ID}
                   >
                     <Grid container alignItems="center">
                       <Http className={classes.icon} />
                       <ListItemText primary={name} />
                     </Grid>
                   </ListItem>
-                  <Collapse in={stateDomains[name]} unmountOnExit>
+                  <Collapse in={stateDomains[ID]} unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(name + '/configuration')}
-                        selected={stateDomains[name] &&
-                          location.pathname.startsWith('/' + name + '/configuration')}
+                        onClick={this.handleNavigation(ID + '/configuration')}
+                        selected={stateDomains[ID] &&
+                          location.pathname.startsWith('/' + ID + '/configuration')}
                       >
                         <Grid container alignItems="center">
                           <Settings className={classes.nestedIcon}/>
@@ -278,9 +278,9 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(name + '/users')}
-                        selected={stateDomains[name] &&
-                          location.pathname.startsWith('/' + name + '/users')}
+                        onClick={this.handleNavigation(ID + '/users')}
+                        selected={stateDomains[ID] &&
+                          location.pathname.startsWith('/' + ID + '/users')}
                       >
                         <Grid container alignItems="center">
                           <People className={classes.nestedIcon}/>
@@ -290,9 +290,9 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(name + '/userAliases')}
-                        selected={stateDomains[name] &&
-                          location.pathname.startsWith('/' + name + '/userAliases')}
+                        onClick={this.handleNavigation(ID + '/userAliases')}
+                        selected={stateDomains[ID] &&
+                          location.pathname.startsWith('/' + ID + '/userAliases')}
                       >
                         <Grid container alignItems="center">
                           <Aliases className={classes.nestedIcon}/>
@@ -302,9 +302,9 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(name + '/folders')}
-                        selected={stateDomains[name] &&
-                          location.pathname.startsWith('/' + name + '/folders')}
+                        onClick={this.handleNavigation(ID + '/folders')}
+                        selected={stateDomains[ID] &&
+                          location.pathname.startsWith('/' + ID + '/folders')}
                       >
                         <Grid container alignItems="center">
                           <Folder className={classes.nestedIcon}/>
@@ -314,9 +314,9 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(name + '/mailAddresses')}
-                        selected={stateDomains[name] &&
-                          location.pathname.startsWith('/' + name + '/mailAddresses')}
+                        onClick={this.handleNavigation(ID + '/mailAddresses')}
+                        selected={stateDomains[ID] &&
+                          location.pathname.startsWith('/' + ID + '/mailAddresses')}
                       >
                         <Grid container alignItems="center">
                           <Mail className={classes.nestedIcon}/>

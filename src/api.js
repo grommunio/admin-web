@@ -148,6 +148,12 @@ export function domains() {
   };
 }
 
+export function domain(id) {
+  return async () => {
+    return await get('/system/domains/' + id);
+  };
+}
+
 export function addDomain(domain) {
   return async () => {
     return await post('/system/domains', domain);
@@ -185,6 +191,12 @@ export function allUsers() {
 export function users(domainID) {
   return async () => {
     return await get('/domains/' + domainID + '/users?addressType=0&level=2');
+  };
+}
+
+export function user(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID);
   };
 }
 
@@ -244,6 +256,12 @@ export function editUserRole(domainID, userID, roles) {
 export function roles() {
   return async () => {
     return await get('/system/roles?level=2');
+  };
+}
+
+export function role(id) {
+  return async () => {
+    return await get('/system/roles/' + id);
   };
 }
 
@@ -310,6 +328,12 @@ export function deleteGroup(id) {
 export function folders(domainID) {
   return async () => {
     return await get('/domains/' + domainID + '/folders');
+  };
+}
+
+export function folder(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/'+ folderID);
   };
 }
 

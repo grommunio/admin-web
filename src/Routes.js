@@ -1,14 +1,15 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import { Switch } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
-import DefaultRedirect from "./components/DefaultRedirect";
+import NotFound from "./containers/NotFound";
 import Loadable from 'react-loadable';
 import Loader from './components/LoadingMainView';
+import DefaultRedirect from "./components/DefaultRedirect";
 
 function makeLoadableComponent(loader) {
   return Loadable({
@@ -204,7 +205,7 @@ const Routes = ({ childProps, domains }) => (
     />
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}`}
+        path={`/${domain.ID}`}
         exact
         component={AsyncDomainMenu}
         domain={domain}
@@ -214,7 +215,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/mailAddresses`}
+        path={`/${domain.ID}/mailAddresses`}
         exact
         component={AsyncMailAddresses}
         props={childProps}
@@ -224,7 +225,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/mailAddresses/:mailID`}
+        path={`/${domain.ID}/mailAddresses/:mailID`}
         exact
         component={AsyncMailAddressDetails}
         props={childProps}
@@ -234,7 +235,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/users`}
+        path={`/${domain.ID}/users`}
         exact
         component={AsyncUsers}
         props={childProps}
@@ -244,7 +245,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/users/:userID*`}
+        path={`/${domain.ID}/users/:userID*`}
         exact
         component={AsyncUserDetails}
         props={childProps}
@@ -254,7 +255,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/userAliases`}
+        path={`/${domain.ID}/userAliases`}
         exact
         component={AsyncUserAliases}
         props={childProps}
@@ -264,7 +265,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/folders`}
+        path={`/${domain.ID}/folders`}
         exact
         component={AsyncFolders}
         props={childProps}
@@ -274,7 +275,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/folders/:folderID`}
+        path={`/${domain.ID}/folders/:folderID`}
         exact
         component={AsyncFolderDetails}
         props={childProps}
@@ -284,7 +285,7 @@ const Routes = ({ childProps, domains }) => (
     )}
     {domains.map(domain =>
       <AuthenticatedDomainRoute
-        path={`/${domain.domainname}/configuration`}
+        path={`/${domain.ID}/configuration`}
         exact
         component={AsyncConfig}
         props={childProps}
@@ -292,7 +293,12 @@ const Routes = ({ childProps, domains }) => (
         domain={domain}
       />
     )}
-    <DefaultRedirect />
+    {!childProps.loading ?
+      <Route
+        route="*"
+        render={(props) => <NotFound {...props} />} />
+      : <DefaultRedirect />
+    }
   </Switch>
 );
 

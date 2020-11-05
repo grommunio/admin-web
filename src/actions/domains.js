@@ -5,7 +5,7 @@ import {
   DOMAIN_DATA_ADD,
   DOMAIN_DATA_EDIT,
 } from '../actions/types';
-import { domains, addDomain, editDomain, deleteDomain } from '../api';
+import { domains, addDomain, editDomain, deleteDomain, domain } from '../api';
 
 export function fetchDomainData() {
   return async dispatch => {
@@ -13,6 +13,19 @@ export function fetchDomainData() {
     try {
       const domainData = await dispatch(domains());
       await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
+    } catch(error) {
+      await dispatch({ type: DOMAIN_DATA_ERROR, error});
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function fetchDomainDetails(id) {
+  return async dispatch => {
+    try {
+      const domainData = await dispatch(domain(id));
+      return Promise.resolve(domainData);
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
