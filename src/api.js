@@ -225,24 +225,6 @@ export async function changeUserPassword(domainID, id, newPw) {
   } catch(err) { return Promise.reject(err); }
 }
 
-export function userAliases(domainID) {
-  return async () => {
-    return await get('/domains/' + domainID + '/users/aliases');
-  };
-}
-
-export function addUserAlias(domainID, aliasID, aliasname) {
-  return async () => {
-    return await post('/domains/' + domainID + '/users/' + aliasID + '/aliases', { aliasname });
-  };
-}
-
-export function deleteUserAlias(domainID, aliasID) {
-  return async () => {
-    return await yeet('/domains/' + domainID + '/users/aliases/' + aliasID);
-  };
-}
-
 export function editUserRole(domainID, userID, roles) {
   return async () => {
     return await patch('/domains/' + domainID + '/users/' + userID + '/roles', roles);
@@ -402,34 +384,6 @@ export function editOrg(org) {
 export function deleteOrg(id) {
   return async () => {
     return await yeet('/orgs/' + id);
-  };
-}
-
-/*
-  ALIASES
-*/
-
-export function aliases() {
-  return async () => {
-    return await get('/system/domains/aliases');
-  };
-}
-
-export function addAlias(domainID, aliasname) {
-  return async () => {
-    return await post('/system/domains/' + domainID + '/aliases', { aliasname });
-  };
-}
-
-export function editAlias(alias) {
-  return async () => {
-    return await patch('/system/domains/aliases/' + alias.ID, alias);
-  };
-}
-
-export function deleteAlias(id) {
-  return async () => {
-    return await yeet('/system/domains/aliases/' + id);
   };
 }
 

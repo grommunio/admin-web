@@ -29,8 +29,6 @@ const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
 const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
 const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
-const AsyncAliases = makeLoadableComponent(() => import("./containers/Aliases"));
-const AsyncAliasDetails = makeLoadableComponent(() => import("./containers/AliasDetails"));
 const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
 const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
 const AsyncMlists = makeLoadableComponent(() => import("./containers/Mlists"));
@@ -44,7 +42,6 @@ const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
 const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
-const AsyncUserAliases = makeLoadableComponent(() => import("./containers/UserAliases"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
 const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
@@ -123,18 +120,6 @@ const Routes = ({ childProps, domains }) => (
       path="/orgs/:orgID"
       exact
       component={AsyncOrgDetails}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path="/aliases"
-      exact
-      component={AsyncAliases}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path="/aliases/:aliasID"
-      exact
-      component={AsyncAliasDetails}
       props={childProps}
     />
     <AuthenticatedRoute
@@ -248,16 +233,6 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/users/:userID*`}
         exact
         component={AsyncUserDetails}
-        props={childProps}
-        domain={domain}
-        key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
-        path={`/${domain.ID}/userAliases`}
-        exact
-        component={AsyncUserAliases}
         props={childProps}
         domain={domain}
         key={domain.ID}

@@ -59,7 +59,6 @@ class DomainList extends Component {
 
   state = {
     snackbar: null,
-    showAliases: false,
     showDeleted: false,
     adding: false,
     deleting: false,
@@ -109,7 +108,7 @@ class DomainList extends Component {
 
   render() {
     const { classes, t, domains } = this.props;
-    const { showAliases, showDeleted, snackbar, adding, deleting } = this.state;
+    const { showDeleted, snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -142,15 +141,6 @@ class DomainList extends Component {
                   <TableCell>{t('Maximum users')}</TableCell>
                   <TableCell style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <FormControlLabel
-                      label={t('Show aliases')}
-                      control={
-                        <Checkbox
-                          checked={showAliases || false}
-                          onChange={this.handleCheckbox('showAliases')}
-                        />
-                      }
-                    />
-                    <FormControlLabel
                       label={t('Show deleted')}
                       control={
                         <Checkbox
@@ -164,7 +154,7 @@ class DomainList extends Component {
               </TableHead>
               <TableBody>
                 {domains.Domains.map((obj, idx) => {
-                  return (obj.domainType === 1 && !showAliases) || (obj.domainStatus === 3 && !showDeleted) ?
+                  return (obj.domainType === 1) || (obj.domainStatus === 3 && !showDeleted) ?
                     null : <TableRow key={idx} hover>
                       <TableCell>{obj.domainname}</TableCell>
                       <TableCell>{obj.address}</TableCell>

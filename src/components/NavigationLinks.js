@@ -17,7 +17,6 @@ import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
 import Web from '@material-ui/icons/Web';
 import Orgs from '@material-ui/icons/GroupWork';
-import Aliases from '@material-ui/icons/AssignmentInd';
 import Folder from '@material-ui/icons/Folder';
 import Mail from '@material-ui/icons/Mail';
 /*
@@ -25,7 +24,6 @@ import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
 import MLists from '@material-ui/icons/Email';
 import Classes from '@material-ui/icons/Class';
-import Members from '@material-ui/icons/Contacts';
 import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -292,18 +290,6 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(ID + '/userAliases')}
-                        selected={stateDomains[ID] &&
-                          location.pathname.startsWith('/' + ID + '/userAliases')}
-                      >
-                        <Grid container alignItems="center">
-                          <Aliases className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Aliases')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
                         onClick={this.handleNavigation(ID + '/folders')}
                         selected={stateDomains[ID] &&
                           location.pathname.startsWith('/' + ID + '/folders')}
@@ -374,17 +360,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Organizations')}/>
               </Grid>
             </ListItem>
-            {/*<ListItem
-              className={classes.li}
-              button
-              onClick={this.handleNavigation('aliases')}
-              selected={location.pathname.startsWith('/aliases')}
-            >
-              <Grid container alignItems="center">
-                <Aliases className={classes.icon}/>
-                <ListItemText primary={t('Aliases')}/>
-              </Grid>
-            </ListItem>
+            {/*
             <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}
