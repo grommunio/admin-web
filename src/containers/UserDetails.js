@@ -13,7 +13,8 @@ import {
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar, InputLabel, Input, Tabs, Tab,
+  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
+  InputLabel, Input, Tabs, Tab, List, ListItem, IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
@@ -23,6 +24,7 @@ import { timezones } from '../res/timezones';
 import { fetchAreasData } from '../actions/areas';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
+import Close from '@material-ui/icons/Close';
 
 const styles = theme => ({
   root: {
@@ -104,36 +106,13 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const maxSize = user.maxSize;
-    if(maxSize % 1048576 === 0) {
-      this.setState({
-        user: {
-          ...user,
-          username: user.username.slice(0, user.username.indexOf('@')),
-          roles: (user.roles && user.roles.map(role => role.ID)) || [],
-          maxSize: maxSize / 1048576,
-        },
-        sizeUnit: 2,
-      });
-    } else if (maxSize % 1024 === 0) {
-      this.setState({
-        user: {
-          ...user,
-          username: user.username.slice(0, user.username.indexOf('@')),
-          roles: (user.roles && user.roles.map(role => role.ID)) || [],
-          maxSize: maxSize / 1024,
-        },
-        sizeUnit: 1,
-      });
-    } else {
-      this.setState({
-        user: {
-          ...user,
-          username: user.username.slice(0, user.username.indexOf('@')),
-          roles: (user.roles && user.roles.map(role => role.ID)) || [],
-        },
-      });
-    }
+    this.setState({
+      user: {
+        ...user,
+        username: user.username.slice(0, user.username.indexOf('@')),
+        roles: (user.roles && user.roles.map(role => role.ID)) || [],
+      },
+    });
   }
 
   handleInput = field => event => {
@@ -166,11 +145,11 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { user, sizeUnit } = this.state;
+    const { user } = this.state;
     this.props.edit(this.props.domain.ID, {
       ...user,
+      aliases: user.aliases.filter(alias => alias !== ''),
       password: undefined,
-      maxSize: user.maxSize << (10 * sizeUnit),
       roles: undefined,
       addressStatus: undefined,
       addressType: undefined,
@@ -192,8 +171,6 @@ class UserDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
-
   handleMultiSelect = event => {
     this.setState({
       user: {
@@ -213,9 +190,30 @@ class UserDetails extends PureComponent {
 
   handleTabChange = (e, tab) => this.setState({ tab });
 
+  handleAliasEdit = idx => event => {
+    const { user } = this.state;
+    const copy = [...user.aliases];
+    copy[idx] = event.target.value;
+    this.setState({ user: { ...user, aliases: copy } });
+  }
+
+  handleAddAlias = () => {
+    const { user } = this.state;
+    const copy = [...user.aliases];
+    copy.push('');
+    this.setState({ user: { ...user, aliases: copy } });
+  }
+
+  handleRemoveAlias = idx => () => {
+    const { user } = this.state;
+    const copy = [...user.aliases];
+    copy.splice(idx, 1);
+    this.setState({ user: { ...user, aliases: copy } });
+  }
+
   render() {
     const { classes, t, domain, Roles } = this.props;
-    const { user, changingPw, newPw, checkPw, sizeUnit, snackbar, tab } = this.state;
+    const { user, changingPw, newPw, checkPw, snackbar, tab } = this.state;
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -235,6 +233,7 @@ class UserDetails extends PureComponent {
               <Tab label="User info" />
               <Tab label="Permissions" />
               <Tab label="Roles" />
+              <Tab label="Aliases" />
             </Tabs>
             <FormControl className={classes.form}>
               {tab === 0 && <React.Fragment>
@@ -292,27 +291,6 @@ class UserDetails extends PureComponent {
                   value={user.maildir || ''}
                   onChange={this.handleInput('areaID')}
                   disabled
-                />
-                <TextField 
-                  className={classes.input} 
-                  label={t("Maximum space")} 
-                  fullWidth 
-                  value={user.maxSize || ''}
-                  onChange={this.handleNumberInput('maxSize')}
-                  InputProps={{
-                    endAdornment:
-                    <FormControl>
-                      <Select
-                        onChange={this.handleUnitChange}
-                        value={sizeUnit}
-                        className={classes.select}
-                      >
-                        <MenuItem value={0}>MiB</MenuItem>
-                        <MenuItem value={1}>GiB</MenuItem>
-                        <MenuItem value={2}>TiB</MenuItem>
-                      </Select>
-                    </FormControl>,
-                  }}
                 />
                 <TextField
                   select
@@ -472,6 +450,26 @@ class UserDetails extends PureComponent {
                   </Select>
                 </FormControl>
               </React.Fragment>}
+              {tab === 4 && <React.Fragment>
+                <List className={classes.list}>
+                  {user.aliases.map((alias, idx) => <ListItem key={idx}>
+                    <TextField
+                      style={{ flex: 1 }}
+                      value={alias}
+                      label={'Alias ' + (idx + 1)}
+                      onChange={this.handleAliasEdit(idx)}
+                    />
+                    <IconButton onClick={this.handleRemoveAlias(idx)}>
+                      <Close color="error" />
+                    </IconButton>
+                  </ListItem>
+                  )}
+                </List>
+                <Grid container justify="center">
+                  <Button onClick={this.handleAddAlias}>{t('Add Alias')}</Button>
+                </Grid>
+              </React.Fragment>
+              }
             </FormControl>
             <Button
               variant="text"
@@ -481,7 +479,7 @@ class UserDetails extends PureComponent {
             >
               {t('Back')}
             </Button>
-            {[0, 1, 2].includes(tab) ? <Button
+            {[0, 1, 2, 4].includes(tab) ? <Button
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
@@ -521,7 +519,7 @@ class UserDetails extends PureComponent {
               fullWidth
               type="password"
               value={newPw}
-              onChange={event => this.setState({ newPw: event.target.value })}
+              onChange={({ target }) => this.setState({ newPw: target.value })}
               autoFocus
               onKeyPress={this.handleKeyPress}
             />
@@ -531,7 +529,7 @@ class UserDetails extends PureComponent {
               fullWidth
               type="password"
               value={checkPw}
-              onChange={event => this.setState({ checkPw: event.target.value })}
+              onChange={({ target }) => this.setState({ checkPw: target.value })}
               onKeyPress={this.handleKeyPress}
             />
           </DialogContent>
