@@ -8,19 +8,16 @@ import {
   Grid,
   TextField,
   FormControl,
-  Checkbox,
-  FormControlLabel,
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, FormLabel, Snackbar,
+  DialogContent, Dialog, DialogActions, Select, Snackbar,
   InputLabel, Input, Tabs, Tab, List, ListItem, IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
-import { timezones } from '../res/timezones';
 import { fetchAreasData } from '../actions/areas';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
@@ -65,7 +62,10 @@ const styles = theme => ({
 class UserDetails extends PureComponent {
 
   state = {
-    user: {},
+    user: {
+      roles: [],
+      properties: {},
+    },
     changingPw: false,
     newPw: '',
     checkPw: '',
@@ -75,9 +75,10 @@ class UserDetails extends PureComponent {
   };
 
   types = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Room', ID: 1 },
-    { name: 'Equipment', ID: 2 },
+    { name: 'User', ID: 0 },
+    { name: 'MList', ID: 1 },
+    { name: 'Room', ID: 7 },
+    { name: 'Equipment', ID: 8 },
   ]
 
   statuses = [
@@ -111,8 +112,21 @@ class UserDetails extends PureComponent {
         ...user,
         username: user.username.slice(0, user.username.indexOf('@')),
         roles: (user.roles && user.roles.map(role => role.ID)) || [],
+        properties: this.toObject(user.properties),
       },
     });
+  }
+
+  toObject(arr) {
+    const obj = {};
+    arr.forEach(item => obj[item.name] = item.val);
+    return obj;
+  }
+
+  toArray(obj) {
+    const arr = [];
+    Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
+    return arr;
   }
 
   handleInput = field => event => {
@@ -125,13 +139,19 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    user: {
-      ...this.state.user,
-      [field]: event.target.checked,
-    },
-    unsaved: true,
-  });
+  handlePropertyChange = field => event => {
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: event.target.value,
+        },
+      },
+      unsaved: true,
+    });
+  }
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -149,10 +169,7 @@ class UserDetails extends PureComponent {
     this.props.edit(this.props.domain.ID, {
       ...user,
       aliases: user.aliases.filter(alias => alias !== ''),
-      password: undefined,
-      roles: undefined,
-      addressStatus: undefined,
-      addressType: undefined,
+      properties: this.toArray(user.properties),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -214,6 +231,9 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, domain, Roles } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab } = this.state;
+    const { language, title, displayname, nickname, primarytelephonenumber,
+      mobiletelephonenumber, postaladdress, comment, creationtime, displaytypeex } = user.properties;
+
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -231,7 +251,6 @@ class UserDetails extends PureComponent {
             <Tabs value={tab} onChange={this.handleTabChange}>
               <Tab label="System info" />
               <Tab label="User info" />
-              <Tab label="Permissions" />
               <Tab label="Roles" />
               <Tab label="Aliases" />
             </Tabs>
@@ -293,12 +312,21 @@ class UserDetails extends PureComponent {
                   disabled
                 />
                 <TextField
+                  className={classes.input}
+                  label={t("Creation time")}
+                  fullWidth
+                  value={creationtime || ''}
+                  onChange={this.handlePropertyChange('creationtime')}
+                  disabled
+                />
+                <TextField
                   select
                   className={classes.input}
                   label={t("Type")}
                   fullWidth
-                  value={user.subType || 0}
-                  onChange={this.handleInput('subType')}
+                  disabled={displaytypeex === 1}
+                  value={displaytypeex || 0}
+                  onChange={this.handlePropertyChange('displaytypeex')}
                 >
                   {this.types.map((type, key) => (
                     <MenuItem key={key} value={type.ID}>
@@ -313,120 +341,64 @@ class UserDetails extends PureComponent {
                   className={classes.input}
                   label={t("Language")}
                   fullWidth
-                  value={user.lang || 0}
-                  onChange={this.handleInput('lang')}
+                  value={language || 0}
+                  onChange={this.handlePropertyChange('language')}
                 >
                   <MenuItem value={0}>
                     {t('english')}
                   </MenuItem>
                 </TextField>
-                <FormControl>
-                  <FormLabel>{t("Timezone")}</FormLabel>
-                  <Select
-                    className={classes.input}
-                    fullWidth
-                    native
-                    value={user.timezone || 427} // Default: Berlin
-                    onChange={this.handleInput('timezone')}
-                  >
-                    {timezones.map((zone, key) => (
-                      <option key={key} value={key}>
-                        {zone.name}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
                 <TextField 
                   className={classes.input}
                   label={t("Job title")}
                   fullWidth
-                  value={user.title || ''}
-                  onChange={this.handleInput('title')}
+                  value={title || ''}
+                  onChange={this.handlePropertyChange('title')}
                 />
                 <TextField 
                   className={classes.input}
                   label={t("Display name")}
                   fullWidth
-                  value={user.realName || ''}
-                  onChange={this.handleInput('realName')}
+                  value={displayname || ''}
+                  onChange={this.handlePropertyChange('displayname')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Nickname")} 
                   fullWidth 
-                  value={user.nickname || ''}
-                  onChange={this.handleInput('nickname')}
+                  value={nickname || ''}
+                  onChange={this.handlePropertyChange('nickname')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Telephone")} 
                   fullWidth 
-                  value={user.tel || ''}
-                  onChange={this.handleInput('tel')}
+                  value={primarytelephonenumber || ''}
+                  onChange={this.handlePropertyChange('primarytelephonenumber')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Mobile phone")} 
                   fullWidth 
-                  value={user.mobilePhone || ''}
-                  onChange={this.handleInput('mobilePhone')}
+                  value={mobiletelephonenumber || ''}
+                  onChange={this.handlePropertyChange('mobiletelephonenumber')}
                 />
                 <TextField 
                   className={classes.input} 
                   label={t("Home address")} 
                   fullWidth 
-                  value={user.homeaddress || ''}
-                  onChange={this.handleInput('homeaddress')}
+                  value={postaladdress || ''}
+                  onChange={this.handlePropertyChange('postaladdress')}
                 />
                 <TextField 
                   className={classes.input} 
-                  label={t("Memo")} 
+                  label={t("Comment")} 
                   fullWidth
-                  value={user.memo || ''}
-                  onChange={this.handleInput('memo')}
+                  value={comment || ''}
+                  onChange={this.handlePropertyChange('comment')}
                 />
               </React.Fragment>}
               {tab === 2 && <React.Fragment>
-                <Grid container className={classes.input}>
-                  <FormControlLabel
-                    label={t('Allow pop3 or imap downloading')}
-                    control={
-                      <Checkbox
-                        checked={user.pop3_imap || false}
-                        onChange={this.handleCheckbox('pop3_imap')}
-                      />
-                    }
-                  />
-                  <FormControlLabel
-                    label={t('Allow smtp sending')}
-                    control={
-                      <Checkbox
-                        checked={user.smtp || false}
-                        onChange={this.handleCheckbox('smtp')}
-                      />
-                    }
-                  />
-                  <FormControlLabel
-                    label={t('Allow change password')}
-                    control={
-                      <Checkbox
-                        checked={user.changePassword || false}
-                        onChange={this.handleCheckbox('changePassword')}
-                      />
-                    }
-                  />
-                  <FormControlLabel
-                    label={t('Public user information')}
-                    control={
-                      <Checkbox
-                        checked={user.publicAddress || false}
-                        onChange={this.handleCheckbox('publicAddress')}
-                      />
-                    }
-                  />
-                </Grid>
-              </React.Fragment>}
-              {tab === 3 && <React.Fragment>
                 <FormControl className={classes.input}>
                   <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
                   <Select
@@ -450,7 +422,7 @@ class UserDetails extends PureComponent {
                   </Select>
                 </FormControl>
               </React.Fragment>}
-              {tab === 4 && <React.Fragment>
+              {tab === 3 && <React.Fragment>
                 <List className={classes.list}>
                   {user.aliases.map((alias, idx) => <ListItem key={idx}>
                     <TextField
