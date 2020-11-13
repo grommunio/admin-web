@@ -18,7 +18,6 @@ import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
-import { fetchAreasData } from '../actions/areas';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
 import Close from '@material-ui/icons/Close';
@@ -100,11 +99,9 @@ class UserDetails extends PureComponent {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
   async componentDidMount() {
-    const { fetch, fetchAreas, fetchRoles } = this.props;
+    const { fetch, fetchRoles } = this.props;
     const splits = window.location.pathname.split('/');
     const user = await fetch(splits[1], splits[3]);
-    fetchAreas()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     this.setState({
@@ -303,14 +300,6 @@ class UserDetails extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
-                <TextField
-                  className={classes.input}
-                  label={t("Data area")}
-                  fullWidth
-                  value={user.maildir || ''}
-                  onChange={this.handleInput('areaID')}
-                  disabled
-                />
                 <TextField
                   className={classes.input}
                   label={t("Creation time")}
@@ -528,19 +517,16 @@ UserDetails.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   Roles: PropTypes.array.isRequired,
-  userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
-  fetchAreas: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-    userAreas: state.areas.Areas.user || [],
     Roles: state.roles.Roles || [],
   };
 };
@@ -550,9 +536,6 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
       .then(user => user)
       .catch(msg => Promise.reject(msg)),
-    fetchAreas: async () => {
-      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
-    },
     fetchRoles: async () => {
       await dispatch(fetchRolesData()).catch(msg => Promise.reject(msg));
     },
