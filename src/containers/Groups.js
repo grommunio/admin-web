@@ -131,7 +131,6 @@ class Groups extends Component {
                   <TableRow key={idx}>
                     <TableCell>{obj.groupname}</TableCell>
                     <TableCell>{obj.title}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>

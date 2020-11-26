@@ -160,7 +160,6 @@ class DomainList extends Component {
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
                       <TableCell>{obj.homedir}</TableCell>
-                      <TableCell>{obj.maxSize}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
                       <TableCell className={classes.flexRowEnd}>
                         <IconButton onClick={this.handleEdit(obj)}>

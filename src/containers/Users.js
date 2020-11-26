@@ -107,7 +107,6 @@ class Users extends Component {
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{obj.realName}</TableCell>
                     <TableCell>{obj.nickname}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />

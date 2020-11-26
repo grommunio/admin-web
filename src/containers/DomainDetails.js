@@ -17,7 +17,6 @@ import {
   DialogContent,
   DialogActions,
   Snackbar,
-  Select,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
@@ -66,7 +65,6 @@ class DomainListDetails extends PureComponent {
     changingPw: false,
     newPw: '',
     checkPw: '',
-    sizeUnit: 0,
   }
 
   domainTypes = [
@@ -81,24 +79,9 @@ class DomainListDetails extends PureComponent {
 
   async componentDidMount() {
     const domain = await this.props.fetch(getStringAfterLastSlash());
-    const maxSize = domain.maxSize;
-    if(maxSize % 1048576 === 0) {
-      this.setState({
-        domain: {
-          ...domain,
-          maxSize: maxSize / 1048576,
-        },
-        sizeUnit: 2,
-      });
-    } else if (maxSize % 1024 === 0) {
-      this.setState({
-        domain: {
-          ...domain,
-          maxSize: maxSize / 1024,
-        },
-        sizeUnit: 1,
-      });
-    }
+    this.setState({
+      domain,
+    });
   }
 
   handleInput = field => event => {
@@ -131,11 +114,9 @@ class DomainListDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { domain, sizeUnit } = this.state;
-    const { maxSize } = domain;
+    const { domain } = this.state;
     this.props.edit({
       ...domain,
-      maxSize: maxSize << (10 * sizeUnit),
       domainname: undefined,
       domainType: undefined,
       createDay: undefined,
@@ -155,13 +136,11 @@ class DomainListDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
-
   render() {
     const { classes, t } = this.props;
-    const { checkPw, newPw, changingPw, sizeUnit, snackbar } = this.state;
+    const { checkPw, newPw, changingPw, snackbar } = this.state;
     const { domainname, domainType, domainStatus,
-      maxSize, maxUser, title, address, adminName, tel, mailBackup,
+      maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.domain;
 
     return (
@@ -233,27 +212,6 @@ class DomainListDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                className={classes.input} 
-                label={t("Maximum space")} 
-                fullWidth 
-                value={maxSize || ''}
-                onChange={this.handleNumberInput('maxSize')}
-                InputProps={{
-                  endAdornment:
-                    <FormControl>
-                      <Select
-                        onChange={this.handleUnitChange}
-                        value={sizeUnit}
-                        className={classes.select}
-                      >
-                        <MenuItem value={0}>MiB</MenuItem>
-                        <MenuItem value={1}>GiB</MenuItem>
-                        <MenuItem value={2}>TiB</MenuItem>
-                      </Select>
-                    </FormControl>,
-                }}
-              />
               <TextField 
                 className={classes.input} 
                 label={t("Maximum users")} 

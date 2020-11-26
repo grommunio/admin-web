@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, Select, CircularProgress, Grid, FormControlLabel, Checkbox, 
+  MenuItem, Button, DialogActions, CircularProgress, Grid, FormControlLabel, Checkbox, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -34,8 +34,6 @@ class AddUser extends PureComponent {
     smtp: true,
     changePassword: true,
     publicAddress: true,
-    maxSize: '',
-    sizeUnit: 0,
     loading: false,
   }
 
@@ -62,9 +60,9 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, createDay, lang, realName, maxSize,
+    const { username, createDay, lang, realName,
       // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password, subType } = this.state;
+      pop3_imap, smtp, changePassword, publicAddress, password, subType } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
@@ -78,20 +76,16 @@ class AddUser extends PureComponent {
       subType,
       createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
       lang: lang || 0,
-      maxFile: 0,
-      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
           username: '',
           realName: '',
-          maxSize: '',
           // eslint-disable-next-line camelcase
           pop3_imap: true,
           smtp: true,
           changePassword: true,
           publicAddress: true,
-          sizeUnit: 0,
           subType: 0,
           loading: false,
         });
@@ -103,11 +97,9 @@ class AddUser extends PureComponent {
       });
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
-
   render() {
     const { classes, t, domain, open, onSuccess } = this.props;
-    const { username, maxSize, sizeUnit,loading, realName, subType,
+    const { username, loading, realName, subType,
       // eslint-disable-next-line camelcase
       pop3_imap, smtp, changePassword, publicAddress, password, repeatPw } = this.state;
 
@@ -169,27 +161,6 @@ class AddUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Maximum space")} 
-              fullWidth 
-              value={maxSize || ''}
-              onChange={this.handleNumberInput('maxSize')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange}
-                      value={sizeUnit}
-                      className={classes.select}
-                    >
-                      <MenuItem value={0}>MiB</MenuItem>
-                      <MenuItem value={1}>GiB</MenuItem>
-                      <MenuItem value={2}>TiB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
             <Grid container className={classes.input}>
               <FormControlLabel
                 label={t('Allow pop3 or imap downloading')}

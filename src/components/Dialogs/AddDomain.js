@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, FormControlLabel, Grid, Checkbox, Button, DialogActions,
-  Select,
   CircularProgress, 
 } from '@material-ui/core';
 import { addDomainData } from '../../actions/domains';
@@ -30,7 +29,6 @@ class AddDomain extends PureComponent {
     domainname: '',
     password: '',
     domainStatus: 0,
-    maxSize: '',
     maxUser: '',
     title: '',
     address: '',
@@ -41,7 +39,6 @@ class AddDomain extends PureComponent {
     mailSubSystem: true,
     ignoreCheckingUser: false,
     netDisk: false,
-    sizeUnit: 0,
     loading: false,
   }
 
@@ -71,7 +68,7 @@ class AddDomain extends PureComponent {
   handleAdd = () => {
     const { domainname, password, domainStatus, maxUser,
       title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
-      ignoreCheckingUser, sizeUnit, maxSize, netDisk } = this.state;
+      ignoreCheckingUser, netDisk } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
@@ -87,14 +84,12 @@ class AddDomain extends PureComponent {
       mailSubSystem,
       ignoreCheckingUser,
       netDisk,
-      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
           domainname: '',
           password: '',
           domainStatus: 0,
-          maxSize: '',
           maxUser: '',
           title: '',
           address: '',
@@ -105,7 +100,6 @@ class AddDomain extends PureComponent {
           mailSubSystem: true,
           ignoreCheckingUser: false,
           netDisk: false,
-          sizeUnit: 0,
           loading: false,
         });
         this.props.onSuccess();
@@ -116,13 +110,11 @@ class AddDomain extends PureComponent {
       });
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
-
   render() {
     const { classes, t, open, onSuccess } = this.props;
     const { domainname, password, domainStatus,
-      maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, sizeUnit, loading } = this.state;
+      maxUser, title, address, adminName, tel, mailBackup,
+      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
@@ -169,27 +161,6 @@ class AddDomain extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Maximum space")} 
-              fullWidth 
-              value={maxSize || ''}
-              onChange={this.handleNumberInput('maxSize')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange}
-                      value={sizeUnit}
-                      className={classes.select}
-                    >
-                      <MenuItem value={0}>MiB</MenuItem>
-                      <MenuItem value={1}>GiB</MenuItem>
-                      <MenuItem value={2}>TiB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
             <TextField 
               className={classes.input} 
               label={t("Maximum users")} 

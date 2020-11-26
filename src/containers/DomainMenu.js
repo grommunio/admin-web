@@ -73,10 +73,6 @@ function DomainMenu(props) {
                 <TableCell>{domain.homedir}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>{t('Maximum size')}</TableCell>
-                <TableCell>{domain.maxSize}</TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell>{t('Maximum users')}</TableCell>
                 <TableCell>{domain.maxUser}</TableCell>
               </TableRow>

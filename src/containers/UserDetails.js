@@ -69,7 +69,6 @@ class UserDetails extends PureComponent {
     newPw: '',
     checkPw: '',
     snackbar: '',
-    sizeUnit: 0,
     tab: 0,
   };
 
