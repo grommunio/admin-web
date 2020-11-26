@@ -65,7 +65,7 @@ const styles = theme => ({
     margin: theme.spacing(1),
   },
   errorMessage: {
-    marginTop: theme.spacing(3),
+    margin: theme.spacing(1, 2, 0, 2),
   },
   logo: {
     padding: 12,
