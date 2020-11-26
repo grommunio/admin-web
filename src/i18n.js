@@ -99,6 +99,11 @@ const resources = {
       "Back": "Zurück",
       "Cancel": "Abbrechen",
       "Logout": "Ausloggen",
+      "New folder": "Neuer Ordner",
+      "New domain": "Neue Domain",
+      "New user": "Neuer Benutzer",
+      "New organization": "Neue Organisation",
+      "New role": "Neue Rolle",
     },
   },
 };

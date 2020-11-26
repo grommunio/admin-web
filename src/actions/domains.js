@@ -7,11 +7,11 @@ import {
 } from '../actions/types';
 import { domains, addDomain, editDomain, deleteDomain, domain } from '../api';
 
-export function fetchDomainData() {
+export function fetchDomainData(params) {
   return async dispatch => {
     await dispatch({ type: DOMAIN_DATA_FETCH });
     try {
-      const domainData = await dispatch(domains());
+      const domainData = await dispatch(domains(params));
       await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});

@@ -15,10 +15,10 @@ import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
-import Orgs from '@material-ui/icons/GroupWork';
 import Folder from '@material-ui/icons/Folder';
-import Mail from '@material-ui/icons/Mail';
 /*
+import Mail from '@material-ui/icons/Mail';
+import Orgs from '@material-ui/icons/GroupWork';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
 import MLists from '@material-ui/icons/Email';
@@ -298,7 +298,7 @@ class NavigationLinks extends PureComponent {
                           <ListItemText primary={t('Folders')}/>
                         </Grid>
                       </ListItem>
-                      <ListItem
+                      {/*<ListItem
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/mailAddresses')}
@@ -309,7 +309,7 @@ class NavigationLinks extends PureComponent {
                           <Mail className={classes.nestedIcon}/>
                           <ListItemText primary={t('Mail addresses')}/>
                         </Grid>
-                      </ListItem>
+                      </ListItem>*/}
                     </List>
                   </Collapse>
                 </React.Fragment> : null;
@@ -336,8 +336,8 @@ class NavigationLinks extends PureComponent {
                 <Http className={classes.icon}/>
                 <ListItemText primary={t('Domain list')} />
               </Grid>
-            </ListItem>
-            <ListItem
+            </ListItem>  
+            {/*<ListItem
               className={classes.li}
               button
               onClick={this.handleNavigation('orgs')}
@@ -348,7 +348,6 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Organizations')}/>
               </Grid>
             </ListItem>
-            {/*
             <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}

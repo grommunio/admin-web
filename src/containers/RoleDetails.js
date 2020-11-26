@@ -25,6 +25,7 @@ import Add from '@material-ui/icons/AddCircle';
 import Delete from '@material-ui/icons/Close';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
 import { getStringAfterLastSlash } from '../utils';
+import { fetchDomainData } from '../actions/domains';
 
 const styles = theme => ({
   root: {
@@ -81,10 +82,12 @@ class RoleDetails extends PureComponent {
 
 
   async componentDidMount() {
-    const role = await this.props.fetch(getStringAfterLastSlash());
+    const { fetch, fetchUser, fetchDomains, fetchPermissions } = this.props;
+    const role = await fetch(getStringAfterLastSlash());
     this.setState({ role });
-    this.props.fetchUser().catch(err => this.setState({ snackbar: err }));
-    this.props.fetchPermissions().catch(err => this.setState({ snackbar: err }));
+    fetchUser().catch(err => this.setState({ snackbar: err }));
+    fetchDomains().catch(err => this.setState({ snackbar: err }));
+    fetchPermissions().catch(err => this.setState({ snackbar: err }));
   }
 
   handleInput = field => event => {
@@ -156,7 +159,7 @@ class RoleDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, Users, Permissions } = this.props;
+    const { classes, t, Users, Permissions, Domains } = this.props;
     const { snackbar, role } = this.state;
     const { name, description, users, permissions } = role;
 
@@ -193,7 +196,7 @@ class RoleDetails extends PureComponent {
                 onChange={this.handleInput('description')}
               />
               <FormControl className={classes.input}>
-                <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
+                <InputLabel id="demo-mutiple-chip-label">{t('Users')}</InputLabel>
                 <Select
                   labelId="demo-mutiple-chip-label"
                   id="demo-mutiple-chip"
@@ -236,9 +239,16 @@ class RoleDetails extends PureComponent {
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
                     fullWidth
-                    disabled={permission.permission === 'SystemAdmin'}
+                    disabled={['SystemAdmin', ''].includes(permission.permission)}
                     className={classes.rowTextfield}
-                  />
+                    select
+                  >
+                    {Domains.map(domain => (
+                      <MenuItem key={domain.ID} value={domain.ID}>
+                        {domain.domainname}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                   <IconButton size="small" onClick={this.removeRow(idx)}>
                     <Delete fontSize="small" color="error" />
                   </IconButton>
@@ -295,15 +305,18 @@ RoleDetails.propTypes = {
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchUser: PropTypes.func.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
   fetchPermissions: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   Permissions: PropTypes.array.isRequired,
+  Domains: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     Users: state.users.Users,
     Permissions: state.roles.Permissions,
+    Domains: state.domains.Domains,
   };
 };
 
@@ -313,7 +326,10 @@ const mapDispatchToProps = dispatch => {
       await dispatch(editRoleData(role)).catch(message => Promise.reject(message));
     },
     fetchUser: async () => {
-      await dispatch(fetchAllUsers()).catch(message => Promise.reject(message));
+      await dispatch(fetchAllUsers({ sort: 'username,asc' })).catch(message => Promise.reject(message));
+    },
+    fetchDomains: async () => {
+      await dispatch(fetchDomainData({})).catch(message => Promise.reject(message));
     },
     fetchPermissions: async () => {
       await dispatch(fetchPermissionsData()).catch(message => Promise.reject(message));

@@ -108,7 +108,7 @@ class Orgs extends Component {
               color="primary"
               onClick={this.handleAdd}
             >
-              Add new organization
+              {t('New organization')}
             </Button>
           </Grid>
           <Paper elevation={1}>

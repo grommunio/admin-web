@@ -8,11 +8,11 @@ import {
 } from '../actions/types';
 import { roles, editRole, permissions, addRole, deleteRole, role } from '../api';
 
-export function fetchRolesData() {
+export function fetchRolesData(params) {
   return async dispatch => {
     await dispatch({ type: ROLES_DATA_FETCH });
     try {
-      const response = await dispatch(roles());
+      const response = await dispatch(roles(params));
       await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});

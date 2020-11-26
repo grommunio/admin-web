@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
-  Typography, Button, Grid } from '@material-ui/core';
+  Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
@@ -78,7 +77,7 @@ const styles = theme => ({
 class Roles extends Component {
 
   componentDidMount() {
-    this.props.fetch()
+    this.props.fetch({ sort: 'name,asc' })
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -88,6 +87,7 @@ class Roles extends Component {
     snackbar: '',
     adding: false,
     deleting: false,
+    order: 'asc',
   }
 
   handleInput = field => event => {
@@ -96,6 +96,20 @@ class Roles extends Component {
         ...this.state.newData,
         [field]: event.target.value,
       },
+    });
+  }
+
+  handleRequestSort = () => {
+    const { fetch } = this.props;
+    const { order: stateOrder } = this.state;
+    const order = stateOrder === "asc" ? "desc" : "asc";
+    
+    fetch({
+      sort: 'name,' + order,
+    }).catch(msg => this.setState({ snackbar: msg }));
+
+    this.setState({
+      order: order,
     });
   }
 
@@ -108,7 +122,11 @@ class Roles extends Component {
     event.stopPropagation();
   }
 
-  handleDelete = role => () => this.setState({ deleting: role });
+  handleDelete = role => event => {
+    event.stopPropagation();
+    this.setState({ deleting: role });
+  }
+
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
@@ -126,7 +144,7 @@ class Roles extends Component {
 
   render() {
     const { classes, t, Roles } = this.props;
-    const { adding, snackbar, deleting } = this.state;
+    const { adding, snackbar, deleting, order } = this.state;
 
     return (
       <div className={classes.root}>
@@ -134,7 +152,7 @@ class Roles extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Roles ")}
+            {t("Roles")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
@@ -144,14 +162,23 @@ class Roles extends Component {
               color="primary"
               onClick={() => this.setState({ adding: true })}
             >
-              {t("Add new role")}
+              {t("New role")}
             </Button>
           </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('Name')}</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active
+                      align="left" 
+                      direction={order}
+                      onClick={this.handleRequestSort}
+                    >
+                      {t('Name')}
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>{t('Description')}</TableCell>
                   <TableCell>{t('Permissions')}</TableCell>
                   <TableCell></TableCell>
@@ -159,14 +186,11 @@ class Roles extends Component {
               </TableHead>
               <TableBody>
                 {Roles.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
                     <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
@@ -228,8 +252,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => {
-      await dispatch(fetchRolesData()).catch(msg => Promise.reject(msg));
+    fetch: async params => {
+      await dispatch(fetchRolesData(params)).catch(msg => Promise.reject(msg));
     },
     delete: async id => {
       await dispatch(deleteRolesData(id)).catch(msg => Promise.reject(msg));

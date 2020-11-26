@@ -8,11 +8,11 @@ import {
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser } from '../api';
 
-export function fetchUsersData(domainID) {
+export function fetchUsersData(domainID, params) {
   return async dispatch => {
     await dispatch({type: USERS_DATA_FETCH});
     try {
-      const data = await dispatch(users(domainID));
+      const data = await dispatch(users(domainID, params));
       await dispatch({type: USERS_DATA_RECEIVED, data});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
@@ -35,11 +35,11 @@ export function fetchUserData(domainID, userID) {
   };
 }
 
-export function fetchAllUsers() {
+export function fetchAllUsers(params) {
   return async dispatch => {
     await dispatch({type: USERS_DATA_FETCH});
     try {
-      const data = await dispatch(allUsers());
+      const data = await dispatch(allUsers(params));
       await dispatch({type: USERS_DATA_RECEIVED, data});
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});

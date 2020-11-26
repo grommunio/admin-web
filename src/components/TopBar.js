@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade, Grid,
+import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade,
   Box } from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
@@ -39,6 +39,14 @@ const styles = theme => ({
   iconButton: {
     color: mode === 'light' ? '#777' : '#fff',
     cursor: 'pointer',
+  },
+  add: {
+    margin: theme.spacing(0, 0, 0, 1),
+  },
+  flexEndContainer: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   profileButton: {
     display: 'flex',
@@ -78,14 +86,14 @@ class TopBar extends PureComponent {
           <IconButton className={classes.iconButton}><StarBorderIcon></StarBorderIcon></IconButton>
           <IconButton className={classes.iconButton}><SearchIcon></SearchIcon></IconButton>
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
-          <Grid container justify="flex-end">
+          <div className={classes.flexEndContainer}>
             <Box className={classes.profileButton}>
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
-          </Grid>
+          </div>
           {onAdd && <div className={classes.divider}></div>}
-          {onAdd && <Button onClick={onAdd} color="inherit">
+          {onAdd && <Button onClick={onAdd} color="inherit" className={classes.add}>
             <Add />{t('Add')}
           </Button>}
         </Toolbar>

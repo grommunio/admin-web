@@ -181,7 +181,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(deleteMlistData(id));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData()).catch(() => { });
+      await dispatch(fetchDomainData({})).catch(() => { });
     },
   };
 };

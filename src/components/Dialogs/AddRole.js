@@ -273,8 +273,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => {
       await dispatch(fetchPermissionsData()).catch(err => Promise.reject(err));
     },
-    fetchDomains: async () => await dispatch(fetchDomainData()).catch(err => Promise.reject(err)),
-    fetchUsers: async () => await dispatch(fetchAllUsers()).catch(err => Promise.reject(err)),
+    fetchDomains: async () => await dispatch(fetchDomainData({})).catch(err => Promise.reject(err)),
+    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc' })).catch(err => Promise.reject(err)),
     add: async role => {
       await dispatch(addRolesData(role)).catch(err => Promise.reject(err));
     },
