@@ -121,7 +121,7 @@ class Users extends Component {
     const order = stateOrder === "asc" ? "desc" : "asc";
     
     fetch(domain.ID, {
-      sort: 'username' + ',' + order,
+      sort: 'username,' + order,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({

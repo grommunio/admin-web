@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Snackbar, Typography, Button, Grid } from '@material-ui/core';
+  Snackbar, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
@@ -68,6 +68,7 @@ class Folders extends Component {
     adding: false,
     deleting: false,
     snackbar: null,
+    order: 'asc',
   }
 
   componentDidMount() {
@@ -107,9 +108,13 @@ class Folders extends Component {
     history.push(`/${path}`);
   }
 
+  handleSort = () => this.setState({ order: this.state.order === 'asc' ? 'desc' : 'asc' })
+
   render() {
     const { classes, t, folders, domain } = this.props;
-    const { snackbar, adding, deleting } = this.state;
+    const { snackbar, adding, deleting, order } = this.state;
+    const sortedArray = [...folders.Folders].sort();
+    if(order === 'desc') sortedArray.reverse();
 
     return (
       <div className={classes.root}>
@@ -134,14 +139,23 @@ class Folders extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('Folder name')}</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active
+                      align="left" 
+                      direction={order}
+                      onClick={this.handleSort}
+                    >
+                      {t('Folder name')}
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>{t('Comment')}</TableCell>
                   <TableCell>{t('Creation time')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!folders.loading && folders.Folders.map((obj, idx) =>
+                {!folders.loading && sortedArray.map((obj, idx) =>
                   <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>

@@ -105,7 +105,7 @@ class Roles extends Component {
     const order = stateOrder === "asc" ? "desc" : "asc";
     
     fetch({
-      sort: 'name' + ',' + order,
+      sort: 'name,' + order,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({
