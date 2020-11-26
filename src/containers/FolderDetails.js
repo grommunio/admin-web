@@ -95,7 +95,12 @@ class FolderDetails extends PureComponent {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false });
+  handleAddingSuccess = () => {
+    const { fetchOwners, domain } = this.props;
+    this.setState({ adding: false });
+    fetchOwners(domain.ID, this.state.folder.folderid)
+      .catch(error => this.setState({ snackbar: error }));
+  }
 
   handleAddingError = error => this.setState({ snackbar: error });
 
