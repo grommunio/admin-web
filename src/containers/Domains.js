@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal,
   Checkbox, FormControlLabel, Typography, Button, Grid } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchDomainData, deleteDomainData } from '../actions/domains';
@@ -85,7 +84,10 @@ class DomainList extends Component {
     event.stopPropagation();
   }
 
-  handleDelete = domain => () => this.setState({ deleting: domain });
+  handleDelete = domain => event => {
+    event.stopPropagation();
+    this.setState({ deleting: domain });
+  }
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
@@ -153,15 +155,12 @@ class DomainList extends Component {
               <TableBody>
                 {domains.Domains.map((obj, idx) => {
                   return (obj.domainType === 1) || (obj.domainStatus === 3 && !showDeleted) ?
-                    null : <TableRow key={idx} hover>
+                    null : <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                       <TableCell>{obj.domainname}</TableCell>
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
                       <TableCell className={classes.flexRowEnd}>
-                        <IconButton onClick={this.handleEdit(obj)}>
-                          <Edit />
-                        </IconButton>
                         <IconButton onClick={this.handleDelete(obj)}>
                           <Delete color="error"/>
                         </IconButton>

@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Snackbar, Typography, Button, Grid } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData } from '../actions/users';
@@ -86,7 +85,10 @@ class Users extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleDelete = user => () => this.setState({ deleting: user });
+  handleDelete = user => event => {
+    event.stopPropagation();
+    this.setState({ deleting: user });
+  }
 
   handleDeleteClose = () => this.setState({ deleting: false });
 
@@ -148,14 +150,11 @@ class Users extends Component {
               <TableBody>
                 {!users.loading && users.Users.map((obj, idx) => {
                   const properties = this.toObject(obj.properties || []);
-                  return <TableRow key={idx}>
+                  return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{properties.storagequotalimit}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>

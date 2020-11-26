@@ -35,6 +35,7 @@ const theme = createMuiTheme({
       hover: {
         '&:hover': {
           backgroundColor: '#ddd',
+          cursor: 'pointer',
         },
       },
     },

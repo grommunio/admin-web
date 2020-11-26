@@ -44,9 +44,6 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-end',
   },
-  hover: {
-    cursor: 'pointer',
-  },
   pageTitle: {
     margin: theme.spacing(2),
   },
@@ -145,7 +142,7 @@ class Folders extends Component {
               </TableHead>
               <TableBody>
                 {!folders.loading && folders.Folders.map((obj, idx) =>
-                  <TableRow className={classes.hover} onClick={this.handleRowClicked(obj)} key={idx}>
+                  <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>
                     <TableCell>{obj.creationtime}</TableCell>

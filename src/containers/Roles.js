@@ -5,7 +5,6 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
   Typography, Button, Grid } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
@@ -108,7 +107,11 @@ class Roles extends Component {
     event.stopPropagation();
   }
 
-  handleDelete = role => () => this.setState({ deleting: role });
+  handleDelete = role => event => {
+    event.stopPropagation();
+    this.setState({ deleting: role });
+  }
+
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
@@ -159,14 +162,11 @@ class Roles extends Component {
               </TableHead>
               <TableBody>
                 {Roles.map((obj, idx) =>
-                  <TableRow key={idx}>
+                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
                     <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
-                      <IconButton onClick={this.handleEdit(obj)}>
-                        <Edit />
-                      </IconButton>
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
