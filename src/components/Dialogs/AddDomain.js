@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, FormControlLabel, Grid, Checkbox, Button, DialogActions,
+  MenuItem, Button, DialogActions,
   CircularProgress, 
 } from '@material-ui/core';
 import { addDomainData } from '../../actions/domains';
@@ -34,11 +34,6 @@ class AddDomain extends PureComponent {
     address: '',
     adminName: '',
     tel: '',
-    mailBackup: false,
-    mailMonitor: false,
-    mailSubSystem: true,
-    ignoreCheckingUser: false,
-    netDisk: false,
     loading: false,
   }
 
@@ -52,10 +47,6 @@ class AddDomain extends PureComponent {
       [field]: event.target.value,
     });
   }
-
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
 
   handleNumberInput = field => event => {
     let input = event.target.value;
@@ -113,8 +104,7 @@ class AddDomain extends PureComponent {
   render() {
     const { classes, t, open, onSuccess } = this.props;
     const { domainname, password, domainStatus,
-      maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, loading } = this.state;
+      maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
@@ -197,53 +187,6 @@ class AddDomain extends PureComponent {
               onChange={this.handleInput('tel')}
             />
           </FormControl>
-          <Grid container className={classes.input}>
-            <FormControlLabel
-              label={t('Mail archive')}
-              control={
-                <Checkbox
-                  checked={mailBackup || false}
-                  onChange={this.handleCheckbox('mailBackup')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Mail monitor')}
-              control={
-                <Checkbox
-                  checked={mailMonitor || false}
-                  onChange={this.handleCheckbox('mailMonitor')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Ignore checking user')}
-              control={
-                <Checkbox
-                  checked={ignoreCheckingUser || false}
-                  onChange={this.handleCheckbox('ignoreCheckingUser')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Mail subsystem')}
-              control={
-                <Checkbox
-                  checked={mailSubSystem || false}
-                  onChange={this.handleCheckbox('mailSubSystem')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Net disk')}
-              control={
-                <Checkbox
-                  checked={netDisk || false}
-                  onChange={this.handleCheckbox('netDisk')}
-                />
-              }
-            />
-          </Grid>
         </DialogContent>
         <DialogActions>
           <Button

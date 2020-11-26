@@ -8,8 +8,6 @@ import {
   Grid,
   TextField,
   FormControl,
-  Checkbox,
-  FormControlLabel,
   MenuItem,
   Button,
   Dialog,
@@ -67,11 +65,6 @@ class DomainListDetails extends PureComponent {
     checkPw: '',
   }
 
-  domainTypes = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Alias', ID: 1 },
-  ]
-
   statuses = [
     { name: 'Normal', ID: 0 },
     { name: 'Suspended', ID: 1 },
@@ -118,7 +111,6 @@ class DomainListDetails extends PureComponent {
     this.props.edit({
       ...domain,
       domainname: undefined,
-      domainType: undefined,
       createDay: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -139,9 +131,8 @@ class DomainListDetails extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { checkPw, newPw, changingPw, snackbar } = this.state;
-    const { domainname, domainType, domainStatus,
-      maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, homedir } = this.state.domain;
+    const { domainname, domainStatus,
+      maxUser, title, address, adminName, tel } = this.state.domain;
 
     return (
       <div className={classes.root}>
@@ -175,29 +166,6 @@ class DomainListDetails extends PureComponent {
                   {t('Change password')}
                 </Button>
               </Grid>
-              <TextField 
-                className={classes.input} 
-                label={t("Home directory")} 
-                fullWidth 
-                disabled
-                value={homedir || ''}
-                onChange={this.handleNumberInput('homedir')}
-              />
-              <TextField
-                select
-                className={classes.input}
-                label={t("Domain type")}
-                fullWidth
-                disabled
-                value={domainType || 0}
-                onChange={this.handleInput('domainType')}
-              >
-                {this.domainTypes.map((domainType, key) => (
-                  <MenuItem key={key} value={domainType.ID}>
-                    {domainType.name}
-                  </MenuItem>
-                ))}
-              </TextField>
               <TextField
                 select
                 className={classes.input}
@@ -248,53 +216,6 @@ class DomainListDetails extends PureComponent {
                 onChange={this.handleInput('tel')}
               />
             </FormControl>
-            <Grid container className={classes.input}>
-              <FormControlLabel
-                label={t('Mail archive')}
-                control={
-                  <Checkbox
-                    checked={mailBackup || false}
-                    onChange={this.handleCheckbox('mailBackup')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Mail monitor')}
-                control={
-                  <Checkbox
-                    checked={mailMonitor || false}
-                    onChange={this.handleCheckbox('mailMonitor')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Ignore checking user')}
-                control={
-                  <Checkbox
-                    checked={ignoreCheckingUser || false}
-                    onChange={this.handleCheckbox('ignoreCheckingUser')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Mail subsystem')}
-                control={
-                  <Checkbox
-                    checked={mailSubSystem || false}
-                    onChange={this.handleCheckbox('mailSubSystem')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Net disk')}
-                control={
-                  <Checkbox
-                    checked={netDisk || false}
-                    onChange={this.handleCheckbox('netDisk')}
-                  />
-                }
-              />
-            </Grid>
             <Button
               variant="text"
               color="secondary"

@@ -136,8 +136,6 @@ class DomainList extends Component {
                   <TableCell>{t('Domain')}</TableCell>
                   <TableCell>{t('Address')}</TableCell>
                   <TableCell>{t('Title')}</TableCell>
-                  <TableCell>{t('Home directory')}</TableCell>
-                  <TableCell>{t('Maximum space')}</TableCell>
                   <TableCell>{t('Maximum users')}</TableCell>
                   <TableCell style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <FormControlLabel
@@ -159,7 +157,6 @@ class DomainList extends Component {
                       <TableCell>{obj.domainname}</TableCell>
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
-                      <TableCell>{obj.homedir}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
                       <TableCell className={classes.flexRowEnd}>
                         <IconButton onClick={this.handleEdit(obj)}>
