@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, Select, CircularProgress, Grid, FormControlLabel, Checkbox, 
 } from '@material-ui/core';
-import { fetchAreasData } from '../../actions/areas';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -29,7 +28,6 @@ class AddUser extends PureComponent {
   state = {
     username: '',
     realName: '',
-    areaID: 0,
     subType: 0,
     // eslint-disable-next-line camelcase
     pop3_imap: true,
@@ -46,11 +44,6 @@ class AddUser extends PureComponent {
     { name: 'Room', ID: 1 },
     { name: 'Equipment', ID: 2 },
   ]
-
-  componentDidMount() {
-    this.props.fetchAreas()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-  }
 
   handleInput = field => event => {
     this.setState({
@@ -69,13 +62,12 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, areaID, createDay, lang, realName, maxSize,
+    const { username, createDay, lang, realName, maxSize,
       // eslint-disable-next-line camelcase
       pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password, subType } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
-      areaID,
       realName,
       // eslint-disable-next-line camelcase
       pop3_imap,
@@ -93,7 +85,6 @@ class AddUser extends PureComponent {
         this.setState({
           username: '',
           realName: '',
-          areaID: 0,
           maxSize: '',
           // eslint-disable-next-line camelcase
           pop3_imap: true,
@@ -115,8 +106,8 @@ class AddUser extends PureComponent {
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
-    const { classes, t, userAreas, domain, open, onSuccess } = this.props;
-    const { username, areaID, maxSize, sizeUnit,loading, realName, subType,
+    const { classes, t, domain, open, onSuccess } = this.props;
+    const { username, maxSize, sizeUnit,loading, realName, subType,
       // eslint-disable-next-line camelcase
       pop3_imap, smtp, changePassword, publicAddress, password, repeatPw } = this.state;
 
@@ -164,20 +155,6 @@ class AddUser extends PureComponent {
               style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
             />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Data area")}
-              fullWidth
-              value={areaID || ''}
-              onChange={this.handleInput('areaID')}
-            >
-              {userAreas.map((area, key) => (
-                <MenuItem key={key} value={area.ID}>
-                  {area.masterPath}
-                </MenuItem>
-              ))}
-            </TextField>
             <TextField
               select
               className={classes.input}
@@ -280,19 +257,16 @@ AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   groups: PropTypes.object.isRequired,
-  userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  fetchAreas: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
-    userAreas: state.areas.Areas.user || [],
   };
 };
 
@@ -300,9 +274,6 @@ const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, user) => {
       await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
-    fetchAreas: async () => {
-      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
   };
 };

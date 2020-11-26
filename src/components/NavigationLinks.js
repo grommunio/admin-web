@@ -15,7 +15,6 @@ import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
-import Web from '@material-ui/icons/Web';
 import Orgs from '@material-ui/icons/GroupWork';
 import Folder from '@material-ui/icons/Folder';
 import Mail from '@material-ui/icons/Mail';
@@ -325,17 +324,6 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Dashboard className={classes.icon} />
                 <ListItemText primary="Dashboard"/>
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
-              onClick={this.handleNavigation('dataAreaSetup')}
-              className={classes.li}
-              selected={location.pathname === '/dataAreaSetup'}
-            >
-              <Grid container alignItems="center">
-                <Web className={classes.icon}/>
-                <ListItemText primary={t('Data areas')} />
               </Grid>
             </ListItem>
             <ListItem

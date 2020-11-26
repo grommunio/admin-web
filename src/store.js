@@ -4,7 +4,6 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 // Keep alphabetically ordered
-import areasReducer from './reducers/areas';
 import authReducer from './reducers/auth';
 import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
@@ -28,7 +27,6 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   // Keep alphabetically ordered
   combineReducers({
-    areas: areasReducer,
     auth: authReducer,
     classes: classesReducer,
     dashboard: dashboardReducer,

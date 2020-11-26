@@ -22,7 +22,6 @@ function makeLoadableComponent(loader) {
 
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
-const AsyncDataAreaSetup = makeLoadableComponent(() => import("./containers/DataAreas"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
 const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
@@ -63,12 +62,6 @@ const Routes = ({ childProps, domains }) => (
       path="/login"
       exact
       component={AsyncLogin}
-      props={childProps}
-    />
-    <AuthenticatedRoute
-      path="/dataAreaSetup"
-      exact
-      component={AsyncDataAreaSetup}
       props={childProps}
     />
     <AuthenticatedRoute

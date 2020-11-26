@@ -500,18 +500,6 @@ export function deleteMember(id) {
 }
 
 /*
-  Sys
-*/
-
-export async function dataArea() {
-  return await get('/system/area_list');
-}
-
-export async function addDataArea(data) {
-  return await post('/system/area_list', data);
-}
-
-/*
   MAIL ADDRESSES
 */
 

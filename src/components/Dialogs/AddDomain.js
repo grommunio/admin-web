@@ -6,7 +6,6 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   Select,
   CircularProgress, 
 } from '@material-ui/core';
-import { fetchAreasData } from '../../actions/areas';
 import { addDomainData } from '../../actions/domains';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -30,7 +29,6 @@ class AddDomain extends PureComponent {
   state = {
     domainname: '',
     password: '',
-    areaID: '',
     domainStatus: 0,
     maxSize: '',
     maxUser: '',
@@ -45,11 +43,6 @@ class AddDomain extends PureComponent {
     netDisk: false,
     sizeUnit: 0,
     loading: false,
-  }
-
-  componentDidMount() {
-    this.props.fetchAreas()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   statuses = [
@@ -76,14 +69,13 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, password, areaID, domainStatus, maxUser,
+    const { domainname, password, domainStatus, maxUser,
       title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
       ignoreCheckingUser, sizeUnit, maxSize, netDisk } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
       password: password || undefined,
-      areaID,
       domainStatus,
       maxUser,
       title,
@@ -101,7 +93,6 @@ class AddDomain extends PureComponent {
         this.setState({
           domainname: '',
           password: '',
-          areaID: '',
           domainStatus: 0,
           maxSize: '',
           maxUser: '',
@@ -128,8 +119,8 @@ class AddDomain extends PureComponent {
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
 
   render() {
-    const { classes, t, domainAreas, open, onSuccess } = this.props;
-    const { domainname, password, areaID, domainStatus,
+    const { classes, t, open, onSuccess } = this.props;
+    const { domainname, password, domainStatus,
       maxSize, maxUser, title, address, adminName, tel, mailBackup,
       mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, sizeUnit, loading } = this.state;
     const domainError = !domainname.match(
@@ -164,20 +155,6 @@ class AddDomain extends PureComponent {
               type="password"
               required
             />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Data area")}
-              fullWidth
-              value={areaID || ''}
-              onChange={this.handleInput('areaID')}
-            >
-              {domainAreas.map((area, key) => (
-                <MenuItem key={key} value={area.ID}>
-                  {area.name} {area.masterPath}
-                </MenuItem>
-              ))}
-            </TextField>
             <TextField
               select
               className={classes.input}
@@ -325,27 +302,16 @@ AddDomain.propTypes = {
   open: PropTypes.bool.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
-  domainAreas: PropTypes.array.isRequired,
   add: PropTypes.func.isRequired,
-  fetchAreas: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    domainAreas: state.areas.Areas.domain || [],
-  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchAreas: async () => {
-      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
-    },
     add: async domain => {
       await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddDomain)));
