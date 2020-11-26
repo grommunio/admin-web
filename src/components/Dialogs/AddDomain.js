@@ -2,11 +2,9 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, FormControlLabel, Grid, Checkbox, Button, DialogActions,
-  Select,
+  MenuItem, Button, DialogActions,
   CircularProgress, 
 } from '@material-ui/core';
-import { fetchAreasData } from '../../actions/areas';
 import { addDomainData } from '../../actions/domains';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -30,26 +28,13 @@ class AddDomain extends PureComponent {
   state = {
     domainname: '',
     password: '',
-    areaID: '',
     domainStatus: 0,
-    maxSize: '',
     maxUser: '',
     title: '',
     address: '',
     adminName: '',
     tel: '',
-    mailBackup: false,
-    mailMonitor: false,
-    mailSubSystem: true,
-    ignoreCheckingUser: false,
-    netDisk: false,
-    sizeUnit: 0,
     loading: false,
-  }
-
-  componentDidMount() {
-    this.props.fetchAreas()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   statuses = [
@@ -63,10 +48,6 @@ class AddDomain extends PureComponent {
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
-
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
@@ -76,14 +57,13 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, password, areaID, domainStatus, maxUser,
+    const { domainname, password, domainStatus, maxUser,
       title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
-      ignoreCheckingUser, sizeUnit, maxSize, netDisk } = this.state;
+      ignoreCheckingUser, netDisk } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
       password: password || undefined,
-      areaID,
       domainStatus,
       maxUser,
       title,
@@ -95,15 +75,12 @@ class AddDomain extends PureComponent {
       mailSubSystem,
       ignoreCheckingUser,
       netDisk,
-      maxSize: maxSize << (10 * sizeUnit),
     })
       .then(() => {
         this.setState({
           domainname: '',
           password: '',
-          areaID: '',
           domainStatus: 0,
-          maxSize: '',
           maxUser: '',
           title: '',
           address: '',
@@ -114,7 +91,6 @@ class AddDomain extends PureComponent {
           mailSubSystem: true,
           ignoreCheckingUser: false,
           netDisk: false,
-          sizeUnit: 0,
           loading: false,
         });
         this.props.onSuccess();
@@ -125,13 +101,10 @@ class AddDomain extends PureComponent {
       });
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
-
   render() {
-    const { classes, t, domainAreas, open, onSuccess } = this.props;
-    const { domainname, password, areaID, domainStatus,
-      maxSize, maxUser, title, address, adminName, tel, mailBackup,
-      mailMonitor, mailSubSystem, ignoreCheckingUser, netDisk, sizeUnit, loading } = this.state;
+    const { classes, t, open, onSuccess } = this.props;
+    const { domainname, password, domainStatus,
+      maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
 
@@ -167,20 +140,6 @@ class AddDomain extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("Data area")}
-              fullWidth
-              value={areaID || ''}
-              onChange={this.handleInput('areaID')}
-            >
-              {domainAreas.map((area, key) => (
-                <MenuItem key={key} value={area.ID}>
-                  {area.name} {area.masterPath}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              className={classes.input}
               label={t("Status")}
               fullWidth
               value={domainStatus || 0}
@@ -192,27 +151,6 @@ class AddDomain extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Maximum space")} 
-              fullWidth 
-              value={maxSize || ''}
-              onChange={this.handleNumberInput('maxSize')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange}
-                      value={sizeUnit}
-                      className={classes.select}
-                    >
-                      <MenuItem value={0}>MiB</MenuItem>
-                      <MenuItem value={1}>GiB</MenuItem>
-                      <MenuItem value={2}>TiB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
             <TextField 
               className={classes.input} 
               label={t("Maximum users")} 
@@ -249,53 +187,6 @@ class AddDomain extends PureComponent {
               onChange={this.handleInput('tel')}
             />
           </FormControl>
-          <Grid container className={classes.input}>
-            <FormControlLabel
-              label={t('Mail archive')}
-              control={
-                <Checkbox
-                  checked={mailBackup || false}
-                  onChange={this.handleCheckbox('mailBackup')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Mail monitor')}
-              control={
-                <Checkbox
-                  checked={mailMonitor || false}
-                  onChange={this.handleCheckbox('mailMonitor')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Ignore checking user')}
-              control={
-                <Checkbox
-                  checked={ignoreCheckingUser || false}
-                  onChange={this.handleCheckbox('ignoreCheckingUser')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Mail subsystem')}
-              control={
-                <Checkbox
-                  checked={mailSubSystem || false}
-                  onChange={this.handleCheckbox('mailSubSystem')}
-                />
-              }
-            />
-            <FormControlLabel
-              label={t('Net disk')}
-              control={
-                <Checkbox
-                  checked={netDisk || false}
-                  onChange={this.handleCheckbox('netDisk')}
-                />
-              }
-            />
-          </Grid>
         </DialogContent>
         <DialogActions>
           <Button
@@ -325,27 +216,16 @@ AddDomain.propTypes = {
   open: PropTypes.bool.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
-  domainAreas: PropTypes.array.isRequired,
   add: PropTypes.func.isRequired,
-  fetchAreas: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    domainAreas: state.areas.Areas.domain || [],
-  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchAreas: async () => {
-      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
-    },
     add: async domain => {
       await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddDomain)));

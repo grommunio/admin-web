@@ -2,9 +2,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, Select, CircularProgress, Grid, FormControlLabel, Checkbox, 
+  MenuItem, Button, DialogActions, CircularProgress,
 } from '@material-ui/core';
-import { fetchAreasData } from '../../actions/areas';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -28,23 +27,19 @@ class AddUser extends PureComponent {
 
   state = {
     username: '',
-    realName: '',
-    areaID: 0,
-    groupID: 0,
-    // eslint-disable-next-line camelcase
-    pop3_imap: true,
-    smtp: true,
-    changePassword: true,
-    publicAddress: true,
-    maxSize: '',
-    sizeUnit: 0,
+    properties: {
+      displayname: '',
+      storagequotalimit: '',
+      displaytypeex: 0,
+    },
     loading: false,
   }
 
-  componentDidMount() {
-    this.props.fetchAreas()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-  }
+  types = [
+    { name: 'Normal', ID: 0 },
+    { name: 'Room', ID: 7 },
+    { name: 'Equipment', ID: 8 },
+  ]
 
   handleInput = field => event => {
     this.setState({
@@ -63,39 +58,22 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, areaID, groupID, createDay, lang, realName, maxSize,
-      // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress, sizeUnit, password } = this.state;
+    const { username, password, subType, properties } = this.state;
     this.setState({ loading: true });
     this.props.add(this.props.domain.ID, {
       username,
-      areaID,
-      groupID,
-      realName,
-      // eslint-disable-next-line camelcase
-      pop3_imap,
-      smtp,
-      changePassword,
-      publicAddress,
       password,
-      createDay: moment(createDay).format('YYYY-MM-DD HH:mm').toString(),
-      lang: lang || 0,
-      maxFile: 0,
-      maxSize: maxSize << (10 * sizeUnit),
+      subType,
+      properties: this.toArray({
+        ...properties,
+        creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
+      }),
     })
       .then(() => {
         this.setState({
           username: '',
-          realName: '',
-          areaID: 0,
-          groupID: 0,
-          maxSize: '',
-          // eslint-disable-next-line camelcase
-          pop3_imap: true,
-          smtp: true,
-          changePassword: true,
-          publicAddress: true,
-          sizeUnit: 0,
+          subType: 0,
+          properties: [],
           loading: false,
         });
         this.props.onSuccess();
@@ -106,13 +84,34 @@ class AddUser extends PureComponent {
       });
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value })
+  handlePropertyChange = field => event => {
+    this.setState({
+      properties: {
+        ...this.state.properties,
+        [field]: event.target.value,
+      },
+    });
+  }
+
+  handleIntPropertyChange = field => event => {
+    this.setState({
+      properties: {
+        ...this.state.properties,
+        [field]: parseInt(event.target.value) || '',
+      },
+    });
+  }
+
+  toArray(obj) {
+    const arr = [];
+    Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
+    return arr;
+  }
 
   render() {
-    const { classes, t, userAreas, groups, domain, open, onSuccess } = this.props;
-    const { username, areaID, groupID, maxSize, sizeUnit,loading, realName,
-      // eslint-disable-next-line camelcase
-      pop3_imap, smtp, changePassword, publicAddress, password, repeatPw } = this.state;
+    const { classes, t, domain, open, onSuccess } = this.props;
+    const { username, loading, properties, password, repeatPw } = this.state;
+    const { storagequotalimit, displayname, displaytypeex } = properties;
 
     return (
       <Dialog
@@ -134,6 +133,7 @@ class AddUser extends PureComponent {
                 endAdornment: <div>@{domain.domainname}</div>,
               }}
               className={classes.input}
+              required
             />
             <TextField 
               label={t("Password")}
@@ -142,6 +142,7 @@ class AddUser extends PureComponent {
               style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
               type="password"
+              required
             />
             <TextField 
               label={t("Repeat password")}
@@ -150,105 +151,38 @@ class AddUser extends PureComponent {
               style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
               type="password"
+              required
             />
             <TextField 
-              label={t("Display name")}
-              value={realName || ''}
-              onChange={this.handleInput('realName')}
+              label={t("Real name")}
+              value={displayname || ''}
+              onChange={this.handlePropertyChange('displayname')}
               style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
             />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Data area")}
-              fullWidth
-              value={areaID || ''}
-              onChange={this.handleInput('areaID')}
-            >
-              {userAreas.map((area, key) => (
-                <MenuItem key={key} value={area.ID}>
-                  {area.masterPath}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Group")}
-              fullWidth
-              value={groupID || 0}
-              onChange={this.handleInput('groupID')}
-            >
-              <MenuItem value={0}>
-                {t('Direct user')}
-              </MenuItem>
-              {groups.Groups.map((group, key) => (
-                <MenuItem key={key} value={group.ID}>
-                  {group.groupname}
-                </MenuItem>
-              ))}
-            </TextField>
             <TextField 
-              className={classes.input} 
-              label={t("Maximum space")} 
-              fullWidth 
-              value={maxSize || ''}
-              onChange={this.handleNumberInput('maxSize')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange}
-                      value={sizeUnit}
-                      className={classes.select}
-                    >
-                      <MenuItem value={0}>MiB</MenuItem>
-                      <MenuItem value={1}>GiB</MenuItem>
-                      <MenuItem value={2}>TiB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
+              label={t("Storage quota limit")}
+              required
+              value={storagequotalimit || ''}
+              onChange={this.handleIntPropertyChange('storagequotalimit')}
+              style={{ flex: 1, marginRight: 8 }}
+              className={classes.input}
+              type="number"
             />
-            <Grid container className={classes.input}>
-              <FormControlLabel
-                label={t('Allow pop3 or imap downloading')}
-                control={
-                  <Checkbox
-                    // eslint-disable-next-line camelcase
-                    checked={pop3_imap || false}
-                    onChange={this.handleCheckbox('pop3_imap')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Allow smtp sending')}
-                control={
-                  <Checkbox
-                    checked={smtp || false}
-                    onChange={this.handleCheckbox('smtp')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Allow change password')}
-                control={
-                  <Checkbox
-                    checked={changePassword || false}
-                    onChange={this.handleCheckbox('changePassword')}
-                  />
-                }
-              />
-              <FormControlLabel
-                label={t('Public user information')}
-                control={
-                  <Checkbox
-                    checked={publicAddress || false}
-                    onChange={this.handleCheckbox('publicAddress')}
-                  />
-                }
-              />
-            </Grid>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Type")}
+              fullWidth
+              value={displaytypeex || 0}
+              onChange={this.handlePropertyChange('displaytypeex')}
+            >
+              {this.types.map((type, key) => (
+                <MenuItem key={key} value={type.ID}>
+                  {type.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -263,7 +197,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username || loading || password !== repeatPw}
+            disabled={!username || loading || password !== repeatPw || !storagequotalimit}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
@@ -277,19 +211,16 @@ AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   groups: PropTypes.object.isRequired,
-  userAreas: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  fetchAreas: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     groups: state.groups,
-    userAreas: state.areas.Areas.user || [],
   };
 };
 
@@ -297,9 +228,6 @@ const mapDispatchToProps = dispatch => {
   return {
     add: async (domainID, user) => {
       await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
-    fetchAreas: async () => {
-      await dispatch(fetchAreasData()).catch(msg => Promise.reject(msg));
     },
   };
 };

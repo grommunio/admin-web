@@ -81,6 +81,12 @@ class Users extends Component {
     this.props.history.push('/' + this.props.domain.ID + '/users/' + user.ID, { ...user });
   }
 
+  toObject(arr) {
+    const obj = {};
+    arr.forEach(item => obj[item.name] = item.val);
+    return obj;
+  }
+
   render() {
     const { classes, t, users } = this.props;
     const { snackbar, adding, deleting } = this.state;
@@ -96,18 +102,17 @@ class Users extends Component {
                 <TableRow>
                   <TableCell>{t('Username')}</TableCell>
                   <TableCell>{t('Display name')}</TableCell>
-                  <TableCell>{t('Nickname')}</TableCell>
                   <TableCell>{t('Max size')}</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!users.loading && users.Users.map((obj, idx) =>
-                  <TableRow key={idx}>
+                {!users.loading && users.Users.map((obj, idx) => {
+                  const properties = this.toObject(obj.properties);
+                  return <TableRow key={idx}>
                     <TableCell>{obj.username}</TableCell>
-                    <TableCell>{obj.realName}</TableCell>
-                    <TableCell>{obj.nickname}</TableCell>
-                    <TableCell>{obj.maxSize}</TableCell>
+                    <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{properties.storagequotalimit}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleEdit(obj)}>
                         <Edit />
@@ -116,8 +121,8 @@ class Users extends Component {
                         <Delete color="error"/>
                       </IconButton>
                     </TableCell>
-                  </TableRow>
-                )}
+                  </TableRow>;
+                })}
               </TableBody>
             </Table>
           </Paper>

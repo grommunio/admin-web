@@ -2,12 +2,14 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, 
+  MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, InputLabel, Select, Input, 
 } from '@material-ui/core';
 import Delete from '@material-ui/icons/Close';
 import Add from '@material-ui/icons/AddCircle';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { fetchDomainData } from '../../actions/domains';
+import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
 
 const styles = theme => ({
@@ -45,7 +47,16 @@ class AddRole extends PureComponent {
   }
 
   componentDidMount() {
-    this.props.fetch()
+    const { fetch, fetchDomains, fetchUsers } = this.props;
+    fetch()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+    fetchDomains()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+    fetchUsers()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -119,8 +130,8 @@ class AddRole extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, Permissions } = this.props;
-    const { name, permissions, description, loading } = this.state;
+    const { classes, t, open, onSuccess, Permissions, Domains, Users } = this.props;
+    const { name, permissions, description, loading, users } = this.state;
 
     return (
       <Dialog
@@ -159,9 +170,16 @@ class AddRole extends PureComponent {
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}
                   fullWidth
-                  disabled={permission.permission === 'SystemAdmin'}
+                  disabled={['SystemAdmin', ''].includes(permission.permission)}
                   className={classes.rowTextfield}
-                />
+                  select
+                >
+                  {Domains.map(domain => (
+                    <MenuItem key={domain.ID} value={domain.ID}>
+                      {domain.domainname}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 <IconButton size="small" onClick={this.removeRow(idx)}>
                   <Delete fontSize="small" color="error" />
                 </IconButton>
@@ -172,6 +190,28 @@ class AddRole extends PureComponent {
                 <Add color="primary" />
               </Button>
             </Grid>
+            <FormControl className={classes.input}>
+              <InputLabel id="demo-mutiple-chip-label">{t("Users")}</InputLabel>
+              <Select
+                labelId="demo-mutiple-chip-label"
+                id="demo-mutiple-chip"
+                multiple
+                fullWidth
+                value={users || []}
+                onChange={this.handleInput('users')}
+                input={<Input id="select-multiple-chip" />}
+              >
+                {Users.map((user, key) => (
+                  <MenuItem
+                    key={key}
+                    value={user.ID}
+                    selected={users.find(u => u.ID === user.ID)}
+                  >
+                    {user.username}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField 
               className={classes.input} 
               label={t("Description")} 
@@ -214,11 +254,17 @@ AddRole.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  Domains: PropTypes.array.isRequired,
+  Users: PropTypes.array.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
+  fetchUsers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     Permissions: state.roles.Permissions,
+    Domains: state.domains.Domains,
+    Users: state.users.Users,
   };
 };
 
@@ -227,6 +273,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => {
       await dispatch(fetchPermissionsData()).catch(err => Promise.reject(err));
     },
+    fetchDomains: async () => await dispatch(fetchDomainData()).catch(err => Promise.reject(err)),
+    fetchUsers: async () => await dispatch(fetchAllUsers()).catch(err => Promise.reject(err)),
     add: async role => {
       await dispatch(addRolesData(role)).catch(err => Promise.reject(err));
     },

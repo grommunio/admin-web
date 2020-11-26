@@ -124,8 +124,8 @@ class Forwards extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>alias name</TableCell>
-                  <TableCell>main name</TableCell>
+                  <TableCell>username</TableCell>
+                  <TableCell>destination</TableCell>
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>

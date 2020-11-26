@@ -4,8 +4,6 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 // Keep alphabetically ordered
-import aliasesReducer from './reducers/aliases';
-import areasReducer from './reducers/areas';
 import authReducer from './reducers/auth';
 import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
@@ -17,7 +15,6 @@ import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
-import userAliasesReducer from './reducers/userAliases';
 import groupsReducer from './reducers/groups';
 import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
@@ -30,8 +27,6 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   // Keep alphabetically ordered
   combineReducers({
-    aliases: aliasesReducer,
-    areas: areasReducer,
     auth: authReducer,
     classes: classesReducer,
     dashboard: dashboardReducer,
@@ -48,7 +43,6 @@ export const store = createStore(
     services: servicesReducer,
     settings: settingsReducer,
     users: usersReducer,
-    userAliases: userAliasesReducer,
   }),
   composeEnhancers(applyMiddleware(
     thunkMiddleware,

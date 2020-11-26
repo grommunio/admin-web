@@ -7,9 +7,11 @@ import {
   TextField,
   FormControl,
   Button,
+  Snackbar,
 } from '@material-ui/core';
 import TopBar from '../components/TopBar';
 import { changePw } from '../api';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -50,6 +52,7 @@ class BaseSetup extends Component {
     oldPw: '',
     newPw: '',
     reType: '',
+    snackbar: '',
   }
 
   handleInput = field => event => {
@@ -58,11 +61,13 @@ class BaseSetup extends Component {
     });
   }
 
-  handleSave = () => changePw(this.state.oldPw, this.state.newPw);
+  handleSave = () => changePw(this.state.oldPw, this.state.newPw)
+    .then(() => this.setState({ snackbar: 'Success!' }))
+    .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));;
 
   render() {
     const { classes, t } = this.props;
-    const { oldPw, newPw, reType } = this.state;
+    const { oldPw, newPw, reType, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -110,6 +115,21 @@ class BaseSetup extends Component {
               {t('Save')}
             </Button>
           </Paper>
+          <Snackbar
+            open={!!snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {snackbar}
+            </Alert>
+          </Snackbar>
         </div>
       </div>
     );

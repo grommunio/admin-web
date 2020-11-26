@@ -233,33 +233,6 @@ class BaseSetup extends Component {
             <Collapse timeout={100} in={help}>
               <Typography>anti-virus scanning size, over this size, anti-virus will not scan the mail</Typography>
             </Collapse>
-            <FormControl className={classes.form}>
-              <TextField
-                className={classes.input}
-                label={t("anti-virus maximum scanning size")}
-                fullWidth
-                value={changes.maxScanningSize || ''}
-                onChange={this.handleInput('maxScanningSize')}
-                InputProps={{
-                  endAdornment: <InputAdornment position="start">
-                    <Select
-                      value={changes.scanningSizeUnit || 1}
-                      onChange={this.handleInput('scanningSizeUnit')}
-                    >
-                      <MenuItem value={0}>
-                          B
-                      </MenuItem>
-                      <MenuItem value={1}>
-                          K
-                      </MenuItem>
-                      <MenuItem value={2}>
-                          M
-                      </MenuItem>
-                    </Select>
-                  </InputAdornment>,
-                }}
-              />
-            </FormControl>
             <Button
               variant="contained"
               color="primary"

@@ -8,24 +8,25 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Collapse from '@material-ui/core/Collapse';
-import DefaultData from '@material-ui/icons/AccountTree';
 import Settings from '@material-ui/icons/Settings';
-import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
 import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
 import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
-import Web from '@material-ui/icons/Web';
 import Orgs from '@material-ui/icons/GroupWork';
-import Aliases from '@material-ui/icons/AssignmentInd';
-import Forwards from '@material-ui/icons/Forward';
 import Folder from '@material-ui/icons/Folder';
 import Mail from '@material-ui/icons/Mail';
+/*
+import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
+import Forwards from '@material-ui/icons/Forward';
 import MLists from '@material-ui/icons/Email';
 import Classes from '@material-ui/icons/Class';
-import Members from '@material-ui/icons/Contacts';
+import DefaultData from '@material-ui/icons/AccountTree';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+*/
 import Roles from '@material-ui/icons/VerifiedUser';
 import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
@@ -34,8 +35,6 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
 import { SYS_ADMIN, DOM_ADMIN } from '../constants';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const styles = theme => ({
   drawerHeader: {
@@ -199,7 +198,7 @@ class NavigationLinks extends PureComponent {
 
   render() {
     const { classes, t, location, domains, role } = this.props;
-    const { filter, stateDomains, defaultsIn, tab } = this.state;
+    const { filter, stateDomains, tab } = this.state;
 
     return(
       <React.Fragment>
@@ -263,7 +262,7 @@ class NavigationLinks extends PureComponent {
                   </ListItem>
                   <Collapse in={stateDomains[ID]} unmountOnExit>
                     <List component="div" disablePadding>
-                      <ListItem
+                      {/*<ListItem
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/configuration')}
@@ -274,7 +273,7 @@ class NavigationLinks extends PureComponent {
                           <Settings className={classes.nestedIcon}/>
                           <ListItemText primary={t('Configuration')}/>
                         </Grid>
-                      </ListItem>
+                      </ListItem>*/}
                       <ListItem
                         className={classes.li}
                         button
@@ -285,18 +284,6 @@ class NavigationLinks extends PureComponent {
                         <Grid container alignItems="center">
                           <People className={classes.nestedIcon}/>
                           <ListItemText primary={t('Users')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/userAliases')}
-                        selected={stateDomains[ID] &&
-                          location.pathname.startsWith('/' + ID + '/userAliases')}
-                      >
-                        <Grid container alignItems="center">
-                          <Aliases className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Aliases')}/>
                         </Grid>
                       </ListItem>
                       <ListItem
@@ -341,17 +328,6 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <ListItem
               button
-              onClick={this.handleNavigation('dataAreaSetup')}
-              className={classes.li}
-              selected={location.pathname === '/dataAreaSetup'}
-            >
-              <Grid container alignItems="center">
-                <Web className={classes.icon}/>
-                <ListItemText primary={t('Data areas')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
               onClick={this.handleNavigation('domainList')}
               className={classes.li}
               selected={location.pathname.startsWith('/domainList')}
@@ -372,17 +348,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Organizations')}/>
               </Grid>
             </ListItem>
-            <ListItem
-              className={classes.li}
-              button
-              onClick={this.handleNavigation('aliases')}
-              selected={location.pathname.startsWith('/aliases')}
-            >
-              <Grid container alignItems="center">
-                <Aliases className={classes.icon}/>
-                <ListItemText primary={t('Aliases')}/>
-              </Grid>
-            </ListItem>
+            {/*
             <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}
@@ -393,7 +359,7 @@ class NavigationLinks extends PureComponent {
                 <Setup className={classes.icon}/>
                 <ListItemText primary={t('Base setup')} />
               </Grid>
-            </ListItem>
+            </ListItem>*/}
             <ListItem
               button
               onClick={this.handleNavigation('roles')}
@@ -405,7 +371,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Roles')} />
               </Grid>
             </ListItem>
-            <ListItem button onClick={this.toggleDefaults} className={classes.li}>
+            {/*<ListItem button onClick={this.toggleDefaults} className={classes.li}>
               <DefaultData className={classes.icon} />
               <ListItemText primary={t('Default data')} />
               { defaultsIn ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
@@ -468,7 +434,7 @@ class NavigationLinks extends PureComponent {
                   </Grid>
                 </ListItem>       
               </List>
-            </Collapse>
+          </Collapse>*/}
           </React.Fragment>
           }
           <div className={classes.logoutContainer}>

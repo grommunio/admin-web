@@ -12,7 +12,6 @@ import {
   FormControlLabel,
   MenuItem,
   Button,
-  InputAdornment,
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { DatePicker } from "@material-ui/pickers";
@@ -195,16 +194,6 @@ class GroupDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField 
-                className={classes.input} 
-                label={t("maximum space")} 
-                fullWidth 
-                value={changes.maxSize || ''}
-                onChange={this.handleNumberInput('maxSize')}
-                InputProps={{
-                  endAdornment: <InputAdornment position="start">G</InputAdornment>,
-                }}
-              />
               <TextField 
                 className={classes.input} 
                 label={t("maximum users")} 

@@ -27,6 +27,7 @@ export function fetchFolderDetails(domainID, folderID) {
   return async dispatch => {
     try {
       const foldersData = await dispatch(folders(domainID));
+      // eslint-disable-next-line
       const folder = foldersData.data.find(f => f.folderid == folderID);
       return folder ? Promise.resolve(folder) : Promise.reject('Folder not found');
     } catch(error) {
