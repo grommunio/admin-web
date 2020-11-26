@@ -166,6 +166,7 @@ class UserDetails extends PureComponent {
       ...user,
       aliases: user.aliases.filter(alias => alias !== ''),
       properties: this.toArray(user.properties),
+      roles: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
