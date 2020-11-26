@@ -439,7 +439,7 @@ class UserDetails extends PureComponent {
             >
               {t('Back')}
             </Button>
-            {[0, 1, 2, 4].includes(tab) ? <Button
+            {[0, 1, 3].includes(tab) ? <Button
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
