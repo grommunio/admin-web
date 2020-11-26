@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal,
-  Checkbox, FormControlLabel, Typography, Button, Grid } from '@material-ui/core';
+  Checkbox, FormControlLabel, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
@@ -61,16 +61,40 @@ class DomainList extends Component {
     showDeleted: false,
     adding: false,
     deleting: false,
+    orderBy: 'domainname',
+    order: 'asc',
   }
 
+  columns = [
+    { label: 'Domain', value: 'domainname' },
+    { label: 'Address', value: 'address' },
+    { label: 'Title', value: 'title' },
+    { label: 'Maximum users', value: 'maxUser' },
+  ]
+
   componentDidMount() {
-    this.props.fetch()
+    this.props.fetch({ sort: 'domainname,asc' })
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
   fetchDomains() {
     this.props.fetch()
       .catch(msg => this.setState({ snackbar: msg }));
+  }
+
+  handleRequestSort = orderBy => () => {
+    const { fetch } = this.props;
+    const { order: stateOrder, orderBy: stateOrderBy } = this.state;
+    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
+    
+    fetch({
+      sort: orderBy + ',' + order,
+    }).catch(msg => this.setState({ snackbar: msg }));
+
+    this.setState({
+      order: order,
+      orderBy: orderBy,
+    });
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -110,7 +134,7 @@ class DomainList extends Component {
 
   render() {
     const { classes, t, domains } = this.props;
-    const { showDeleted, snackbar, adding, deleting } = this.state;
+    const { showDeleted, snackbar, adding, deleting, order, orderBy } = this.state;
 
     return (
       <div className={classes.root}>
@@ -135,10 +159,18 @@ class DomainList extends Component {
             <Table size="medium">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('Domain')}</TableCell>
-                  <TableCell>{t('Address')}</TableCell>
-                  <TableCell>{t('Title')}</TableCell>
-                  <TableCell>{t('Maximum users')}</TableCell>
+                  {this.columns.map(column =>
+                    <TableCell key={column.value}>
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left" 
+                        direction={orderBy === column.value ? order : 'asc'}
+                        onClick={this.handleRequestSort(column.value)}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
                   <TableCell style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <FormControlLabel
                       label={t('Show deleted')}
@@ -222,8 +254,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => {
-      await dispatch(fetchDomainData()).catch(error => Promise.reject(error));
+    fetch: async params => {
+      await dispatch(fetchDomainData(params)).catch(error => Promise.reject(error));
     },
     delete: async id => {
       await dispatch(deleteDomainData(id)).catch(error => Promise.reject(error));

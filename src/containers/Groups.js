@@ -180,7 +180,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchGroupsData()).catch(error => Promise.reject(error));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData()).catch(() => { });
+      await dispatch(fetchDomainData({})).catch(() => { });
     },
     delete: async id => {
       await dispatch(deleteGroupData(id));

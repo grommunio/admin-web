@@ -58,8 +58,7 @@ class AddDomain extends PureComponent {
 
   handleAdd = () => {
     const { domainname, password, domainStatus, maxUser,
-      title, address, adminName, tel, mailBackup, mailMonitor, mailSubSystem,
-      ignoreCheckingUser, netDisk } = this.state;
+      title, address, adminName, tel } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
@@ -70,11 +69,6 @@ class AddDomain extends PureComponent {
       address,
       adminName,
       tel,
-      mailBackup,
-      mailMonitor,
-      mailSubSystem,
-      ignoreCheckingUser,
-      netDisk,
     })
       .then(() => {
         this.setState({
@@ -86,12 +80,6 @@ class AddDomain extends PureComponent {
           address: '',
           adminName: '',
           tel: '',
-          mailBackup: false,
-          mailMonitor: false,
-          mailSubSystem: true,
-          ignoreCheckingUser: false,
-          netDisk: false,
-          loading: false,
         });
         this.props.onSuccess();
       })

@@ -185,7 +185,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(deleteClassData(id));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData()).catch(() => { });
+      await dispatch(fetchDomainData({})).catch(() => { });
     },
     fetchGroups: async () => {
       await dispatch(fetchGroupsData());

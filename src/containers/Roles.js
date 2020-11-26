@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
-  Typography, Button, Grid } from '@material-ui/core';
+  Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Close';
 import TopBar from '../components/TopBar';
@@ -77,7 +77,7 @@ const styles = theme => ({
 class Roles extends Component {
 
   componentDidMount() {
-    this.props.fetch()
+    this.props.fetch({ sort: 'name,asc' })
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -87,6 +87,7 @@ class Roles extends Component {
     snackbar: '',
     adding: false,
     deleting: false,
+    order: 'asc',
   }
 
   handleInput = field => event => {
@@ -95,6 +96,20 @@ class Roles extends Component {
         ...this.state.newData,
         [field]: event.target.value,
       },
+    });
+  }
+
+  handleRequestSort = () => {
+    const { fetch } = this.props;
+    const { order: stateOrder } = this.state;
+    const order = stateOrder === "asc" ? "desc" : "asc";
+    
+    fetch({
+      sort: 'name' + ',' + order,
+    }).catch(msg => this.setState({ snackbar: msg }));
+
+    this.setState({
+      order: order,
     });
   }
 
@@ -129,7 +144,7 @@ class Roles extends Component {
 
   render() {
     const { classes, t, Roles } = this.props;
-    const { adding, snackbar, deleting } = this.state;
+    const { adding, snackbar, deleting, order } = this.state;
 
     return (
       <div className={classes.root}>
@@ -154,7 +169,16 @@ class Roles extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('Name')}</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active
+                      align="left" 
+                      direction={order}
+                      onClick={this.handleRequestSort}
+                    >
+                      {t('Name')}
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>{t('Description')}</TableCell>
                   <TableCell>{t('Permissions')}</TableCell>
                   <TableCell></TableCell>
@@ -228,8 +252,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => {
-      await dispatch(fetchRolesData()).catch(msg => Promise.reject(msg));
+    fetch: async params => {
+      await dispatch(fetchRolesData(params)).catch(msg => Promise.reject(msg));
     },
     delete: async id => {
       await dispatch(deleteRolesData(id)).catch(msg => Promise.reject(msg));

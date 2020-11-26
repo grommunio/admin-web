@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Snackbar, Typography, Button, Grid } from '@material-ui/core';
+  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
@@ -68,6 +68,7 @@ class Users extends Component {
     snackbar: null,
     adding: false,
     deleting: false,
+    order: 'asc',
   }
 
   componentDidMount() {
@@ -75,7 +76,7 @@ class Users extends Component {
   }
 
   fetchUsers() {
-    this.props.fetch(this.props.domain.ID)
+    this.props.fetch(this.props.domain.ID, { sort: 'username,asc' })
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
@@ -114,9 +115,23 @@ class Users extends Component {
     return obj;
   }
 
+  handleRequestSort = () => {
+    const { fetch, domain } = this.props;
+    const { order: stateOrder } = this.state;
+    const order = stateOrder === "asc" ? "desc" : "asc";
+    
+    fetch(domain.ID, {
+      sort: 'username' + ',' + order,
+    }).catch(msg => this.setState({ snackbar: msg }));
+
+    this.setState({
+      order: order,
+    });
+  }
+
   render() {
     const { classes, t, users, domain } = this.props;
-    const { snackbar, adding, deleting } = this.state;
+    const { snackbar, adding, deleting, order } = this.state;
 
     return (
       <div className={classes.root}>
@@ -141,7 +156,16 @@ class Users extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('Username')}</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active
+                      align="left" 
+                      direction={order}
+                      onClick={this.handleRequestSort}
+                    >
+                      {t('Username')}
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>{t('Display name')}</TableCell>
                   <TableCell>{t('Max size')}</TableCell>
                   <TableCell></TableCell>
@@ -215,8 +239,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async domainID => {
-      await dispatch(fetchUsersData(domainID)).catch(error => Promise.reject(error));
+    fetch: async (domainID, params) => {
+      await dispatch(fetchUsersData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));

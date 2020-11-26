@@ -88,6 +88,21 @@ async function renew() {
   }).then(handleErrors);
 }
 
+function toArray(obj) {
+  const arr = [];
+  Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
+  return arr;
+}
+
+function buildQuery(endpoint, params) {
+  let query = endpoint;
+  const paramsArray = toArray(params);
+  if(Object.keys(params).length === 0) return query;
+  query += '?';
+  paramsArray.forEach(param => query += ![undefined].includes(param.val) ? `${param.name}=${param.val}&` : '');
+  return query.slice(0, -1);
+}
+
 /*
   LOGIN
 */
@@ -142,9 +157,9 @@ export function drawerDomains() {
   };
 }
 
-export function domains() {
+export function domains(params) {
   return async () => {
-    return await get('/system/domains?domainType=0');
+    return await get(buildQuery('/system/domains', { ...params, domainType: 0 }));
   };
 }
 
@@ -182,15 +197,16 @@ export async function changeDomainPassword(id, newPw) {
   USERS
 */
 
-export function allUsers() {
+export function allUsers(params) {
   return async () => {
-    return await get('/system/users?addressType=0');
+    return await get(buildQuery('/system/users', { ...params, addressType: 0 }));
   };
 }
 
-export function users(domainID) {
+export function users(domainID, params) {
   return async () => {
-    return await get('/domains/' + domainID + '/users?addressType=0&level=2');
+    return await get(buildQuery(
+      '/domains/' + domainID + '/users', { ...params, level: 2, addressType: 0 }));
   };
 }
 
@@ -235,9 +251,9 @@ export function editUserRole(domainID, userID, roles) {
   ROLES
 */
 
-export function roles() {
+export function roles(params) {
   return async () => {
-    return await get('/system/roles?level=2');
+    return await get(buildQuery('/system/roles', { ...params, level: 2 }));
   };
 }
 
