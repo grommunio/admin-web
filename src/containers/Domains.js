@@ -126,7 +126,7 @@ class DomainList extends Component {
               color="primary"
               onClick={this.handleAdd}
             >
-              Add new domain
+              {t('New domain')}
             </Button>
           </Grid>
           <Paper elevation={1}>

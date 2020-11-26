@@ -134,7 +134,7 @@ class Roles extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Roles ")}
+            {t("Roles")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
@@ -144,7 +144,7 @@ class Roles extends Component {
               color="primary"
               onClick={() => this.setState({ adding: true })}
             >
-              {t("Add new role")}
+              {t("New role")}
             </Button>
           </Grid>
           <Paper className={classes.tablePaper} elevation={1}>

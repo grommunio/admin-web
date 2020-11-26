@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell,
+  TableBody, Snackbar, Typography, Button, Grid } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Close';
@@ -12,6 +13,8 @@ import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
+import HomeIcon from '@material-ui/icons/Home';
+import blue from '../colors/blue';
 
 const styles = theme => ({
   root: {
@@ -41,6 +44,22 @@ const styles = theme => ({
   flexRowEnd: {
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  buttonGrid: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: '#aaa',
+  },
+  homeIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    left: 4,
+    cursor: 'pointer',
   },
 });
 
@@ -81,6 +100,12 @@ class Users extends Component {
     this.props.history.push('/' + this.props.domain.ID + '/users/' + user.ID, { ...user });
   }
 
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
   toObject(arr) {
     const obj = {};
     arr.forEach(item => obj[item.name] = item.val);
@@ -88,14 +113,28 @@ class Users extends Component {
   }
 
   render() {
-    const { classes, t, users } = this.props;
+    const { classes, t, users, domain } = this.props;
     const { snackbar, adding, deleting } = this.state;
 
     return (
       <div className={classes.root}>
-        <TopBar onAdd={this.handleAdd} title={t("Users")}/>
+        <TopBar title={domain.domainname}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Users")}
+            <span className={classes.pageTitleSecondary}> |</span>
+            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
+          </Typography>
+          <Grid className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleAdd}
+            >
+              {t('New user')}
+            </Button>
+          </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
@@ -108,7 +147,7 @@ class Users extends Component {
               </TableHead>
               <TableBody>
                 {!users.loading && users.Users.map((obj, idx) => {
-                  const properties = this.toObject(obj.properties);
+                  const properties = this.toObject(obj.properties || []);
                   return <TableRow key={idx}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
