@@ -69,7 +69,14 @@ class Users extends Component {
     adding: false,
     deleting: false,
     order: 'asc',
+    orderBy: 'username',
   }
+
+  columns = [
+    { label: 'Username', value: 'username' },
+    { label: 'Display name', value: 'displayname' },
+    { label: 'Storage quota limit', value: 'storagequotalimit' },
+  ]
 
   componentDidMount() {
     this.fetchUsers();
@@ -117,23 +124,24 @@ class Users extends Component {
     return obj;
   }
 
-  handleRequestSort = () => {
+  handleRequestSort = orderBy => () => {
     const { fetch, domain } = this.props;
-    const { order: stateOrder } = this.state;
-    const order = stateOrder === "asc" ? "desc" : "asc";
+    const { order: stateOrder, orderBy: stateOrderBy } = this.state;
+    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
     
     fetch(domain.ID, {
-      sort: 'username,' + order,
+      sort: orderBy + ',' + order,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({
       order: order,
+      orderBy,
     });
   }
 
   render() {
     const { classes, t, users, domain } = this.props;
-    const { snackbar, adding, deleting, order } = this.state;
+    const { snackbar, adding, deleting, order, orderBy } = this.state;
 
     return (
       <div className={classes.root}>
@@ -158,18 +166,18 @@ class Users extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active
-                      align="left" 
-                      direction={order}
-                      onClick={this.handleRequestSort}
-                    >
-                      {t('Username')}
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>{t('Display name')}</TableCell>
-                  <TableCell>{t('Max size')}</TableCell>
+                  {this.columns.map(column =>
+                    <TableCell key={column.value}>
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left" 
+                        direction={orderBy === column.value ? order : 'asc'}
+                        onClick={this.handleRequestSort(column.value)}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>

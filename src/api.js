@@ -206,7 +206,7 @@ export function allUsers(params) {
 export function users(domainID, params) {
   return async () => {
     return await get(buildQuery(
-      '/domains/' + domainID + '/users', { ...params, level: 2, addressType: 0 }));
+      '/domains/' + domainID + '/users', { ...params, properties: 'displayname,storagequotalimit', addressType: 0 }));
   };
 }
 
