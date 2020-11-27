@@ -661,11 +661,9 @@ class UserDetails extends PureComponent {
               </React.Fragment>}
 
               {tab === 3 && <React.Fragment>
+                <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
                 <FormControl className={classes.input}>
-                  <InputLabel id="demo-mutiple-chip-label">{t('Roles')}</InputLabel>
                   <Select
-                    labelId="demo-mutiple-chip-label"
-                    id="demo-mutiple-chip"
                     multiple
                     fullWidth
                     value={user.roles || []}
@@ -684,6 +682,7 @@ class UserDetails extends PureComponent {
                 </FormControl>
               </React.Fragment>}
               {tab === 4 && <React.Fragment>
+                <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
                 <List className={classes.list}>
                   {user.aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
                     <TextField
