@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress,
+  MenuItem, Button, DialogActions, CircularProgress, Select,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -36,6 +36,7 @@ class AddUser extends PureComponent {
     loading: false,
     password: '',
     repeatPw: '',
+    sizeUnit: 1,
   }
 
   types = [
@@ -132,15 +133,18 @@ class AddUser extends PureComponent {
     });
   }
 
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+
   toArray(obj) {
     const arr = [];
+    obj.storagequotalimit = obj.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit);
     Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
     return arr;
   }
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw } = this.state;
+    const { username, loading, properties, password, repeatPw, sizeUnit } = this.state;
     const { storagequotalimit, displayname, displaytypeex } = properties;
 
     return (
@@ -191,13 +195,24 @@ class AddUser extends PureComponent {
               className={classes.input}
             />
             <TextField 
+              className={classes.input} 
               label={t("Storage quota limit")}
-              required
               value={storagequotalimit || ''}
               onChange={this.handleIntPropertyChange('storagequotalimit')}
-              style={{ flex: 1, marginRight: 8 }}
-              className={classes.input}
-              type="number"
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={this.handleUnitChange}
+                      value={sizeUnit}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MiB</MenuItem>
+                      <MenuItem value={2}>GiB</MenuItem>
+                      <MenuItem value={3}>TiB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
             />
             <TextField
               select

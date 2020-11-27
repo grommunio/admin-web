@@ -101,6 +101,7 @@ class UserDetails extends PureComponent {
     checkPw: '',
     snackbar: '',
     tab: 0,
+    sizeUnit: 1,
   };
 
   types = [
@@ -123,14 +124,46 @@ class UserDetails extends PureComponent {
     const user = await fetch(splits[1], splits[3]);
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    this.setState({
-      user: {
-        ...user,
-        username: user.username.slice(0, user.username.indexOf('@')),
-        roles: (user.roles && user.roles.map(role => role.ID)) || [],
-        properties: this.toObject(user.properties),
-      },
-    });
+    const properties = this.toObject(user.properties);
+    const username = user.username.slice(0, user.username.indexOf('@'));
+    const roles = (user.roles && user.roles.map(role => role.ID)) || [];
+    const storagequotalimit = properties.storagequotalimit;
+
+    // Covert to biggest possible sizeUnit
+    if(storagequotalimit % 1073741824 === 0) {
+      properties.storagequotalimit = storagequotalimit / 1073741824;
+      this.setState({
+        user: {
+          ...user,
+          username,
+          roles,
+          properties,
+        },
+        sizeUnit: 3,
+      });
+    } else if (storagequotalimit % 1048576 === 0) {
+      properties.storagequotalimit = storagequotalimit / 1048576;
+      this.setState({
+        user: {
+          ...user,
+          username,
+          roles,
+          properties,
+        },
+        sizeUnit: 2,
+      });
+    } else {
+      properties.storagequotalimit = storagequotalimit / 1024;
+      this.setState({
+        user: {
+          ...user,
+          username,
+          roles,
+          properties,
+        },
+        sizeUnit: 1,
+      });
+    }
   }
 
   toObject(arr) {
@@ -141,6 +174,7 @@ class UserDetails extends PureComponent {
 
   toArray(obj) {
     const arr = [];
+    obj.storagequotalimit = obj.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit);
     Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
     return arr;
   }
@@ -169,6 +203,20 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleIntPropertyChange = field => event => {
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: parseInt(event.target.value) || '',
+        },
+      },
+      unsaved: true,
+    });
+  }
+
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
@@ -185,7 +233,7 @@ class UserDetails extends PureComponent {
     this.props.edit(this.props.domain.ID, {
       ...user,
       aliases: user.aliases.filter(alias => alias !== ''),
-      properties: this.toArray(user.properties),
+      properties: this.toArray({ ...user.properties }),
       roles: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -252,13 +300,15 @@ class UserDetails extends PureComponent {
     this.setState({ user: { ...user, aliases: copy } });
   }
 
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+
   render() {
     const { classes, t, domain, Roles } = this.props;
-    const { user, changingPw, newPw, checkPw, snackbar, tab } = this.state;
+    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit } = this.state;
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
-      assistant, country, locality, stateorprovince, postalcode,
+      assistant, country, locality, stateorprovince, postalcode, storagequotalimit,
       hometelephonenumber, home2telephonenumber, businesstelephonenumber, business2telephonenumber,
       pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = user.properties;
 
@@ -325,6 +375,27 @@ class UserDetails extends PureComponent {
                   value={creationtime || ''}
                   onChange={this.handlePropertyChange('creationtime')}
                   disabled
+                />
+                <TextField 
+                  className={classes.input} 
+                  label={t("Storage quota limit")}
+                  fullWidth 
+                  value={storagequotalimit || ''}
+                  onChange={this.handleIntPropertyChange('storagequotalimit')}
+                  InputProps={{
+                    endAdornment:
+                      <FormControl>
+                        <Select
+                          onChange={this.handleUnitChange}
+                          value={sizeUnit}
+                          className={classes.select}
+                        >
+                          <MenuItem value={1}>MiB</MenuItem>
+                          <MenuItem value={2}>GiB</MenuItem>
+                          <MenuItem value={3}>TiB</MenuItem>
+                        </Select>
+                      </FormControl>,
+                  }}
                 />
                 <TextField
                   select
