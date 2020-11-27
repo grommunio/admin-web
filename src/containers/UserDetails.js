@@ -21,6 +21,7 @@ import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
 import Close from '@material-ui/icons/Close';
+import world from '../res/world.json';
 
 const styles = theme => ({
   root: {
@@ -340,6 +341,21 @@ class UserDetails extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
+                <TextField
+                  select
+                  className={classes.input}
+                  label={t("Language")}
+                  fullWidth
+                  value={language || 'english'}
+                  onChange={this.handlePropertyChange('language')}
+                >
+                  <MenuItem value={'english'}>
+                    {t('English')}
+                  </MenuItem>
+                  <MenuItem value={'german'}>
+                    {t('Deutsch')}
+                  </MenuItem>
+                </TextField>
               </React.Fragment>}
 
               {tab === 1 && <React.Fragment>
@@ -427,13 +443,21 @@ class UserDetails extends PureComponent {
                         value={postalcode || ''}
                         onChange={this.handlePropertyChange('postalcode')}
                       />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Country")}
-                        fullWidth
-                        value={country || ''}
-                        onChange={this.handlePropertyChange('country')}
-                      />
+                      <FormControl className={classes.input}>
+                        <InputLabel>{t("Country")}</InputLabel>
+                        <Select
+                          value={country || "Germany"}
+                          onChange={this.handlePropertyChange('country')}
+                          fullWidth
+                          native
+                        >
+                          {world.map(country =>
+                            <option key={country.id} value={country.name}>
+                              {country.name}
+                            </option>  
+                          )}
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Grid>
                   <Grid item xs={6}>
@@ -483,18 +507,6 @@ class UserDetails extends PureComponent {
                     </Grid>
                   </Grid>
                 </Grid>
-                <TextField
-                  select
-                  className={classes.input}
-                  label={t("Language")}
-                  fullWidth
-                  value={language || 0}
-                  onChange={this.handlePropertyChange('language')}
-                >
-                  <MenuItem value={0}>
-                    {t('english')}
-                  </MenuItem>
-                </TextField>
               </React.Fragment>}
 
               {tab === 2 && <React.Fragment>
