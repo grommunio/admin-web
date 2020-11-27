@@ -327,11 +327,11 @@ class UserDetails extends PureComponent {
               </Typography>
             </Grid>
             <Tabs value={tab} onChange={this.handleTabChange}>
-              <Tab label="Account" />
-              <Tab label="User" />
-              <Tab label="Contact" />
-              <Tab label="Roles" />
-              <Tab label="SMTP" />
+              <Tab label={t("Account")} />
+              <Tab label={t("User")} />
+              <Tab label={t("Contact")} />
+              <Tab label={t("Roles")} />
+              <Tab label={t("SMTP")} />
             </Tabs>
             <FormControl className={classes.form}>
               {tab === 0 && <React.Fragment>
@@ -698,7 +698,7 @@ class UserDetails extends PureComponent {
                   )}
                 </List>
                 <Grid container justify="center">
-                  <Button onClick={this.handleAddAlias}>{t('Add Alias')}</Button>
+                  <Button onClick={this.handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
                 </Grid>
               </React.Fragment>
               }
@@ -716,14 +716,14 @@ class UserDetails extends PureComponent {
               color="primary"
               onClick={this.handleEdit}
             >
-              {('Save')}
+              {t('Save')}
             </Button> :
               <Button
                 variant="contained"
                 color="primary"
                 onClick={this.handleSaveRoles}
               >
-                {('Save')}
+                {t('Save')}
               </Button>}
           </Paper>
           <Snackbar
