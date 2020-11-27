@@ -2,12 +2,13 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress,
+  MenuItem, Button, DialogActions, CircularProgress, Select,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
+import { withRouter } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -33,6 +34,9 @@ class AddUser extends PureComponent {
       displaytypeex: 0,
     },
     loading: false,
+    password: '',
+    repeatPw: '',
+    sizeUnit: 1,
   }
 
   types = [
@@ -58,12 +62,12 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, password, subType, properties } = this.state;
+    const { domain, add, onError, onSuccess } = this.props;
+    const { username, password, properties } = this.state;
     this.setState({ loading: true });
-    this.props.add(this.props.domain.ID, {
+    add(domain.ID, {
       username,
       password,
-      subType,
       properties: this.toArray({
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -72,14 +76,41 @@ class AddUser extends PureComponent {
       .then(() => {
         this.setState({
           username: '',
-          subType: 0,
-          properties: [],
+          properties: {
+            displayname: '',
+            storagequotalimit: '',
+            displaytypeex: 0,
+          },
           loading: false,
+          password: '',
+          repeatPw: '',
         });
-        this.props.onSuccess();
+        onSuccess();
       })
       .catch(error => {
-        this.props.onError(error);
+        onError(error);
+        this.setState({ loading: false });
+      });
+  }
+
+  handleAddAndEdit = () => {
+    const { domain, history, add, onError } = this.props;
+    const { username, password, subType, properties } = this.state;
+    this.setState({ loading: true });
+    add(domain.ID, {
+      username,
+      password,
+      subType,
+      properties: this.toArray({
+        ...properties,
+        creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
+      }),
+    })
+      .then(user => {
+        history.push('/' + domain.ID + '/users/' + user.ID);
+      })
+      .catch(error => {
+        onError(error);
         this.setState({ loading: false });
       });
   }
@@ -102,20 +133,23 @@ class AddUser extends PureComponent {
     });
   }
 
+  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+
   toArray(obj) {
     const arr = [];
+    obj.storagequotalimit = obj.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit);
     Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
     return arr;
   }
 
   render() {
-    const { classes, t, domain, open, onSuccess } = this.props;
-    const { username, loading, properties, password, repeatPw } = this.state;
+    const { classes, t, domain, open, onClose } = this.props;
+    const { username, loading, properties, password, repeatPw, sizeUnit } = this.state;
     const { storagequotalimit, displayname, displaytypeex } = properties;
 
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -161,13 +195,24 @@ class AddUser extends PureComponent {
               className={classes.input}
             />
             <TextField 
+              className={classes.input} 
               label={t("Storage quota limit")}
-              required
               value={storagequotalimit || ''}
               onChange={this.handleIntPropertyChange('storagequotalimit')}
-              style={{ flex: 1, marginRight: 8 }}
-              className={classes.input}
-              type="number"
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={this.handleUnitChange}
+                      value={sizeUnit}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MiB</MenuItem>
+                      <MenuItem value={2}>GiB</MenuItem>
+                      <MenuItem value={3}>TiB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
             />
             <TextField
               select
@@ -187,11 +232,19 @@ class AddUser extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
             color="secondary"
           >
             {t('Cancel')}
+          </Button>
+          <Button
+            onClick={this.handleAddAndEdit}
+            variant="contained"
+            color="primary"
+            disabled={!username || loading || password !== repeatPw || !storagequotalimit}
+          >
+            {loading ? <CircularProgress size={24}/> : t('Add and edit')}
           </Button>
           <Button
             onClick={this.handleAdd}
@@ -210,10 +263,12 @@ class AddUser extends PureComponent {
 AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 };
@@ -226,11 +281,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, user) => {
-      await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
+    add: async (domainID, user) => 
+      await dispatch(addUserData(domainID, user))
+        .then(user => Promise.resolve(user))
+        .catch(msg => Promise.reject(msg)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddUser)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(AddUser))));

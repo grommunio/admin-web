@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
+  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel, Portal } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
@@ -69,7 +69,14 @@ class Users extends Component {
     adding: false,
     deleting: false,
     order: 'asc',
+    orderBy: 'username',
   }
+
+  columns = [
+    { label: 'Username', value: 'username' },
+    { label: 'Display name', value: 'displayname' },
+    { label: 'Storage quota limit', value: 'storagequotalimit' },
+  ]
 
   componentDidMount() {
     this.fetchUsers();
@@ -82,7 +89,9 @@ class Users extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false });
+  handleAddingSuccess = () => this.setState({ snackbar: 'Success!' });
+
+  handleAddingClose = () => this.setState({ adding: false });
 
   handleAddingError = error => this.setState({ snackbar: error });
 
@@ -115,23 +124,24 @@ class Users extends Component {
     return obj;
   }
 
-  handleRequestSort = () => {
+  handleRequestSort = orderBy => () => {
     const { fetch, domain } = this.props;
-    const { order: stateOrder } = this.state;
-    const order = stateOrder === "asc" ? "desc" : "asc";
+    const { order: stateOrder, orderBy: stateOrderBy } = this.state;
+    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
     
     fetch(domain.ID, {
-      sort: 'username,' + order,
+      sort: orderBy + ',' + order,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({
       order: order,
+      orderBy,
     });
   }
 
   render() {
     const { classes, t, users, domain } = this.props;
-    const { snackbar, adding, deleting, order } = this.state;
+    const { snackbar, adding, deleting, order, orderBy } = this.state;
 
     return (
       <div className={classes.root}>
@@ -156,18 +166,18 @@ class Users extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active
-                      align="left" 
-                      direction={order}
-                      onClick={this.handleRequestSort}
-                    >
-                      {t('Username')}
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>{t('Display name')}</TableCell>
-                  <TableCell>{t('Max size')}</TableCell>
+                  {this.columns.map(column =>
+                    <TableCell key={column.value}>
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left" 
+                        direction={orderBy === column.value ? order : 'asc'}
+                        onClick={this.handleRequestSort(column.value)}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
@@ -188,27 +198,30 @@ class Users extends Component {
               </TableBody>
             </Table>
           </Paper>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
         </div>
         <AddUser
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={this.props.domain}
+          onClose={this.handleAddingClose}
         />
         <DeleteUser
           open={!!deleting}

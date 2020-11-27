@@ -54,6 +54,7 @@ export function addUserData(domainID, user) {
     try {
       let resp = await dispatch(addUser(domainID, user));
       if(resp) await dispatch({type: USER_DATA_ADD, user: resp});
+      return Promise.resolve(resp);
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
       console.error('Failed to add user', err);
