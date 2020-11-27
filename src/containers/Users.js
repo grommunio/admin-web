@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
+  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel, Portal } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
@@ -82,7 +82,9 @@ class Users extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false });
+  handleAddingSuccess = () => this.setState({ snackbar: 'Success!' });
+
+  handleAddingClose = () => this.setState({ adding: false });
 
   handleAddingError = error => this.setState({ snackbar: error });
 
@@ -188,27 +190,30 @@ class Users extends Component {
               </TableBody>
             </Table>
           </Paper>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
         </div>
         <AddUser
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={this.props.domain}
+          onClose={this.handleAddingClose}
         />
         <DeleteUser
           open={!!deleting}

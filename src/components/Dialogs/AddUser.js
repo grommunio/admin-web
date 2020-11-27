@@ -8,6 +8,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
+import { withRouter } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -33,6 +34,8 @@ class AddUser extends PureComponent {
       displaytypeex: 0,
     },
     loading: false,
+    password: '',
+    repeatPw: '',
   }
 
   types = [
@@ -58,12 +61,12 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { username, password, subType, properties } = this.state;
+    const { domain, add, onError, onSuccess } = this.props;
+    const { username, password, properties } = this.state;
     this.setState({ loading: true });
-    this.props.add(this.props.domain.ID, {
+    add(domain.ID, {
       username,
       password,
-      subType,
       properties: this.toArray({
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -72,14 +75,41 @@ class AddUser extends PureComponent {
       .then(() => {
         this.setState({
           username: '',
-          subType: 0,
-          properties: [],
+          properties: {
+            displayname: '',
+            storagequotalimit: '',
+            displaytypeex: 0,
+          },
           loading: false,
+          password: '',
+          repeatPw: '',
         });
-        this.props.onSuccess();
+        onSuccess();
       })
       .catch(error => {
-        this.props.onError(error);
+        onError(error);
+        this.setState({ loading: false });
+      });
+  }
+
+  handleAddAndEdit = () => {
+    const { domain, history, add, onError } = this.props;
+    const { username, password, subType, properties } = this.state;
+    this.setState({ loading: true });
+    add(domain.ID, {
+      username,
+      password,
+      subType,
+      properties: this.toArray({
+        ...properties,
+        creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
+      }),
+    })
+      .then(user => {
+        history.push('/' + domain.ID + '/users/' + user.ID);
+      })
+      .catch(error => {
+        onError(error);
         this.setState({ loading: false });
       });
   }
@@ -109,13 +139,13 @@ class AddUser extends PureComponent {
   }
 
   render() {
-    const { classes, t, domain, open, onSuccess } = this.props;
+    const { classes, t, domain, open, onClose } = this.props;
     const { username, loading, properties, password, repeatPw } = this.state;
     const { storagequotalimit, displayname, displaytypeex } = properties;
 
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -187,11 +217,19 @@ class AddUser extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
             color="secondary"
           >
             {t('Cancel')}
+          </Button>
+          <Button
+            onClick={this.handleAddAndEdit}
+            variant="contained"
+            color="primary"
+            disabled={!username || loading || password !== repeatPw || !storagequotalimit}
+          >
+            {loading ? <CircularProgress size={24}/> : t('Add and edit')}
           </Button>
           <Button
             onClick={this.handleAdd}
@@ -210,10 +248,12 @@ class AddUser extends PureComponent {
 AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
   groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 };
@@ -226,11 +266,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, user) => {
-      await dispatch(addUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
+    add: async (domainID, user) => 
+      await dispatch(addUserData(domainID, user))
+        .then(user => Promise.resolve(user))
+        .catch(msg => Promise.reject(msg)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddUser)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(AddUser))));
