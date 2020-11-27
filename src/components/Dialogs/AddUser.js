@@ -177,6 +177,7 @@ class AddUser extends PureComponent {
               className={classes.input}
               type="password"
               required
+              helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
             />
             <TextField 
               label={t("Repeat password")}
@@ -186,9 +187,10 @@ class AddUser extends PureComponent {
               className={classes.input}
               type="password"
               required
+              helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
             />
             <TextField 
-              label={t("Real name")}
+              label={t("Display name")}
               value={displayname || ''}
               onChange={this.handlePropertyChange('displayname')}
               style={{ flex: 1, marginRight: 8 }}
@@ -242,7 +244,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAddAndEdit}
             variant="contained"
             color="primary"
-            disabled={!username || loading || password !== repeatPw || !storagequotalimit}
+            disabled={!username || loading || password !== repeatPw || !storagequotalimit || password.length < 6}
           >
             {loading ? <CircularProgress size={24}/> : t('Add and edit')}
           </Button>
@@ -250,7 +252,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username || loading || password !== repeatPw || !storagequotalimit}
+            disabled={!username || loading || password !== repeatPw || !storagequotalimit || password.length < 6}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
