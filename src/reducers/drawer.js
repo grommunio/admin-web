@@ -6,7 +6,9 @@ import {
   DRAWER_SELECTION,
   DRAWER_DOMAINS_REVEICED,
   DRAWER_DOMAINS_FETCH,
+  DOMAIN_DATA_ADD,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   defaultOpen: false,
@@ -60,6 +62,12 @@ function drawerReducer(state = defaultState, action) {
         ...state,
         Domains: action.data.data,
         loading: false,
+      };
+
+    case DOMAIN_DATA_ADD:
+      return {
+        ...state,
+        Domains: addItem(state.Domains, action.data),
       };
 
     default:
