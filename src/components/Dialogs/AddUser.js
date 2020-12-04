@@ -81,6 +81,7 @@ class AddUser extends PureComponent {
             storagequotalimit: '',
             displaytypeex: 0,
           },
+          sizeUnit: 1,
           loading: false,
           password: '',
           repeatPw: '',
