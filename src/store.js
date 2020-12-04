@@ -11,6 +11,7 @@ import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
 import foldersReducer from './reducers/folders';
 import forwardsReducer from './reducers/forwards';
+import licenseReducer from './reducers/license';
 import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
@@ -35,6 +36,7 @@ export const store = createStore(
     folders: foldersReducer,
     forwards: forwardsReducer,
     groups: groupsReducer,
+    license: licenseReducer,
     members: membersReducer,
     mlists: mlistsReducer,
     orgs: orgsReducer,

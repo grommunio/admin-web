@@ -16,7 +16,7 @@ const styles = {
 export default withRouter(withStyles(styles)(function NotFound(props) {
   const { classes } = props;
   const handleButton = () => props.history.push('/');
-  console.log(props);
+
   return (
     <div className={classes.root}>
       <Grid container justify="center" direction="column" alignItems="center">

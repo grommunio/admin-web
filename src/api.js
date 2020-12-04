@@ -60,14 +60,14 @@ async function upload(path, data) {
   }).then(handleErrors)
     .then(response => response.json());
 }
+*/
 
 async function uploadPut(path, data) {
   return fetch((baseUrl + path), {
     method: 'PUT',
     body: data,
-  }).then(handleErrors)
-    .then(response => response.json());
-}*/
+  }).then(handleErrors);
+}
 
 async function loginPost(path, data) {
   return await fetch((baseUrl + path), {
@@ -288,6 +288,22 @@ export function deleteRole(id) {
 export function permissions() {
   return async () => {
     return await get('/system/roles/permissions');
+  };
+}
+
+/*
+  License
+*/
+
+export function license() {
+  return async () => {
+    return await get('/system/license');
+  };
+}
+
+export function uploadLicense(license) {
+  return async () => {
+    return await uploadPut('/system/license', license);
   };
 }
 
