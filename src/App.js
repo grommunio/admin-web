@@ -63,7 +63,7 @@ const styles = {
   },
 };
 
-let MainView = Loadable({
+const MainView = Loadable({
   loader: () => import('./components/LoadableMainView'),
   loading: Loader,
   timeout: 20000,
