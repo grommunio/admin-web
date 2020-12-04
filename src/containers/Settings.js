@@ -234,7 +234,7 @@ class Settings extends Component {
           </Portal>
         </div>
         <input
-          accept="application/x-pem-file"
+          accept=".crt,.pem"
           style={{ display: 'none' }}
           id="raised-button-file"
           type="file"
