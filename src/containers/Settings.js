@@ -79,6 +79,9 @@ const styles = theme => ({
   upload: {
     margin: theme.spacing(0, 0, 0, 1),
   },
+  headline: {
+    marginRight: 8,
+  },
 });
 
 class Settings extends Component {
@@ -170,7 +173,7 @@ class Settings extends Component {
             </FormControl>
             <Divider className={classes.divider}/>
             <Grid container>
-              <Typography variant="h5">License</Typography>
+              <Typography variant="h5" className={classes.headline}>License</Typography>
               <Button
                 className={classes.upload}
                 variant="contained"
@@ -178,7 +181,7 @@ class Settings extends Component {
                 onClick={this.handleUpload}
                 size="small"
               >
-                Upload license
+                Upload
               </Button>
             </Grid>
             <Grid container direction="column" className={classes.licenseContainer}>
@@ -203,14 +206,15 @@ class Settings extends Component {
                 {license.maxUsers}
               </Typography>
               <Typography className={classes.data}>
-                <span className={classes.description}>Certificat:</span>
-                {license.certificate ||
+                {license.certificate &&
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={this.handleUpload}
+                    href={license.certificate}
+                    download
+                    size="small"
                   >
-                    Upload license
+                    Download
                   </Button>}
               </Typography>
             </Grid>
