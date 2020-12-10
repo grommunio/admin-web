@@ -122,6 +122,8 @@ const resources = {
       "Name": "Name",
       "Description": "Beschreibung",
       "Permissions": "Berechtigungen",
+      "Don't have a license?": "Sie haben keine Lizenz?",
+      "Buy now": "Jetzt kaufen",
 
       // User properties
       "First name": "Vorname",

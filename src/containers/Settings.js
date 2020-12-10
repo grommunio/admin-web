@@ -65,7 +65,7 @@ const styles = theme => ({
   description: {
     display: 'inline-block',
     fontWeight: 500,
-    width: 100,
+    width: 200,
   },
   data: {
     padding: '8px 0',
@@ -77,10 +77,14 @@ const styles = theme => ({
     margin: theme.spacing(2, 0),
   },
   upload: {
-    margin: theme.spacing(0, 0, 0, 3),
+    margin: theme.spacing(0, 0, 0, 1),
   },
   headline: {
     marginRight: 8,
+  },
+  gridItem: {
+    display: 'flex',
+    flex: 1,
   },
 });
 
@@ -172,16 +176,29 @@ class Settings extends Component {
               </FormControl>
             </FormControl>
             <Divider className={classes.divider}/>
-            <Grid container>
-              <Typography variant="h5" className={classes.headline}>{t('License')}</Typography>
+            <Grid container alignItems="center">
+              <Grid item className={classes.gridItem}>
+                <Typography variant="h5" className={classes.headline}>{t('License')}</Typography>
+                <Button
+                  className={classes.upload}
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleUpload}
+                  size="small"
+                >
+                  {t('Upload')}
+                </Button>
+              </Grid>
+              <Typography variant="body2">{t("Don't have a license?")}</Typography>
               <Button
                 className={classes.upload}
                 variant="contained"
                 color="primary"
-                onClick={this.handleUpload}
+                href="https://portal.grammm.com"
+                target="_blank"
                 size="small"
               >
-                {t('Upload')}
+                {t('Buy now')}
               </Button>
             </Grid>
             <Grid container direction="column" className={classes.licenseContainer}>

@@ -25,6 +25,7 @@ const styles = theme => ({
   title: {
     flexGrow: 1,
     fontWeight: 500,
+    marginLeft: 4,
   },
   burger: {
     marginRight: 16,
@@ -82,7 +83,12 @@ class TopBar extends PureComponent {
               <Burger />
             </IconButton>
           </Hidden>
-          <IconButton className={classes.iconButton}><MailOutlineIcon></MailOutlineIcon></IconButton>
+          <IconButton
+            href="https://mail.grammm.com/web"
+            target="_blank"
+            className={classes.iconButton}
+          ><MailOutlineIcon />
+          </IconButton>
           <IconButton className={classes.iconButton}><StarBorderIcon></StarBorderIcon></IconButton>
           <IconButton className={classes.iconButton}><SearchIcon></SearchIcon></IconButton>
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
