@@ -39,6 +39,13 @@ export function getStringAfterLastSlash() {
   return /[^/]*$/.exec(window.location.href)[0];
 }
 
+export function getDomainFromUrl() {
+  const first = window.location.pathname;
+  first.indexOf(1);
+  first.toLowerCase();
+  return parseInt(first.split("/")[1]);
+}
+
 export function setDateTimeString(date) {
   return moment(date, "YYYY-MM-DD hh:mm")
     .locale(store.getState().settings.language.slice(0, 2)).format('lll');

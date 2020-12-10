@@ -2,7 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade,
-  Box } from '@material-ui/core';
+  Box, 
+  Menu,
+  MenuItem} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -13,6 +15,7 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
+import { authLogout } from '../actions/auth';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -68,13 +71,38 @@ const styles = theme => ({
 
 class TopBar extends PureComponent {
 
-  handleMenuToggle = async () => {
+  state = {
+    anchorEl: null,
+  }
+
+  handleMenuToggle = () => {
     const { setDrawerExpansion } = this.props;
     setDrawerExpansion();
   }
 
+  handleMenuOpen = e => this.setState({
+    anchorEl: e.currentTarget,
+  });
+
+  handleMenuClose = () => this.setState({
+    anchorEl: null,
+  });
+
+  handleNavigation = path => event => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  }
+
+  handleLogout = () => {
+    const { history, authLogout } = this.props;
+    history.push('/');
+    authLogout();
+  }
+
   render() {
     const { classes, t, profile, title, onAdd, fetching } = this.props;
+    const { anchorEl } = this.state;
     return (
       <AppBar position="fixed" className={classes.root}>
         <Toolbar className={classes.root}>
@@ -93,10 +121,27 @@ class TopBar extends PureComponent {
           <IconButton className={classes.iconButton}><SearchIcon></SearchIcon></IconButton>
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
-            <Box className={classes.profileButton}>
+            <Box className={classes.profileButton} onClick={this.handleMenuOpen}>
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={this.handleMenuClose}
+            >
+              <MenuItem onClick={this.handleNavigation('settings')}>
+                {t('Settings')}
+              </MenuItem>
+              <MenuItem onClick={this.handleNavigation('changePassword')}>
+                {t('Change password')}
+              </MenuItem>
+              <MenuItem onClick={this.handleLogout}>
+                {t('Logout')}
+              </MenuItem>
+            </Menu>
           </div>
           {onAdd && <div className={classes.divider}></div>}
           {onAdd && <Button onClick={onAdd} color="inherit" className={classes.add}>
@@ -126,6 +171,7 @@ TopBar.propTypes = {
   Domains: PropTypes.array.isRequired,
   onAdd: PropTypes.func,
   fetching: PropTypes.bool,
+  authLogout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -142,6 +188,9 @@ const mapDispatchToProps = dispatch => {
   return {
     setDrawerExpansion: () => {
       dispatch(setDrawerExpansion());
+    },
+    authLogout: async () => {
+      await dispatch(authLogout());
     },
   };
 };
