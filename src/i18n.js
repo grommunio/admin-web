@@ -62,6 +62,7 @@ const resources = {
       "Mobile phone": "Mobiltelefon",
       "Home address": "Adresse",
       "Memo": "Memo",
+      "Public address": "Öffentliche Adresse",
       "Allow pop3 or imap downloading": "Erlaube pop3 oder imap runterladen",
       "Allow smtp sending": "Erlaube smpt senden",
       "Public user information": "Öffentliche Benutzerinformationen",
