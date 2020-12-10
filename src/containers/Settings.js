@@ -65,7 +65,7 @@ const styles = theme => ({
   description: {
     display: 'inline-block',
     fontWeight: 500,
-    width: 100,
+    width: 200,
   },
   data: {
     padding: '8px 0',
@@ -81,6 +81,10 @@ const styles = theme => ({
   },
   headline: {
     marginRight: 8,
+  },
+  gridItem: {
+    display: 'flex',
+    flex: 1,
   },
 });
 
@@ -172,37 +176,50 @@ class Settings extends Component {
               </FormControl>
             </FormControl>
             <Divider className={classes.divider}/>
-            <Grid container>
-              <Typography variant="h5" className={classes.headline}>License</Typography>
+            <Grid container alignItems="center">
+              <Grid item className={classes.gridItem}>
+                <Typography variant="h5" className={classes.headline}>{t('License')}</Typography>
+                <Button
+                  className={classes.upload}
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleUpload}
+                  size="small"
+                >
+                  {t('Upload')}
+                </Button>
+              </Grid>
+              <Typography variant="body2">{t("Don't have a license?")}</Typography>
               <Button
                 className={classes.upload}
                 variant="contained"
                 color="primary"
-                onClick={this.handleUpload}
+                href="https://portal.grammm.com"
+                target="_blank"
                 size="small"
               >
-                Upload
+                {t('Buy now')}
               </Button>
             </Grid>
             <Grid container direction="column" className={classes.licenseContainer}>
               <Typography className={classes.data}>
-                <span className={classes.description}>Product:</span>
+                <span className={classes.description}>{t('Product')}:</span>
                 {license.product}
               </Typography>
               <Typography className={classes.data}>
-                <span className={classes.description}>Created:</span>
+                <span className={classes.description}>{t('Created')}:</span>
                 {license.notBefore}
               </Typography>
               <Typography className={classes.data}>
-                <span className={classes.description}>Expires:</span>
+                <span className={classes.description}>{t('Expires')}:</span>
                 {license.notAfter}
               </Typography>
               <Typography className={classes.data}>
-                <span className={classes.description}>Users:</span>
+                <span className={classes.description}>{t('Users')}:</span>
                 {license.currentUsers}
               </Typography>
               <Typography className={classes.data}>
-                <span className={classes.description}>Max Users:</span>
+                <span className={classes.description}>{t('Max users')}:</span>
                 {license.maxUsers}
               </Typography>
               <Typography className={classes.data}>
@@ -214,7 +231,7 @@ class Settings extends Component {
                     download
                     size="small"
                   >
-                    Download
+                    {t('Download')}
                   </Button>}
               </Typography>
             </Grid>

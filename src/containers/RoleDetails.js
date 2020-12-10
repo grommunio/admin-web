@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import Add from '@material-ui/icons/AddCircle';
-import Delete from '@material-ui/icons/Close';
+import Delete from '@material-ui/icons/Delete';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
 import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';

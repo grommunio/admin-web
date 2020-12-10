@@ -12,7 +12,7 @@ import {
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select, Snackbar,
-  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider,
+  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
@@ -20,7 +20,7 @@ import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
-import Close from '@material-ui/icons/Close';
+import Close from '@material-ui/icons/Delete';
 import world from '../res/world.json';
 
 const styles = theme => ({
@@ -300,17 +300,25 @@ class UserDetails extends PureComponent {
     this.setState({ user: { ...user, aliases: copy } });
   }
 
+  handleCheckbox = field => e => this.setState({
+    user: {
+      ...this.state.user,
+      [field]: e.target.checked,
+    },
+  });
+
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
 
   render() {
     const { classes, t, domain, Roles } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit } = this.state;
+    const { properties, smtp, pop3_imap, publicAddress } = user; //eslint-disable-line
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
       assistant, country, locality, stateorprovince, postalcode, storagequotalimit,
       hometelephonenumber, home2telephonenumber, businesstelephonenumber, business2telephonenumber,
-      pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = user.properties;
+      pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
 
     return (
       <div className={classes.root}>
@@ -427,6 +435,38 @@ class UserDetails extends PureComponent {
                     {t('Deutsch')}
                   </MenuItem>
                 </TextField>
+                <Grid container className={classes.input}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={smtp || false }
+                        onChange={this.handleCheckbox('smtp')}
+                        color="primary"
+                      />
+                    }
+                    label={t('Smtp')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={publicAddress || false }
+                        onChange={this.handleCheckbox('publicAddress')}
+                        color="primary"
+                      />
+                    }
+                    label={t('Public address')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={pop3_imap || false /*eslint-disable-line*/}
+                        onChange={this.handleCheckbox('pop3_imap')}
+                        color="primary"
+                      />
+                    }
+                    label={t('Pop3 imap')}
+                  />
+                </Grid>
               </React.Fragment>}
 
               {tab === 1 && <React.Fragment>

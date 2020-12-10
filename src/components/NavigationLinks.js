@@ -8,12 +8,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Collapse from '@material-ui/core/Collapse';
-import Settings from '@material-ui/icons/Settings';
 import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
-import Run from '@material-ui/icons/DirectionsRun';
 import People from '@material-ui/icons/People';
-import Lock from '@material-ui/icons/Lock';
 import Http from '@material-ui/icons/Http';
 import Folder from '@material-ui/icons/Folder';
 /*
@@ -28,7 +25,6 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 */
 import Roles from '@material-ui/icons/VerifiedUser';
-import { authLogout } from '../actions/auth';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_light.svg';
 import blue from '../colors/blue';
@@ -153,17 +149,11 @@ const styles = theme => ({
 
 class NavigationLinks extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    // Map domains array to bool obj with domains as keys
-    const domains = this.props.domains.map(obj => obj.ID)
-      .reduce((a, b) => (a[b] = false, a), {});//eslint-disable-line
-    this.state = {
-      tab: 0,
-      stateDomains: domains,
-      filter: '',
-      defaultsIn: false,
-    };
+  state = {
+    tab: 0,
+    expandedDomain: -1,
+    filter: '',
+    defaultsIn: false,
   }
 
   handleNavigation = path => event => {
@@ -172,21 +162,9 @@ class NavigationLinks extends PureComponent {
     history.push(`/${path}`);
   }
 
-  handleLogout = () => {
-    const { history, authLogout } = this.props;
-    history.push('/');
-    authLogout();
-  }
-
   handleDrawer = domain => event => {
     event.preventDefault();
-    let overwrite = {};
-    for (const key in this.state) {
-      overwrite[key] = false;
-    }
-    overwrite[domain] = !this.state[domain]
-      || this.props.location.pathname !== '/' + domain;
-    this.setState({ stateDomains: { ...overwrite } });
+    this.setState({ expandedDomain: domain });
     this.props.history.push(`/${domain}`);
   }
 
@@ -198,7 +176,7 @@ class NavigationLinks extends PureComponent {
 
   render() {
     const { classes, t, location, domains, role } = this.props;
-    const { filter, stateDomains, tab } = this.state;
+    const { filter, expandedDomain, tab } = this.state;
 
     return(
       <React.Fragment>
@@ -253,14 +231,14 @@ class NavigationLinks extends PureComponent {
                     onClick={this.handleDrawer(ID)}
                     button
                     className={classes.li}
-                    selected={stateDomains[ID] && location.pathname === '/' + ID}
+                    selected={expandedDomain === ID && location.pathname === '/' + ID}
                   >
                     <Grid container alignItems="center">
                       <Http className={classes.icon} />
                       <ListItemText primary={name} />
                     </Grid>
                   </ListItem>
-                  <Collapse in={stateDomains[ID]} unmountOnExit>
+                  <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
                       {/*<ListItem
                         className={classes.li}
@@ -278,7 +256,7 @@ class NavigationLinks extends PureComponent {
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/users')}
-                        selected={stateDomains[ID] &&
+                        selected={expandedDomain === ID &&
                           location.pathname.startsWith('/' + ID + '/users')}
                       >
                         <Grid container alignItems="center">
@@ -290,7 +268,7 @@ class NavigationLinks extends PureComponent {
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/folders')}
-                        selected={stateDomains[ID] &&
+                        selected={expandedDomain === ID &&
                           location.pathname.startsWith('/' + ID + '/folders')}
                       >
                         <Grid container alignItems="center">
@@ -436,36 +414,6 @@ class NavigationLinks extends PureComponent {
           </Collapse>*/}
           </React.Fragment>
           }
-          <div className={classes.logoutContainer}>
-            <ListItem
-              className={classes.li}
-              button
-              selected={location.pathname === '/settings'}
-              onClick={this.handleNavigation('settings')}
-            >
-              <Grid container alignItems="center">
-                <Settings className={classes.icon} />
-                <ListItemText primary={t('Settings')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
-              selected={location.pathname === '/changePassword'}
-              onClick={this.handleNavigation('changePassword')}
-              className={classes.li}
-            >
-              <Grid container alignItems="center">
-                <Lock className={classes.icon}/>
-                <ListItemText primary={t('Change password')} />
-              </Grid>
-            </ListItem>
-            <ListItem button onClick={this.handleLogout} className={classes.li}>
-              <Grid container alignItems="center">
-                <Run className={classes.icon} />
-                <ListItemText primary={t('Logout')} />
-              </Grid>
-            </ListItem>
-          </div>
         </List>
         <div className={classes.background} />
       </React.Fragment>
@@ -489,13 +437,5 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    authLogout: async () => {
-      await dispatch(authLogout());
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(mapStateToProps)(
   withRouter(withTranslation()(withStyles(styles)(NavigationLinks))));
