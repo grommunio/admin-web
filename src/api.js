@@ -153,7 +153,7 @@ export function postServices(service, action) {
 
 export function drawerDomains() {
   return async () => {
-    return await get('/domains?domainType=0');
+    return await get(buildQuery('/domains', { domainType: 0 }));
   };
 }
 

@@ -1,3 +1,6 @@
+import moment from "moment";
+import store from './store';
+
 export function later(delay) {
   if (!delay) {
     delay = 100;
@@ -34,4 +37,14 @@ export function addItem(arr, item) {
 
 export function getStringAfterLastSlash() {
   return /[^/]*$/.exec(window.location.href)[0];
+}
+
+export function setDateTimeString(date) {
+  return moment(date, "YYYY-MM-DD hh:mm")
+    .locale(store.getState().settings.language.slice(0, 2)).format('lll');
+}
+
+export function setDateString(date) {
+  return moment(date, "YYYY-MM-DD")
+    .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }

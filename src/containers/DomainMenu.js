@@ -2,11 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
-import { Paper, Table, TableRow, TableCell, TableBody } from '@material-ui/core';
-import True from '@material-ui/icons/Done';
-import False from '@material-ui/icons/Clear';
-import { green, red } from '@material-ui/core/colors';
+import { Paper, Typography, Grid } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
+import { setDateString } from '../utils';
 
 const styles = theme => ({
   root: {
@@ -25,11 +23,16 @@ const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2),
   },
-  true: {
-    color: green['500'],
+  description: {
+    display: 'inline-block',
+    fontWeight: 500,
+    width: 240,
   },
-  false: {
-    color: red['500'],
+  data: {
+    padding: '8px 0',
+  },
+  container: {
+    margin: theme.spacing(2),
   },
 });
 
@@ -42,76 +45,36 @@ function DomainMenu(props) {
       <div className={classes.toolbar}></div>
       <div className={classes.base}>
         <Paper className={classes.tablePaper} elevation={1}>
-          <Table size="small">
-            <TableBody>
-              <TableRow>
-                <TableCell>{t('Domain name')}</TableCell>
-                <TableCell>{domain.domainname}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Title')}</TableCell>
-                <TableCell>{domain.title}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Address')}</TableCell>
-                <TableCell>{domain.address}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Admin')}</TableCell>
-                <TableCell>{domain.adminName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Create day')}</TableCell>
-                <TableCell>{domain.createDay}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('End day')}</TableCell>
-                <TableCell>{domain.endDay}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Home dir')}</TableCell>
-                <TableCell>{domain.homedir}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Maximum users')}</TableCell>
-                <TableCell>{domain.maxUser}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Telephone')}</TableCell>
-                <TableCell>{domain.tel}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Ignore checking user')}</TableCell>
-                <TableCell>
-                  {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Mail backup')}</TableCell>
-                <TableCell>
-                  {domain.mailLists ? <True className={classes.true} /> : <False className={classes.false} />}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Mail monitor')}</TableCell>
-                <TableCell>
-                  {domain.mailMonitor ? <True className={classes.true} /> : <False className={classes.false} />}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Mail subsystem')}</TableCell>
-                <TableCell>
-                  {domain.mailBackup ? <True className={classes.true} /> : <False className={classes.false} />}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t('Net disk')}</TableCell>
-                <TableCell>
-                  {domain.netDisk ? <True className={classes.true} /> : <False className={classes.false} />}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Grid container direction="column" className={classes.container}>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Domain name')}:</span>
+              {domain.domainname}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Title')}:</span>
+              {domain.title}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Address')}:</span>
+              {domain.address}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Admin')}:</span>
+              {domain.adminName}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('End day')}:</span>
+              {setDateString(domain.endDay)}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Max users')}:</span>
+              {domain.maxUser}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Telephone')}:</span>
+              {domain.tel}
+            </Typography>
+          </Grid>
         </Paper>
       </div>
     </div>
