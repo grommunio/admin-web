@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
   Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
-import Delete from '@material-ui/icons/Close';
+import Delete from '@material-ui/icons/Delete';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';

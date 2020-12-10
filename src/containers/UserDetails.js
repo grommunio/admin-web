@@ -20,7 +20,7 @@ import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
-import Close from '@material-ui/icons/Close';
+import Close from '@material-ui/icons/Delete';
 import world from '../res/world.json';
 
 const styles = theme => ({
