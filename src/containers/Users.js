@@ -139,6 +139,19 @@ class Users extends Component {
     });
   }
 
+  getMaxSizeFormatting(size) {
+    if(!size) return '';
+    if(size % 1073741824 === 0) {
+      return size / 1073741824 + ' TiB';
+    } else if (size % 1048576 === 0) {
+      return size / 1048576 + ' GiB';
+    } else if (size % 1024 === 0) {
+      return size / 1024 + ' MiB';
+    } else {
+      return size + ' KiB';
+    }
+  }
+
   render() {
     const { classes, t, users, domain } = this.props;
     const { snackbar, adding, deleting, order, orderBy } = this.state;
@@ -187,7 +200,7 @@ class Users extends Component {
                   return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
-                    <TableCell>{properties.storagequotalimit}</TableCell>
+                    <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell className={classes.flexRowEnd}>
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
