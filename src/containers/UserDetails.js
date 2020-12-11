@@ -48,12 +48,17 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(1),
+  },
+  propertyInput: {
+    margin: theme.spacing(1),
+    flex: 1,
   },
   toolbar: theme.mixins.toolbar,
   grid: {
     display: 'flex',
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(1),
+    flex: 1,
   },
   select: {
     minWidth: 60,
@@ -86,6 +91,9 @@ const styles = theme => ({
   },
   textarea: {
     height: 84,
+  },
+  gridItem: {
+    display: 'flex',
   },
 });
 
@@ -471,221 +479,222 @@ class UserDetails extends PureComponent {
 
               {tab === 1 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('Name')}</Typography>
-                <Grid container spacing={6}>
-                  <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <div className={classes.grid}>
-                        <TextField 
-                          className={classes.flexTextfield}
-                          label={t("First name")}
-                          value={givenname || ''}
-                          onChange={this.handlePropertyChange('givenname')}
-                        />
-                        <TextField 
-                          //className={classes.flexTextfield}
-                          label={t("Initials")}
-                          value={initials || ''}
-                          onChange={this.handlePropertyChange('initials')}
-                        />
-                      </div>
+                <Grid container>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <div className={classes.grid}>
                       <TextField 
-                        className={classes.input}
-                        label={t("Display name")}
-                        fullWidth
-                        value={displayname || ''}
-                        onChange={this.handlePropertyChange('displayname')}
+                        className={classes.flexTextfield}
+                        label={t("First name")}
+                        value={givenname || ''}
+                        onChange={this.handlePropertyChange('givenname')}
                       />
-                    </Grid>
+                      <TextField 
+                        //className={classes.flexTextfield}
+                        label={t("Initials")}
+                        value={initials || ''}
+                        onChange={this.handlePropertyChange('initials')}
+                      />
+                    </div>
+                    <TextField 
+                      className={classes.propertyInput} 
+                      label={t("Surname")} 
+                      fullWidth 
+                      value={surname || ''}
+                      onChange={this.handlePropertyChange('surname')}
+                    />
                   </Grid>
-                  <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Surname")} 
-                        fullWidth 
-                        value={surname || ''}
-                        onChange={this.handlePropertyChange('surname')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Nickname")} 
-                        fullWidth 
-                        value={nickname || ''}
-                        onChange={this.handlePropertyChange('nickname')}
-                      />
-                    </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Display name")}
+                      fullWidth
+                      value={displayname || ''}
+                      onChange={this.handlePropertyChange('displayname')}
+                    />
+                    <TextField 
+                      className={classes.propertyInput} 
+                      label={t("Nickname")} 
+                      fullWidth 
+                      value={nickname || ''}
+                      onChange={this.handlePropertyChange('nickname')}
+                    />
                   </Grid>
                 </Grid>
                 <Divider className={classes.divider} />
-                <Grid container spacing={6}>
+                <Grid container>
                   <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <TextField 
-                        className={classes.address}
-                        label={t("Address")}
-                        variant="outlined"
-                        fullWidth
-                        value={streetaddress || ''}
-                        onChange={this.handlePropertyChange('streetaddress')}
-                        multiline
-                        rows={3}
-                        inputProps={{
-                          className: classes.textarea,
-                        }}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Locality")}
-                        fullWidth
-                        value={locality || ''}
-                        onChange={this.handlePropertyChange('locality')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("State")}
-                        fullWidth
-                        value={stateorprovince || ''}
-                        onChange={this.handlePropertyChange('stateorprovince')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Postal Code")}
-                        fullWidth
-                        value={postalcode || ''}
-                        onChange={this.handlePropertyChange('postalcode')}
-                      />
-                      <FormControl className={classes.input}>
-                        <InputLabel>{t("Country")}</InputLabel>
-                        <Select
-                          value={country || "Germany"}
-                          onChange={this.handlePropertyChange('country')}
-                          fullWidth
-                          native
-                        >
-                          {world.map(country =>
-                            <option key={country.id} value={country.name}>
-                              {country.name}
-                            </option>  
-                          )}
-                        </Select>
-                      </FormControl>
-                    </Grid>
+                    <TextField 
+                      className={classes.address}
+                      label={t("Address")}
+                      variant="outlined"
+                      fullWidth
+                      value={streetaddress || ''}
+                      onChange={this.handlePropertyChange('streetaddress')}
+                      multiline
+                      rows={3}
+                      inputProps={{
+                        className: classes.textarea,
+                      }}
+                    />
                   </Grid>
                   <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <TextField 
-                        className={classes.input}
-                        label={t("Position")}
+                    <TextField 
+                      className={classes.input}
+                      label={t("Position")}
+                      fullWidth
+                      value={title || ''}
+                      onChange={this.handlePropertyChange('title')}
+                    />
+                    <TextField 
+                      className={classes.input}
+                      label={t("Company")}
+                      fullWidth
+                      value={companyname || ''}
+                      onChange={this.handlePropertyChange('companyname')}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Locality")}
+                      fullWidth
+                      value={locality || ''}
+                      onChange={this.handlePropertyChange('locality')}
+                    />
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Department")}
+                      fullWidth
+                      value={departmentname || ''}
+                      onChange={this.handlePropertyChange('departmentname')}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("State")}
+                      fullWidth
+                      value={stateorprovince || ''}
+                      onChange={this.handlePropertyChange('stateorprovince')}
+                    />
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Office")}
+                      fullWidth
+                      value={officelocation || ''}
+                      onChange={this.handlePropertyChange('officelocation')}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Postal Code")}
+                      fullWidth
+                      value={postalcode || ''}
+                      onChange={this.handlePropertyChange('postalcode')}
+                    />
+                    <TextField 
+                      className={classes.propertyInput}
+                      label={t("Assistant")}
+                      fullWidth
+                      value={assistant || ''}
+                      onChange={this.handlePropertyChange('assistant')}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <FormControl className={classes.propertyInput}>
+                      <InputLabel>{t("Country")}</InputLabel>
+                      <Select
+                        value={country || "Germany"}
+                        onChange={this.handlePropertyChange('country')}
                         fullWidth
-                        value={title || ''}
-                        onChange={this.handlePropertyChange('title')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Company")}
-                        fullWidth
-                        value={companyname || ''}
-                        onChange={this.handlePropertyChange('companyname')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Department")}
-                        fullWidth
-                        value={departmentname || ''}
-                        onChange={this.handlePropertyChange('departmentname')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Office")}
-                        fullWidth
-                        value={officelocation || ''}
-                        onChange={this.handlePropertyChange('officelocation')}
-                      />
-                      <TextField 
-                        className={classes.input}
-                        label={t("Assistant")}
-                        fullWidth
-                        value={assistant || ''}
-                        onChange={this.handlePropertyChange('assistant')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Telephone")} 
-                        fullWidth 
-                        value={primarytelephonenumber || ''}
-                        onChange={this.handlePropertyChange('primarytelephonenumber')}
-                      />
-                    </Grid>
+                        native
+                      >
+                        {world.map(country =>
+                          <option key={country.id} value={country.name}>
+                            {country.name}
+                          </option>  
+                        )}
+                      </Select>
+                    </FormControl>
+                    <TextField 
+                      className={classes.propertyInput} 
+                      label={t("Telephone")} 
+                      fullWidth 
+                      value={primarytelephonenumber || ''}
+                      onChange={this.handlePropertyChange('primarytelephonenumber')}
+                    />
                   </Grid>
                 </Grid>
               </React.Fragment>}
-
               {tab === 2 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('Telephone')}</Typography>
-                <Grid container spacing={6}>
-                  <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Business 1")} 
-                        fullWidth 
-                        value={businesstelephonenumber || ''}
-                        onChange={this.handlePropertyChange('businesstelephonenumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Business 2")} 
-                        fullWidth 
-                        value={business2telephonenumber || ''}
-                        onChange={this.handlePropertyChange('business2telephonenumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Fax")} 
-                        fullWidth 
-                        value={primaryfaxnumber || ''}
-                        onChange={this.handlePropertyChange('primaryfaxnumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Assistant")} 
-                        fullWidth 
-                        value={assistanttelephonenumber || ''}
-                        onChange={this.handlePropertyChange('assistanttelephonenumber')}
-                      />
-                    </Grid>
+                <Grid container>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Business 1")} 
+                      fullWidth 
+                      value={businesstelephonenumber || ''}
+                      onChange={this.handlePropertyChange('businesstelephonenumber')}
+                    />
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Privat 1")} 
+                      fullWidth 
+                      value={hometelephonenumber || ''}
+                      onChange={this.handlePropertyChange('hometelephonenumber')}
+                    />
                   </Grid>
-                  <Grid item xs={6}>
-                    <Grid container direction="column">
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Privat 1")} 
-                        fullWidth 
-                        value={hometelephonenumber || ''}
-                        onChange={this.handlePropertyChange('hometelephonenumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Privat 2")} 
-                        fullWidth 
-                        value={home2telephonenumber || ''}
-                        onChange={this.handlePropertyChange('home2telephonenumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Mobile")} 
-                        fullWidth 
-                        value={mobiletelephonenumber || ''}
-                        onChange={this.handlePropertyChange('mobiletelephonenumber')}
-                      />
-                      <TextField 
-                        className={classes.input} 
-                        label={t("Pager")} 
-                        fullWidth 
-                        value={pagertelephonenumber || ''}
-                        onChange={this.handlePropertyChange('pagertelephonenumber')}
-                      />
-                    </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Business 2")} 
+                      fullWidth 
+                      value={business2telephonenumber || ''}
+                      onChange={this.handlePropertyChange('business2telephonenumber')}
+                    />
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Privat 2")} 
+                      fullWidth 
+                      value={home2telephonenumber || ''}
+                      onChange={this.handlePropertyChange('home2telephonenumber')}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Fax")} 
+                      fullWidth 
+                      value={primaryfaxnumber || ''}
+                      onChange={this.handlePropertyChange('primaryfaxnumber')}
+                    />
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Mobile")} 
+                      fullWidth 
+                      value={mobiletelephonenumber || ''}
+                      onChange={this.handlePropertyChange('mobiletelephonenumber')}
+                    />
+                  </Grid>
+                  <Grid item xs={12} className={classes.gridItem}>
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Assistant")} 
+                      fullWidth 
+                      value={assistanttelephonenumber || ''}
+                      onChange={this.handlePropertyChange('assistanttelephonenumber')}
+                    />
+                    <TextField 
+                      className={classes.input} 
+                      label={t("Pager")} 
+                      fullWidth 
+                      value={pagertelephonenumber || ''}
+                      onChange={this.handlePropertyChange('pagertelephonenumber')}
+                    />
                   </Grid>
                 </Grid>
                 <Divider className={classes.divider}/>
