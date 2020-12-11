@@ -89,21 +89,6 @@ const styles = theme => ({
     paddingLeft: 16,
     paddingRight: 6,
   },
-  logoutContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyItems: 'flex-end',
-    justifyContent: 'flex-end',
-    flex: 1,
-  },
-  logout: {
-    flex: 1,
-    flexGrow: 0,
-  },
-  expandIcon: {
-    float: 'right',
-    marginTop: '2px',
-  },
   tabs: {
     width: 260,
     minWidth: 260,
@@ -425,7 +410,6 @@ NavigationLinks.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  authLogout: PropTypes.func.isRequired,
   domains: PropTypes.array,
   role: PropTypes.number.isRequired,
   location: PropTypes.object.isRequired,

@@ -18,7 +18,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
   select: {
     minWidth: 60,
   },

@@ -5,19 +5,9 @@ import { Dialog, DialogTitle, Button, DialogActions, CircularProgress,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 
-const styles = theme => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    marginBottom: theme.spacing(3),
-  },
-  toolbar: theme.mixins.toolbar,
-  select: {
-    minWidth: 60,
-  },
-});
+const styles = {
+  
+};
 
 class DomainDataDelete extends PureComponent {
 

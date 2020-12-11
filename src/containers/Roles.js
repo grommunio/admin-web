@@ -35,15 +35,8 @@ const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2),
   },
-  paperHeading: {
-    margin: theme.spacing(-1, 0, 0, 2),
-  },
   grid: {
     padding: theme.spacing(0, 2),
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
   },
   input: {
     marginBottom: theme.spacing(3),
@@ -52,9 +45,6 @@ const styles = theme => ({
   flexRowEnd: {
     display: 'flex',
     justifyContent: 'flex-end',
-  },
-  select: {
-    minWidth: 60,
   },
   pageTitle: {
     margin: theme.spacing(2),

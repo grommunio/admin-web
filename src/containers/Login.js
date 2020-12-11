@@ -45,9 +45,6 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
-  headline: {
-    padding: theme.spacing(2),
-  },
   button: {
     width: '100%',
     borderRadius: 10,
