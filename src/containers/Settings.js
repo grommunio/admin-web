@@ -186,7 +186,7 @@ class Settings extends Component {
                 className={classes.upload}
                 variant="contained"
                 color="primary"
-                href="https://portal.grammm.com"
+                href="https://grammm.com/produkte/"
                 target="_blank"
                 size="small"
               >
@@ -213,18 +213,6 @@ class Settings extends Component {
               <Typography className={classes.data}>
                 <span className={classes.description}>{t('Max users')}:</span>
                 {license.maxUsers}
-              </Typography>
-              <Typography className={classes.data}>
-                {license.certificate &&
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href={license.certificate}
-                    download
-                    size="small"
-                  >
-                    {t('Download')}
-                  </Button>}
               </Typography>
             </Grid>
           </Paper>
