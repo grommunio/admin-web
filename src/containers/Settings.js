@@ -30,18 +30,10 @@ const styles = theme => ({
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
   },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
-    borderRadius: 6,
-  },
   grid: {
     padding: theme.spacing(0, 2),
   },
   toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
   form: {
     width: '100%',
     marginTop: theme.spacing(4),

@@ -8,19 +8,9 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deleteUserData } from '../../actions/users';
 
-const styles = theme => ({
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    marginBottom: theme.spacing(3),
-  },
-  toolbar: theme.mixins.toolbar,
-  select: {
-    minWidth: 60,
-  },
-});
+const styles = {
+  
+};
 
 class DeleteUser extends PureComponent {
 

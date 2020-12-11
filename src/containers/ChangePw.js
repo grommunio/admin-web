@@ -41,9 +41,6 @@ const styles = theme => ({
     marginBottom: theme.spacing(2),
   },
   toolbar: theme.mixins.toolbar,
-  gird: {
-    display: 'flex',
-  },
 });
 
 class BaseSetup extends Component {
