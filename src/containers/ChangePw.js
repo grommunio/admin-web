@@ -43,7 +43,7 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class BaseSetup extends Component {
+class ChangePw extends Component {
 
   state = {
     oldPw: '',
@@ -133,9 +133,9 @@ class BaseSetup extends Component {
   }
 }
 
-BaseSetup.propTypes = {
+ChangePw.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(BaseSetup));
+export default withTranslation()(withStyles(styles)(ChangePw));
