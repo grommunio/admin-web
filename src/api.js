@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020 grammm GmbH
+
 const baseUrl = '//' + window.location.host + '/api/v1';
 
 async function handleErrors(response) {

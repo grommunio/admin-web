@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020 grammm GmbH
+
 export const AUTH_AUTHENTICATED = 'AUTH_AUTHENTICATED';
 export const AUTH_AUTHENTICATING = 'AUTH_AUTHENTICATING';
 export const AUTH_ERROR = 'AUTH_ERROR';

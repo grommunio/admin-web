@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020 grammm GmbH
+
 import {
   ROLES_DATA_ERROR,
   ROLES_DATA_FETCH,

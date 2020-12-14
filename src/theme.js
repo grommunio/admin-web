@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020 grammm GmbH
+
 import { createMuiTheme } from '@material-ui/core/styles';
 
 import grey from './colors/grey';
