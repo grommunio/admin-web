@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { createLogger } from 'redux-logger';
-import config from './config';
+//import config from './config';
 
 import thunkMiddleware from 'redux-thunk';
+import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 // Keep alphabetically ordered
 import authReducer from './reducers/auth';
@@ -26,37 +26,26 @@ import profileReducer from './reducers/profile';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
 
-const loggerMiddleware = createLogger();
-const middleWareApplier = config.devMode ? applyMiddleware(
-  thunkMiddleware,
-  loggerMiddleware // Must be last.
-) : applyMiddleware(
-  thunkMiddleware,
-);
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(
-  // Keep alphabetically ordered
   combineReducers({
     auth: authReducer,
-    //classes: classesReducer,
     dashboard: dashboardReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,
-    //forwards: forwardsReducer,
-    //groups: groupsReducer,
     license: licenseReducer,
-    //members: membersReducer,
-    //mlists: mlistsReducer,
-    //orgs: orgsReducer,
     profile: profileReducer,
     roles: rolesReducer,
     services: servicesReducer,
     settings: settingsReducer,
     users: usersReducer,
   }),
-  composeEnhancers(middleWareApplier)
+  composeEnhancers(applyMiddleware(
+    thunkMiddleware,
+    dynamicMiddlewares,
+  ))
 );
 
 export default store;
