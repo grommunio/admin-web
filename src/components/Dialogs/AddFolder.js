@@ -185,7 +185,6 @@ AddFolder.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    groups: state.groups,
     Users: state.users.Users,
   };
 };

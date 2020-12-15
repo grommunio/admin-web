@@ -269,19 +269,12 @@ AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    groups: state.groups,
-  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -293,5 +286,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+export default withRouter(connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddUser))));
