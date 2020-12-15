@@ -3,6 +3,7 @@
 
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
+import config from './config';
 
 import thunkMiddleware from 'redux-thunk';
 
@@ -26,6 +27,12 @@ import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
 
 const loggerMiddleware = createLogger();
+const middleWareApplier = config.devMode ? applyMiddleware(
+  thunkMiddleware,
+  loggerMiddleware // Must be last.
+) : applyMiddleware(
+  thunkMiddleware,
+);
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(
@@ -49,10 +56,7 @@ export const store = createStore(
     settings: settingsReducer,
     users: usersReducer,
   }),
-  composeEnhancers(applyMiddleware(
-    thunkMiddleware,
-    loggerMiddleware // Must be last.
-  ))
+  composeEnhancers(middleWareApplier)
 );
 
 export default store;
