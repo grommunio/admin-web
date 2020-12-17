@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
-  Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
+  Typography, Button, Grid, TableSortLabel, CircularProgress } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Delete from '@material-ui/icons/Delete';
 import TopBar from '../components/TopBar';
@@ -16,19 +16,18 @@ import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
+import { debounce } from 'debounce';
 
 const styles = theme => ({
   root: {
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
+    overflowY: 'auto',
   },
   base: {
     flexDirection: 'column',
     padding: theme.spacing(2),
     flex: 1,
     display: 'flex',
-    overflowY: 'auto',
   },
   paper: {
     margin: theme.spacing(3, 2),
@@ -65,6 +64,9 @@ const styles = theme => ({
     left: 4,
     cursor: 'pointer',
   },
+  circularProgress: {
+    margin: theme.spacing(1, 0),
+  },
 });
 
 class Roles extends Component {
@@ -81,6 +83,26 @@ class Roles extends Component {
     adding: false,
     deleting: false,
     order: 'asc',
+    offset: 50,
+  }
+
+  handleScroll = () => {
+    const { roles, fetch } = this.props;
+    if((roles.Roles.length >= roles.count)) return;
+    if (
+      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
+      <= document.getElementById('scrollDiv').offsetHeight + 20
+    ) {
+      const { order, offset } = this.state;
+      if(!roles.loading) fetch({
+        sort: 'name,' + order,
+        offset,
+      }).then(() =>
+        this.setState({
+          offset: offset + 50,
+        })
+      );
+    }
   }
 
   handleInput = field => event => {
@@ -103,6 +125,7 @@ class Roles extends Component {
 
     this.setState({
       order: order,
+      offset: 0,
     });
   }
 
@@ -136,11 +159,15 @@ class Roles extends Component {
   }
 
   render() {
-    const { classes, t, Roles } = this.props;
+    const { classes, t, roles } = this.props;
     const { adding, snackbar, deleting, order } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        onScroll={debounce(this.handleScroll, 100)}
+        id="scrollDiv"
+      >
         <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
@@ -178,7 +205,7 @@ class Roles extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Roles.map((obj, idx) =>
+                {roles.Roles.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
@@ -192,6 +219,9 @@ class Roles extends Component {
                 )}
               </TableBody>
             </Table>
+            {(roles.Roles.length < roles.count) && <Grid container justify="center">
+              <CircularProgress color="primary" className={classes.circularProgress}/>
+            </Grid>}
           </Paper>
           <Snackbar
             open={!!snackbar}
@@ -232,14 +262,14 @@ Roles.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  Roles: PropTypes.array.isRequired,
+  roles: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-    Roles: state.roles.Roles,
+    roles: state.roles,
   };
 };
 

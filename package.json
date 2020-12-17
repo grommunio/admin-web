@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^7.1.2",
     "classnames": "^2.2.6",
     "date-fns": "^2.14.0",
+    "debounce": "^1.2.0",
     "i18next": "^19.5.1",
     "moment": "^2.27.0",
     "prop-types": "^15.7.2",

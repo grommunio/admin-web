@@ -9,12 +9,14 @@ import {
   FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
+  FOLDERS_NEXT_SET,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
   error: null,
+  count: 0,
   Folders: [],
   Owners: [],
 };
@@ -33,6 +35,16 @@ function foldersReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Folders: action.data.data,
+        count: action.data.count,
+      };
+    
+    case FOLDERS_NEXT_SET:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        Folders: append(state.Folders, action.data.data),
+        count: action.data.count,
       };
     
     case FOLDERS_DATA_ERROR: {

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, Portal,
-  Checkbox, FormControlLabel, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
+  Checkbox, FormControlLabel, Typography, Button, Grid, TableSortLabel, CircularProgress } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
@@ -17,19 +17,18 @@ import AddDomain from '../components/Dialogs/AddDomain';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
+import debounce from 'debounce';
 
 const styles = theme => ({
   root: {
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
+    overflow: 'auto',
   },
   base: {
     flexDirection: 'column',
     padding: theme.spacing(2),
     flex: 1,
     display: 'flex',
-    overflowY: 'auto',
   },
   grid: {
     padding: theme.spacing(0, 2),
@@ -55,6 +54,9 @@ const styles = theme => ({
     left: 4,
     cursor: 'pointer',
   },
+  circularProgress: {
+    margin: theme.spacing(1, 0),
+  },
 });
 
 class DomainList extends Component {
@@ -66,6 +68,7 @@ class DomainList extends Component {
     deleting: false,
     orderBy: 'domainname',
     order: 'asc',
+    offset: 50,
   }
 
   columns = [
@@ -75,13 +78,30 @@ class DomainList extends Component {
     { label: 'Maximum users', value: 'maxUser' },
   ]
 
-  componentDidMount() {
-    this.props.fetch({ sort: 'domainname,asc' })
-      .catch(msg => this.setState({ snackbar: msg }));
+  handleScroll = () => {
+    const { domains } = this.props;
+    if((domains.Domains.length >= domains.count)) return;
+    if (
+      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
+      <= document.getElementById('scrollDiv').offsetHeight + 20
+    ) {
+      const { orderBy, order, offset } = this.state;
+      if(!domains.loading) this.fetchDomains({
+        sort: orderBy + ',' + order,
+        offset,
+      });
+      this.setState({
+        offset: offset + 50,
+      });
+    }
   }
 
-  fetchDomains() {
-    this.props.fetch()
+  componentDidMount() {
+    this.fetchDomains({ sort: 'domainname,asc' });
+  }
+
+  fetchDomains(params) {
+    this.props.fetch(params)
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
@@ -97,6 +117,7 @@ class DomainList extends Component {
     this.setState({
       order: order,
       orderBy: orderBy,
+      offset: 0,
     });
   }
 
@@ -140,7 +161,11 @@ class DomainList extends Component {
     const { showDeleted, snackbar, adding, deleting, order, orderBy } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        onScroll={debounce(this.handleScroll, 100)}
+        id="scrollDiv"
+      >
         <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
@@ -204,6 +229,9 @@ class DomainList extends Component {
                 })}
               </TableBody>
             </Table>
+            {(domains.Domains.length < domains.count) && <Grid container justify="center">
+              <CircularProgress color="primary" className={classes.circularProgress}/>
+            </Grid>}
           </Paper>
           <Portal>
             <Snackbar

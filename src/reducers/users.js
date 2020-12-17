@@ -8,13 +8,15 @@ import {
   USER_DATA_ADD,
   USER_DATA_EDIT,
   USER_DATA_DELETE,
+  USERS_NEXT_SET,
 } from '../actions/types';
+import { append } from '../utils';
 
 const defaultState = {
   error: null,
   loading: false,
   ready: false,
-
+  count: 0,
   Users: [],
 };
 
@@ -44,6 +46,15 @@ function usersReducer(state=defaultState, action) {
         ...state,
         loading: false,
         Users: action.data.data,
+        count: action.data.count,
+      };
+    
+    case USERS_NEXT_SET:
+      return {
+        ...state,
+        loading: false,
+        Users: append(state.Users, action.data.data),
+        count: action.data.count,
       };
 
     case USERS_DATA_FETCH:

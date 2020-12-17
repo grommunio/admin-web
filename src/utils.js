@@ -58,3 +58,9 @@ export function setDateString(date) {
   return moment(date, "YYYY-MM-DD")
     .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }
+
+export function append(arr, newArr) {
+  let copy = [...arr];
+  copy = copy.concat(newArr);
+  return copy;
+}
