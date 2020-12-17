@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-//import config from './config';
 
 import thunkMiddleware from 'redux-thunk';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';

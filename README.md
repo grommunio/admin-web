@@ -34,4 +34,11 @@ Result will be created in `/dist`
 
 ## Nginx config
 
-In order to get the correct configuration for production, create a config.json
+In order to get the correct configuration for production, create a config.json in
+`/usr/share/grammm/admin/webapp/config.json`
+
+Following props are available:
+
+### devMode
+
+For development, enables redux logger
