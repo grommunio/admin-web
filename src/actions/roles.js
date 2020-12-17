@@ -8,6 +8,7 @@ import {
   ROLE_DATA_ADD,
   ROLE_DATA_DELETE,
   PERMISSIONS_DATA_RECEIVED,
+  ROLES_NEXT_SET,
 } from '../actions/types';
 import { roles, editRole, permissions, addRole, deleteRole, role } from '../api';
 
@@ -16,7 +17,8 @@ export function fetchRolesData(params) {
     await dispatch({ type: ROLES_DATA_FETCH });
     try {
       const response = await dispatch(roles(params));
-      await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
+      if(!params.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
+      else await dispatch({ type: ROLES_NEXT_SET, data: response });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);

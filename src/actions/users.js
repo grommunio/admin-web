@@ -8,6 +8,7 @@ import {
   USER_DATA_ADD,
   USER_DATA_EDIT,
   USER_DATA_DELETE,
+  USERS_NEXT_SET,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser } from '../api';
 
@@ -16,7 +17,8 @@ export function fetchUsersData(domainID, params) {
     await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(users(domainID, params));
-      await dispatch({type: USERS_DATA_RECEIVED, data});
+      if(!params.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
+      else await dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');

@@ -9,15 +9,17 @@ import {
   FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
+  FOLDERS_NEXT_SET,
 } from './types';
 import { folders, addFolder, editFolder, deleteFolder, owners, addOwner, deleteOwner } from '../api';
 
-export function fetchFolderData(domainID) {
+export function fetchFolderData(domainID, offset) {
   return async dispatch => {
     await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
       const response = await dispatch(folders(domainID));
-      await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
+      if(!offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
+      else await dispatch({ type: FOLDERS_NEXT_SET, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

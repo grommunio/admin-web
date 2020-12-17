@@ -7,6 +7,7 @@ import {
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ADD,
   DOMAIN_DATA_EDIT,
+  DOMAIN_NEXT_SET,
 } from '../actions/types';
 import { domains, addDomain, editDomain, deleteDomain, domain } from '../api';
 
@@ -15,7 +16,8 @@ export function fetchDomainData(params) {
     await dispatch({ type: DOMAIN_DATA_FETCH });
     try {
       const domainData = await dispatch(domains(params));
-      await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
+      if(!params.offset) await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
+      else await dispatch({ type: DOMAIN_NEXT_SET, data: domainData });
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);

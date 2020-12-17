@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Snackbar, Typography, Button, Grid, TableSortLabel } from '@material-ui/core';
+  Snackbar, Typography, Button, Grid, TableSortLabel, CircularProgress } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
@@ -17,19 +17,18 @@ import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import Alert from '@material-ui/lab/Alert';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
+import { debounce } from 'debounce';
 
 const styles = theme => ({
   root: {
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
+    overflowY: 'auto',
   },
   base: {
     flexDirection: 'column',
     padding: theme.spacing(2),
     flex: 1,
     display: 'flex',
-    overflowY: 'auto',
   },
   paper: {
     margin: theme.spacing(3, 2),
@@ -63,6 +62,9 @@ const styles = theme => ({
     left: 4,
     cursor: 'pointer',
   },
+  circularProgress: {
+    margin: theme.spacing(1, 0),
+  },
 });
 
 class Folders extends Component {
@@ -72,15 +74,31 @@ class Folders extends Component {
     deleting: false,
     snackbar: null,
     order: 'asc',
+    offset: 50,
+  }
+
+  handleScroll = () => {
+    const { folders } = this.props;
+    if((folders.Folders.length >= folders.count)) return;
+    if (
+      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
+      <= document.getElementById('scrollDiv').offsetHeight + 20
+    ) {
+      const { offset } = this.state;
+      if(!folders.loading) this.fetchFolders(offset);
+      this.setState({
+        offset: offset + 50,
+      });
+    }
   }
 
   componentDidMount() {
     this.fetchFolders();
   }
 
-  fetchFolders() {
+  fetchFolders(offset) {
     const { fetch, domain } = this.props;
-    fetch(domain.ID).catch(error => this.setState({ snackbar: error }));
+    fetch(domain.ID, offset).catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -120,7 +138,11 @@ class Folders extends Component {
     if(order === 'desc') sortedArray.reverse();
 
     return (
-      <div className={classes.root}>
+      <div
+        className={classes.root}
+        onScroll={debounce(this.handleScroll, 100)}
+        id="scrollDiv"
+      >
         <TopBar title={domain.domainname}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
@@ -172,6 +194,9 @@ class Folders extends Component {
                 )}
               </TableBody>
             </Table>
+            {(folders.Folders.length < folders.count) && <Grid container justify="center">
+              <CircularProgress color="primary" className={classes.circularProgress}/>
+            </Grid>}
           </Paper>
           <Snackbar
             open={!!snackbar}

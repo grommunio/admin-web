@@ -8,8 +8,9 @@ import {
   PERMISSIONS_DATA_RECEIVED,
   ROLE_DATA_ADD,
   ROLE_DATA_DELETE,
+  ROLES_NEXT_SET,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -32,6 +33,16 @@ function rolesReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Roles: action.data.data,
+        count: action.data.count,
+      };
+
+    case ROLES_NEXT_SET:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        Roles: append(state.Roles, action.data.data),
+        count: action.data.count,
       };
     
     case ROLES_DATA_ERROR: {
