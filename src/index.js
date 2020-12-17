@@ -12,6 +12,7 @@ import { store } from './store';
 import Loading from './components/Loading';
 import theme from './theme';
 import './i18n';
+import './config';
 //import * as serviceWorker from './serviceWorker';
 //import { serviceWorkerNewContent } from './actions/common';
 
