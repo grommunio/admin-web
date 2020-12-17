@@ -85,7 +85,7 @@ class Folders extends Component {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { offset } = this.state;
-      if(!folders.loading) this.fetchFolders(offset);
+      if(!folders.loading) this.fetchFolders({ offset });
       this.setState({
         offset: offset + 50,
       });
@@ -93,12 +93,12 @@ class Folders extends Component {
   }
 
   componentDidMount() {
-    this.fetchFolders();
+    this.fetchFolders({});
   }
 
-  fetchFolders(offset) {
+  fetchFolders(params) {
     const { fetch, domain } = this.props;
-    fetch(domain.ID, offset).catch(error => this.setState({ snackbar: error }));
+    fetch(domain.ID, params).catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -251,8 +251,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domainID) => {
-      await dispatch(fetchFolderData(domainID)).catch(msg => Promise.reject(msg));
+    fetch: async (domainID, params) => {
+      await dispatch(fetchFolderData(domainID, params)).catch(msg => Promise.reject(msg));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteFolderData(domainID, id)).catch(msg => Promise.reject(msg));

@@ -100,7 +100,7 @@ function toArray(obj) {
 function buildQuery(endpoint, params) {
   let query = endpoint;
   const paramsArray = toArray(params);
-  if(Object.keys(params).length === 0) return query;
+  if(paramsArray.length === 0) return query;
   query += '?';
   paramsArray.forEach(param => query += ![undefined].includes(param.val) ? `${param.name}=${param.val}&` : '');
   return query.slice(0, -1);
@@ -288,9 +288,9 @@ export function deleteRole(id) {
   PERMISSIONS
 */
 
-export function permissions() {
+export function permissions(params) {
   return async () => {
-    return await get('/system/roles/permissions');
+    return await get(buildQuery('/system/roles/permissions', params));
   };
 }
 
@@ -342,9 +342,9 @@ export function deleteGroup(id) {
   FOLDERS
 */
 
-export function folders(domainID) {
+export function folders(domainID, params) {
   return async () => {
-    return await get('/domains/' + domainID + '/folders');
+    return await get(buildQuery('/domains/' + domainID + '/folders', params));
   };
 }
 
@@ -376,9 +376,9 @@ export function deleteFolder(domainID, id) {
   OWNERS
 */
 
-export function owners(domainID, folderID) {
+export function owners(domainID, folderID, params) {
   return async () => {
-    return await get('/domains/' + domainID + '/folders/' + folderID + '/owners');
+    return await get(buildQuery('/domains/' + domainID + '/folders/' + folderID + '/owners'), params);
   };
 }
 

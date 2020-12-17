@@ -329,13 +329,13 @@ const mapDispatchToProps = dispatch => {
       await dispatch(editRoleData(role)).catch(message => Promise.reject(message));
     },
     fetchUser: async () => {
-      await dispatch(fetchAllUsers({ sort: 'username,asc' })).catch(message => Promise.reject(message));
+      await dispatch(fetchAllUsers({ sort: 'username,asc', limit: '' })).catch(message => Promise.reject(message));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData({})).catch(message => Promise.reject(message));
+      await dispatch(fetchDomainData({ limit: '' })).catch(message => Promise.reject(message));
     },
     fetchPermissions: async () => {
-      await dispatch(fetchPermissionsData()).catch(message => Promise.reject(message));
+      await dispatch(fetchPermissionsData({ limit: '' })).catch(message => Promise.reject(message));
     },
     fetch: async id => await dispatch(fetchRoleData(id))
       .then(role => role)

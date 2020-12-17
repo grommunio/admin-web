@@ -40,10 +40,10 @@ export function fetchRoleData(id) {
   };
 }
 
-export function fetchPermissionsData() {
+export function fetchPermissionsData(params) {
   return async dispatch => {
     try {
-      const response = await dispatch(permissions());
+      const response = await dispatch(permissions(params));
       await dispatch({ type: PERMISSIONS_DATA_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});

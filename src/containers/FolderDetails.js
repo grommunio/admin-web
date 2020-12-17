@@ -259,7 +259,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
     },
     fetchOwners: async (domainID, folderID) => {
-      await dispatch(fetchOwnersData(domainID, folderID)).catch(msg => Promise.reject(msg));
+      await dispatch(fetchOwnersData(domainID, folderID, { limit: '' })).catch(msg => Promise.reject(msg));
     },
     delete: async (domainID, folderID, memberID) => {
       await dispatch(deleteOwnerData(domainID, folderID, memberID)).catch(msg => Promise.reject(msg));

@@ -13,12 +13,12 @@ import {
 } from './types';
 import { folders, addFolder, editFolder, deleteFolder, owners, addOwner, deleteOwner } from '../api';
 
-export function fetchFolderData(domainID, offset) {
+export function fetchFolderData(domainID, params) {
   return async dispatch => {
     await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
-      const response = await dispatch(folders(domainID));
-      if(!offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
+      const response = await dispatch(folders(domainID, params));
+      if(!params.offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
       else await dispatch({ type: FOLDERS_NEXT_SET, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
@@ -86,11 +86,11 @@ export function deleteFolderData(domainID, id) {
   };
 }
 
-export function fetchOwnersData(domainID, folderID) {
+export function fetchOwnersData(domainID, folderID, params) {
   return async dispatch => {
     await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
-      const response = await dispatch(owners(domainID, folderID));
+      const response = await dispatch(owners(domainID, folderID, params));
       await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
