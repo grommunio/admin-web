@@ -3,7 +3,11 @@ import { createLogger } from 'redux-logger';
 
 export var config = {
   devMode: false,
-  mailWebappAddress: '',
+  mailWebAddress: '',
+  chatWebAddress: '',
+  videoWebAddress: '',
+  fileWebAddress: '',
+  archiveWebAddress: '',
 };
 
 var setConfig = (newConfig) => {

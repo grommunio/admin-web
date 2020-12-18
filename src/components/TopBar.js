@@ -7,7 +7,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade,
   Box, 
   Menu,
-  MenuItem} from '@material-ui/core';
+  MenuItem,
+  Tooltip} from '@material-ui/core';
 import Add from '@material-ui/icons/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -15,9 +16,11 @@ import Burger from '@material-ui/icons/Menu';
 import { setDrawerExpansion } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
+import Duo from '@material-ui/icons/Duo';
+import Chat from '@material-ui/icons/Chat';
+import Files from '@material-ui/icons/Description';
+import Archive from '@material-ui/icons/Archive';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import SearchIcon from '@material-ui/icons/Search';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
 
@@ -115,15 +118,56 @@ class TopBar extends PureComponent {
               <Burger />
             </IconButton>
           </Hidden>
-          <IconButton
-            href={config.mailWebappAddress}
-            disabled={!config.mailWebappAddress}
-            target="_blank"
-            className={classes.iconButton}
-          ><MailOutlineIcon />
-          </IconButton>
-          <IconButton className={classes.iconButton}><StarBorderIcon></StarBorderIcon></IconButton>
-          <IconButton className={classes.iconButton}><SearchIcon></SearchIcon></IconButton>
+          <Tooltip placement="bottom" title={t('E-Mail')}>
+            <IconButton
+              href={config.mailWebAddress}
+              disabled={!config.mailWebAddress}
+              target="_blank"
+              className={classes.iconButton}
+            >
+              <MailOutlineIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip placement="bottom" title={t('Chat')}>
+            <IconButton
+              href={config.chatWebAddress}
+              disabled={!config.chatWebAddress}
+              className={classes.iconButton}
+              target="_blank"
+            >
+              <Chat />
+            </IconButton>
+          </Tooltip>
+          <Tooltip placement="bottom" title={t('Video')}>
+            <IconButton
+              href={config.videoWebAddress}
+              disabled={!config.videoWebAddress}
+              target="_blank"
+              className={classes.iconButton}
+            >
+              <Duo />
+            </IconButton>
+          </Tooltip>
+          <Tooltip placement="bottom" title={t('Files')}>
+            <IconButton
+              href={config.fileWebAddress}
+              disabled={!config.fileWebAddress}
+              target="_blank"
+              className={classes.iconButton}
+            >
+              <Files />
+            </IconButton>
+          </Tooltip>
+          <Tooltip placement="bottom" title={t('Archive')}>
+            <IconButton
+              href={config.archiveWebAddress}
+              disabled={!config.archiveWebAddress}
+              target="_blank"
+              className={classes.iconButton}
+            >
+              <Archive />
+            </IconButton>
+          </Tooltip>
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
             <Box className={classes.profileButton} onClick={this.handleMenuOpen}>
