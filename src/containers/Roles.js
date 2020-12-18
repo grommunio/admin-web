@@ -53,7 +53,7 @@ const styles = theme => ({
     margin: theme.spacing(2),
   },
   buttonGrid: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(0, 2, 2, 2),
   },
   pageTitleSecondary: {
     color: '#aaa',
@@ -258,7 +258,7 @@ class Roles extends Component {
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
                     <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
+                    <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>

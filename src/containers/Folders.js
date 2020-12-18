@@ -52,7 +52,7 @@ const styles = theme => ({
     margin: theme.spacing(2),
   },
   buttonGrid: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(0, 2, 2, 2),
   },
   pageTitleSecondary: {
     color: '#aaa',
@@ -227,7 +227,7 @@ class Folders extends Component {
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>
                     <TableCell>{obj.creationtime}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
+                    <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>

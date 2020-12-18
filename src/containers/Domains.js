@@ -45,7 +45,7 @@ const styles = theme => ({
     margin: theme.spacing(2),
   },
   buttonGrid: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(0, 2, 2, 2),
   },
   pageTitleSecondary: {
     color: '#aaa',
@@ -240,7 +240,7 @@ class DomainList extends Component {
             </div>
           </Grid>
           <Paper elevation={1}>
-            <Table size="medium">
+            <Table size="small">
               <TableHead>
                 <TableRow>
                   {this.columns.map(column =>
@@ -266,7 +266,7 @@ class DomainList extends Component {
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
-                      <TableCell className={classes.flexRowEnd}>
+                      <TableCell align="right">
                         <IconButton onClick={this.handleDelete(obj)}>
                           <Delete color="error"/>
                         </IconButton>
