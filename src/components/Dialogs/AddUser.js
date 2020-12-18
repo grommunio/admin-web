@@ -149,7 +149,7 @@ class AddUser extends PureComponent {
     const { classes, t, domain, open, onClose } = this.props;
     const { username, loading, properties, password, repeatPw, sizeUnit } = this.state;
     const { storagequotalimit, displayname, displaytypeex } = properties;
-
+    const usernameError = username && !username.match(/^([.0-9a-z_+-]+)$/);
     return (
       <Dialog
         onClose={onClose}
@@ -171,6 +171,7 @@ class AddUser extends PureComponent {
               }}
               className={classes.input}
               required
+              error={usernameError}
             />
             <TextField 
               label={t("Password")}
@@ -247,7 +248,8 @@ class AddUser extends PureComponent {
             onClick={this.handleAddAndEdit}
             variant="contained"
             color="primary"
-            disabled={!username || loading || password !== repeatPw || !storagequotalimit || password.length < 6}
+            disabled={usernameError || !username || loading || password !== repeatPw
+              || !storagequotalimit || password.length < 6}
           >
             {loading ? <CircularProgress size={24}/> : t('Add and edit')}
           </Button>

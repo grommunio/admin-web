@@ -42,3 +42,23 @@ Following props are available:
 ### devMode
 
 For development, enables redux logger
+
+### mailWebAddress
+
+Url of production mail server
+
+### chatWebAddress
+
+Url of production chat server
+
+### videoWebAddress
+
+Url of production video server
+
+### fileWebAddress
+
+Url of production file server
+
+### archiveWebAddress
+
+Url of production archive server

@@ -330,6 +330,7 @@ class UserDetails extends PureComponent {
       assistant, country, locality, stateorprovince, postalcode, storagequotalimit,
       hometelephonenumber, home2telephonenumber, businesstelephonenumber, business2telephonenumber,
       pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
+    const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
 
     return (
       <div className={classes.root}>
@@ -364,6 +365,7 @@ class UserDetails extends PureComponent {
                     InputProps={{
                       endAdornment: <div>@{domain.domainname}</div>,
                     }}
+                    error={usernameError}
                   />
                   <Button
                     variant="contained"
@@ -767,6 +769,7 @@ class UserDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!user.username || usernameError}
             >
               {t('Save')}
             </Button> :
