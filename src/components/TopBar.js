@@ -19,6 +19,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
 import { authLogout } from '../actions/auth';
+import { config } from '../config';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -115,7 +116,8 @@ class TopBar extends PureComponent {
             </IconButton>
           </Hidden>
           <IconButton
-            href="https://mail.grammm.com/web"
+            href={config.mailWebappAddress}
+            disabled={!config.mailWebappAddress}
             target="_blank"
             className={classes.iconButton}
           ><MailOutlineIcon />
