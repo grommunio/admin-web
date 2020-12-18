@@ -6,9 +6,11 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Snackbar, Typography, Button, Grid, TableSortLabel, CircularProgress } from '@material-ui/core';
+  Snackbar, Typography, Button, Grid, TableSortLabel, CircularProgress,
+  TextField, InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
+import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
@@ -65,6 +67,17 @@ const styles = theme => ({
   circularProgress: {
     margin: theme.spacing(1, 0),
   },
+  textfield: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  actions: {
+    display: 'flex',
+    flex: 1,
+    margin: theme.spacing(0, 4, 0, 0),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    match: '',
+  },
 });
 
 class Folders extends Component {
@@ -84,10 +97,11 @@ class Folders extends Component {
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
-      const { offset } = this.state;
+      const { offset, match } = this.state;
       if(!folders.loading) this.fetchFolders({ offset });
       this.setState({
         offset: offset + 50,
+        match: match || undefined,
       });
     }
   }
@@ -131,9 +145,20 @@ class Folders extends Component {
 
   handleSort = () => this.setState({ order: this.state.order === 'asc' ? 'desc' : 'asc' })
 
+  handleMatch = e => {
+    const { value } = e.target;
+    this.debouceFetch(value);
+    this.setState({ match: value });
+  }
+
+  debouceFetch = debounce(value => {
+    const { order } = this.state;
+    this.fetchFolders({ match: value || undefined, sort: 'name,' + order });
+  }, 200)
+
   render() {
     const { classes, t, folders, domain } = this.props;
-    const { snackbar, adding, deleting, order } = this.state;
+    const { snackbar, adding, deleting, order, match } = this.state;
     const sortedArray = [...folders.Folders].sort();
     if(order === 'desc') sortedArray.reverse();
 
@@ -151,7 +176,7 @@ class Folders extends Component {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
-          <Grid className={classes.buttonGrid}>
+          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button
               variant="contained"
               color="primary"
@@ -159,6 +184,23 @@ class Folders extends Component {
             >
               {t('New folder')}
             </Button>
+            <div className={classes.actions}>
+              <TextField
+                value={match}
+                onChange={this.handleMatch}
+                label={t("Search")}
+                variant="outlined"
+                className={classes.textfield}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                color="primary"
+              />
+            </div>
           </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
