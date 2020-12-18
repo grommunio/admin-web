@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
-  Typography, Button, Grid, TableSortLabel, CircularProgress } from '@material-ui/core';
+  Typography, Button, Grid, TableSortLabel, CircularProgress, TextField, InputAdornment } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
@@ -52,7 +53,7 @@ const styles = theme => ({
     margin: theme.spacing(2),
   },
   buttonGrid: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(0, 2, 2, 2),
   },
   pageTitleSecondary: {
     color: '#aaa',
@@ -66,6 +67,16 @@ const styles = theme => ({
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
+  },
+  textfield: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  actions: {
+    display: 'flex',
+    flex: 1,
+    margin: theme.spacing(0, 4, 0, 0),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
 });
 
@@ -83,6 +94,7 @@ class Roles extends Component {
     adding: false,
     deleting: false,
     order: 'asc',
+    match: '',
     offset: 50,
   }
 
@@ -93,10 +105,11 @@ class Roles extends Component {
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
-      const { order, offset } = this.state;
+      const { order, offset, match } = this.state;
       if(!roles.loading) fetch({
         sort: 'name,' + order,
         offset,
+        match: match || undefined,
       }).then(() =>
         this.setState({
           offset: offset + 50,
@@ -116,11 +129,12 @@ class Roles extends Component {
 
   handleRequestSort = () => {
     const { fetch } = this.props;
-    const { order: stateOrder } = this.state;
+    const { order: stateOrder, match } = this.state;
     const order = stateOrder === "asc" ? "desc" : "asc";
     
     fetch({
       sort: 'name,' + order,
+      match: match || undefined,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({
@@ -128,6 +142,8 @@ class Roles extends Component {
       offset: 0,
     });
   }
+
+  handleAdd = () => this.setState({ adding: true });
 
   handleAddingSuccess = () => this.setState({ adding: false });
 
@@ -158,9 +174,24 @@ class Roles extends Component {
     history.push(`/${path}`);
   }
 
+  handleMatch = e => {
+    const { value } = e.target;
+    this.debouceFetch(value);
+    this.setState({ match: value });
+  }
+
+  debouceFetch = debounce(value => {
+    const { fetch }= this.props;
+    const { order, orderBy } = this.state;
+    fetch({ match: value || undefined, sort: orderBy + ',' + order })
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+  }, 200)
+
   render() {
     const { classes, t, roles } = this.props;
-    const { adding, snackbar, deleting, order } = this.state;
+    const { adding, snackbar, deleting, order, match } = this.state;
 
     return (
       <div
@@ -176,7 +207,7 @@ class Roles extends Component {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
-          <Grid className={classes.buttonGrid}>
+          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button
               variant="contained"
               color="primary"
@@ -184,6 +215,23 @@ class Roles extends Component {
             >
               {t("New role")}
             </Button>
+            <div className={classes.actions}>
+              <TextField
+                value={match}
+                onChange={this.handleMatch}
+                label={t("Search")}
+                variant="outlined"
+                className={classes.textfield}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                color="primary"
+              />
+            </div>
           </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
@@ -201,7 +249,7 @@ class Roles extends Component {
                   </TableCell>
                   <TableCell>{t('Description')}</TableCell>
                   <TableCell>{t('Permissions')}</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -210,7 +258,7 @@ class Roles extends Component {
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
                     <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
+                    <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>

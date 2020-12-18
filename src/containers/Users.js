@@ -7,8 +7,10 @@ import { withStyles } from '@material-ui/core/styles';
 import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel, Portal, CircularProgress } from '@material-ui/core';
+  TableBody, Snackbar, Typography, Button, Grid, TableSortLabel, Portal,
+  CircularProgress, TextField, InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
+import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData } from '../actions/users';
@@ -50,7 +52,7 @@ const styles = theme => ({
     margin: theme.spacing(2),
   },
   buttonGrid: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(0, 2, 2, 2),
   },
   pageTitleSecondary: {
     color: '#aaa',
@@ -65,6 +67,16 @@ const styles = theme => ({
   circularProgress: {
     margin: theme.spacing(1, 0),
   },
+  textfield: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  actions: {
+    display: 'flex',
+    flex: 1,
+    margin: theme.spacing(0, 4, 0, 0),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
 });
 
 class Users extends Component {
@@ -76,6 +88,7 @@ class Users extends Component {
     order: 'asc',
     orderBy: 'username',
     offset: 50,
+    match: '',
   }
 
   columns = [
@@ -91,10 +104,11 @@ class Users extends Component {
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
-      const { orderBy, order, offset } = this.state;
+      const { orderBy, order, offset, match } = this.state;
       if(!users.loading) this.fetchUsers({
         sort: orderBy + ',' + order,
         offset,
+        match: match || undefined,
       });
       this.setState({
         offset: offset + 50,
@@ -151,11 +165,12 @@ class Users extends Component {
 
   handleRequestSort = orderBy => () => {
     const { fetch, domain } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy } = this.state;
+    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
     const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
     
     fetch(domain.ID, {
       sort: orderBy + ',' + order,
+      match: match || undefined,
     }).catch(msg => this.setState({ snackbar: msg }));
 
     this.setState({
@@ -178,9 +193,20 @@ class Users extends Component {
     }
   }
 
+  handleMatch = e => {
+    const { value } = e.target;
+    this.debouceFetch(value);
+    this.setState({ match: value });
+  }
+
+  debouceFetch = debounce(value => {
+    const { order, orderBy } = this.state;
+    this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
+  }, 200)
+
   render() {
     const { classes, t, users, domain } = this.props;
-    const { snackbar, adding, deleting, order, orderBy } = this.state;
+    const { snackbar, adding, deleting, order, orderBy, match } = this.state;
 
     return (
       <div
@@ -196,7 +222,7 @@ class Users extends Component {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
-          <Grid className={classes.buttonGrid}>
+          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button
               variant="contained"
               color="primary"
@@ -204,6 +230,23 @@ class Users extends Component {
             >
               {t('New user')}
             </Button>
+            <div className={classes.actions}>
+              <TextField
+                value={match}
+                onChange={this.handleMatch}
+                label={t("Search")}
+                variant="outlined"
+                className={classes.textfield}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                color="primary"
+              />
+            </div>
           </Grid>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
@@ -231,7 +274,7 @@ class Users extends Component {
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
-                    <TableCell className={classes.flexRowEnd}>
+                    <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
                       </IconButton>
