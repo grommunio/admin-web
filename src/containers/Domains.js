@@ -70,6 +70,9 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  deletedDomain: {
+    backgroundColor: '#22242f',
+  },
 });
 
 class DomainList extends Component {
@@ -261,7 +264,12 @@ class DomainList extends Component {
               <TableBody>
                 {domains.Domains.map((obj, idx) => {
                   return (obj.domainType === 1) || (obj.domainStatus === 3 && !showDeleted) ?
-                    null : <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                    null : <TableRow
+                      key={idx}
+                      hover
+                      onClick={this.handleEdit(obj)}
+                      className={obj.domainStatus ? classes.deletedDomain : null}
+                    >
                       <TableCell>{obj.domainname}</TableCell>
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
