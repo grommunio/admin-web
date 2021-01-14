@@ -44,6 +44,7 @@ const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
 const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
+const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
@@ -148,6 +149,16 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/folders/:folderID`}
         exact
         component={AsyncFolderDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/ldap`}
+        exact
+        component={AsyncLdap}
         props={childProps}
         key={domain.ID}
         domain={domain}

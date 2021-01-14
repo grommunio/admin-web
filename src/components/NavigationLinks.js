@@ -14,6 +14,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
 import People from '@material-ui/icons/People';
+import Ldap from '@material-ui/icons/Contacts';
 import Http from '@material-ui/icons/Http';
 import Folder from '@material-ui/icons/Folder';
 /*
@@ -250,6 +251,18 @@ class NavigationLinks extends PureComponent {
                         <Grid container alignItems="center">
                           <People className={classes.nestedIcon}/>
                           <ListItemText primary={t('Users')}/>
+                        </Grid>
+                      </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
+                        onClick={this.handleNavigation(ID + '/ldap')}
+                        selected={expandedDomain === ID &&
+                          location.pathname.startsWith('/' + ID + '/ldap')}
+                      >
+                        <Grid container alignItems="center">
+                          <Ldap className={classes.nestedIcon}/>
+                          <ListItemText primary={t('LDAP')}/>
                         </Grid>
                       </ListItem>
                       <ListItem

@@ -70,10 +70,11 @@ class AddUser extends PureComponent {
     add(domain.ID, {
       username,
       password,
-      properties: this.toArray({
+      properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-      }),
+        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+      },
     })
       .then(() => {
         this.setState({
@@ -104,10 +105,11 @@ class AddUser extends PureComponent {
       username,
       password,
       subType,
-      properties: this.toArray({
+      properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-      }),
+        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+      },
     })
       .then(user => {
         history.push('/' + domain.ID + '/users/' + user.ID);
@@ -137,13 +139,6 @@ class AddUser extends PureComponent {
   }
 
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
-
-  toArray(obj) {
-    const arr = [];
-    obj.storagequotalimit = obj.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit);
-    Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
-    return arr;
-  }
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
