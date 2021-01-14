@@ -45,7 +45,7 @@ class MemoryChart extends Component {
         { name: 'Filesystem', value: props.payload[0].payload.filesystem },
       ];
       return <DefaultTooltipContent
-        {...props}
+        labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}
         payload={newPayload}
       />;
     }
@@ -63,7 +63,7 @@ class MemoryChart extends Component {
             layout="vertical"
             margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
           >
-            <YAxis type="category" dataKey="mountpoint" />
+            <YAxis type="category" dataKey="mountpoint" tick={{ fontSize: 12, wordBreak: 'break-all' }}/>
             <XAxis type="number"/>
             <Tooltip
               isAnimationActive={false}
