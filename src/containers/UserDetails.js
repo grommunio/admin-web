@@ -24,7 +24,11 @@ import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
 import Alert from '@material-ui/lab/Alert';
 import Close from '@material-ui/icons/Delete';
+import Sync from '@material-ui/icons/Sync';
+import Detach from '@material-ui/icons/SyncDisabled';
 import world from '../res/world.json';
+import { syncLdapData } from '../actions/ldap';
+import DetachDialog from '../components/Dialogs/DetachDialog';
 
 const styles = theme => ({
   root: {
@@ -98,6 +102,12 @@ const styles = theme => ({
   gridItem: {
     display: 'flex',
   },
+  syncButtons: {
+    margin: theme.spacing(2, 0),
+  },
+  leftIcon: {
+    marginRight: 4,
+  },
 });
 
 class UserDetails extends PureComponent {
@@ -113,6 +123,8 @@ class UserDetails extends PureComponent {
     snackbar: '',
     tab: 0,
     sizeUnit: 1,
+    detaching: false,
+    detachLoading: false,
   };
 
   types = [
@@ -135,59 +147,37 @@ class UserDetails extends PureComponent {
     const user = await fetch(splits[1], splits[3]);
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const properties = this.toObject(user.properties);
+
+    this.setState(this.getStateOverwrite(user));
+  }
+
+  getStateOverwrite(user) {
+    const properties = {
+      ...user.properties,
+    };
     const username = user.username.slice(0, user.username.indexOf('@'));
     const roles = (user.roles && user.roles.map(role => role.ID)) || [];
     const storagequotalimit = properties.storagequotalimit;
-
+    let sizeUnit = 1;
     // Covert to biggest possible sizeUnit
     if(storagequotalimit % 1073741824 === 0) {
       properties.storagequotalimit = storagequotalimit / 1073741824;
-      this.setState({
-        user: {
-          ...user,
-          username,
-          roles,
-          properties,
-        },
-        sizeUnit: 3,
-      });
+      sizeUnit = 3;
     } else if (storagequotalimit % 1048576 === 0) {
       properties.storagequotalimit = storagequotalimit / 1048576;
-      this.setState({
-        user: {
-          ...user,
-          username,
-          roles,
-          properties,
-        },
-        sizeUnit: 2,
-      });
+      sizeUnit = 2;
     } else {
       properties.storagequotalimit = storagequotalimit / 1024;
-      this.setState({
-        user: {
-          ...user,
-          username,
-          roles,
-          properties,
-        },
-        sizeUnit: 1,
-      });
     }
-  }
-
-  toObject(arr) {
-    const obj = {};
-    arr.forEach(item => obj[item.name] = item.val);
-    return obj;
-  }
-
-  toArray(obj) {
-    const arr = [];
-    obj.storagequotalimit = obj.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit);
-    Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
-    return arr;
+    return {
+      sizeUnit,
+      user: {
+        ...user,
+        username,
+        roles,
+        properties,
+      },
+    };
   }
 
   handleInput = field => event => {
@@ -244,10 +234,26 @@ class UserDetails extends PureComponent {
     this.props.edit(this.props.domain.ID, {
       ...user,
       aliases: user.aliases.filter(alias => alias !== ''),
-      properties: this.toArray({ ...user.properties }),
+      properties: {
+        ...user.properties,
+        storagequotalimit: user.properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+      },
       roles: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+  }
+
+  handleSync = () => {
+    const { sync, domain } = this.props;
+    const { user } = this.state;
+    sync(domain.ID, user.ID)
+      .then(user => 
+        this.setState({
+          ...this.getStateOverwrite(user),
+          snackbar: 'Success!',
+        })
+      )
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
@@ -320,10 +326,28 @@ class UserDetails extends PureComponent {
 
   handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
 
+  handleDetachDialog = detaching => () => this.setState({ detaching });
+
+  handleDetach = () => {
+    const { domain, edit } = this.props;
+    this.setState({ detachLoading: true });
+    edit(domain.ID, { ID: this.state.user.ID, ldapImported: false })
+      .then(() => this.setState({
+        user: {
+          ...this.state.user,
+          ldapImported: false,
+        },
+        snackbar: 'Success!',
+        detachLoading: false,
+        detaching: false,
+      }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error', detachLoading: false }));
+  }
+
   render() {
     const { classes, t, domain, Roles } = this.props;
-    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit } = this.state;
-    const { properties, smtp, pop3_imap, publicAddress } = user; //eslint-disable-line
+    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching } = this.state;
+    const { properties, smtp, pop3_imap, publicAddress, ldapImported } = user; //eslint-disable-line
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
@@ -346,6 +370,25 @@ class UserDetails extends PureComponent {
                 {t('editHeadline', { item: 'User' })}
               </Typography>
             </Grid>
+            {ldapImported && <Grid container className={classes.syncButtons}>
+              <Button
+                variant="contained"
+                color="secondary"
+                style={{ marginRight: 8 }}
+                onClick={this.handleDetachDialog(true)}
+                size="small"
+              >
+                <Detach fontSize="small" className={classes.leftIcon} /> Detach
+              </Button>
+              <Button
+                size="small"
+                onClick={this.handleSync}
+                variant="contained"
+                color="primary"
+              >
+                <Sync fontSize="small" className={classes.leftIcon}/> Sync
+              </Button>
+            </Grid>}
             <Tabs value={tab} onChange={this.handleTabChange}>
               <Tab label={t("Account")} />
               <Tab label={t("User")} />
@@ -797,6 +840,12 @@ class UserDetails extends PureComponent {
             </Alert>
           </Snackbar>
         </div>
+        <DetachDialog
+          open={detaching}
+          loading={detachLoading}
+          onClose={this.handleDetachDialog(false)}
+          onDetach={this.handleDetach}
+        />
         <Dialog open={!!changingPw}>
           <DialogTitle>{t('Change password')}</DialogTitle>
           <DialogContent>
@@ -845,6 +894,7 @@ UserDetails.propTypes = {
   Roles: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  sync: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
@@ -871,6 +921,10 @@ const mapDispatchToProps = dispatch => {
     editUserRoles: async (domainID, userID, roles) => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
     },
+    sync: async (domainID, userID) =>
+      await dispatch(syncLdapData(domainID, userID))
+        .then(user => Promise.resolve(user))
+        .catch(msg => Promise.reject(msg)),
   };
 };
 

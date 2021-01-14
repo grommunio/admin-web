@@ -157,12 +157,6 @@ class Users extends Component {
     history.push(`/${path}`);
   }
 
-  toObject(arr) {
-    const obj = {};
-    arr.forEach(item => obj[item.name] = item.val);
-    return obj;
-  }
-
   handleRequestSort = orderBy => () => {
     const { fetch, domain } = this.props;
     const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
@@ -269,7 +263,7 @@ class Users extends Component {
               </TableHead>
               <TableBody>
                 {users.Users.map((obj, idx) => {
-                  const properties = this.toObject(obj.properties || []);
+                  const properties = obj.properties || {};
                   return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>

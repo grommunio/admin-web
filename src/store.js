@@ -14,6 +14,7 @@ import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
 import foldersReducer from './reducers/folders';
 //import forwardsReducer from './reducers/forwards';
+import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 //import membersReducer from './reducers/members';
 //import mlistsReducer from './reducers/mlists';
@@ -34,6 +35,7 @@ export const store = createStore(
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,
+    ldap: ldapReducer,
     license: licenseReducer,
     profile: profileReducer,
     roles: rolesReducer,

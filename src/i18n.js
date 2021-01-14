@@ -16,6 +16,7 @@ const resources = {
       "addHeadline": "$t({{item}}) hinzufügen",
       "editHeadline": "$t({{item}}) bearbeiten",
       "Add": "Hinzufügen",
+      "Add and edit": "Hinzufügen & bearbeiten",
       "Deleted": "Gelöscht",
       "Configuration": "Konfiguration",
       "Admin": "Admin",

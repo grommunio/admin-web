@@ -250,6 +250,26 @@ export function editUserRole(domainID, userID, roles) {
   };
 }
 
+/* LDAP */
+
+export function searchLdap(params) {
+  return async () => {
+    return await get(buildQuery('/ldap/search', params));
+  };
+}
+
+export function importUser(params) {
+  return async () => {
+    return await post(buildQuery('/ldap/importUser', params));
+  };
+}
+
+export function sync(domainID, userID) {
+  return async () => {
+    return await put('/domains/' + domainID + '/users/' + userID + '/downsync');
+  };
+}
+
 /*
   ROLES
 */
