@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   Snackbar, Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@material-ui/core';
+  TextField, InputAdornment, Portal } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
 import Search from '@material-ui/icons/Search';
@@ -240,21 +240,23 @@ class Folders extends Component {
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
         </div>
         <AddFolder
           open={adding}

@@ -15,7 +15,7 @@ import {
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select, Snackbar,
-  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox,
+  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox, Portal,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
@@ -824,21 +824,23 @@ class UserDetails extends PureComponent {
                 {t('Save')}
               </Button>}
           </Paper>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
         </div>
         <DetachDialog
           open={detaching}

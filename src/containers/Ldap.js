@@ -9,7 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import Search from '@material-ui/icons/Search';
 import Import from '@material-ui/icons/ImportContacts';
 import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
-  Paper, Snackbar, TextField, Typography } from '@material-ui/core';
+  Paper, Portal, Snackbar, TextField, Typography } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { connect } from 'react-redux';
@@ -144,21 +144,23 @@ class Ldap extends PureComponent {
               <CircularProgress color="primary" size={40}/>
             </Grow>
           </Grid>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
+          <Portal>
+            <Snackbar
+              open={!!snackbar}
               onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
+              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
             >
-              {snackbar}
-            </Alert>
-          </Snackbar>
+              <Alert
+                onClose={() => this.setState({ snackbar: '' })}
+                severity={snackbar === 'Success!' ? "success" : "error"}
+                elevation={6}
+                variant="filled"
+              >
+                {snackbar}
+              </Alert>
+            </Snackbar>
+          </Portal>
           <ImportDialog
             open={!!confirming}
             user={confirming || {}}
