@@ -77,6 +77,9 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  newButton: {
+    marginRight: 8,
+  },
 });
 
 class Users extends Component {
@@ -221,8 +224,16 @@ class Users extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              className={classes.newButton}
             >
               {t('New user')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleNavigation(domain.ID + '/ldap')}
+            >
+              {t('Search in LDAP')}
             </Button>
             <div className={classes.actions}>
               <TextField
