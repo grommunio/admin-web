@@ -97,6 +97,7 @@ class Users extends Component {
   columns = [
     { label: 'Username', value: 'username' },
     { label: 'Display name', value: 'displayname' },
+    { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ]
 
@@ -278,6 +279,7 @@ class Users extends Component {
                   return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>

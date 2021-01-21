@@ -331,11 +331,11 @@ class UserDetails extends PureComponent {
   handleDetach = () => {
     const { domain, edit } = this.props;
     this.setState({ detachLoading: true });
-    edit(domain.ID, { ID: this.state.user.ID, ldapImported: false })
+    edit(domain.ID, { ID: this.state.user.ID, ldapID: null })
       .then(() => this.setState({
         user: {
           ...this.state.user,
-          ldapImported: false,
+          ldapID: null,
         },
         snackbar: 'Success!',
         detachLoading: false,
@@ -347,7 +347,7 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, domain, Roles } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching } = this.state;
-    const { properties, smtp, pop3_imap, publicAddress, ldapImported } = user; //eslint-disable-line
+    const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, publicAddress, ldapID } = user; //eslint-disable-line
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
@@ -370,7 +370,7 @@ class UserDetails extends PureComponent {
                 {t('editHeadline', { item: 'User' })}
               </Typography>
             </Grid>
-            {ldapImported && <Grid container className={classes.syncButtons}>
+            {ldapID && <Grid container className={classes.syncButtons}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -401,7 +401,7 @@ class UserDetails extends PureComponent {
                 <Grid container className={classes.input}>
                   <TextField 
                     label={t("Username")}
-                    value={user.username || ''}
+                    value={username || ''}
                     autoFocus
                     onChange={this.handleInput('username')}
                     style={{ flex: 1, marginRight: 8 }}
@@ -418,12 +418,19 @@ class UserDetails extends PureComponent {
                     {t('Change password')}
                   </Button>
                 </Grid>
+                {ldapID && <TextField 
+                  label={t("LDAP ID")}
+                  className={classes.input}
+                  value={ldapID || ''}
+                  disabled
+                  style={{ flex: 1, marginRight: 8 }}
+                />}
                 <TextField
                   select
                   className={classes.input}
                   label={t("Status")}
                   fullWidth
-                  value={user.addressStatus || 0}
+                  value={addressStatus || 0}
                   onChange={this.handleInput('addressStatus')}
                 >
                   {this.statuses.map((status, key) => (
@@ -763,7 +770,7 @@ class UserDetails extends PureComponent {
                   <Select
                     multiple
                     fullWidth
-                    value={user.roles || []}
+                    value={roles || []}
                     onChange={this.handleMultiSelect}
                     native
                   >
@@ -781,7 +788,7 @@ class UserDetails extends PureComponent {
               {tab === 4 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
                 <List className={classes.list}>
-                  {user.aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
+                  {aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
                     <TextField
                       className={classes.listTextfield}
                       value={alias}
@@ -812,7 +819,7 @@ class UserDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
-              disabled={!user.username || usernameError}
+              disabled={!username || usernameError}
             >
               {t('Save')}
             </Button> :
