@@ -604,6 +604,6 @@ export async function editBaseSetup(setup) {
 
 export async function changePw(oldPw, newPw) {
   try {
-    return await patch('/passwd', { oldPw, newPw });
+    return await put('/passwd', { old: oldPw, new: newPw });
   } catch(err) { return Promise.reject(err); }
 }
