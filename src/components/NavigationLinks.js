@@ -14,8 +14,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
 import People from '@material-ui/icons/People';
-import Ldap from '@material-ui/icons/Contacts';
-import Http from '@material-ui/icons/Http';
+import Domains from '@material-ui/icons/Domain';
 import Folder from '@material-ui/icons/Folder';
 /*
 import Mail from '@material-ui/icons/Mail';
@@ -120,6 +119,9 @@ const styles = theme => ({
   logo: {
     cursor: 'pointer',
   },
+  input: {
+    color: 'white',
+  },
   textfield: {
     margin: theme.spacing(1),
     '& .MuiOutlinedInput-root': {
@@ -196,7 +198,9 @@ class NavigationLinks extends PureComponent {
                 value={filter}
                 onChange={this.handleTextInput}
                 InputLabelProps={{
-                  className: classes.input,
+                  classes: {
+                    root: classes.input,
+                  },
                   shrink: true,
                 }}
                 InputProps={{
@@ -223,7 +227,7 @@ class NavigationLinks extends PureComponent {
                     selected={expandedDomain === ID && location.pathname === '/' + ID}
                   >
                     <Grid container alignItems="center">
-                      <Http className={classes.icon} />
+                      <Domains className={classes.icon} />
                       <ListItemText primary={name} />
                     </Grid>
                   </ListItem>
@@ -256,25 +260,13 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(ID + '/ldap')}
-                        selected={expandedDomain === ID &&
-                          location.pathname.startsWith('/' + ID + '/ldap')}
-                      >
-                        <Grid container alignItems="center">
-                          <Ldap className={classes.nestedIcon}/>
-                          <ListItemText primary={t('LDAP')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
                         onClick={this.handleNavigation(ID + '/folders')}
                         selected={expandedDomain === ID &&
                           location.pathname.startsWith('/' + ID + '/folders')}
                       >
                         <Grid container alignItems="center">
                           <Folder className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Folders')}/>
+                          <ListItemText primary={t('Public folders')}/>
                         </Grid>
                       </ListItem>
                       {/*<ListItem
@@ -312,7 +304,7 @@ class NavigationLinks extends PureComponent {
               selected={location.pathname.startsWith('/domainList')}
             >
               <Grid container alignItems="center">
-                <Http className={classes.icon}/>
+                <Domains className={classes.icon}/>
                 <ListItemText primary={t('Domain list')} />
               </Grid>
             </ListItem>  

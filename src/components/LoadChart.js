@@ -44,7 +44,7 @@ class LoadChart extends Component {
             <XAxis dataKey="time" />
             <YAxis />
             <Legend />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}/>
             <Area
               type="monotone"
               dataKey="value"

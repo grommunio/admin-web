@@ -13,7 +13,7 @@ import SwapPieChart from '../components/SwapPieChart';
 import DisksChart from '../components/DisksChart';
 import CPULineChart from '../components/CPULineChart';
 import ServicesChart from '../components/ServicesChart';
-import { Paper, Grid, Typography, IconButton, Snackbar } from '@material-ui/core';
+import { Paper, Grid, Typography, IconButton, Snackbar, Portal } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import Refresh from '@material-ui/icons/Update';
 import { connect } from 'react-redux';
@@ -160,21 +160,23 @@ class Dashboard extends Component {
             </Grid>
           </Grid>
         </div>
-        <Snackbar
-          open={!!this.state.snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
-          autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
-          transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-        >
-          <Alert
+        <Portal>
+          <Snackbar
+            open={!!this.state.snackbar}
             onClose={() => this.setState({ snackbar: '' })}
-            severity={this.state.snackbar === 'Success!' ? "success" : "error"}
-            elevation={6}
-            variant="filled"
+            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
+            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
           >
-            {this.state.snackbar}
-          </Alert>
-        </Snackbar>
+            <Alert
+              onClose={() => this.setState({ snackbar: '' })}
+              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
+              elevation={6}
+              variant="filled"
+            >
+              {this.state.snackbar}
+            </Alert>
+          </Snackbar>
+        </Portal>
       </div>
     );
   }
