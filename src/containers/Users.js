@@ -14,6 +14,7 @@ import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
+import { syncLdapUsers } from '../actions/ldap';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddUser from '../components/Dialogs/AddUser';
@@ -204,6 +205,12 @@ class Users extends Component {
     this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
   }, 200)
 
+  handleUserSync = () => {
+    this.props.sync()
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg }));
+  }
+
   checkUsers = () => {
     this.props.check({});
     this.setState({ checking: true });
@@ -245,6 +252,14 @@ class Users extends Component {
               className={classes.newButton}
             >
               {t('Search in LDAP')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleUserSync}
+              className={classes.newButton}
+            >
+              {t('Sync LDAP users')}
             </Button>
             <Button
               variant="contained"
@@ -363,6 +378,7 @@ Users.propTypes = {
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   check: PropTypes.func.isRequired,
+  sync: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -378,6 +394,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },
     check: async params => await dispatch(checkLdapUsers(params))
+      .catch(error => Promise.reject(error)),
+    sync: async () => await dispatch(syncLdapUsers())
       .catch(error => Promise.reject(error)),
   };
 };

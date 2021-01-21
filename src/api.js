@@ -270,6 +270,12 @@ export function sync(domainID, userID) {
   };
 }
 
+export function syncAll() {
+  return async () => {
+    return await post('/ldap/downsync');
+  };
+}
+
 export function ldapDump(params) {
   return async () => {
     return await get(buildQuery('/ldap/dump', params));

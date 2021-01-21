@@ -3,7 +3,7 @@ import {
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
 } from './types';
-import { searchLdap, importUser, sync } from '../api';
+import { searchLdap, importUser, sync, syncAll } from '../api';
 
 export function fetchLdapData(params) {
   return async dispatch => {
@@ -38,6 +38,16 @@ export function syncLdapData(domainID, userID) {
       //await dispatch({ type: LDAP_DATA_RECEIVED, data: resp });
     } catch (err) {
       await dispatch({ type: LDAP_DATA_ERROR, error: err });
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function syncLdapUsers() {
+  return async dispatch => {
+    try {
+      await dispatch(syncAll());
+    } catch (err) {
       return Promise.reject(err.message);
     }
   };
