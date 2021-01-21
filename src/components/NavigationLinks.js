@@ -14,7 +14,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Search from '@material-ui/icons/Search';
 import Dashboard from '@material-ui/icons/Dashboard';
 import People from '@material-ui/icons/People';
-import Http from '@material-ui/icons/Http';
+import Domains from '@material-ui/icons/Domain';
 import Folder from '@material-ui/icons/Folder';
 /*
 import Mail from '@material-ui/icons/Mail';
@@ -222,7 +222,7 @@ class NavigationLinks extends PureComponent {
                     selected={expandedDomain === ID && location.pathname === '/' + ID}
                   >
                     <Grid container alignItems="center">
-                      <Http className={classes.icon} />
+                      <Domains className={classes.icon} />
                       <ListItemText primary={name} />
                     </Grid>
                   </ListItem>
@@ -299,7 +299,7 @@ class NavigationLinks extends PureComponent {
               selected={location.pathname.startsWith('/domainList')}
             >
               <Grid container alignItems="center">
-                <Http className={classes.icon}/>
+                <Domains className={classes.icon}/>
                 <ListItemText primary={t('Domain list')} />
               </Grid>
             </ListItem>  
