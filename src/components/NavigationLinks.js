@@ -119,6 +119,9 @@ const styles = theme => ({
   logo: {
     cursor: 'pointer',
   },
+  input: {
+    color: 'white',
+  },
   textfield: {
     margin: theme.spacing(1),
     '& .MuiOutlinedInput-root': {
@@ -195,7 +198,9 @@ class NavigationLinks extends PureComponent {
                 value={filter}
                 onChange={this.handleTextInput}
                 InputLabelProps={{
-                  className: classes.input,
+                  classes: {
+                    root: classes.input,
+                  },
                   shrink: true,
                 }}
                 InputProps={{
