@@ -294,6 +294,18 @@ export function deleteOrphans(params) {
   };
 }
 
+export function ldapConfig() {
+  return async () => {
+    return await get('/mconf/ldap');
+  };
+}
+
+export function updateLdap(config) {
+  return async () => {
+    return await put('/mconf/ldap', config);
+  };
+}
+
 /*
   ROLES
 */

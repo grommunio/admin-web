@@ -3,7 +3,29 @@ import {
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
 } from './types';
-import { searchLdap, importUser, sync, syncAll } from '../api';
+import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap } from '../api';
+
+export function fetchLdapConfig() {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(ldapConfig());
+      return Promise.resolve(resp);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function updateLdapConfig(config) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(updateLdap(config));
+      return Promise.resolve(resp);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
 
 export function fetchLdapData(params) {
   return async dispatch => {
