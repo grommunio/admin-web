@@ -24,6 +24,7 @@ const resources = {
       "Users": "Benutzer",
       "Folder": "Ordner",
       "Folders": "Ordner",
+      "Public folders": "Öffentliche Ordner",
       "Folder details": "Ordner Details",
       "Role": "Rolle",
       "Roles": "Rollen",
