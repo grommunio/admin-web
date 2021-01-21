@@ -5,9 +5,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
-import { Paper, Typography, Grid } from '@material-ui/core';
+import { Paper, Typography, Grid, Button } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { setDateString } from '../utils';
+import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
+import { SYS_ADMIN } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -37,10 +40,26 @@ const styles = theme => ({
   container: {
     margin: theme.spacing(2),
   },
+  firstRow: {
+    display: 'flex',
+    flex: 1,
+    paddingBottom: 8,
+  },
+  editButtonContainer: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginRight: 28,
+  },
 });
 
 function DomainMenu(props) {
-  const { classes, domain, t } = props;
+  const { classes, domain, t, role } = props;
+
+  const handleNav = () => {
+    const { domain, history } = props;
+    history.push('/domainList/' + domain.ID);
+  };
 
   return (
     <div className={classes.root}>
@@ -49,10 +68,21 @@ function DomainMenu(props) {
       <div className={classes.base}>
         <Paper className={classes.tablePaper} elevation={1}>
           <Grid container direction="column" className={classes.container}>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Domain name')}:</span>
-              {domain.domainname}
-            </Typography>
+            <Grid item className={classes.firstRow}>
+              <Typography variant="h6">
+                <span className={classes.description}>{t('Domain name')}:</span>
+                {domain.domainname}
+              </Typography>
+              {role === SYS_ADMIN && <div className={classes.editButtonContainer}>
+                <Button
+                  onClick={handleNav}
+                  variant="contained"
+                  color="primary"
+                >
+                  {t('editHeadline', { item: 'domain' })}
+                </Button>
+              </div>}
+            </Grid>
             <Typography variant="h6" className={classes.data}>
               <span className={classes.description}>{t('Title')}:</span>
               {domain.title}
@@ -86,8 +116,17 @@ function DomainMenu(props) {
 
 DomainMenu.propTypes = {
   classes: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
+  role: PropTypes.number,
 };
 
-export default withTranslation()(withStyles(styles)(DomainMenu));
+const mapStateToProps = state => {
+  return {
+    role: state.auth.role,
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(
+  withTranslation()(withStyles(styles)(DomainMenu))));
