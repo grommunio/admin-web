@@ -9,8 +9,11 @@ import {
   USER_DATA_EDIT,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
+  ORPHANED_USERS_RECEIVED,
+  ORPHANS_DELETED,
 } from './types';
-import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, ldapDump } from '../api';
+import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser,
+  ldapDump, checkLdap, deleteOrphans } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -65,6 +68,17 @@ export function fetchLdapDump(params) {
   };
 }
 
+export function checkLdapUsers(params) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(checkLdap(params));
+      await dispatch({ type: ORPHANED_USERS_RECEIVED, data });
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
 export function addUserData(domainID, user) {
   return async dispatch => {
     try {
@@ -112,6 +126,17 @@ export function deleteUserData(domainID, id, deleteFiles) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});
       console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deleteOrphanedUsers(params) {
+  return async dispatch => {
+    try {
+      await dispatch(deleteOrphans(params));
+      await dispatch({ type: ORPHANS_DELETED });
+    } catch(err) {
       return Promise.reject(err.message);
     }
   };

@@ -276,6 +276,18 @@ export function ldapDump(params) {
   };
 }
 
+export function checkLdap(params) {
+  return async () => {
+    return await get(buildQuery('/ldap/check', params));
+  };
+}
+
+export function deleteOrphans(params) {
+  return async () => {
+    return await yeet(buildQuery('/ldap/check', params));
+  };
+}
+
 /*
   ROLES
 */
