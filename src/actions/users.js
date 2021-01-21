@@ -10,7 +10,7 @@ import {
   USER_DATA_DELETE,
   USERS_NEXT_SET,
 } from './types';
-import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser } from '../api';
+import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, ldapDump } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -49,6 +49,17 @@ export function fetchAllUsers(params) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchLdapDump(params) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(ldapDump(params));
+      return Promise.resolve(data);
+    } catch(err) {
       return Promise.reject(err.message);
     }
   };
