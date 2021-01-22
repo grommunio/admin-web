@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Paper,
-  Portal, Snackbar, TextField, Typography } from '@material-ui/core';
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
+  Portal, Select, Snackbar, TextField, Typography } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
@@ -15,6 +15,7 @@ import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Close';
 import { red } from '@material-ui/core/colors';
 import { Alert } from '@material-ui/lab';
+import adminConfig from '../config';
 
 const styles = theme => ({
   root: {
@@ -107,7 +108,7 @@ class LdapConfig extends PureComponent {
     filters: '',
     templates: '',
     attributes: [],
-    searchAttributes: '',
+    searchAttributes: [],
 
     deleting: false,
     snackbar: '',
@@ -136,9 +137,9 @@ class LdapConfig extends PureComponent {
     formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
     // Split multiline-strings to arrays of strings
-    formatted.users.filters = copy.filters.split('\n');
-    formatted.users.searchAttributes = copy.searchAttributes.split('\n');
-    formatted.users.templates = copy.templates.split('\n');
+    formatted.users.filters = [copy.filters];
+    formatted.users.templates = [copy.templates];
+    formatted.users.searchAttributes = [...this.state.searchAttributes];
 
     return formatted;
   }
@@ -158,9 +159,9 @@ class LdapConfig extends PureComponent {
       username: users.username,
       displayName: users.displayName,
       defaultQuota: users.defaultQuota,
-      filters: this.arrayToString(users.filters),
-      searchAttributes: this.arrayToString(users.searchAttributes),
-      templates: this.arrayToString(users.templates),
+      filters: users.filters.length > 0 ? users.filters[0] : [],
+      templates: users.templates.length > 0 ? users.templates[0] : [],
+      searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
     });
   }
@@ -175,16 +176,6 @@ class LdapConfig extends PureComponent {
     const obj = {};
     arr.forEach(attr => obj[attr.key] = attr.value);
     return obj;
-  }
-
-  arrayToString(arr) {
-    let string = '';
-    const len = arr.length;
-    for(let i = 0; i < len - 1; i++) {
-      string += arr[i] + '\n';
-    }
-    string += arr[len - 1];
-    return string;
   }
 
   handleNavigation = path => event => {
@@ -332,32 +323,36 @@ class LdapConfig extends PureComponent {
                 value={displayName || ''}
               />
               <TextField
-                label={t('LDAP Filters (filters) - (separated by line)')}
+                label={t('LDAP Filters (filters)')}
                 className={classes.textfield}
                 color="primary"
                 onChange={this.handleInput('filters')}
                 value={filters || ''}
-                multiline
-                rows={4}
               />
               <TextField
-                label={t('LDAP Search Attributes - (searchAttributes) - (separated by line)')}
-                className={classes.textfield}
-                color="primary"
-                onChange={this.handleInput('searchAttributes')}
-                value={searchAttributes}
-                multiline
-                rows={4}
-              />
-              <TextField
-                label={t('LDAP Templates (templates) - (separated by line)')}
+                label={t('LDAP Templates (templates)')}
                 className={classes.textfield}
                 color="primary"
                 onChange={this.handleInput('templates')}
                 value={templates}
-                multiline
-                rows={4}
               />
+              <FormControl className={classes.textfield}>
+                <InputLabel>
+                  {t('LDAP Search Attributes - (searchAttributes) - (separated by line)')}
+                </InputLabel>
+                <Select
+                  multiple
+                  value={searchAttributes}
+                  onChange={this.handleInput('searchAttributes')}
+                  input={<Input />}
+                >
+                  {adminConfig.searchAttributes.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </FormControl>
           </Paper>
           <Paper elevation={1} className={classes.paper}>
