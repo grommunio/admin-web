@@ -306,6 +306,12 @@ export function updateLdap(config) {
   };
 }
 
+export function deleteLdap() {
+  return async () => {
+    return await yeet('/mconf/ldap');
+  };
+}
+
 /*
   ROLES
 */
