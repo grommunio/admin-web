@@ -10,6 +10,11 @@ const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'ligh
 
 const theme = createMuiTheme({
   overrides: {
+    MuiFormControlLabel: {
+      root: {
+        color: mode === 'light' ? '#333' : '#fff',
+      },
+    },
     MuiPaper: {
       elevation1: {
         borderRadius: 8,
