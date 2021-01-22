@@ -44,9 +44,6 @@ const styles = theme => ({
   pageTitle: {
     margin: theme.spacing(2),
   },
-  buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
-  },
   pageTitleSecondary: {
     color: '#aaa',
   },
@@ -63,11 +60,14 @@ const styles = theme => ({
   textfield: {
     margin: theme.spacing(2, 0, 1, 0),
   },
+  tools: {
+    margin: theme.spacing(0, 2, 2, 2),
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
   actions: {
     display: 'flex',
-    flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
-    justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   deletedDomain: {
@@ -204,7 +204,7 @@ class DomainList extends Component {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <div className={classes.tools}>
             <Button
               variant="contained"
               color="primary"
@@ -215,9 +215,6 @@ class DomainList extends Component {
             <div className={classes.actions}>
               <FormControlLabel
                 label={t('Show deleted')}
-                style={{
-                  color: 'white',
-                }}
                 control={
                   <Checkbox
                     checked={showDeleted || false}
@@ -228,20 +225,19 @@ class DomainList extends Component {
               <TextField
                 value={match}
                 onChange={this.handleMatch}
-                label={t("Search")}
-                variant="outlined"
-                className={classes.textfield}
+                placeholder={t("search domains")}
+                variant={"outlined"}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search />
+                      <Search/>
                     </InputAdornment>
                   ),
                 }}
                 color="primary"
               />
             </div>
-          </Grid>
+          </div>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>

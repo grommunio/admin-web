@@ -220,7 +220,7 @@ class Roles extends Component {
               <TextField
                 value={match}
                 onChange={this.handleMatch}
-                label={t("Search")}
+                placeholder={t("search roles")}
                 variant="outlined"
                 className={classes.textfield}
                 InputProps={{
