@@ -18,7 +18,7 @@ import {
   InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox, Portal,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { fetchUserData, editUserData, editUserRoles } from '../actions/users';
+import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
@@ -26,9 +26,11 @@ import Alert from '@material-ui/lab/Alert';
 import Close from '@material-ui/icons/Delete';
 import Sync from '@material-ui/icons/Sync';
 import Detach from '@material-ui/icons/SyncDisabled';
+import Dump from '@material-ui/icons/Receipt';
 import world from '../res/world.json';
 import { syncLdapData } from '../actions/ldap';
 import DetachDialog from '../components/Dialogs/DetachDialog';
+import DumpDialog from '../components/Dialogs/DumpDialog';
 
 const styles = theme => ({
   root: {
@@ -117,6 +119,7 @@ class UserDetails extends PureComponent {
       roles: [],
       properties: {},
     },
+    dump: '',
     changingPw: false,
     newPw: '',
     checkPw: '',
@@ -257,6 +260,13 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
+  handleDump = () => {
+    const { dump } = this.props;
+    dump({ ID: this.state.user.ldapID })
+      .then(data => this.setState({ dump: data.data }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+  }
+
   handlePasswordChange = async () => {
     const { user, newPw } = this.state;
     await changeUserPassword(this.props.domain.ID, user.ID, newPw)
@@ -331,11 +341,11 @@ class UserDetails extends PureComponent {
   handleDetach = () => {
     const { domain, edit } = this.props;
     this.setState({ detachLoading: true });
-    edit(domain.ID, { ID: this.state.user.ID, ldapImported: false })
+    edit(domain.ID, { ID: this.state.user.ID, ldapID: null })
       .then(() => this.setState({
         user: {
           ...this.state.user,
-          ldapImported: false,
+          ldapID: null,
         },
         snackbar: 'Success!',
         detachLoading: false,
@@ -344,10 +354,12 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error', detachLoading: false }));
   }
 
+  handleCloseDump = () => this.setState({ dump: '' });
+
   render() {
     const { classes, t, domain, Roles } = this.props;
-    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching } = this.state;
-    const { properties, smtp, pop3_imap, publicAddress, ldapImported } = user; //eslint-disable-line
+    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
+    const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, publicAddress, ldapID } = user; //eslint-disable-line
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
@@ -370,7 +382,7 @@ class UserDetails extends PureComponent {
                 {t('editHeadline', { item: 'User' })}
               </Typography>
             </Grid>
-            {ldapImported && <Grid container className={classes.syncButtons}>
+            {ldapID && <Grid container className={classes.syncButtons}>
               <Button
                 variant="contained"
                 color="secondary"
@@ -385,8 +397,17 @@ class UserDetails extends PureComponent {
                 onClick={this.handleSync}
                 variant="contained"
                 color="primary"
+                style={{ marginRight: 8 }}
               >
                 <Sync fontSize="small" className={classes.leftIcon}/> Sync
+              </Button>
+              <Button
+                size="small"
+                onClick={this.handleDump}
+                variant="contained"
+                color="primary"
+              >
+                <Dump fontSize="small" className={classes.leftIcon}/> Dump
               </Button>
             </Grid>}
             <Tabs value={tab} onChange={this.handleTabChange}>
@@ -401,7 +422,7 @@ class UserDetails extends PureComponent {
                 <Grid container className={classes.input}>
                   <TextField 
                     label={t("Username")}
-                    value={user.username || ''}
+                    value={username || ''}
                     autoFocus
                     onChange={this.handleInput('username')}
                     style={{ flex: 1, marginRight: 8 }}
@@ -418,12 +439,19 @@ class UserDetails extends PureComponent {
                     {t('Change password')}
                   </Button>
                 </Grid>
+                {ldapID && <TextField 
+                  label={t("LDAP ID")}
+                  className={classes.input}
+                  value={ldapID || ''}
+                  disabled
+                  style={{ flex: 1, marginRight: 8 }}
+                />}
                 <TextField
                   select
                   className={classes.input}
                   label={t("Status")}
                   fullWidth
-                  value={user.addressStatus || 0}
+                  value={addressStatus || 0}
                   onChange={this.handleInput('addressStatus')}
                 >
                   {this.statuses.map((status, key) => (
@@ -763,7 +791,7 @@ class UserDetails extends PureComponent {
                   <Select
                     multiple
                     fullWidth
-                    value={user.roles || []}
+                    value={roles || []}
                     onChange={this.handleMultiSelect}
                     native
                   >
@@ -781,7 +809,7 @@ class UserDetails extends PureComponent {
               {tab === 4 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
                 <List className={classes.list}>
-                  {user.aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
+                  {aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
                     <TextField
                       className={classes.listTextfield}
                       value={alias}
@@ -812,7 +840,7 @@ class UserDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
-              disabled={!user.username || usernameError}
+              disabled={!username || usernameError}
             >
               {t('Save')}
             </Button> :
@@ -884,6 +912,7 @@ class UserDetails extends PureComponent {
             </Button>
           </DialogActions>
         </Dialog>
+        <DumpDialog onClose={this.handleCloseDump} open={!!dump} dump={dump} />
       </div>
     );
   }
@@ -901,6 +930,7 @@ UserDetails.propTypes = {
   fetch: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
+  dump: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -927,6 +957,9 @@ const mapDispatchToProps = dispatch => {
       await dispatch(syncLdapData(domainID, userID))
         .then(user => Promise.resolve(user))
         .catch(msg => Promise.reject(msg)),
+    dump: async params => await dispatch(fetchLdapDump(params))
+      .then(data => Promise.resolve(data))
+      .catch(msg => Promise.reject(msg)),
   };
 };
 

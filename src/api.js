@@ -270,6 +270,48 @@ export function sync(domainID, userID) {
   };
 }
 
+export function syncAll() {
+  return async () => {
+    return await post('/ldap/downsync');
+  };
+}
+
+export function ldapDump(params) {
+  return async () => {
+    return await get(buildQuery('/ldap/dump', params));
+  };
+}
+
+export function checkLdap(params) {
+  return async () => {
+    return await get(buildQuery('/ldap/check', params));
+  };
+}
+
+export function deleteOrphans(params) {
+  return async () => {
+    return await yeet(buildQuery('/ldap/check', params));
+  };
+}
+
+export function ldapConfig() {
+  return async () => {
+    return await get('/mconf/ldap');
+  };
+}
+
+export function updateLdap(config) {
+  return async () => {
+    return await put('/mconf/ldap', config);
+  };
+}
+
+export function deleteLdap() {
+  return async () => {
+    return await yeet('/mconf/ldap');
+  };
+}
+
 /*
   ROLES
 */

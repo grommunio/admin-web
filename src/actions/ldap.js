@@ -3,7 +3,39 @@ import {
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
 } from './types';
-import { searchLdap, importUser, sync } from '../api';
+import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap } from '../api';
+
+export function fetchLdapConfig() {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(ldapConfig());
+      return Promise.resolve(resp);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function updateLdapConfig(config) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(updateLdap(config));
+      return Promise.resolve(resp);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deleteLdapConfig() {
+  return async dispatch => {
+    try {
+      await dispatch(deleteLdap());
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
 
 export function fetchLdapData(params) {
   return async dispatch => {
@@ -38,6 +70,16 @@ export function syncLdapData(domainID, userID) {
       //await dispatch({ type: LDAP_DATA_RECEIVED, data: resp });
     } catch (err) {
       await dispatch({ type: LDAP_DATA_ERROR, error: err });
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function syncLdapUsers() {
+  return async dispatch => {
+    try {
+      await dispatch(syncAll());
+    } catch (err) {
       return Promise.reject(err.message);
     }
   };

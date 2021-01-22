@@ -9,6 +9,8 @@ import {
   USER_DATA_EDIT,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
+  ORPHANED_USERS_RECEIVED,
+  ORPHANS_DELETED,
 } from '../actions/types';
 import { append } from '../utils';
 
@@ -18,6 +20,7 @@ const defaultState = {
   ready: false,
   count: 0,
   Users: [],
+  Orphaned: [],
 };
 
 function addUser(arr, user) {
@@ -88,6 +91,18 @@ function usersReducer(state=defaultState, action) {
       return {
         ...state,
         Users: deleteUser(state.Users, action.id),
+      };
+
+    case ORPHANED_USERS_RECEIVED:
+      return {
+        ...state,
+        Orphaned: action.data.orphaned,
+      };
+
+    case ORPHANS_DELETED:
+      return {
+        ...state,
+        Orphaned: [],
       };
 
     default: return state;

@@ -13,13 +13,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
-import { fetchUsersData, deleteUserData } from '../actions/users';
+import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
+import { syncLdapUsers } from '../actions/ldap';
 import TopBar from '../components/TopBar';
 import Alert from '@material-ui/lab/Alert';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
+import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 
 const styles = theme => ({
   root: {
@@ -88,6 +90,7 @@ class Users extends Component {
     snackbar: null,
     adding: false,
     deleting: false,
+    checking: false,
     order: 'asc',
     orderBy: 'username',
     offset: 50,
@@ -97,6 +100,7 @@ class Users extends Component {
   columns = [
     { label: 'Username', value: 'username' },
     { label: 'Display name', value: 'displayname' },
+    { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ]
 
@@ -201,9 +205,22 @@ class Users extends Component {
     this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
   }, 200)
 
+  handleUserSync = () => {
+    this.props.sync()
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg }));
+  }
+
+  checkUsers = () => {
+    this.props.check({});
+    this.setState({ checking: true });
+  }
+
+  handleCheckClose = () => this.setState({ checking: false });
+
   render() {
     const { classes, t, users, domain } = this.props;
-    const { snackbar, adding, deleting, order, orderBy, match } = this.state;
+    const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
 
     return (
       <div
@@ -232,8 +249,24 @@ class Users extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleNavigation(domain.ID + '/ldap')}
+              className={classes.newButton}
             >
               {t('Search in LDAP')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleUserSync}
+              className={classes.newButton}
+            >
+              {t('Sync LDAP users')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.checkUsers}
+            >
+              {t('Check LDAP users')}
             </Button>
             <div className={classes.actions}>
               <TextField
@@ -278,6 +311,7 @@ class Users extends Component {
                   return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
@@ -325,6 +359,11 @@ class Users extends Component {
           domainID={this.props.domain.ID}
           user={deleting}
         />
+        <CheckLdapDialog
+          open={checking}
+          onClose={this.handleCheckClose}
+          onError={this.handleDeleteError}
+        />
       </div>
     );
   }
@@ -338,6 +377,8 @@ Users.propTypes = {
   domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  check: PropTypes.func.isRequired,
+  sync: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -352,6 +393,10 @@ const mapDispatchToProps = dispatch => {
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },
+    check: async params => await dispatch(checkLdapUsers(params))
+      .catch(error => Promise.reject(error)),
+    sync: async () => await dispatch(syncLdapUsers())
+      .catch(error => Promise.reject(error)),
   };
 };
 

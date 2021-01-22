@@ -8,10 +8,48 @@ export var config = {
   videoWebAddress: '',
   fileWebAddress: '',
   archiveWebAddress: '',
+  searchAttributes: [
+    'assistant',
+    'co',
+    'company',
+    'department',
+    'departmentNumber',
+    'description',
+    'displayname',
+    'employeeNumber',
+    'facsimileTelephoneNumber',
+    'givenName',
+    'homePhone',
+    'initials',
+    'l',
+    'mail',
+    'mailPrimaryAddress',
+    'mobile',
+    'o',
+    'otherFacsimileTelephoneNumber',
+    'otherHomePhone',
+    'otherTelephone',
+    'pager',
+    'physicalDeliveryOfficeName',
+    'postalAddress',
+    'postalCode',
+    'postOfficeBox',
+    'preferredLanguage',
+    'sn',
+    'st',
+    'streetAddress',
+    'telephoneNumber',
+    'title',
+    'uid',
+    'wWWHomePage',
+  ],
 };
 
 var setConfig = (newConfig) => {
-  config = newConfig;
+  config = {
+    ...config,
+    ...newConfig,
+  };
 };
 
 fetch('//' + window.location.host + '/config.json')
