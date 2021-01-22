@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
-  Portal, Select, Snackbar, TextField, Typography } from '@material-ui/core';
+  Portal, Select, Snackbar, TextField, Typography, Switch } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
@@ -96,6 +96,7 @@ class LdapConfig extends PureComponent {
   state = {
     baseDn: '',
     objectID: '',
+    disabled: false,
     //Connection
     server: '',
     bindUser: '',
@@ -123,6 +124,7 @@ class LdapConfig extends PureComponent {
     // Defaults
     formatted.baseDn = copy.baseDn;
     formatted.objectID  = copy.objectID;
+    formatted.disabled = copy.disabled;
     // Format connection
     formatted.connection = {};
     formatted.connection.server = copy.server;
@@ -136,7 +138,6 @@ class LdapConfig extends PureComponent {
     formatted.users.displayName = copy.displayName;
     formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
-    // Split multiline-strings to arrays of strings
     formatted.users.filters = [copy.filters];
     formatted.users.templates = [copy.templates];
     formatted.users.searchAttributes = [...this.state.searchAttributes];
@@ -148,9 +149,11 @@ class LdapConfig extends PureComponent {
     const resp = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
     const config = resp.data;
-    const { connection, users } = config;
-    if(config.objectID && connection && users) this.setState({
+    const { connection } = config;
+    const users = config.users || {};
+    if(config.objectID && connection) this.setState({
       baseDn: config.baseDn,
+      disabled: config.disabled || false,
       objectID: config.objectID,
       server: connection.server,
       bindUser: connection.bindUser,
@@ -159,8 +162,8 @@ class LdapConfig extends PureComponent {
       username: users.username,
       displayName: users.displayName,
       defaultQuota: users.defaultQuota,
-      filters: users.filters.length > 0 ? users.filters[0] : [],
-      templates: users.templates.length > 0 ? users.templates[0] : [],
+      filters: users.filters && users.filters.length > 0 ? users.filters[0] : [],
+      templates: users.templates && users.templates.length > 0 ? users.templates[0] : [],
       searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
     });
@@ -210,8 +213,8 @@ class LdapConfig extends PureComponent {
     this.setState({ attributes: copy });
   }
 
-  handleCheckbox = e => this.setState({
-    starttls: e.target.checked,
+  handleCheckbox = field => e => this.setState({
+    [field]: e.target.checked,
   });
 
   handleSave = () => {
@@ -232,7 +235,7 @@ class LdapConfig extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID,
+    const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filters, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
 
     return (
@@ -245,6 +248,20 @@ class LdapConfig extends PureComponent {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
           </Typography>
+          <Grid container className={classes.category}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={!disabled}
+                  onChange={e => this.setState({ disabled: !e.target.checked})}
+                  name="disabled"
+                  color="primary"
+                />
+              }
+              style={{ color: 'white' }}
+              label="LDAP enabled"
+            />
+          </Grid>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>LDAP Server</Typography>
             <FormControl className={classes.formControl}>
@@ -274,7 +291,7 @@ class LdapConfig extends PureComponent {
                   control={
                     <Checkbox
                       checked={starttls || false}
-                      onChange={this.handleCheckbox}
+                      onChange={this.handleCheckbox('starttls')}
                       name="starttls"
                       color="primary"
                     />
