@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
-import { Button, Checkbox, FormControl, FormControlLabel, Paper,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Paper,
   Portal, Snackbar, TextField, Typography } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import HomeIcon from '@material-ui/icons/Home';
@@ -11,6 +11,8 @@ import { fetchLdapConfig, updateLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
+import Add from '@material-ui/icons/Add';
+import Delete from '@material-ui/icons/Close';
 import { red } from '@material-ui/core/colors';
 import { Alert } from '@material-ui/lab';
 
@@ -38,14 +40,14 @@ const styles = theme => ({
     left: 4,
     cursor: 'pointer',
   },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
+  paper: {
+    margin: theme.spacing(3, 2, 1, 2),
   },
   formControl: {
     width: '100%',
   },
   category: {
-    margin: theme.spacing(2, 0, 0, 2),
+    margin: theme.spacing(2, 0, 1, 2),
   },
   textfield: {
     margin: theme.spacing(1, 2),
@@ -56,7 +58,7 @@ const styles = theme => ({
     minWidth: 400,
   },
   flexRow: {
-    margin: theme.spacing(0, 2),
+    margin: theme.spacing(0, 1),
     flexWrap: 'wrap',
     display: 'flex',
   },
@@ -66,6 +68,25 @@ const styles = theme => ({
     '&:hover': {
       backgroundColor: red['700'],
     },
+  },
+  bottomRow: {
+    display: 'flex',
+    padding: theme.spacing(2, 2, 4, 2),
+  },
+  spacer: {
+    paddingTop: 16,
+  },
+  mappingTitle: {
+    padding: theme.spacing(1, 1, 0, 2),
+  },
+  addButton: {
+    padding: theme.spacing(1, 0),
+  },
+  removeButton: {
+    margin: theme.spacing(1, 2, 0, 0),
+  },
+  attribute: {
+    marginLeft: 8,
   },
 });
 
@@ -85,11 +106,7 @@ class LdapConfig extends PureComponent {
     defaultQuota: 0,
     filters: '',
     templates: '',
-    attributes: {
-      additionalProp1: '',
-      additionalProp2: '',
-      additionalProp3: '',
-    },
+    attributes: [],
     searchAttributes: '',
 
     deleting: false,
@@ -105,7 +122,6 @@ class LdapConfig extends PureComponent {
     // Defaults
     formatted.baseDn = copy.baseDn;
     formatted.objectID  = copy.objectID;
-
     // Format connection
     formatted.connection = {};
     formatted.connection.server = copy.server;
@@ -117,7 +133,7 @@ class LdapConfig extends PureComponent {
     formatted.users = {};
     formatted.users.username = copy.username;
     formatted.users.displayName = copy.displayName;
-    formatted.users.attributes = copy.attributes;
+    formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
     // Split multiline-strings to arrays of strings
     formatted.users.filters = copy.filters.split('\n');
@@ -128,8 +144,9 @@ class LdapConfig extends PureComponent {
   }
 
   async componentDidMount() {
-    const config = await this.props.fetch()
+    const resp = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
+    const config = resp.data;
     const { connection, users } = config;
     if(config.objectID && connection && users) this.setState({
       baseDn: config.baseDn,
@@ -144,8 +161,20 @@ class LdapConfig extends PureComponent {
       filters: this.arrayToString(users.filters),
       searchAttributes: this.arrayToString(users.searchAttributes),
       templates: this.arrayToString(users.templates),
-      attributes: users.attributes,
+      attributes: this.objectToArray(users.attributes || {}),
     });
+  }
+
+  objectToArray(obj) {
+    const arr = [];
+    Object.entries(obj).forEach(([key, value]) => arr.push({ key, value }));
+    return arr;
+  }
+
+  arrayToObject(arr) {
+    const obj = {};
+    arr.forEach(attr => obj[attr.key] = attr.value);
+    return obj;
   }
 
   arrayToString(arr) {
@@ -168,12 +197,27 @@ class LdapConfig extends PureComponent {
     [field]: t.value,
   });
 
-  handleAttributeInput = field => ({ target: t }) => this.setState({
-    attributes: {
-      ...this.state.attributes,
-      [field]: t.value,
-    },
-  });
+  handleAttributeInput = (objectPart, idx) => ({ target: t }) => {
+    const copy = [...this.state.attributes];
+    copy[idx][objectPart] = t.value;
+    this.setState({
+      attributes: copy,
+    });
+  }
+
+  handleNewRow = () => {
+    const copy = [...this.state.attributes];
+    copy.push({ key: '', value: '' });
+    this.setState({
+      attributes: copy,
+    });
+  }
+
+  removeRow = idx => () => {
+    const copy = [...this.state.attributes];
+    copy.splice(idx, 1);
+    this.setState({ attributes: copy });
+  }
 
   handleCheckbox = e => this.setState({
     starttls: e.target.checked,
@@ -199,7 +243,6 @@ class LdapConfig extends PureComponent {
     const { classes, t } = this.props;
     const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID,
       username, filters, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
-    const { additionalProp1, additionalProp2, additionalProp3 } = attributes;
 
     return (
       <div className={classes.root}>
@@ -211,23 +254,9 @@ class LdapConfig extends PureComponent {
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
           </Typography>
-          <Paper className={classes.tablePaper} elevation={1}>
+          <Paper elevation={1} className={classes.paper}>
+            <Typography variant="h6" className={classes.category}>LDAP Server</Typography>
             <FormControl className={classes.formControl}>
-              <TextField
-                label={t('LDAP Base DN (baseDn)')}
-                className={classes.textfield}
-                color="primary"
-                onChange={this.handleInput('baseDn')}
-                value={baseDn || ''}
-              />
-              <TextField
-                label={t('Unique Identifier Attribute (objectID)')}
-                className={classes.textfield}
-                color="primary"
-                onChange={this.handleInput('objectID')}
-                value={objectID || ''}
-              />
-              <Typography variant="h6" className={classes.category}>Connection</Typography>
               <div className={classes.flexRow}>
                 <TextField
                   label={t('LDAP-Server (server)')}
@@ -262,7 +291,25 @@ class LdapConfig extends PureComponent {
                   label="STARTTLS"
                 />
               </div>
-              <Typography variant="h6" className={classes.category}>Users</Typography>
+              <TextField
+                label={t('LDAP Base DN (baseDn)')}
+                className={classes.textfield}
+                color="primary"
+                onChange={this.handleInput('baseDn')}
+                value={baseDn || ''}
+              />
+            </FormControl>
+          </Paper>
+          <Paper className={classes.paper} elevation={1}>
+            <FormControl className={classes.formControl}>
+              <Typography variant="h6" className={classes.category}>Attribute Configuration</Typography>
+              <TextField
+                label={t('Unique Identifier Attribute (objectID)')}
+                className={classes.textfield}
+                color="primary"
+                onChange={this.handleInput('objectID')}
+                value={objectID || ''}
+              />
               <TextField
                 label={t('LDAP Username Attribute (username)')}
                 className={classes.textfield}
@@ -271,18 +318,18 @@ class LdapConfig extends PureComponent {
                 value={username || ''}
               />
               <TextField
-                label={t('LDAP Display Name Attribute (displayName)')}
-                className={classes.textfield}
-                color="primary"
-                onChange={this.handleInput('displayName')}
-                value={displayName || ''}
-              />
-              <TextField
                 label={t('LDAP Default Quota (defaultQuota)')}
                 className={classes.textfield}
                 color="primary"
                 onChange={this.handleInput('defaultQuota')}
                 value={defaultQuota}
+              />
+              <TextField
+                label={t('LDAP Display Name Attribute (displayName)')}
+                className={classes.textfield}
+                color="primary"
+                onChange={this.handleInput('displayName')}
+                value={displayName || ''}
               />
               <TextField
                 label={t('LDAP Filters (filters) - (separated by line)')}
@@ -311,48 +358,54 @@ class LdapConfig extends PureComponent {
                 multiline
                 rows={4}
               />
-              <Typography variant="h6" className={classes.category}>Attributes</Typography>
-              <div className={classes.flexRow}>
-                <TextField
-                  label={t('additionalProp1')}
-                  className={classes.flexTextfield}
-                  color="primary"
-                  onChange={this.handleAttributeInput('additionalProp1')}
-                  value={additionalProp1 || ''}
-                />
-                <TextField
-                  label={t('additionalProp2')}
-                  className={classes.flexTextfield}
-                  color="primary"
-                  onChange={this.handleAttributeInput('additionalProp2')}
-                  value={additionalProp2 || ''}
-                />
-                <TextField
-                  label={t('additionalProp3')}
-                  className={classes.flexTextfield}
-                  color="primary"
-                  onChange={this.handleAttributeInput('additionalProp3')}
-                  value={additionalProp3 || ''}
-                />
-              </div>
             </FormControl>
-            <div className={classes.textfield}>
-              <Button
-                variant="contained"
-                onClick={this.handleDelete}
-                className={classes.deleteButton}
-              >
-                {t('Delete config')}
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleSave}
-              >
-                {t('Save')}
-              </Button>
-            </div>
           </Paper>
+          <Paper elevation={1} className={classes.paper}>
+            <Typography variant="h6" className={classes.category}>Custom Mapping</Typography>
+            {attributes.map((mapping, idx) =>
+              <Grid className={classes.attribute} container alignItems="center" key={idx}>
+                <TextField
+                  label={t('Key')}
+                  className={classes.flexTextfield}
+                  color="primary"
+                  onChange={this.handleAttributeInput('key', idx)}
+                  value={mapping.key || ''}
+                />
+                <Typography className={classes.spacer}>:</Typography>
+                <TextField
+                  label={t('Value')}
+                  className={classes.flexTextfield}
+                  color="primary"
+                  onChange={this.handleAttributeInput('value', idx)}
+                  value={mapping.value || ''}
+                />
+                <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
+                  <Delete color="error" />
+                </IconButton>
+              </Grid>
+            )}
+            <Grid container justify="center" className={classes.addButton}>
+              <Button size="small" onClick={this.handleNewRow}>
+                <Add color="primary" />
+              </Button>
+            </Grid>
+          </Paper>
+          <div className={classes.bottomRow}>
+            <Button
+              variant="contained"
+              onClick={this.handleDelete}
+              className={classes.deleteButton}
+            >
+              {t('Delete config')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSave}
+            >
+              {t('Save')}
+            </Button>
+          </div>
         </div>
         <DeleteConfig
           open={deleting}
