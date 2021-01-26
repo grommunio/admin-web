@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
-  Portal, Select, Snackbar, TextField, Typography, Switch } from '@material-ui/core';
+  Portal, Select, Snackbar, Typography, Switch, Tooltip } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
@@ -16,6 +16,8 @@ import Delete from '@material-ui/icons/Close';
 import { red } from '@material-ui/core/colors';
 import { Alert } from '@material-ui/lab';
 import adminConfig from '../config';
+import LdapTextfield from '../components/LdapTextfield';
+import Help from '@material-ui/icons/HelpOutline';
 
 const styles = theme => ({
   root: {
@@ -89,6 +91,9 @@ const styles = theme => ({
   },
   attribute: {
     marginLeft: 8,
+  },
+  tooltip: {
+    marginTop: -2,
   },
 });
 
@@ -261,33 +266,44 @@ class LdapConfig extends PureComponent {
                 />
               }
               style={{ color: 'white' }}
-              label={t('LDAP enabled')}
+              label={<span>
+                {t('LDAP enabled')}
+                <Tooltip
+                  className={classes.tooltip}
+                  title="Enable LDAP service"
+                  placement="top"
+                >
+                  <IconButton size="small">
+                    <Help fontSize="small"/>
+                  </IconButton>
+                </Tooltip>
+              </span>}
             />
           </Grid>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>{t('LDAP Server')}</Typography>
             <FormControl className={classes.formControl}>
               <div className={classes.flexRow}>
-                <TextField
+                <LdapTextfield
+                  flex
                   label={t('LDAP-Server (server)')}
-                  className={classes.flexTextfield}
-                  color="primary"
                   onChange={this.handleInput('server')}
                   value={server || ''}
+                  desc="Address of the LDAP server to connect to"
                 />
-                <TextField
-                  label={t('LDAP Bind User (bindUser)')}
-                  className={classes.flexTextfield}
-                  color="primary"
+                <LdapTextfield
+                  flex
+                  label="LDAP Bind User (bindUser)"
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
+                  desc="DN of the user to perform initial bind with"
                 />
-                <TextField
+                <LdapTextfield
+                  flex
                   label={t('LDAP Bind Password (bindPass)')}
-                  className={classes.flexTextfield}
-                  color="primary"
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
+                  desc="Password for bindUser"
                 />
                 <FormControlLabel
                   control={
@@ -298,71 +314,84 @@ class LdapConfig extends PureComponent {
                       color="primary"
                     />
                   }
-                  label="STARTTLS"
+                  label={<span>
+                    {t('STARTTLS')}
+                    <Tooltip
+                      className={classes.tooltip}
+                      title="Whether to initiate a StartTLS connection"
+                      placement="top"
+                    >
+                      <IconButton size="small">
+                        <Help fontSize="small"/>
+                      </IconButton>
+                    </Tooltip>
+                  </span>}
                 />
               </div>
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Base DN (baseDn)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
+                desc="Base DN to use for user search"
               />
             </FormControl>
           </Paper>
           <Paper className={classes.paper} elevation={1}>
             <FormControl className={classes.formControl}>
               <Typography variant="h6" className={classes.category}>{t('Attribute Configuration')}</Typography>
-              <TextField
+              <LdapTextfield
                 label={t('Unique Identifier Attribute (objectID)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('objectID')}
                 value={objectID || ''}
+                desc="Name of an attribute that uniquely idetifies an LDAP object"
               />
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Username Attribute (username)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('username')}
                 value={username || ''}
+                desc="Name of the attribute that corresponds to the username (e-mail address)"
               />
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Default Quota (defaultQuota)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('defaultQuota')}
                 value={defaultQuota}
+                desc="Storage quota of imported users if no mapping exists"
               />
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Display Name Attribute (displayName)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('displayName')}
                 value={displayName || ''}
+                desc="Name of the attribute that contains the name"
               />
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Filter (filters)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('filter')}
                 value={filter || ''}
+                desc="LDAP search filter to apply to user lookup"
               />
-              <TextField
+              <LdapTextfield
                 label={t('LDAP Templates (templates)')}
-                className={classes.textfield}
-                color="primary"
                 onChange={this.handleInput('templates')}
                 value={templates}
                 select
+                desc="List of mapping templates to use"
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
                 <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
-              </TextField>
+              </LdapTextfield>
               <FormControl className={classes.textfield}>
                 <InputLabel>
                   {t('LDAP Search Attributes (searchAttributes)')}
+                  <Tooltip
+                    className={classes.tooltip}
+                    title="List of attributes to use for searching"
+                    placement="top"
+                  >
+                    <IconButton size="small">
+                      <Help fontSize="small"/>
+                    </IconButton>
+                  </Tooltip>
                 </InputLabel>
                 <Select
                   multiple
@@ -383,23 +412,35 @@ class LdapConfig extends PureComponent {
             </FormControl>
           </Paper>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.category}>{t('Custom Mapping')}</Typography>
+            <Typography variant="h6" className={classes.category}>
+              {t('Custom Mapping')}
+              <Tooltip
+                className={classes.tooltip}
+                title="LDAP attribute -> PropTag mapping to used for LDAP import.
+                  Any mappings specified take precendence over active templates"
+                placement="top"
+              >
+                <IconButton size="small">
+                  <Help fontSize="small"/>
+                </IconButton>
+              </Tooltip>
+            </Typography>
             {attributes.map((mapping, idx) =>
               <Grid className={classes.attribute} container alignItems="center" key={idx}>
-                <TextField
-                  label={t('Key')}
-                  className={classes.flexTextfield}
-                  color="primary"
+                <LdapTextfield
+                  label={t('Name')}
+                  flex
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
+                  desc="Name of the PropTag the atribute maps to"
                 />
                 <Typography className={classes.spacer}>:</Typography>
-                <TextField
+                <LdapTextfield
                   label={t('Value')}
-                  className={classes.flexTextfield}
-                  color="primary"
+                  flex
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
+                  desc="Value of the PropTag the atribute maps to"
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
                   <Delete color="error" />
