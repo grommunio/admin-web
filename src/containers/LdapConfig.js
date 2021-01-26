@@ -367,6 +367,9 @@ class LdapConfig extends PureComponent {
                   value={searchAttributes}
                   onChange={this.handleInput('searchAttributes')}
                   input={<Input />}
+                  MenuProps={{
+                    style: { maxHeight: 400 },
+                  }}
                 >
                   {adminConfig.searchAttributes.map((name) => (
                     <MenuItem key={name} value={name}>
