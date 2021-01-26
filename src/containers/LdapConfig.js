@@ -106,7 +106,7 @@ class LdapConfig extends PureComponent {
     username: '',
     displayName: '',
     defaultQuota: 0,
-    filters: '',
+    filter: '',
     templates: 'none',
     attributes: [],
     searchAttributes: [],
@@ -138,8 +138,9 @@ class LdapConfig extends PureComponent {
     formatted.users.displayName = copy.displayName;
     formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
-    formatted.users.filters = [copy.filters]; // Put single string in array (necessary)
-    formatted.users.templates = copy.templates === 'none' ? [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
+    formatted.users.filter = copy.filter; // Put single string in array (necessary)
+    formatted.users.templates = copy.templates === 'none' ?
+      [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
     formatted.users.searchAttributes = [...this.state.searchAttributes];
 
     return formatted;
@@ -162,7 +163,7 @@ class LdapConfig extends PureComponent {
       username: users.username,
       displayName: users.displayName,
       defaultQuota: users.defaultQuota,
-      filters: users.filters && users.filters.length > 0 ? users.filters[0] : [],
+      filter: users.filter || '',
       templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
@@ -236,7 +237,7 @@ class LdapConfig extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
-      username, filters, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
+      username, filter, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
 
     return (
       <div className={classes.root}>
@@ -340,11 +341,11 @@ class LdapConfig extends PureComponent {
                 value={displayName || ''}
               />
               <TextField
-                label={t('LDAP Filters (filters)')}
+                label={t('LDAP Filter (filters)')}
                 className={classes.textfield}
                 color="primary"
-                onChange={this.handleInput('filters')}
-                value={filters || ''}
+                onChange={this.handleInput('filter')}
+                value={filter || ''}
               />
               <TextField
                 label={t('LDAP Templates (templates)')}
