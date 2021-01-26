@@ -7,6 +7,7 @@ import {
   DOMAIN_DATA_ERROR,
   DOMAIN_DATA_ADD,
   DOMAIN_NEXT_SET,
+  DOMAIN_DATA_DELETE,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
@@ -54,6 +55,12 @@ function domainsReducer(state = defaultState, action) {
       return {
         ...state,
         Domains: addItem(state.Domains, action.data),
+      };
+
+    case DOMAIN_DATA_DELETE:
+      return {
+        ...state,
+        Domains: state.Domains.filter(domain => domain.ID !== action.id),
       };
 
     default:

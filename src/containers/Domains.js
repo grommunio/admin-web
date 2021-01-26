@@ -156,10 +156,7 @@ class DomainList extends Component {
     this.setState({ deleting: domain });
   }
 
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-    this.fetchDomains();
-  }
+  handleDeleteSuccess = () => this.setState({ deleting: false, snackbar: 'Success!' });
 
   handleDeleteClose = () => this.setState({ deleting: false });
 

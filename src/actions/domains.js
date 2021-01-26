@@ -8,6 +8,7 @@ import {
   DOMAIN_DATA_ADD,
   DOMAIN_DATA_EDIT,
   DOMAIN_NEXT_SET,
+  DOMAIN_DATA_DELETE,
 } from '../actions/types';
 import { domains, addDomain, editDomain, deleteDomain, domain } from '../api';
 
@@ -69,6 +70,7 @@ export function deleteDomainData(id) {
   return async dispatch => {
     try {
       await dispatch(deleteDomain(id));
+      await dispatch({ type: DOMAIN_DATA_DELETE, id });
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
