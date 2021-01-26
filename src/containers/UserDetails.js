@@ -359,7 +359,7 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, domain, Roles } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
-    const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, publicAddress, ldapID } = user; //eslint-disable-line
+    const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, title, displayname, nickname, primarytelephonenumber,
       mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
       departmentname, companyname, officelocation, givenname, surname, initials,
@@ -528,17 +528,17 @@ class UserDetails extends PureComponent {
                         color="primary"
                       />
                     }
-                    label={t('Smtp')}
+                    label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
                   />
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={publicAddress || false }
-                        onChange={this.handleCheckbox('publicAddress')}
+                        checked={changePassword || false }
+                        onChange={this.handleCheckbox('changePassword')}
                         color="primary"
                       />
                     }
-                    label={t('Public address')}
+                    label={t('Allow password changes')}
                   />
                   <FormControlLabel
                     control={
@@ -548,7 +548,7 @@ class UserDetails extends PureComponent {
                         color="primary"
                       />
                     }
-                    label={t('Pop3 imap')}
+                    label={t('Allow POP3/IMAP logins')}
                   />
                 </Grid>
               </React.Fragment>}
