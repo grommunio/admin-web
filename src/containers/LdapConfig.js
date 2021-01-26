@@ -260,11 +260,11 @@ class LdapConfig extends PureComponent {
                 />
               }
               style={{ color: 'white' }}
-              label="LDAP enabled"
+              label={t('LDAP enabled')}
             />
           </Grid>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.category}>LDAP Server</Typography>
+            <Typography variant="h6" className={classes.category}>{t('LDAP Server')}</Typography>
             <FormControl className={classes.formControl}>
               <div className={classes.flexRow}>
                 <TextField
@@ -311,7 +311,7 @@ class LdapConfig extends PureComponent {
           </Paper>
           <Paper className={classes.paper} elevation={1}>
             <FormControl className={classes.formControl}>
-              <Typography variant="h6" className={classes.category}>Attribute Configuration</Typography>
+              <Typography variant="h6" className={classes.category}>{t('Attribute Configuration')}</Typography>
               <TextField
                 label={t('Unique Identifier Attribute (objectID)')}
                 className={classes.textfield}
@@ -382,7 +382,7 @@ class LdapConfig extends PureComponent {
             </FormControl>
           </Paper>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.category}>Custom Mapping</Typography>
+            <Typography variant="h6" className={classes.category}>{t('Custom Mapping')}</Typography>
             {attributes.map((mapping, idx) =>
               <Grid className={classes.attribute} container alignItems="center" key={idx}>
                 <TextField
