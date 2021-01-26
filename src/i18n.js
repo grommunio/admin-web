@@ -129,6 +129,7 @@ const resources = {
       "Permissions": "Berechtigungen",
       "Don't have a license?": "Sie haben keine Lizenz?",
       "Buy now": "Jetzt kaufen",
+      "No template": "Kein Template",
 
       // User properties
       "First name": "Vorname",

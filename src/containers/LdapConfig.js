@@ -107,7 +107,7 @@ class LdapConfig extends PureComponent {
     displayName: '',
     defaultQuota: 0,
     filters: '',
-    templates: '',
+    templates: 'none',
     attributes: [],
     searchAttributes: [],
 
@@ -138,8 +138,8 @@ class LdapConfig extends PureComponent {
     formatted.users.displayName = copy.displayName;
     formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
-    formatted.users.filters = [copy.filters];
-    formatted.users.templates = [copy.templates];
+    formatted.users.filters = [copy.filters]; // Put single string in array (necessary)
+    formatted.users.templates = copy.templates === 'none' ? [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
     formatted.users.searchAttributes = [...this.state.searchAttributes];
 
     return formatted;
@@ -151,7 +151,7 @@ class LdapConfig extends PureComponent {
     const config = resp.data;
     const { connection } = config;
     const users = config.users || {};
-    if(config.objectID && connection) this.setState({
+    if(config.baseDn && connection) this.setState({
       baseDn: config.baseDn,
       disabled: config.disabled || false,
       objectID: config.objectID,
@@ -163,7 +163,7 @@ class LdapConfig extends PureComponent {
       displayName: users.displayName,
       defaultQuota: users.defaultQuota,
       filters: users.filters && users.filters.length > 0 ? users.filters[0] : [],
-      templates: users.templates && users.templates.length > 0 ? users.templates[0] : [],
+      templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
     });
@@ -352,10 +352,15 @@ class LdapConfig extends PureComponent {
                 color="primary"
                 onChange={this.handleInput('templates')}
                 value={templates}
-              />
+                select
+              >
+                <MenuItem value='none'>{t('No template')}</MenuItem>
+                <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
+                <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
+              </TextField>
               <FormControl className={classes.textfield}>
                 <InputLabel>
-                  {t('LDAP Search Attributes - (searchAttributes) - (separated by line)')}
+                  {t('LDAP Search Attributes (searchAttributes)')}
                 </InputLabel>
                 <Select
                   multiple
