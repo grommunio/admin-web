@@ -43,7 +43,7 @@ class GeneralDelete extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
+        <DialogTitle>{t('deleteDialog', { item })}?</DialogTitle>
         <DialogActions>
           <Button
             onClick={onClose}
