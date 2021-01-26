@@ -43,6 +43,7 @@ const styles = theme => ({
   },
   paper: {
     margin: theme.spacing(3, 2, 1, 2),
+    paddingBottom: 16,
   },
   formControl: {
     width: '100%',
@@ -81,7 +82,7 @@ const styles = theme => ({
     padding: theme.spacing(1, 1, 0, 2),
   },
   addButton: {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1, 0, 0, 0),
   },
   removeButton: {
     margin: theme.spacing(1, 2, 0, 0),
