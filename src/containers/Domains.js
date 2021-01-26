@@ -261,9 +261,8 @@ class DomainList extends Component {
                       key={idx}
                       hover
                       onClick={this.handleEdit(obj)}
-                      className={obj.domainStatus ? classes.deletedDomain : null}
                     >
-                      <TableCell>{obj.domainname}</TableCell>
+                      <TableCell>{obj.domainname} {obj.domainStatus === 3 ? `[${t('Deleted')}]` : ''}</TableCell>
                       <TableCell>{obj.address}</TableCell>
                       <TableCell>{obj.title}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
