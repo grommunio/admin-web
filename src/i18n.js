@@ -129,7 +129,15 @@ const resources = {
       "Permissions": "Berechtigungen",
       "Don't have a license?": "Sie haben keine Lizenz?",
       "Buy now": "Jetzt kaufen",
+
+      //LDAP
+      "LDAP enabled": "LDAP aktiviert",
+      "LDAP authentification": "LDAP Authentifikation",
+      "LDAP Server": "LDAP Server",
+      "Attribute Configuration": "Attribut Konfiguration",
+      "Custom Mapping": "Benutzerdefinierte Zuordnung",
       "No template": "Kein Template",
+      "Delete config": "Konfiguration löschen",
 
       // User properties
       "First name": "Vorname",

@@ -43,6 +43,7 @@ const styles = theme => ({
   },
   paper: {
     margin: theme.spacing(3, 2, 1, 2),
+    paddingBottom: 16,
   },
   formControl: {
     width: '100%',
@@ -81,7 +82,7 @@ const styles = theme => ({
     padding: theme.spacing(1, 1, 0, 2),
   },
   addButton: {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1, 0, 0, 0),
   },
   removeButton: {
     margin: theme.spacing(1, 2, 0, 0),
@@ -106,7 +107,7 @@ class LdapConfig extends PureComponent {
     username: '',
     displayName: '',
     defaultQuota: 0,
-    filters: '',
+    filter: '',
     templates: 'none',
     attributes: [],
     searchAttributes: [],
@@ -138,8 +139,9 @@ class LdapConfig extends PureComponent {
     formatted.users.displayName = copy.displayName;
     formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota);
-    formatted.users.filters = [copy.filters]; // Put single string in array (necessary)
-    formatted.users.templates = copy.templates === 'none' ? [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
+    formatted.users.filter = copy.filter; // Put single string in array (necessary)
+    formatted.users.templates = copy.templates === 'none' ?
+      [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
     formatted.users.searchAttributes = [...this.state.searchAttributes];
 
     return formatted;
@@ -162,7 +164,7 @@ class LdapConfig extends PureComponent {
       username: users.username,
       displayName: users.displayName,
       defaultQuota: users.defaultQuota,
-      filters: users.filters && users.filters.length > 0 ? users.filters[0] : [],
+      filter: users.filter || '',
       templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
@@ -236,7 +238,7 @@ class LdapConfig extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
-      username, filters, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
+      username, filter, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
 
     return (
       <div className={classes.root}>
@@ -259,11 +261,11 @@ class LdapConfig extends PureComponent {
                 />
               }
               style={{ color: 'white' }}
-              label="LDAP enabled"
+              label={t('LDAP enabled')}
             />
           </Grid>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.category}>LDAP Server</Typography>
+            <Typography variant="h6" className={classes.category}>{t('LDAP Server')}</Typography>
             <FormControl className={classes.formControl}>
               <div className={classes.flexRow}>
                 <TextField
@@ -310,7 +312,7 @@ class LdapConfig extends PureComponent {
           </Paper>
           <Paper className={classes.paper} elevation={1}>
             <FormControl className={classes.formControl}>
-              <Typography variant="h6" className={classes.category}>Attribute Configuration</Typography>
+              <Typography variant="h6" className={classes.category}>{t('Attribute Configuration')}</Typography>
               <TextField
                 label={t('Unique Identifier Attribute (objectID)')}
                 className={classes.textfield}
@@ -340,11 +342,11 @@ class LdapConfig extends PureComponent {
                 value={displayName || ''}
               />
               <TextField
-                label={t('LDAP Filters (filters)')}
+                label={t('LDAP Filter (filters)')}
                 className={classes.textfield}
                 color="primary"
-                onChange={this.handleInput('filters')}
-                value={filters || ''}
+                onChange={this.handleInput('filter')}
+                value={filter || ''}
               />
               <TextField
                 label={t('LDAP Templates (templates)')}
@@ -381,7 +383,7 @@ class LdapConfig extends PureComponent {
             </FormControl>
           </Paper>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.category}>Custom Mapping</Typography>
+            <Typography variant="h6" className={classes.category}>{t('Custom Mapping')}</Typography>
             {attributes.map((mapping, idx) =>
               <Grid className={classes.attribute} container alignItems="center" key={idx}>
                 <TextField
