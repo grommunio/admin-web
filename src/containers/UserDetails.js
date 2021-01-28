@@ -11,11 +11,10 @@ import {
   Grid,
   TextField,
   FormControl,
-  MenuItem,
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select,
-  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox,
+  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
@@ -31,6 +30,7 @@ import { syncLdapData } from '../actions/ldap';
 import DetachDialog from '../components/Dialogs/DetachDialog';
 import DumpDialog from '../components/Dialogs/DumpDialog';
 import Feedback from '../components/Feedback';
+import Account from '../components/user/Account';
 
 const styles = theme => ({
   root: {
@@ -129,20 +129,6 @@ class UserDetails extends PureComponent {
     detaching: false,
     detachLoading: false,
   };
-
-  types = [
-    { name: 'User', ID: 0 },
-    { name: 'MList', ID: 1 },
-    { name: 'Room', ID: 7 },
-    { name: 'Equipment', ID: 8 },
-  ]
-
-  statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
-    { name: 'Out of date', ID: 2 },
-    { name: 'Deleted', ID: 3 },
-  ]
 
   async componentDidMount() {
     const { fetch, fetchRoles } = this.props;
@@ -357,13 +343,13 @@ class UserDetails extends PureComponent {
   handleCloseDump = () => this.setState({ dump: '' });
 
   render() {
-    const { classes, t, domain, Roles } = this.props;
+    const { classes, t, Roles, domain } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
     const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
-    const { language, title, displayname, nickname, primarytelephonenumber,
-      mobiletelephonenumber, streetaddress, comment, creationtime, displaytypeex,
+    const { title, displayname, nickname, primarytelephonenumber,
+      mobiletelephonenumber, streetaddress, comment,
       departmentname, companyname, officelocation, givenname, surname, initials,
-      assistant, country, locality, stateorprovince, postalcode, storagequotalimit,
+      assistant, country, locality, stateorprovince, postalcode,
       hometelephonenumber, home2telephonenumber, businesstelephonenumber, business2telephonenumber,
       pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
     const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
@@ -418,141 +404,15 @@ class UserDetails extends PureComponent {
               <Tab label={t("SMTP")} />
             </Tabs>
             <FormControl className={classes.form}>
-              {tab === 0 && <React.Fragment>
-                <Grid container className={classes.input}>
-                  <TextField 
-                    label={t("Username")}
-                    value={username || ''}
-                    autoFocus
-                    onChange={this.handleInput('username')}
-                    style={{ flex: 1, marginRight: 8 }}
-                    InputProps={{
-                      endAdornment: <div>@{domain.domainname}</div>,
-                    }}
-                    error={usernameError}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={() => this.setState({ changingPw: true })}
-                    size="small"
-                  >
-                    {t('Change password')}
-                  </Button>
-                </Grid>
-                {ldapID && <TextField 
-                  label={t("LDAP ID")}
-                  className={classes.input}
-                  value={ldapID || ''}
-                  disabled
-                  style={{ flex: 1, marginRight: 8 }}
-                />}
-                <TextField
-                  select
-                  className={classes.input}
-                  label={t("Status")}
-                  fullWidth
-                  value={addressStatus || 0}
-                  onChange={this.handleInput('addressStatus')}
-                >
-                  {this.statuses.map((status, key) => (
-                    <MenuItem key={key} value={status.ID}>
-                      {status.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  className={classes.input}
-                  label={t("Creation time")}
-                  fullWidth
-                  value={creationtime || ''}
-                  onChange={this.handlePropertyChange('creationtime')}
-                  disabled
-                />
-                <TextField 
-                  className={classes.input} 
-                  label={t("Storage quota limit")}
-                  fullWidth 
-                  value={storagequotalimit || ''}
-                  onChange={this.handleIntPropertyChange('storagequotalimit')}
-                  InputProps={{
-                    endAdornment:
-                      <FormControl>
-                        <Select
-                          onChange={this.handleUnitChange}
-                          value={sizeUnit}
-                          className={classes.select}
-                        >
-                          <MenuItem value={1}>MiB</MenuItem>
-                          <MenuItem value={2}>GiB</MenuItem>
-                          <MenuItem value={3}>TiB</MenuItem>
-                        </Select>
-                      </FormControl>,
-                  }}
-                />
-                <TextField
-                  select
-                  className={classes.input}
-                  label={t("Type")}
-                  fullWidth
-                  disabled={displaytypeex === 1}
-                  value={displaytypeex || 0}
-                  onChange={this.handlePropertyChange('displaytypeex')}
-                >
-                  {this.types.map((type, key) => (
-                    <MenuItem key={key} value={type.ID}>
-                      {type.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                <TextField
-                  select
-                  className={classes.input}
-                  label={t("Language")}
-                  fullWidth
-                  value={language || 'english'}
-                  onChange={this.handlePropertyChange('language')}
-                >
-                  <MenuItem value={'english'}>
-                    {t('English')}
-                  </MenuItem>
-                  <MenuItem value={'german'}>
-                    {t('Deutsch')}
-                  </MenuItem>
-                </TextField>
-                <Grid container className={classes.input}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={smtp || false }
-                        onChange={this.handleCheckbox('smtp')}
-                        color="primary"
-                      />
-                    }
-                    label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={changePassword || false }
-                        onChange={this.handleCheckbox('changePassword')}
-                        color="primary"
-                      />
-                    }
-                    label={t('Allow password changes')}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={pop3_imap || false /*eslint-disable-line*/}
-                        onChange={this.handleCheckbox('pop3_imap')}
-                        color="primary"
-                      />
-                    }
-                    label={t('Allow POP3/IMAP logins')}
-                  />
-                </Grid>
-              </React.Fragment>}
-
+              {tab === 0 && <Account
+                domain={domain}
+                user={user}
+                sizeUnit={sizeUnit}
+                handleInput={this.handleInput}
+                handlePropertyChange={this.handlePropertyChange}
+                handleIntPropertyChange={this.handleIntPropertyChange}
+                handleCheckbox={this.handleCheckbox}
+              />}
               {tab === 1 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('Name')}</Typography>
                 <Grid container>
