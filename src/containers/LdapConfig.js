@@ -265,7 +265,6 @@ class LdapConfig extends PureComponent {
                   color="primary"
                 />
               }
-              style={{ color: 'white' }}
               label={<span>
                 {t('LDAP enabled')}
                 <Tooltip
