@@ -15,6 +15,9 @@ const styles = theme => ({
   divider: {
     margin: theme.spacing(2, 0),
   },
+  address: {
+    height: 128,
+  },
   gridItem: {
     display: 'flex',
   },

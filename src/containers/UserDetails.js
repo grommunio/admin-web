@@ -61,50 +61,9 @@ const styles = theme => ({
   input: {
     margin: theme.spacing(1),
   },
-  propertyInput: {
-    margin: theme.spacing(1),
-    flex: 1,
-  },
   toolbar: theme.mixins.toolbar,
-  grid: {
-    display: 'flex',
-    margin: theme.spacing(1),
-    flex: 1,
-  },
-  select: {
-    minWidth: 60,
-  },
-  headline: {
-    margin: theme.spacing(0, 0, 2, 0),
-  },
-  list: {
-    padding: 0,
-    marginTop: -8,
-  },
-  listItem: {
-    padding: theme.spacing(1, 0),
-  },
-  listTextfield: {
-    flex: 1,
-  },
-  flexTextfield: {
-    flex: 1,
-    marginRight: 8,
-  },
   column: {
     margin: theme.spacing(1, 2),
-  },
-  address: {
-    height: 128,
-  },
-  divider: {
-    margin: theme.spacing(2, 0),
-  },
-  textarea: {
-    height: 84,
-  },
-  gridItem: {
-    display: 'flex',
   },
   syncButtons: {
     margin: theme.spacing(2, 0),
@@ -206,17 +165,6 @@ class UserDetails extends PureComponent {
         },
       },
       unsaved: true,
-    });
-  }
-
-  handleNumberInput = field => event => {
-    let input = event.target.value;
-    if(input && input.match("^\\d*?$")) input = parseInt(input);
-    this.setState({
-      user: {
-        ...this.state.user,
-        [field]: input,
-      },
     });
   }
 
@@ -345,7 +293,7 @@ class UserDetails extends PureComponent {
   handleCloseDump = () => this.setState({ dump: '' });
 
   render() {
-    const { classes, t, domain } = this.props;
+    const { classes, t, domain, history } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
@@ -433,7 +381,7 @@ class UserDetails extends PureComponent {
             <Button
               variant="text"
               color="secondary"
-              onClick={this.props.history.goBack}
+              onClick={history.goBack}
               style={{ marginRight: 8 }}
             >
               {t('Back')}
