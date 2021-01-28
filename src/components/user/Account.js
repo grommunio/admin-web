@@ -183,7 +183,7 @@ Account.propTypes = {
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
   user: PropTypes.object.isRequired,
-  sizeUnit: PropTypes.string.isRequired,
+  sizeUnit: PropTypes.number.isRequired,
   handleInput: PropTypes.func.isRequired,
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,

@@ -14,7 +14,7 @@ import {
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions, Select,
-  Tabs, Tab, List, ListItem, IconButton, Divider,
+  Tabs, Tab, List, ListItem, IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
@@ -31,6 +31,7 @@ import DumpDialog from '../components/Dialogs/DumpDialog';
 import Feedback from '../components/Feedback';
 import Account from '../components/user/Account';
 import User from '../components/user/User';
+import Contact from '../components/user/Contact';
 
 const styles = theme => ({
   root: {
@@ -345,10 +346,7 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, Roles, domain } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
-    const { username, addressStatus, roles, aliases, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
-    const { mobiletelephonenumber, comment,
-      hometelephonenumber, home2telephonenumber, businesstelephonenumber, business2telephonenumber,
-      pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
+    const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
 
     return (
@@ -413,87 +411,11 @@ class UserDetails extends PureComponent {
               user={user}
               handlePropertyChange={this.handlePropertyChange}
             />}
+            {tab === 2 && <Contact
+              user={user}
+              handlePropertyChange={this.handlePropertyChange}
+            />}
             <FormControl className={classes.form}>
-              {tab === 2 && <React.Fragment>
-                <Typography variant="h6" className={classes.headline}>{t('Telephone')}</Typography>
-                <Grid container>
-                  <Grid item xs={12} className={classes.gridItem}>
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Business 1")} 
-                      fullWidth 
-                      value={businesstelephonenumber || ''}
-                      onChange={this.handlePropertyChange('businesstelephonenumber')}
-                    />
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Privat 1")} 
-                      fullWidth 
-                      value={hometelephonenumber || ''}
-                      onChange={this.handlePropertyChange('hometelephonenumber')}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.gridItem}>
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Business 2")} 
-                      fullWidth 
-                      value={business2telephonenumber || ''}
-                      onChange={this.handlePropertyChange('business2telephonenumber')}
-                    />
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Privat 2")} 
-                      fullWidth 
-                      value={home2telephonenumber || ''}
-                      onChange={this.handlePropertyChange('home2telephonenumber')}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.gridItem}>
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Fax")} 
-                      fullWidth 
-                      value={primaryfaxnumber || ''}
-                      onChange={this.handlePropertyChange('primaryfaxnumber')}
-                    />
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Mobile")} 
-                      fullWidth 
-                      value={mobiletelephonenumber || ''}
-                      onChange={this.handlePropertyChange('mobiletelephonenumber')}
-                    />
-                  </Grid>
-                  <Grid item xs={12} className={classes.gridItem}>
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Assistant")} 
-                      fullWidth 
-                      value={assistanttelephonenumber || ''}
-                      onChange={this.handlePropertyChange('assistanttelephonenumber')}
-                    />
-                    <TextField 
-                      className={classes.input} 
-                      label={t("Pager")} 
-                      fullWidth 
-                      value={pagertelephonenumber || ''}
-                      onChange={this.handlePropertyChange('pagertelephonenumber')}
-                    />
-                  </Grid>
-                </Grid>
-                <Divider className={classes.divider}/>
-                <Typography variant="h6" className={classes.headline}>{t('Annotation')}</Typography>
-                <TextField 
-                  className={classes.input}
-                  fullWidth
-                  value={comment || ''}
-                  onChange={this.handlePropertyChange('comment')}
-                  multiline
-                  rows={4}
-                />
-              </React.Fragment>}
-
               {tab === 3 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
                 <FormControl className={classes.input}>
