@@ -10,12 +10,10 @@ import {
   TextField,
   FormControl,
   Button,
-  Snackbar,
-  Portal,
 } from '@material-ui/core';
 import TopBar from '../components/TopBar';
 import { changePw } from '../api';
-import Alert from '@material-ui/lab/Alert';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -116,23 +114,10 @@ class ChangePw extends Component {
               {t('Save')}
             </Button>
           </Paper>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
       </div>
     );

@@ -5,10 +5,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Snackbar, IconButton,
-  Typography, Button, Grid, TableSortLabel, CircularProgress, TextField, InputAdornment,
-  Portal } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
+  Typography, Button, Grid, TableSortLabel, CircularProgress,
+  TextField, InputAdornment } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
 import TopBar from '../components/TopBar';
@@ -18,6 +17,7 @@ import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
+import Feedback from '../components/Feedback';
 import { debounce } from 'debounce';
 
 const styles = theme => ({
@@ -272,23 +272,10 @@ class Roles extends Component {
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
         <AddRoles
           open={adding}

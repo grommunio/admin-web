@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Typography, FormControl, TextField, MenuItem, Switch, FormLabel,
-  Grid, Divider, Button, Portal, Snackbar } from '@material-ui/core';
+  Grid, Divider, Button } from '@material-ui/core';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
@@ -14,7 +14,7 @@ import i18n from '../i18n';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import { fetchLicenseData, uploadLicenseData } from '../actions/license';
-import Alert from '@material-ui/lab/Alert';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -219,23 +219,10 @@ class Settings extends Component {
               </Typography>
             </Grid>
           </Paper>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
         <input
           accept=".crt,.pem"

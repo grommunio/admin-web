@@ -4,8 +4,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { Typography, Chip, IconButton, CircularProgress, Snackbar, Portal } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Typography, Chip, IconButton, CircularProgress } from '@material-ui/core';
 import {
   BarChart,
   Bar,
@@ -21,6 +20,7 @@ import green from '../colors/green';
 import red from '../colors/red';
 import grey from '../colors/grey';
 import orange from '../colors/orange';
+import Feedback from './Feedback';
 
 const styles = theme => ({
   chipLabel: {
@@ -108,7 +108,7 @@ class ServicesChart extends Component {
 
   render() {
     const { classes, Services } = this.props;
-    const { starting, restarting, stoping } = this.state;
+    const { starting, restarting, stoping, snackbar } = this.state;
 
     return (
       <div>
@@ -172,23 +172,10 @@ class ServicesChart extends Component {
             <Legend />
           </BarChart>
         </div>
-        <Portal>
-          <Snackbar
-            open={!!this.state.snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={this.state.snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
-              onClose={() => this.setState({ snackbar: '' })}
-              severity={this.state.snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
-            >
-              {this.state.snackbar}
-            </Alert>
-          </Snackbar>
-        </Portal>
+        <Feedback
+          snackbar={snackbar}
+          onClose={() => this.setState({ snackbar: '' })}
+        />
       </div>
     );
   }

@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Snackbar, Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment, Portal } from '@material-ui/core';
+  Typography, Button, Grid, TableSortLabel, CircularProgress,
+  TextField, InputAdornment } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
 import Search from '@material-ui/icons/Search';
@@ -16,10 +16,10 @@ import TopBar from '../components/TopBar';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
-import Alert from '@material-ui/lab/Alert';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import { debounce } from 'debounce';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -240,23 +240,10 @@ class Folders extends Component {
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
         <AddFolder
           open={adding}
