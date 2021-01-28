@@ -13,7 +13,7 @@ import {
   FormControl,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select,
+  DialogContent, Dialog, DialogActions,
   Tabs, Tab, List, ListItem, IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
@@ -32,6 +32,7 @@ import Feedback from '../components/Feedback';
 import Account from '../components/user/Account';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
+import Roles from '../components/user/Roles';
 
 const styles = theme => ({
   root: {
@@ -344,7 +345,7 @@ class UserDetails extends PureComponent {
   handleCloseDump = () => this.setState({ dump: '' });
 
   render() {
-    const { classes, t, Roles, domain } = this.props;
+    const { classes, t, domain } = this.props;
     const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
@@ -416,27 +417,10 @@ class UserDetails extends PureComponent {
               handlePropertyChange={this.handlePropertyChange}
             />}
             <FormControl className={classes.form}>
-              {tab === 3 && <React.Fragment>
-                <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
-                <FormControl className={classes.input}>
-                  <Select
-                    multiple
-                    fullWidth
-                    value={roles || []}
-                    onChange={this.handleMultiSelect}
-                    native
-                  >
-                    {(Roles || []).map((role, key) => (
-                      <option
-                        key={key}
-                        value={role.ID}
-                      >
-                        {role.name}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-              </React.Fragment>}
+              {tab === 3 && <Roles
+                roles={roles}
+                handleMultiSelect={this.handleMultiSelect}
+              />}
               {tab === 4 && <React.Fragment>
                 <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
                 <List className={classes.list}>
@@ -540,7 +524,6 @@ UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  Roles: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   sync: PropTypes.func.isRequired,
@@ -549,12 +532,6 @@ UserDetails.propTypes = {
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    Roles: state.roles.Roles || [],
-  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -581,5 +558,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(UserDetails)));
