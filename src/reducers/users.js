@@ -91,6 +91,7 @@ function usersReducer(state=defaultState, action) {
       return {
         ...state,
         Users: deleteUser(state.Users, action.id),
+        count: state.count - 1,
       };
 
     case ORPHANED_USERS_RECEIVED:
