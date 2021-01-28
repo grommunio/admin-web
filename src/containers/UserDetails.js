@@ -408,6 +408,7 @@ class UserDetails extends PureComponent {
               handlePropertyChange={this.handlePropertyChange}
               handleIntPropertyChange={this.handleIntPropertyChange}
               handleCheckbox={this.handleCheckbox}
+              handleUnitChange={this.handleUnitChange}
             />}
             {tab === 1 && <User
               user={user}

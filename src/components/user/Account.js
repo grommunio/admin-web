@@ -35,7 +35,7 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnit, handleInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, usernameError } = this.props;
+      handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit } = properties;
     return (
@@ -99,7 +99,7 @@ class Account extends PureComponent {
             endAdornment:
               <FormControl>
                 <Select
-                  onChange={this.handleUnitChange}
+                  onChange={handleUnitChange}
                   value={sizeUnit}
                   className={classes.select}
                 >
@@ -187,6 +187,7 @@ Account.propTypes = {
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
+  handleUnitChange: PropTypes.func.isRequired,
   usernameError: PropTypes.bool,
 };
 
