@@ -96,10 +96,6 @@ function DomainMenu(props) {
               {domain.adminName}
             </Typography>
             <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('End day')}:</span>
-              {setDateString(domain.endDay)}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
               <span className={classes.description}>{t('Max users')}:</span>
               {domain.maxUser}
             </Typography>

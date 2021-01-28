@@ -266,9 +266,9 @@ class DomainList extends Component {
                       <TableCell>{obj.title}</TableCell>
                       <TableCell>{obj.maxUser}</TableCell>
                       <TableCell align="right">
-                        <IconButton onClick={this.handleDelete(obj)}>
+                        {!obj.domainStatus /*If not deleted*/ && <IconButton onClick={this.handleDelete(obj)}>
                           <Delete color="error"/>
-                        </IconButton>
+                        </IconButton>}
                       </TableCell>
                     </TableRow>;
                 })}
