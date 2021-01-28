@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
-  Portal, Select, Snackbar, Typography, Switch, Tooltip } from '@material-ui/core';
+  Select, Typography, Switch, Tooltip } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
@@ -14,10 +14,10 @@ import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import Add from '@material-ui/icons/Add';
 import Delete from '@material-ui/icons/Close';
 import { red } from '@material-ui/core/colors';
-import { Alert } from '@material-ui/lab';
 import adminConfig from '../config';
 import LdapTextfield from '../components/LdapTextfield';
 import Help from '@material-ui/icons/HelpOutline';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -476,23 +476,10 @@ class LdapConfig extends PureComponent {
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
         />
-        <Portal>
-          <Snackbar
-            open={!!snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-            autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-            transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-          >
-            <Alert
-              onClose={() => this.setState({ snackbar: '' })}
-              severity={snackbar === 'Success!' ? "success" : "error"}
-              elevation={6}
-              variant="filled"
-            >
-              {snackbar}
-            </Alert>
-          </Snackbar>
-        </Portal>
+        <Feedback
+          snackbar={snackbar}
+          onClose={() => this.setState({ snackbar: '' })}
+        />
       </div>
     );
   }

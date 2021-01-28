@@ -14,15 +14,14 @@ import {
   MenuItem,
   Button,
   DialogTitle,
-  DialogContent, Dialog, DialogActions, Select, Snackbar,
-  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox, Portal,
+  DialogContent, Dialog, DialogActions, Select,
+  InputLabel, Tabs, Tab, List, ListItem, IconButton, Divider, FormControlLabel, Checkbox,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
-import Alert from '@material-ui/lab/Alert';
 import Close from '@material-ui/icons/Delete';
 import Sync from '@material-ui/icons/Sync';
 import Detach from '@material-ui/icons/SyncDisabled';
@@ -31,6 +30,7 @@ import world from '../res/world.json';
 import { syncLdapData } from '../actions/ldap';
 import DetachDialog from '../components/Dialogs/DetachDialog';
 import DumpDialog from '../components/Dialogs/DumpDialog';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -852,23 +852,10 @@ class UserDetails extends PureComponent {
                 {t('Save')}
               </Button>}
           </Paper>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
         <DetachDialog
           open={detaching}

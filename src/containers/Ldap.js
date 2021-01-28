@@ -9,14 +9,14 @@ import HomeIcon from '@material-ui/icons/Home';
 import Search from '@material-ui/icons/Search';
 import Import from '@material-ui/icons/ImportContacts';
 import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
-  Paper, Portal, Snackbar, TextField, Typography } from '@material-ui/core';
+  Paper, TextField, Typography } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { connect } from 'react-redux';
 import { fetchLdapData } from '../actions/ldap';
 import { debounce } from 'debounce';
-import { Alert } from '@material-ui/lab';
 import ImportDialog from '../components/Dialogs/ImportDialog';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -144,23 +144,10 @@ class Ldap extends PureComponent {
               <CircularProgress color="primary" size={40}/>
             </Grow>
           </Grid>
-          <Portal>
-            <Snackbar
-              open={!!snackbar}
-              onClose={() => this.setState({ snackbar: '' })}
-              autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
-              transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
-            >
-              <Alert
-                onClose={() => this.setState({ snackbar: '' })}
-                severity={snackbar === 'Success!' ? "success" : "error"}
-                elevation={6}
-                variant="filled"
-              >
-                {snackbar}
-              </Alert>
-            </Snackbar>
-          </Portal>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
           <ImportDialog
             open={!!confirming}
             user={confirming || {}}
