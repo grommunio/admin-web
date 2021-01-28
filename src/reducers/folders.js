@@ -66,6 +66,7 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Folders: state.Folders.filter(folder => folder.folderid !== action.id),
+        count: state.count - 1,
       };
 
     case OWNERS_DATA_RECEIVED:

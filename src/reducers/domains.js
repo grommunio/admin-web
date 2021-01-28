@@ -61,6 +61,7 @@ function domainsReducer(state = defaultState, action) {
       return {
         ...state,
         Domains: state.Domains.filter(domain => domain.ID !== action.id),
+        count: state.count - 1,
       };
 
     default:
