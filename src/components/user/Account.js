@@ -35,7 +35,8 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnit, handleInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange } = this.props;
+      handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange,
+      handlePasswordChange } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit } = properties;
     return (
@@ -54,7 +55,7 @@ class Account extends PureComponent {
           />
           <Button
             variant="contained"
-            onClick={() => this.setState({ changingPw: true })}
+            onClick={handlePasswordChange}
             size="small"
           >
             {t('Change password')}
@@ -188,6 +189,7 @@ Account.propTypes = {
   handleIntPropertyChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
   handleUnitChange: PropTypes.func.isRequired,
+  handlePasswordChange: PropTypes.func.isRequired,
   usernameError: PropTypes.bool,
 };
 

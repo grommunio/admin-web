@@ -9,17 +9,12 @@ import {
   Typography,
   Paper,
   Grid,
-  TextField,
-  FormControl,
   Button,
-  DialogTitle,
-  DialogContent, Dialog, DialogActions,
   Tabs, Tab,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
 import TopBar from '../components/TopBar';
-import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@material-ui/icons/Sync';
 import Detach from '@material-ui/icons/SyncDisabled';
@@ -33,6 +28,7 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import Roles from '../components/user/Roles';
 import Smtp from '../components/user/Smtp';
+import ChangeUserPassword from '../components/Dialogs/ChangeUserPassword';
 
 const styles = theme => ({
   root: {
@@ -82,8 +78,6 @@ class UserDetails extends PureComponent {
     },
     dump: '',
     changingPw: false,
-    newPw: '',
-    checkPw: '',
     snackbar: '',
     tab: 0,
     sizeUnit: 1,
@@ -203,14 +197,6 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
-  handlePasswordChange = async () => {
-    const { user, newPw } = this.state;
-    await changeUserPassword(this.props.domain.ID, user.ID, newPw)
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));
-    this.setState({ changingPw: false });
-  }
-
   handleKeyPress = event => {
     const { newPw, checkPw } = this.state;
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
@@ -292,9 +278,15 @@ class UserDetails extends PureComponent {
 
   handleCloseDump = () => this.setState({ dump: '' });
 
+  handlePasswordDialogToggle = changingPw => () => this.setState({ changingPw });
+
+  handleSuccess = () => this.setState({ snackbar: 'Success!' });
+
+  handleError = msg => this.setState({ snackbar: msg.message || 'Unknown error' });
+
   render() {
     const { classes, t, domain, history } = this.props;
-    const { user, changingPw, newPw, checkPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
+    const { user, changingPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
 
@@ -357,6 +349,7 @@ class UserDetails extends PureComponent {
               handleIntPropertyChange={this.handleIntPropertyChange}
               handleCheckbox={this.handleCheckbox}
               handleUnitChange={this.handleUnitChange}
+              handlePasswordChange={this.handlePasswordDialogToggle(true)}
             />}
             {tab === 1 && <User
               user={user}
@@ -366,18 +359,16 @@ class UserDetails extends PureComponent {
               user={user}
               handlePropertyChange={this.handlePropertyChange}
             />}
-            <FormControl className={classes.form}>
-              {tab === 3 && <Roles
-                roles={roles}
-                handleMultiSelect={this.handleMultiSelect}
-              />}
-              {tab === 4 && <Smtp
-                aliases={aliases}
-                handleAliasEdit={this.handleAliasEdit}
-                handleAddAlias={this.handleAddAlias}
-                handleRemoveAlias={this.handleRemoveAlias}
-              />}
-            </FormControl>
+            {tab === 3 && <Roles
+              roles={roles}
+              handleMultiSelect={this.handleMultiSelect}
+            />}
+            {tab === 4 && <Smtp
+              aliases={aliases}
+              handleAliasEdit={this.handleAliasEdit}
+              handleAddAlias={this.handleAddAlias}
+              handleRemoveAlias={this.handleRemoveAlias}
+            />}
             <Button
               variant="text"
               color="secondary"
@@ -413,42 +404,14 @@ class UserDetails extends PureComponent {
           onClose={this.handleDetachDialog(false)}
           onDetach={this.handleDetach}
         />
-        <Dialog open={!!changingPw}>
-          <DialogTitle>{t('Change password')}</DialogTitle>
-          <DialogContent>
-            <TextField 
-              className={classes.input} 
-              label={t("New password")} 
-              fullWidth
-              type="password"
-              value={newPw}
-              onChange={({ target }) => this.setState({ newPw: target.value })}
-              autoFocus
-              onKeyPress={this.handleKeyPress}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Repeat new password")} 
-              fullWidth
-              type="password"
-              value={checkPw}
-              onChange={({ target }) => this.setState({ checkPw: target.value })}
-              onKeyPress={this.handleKeyPress}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.setState({ changingPw: false })}>
-              {t('Cancel')}
-            </Button>
-            <Button
-              color="primary"
-              onClick={this.handlePasswordChange}
-              disabled={checkPw !== newPw}
-            >
-              {t('Save')}
-            </Button>
-          </DialogActions>
-        </Dialog>
+        <ChangeUserPassword
+          onClose={this.handlePasswordDialogToggle(false)}
+          onError={this.handleError}
+          onSuccess={this.handleSuccess}
+          changingPw={changingPw}
+          domain={domain}
+          user={user}
+        />
         <DumpDialog onClose={this.handleCloseDump} open={!!dump} dump={dump} />
       </div>
     );
