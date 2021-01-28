@@ -35,10 +35,9 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnit, handleInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox } = this.props;
+      handleIntPropertyChange, handleCheckbox, usernameError } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit } = properties;
-    const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
     return (
       <FormControl className={classes.form}>
         <Grid container className={classes.input}>
@@ -188,6 +187,7 @@ Account.propTypes = {
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
+  usernameError: PropTypes.bool,
 };
 
 export default withTranslation()(withStyles(styles)(Account));

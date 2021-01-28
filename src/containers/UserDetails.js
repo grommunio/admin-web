@@ -14,14 +14,13 @@ import {
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions,
-  Tabs, Tab, List, ListItem, IconButton,
+  Tabs, Tab,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { changeUserPassword } from '../api';
 import { fetchRolesData } from '../actions/roles';
-import Close from '@material-ui/icons/Delete';
 import Sync from '@material-ui/icons/Sync';
 import Detach from '@material-ui/icons/SyncDisabled';
 import Dump from '@material-ui/icons/Receipt';
@@ -33,6 +32,7 @@ import Account from '../components/user/Account';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import Roles from '../components/user/Roles';
+import Smtp from '../components/user/Smtp';
 
 const styles = theme => ({
   root: {
@@ -402,6 +402,7 @@ class UserDetails extends PureComponent {
             {tab === 0 && <Account
               domain={domain}
               user={user}
+              usernameError={usernameError}
               sizeUnit={sizeUnit}
               handleInput={this.handleInput}
               handlePropertyChange={this.handlePropertyChange}
@@ -421,27 +422,12 @@ class UserDetails extends PureComponent {
                 roles={roles}
                 handleMultiSelect={this.handleMultiSelect}
               />}
-              {tab === 4 && <React.Fragment>
-                <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
-                <List className={classes.list}>
-                  {aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
-                    <TextField
-                      className={classes.listTextfield}
-                      value={alias}
-                      label={'Alias ' + (idx + 1)}
-                      onChange={this.handleAliasEdit(idx)}
-                    />
-                    <IconButton onClick={this.handleRemoveAlias(idx)}>
-                      <Close color="error" />
-                    </IconButton>
-                  </ListItem>
-                  )}
-                </List>
-                <Grid container justify="center">
-                  <Button onClick={this.handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-                </Grid>
-              </React.Fragment>
-              }
+              {tab === 4 && <Smtp
+                aliases={aliases}
+                handleAliasEdit={this.handleAliasEdit}
+                handleAddAlias={this.handleAddAlias}
+                handleRemoveAlias={this.handleRemoveAlias}
+              />}
             </FormControl>
             <Button
               variant="text"
