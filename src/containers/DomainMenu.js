@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
 import { Paper, Typography, Grid, Button } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
-import { setDateString } from '../utils';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import { SYS_ADMIN } from '../constants';
