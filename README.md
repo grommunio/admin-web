@@ -1,8 +1,8 @@
-
 # Set up for development
  
-This webapp uses `yarn` (https://yarnpkg.com/) and `caddy` (https://caddyserver.com/) for development.
+This webapp uses [yarn](https://yarnpkg.com/) and [caddy](https://caddyserver.com/) for development.
 You need 2 seperate terminals to run this app. One to run `yarn` and one to setup a `caddy` reverse proxy to access the backend server.
+To build for production, this webapp uses a `Makefile` with [GNU Make](https://www.gnu.org/software/make/)
 
 ## yarn
 
