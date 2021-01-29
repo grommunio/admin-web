@@ -1,27 +1,9 @@
-# This assumes this project was built and the built files are found in `./build`.
+# This assumes this project runs webpack-dev-server on 127.0.0.1:3000
+# To access the proxy server, open localhost:4000
+# Copy this file to ./Caddyfile to start development
 
-https://:8411 {
-	errors stderr
-	log stdout
+:4000 # port to run caddy on
 
-	tls self_signed
-
-	gzip
-
-	root ./build
-
-	# Never cache the service worker.
-	header /service-worker.js {
-		Cache-Control "no-cache, no-store, must-revalidate"
-		Pragma "no-cache"
-		Expires "0"
-	}
-
-	# Caching for static assets.
-	header /static/ {
-		Cache-Control "max-age=86400"
-	}
-
-	# Backend API.
-	proxy /api/v1/ https://d3u9fxr8qqc6qs.cloudfront.net
-}
+reverse_proxy /api/v1/* localhost:8080 # Address of backend
+reverse_proxy /config.json localhost:8080 # Address of config.json
+reverse_proxy http://127.0.0.1:3000 # Address of webapp (default yarn port)

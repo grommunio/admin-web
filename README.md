@@ -1,64 +1,93 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+# Set up for development
+ 
+This webapp uses `yarn` (https://yarnpkg.com/) and `caddy` (https://caddyserver.com/) for development.
+You need 2 seperate terminals to run this app. One to run `yarn` and one to setup a `caddy` reverse proxy to access the backend server.
 
-In the project directory, you can run:
+## yarn
 
-### `yarn start`
+### Install packages
+```
+yarn
+```
+or
+```
+make
+```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Run app
+```
+yarn start
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## caddy
 
-### `yarn test`
+### Installation
+According to https://caddyserver.com/docs/install
+```
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/cfg/gpg/gpg.155B6D79CA56EA34.key' | sudo apt-key add -
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/cfg/setup/config.deb.txt?distro=debian&version=any-version' | sudo tee -a /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy
+```
+### Using caddy
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Caddyfile
 
-### `make`
+You will find a file `Caddyfile.dev` in root directory of this repository.
+Copy this file to `./Caddyfile`. Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box. Further details are commented in `Caddyfile.dev` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Running caddy
+In separate terminal:
+```
+caddy run
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Build for production
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### `make && make dist`
 
-### `make dist`
+Run this command to create files for distribution.
 
-After running `make`, run this command to create files for distribution.
 Result will be created in `/dist`
+
+
+
+# Server-side configuration
+
 
 ## Nginx config
 
 In order to get the correct configuration for production, create a config.json in
-`/usr/share/grammm/admin/webapp/config.json`
+`/usr/share/grammm/admin/webapp/config.json` 
 
 Following props are available:
 
-### devMode
+### `devMode:boolean`
 
 For development, enables redux logger
 
-### mailWebAddress
+### `mailWebAddress:String` 
 
 Url of production mail server
 
-### chatWebAddress
+### `chatWebAddress:String`
 
 Url of production chat server
 
-### videoWebAddress
+### `videoWebAddress:String`
 
 Url of production video server
 
-### fileWebAddress
+### `fileWebAddress:String`
 
 Url of production file server
 
-### archiveWebAddress
+### `archiveWebAddress:String`
 
 Url of production archive server
+
+### `searchAttributes:Array<String>`
+
+Array of strings, possble LDAP Search attributes
