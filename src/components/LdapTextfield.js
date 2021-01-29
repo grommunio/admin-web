@@ -21,11 +21,11 @@ const styles = theme => ({
 class LdapTextfield extends PureComponent {
 
   render() {
-    const { classes, children, t, select, value, label, desc, flex, onChange } = this.props;
+    const { classes, children, t, value, label, desc, flex, ...rest } = this.props;
 
     return (
       <TextField
-        select={select}
+        {...rest}
         label={<span>
           {t(label)}
           <Tooltip className={classes.tooltip} title={desc || ''} placement="top">
@@ -36,7 +36,6 @@ class LdapTextfield extends PureComponent {
         </span>}
         className={flex ? classes.flexTextfield : classes.textfield}
         color="primary"
-        onChange={onChange}
         value={value || ''}
       >
         {children}
@@ -54,7 +53,6 @@ LdapTextfield.propTypes = {
   label: PropTypes.string,
   desc: PropTypes.string,
   flex: PropTypes.bool,
-  select: PropTypes.bool,
 };
 
 export default withTranslation()(withStyles(styles)(LdapTextfield));

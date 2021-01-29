@@ -156,9 +156,11 @@ class LdapConfig extends PureComponent {
     const resp = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
     const config = resp.data;
+    const available = resp.ldapAvailable;
     const { connection } = config;
     const users = config.users || {};
     if(config.baseDn && connection) this.setState({
+      available,
       baseDn: config.baseDn,
       disabled: config.disabled || false,
       objectID: config.objectID,
@@ -242,7 +244,7 @@ class LdapConfig extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
+    const { available, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
 
     return (
@@ -263,6 +265,7 @@ class LdapConfig extends PureComponent {
                   onChange={e => this.setState({ disabled: !e.target.checked})}
                   name="disabled"
                   color="primary"
+                  disabled={available}
                 />
               }
               label={<span>
@@ -289,6 +292,7 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('server')}
                   value={server || ''}
                   desc="Address of the LDAP server to connect to"
+                  disabled={disabled}
                 />
                 <LdapTextfield
                   flex
@@ -296,6 +300,7 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc="DN of the user to perform initial bind with"
+                  disabled={disabled}
                 />
                 <LdapTextfield
                   flex
@@ -303,6 +308,7 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
                   desc="Password for bindUser"
+                  disabled={disabled}
                 />
                 <FormControlLabel
                   control={
@@ -311,6 +317,7 @@ class LdapConfig extends PureComponent {
                       onChange={this.handleCheckbox('starttls')}
                       name="starttls"
                       color="primary"
+                      disabled={disabled}
                     />
                   }
                   label={<span>
@@ -332,6 +339,7 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
                 desc="Base DN to use for user search"
+                disabled={disabled}
               />
             </FormControl>
           </Paper>
@@ -343,30 +351,35 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('objectID')}
                 value={objectID || ''}
                 desc="Name of an attribute that uniquely idetifies an LDAP object"
+                disabled={disabled}
               />
               <LdapTextfield
                 label={t('LDAP Username Attribute (username)')}
                 onChange={this.handleInput('username')}
                 value={username || ''}
                 desc="Name of the attribute that corresponds to the username (e-mail address)"
+                disabled={disabled}
               />
               <LdapTextfield
                 label={t('LDAP Default Quota (defaultQuota)')}
                 onChange={this.handleInput('defaultQuota')}
                 value={defaultQuota}
                 desc="Storage quota of imported users if no mapping exists"
+                disabled={disabled}
               />
               <LdapTextfield
                 label={t('LDAP Display Name Attribute (displayName)')}
                 onChange={this.handleInput('displayName')}
                 value={displayName || ''}
                 desc="Name of the attribute that contains the name"
+                disabled={disabled}
               />
               <LdapTextfield
                 label={t('LDAP Filter (filters)')}
                 onChange={this.handleInput('filter')}
                 value={filter || ''}
                 desc="LDAP search filter to apply to user lookup"
+                disabled={disabled}
               />
               <LdapTextfield
                 label={t('LDAP Templates (templates)')}
@@ -374,6 +387,7 @@ class LdapConfig extends PureComponent {
                 value={templates}
                 select
                 desc="List of mapping templates to use"
+                disabled={disabled}
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
@@ -400,6 +414,7 @@ class LdapConfig extends PureComponent {
                   MenuProps={{
                     style: { maxHeight: 400 },
                   }}
+                  disabled={disabled}
                 >
                   {adminConfig.searchAttributes.map((name) => (
                     <MenuItem key={name} value={name}>
@@ -432,6 +447,7 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
                   desc="Name of the PropTag the atribute maps to"
+                  disabled={disabled}
                 />
                 <Typography className={classes.spacer}>:</Typography>
                 <LdapTextfield
@@ -440,6 +456,7 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
                   desc="Value of the PropTag the atribute maps to"
+                  disabled={disabled}
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
                   <Delete color="error" />
