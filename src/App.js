@@ -6,7 +6,7 @@ import './App.css';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import Loadable from 'react-loadable';
-import Loader from './components/LoadingMainView';
+import Loader from './components/Loading';
 import { withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
 import { authAuthenticating } from './actions/auth';

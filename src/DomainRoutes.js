@@ -8,7 +8,7 @@ import { Switch, Route } from "react-router-dom";
 
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import Loadable from 'react-loadable';
-import Loader from './components/LoadingMainView';
+import Loader from './components/Loading';
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 import DefaultRedirect from "./components/DefaultRedirect";

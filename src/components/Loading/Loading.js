@@ -3,6 +3,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button, CircularProgress, Typography } from '@material-ui/core';
 
 function handleRetry(event) {
   event.preventDefault();
@@ -13,11 +14,23 @@ function handleRetry(event) {
 function Loading(props) {
   if (props.error) {
     console.error(props.error); // eslint-disable-line no-console
-    return <div id="loader">Error &mdash; <button onClick={ handleRetry }>Retry</button></div>;
+    return <div id="loader">
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Typography variant="body1" style={{ marginRight: 8 }}>Error loading page</Typography>
+        <Button size="small" variant="text" color="primary" onClick={ handleRetry }>Retry</Button>
+      </div>
+    </div>;
   } else if (props.timedOut) {
-    return <div id="loader">Taking a long time... &mdash; <button onClick={ handleRetry }>Retry</button></div>;
+    return <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Typography variant="body1" style={{ marginRight: 8 }}>Taking a long time...</Typography>
+        <Button size="small" variant="text" color="primary" onClick={ handleRetry }>Retry</Button>
+      </div>
+    </div>;
   } else if (props.pastDelay) {
-    return <div id="loader">Loading...</div>;
+    return <div id="loader">
+      <CircularProgress />
+    </div>;
   } else {
     return null;
   }

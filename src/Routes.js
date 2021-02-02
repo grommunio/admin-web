@@ -11,7 +11,7 @@ import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import NotFound from "./containers/NotFound";
 import Loadable from 'react-loadable';
-import Loader from './components/LoadingMainView';
+import Loader from './components/Loading';
 import DefaultRedirect from "./components/DefaultRedirect";
 
 function makeLoadableComponent(loader) {
