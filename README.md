@@ -35,14 +35,23 @@ sudo apt install caddy
 
 #### Caddyfile
 
-You will find a file `Caddyfile.dev` in root directory of this repository.
-Copy this file to `./Caddyfile`. Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box. Further details are commented in `Caddyfile.dev` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
+You will find a file `Caddyfile.example` in root directory of this repository.
+Copy this file to `./Caddyfile`. Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box. Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
 
 ### Running caddy
 In separate terminal:
 ```
 caddy run
 ```
+
+If you get an error with `caddy administration endpoint: listen tcp 127.0.0.1:2019: bind: address already in use`, try
+```
+caddy stop && caddy run
+```
+
+### Accessing website
+
+If you followed above steps, you should now be able to access the running webapp in your browser on `localhost:4000`
 
 ## Build for production
 
