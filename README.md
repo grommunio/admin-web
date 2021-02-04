@@ -35,8 +35,16 @@ sudo apt install caddy
 
 #### Caddyfile
 
-You will find a file `Caddyfile.example` in root directory of this repository.
-Copy this file to `./Caddyfile`. Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box. Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
+You will find a file `Caddyfile.example` in root directory of this repository. Copy this file to `./Caddyfile`.
+```
+cp Caddyfile.example Caddyfile
+```
+Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box.
+In VM:
+```
+systemctl restart grammm-admin-api.service
+```
+Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
 
 ### Running caddy
 In separate terminal:
