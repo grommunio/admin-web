@@ -43,6 +43,12 @@ cp Caddyfile.example Caddyfile
 ```
 
 Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box.
+
+In VM:
+```
+systemctl restart grammm-admin-api.service
+```
+
 The Caddyfile includes these necessary lines
 ```
 :4000 # port to run caddy on
