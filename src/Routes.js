@@ -35,8 +35,8 @@ const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/
 //const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
 //const AsyncMlists = makeLoadableComponent(() => import("./containers/Mlists"));
 //const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MlistDetails"));
-//const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
-//const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
+const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
+const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
 //const AsyncMembers = makeLoadableComponent(() => import("./containers/Members"));
 //const AsyncMemberDetails = makeLoadableComponent(() => import("./containers/MemberDetails"));
 //const AsyncBaseSetup = makeLoadableComponent(() => import("./containers/BaseSetup"));
@@ -166,6 +166,26 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/ldap`}
         exact
         component={AsyncLdap}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes`}
+        exact
+        component={AsyncClasses}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes/:classID`}
+        exact
+        component={AsyncClassDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

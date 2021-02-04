@@ -23,11 +23,11 @@ import Orgs from '@material-ui/icons/GroupWork';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
 import MLists from '@material-ui/icons/Email';
-import Classes from '@material-ui/icons/Class';
 import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 */
+import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grammm_logo_light.svg';
@@ -270,6 +270,17 @@ class NavigationLinks extends PureComponent {
                           <ListItemText primary={t('Public folders')}/>
                         </Grid>
                       </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
+                        onClick={this.handleNavigation(ID + '/classes')}
+                        selected={location.pathname.startsWith('/' + ID + '/classes')}
+                      >
+                        <Grid container alignItems="center">
+                          <Classes className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Classes')}/>
+                        </Grid>
+                      </ListItem>
                       {/*<ListItem
                         className={classes.li}
                         button
@@ -391,17 +402,6 @@ class NavigationLinks extends PureComponent {
                   <Grid container alignItems="center">
                     <MLists className={classes.nestedIcon}/>
                     <ListItemText primary={t('Mail lists')}/>
-                  </Grid>
-                </ListItem>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('classes')}
-                  selected={location.pathname.startsWith('/classes')}
-                >
-                  <Grid container alignItems="center">
-                    <Classes className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Classes')}/>
                   </Grid>
                 </ListItem>
                 <ListItem

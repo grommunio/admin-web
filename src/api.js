@@ -544,27 +544,33 @@ export function deleteMlist(id) {
   CLASSES
 */
 
-export function classes() {
+export function classes(domainID, params) {
   return async () => {
-    return await get('/classes');
+    return await get(buildQuery('/' + domainID + '/classes', params));
   };
 }
 
-export function addClass(Class) {
+export function addClass(domainID, _class) {
   return async () => {
-    return await post('/classes', Class);
+    return await post('/' + domainID + '/classes', _class);
   };
 }
 
-export function editClass(Class) {
+export function editClass(domainID, _class) {
   return async () => {
-    return await patch('/classes/' + Class.ID, Class);
+    return await patch('/' + domainID + '/classes/' + _class.ID, { ..._class, ID: undefined });
   };
 }
 
-export function deleteClass(id) {
+export function deleteClass(domainID, id) {
   return async () => {
-    return await yeet('/classes/' + id);
+    return await yeet('/' + domainID + '/classes/' + id);
+  };
+}
+
+export function classDetails(domainID, id) {
+  return async () => {
+    return await get('/domains/' + domainID + '/classes/' + id);
   };
 }
 
