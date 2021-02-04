@@ -33,8 +33,8 @@ const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/Group
 ////const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
 //const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
-//const AsyncMlists = makeLoadableComponent(() => import("./containers/Mlists"));
-//const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MlistDetails"));
+const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
+const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MListDetails"));
 const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
 const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
 //const AsyncMembers = makeLoadableComponent(() => import("./containers/Members"));
@@ -206,6 +206,26 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/groups/:groupID`}
         exact
         component={AsyncGroupDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists`}
+        exact
+        component={AsyncMlists}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists/:mlistID`}
+        exact
+        component={AsyncMlistDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

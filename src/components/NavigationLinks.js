@@ -17,12 +17,12 @@ import People from '@material-ui/icons/People';
 import Domains from '@material-ui/icons/Domain';
 import Folder from '@material-ui/icons/Folder';
 import Ldap from '@material-ui/icons/Contacts';
+import MLists from '@material-ui/icons/Email';
 /*
 import Mail from '@material-ui/icons/Mail';
 import Orgs from '@material-ui/icons/GroupWork';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
-import MLists from '@material-ui/icons/Email';
 import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -293,6 +293,17 @@ class NavigationLinks extends PureComponent {
                           <ListItemText primary={t('Groups')}/>
                         </Grid>
                       </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
+                        onClick={this.handleNavigation(ID + '/mailLists')}
+                        selected={location.pathname.startsWith('/' + ID + '/mailLists')}
+                      >
+                        <Grid container alignItems="center">
+                          <MLists className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Mail lists')}/>
+                        </Grid>
+                      </ListItem>
                       {/*<ListItem
                         className={classes.li}
                         button
@@ -403,17 +414,6 @@ class NavigationLinks extends PureComponent {
                   <Grid container alignItems="center">
                     <Forwards className={classes.nestedIcon}/>
                     <ListItemText primary={t('Forwards')}/>
-                  </Grid>
-                </ListItem>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('mailLists')}
-                  selected={location.pathname.startsWith('/mailLists')}
-                >
-                  <Grid container alignItems="center">
-                    <MLists className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Mail lists')}/>
                   </Grid>
                 </ListItem>
                 <ListItem
