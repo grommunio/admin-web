@@ -522,27 +522,33 @@ export function deleteForward(id) {
   MLISTS
 */
 
-export function mlists() {
+export function mlists(domainID, params) {
   return async () => {
-    return await get('/mlists');
+    return await get(buildQuery('/' + domainID + '/mlists', params));
   };
 }
 
-export function addMlist(mlist) {
+export function addMlist(domainID, mlist) {
   return async () => {
-    return await post('/mlists', mlist);
+    return await post('/' + domainID + '/mlists', mlist);
   };
 }
 
-export function editMlist(mlist) {
+export function editMlist(domainID, mlist) {
   return async () => {
-    return await patch('/mlists/' + mlist.ID, mlist);
+    return await patch('/' + domainID + '/mlists/' + mlist.ID, { ...mlist, ID: undefined });
   };
 }
 
-export function deleteMlist(id) {
+export function deleteMlist(domainID, id) {
   return async () => {
-    return await yeet('/mlists/' + id);
+    return await yeet('/' + domainID + '/mlists/' + id);
+  };
+}
+
+export function mlistDetails(domainID, id) {
+  return async () => {
+    return await get('/' + domainID + '/mlists/' + id);
   };
 }
 
