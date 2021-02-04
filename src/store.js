@@ -8,7 +8,7 @@ import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 // Keep alphabetically ordered
 import authReducer from './reducers/auth';
-//import classesReducer from './reducers/classes';
+import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
@@ -31,6 +31,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   combineReducers({
     auth: authReducer,
+    _classes: classesReducer,
     dashboard: dashboardReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
