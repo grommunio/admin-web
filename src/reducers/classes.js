@@ -13,7 +13,7 @@ import { addItem } from '../utils';
 const defaultState = {
   loading: false,
   error: null,
-  Classes: [{ID: 1, name: 'heh'}],
+  Classes: [],
   count: 0,
 };
 

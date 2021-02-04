@@ -27,6 +27,7 @@ import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 */
+import Groups from '@material-ui/icons/GroupWork';
 import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
@@ -279,6 +280,17 @@ class NavigationLinks extends PureComponent {
                         <Grid container alignItems="center">
                           <Classes className={classes.nestedIcon}/>
                           <ListItemText primary={t('Classes')}/>
+                        </Grid>
+                      </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
+                        onClick={this.handleNavigation(ID + '/groups')}
+                        selected={location.pathname.startsWith('/' + ID + '/groups')}
+                      >
+                        <Grid container alignItems="center">
+                          <Groups className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Groups')}/>
                         </Grid>
                       </ListItem>
                       {/*<ListItem

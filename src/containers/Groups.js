@@ -11,14 +11,14 @@ import { Paper, Typography, Button, Grid,
   TableSortLabel, TableBody, IconButton } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
-import { fetchClassesData, deleteClassData } from '../actions/classes';
+import { fetchGroupsData, deleteGroupData } from '../actions/groups';
 import TopBar from '../components/TopBar';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
-import AddClass from '../components/Dialogs/AddClass';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import AddGroup from '../components/Dialogs/AddGroup';
 
 const styles = theme => ({
   root: {
@@ -81,7 +81,7 @@ const styles = theme => ({
   },
 });
 
-class Classes extends Component {
+class Groups extends Component {
 
   state = {
     snackbar: null,
@@ -95,18 +95,18 @@ class Classes extends Component {
   }
 
   columns = [
-    { label: 'Classname', value: 'name' },
+    { label: 'Groupname', value: 'name' },
   ]
 
   handleScroll = () => {
-    const { _classes } = this.props;
-    if((_classes.Classes.length >= _classes.count)) return;
+    const { groups } = this.props;
+    if((groups.Groups.length >= groups.count)) return;
     if (
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if(!_classes.loading) this.fetchClasses({
+      if(!groups.loading) this.fetchGroups({
         sort: orderBy + ',' + order,
         offset,
         match: match || undefined,
@@ -118,10 +118,10 @@ class Classes extends Component {
   }
 
   componentDidMount() {
-    this.fetchClasses({ sort: 'name,asc' });
+    this.fetchGroups({ sort: 'name,asc' });
   }
 
-  fetchClasses(params) {
+  fetchGroups(params) {
     const { fetch, domain } = this.props;
     fetch(domain.ID, params)
       .catch(msg => this.setState({ snackbar: msg }));
@@ -135,9 +135,9 @@ class Classes extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleDelete = _class => event => {
+  handleDelete = group => event => {
     event.stopPropagation();
-    this.setState({ deleting: _class });
+    this.setState({ deleting: group });
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
@@ -148,9 +148,9 @@ class Classes extends Component {
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
-  handleEdit = _class => () => {
+  handleEdit = group => () => {
     const { history, domain } = this.props;
-    history.push('/' + domain.ID + '/classes/' + _class.ID, { ..._class });
+    history.push('/' + domain.ID + '/groups/' + group.ID, { ...group });
   }
 
   handleNavigation = path => event => {
@@ -178,13 +178,13 @@ class Classes extends Component {
 
   debouceFetch = debounce(value => {
     const { order, orderBy } = this.state;
-    this.fetchClasses({ match: value || undefined, sort: orderBy + ',' + order });
+    this.fetchGroups({ match: value || undefined, sort: orderBy + ',' + order });
   }, 200)
 
   handleCheckClose = () => this.setState({ checking: false });
 
   render() {
-    const { classes, t, _classes, domain } = this.props;
+    const { classes, t, groups, domain } = this.props;
     const { snackbar, match, orderBy, order, adding, deleting } = this.state;
 
     return (
@@ -197,7 +197,7 @@ class Classes extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Classes")}
+            {t("Groups")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
@@ -208,7 +208,7 @@ class Classes extends Component {
               onClick={this.handleAdd}
               className={classes.newButton}
             >
-              {t('New class')}
+              {t('New group')}
             </Button>
             <div className={classes.actions}>
               <TextField
@@ -248,7 +248,7 @@ class Classes extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {_classes.Classes.map((obj, idx) =>
+                {groups.Groups.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.name}</TableCell>
                     <TableCell align="right">
@@ -260,7 +260,7 @@ class Classes extends Component {
                 )}
               </TableBody>
             </Table>
-            {(_classes.Classes.length < _classes.count) && <Grid container justify="center">
+            {(groups.Groups.length < groups.count) && <Grid container justify="center">
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper>
@@ -268,7 +268,7 @@ class Classes extends Component {
             snackbar={snackbar}
             onClose={() => this.setState({ snackbar: '' })}
           />
-          <AddClass
+          <AddGroup
             open={adding}
             onSuccess={this.handleAddingSuccess}
             onError={this.handleAddingError}
@@ -291,30 +291,30 @@ class Classes extends Component {
   }
 }
 
-Classes.propTypes = {
+Groups.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  _classes: PropTypes.object.isRequired,
+  groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  return { _classes: state._classes };
+  return { groups: state.groups };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, params) => {
-      await dispatch(fetchClassesData(domainID, params)).catch(error => Promise.reject(error));
+      await dispatch(fetchGroupsData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
-      await dispatch(deleteClassData(domainID, id)).catch(error => Promise.reject(error));
+      await dispatch(deleteGroupData(domainID, id)).catch(error => Promise.reject(error));
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Classes)));
+  withTranslation()(withStyles(styles)(Groups)));
