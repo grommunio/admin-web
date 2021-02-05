@@ -5,7 +5,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
-  CircularProgress, 
+  CircularProgress,
+  MenuItem, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -27,9 +28,27 @@ const styles = theme => ({
 class AddMList extends PureComponent {
 
   state = {
-    name: '',
+    listname: '',
+    listType: 0,
+    listPrivilege: 0,
+    associations: '',
+    specifieds: '',
     loading: false,
   }
+
+  listTypes = [
+    { ID: 0, name: "Normal" },
+    { ID: 1, name: "Group" },
+    { ID: 2, name: "Domain" },
+  ]
+
+  listPrivileges = [
+    { ID: 0, name: "All" },
+    { ID: 1, name: "Internal" },
+    { ID: 2, name: "Domain" },
+    { ID: 3, name: "Specific" },
+    { ID: 4, name: "Outgoing" },
+  ]
 
   handleInput = field => event => {
     this.setState({
@@ -37,28 +56,55 @@ class AddMList extends PureComponent {
     });
   }
 
+  handleTypeChange = event => {
+    const { associations } = this.state;
+    const val = event.target.value;
+    this.setState({
+      listType: val,
+      associations: val === 0 ? associations : '', /* Associations only available if type "all" */
+    });
+  }
+
+  handlePrivilegeChange = event => {
+    const { specifieds } = this.state;
+    const val = event.target.value;
+    this.setState({
+      listPrivilege: val,
+      specifieds: val === 3 ? specifieds : '', /* Specifieds only available if privilege "specific" */
+    });
+  }
+
   handleAdd = () => {
-    const { add, domain } = this.props;
-    const { name } = this.state;
+    const { add, domain, onSuccess, onError } = this.props;
+    const { listname, listType, listPrivilege, associations, specifieds } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
-      name,
+      listname,
+      listType,
+      listPrivilege,
+      /* Strip whitespaces and split on ',' */
+      associations: associations ? associations.replace(/\s/g, "").split(',') : undefined, 
+      specifieds: specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
     })
       .then(() => {
         this.setState({
-          name: '',
+          listname: '',
+          listType: 0,
+          listPrivilege: 0,
+          associations: '',
+          specifieds: '',
         });
-        this.props.onSuccess();
+        onSuccess();
       })
       .catch(error => {
-        this.props.onError(error);
+        onError(error);
         this.setState({ loading: false });
       });
   }
 
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { name, loading } = this.state;
+    const { listname, listType, listPrivilege, associations, specifieds, loading } = this.state;
 
     return (
       <Dialog
@@ -74,11 +120,53 @@ class AddMList extends PureComponent {
               className={classes.input} 
               label={t("Mail list name")} 
               fullWidth 
-              value={name || ''}
-              onChange={this.handleInput('name')}
+              value={listname || ''}
+              onChange={this.handleInput('listname')}
               autoFocus
               required
             />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Type")}
+              fullWidth
+              value={listType || 0}
+              onChange={this.handleTypeChange}
+            >
+              {this.listTypes.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Privilege")}
+              fullWidth
+              value={listPrivilege || 0}
+              onChange={this.handlePrivilegeChange}
+            >
+              {this.listPrivileges.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {listType === 0 && <TextField 
+              className={classes.input} 
+              label={t("Recipients (separated by ',')")} 
+              fullWidth 
+              value={associations || ''}
+              onChange={this.handleInput('associations')}
+            />}
+            {listPrivilege === 3 && <TextField 
+              className={classes.input} 
+              label={t("Senders (separated by ','")} 
+              fullWidth 
+              value={specifieds || ''}
+              onChange={this.handleInput('specifieds')}
+            />}
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -93,7 +181,7 @@ class AddMList extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={loading || !name}
+            disabled={loading || !listname}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>

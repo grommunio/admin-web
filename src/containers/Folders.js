@@ -117,7 +117,7 @@ class Folders extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false });
+  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
 
   handleAddingError = error => this.setState({ snackbar: error });
 

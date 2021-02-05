@@ -12,6 +12,7 @@ import {
   TextField,
   FormControl,
   Button,
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
@@ -68,6 +69,32 @@ class MListDetails extends PureComponent {
     });
   }
 
+  listTypes = [
+    { ID: 0, name: "Normal" },
+    { ID: 1, name: "Group" },
+    { ID: 2, name: "Domain" },
+  ]
+
+  listPrivileges = [
+    { ID: 0, name: "All" },
+    { ID: 1, name: "Internal" },
+    { ID: 2, name: "Domain" },
+    { ID: 3, name: "Specific" },
+    { ID: 4, name: "Outgoing" },
+  ]
+
+  handlePrivilegeChange = event => {
+    const { mList } = this.state;
+    const val = event.target.value;
+    this.setState({
+      mList: {
+        ...mList,
+        listPrivilege: val,
+        specifieds: val === 3 ? mList.specifieds : '', /* Specifieds only available if privilege "specific" */
+      },
+    });
+  }
+
   handleInput = field => event => {
     this.setState({
       mList: {
@@ -83,6 +110,11 @@ class MListDetails extends PureComponent {
     const { mList } = this.state;
     edit(domain.ID, {
       ...mList,
+      /* Strip whitespaces and split on ',' */
+      associations: Array.isArray(mList.associations) ? mList.associations :
+        mList.associations ? mList.associations.replace(/\s/g, "").split(',') : undefined, 
+      specifieds: Array.isArray(mList.specifieds) ? mList.specifieds :
+        mList.specifieds ? mList.specifieds.replace(/\s/g, "").split(',') : undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -97,7 +129,7 @@ class MListDetails extends PureComponent {
   render() {
     const { classes, t, domain } = this.props;
     const { mList, snackbar } = this.state;
-    const { name } = mList;
+    const { listname, listType, listPrivilege, associations, specifieds } = mList;
 
     return (
       <div className={classes.root}>
@@ -114,13 +146,61 @@ class MListDetails extends PureComponent {
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField
-                label={t("Name")} 
+              <TextField 
                 className={classes.input} 
-                value={name || ''}
-                onChange={this.handleInput('name')}
+                label={t("Mail list name")} 
+                fullWidth 
+                value={listname || ''}
                 autoFocus
+                required
+                inputProps={{
+                  disabled: true,
+                }}
               />
+              <TextField
+                select
+                className={classes.input}
+                label={t("Type")}
+                fullWidth
+                value={listType || 0}
+                inputProps={{
+                  disabled: true,
+                }}
+              >
+                {this.listTypes.map((status, key) => (
+                  <MenuItem key={key} value={status.ID}>
+                    {status.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                className={classes.input}
+                label={t("Privilege")}
+                fullWidth
+                value={listPrivilege || 0}
+                onChange={this.handlePrivilegeChange}
+              >
+                {this.listPrivileges.map((status, key) => (
+                  <MenuItem key={key} value={status.ID}>
+                    {status.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {listType === 0 && <TextField 
+                className={classes.input} 
+                label={t("Recipients (separated by ',')")} 
+                fullWidth 
+                value={associations || ''}
+                onChange={this.handleInput('associations')}
+              />}
+              {listPrivilege === 3 && <TextField 
+                className={classes.input} 
+                label={t("Senders (separated by ','")} 
+                fullWidth 
+                value={specifieds || ''}
+                onChange={this.handleInput('specifieds')}
+              />}
             </FormControl>
             <Button
               variant="text"

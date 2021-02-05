@@ -89,14 +89,20 @@ class MLists extends Component {
     deleting: false,
     checking: false,
     order: 'asc',
-    orderBy: 'name',
+    orderBy: 'listname',
     offset: 50,
     match: '',
   }
 
   columns = [
-    { label: 'Mail list name', value: 'name' },
+    { label: 'Mail list name', value: 'listname' },
+    { label: 'Type', value: 'listType' },
+    { label: 'Privilege', value: 'listPrivilege' },
   ]
+
+  listTypes = ['Normal', 'Group', 'Domain']
+
+  listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing']
 
   handleScroll = () => {
     const { mLists } = this.props;
@@ -118,7 +124,7 @@ class MLists extends Component {
   }
 
   componentDidMount() {
-    this.fetchMLists({ sort: 'name,asc' });
+    this.fetchMLists({ sort: 'listname,asc' });
   }
 
   fetchMLists(params) {
@@ -129,7 +135,7 @@ class MLists extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!' });
+  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
 
   handleAddingClose = () => this.setState({ adding: false });
 
@@ -250,7 +256,9 @@ class MLists extends Component {
               <TableBody>
                 {mLists.MLists.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.name}</TableCell>
+                    <TableCell>{obj.listname}</TableCell>
+                    <TableCell>{this.listTypes[obj.listType]}</TableCell>
+                    <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
@@ -281,7 +289,7 @@ class MLists extends Component {
             onSuccess={this.handleDeleteSuccess}
             onError={this.handleDeleteError}
             onClose={this.handleDeleteClose}
-            item={deleting.name}
+            item={deleting.listname}
             id={deleting.ID}
             domainID={domain.ID}
           />
