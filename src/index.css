@@ -1,5 +1,6 @@
 /* || General styles */
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -20,68 +21,68 @@ code {
 }
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 400;
-  src: url('./fonts/Roboto-Regular.ttf'); /* IE9 Compat Modes */
-  src: local('Roboto'), local('Roboto'),
-       url('./fonts/Roboto-Regular.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('./fonts/Roboto-Regular.ttf') format('woff2'), /* Super Modern Browsers */
-       url('./fonts/Roboto-Regular.ttf') format('woff'), /* Modern Browsers */
-       url('./fonts/Roboto-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('./fonts/Roboto-Regular.ttf') format('svg'); /* Legacy iOS */
+  src: url("./fonts/Roboto-Regular.ttf"); /* IE9 Compat Modes */
+  src: local("Roboto"), local("Roboto"),
+    url("./fonts/Roboto-Regular.ttf") format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/Roboto-Regular.ttf") format("woff2"),
+    /* Super Modern Browsers */ url("./fonts/Roboto-Regular.ttf") format("woff"),
+    /* Modern Browsers */ url("./fonts/Roboto-Regular.ttf") format("truetype"),
+    /* Safari, Android, iOS */ url("./fonts/Roboto-Regular.ttf") format("svg"); /* Legacy iOS */
 }
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 500;
-  src: url('./fonts/Roboto-Medium.ttf'); /* IE9 Compat Modes */
-  src: local('Roboto'), local('Roboto'),
-       url('./fonts/Roboto-Medium.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('./fonts/Roboto-Medium.ttf') format('woff2'), /* Super Modern Browsers */
-       url('./fonts/Roboto-Medium.ttf') format('woff'), /* Modern Browsers */
-       url('./fonts/Roboto-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('./fonts/Roboto-Medium.ttf') format('svg'); /* Legacy iOS */
+  src: url("./fonts/Roboto-Medium.ttf"); /* IE9 Compat Modes */
+  src: local("Roboto"), local("Roboto"),
+    url("./fonts/Roboto-Medium.ttf") format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/Roboto-Medium.ttf") format("woff2"),
+    /* Super Modern Browsers */ url("./fonts/Roboto-Medium.ttf") format("woff"),
+    /* Modern Browsers */ url("./fonts/Roboto-Medium.ttf") format("truetype"),
+    /* Safari, Android, iOS */ url("./fonts/Roboto-Medium.ttf") format("svg"); /* Legacy iOS */
 }
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 300;
-  src: url('./fonts/Roboto-Light.ttf'); /* IE9 Compat Modes */
-  src: local('Roboto'), local('Roboto'),
-       url('./fonts/Roboto-Light.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('./fonts/Roboto-Light.ttf') format('woff2'), /* Super Modern Browsers */
-       url('./fonts/Roboto-Light.ttf') format('woff'), /* Modern Browsers */
-       url('./fonts/Roboto-Light.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('./fonts/Roboto-Light.ttf') format('svg'); /* Legacy iOS */
+  src: url("./fonts/Roboto-Light.ttf"); /* IE9 Compat Modes */
+  src: local("Roboto"), local("Roboto"),
+    url("./fonts/Roboto-Light.ttf") format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/Roboto-Light.ttf") format("woff2"),
+    /* Super Modern Browsers */ url("./fonts/Roboto-Light.ttf") format("woff"),
+    /* Modern Browsers */ url("./fonts/Roboto-Light.ttf") format("truetype"),
+    /* Safari, Android, iOS */ url("./fonts/Roboto-Light.ttf") format("svg"); /* Legacy iOS */
 }
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 700;
-  src: url('./fonts/Roboto-Bold.ttf'); /* IE9 Compat Modes */
-  src: local('Roboto'), local('Roboto'),
-       url('./fonts/Roboto-Bold.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('./fonts/Roboto-Bold.ttf') format('woff2'), /* Super Modern Browsers */
-       url('./fonts/Roboto-Bold.ttf') format('woff'), /* Modern Browsers */
-       url('./fonts/Roboto-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('./fonts/Roboto-Bold.ttf') format('svg'); /* Legacy iOS */
+  src: url("./fonts/Roboto-Bold.ttf"); /* IE9 Compat Modes */
+  src: local("Roboto"), local("Roboto"),
+    url("./fonts/Roboto-Bold.ttf") format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/Roboto-Bold.ttf") format("woff2"),
+    /* Super Modern Browsers */ url("./fonts/Roboto-Bold.ttf") format("woff"),
+    /* Modern Browsers */ url("./fonts/Roboto-Bold.ttf") format("truetype"),
+    /* Safari, Android, iOS */ url("./fonts/Roboto-Bold.ttf") format("svg"); /* Legacy iOS */
 }
 
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-style: normal;
   font-weight: 900;
-  src: url('./fonts/Roboto-Black.ttf'); /* IE9 Compat Modes */
-  src: local('Roboto'), local('Roboto'),
-       url('./fonts/Roboto-Black.ttf') format('embedded-opentype'), /* IE6-IE8 */
-       url('./fonts/Roboto-Black.ttf') format('woff2'), /* Super Modern Browsers */
-       url('./fonts/Roboto-Black.ttf') format('woff'), /* Modern Browsers */
-       url('./fonts/Roboto-Black.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('./fonts/Roboto-Black.ttf') format('svg'); /* Legacy iOS */
+  src: url("./fonts/Roboto-Black.ttf"); /* IE9 Compat Modes */
+  src: local("Roboto"), local("Roboto"),
+    url("./fonts/Roboto-Black.ttf") format("embedded-opentype"),
+    /* IE6-IE8 */ url("./fonts/Roboto-Black.ttf") format("woff2"),
+    /* Super Modern Browsers */ url("./fonts/Roboto-Black.ttf") format("woff"),
+    /* Modern Browsers */ url("./fonts/Roboto-Black.ttf") format("truetype"),
+    /* Safari, Android, iOS */ url("./fonts/Roboto-Black.ttf") format("svg"); /* Legacy iOS */
 }
 
 /* || etc */
@@ -109,7 +110,7 @@ code {
   left: 0;
   right: 0;
   z-index: -1;
-  background-repeat:no-repeat;
+  background-repeat: no-repeat;
   background-position: center center;
   background-size: auto 30%;
   color: black;
@@ -132,16 +133,16 @@ code {
 
 /* Scrollbar Track */
 ::-webkit-scrollbar-track {
-  background:#2d323b; 
+  background: #2d323b;
 }
- 
+
 /* Scrollbar Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
   border-radius: 10px;
 }
 
 /* Scrollbar-Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #888; 
+  background: #888;
 }

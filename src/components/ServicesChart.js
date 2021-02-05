@@ -19,6 +19,9 @@ const styles = (theme) => ({
     flexWrap: "wrap",
     borderRadius: 8,
     padding: theme.spacing(0, 0, 2, 0),
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "center",
+    },
   },
   serviceContainer: {
     margin: theme.spacing(1, 2),

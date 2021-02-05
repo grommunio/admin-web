@@ -1,67 +1,74 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import TopBar from '../components/TopBar';
-import LoadChart from '../components/LoadChart';
-import MemoryChart from '../components/MemoryChart';
-import CPUPieChart from '../components/CPUPieChart';
-import MemoryPieChart from '../components/MemoryPieChart';
-import SwapPieChart from '../components/SwapPieChart';
-import DisksChart from '../components/DisksChart';
-import CPULineChart from '../components/CPULineChart';
-import ServicesChart from '../components/ServicesChart';
-import { Paper, Grid, Typography, IconButton } from '@material-ui/core';
-import Refresh from '@material-ui/icons/Update';
-import { connect } from 'react-redux';
-import { fetchDashboardData } from '../actions/dashboard';
-import { withTranslation } from 'react-i18next';
-import { fetchServicesData } from '../actions/services';
-import Feedback from '../components/Feedback';
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import TopBar from "../components/TopBar";
+import LoadChart from "../components/LoadChart";
+import MemoryChart from "../components/MemoryChart";
+import CPUPieChart from "../components/CPUPieChart";
+import MemoryPieChart from "../components/MemoryPieChart";
+import SwapPieChart from "../components/SwapPieChart";
+import DisksChart from "../components/DisksChart";
+import CPULineChart from "../components/CPULineChart";
+import ServicesChart from "../components/ServicesChart";
+import { Paper, Typography, IconButton } from "@material-ui/core";
+import Refresh from "@material-ui/icons/Update";
+import { connect } from "react-redux";
+import { fetchDashboardData } from "../actions/dashboard";
+import { withTranslation } from "react-i18next";
+import { fetchServicesData } from "../actions/services";
+import Feedback from "../components/Feedback";
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    display: 'flex',
     flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    flexDirection: 'column',
     padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-    overflow: 'auto',
-  }, 
+    overflowY: "scroll",
+    overflowX: "hidden",
+  },
   toolbar: theme.mixins.toolbar,
   flexRow: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   flexRowEnd: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
   chartTitle: {
     margin: theme.spacing(2, 3),
   },
   fixedPaper: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     borderRadius: 8,
+    minWidth: "300px",
   },
-  chipsPaper: {
-    display: 'flex',
-    flexWrap: 'wrap',
+  pieChartsPaper: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-around",
     borderRadius: 8,
     padding: theme.spacing(0, 0, 2, 0),
   },
+  pieChartContainer: {
+    minWidth: 300,
+  },
   iconButton: {
-    color: 'black',
+    color: "black",
+  },
+  paperGrid: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "1fr",
+    },
   },
   pageTitle: {
     margin: theme.spacing(2),
@@ -69,25 +76,21 @@ const styles = theme => ({
 });
 
 class Dashboard extends Component {
-
   componentDidMount() {
-    this.props.fetch()
-      .catch(msg => this.setState({ snackbar: msg }));
-    this.props.fetchServices()
-      .catch(msg => this.setState({ snackbar: msg }));
+    this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
+    this.props.fetchServices().catch((msg) => this.setState({ snackbar: msg }));
     this.fetchDashboard();
   }
 
   state = {
     snackbar: null,
-  }
+  };
 
   fetchInterval = null;
 
   fetchDashboard() {
     this.fetchInterval = setInterval(() => {
-      this.props.fetch()
-        .catch(msg => this.setState({ snackbar: msg }));
+      this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
     }, 10000);
   }
 
@@ -96,74 +99,67 @@ class Dashboard extends Component {
   }
 
   render() {
-    const { classes, t, cpuPercent, disks, memory, swap,
-      swapPercent, load, fetchServices } = this.props;
+    const {
+      classes,
+      t,
+      cpuPercent,
+      disks,
+      memory,
+      swap,
+      swapPercent,
+      load,
+      fetchServices,
+    } = this.props;
     const { snackbar } = this.state;
 
-    return(
+    return (
       <div className={classes.root}>
-        <TopBar/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Dashboard")}
-          </Typography>
-          <Grid container>
-            <Grid item xs={12}>
-              <Paper className={classes.fixedPaper} elevation={1}>
-                <div className={classes.flexRow}>
-                  <Typography className={classes.chartTitle} variant="h5">
-                    {t('Services')}
-                  </Typography>
-                  <div className={classes.flexRowEnd}>
-                    <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
-                      <Refresh color="primary"/>
-                    </IconButton>
-                  </div>
-                </div>
-                <ServicesChart />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.chipsPaper} elevation={1}>
-                <Grid container>
-                  <Grid item xs={4}>
-                    <CPUPieChart cpuPercent={cpuPercent}/>
-                  </Grid>
-                  <Grid item xs={4} className={classes.fixedPaper}>
-                    <MemoryPieChart memory={memory} />
-                  </Grid>
-                  <Grid item xs={4} className={classes.fixedPaper}>
-                    <SwapPieChart swap={swap} swapPercent={swapPercent}/>
-                  </Grid>
-                </Grid> 
-              </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={1}>
-                <CPULineChart cpuPercent={cpuPercent}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={1}>
-                <MemoryChart memory={memory} />
-              </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={1}>
-                <DisksChart disks={disks}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={6}>
-              <Paper className={classes.fixedPaper} elevation={1}>
-                <LoadChart load={load} />
-              </Paper>
-            </Grid>
-          </Grid>
+        <TopBar />
+        <div className={classes.toolbar} />
+        <Typography variant="h2" className={classes.pageTitle}>
+          {t("Dashboard")}
+        </Typography>
+        <Paper className={classes.fixedPaper} elevation={1}>
+          <div className={classes.flexRow}>
+            <Typography className={classes.chartTitle} variant="h5">
+              {t("Services")}
+            </Typography>
+            <div className={classes.flexRowEnd}>
+              <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
+                <Refresh color="primary" />
+              </IconButton>
+            </div>
+          </div>
+          <ServicesChart />
+        </Paper>
+        <Paper className={classes.pieChartsPaper} elevation={1}>
+          <div className={classes.pieChartContainer}>
+            <CPUPieChart cpuPercent={cpuPercent} />
+          </div>
+          <div className={classes.pieChartContainer}>
+            <MemoryPieChart memory={memory} />
+          </div>
+          <div className={classes.pieChartContainer}>
+            <SwapPieChart swap={swap} swapPercent={swapPercent} />
+          </div>
+        </Paper>
+        <div className={classes.paperGrid}>
+          <Paper className={classes.fixedPaper} elevation={1}>
+            <CPULineChart cpuPercent={cpuPercent} />
+          </Paper>
+          <Paper className={classes.fixedPaper} elevation={1}>
+            <MemoryChart memory={memory} />
+          </Paper>
+          <Paper className={classes.fixedPaper} elevation={1}>
+            <DisksChart disks={disks} />
+          </Paper>
+          <Paper className={classes.fixedPaper} elevation={1}>
+            <LoadChart load={load} />
+          </Paper>
         </div>
         <Feedback
           snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
+          onClose={() => this.setState({ snackbar: "" })}
         />
       </div>
     );
@@ -183,20 +179,26 @@ Dashboard.propTypes = {
   load: PropTypes.array.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     ...state.dashboard.Dashboard,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    fetch: async () => await dispatch(fetchDashboardData())
-      .catch(error => Promise.reject(error)),
-    fetchServices: async () => await dispatch(fetchServicesData())
-      .catch(error => Promise.reject(error)),
+    fetch: async () =>
+      await dispatch(fetchDashboardData()).catch((error) =>
+        Promise.reject(error)
+      ),
+    fetchServices: async () =>
+      await dispatch(fetchServicesData()).catch((error) =>
+        Promise.reject(error)
+      ),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Dashboard)));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTranslation()(withStyles(styles)(Dashboard)));
