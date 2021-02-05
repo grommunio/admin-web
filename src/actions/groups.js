@@ -28,8 +28,8 @@ export function fetchGroupDetails(domainID, id) {
   return async dispatch => {
     await dispatch(groupsDataFetch(true));
     try {
-      const groupsJSONData = await dispatch(groupDetails(domainID, id));
-      await dispatch(groupsDataReceived(groupsJSONData));
+      const group = await dispatch(groupDetails(domainID, id));
+      return Promise.resolve(group);
     } catch(err) {
       console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));
@@ -54,8 +54,8 @@ export function addGroupData(domainID, group) {
 export function deleteGroupData(domainID, id) {
   return async dispatch => {
     try {
+      await dispatch(deleteGroup(domainID, id));
       await dispatch(groupDataDelete(domainID, id));
-      await dispatch(deleteGroup(id));
     } catch(err) {
       console.error('failed to delete group data', err); // eslint-disable-line no-console
       await dispatch(groupsDataError(err));

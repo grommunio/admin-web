@@ -63,6 +63,7 @@ class GroupDetails extends PureComponent {
     const { domain, fetch } = this.props;
     const group = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    console.log(group);
     this.setState({
       group: group || {},
     });
@@ -97,11 +98,11 @@ class GroupDetails extends PureComponent {
   render() {
     const { classes, t, domain } = this.props;
     const { group, snackbar } = this.state;
-    const { name } = group;
+    const { groupname, title } = group;
 
     return (
       <div className={classes.root}>
-        <TopBar title={t("Classes")}/>
+        <TopBar title={t("Groups")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
@@ -115,10 +116,17 @@ class GroupDetails extends PureComponent {
             </Grid>
             <FormControl className={classes.form}>
               <TextField
-                label={t("Name")} 
+                label={t("Group name")} 
                 className={classes.input} 
-                value={name || ''}
-                onChange={this.handleInput('name')}
+                value={groupname || ''}
+                onChange={this.handleInput('groupname')}
+                autoFocus
+              />
+              <TextField
+                label={t("Title")} 
+                className={classes.input} 
+                value={title || ''}
+                onChange={this.handleInput('title')}
                 autoFocus
               />
             </FormControl>

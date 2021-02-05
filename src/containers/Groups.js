@@ -89,13 +89,14 @@ class Groups extends Component {
     deleting: false,
     checking: false,
     order: 'asc',
-    orderBy: 'name',
+    orderBy: 'groupname',
     offset: 50,
     match: '',
   }
 
   columns = [
-    { label: 'Groupname', value: 'name' },
+    { label: 'Groupname', value: 'groupname' },
+    { label: 'Title', value: 'title' },
   ]
 
   handleScroll = () => {
@@ -118,7 +119,7 @@ class Groups extends Component {
   }
 
   componentDidMount() {
-    this.fetchGroups({ sort: 'name,asc' });
+    this.fetchGroups({ sort: 'groupname,asc' });
   }
 
   fetchGroups(params) {
@@ -250,7 +251,8 @@ class Groups extends Component {
               <TableBody>
                 {groups.Groups.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.name}</TableCell>
+                    <TableCell>{obj.groupname}</TableCell>
+                    <TableCell>{obj.title}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
@@ -281,7 +283,7 @@ class Groups extends Component {
             onSuccess={this.handleDeleteSuccess}
             onError={this.handleDeleteError}
             onClose={this.handleDeleteClose}
-            item={deleting.name}
+            item={deleting.groupname}
             id={deleting.ID}
             domainID={domain.ID}
           />

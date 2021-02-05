@@ -27,7 +27,7 @@ const styles = theme => ({
 class AddGroup extends PureComponent {
 
   state = {
-    name: '',
+    groupname: '',
     loading: false,
   }
 
@@ -39,14 +39,16 @@ class AddGroup extends PureComponent {
 
   handleAdd = () => {
     const { add, domain } = this.props;
-    const { name } = this.state;
+    const { groupname, title } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
-      name,
+      groupname,
+      title,
     })
       .then(() => {
         this.setState({
-          name: '',
+          groupname: '',
+          title: '',
         });
         this.props.onSuccess();
       })
@@ -58,7 +60,7 @@ class AddGroup extends PureComponent {
 
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { name, loading } = this.state;
+    const { groupname, title, loading } = this.state;
 
     return (
       <Dialog
@@ -74,10 +76,17 @@ class AddGroup extends PureComponent {
               className={classes.input} 
               label={t("Group name")} 
               fullWidth 
-              value={name || ''}
-              onChange={this.handleInput('name')}
+              value={groupname || ''}
+              onChange={this.handleInput('groupname')}
               autoFocus
               required
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Title")} 
+              fullWidth 
+              value={title || ''}
+              onChange={this.handleInput('title')}
             />
           </FormControl>
         </DialogContent>
@@ -93,7 +102,7 @@ class AddGroup extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={loading || !name}
+            disabled={loading || !groupname}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
