@@ -129,7 +129,7 @@ class Groups extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!' });
+  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
 
   handleAddingClose = () => this.setState({ adding: false });
 
