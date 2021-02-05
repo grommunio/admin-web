@@ -1,108 +1,137 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
-import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import { Typography, Chip, IconButton, CircularProgress } from '@material-ui/core';
-import {
-  BarChart,
-  Bar,
-  Legend,
-} from 'recharts';
-import Stop from '@material-ui/icons/HighlightOff';
-import Restart from '@material-ui/icons/Replay';
-import Start from '@material-ui/icons/PlayCircleFilledOutlined';
-import { connect } from 'react-redux';
-import { serviceAction } from '../actions/services';
-import { withTranslation } from 'react-i18next';
-import green from '../colors/green';
-import red from '../colors/red';
-import grey from '../colors/grey';
-import orange from '../colors/orange';
-import Feedback from './Feedback';
+import React, { Component } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { Typography, IconButton, CircularProgress } from "@material-ui/core";
+import Stop from "@material-ui/icons/HighlightOff";
+import Restart from "@material-ui/icons/Replay";
+import Start from "@material-ui/icons/PlayCircleFilledOutlined";
+import { connect } from "react-redux";
+import { serviceAction } from "../actions/services";
+import { withTranslation } from "react-i18next";
+import Feedback from "./Feedback";
 
-const styles = theme => ({
-  chipLabel: {
-    width: 220,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  chipsPaper: {
-    display: 'flex',
-    flexWrap: 'wrap',
+const styles = (theme) => ({
+  servicePaper: {
+    display: "flex",
+    flexWrap: "wrap",
     borderRadius: 8,
     padding: theme.spacing(0, 0, 2, 0),
   },
-  chipContainer: {
+  serviceContainer: {
     margin: theme.spacing(1, 2),
-    display: 'flex',
-    alignItems: 'center',
-    flex: '0 1 auto',
-    minWidth: 250,
+  },
+  serviceBox: {
+    width: 220,
+    borderRadius: 25,
+    padding: "2px 10px 2px 15px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    cursor: "default",
+    transition: "transform 0.2s ease",
+
+    "&:hover": {
+      transform: "scale(1.1)",
+    },
   },
   chipIcon: {
     padding: 6,
   },
   iconButton: {
-    color: 'black',
+    color: "#fff",
   },
   activeChip: {
-    backgroundColor: green['500'],
+    color: "#fff",
+    background: "linear-gradient(150deg, #56ab2f, #a8e063)",
   },
   errorChip: {
-    backgroundColor: red['500'],
+    color: "#fff",
+    fontWeight: "bold",
+    background: "linear-gradient(150deg, #FF512F, #DD2476)",
   },
   inactiveChip: {
-    color: 'white',
-    backgroundColor: grey['700'],
+    color: "white",
+    background: "linear-gradient(150deg, #232526, #414345)",
   },
   failedChip: {
-    backgroundColor: red['800'],
+    background: "linear-gradient(150deg, #000000, #434343)",
   },
   activatingChip: {
-    backgroundColor: orange['500'],
+    background: "linear-gradient(150deg, #FFB75E, #ED8F03)",
   },
   deactivatingChip: {
-    backgroundColor: grey['300'],
+    background: "linear-gradient(150deg, #F2F2F2, #EAEAEA)",
   },
   legendContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: theme.spacing(0, 0, 2, 0),
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 10,
+  },
+  legendItem: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 10px",
+  },
+  rectangle: {
+    display: "inline-block",
+    width: 15,
+    height: 10,
+    marginRight: 5,
+    backgroundColor: "#abc",
   },
   serviceName: {
-    fontWeight: 300,
+    fontWeight: 400,
   },
 });
 
 class ServicesChart extends Component {
-
   state = {
     snackbar: null,
     starting: false,
     restarting: false,
     stoping: false,
-  }
+  };
 
   handleServiceAction = (service, action) => () => {
-    this.setState({ [action + 'ing']: service.name });
-    this.props.serviceAction(service.unit, action)
-      .then(() => this.setState({ [action + 'ing']: false }))
-      .catch(msg => this.setState({ snackbar: msg, [action + 'ing']: false }));
-  }
+    this.setState({ [action + "ing"]: service.name });
+    this.props
+      .serviceAction(service.unit, action)
+      .then(() => this.setState({ [action + "ing"]: false }))
+      .catch((msg) =>
+        this.setState({ snackbar: msg, [action + "ing"]: false })
+      );
+  };
 
   getChipColor(state) {
-    const { activeChip, errorChip, inactiveChip, failedChip, activatingChip, deactivatingChip } = this.props.classes;
-    switch(state) {
-      case 'active': return activeChip;
-      case 'error': return errorChip;
-      case 'inactive': return inactiveChip;
-      case 'failedChip': return failedChip;
-      case 'activatingChip': return activatingChip;
-      case 'deactivating': return deactivatingChip;
-      default: return inactiveChip;
+    const {
+      activeChip,
+      errorChip,
+      inactiveChip,
+      failedChip,
+      activatingChip,
+      deactivatingChip,
+    } = this.props.classes;
+    switch (state) {
+      case "active":
+        return activeChip;
+      case "error":
+        return errorChip;
+      case "inactive":
+        return inactiveChip;
+      case "failedChip":
+        return failedChip;
+      case "activatingChip":
+        return activatingChip;
+      case "deactivating":
+        return deactivatingChip;
+      default:
+        return inactiveChip;
     }
   }
 
@@ -112,69 +141,103 @@ class ServicesChart extends Component {
 
     return (
       <div>
-        <div className={classes.chipsPaper}>
-          {Services.map((service, idx) =>
-            <div key={idx} className={classes.chipContainer}>
-              <Chip
-                label={
-                  <div className={classes.chipLabel}>
-                    <Typography className={classes.serviceName} variant="inherit">
-                      {service.name}
-                    </Typography>
-                    <div>
-                      {stoping !== service.name ? <IconButton
-                        onClick={this.handleServiceAction(service, 'stop')}
-                        className={classes.chipIcon}
-                      >
-                        <Stop className={classes.iconButton} color="inherit" fontSize="small"/>
-                      </IconButton> : 
-                        <IconButton disabled className={classes.chipIcon}>
-                          <CircularProgress size={18}/>
-                        </IconButton>}
-                      {restarting !== service.name ? <IconButton
-                        onClick={this.handleServiceAction(service, 'restart')}
-                        className={classes.chipIcon}
-                      >
-                        <Restart className={classes.iconButton} color="inherit" fontSize="small"/>
-                      </IconButton> : 
-                        <IconButton disabled className={classes.chipIcon}>
-                          <CircularProgress size={18}/>
-                        </IconButton>}
-                      {starting !== service.name ? <IconButton
-                        onClick={this.handleServiceAction(service, 'start')}
-                        className={classes.chipIcon}
-                      >
-                        <Start className={classes.iconButton} color="inherit" fontSize="small"/>
-                      </IconButton> : 
-                        <IconButton disabled className={classes.chipIcon}>
-                          <CircularProgress size={18}/>
-                        </IconButton>}
-                    </div>
-                  </div>
+        <div className={classes.servicePaper}>
+          {Services.map((service, idx) => (
+            <div key={idx} className={classes.serviceContainer}>
+              <div
+                className={
+                  classes.serviceBox + " " + this.getChipColor(service.state)
                 }
-                color="secondary"
-                classes={{
-                  root: classes.chip,
-                  colorSecondary: this.getChipColor(service.state),
-                }}
-              />
+              >
+                <Typography className={classes.serviceName}>
+                  {service.name}
+                </Typography>
+                <div>
+                  {stoping !== service.name ? (
+                    <IconButton
+                      onClick={this.handleServiceAction(service, "stop")}
+                      className={classes.chipIcon}
+                    >
+                      <Stop className={classes.iconButton} fontSize="small" />
+                    </IconButton>
+                  ) : (
+                    <IconButton className={classes.chipIcon}>
+                      <CircularProgress size={18} />
+                    </IconButton>
+                  )}
+                  {restarting !== service.name ? (
+                    <IconButton
+                      onClick={this.handleServiceAction(service, "restart")}
+                      className={classes.chipIcon}
+                    >
+                      <Restart
+                        className={classes.iconButton}
+                        fontSize="small"
+                      />
+                    </IconButton>
+                  ) : (
+                    <IconButton className={classes.chipIcon}>
+                      <CircularProgress size={18} />
+                    </IconButton>
+                  )}
+                  {starting !== service.name ? (
+                    <IconButton
+                      onClick={this.handleServiceAction(service, "start")}
+                      className={classes.chipIcon}
+                    >
+                      <Start className={classes.iconButton} fontSize="small" />
+                    </IconButton>
+                  ) : (
+                    <IconButton className={classes.chipIcon}>
+                      <CircularProgress size={18} />
+                    </IconButton>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
+          ))}
         </div>
         <div className={classes.legendContainer}>
-          <BarChart width={510} height={24} data={[{ name: "fake", value: 1 }]}>
-            <Bar dataKey="active" fill={green['500']} />
-            <Bar dataKey="inactive" fill={grey['700']} />
-            <Bar dataKey="error" fill={red['500']} />
-            <Bar dataKey="failed" fill={red['800']} />
-            <Bar dataKey="activating" fill={orange['500']} />
-            <Bar dataKey="deactivating" fill={grey['300']} />
-            <Legend />
-          </BarChart>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.activeChip}
+            ></span>{" "}
+            active
+          </p>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.inactiveChip}
+            ></span>{" "}
+            inactive
+          </p>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.errorChip}
+            ></span>{" "}
+            error
+          </p>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.failedChip}
+            ></span>{" "}
+            failed
+          </p>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.activatingChip}
+            ></span>{" "}
+            activating
+          </p>
+          <p className={classes.legendItem}>
+            <span
+              className={classes.rectangle + " " + classes.deactivatingChip}
+            ></span>{" "}
+            deactivating
+          </p>
         </div>
         <Feedback
           snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
+          onClose={() => this.setState({ snackbar: "" })}
         />
       </div>
     );
@@ -188,18 +251,22 @@ ServicesChart.propTypes = {
   serviceAction: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     Services: state.services.Services,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    serviceAction: async (service, action) => await dispatch(serviceAction(service, action))
-      .catch(error => Promise.reject(error)),
+    serviceAction: async (service, action) =>
+      await dispatch(serviceAction(service, action)).catch((error) =>
+        Promise.reject(error)
+      ),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ServicesChart)));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTranslation()(withStyles(styles)(ServicesChart)));
