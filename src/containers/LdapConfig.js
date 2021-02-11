@@ -472,6 +472,7 @@ class LdapConfig extends PureComponent {
           <div className={classes.bottomRow}>
             <Button
               variant="contained"
+              color="secondary"
               onClick={this.handleDelete}
               className={classes.deleteButton}
             >

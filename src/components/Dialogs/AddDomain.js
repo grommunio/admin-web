@@ -182,7 +182,6 @@ class AddDomain extends PureComponent {
           <Button
             onClick={onSuccess}
             variant="contained"
-            color="secondary"
           >
             {t('Cancel')}
           </Button>
