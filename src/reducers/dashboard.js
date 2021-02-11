@@ -6,8 +6,6 @@ import {
   DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
 } from '../actions/types';
-import blue from '../colors/blue';
-import green from '../colors/green';
 
 const defaultState = {
   loading: false,
@@ -32,8 +30,8 @@ function addUsageData(arr, item) {
 
 function formatSwap(obj) {
   return [
-    { name: 'used', value: obj.used, color: green['500'] },
-    { name: 'free', value: obj.free, color: blue['800'] },
+    { name: 'used', value: obj.used, color: 'gradientGreen' },
+    { name: 'free', value: obj.free, color: 'gradientBlue' },
     //{ name: 'total', value: obj.total },
   ];
 }
