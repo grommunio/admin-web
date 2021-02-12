@@ -53,6 +53,7 @@ const theme = createMuiTheme({
       
         '&.Mui-disabled': {
           background: 'linear-gradient(#e0e0e0, #e0e0e0)',
+          color: '#999',
         },
       },
       containedPrimary: {
