@@ -62,7 +62,7 @@ function DomainMenu(props) {
 
   return (
     <div className={classes.root}>
-      <TopBar title={domain.domainname}/>
+      <TopBar/>
       <div className={classes.toolbar}></div>
       <div className={classes.base}>
         <Paper className={classes.tablePaper} elevation={1}>
