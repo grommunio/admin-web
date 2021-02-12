@@ -36,9 +36,6 @@ const styles = theme => ({
     padding: theme.spacing(2),
     borderRadius: 6,
   },
-  tablePaper: {
-    margin: theme.spacing(3, 2),
-  },
   grid: {
     padding: theme.spacing(0, 2),
   },
@@ -68,9 +65,6 @@ const styles = theme => ({
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
-  },
-  textfield: {
-    margin: theme.spacing(2, 0, 1, 0),
   },
   actions: {
     display: 'flex',
@@ -234,7 +228,7 @@ class Roles extends Component {
               />
             </div>
           </Grid>
-          <Paper className={classes.tablePaper} elevation={1}>
+          <Paper elevation={1}>
             <Table size="small">
               <TableHead>
                 <TableRow>

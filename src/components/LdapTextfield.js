@@ -6,11 +6,11 @@ import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   textfield: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(2, 2),
   },
   flexTextfield: {
     flex: 1,
-    margin: 8,
+    margin: 10,
     minWidth: 400,
   },
   tooltip: {
@@ -26,14 +26,8 @@ class LdapTextfield extends PureComponent {
     return (
       <TextField
         {...rest}
-        label={<span>
-          {t(label)}
-          <Tooltip className={classes.tooltip} title={desc || ''} placement="top">
-            <IconButton size="small">
-              <Help fontSize="small"/>
-            </IconButton>
-          </Tooltip>
-        </span>}
+        label={t(label)}
+        helperText={desc || ''}
         className={flex ? classes.flexTextfield : classes.textfield}
         color="primary"
         value={value || ''}

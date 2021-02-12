@@ -80,8 +80,14 @@ const styles = (theme) => ({
     alignItems: "flex-end",
   },
   actions: {
-    display: "flex",
-    alignItems: "flex-end",
+    display: 'flex',
+    flex: 1,
+    margin: theme.spacing(0, 4, 0, 0),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  buttonGrid: {
+    margin: theme.spacing(0, 2, 2, 2),
   },
   deletedDomain: {
     backgroundColor: "#22242f",
@@ -233,7 +239,7 @@ class DomainList extends Component {
               className={classes.homeIcon}
             ></HomeIcon>
           </Typography>
-          <div className={classes.tools}>
+          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button
               variant="contained"
               color="primary"
@@ -266,7 +272,7 @@ class DomainList extends Component {
                 color="primary"
               />
             </div>
-          </div>
+          </Grid>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>
