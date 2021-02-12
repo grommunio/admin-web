@@ -54,7 +54,7 @@ const styles = theme => ({
     margin: theme.spacing(2, 0, 1, 2),
   },
   textfield: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(2, 2),
   },
   flexTextfield: {
     flex: 1,
