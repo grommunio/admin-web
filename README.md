@@ -36,10 +36,30 @@ sudo apt install caddy
 #### Caddyfile
 
 You will find a file `Caddyfile.example` in root directory of this repository.
-Copy this file to `./Caddyfile`. Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box. Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
+Copy this file to `./Caddyfile`.
+
+```
+cp Caddyfile.example Caddyfile
+```
+
+Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box.
+The Caddyfile includes these necessary lines
+```
+:4000 # port to run caddy on
+reverse_proxy /api/v1/* localhost:8080 # Address of backend
+reverse_proxy /config.json localhost:8080 # Address of config.json
+reverse_proxy http://127.0.0.1:3000 # Address of webapp (default yarn port)
+```
+* `:4000`: Specifies the port the Caddyserver will run on and can be accessed with your browser.
+* `reverse_proxy /api/v1/* localhost:8080`: Specifies the address http requests to `/api/v1/*` will be redirected to. This has to be the location `grammm-admin-api.service` runs on.
+* `reverse_proxy /config.json localhost:8080`: Specifies the location of `config.json`.
+* `reverse_proxy http://127.0.0.1:3000`: Specifies the address the webapp is running on with yarn. Per default, yarn runs on port 3000, so this should only be changed if changes to `./.env` are made.
+
+Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
 
 ### Running caddy
 In separate terminal:
+
 ```
 caddy run
 ```
@@ -65,6 +85,10 @@ Result will be created in `/dist`
 
 # Server-side configuration
 
+## Necessary services
+
+* `grammm-admin-api.service`: Used to login and get any data from database
+
 
 ## Nginx config
 
@@ -73,30 +97,16 @@ In order to get the correct configuration for production, create a config.json i
 
 Following props are available:
 
-### `devMode:boolean`
+* `devMode:boolean` For development, enables redux logger
 
-For development, enables redux logger
+* `mailWebAddress:String` Url of production mail server
 
-### `mailWebAddress:String` 
+* `chatWebAddress:String` Url of production chat server
 
-Url of production mail server
+* `videoWebAddress:String` Url of production video server
 
-### `chatWebAddress:String`
+* `fileWebAddress:String` Url of production file server
 
-Url of production chat server
+* `archiveWebAddress:String` Url of production archive server
 
-### `videoWebAddress:String`
-
-Url of production video server
-
-### `fileWebAddress:String`
-
-Url of production file server
-
-### `archiveWebAddress:String`
-
-Url of production archive server
-
-### `searchAttributes:Array<String>`
-
-Array of strings, possble LDAP Search attributes
+* `searchAttributes:Array<String>` Array of strings, possible LDAP Search attributes
