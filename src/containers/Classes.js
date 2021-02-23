@@ -89,13 +89,14 @@ class Classes extends Component {
     deleting: false,
     checking: false,
     order: 'asc',
-    orderBy: 'name',
+    orderBy: 'classname',
     offset: 50,
     match: '',
   }
 
   columns = [
-    { label: 'Classname', value: 'name' },
+    { label: 'Classname', value: 'classname' },
+    { label: 'Listname', value: 'listname' },
   ]
 
   handleScroll = () => {
@@ -250,7 +251,8 @@ class Classes extends Component {
               <TableBody>
                 {_classes.Classes.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.name}</TableCell>
+                    <TableCell>{obj.classname}</TableCell>
+                    <TableCell>{obj.listname}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
