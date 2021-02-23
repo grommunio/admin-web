@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-import { IconButton, TextField, withStyles, Tooltip } from '@material-ui/core';
-import Help from '@material-ui/icons/HelpOutline';
+import { TextField, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 
