@@ -558,31 +558,31 @@ export function mlistDetails(domainID, id) {
 
 export function classes(domainID, params) {
   return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/classes', params));
+    return await get(buildQuery('/domains' + '/classes', params));
   };
 }
 
 export function addClass(domainID, _class) {
   return async () => {
-    return await post('/domains/' + domainID + '/classes', _class);
+    return await post('/domains' + '/classes', _class);
   };
 }
 
 export function editClass(domainID, _class) {
   return async () => {
-    return await patch('/domains/' + domainID + '/classes/' + _class.ID, { ..._class, ID: undefined });
+    return await patch('/domains' + '/classes/' + _class.ID, { ..._class, ID: undefined });
   };
 }
 
 export function deleteClass(domainID, id) {
   return async () => {
-    return await yeet('/domains/' + domainID + '/classes/' + id);
+    return await yeet('/domains' + '/classes/' + id);
   };
 }
 
 export function classDetails(domainID, id) {
   return async () => {
-    return await get('/domains/' + domainID + '/classes/' + id);
+    return await get('/domains' + '/classes/' + id);
   };
 }
 
