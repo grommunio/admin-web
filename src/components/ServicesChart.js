@@ -27,7 +27,7 @@ const styles = (theme) => ({
     margin: theme.spacing(1, 2),
   },
   serviceBox: {
-    width: 220,
+    width: 232,
     borderRadius: 25,
     padding: "2px 10px 2px 15px",
     display: "flex",

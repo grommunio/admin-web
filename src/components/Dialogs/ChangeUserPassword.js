@@ -12,8 +12,11 @@ import { changeUserPassword } from '../../api';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
+  content: {
+    padding: theme.spacing(1, 4),
+  },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 0),
   },
 });
 
@@ -43,9 +46,9 @@ class ChangeUserPassword extends PureComponent {
     return (
       <Dialog open={changingPw}>
         <DialogTitle>{t('Change password')}</DialogTitle>
-        <DialogContent>
-          <TextField 
-            className={classes.input} 
+        <DialogContent className={classes.content}>
+          <TextField
+            className={classes.input}
             label={t("New password")} 
             fullWidth
             type="password"
@@ -54,8 +57,8 @@ class ChangeUserPassword extends PureComponent {
             autoFocus
             onKeyPress={this.handleKeyPress}
           />
-          <TextField 
-            className={classes.input} 
+          <TextField
+            className={classes.input}
             label={t("Repeat new password")} 
             fullWidth
             type="password"

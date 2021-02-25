@@ -50,6 +50,18 @@ const theme = createMuiTheme({
     MuiButton: {
       contained: {
         boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06), 0px 8px 10px 1px rgba(0, 0, 0, 0.042), 0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
+      
+        '&.Mui-disabled': {
+          background: 'linear-gradient(#e0e0e0, #e0e0e0)',
+          color: '#999',
+        },
+      },
+      containedPrimary: {
+        background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+      },
+      containedSecondary: {
+        background: 'linear-gradient(150deg, #FF512F, #DD2476)',
+        color: '#fff',
       },
     },
     MuiGridListTile: {

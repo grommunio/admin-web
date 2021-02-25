@@ -12,7 +12,6 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import green from '../colors/green';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
@@ -57,6 +56,24 @@ class SwapPieChart extends Component {
         </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart height={250}>
+            <defs>
+              <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#6DD5FA"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FFB75E"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#ED8F03"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#eef2f3"} stopOpacity={1}/>
+              </linearGradient>
+            </defs>
             <Pie
               data={swap}
               dataKey="value"
@@ -65,23 +82,23 @@ class SwapPieChart extends Component {
               endAngle={-180}
               cx="50%"
               cy="50%"
-              innerRadius={60}
+              innerRadius={50}
               outerRadius={80}
-              fill={green['500']}
               label={data => this.formatLabel(data.payload.value)}
+              minAngle={1}
+              stroke={"none"}
               isAnimationActive={false}
             >
               {swap.map((entry, index) => 
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.color}
+                  fill={`url(#${entry.color})`}
                 />
               )}
             </Pie>
             {swap.length > 0 && swap[1].value && <Tooltip
               formatter={this.formatLabel}
-              isAnimationActive={false}
-              content={<this.SwapTooltip />}
+              isAnimationActive={true}
             />}
             {swap.length > 0 && swap[1].value && <Legend />}
           </PieChart>

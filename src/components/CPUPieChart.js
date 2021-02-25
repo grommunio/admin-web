@@ -12,11 +12,6 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import grey from '../colors/grey';
-import red from '../colors/red';
-import green from '../colors/green';
-import blue from '../colors/blue';
-import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
@@ -32,12 +27,12 @@ class CPUPieChart extends Component {
 
   formatLastCPU(unformatted) {
     return [
-      { name: 'user', value: unformatted.user, color: green['500'] },
-      { name: 'system', value: unformatted.system, color: red['500'] },
-      { name: 'io', value: unformatted.io, color: grey['500'] },
-      { name: 'steal', value: unformatted.steal, color: blue['500'] },
-      { name: 'interrupt', value: unformatted.interrupt, color: orange['500'] },
-      { name: 'idle', value: unformatted.idle, color: blue['800'] },
+      { name: 'user', value: unformatted.user, color: "gradientGreen" },
+      { name: 'system', value: unformatted.system, color: "gradientRed" },
+      { name: 'io', value: unformatted.io, color: "gradientGrey" },
+      { name: 'steal', value: unformatted.steal, color: "gradientBlue" },
+      { name: 'interrupt', value: unformatted.interrupt, color: "gradientOrange" },
+      { name: 'idle', value: unformatted.idle, color: "gradientBlue" },
     ].filter(obj => obj.value !== 0);
   }
 
@@ -71,6 +66,28 @@ class CPUPieChart extends Component {
         </Typography>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart height={250}>
+            <defs>
+              <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#6DD5FA"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FFB75E"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#ED8F03"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#eef2f3"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientRed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FF512F"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#DD2476"} stopOpacity={1}/>
+              </linearGradient>
+            </defs>
             <Pie
               data={lastCpu}
               dataKey="value"
@@ -79,23 +96,22 @@ class CPUPieChart extends Component {
               endAngle={-180}
               cx="50%"
               cy="50%"
-              innerRadius={60}
+              innerRadius={50}
               outerRadius={80}
-              fill={green['500']}
               label
               minAngle={1}
+              stroke={"none"}
               isAnimationActive={false}
             >
               {lastCpu.map((entry, index) =>
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.color}
+                  fill={`url(#${entry.color}`}
                 />
               )}
             </Pie>
             <Tooltip
-              isAnimationActive={false}
-              content={<this.CPUTooltip />}
+              isAnimationActive={true}
             />
             <Legend />
           </PieChart>

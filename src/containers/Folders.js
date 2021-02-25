@@ -168,7 +168,7 @@ class Folders extends Component {
         onScroll={debounce(this.handleScroll, 100)}
         id="scrollDiv"
       >
-        <TopBar title={domain.domainname}/>
+        <TopBar/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
