@@ -64,7 +64,7 @@ class AddClass extends PureComponent {
     { label: 'no regex match', value: 'nl'},
     { label: 'exists', value: 'ex'},
     { label: 'does not exist', value: 'nx'},
-  ]
+  ];
 
   columns = [ 'username' ];
 
@@ -114,7 +114,7 @@ class AddClass extends PureComponent {
 
   handleAddAND = () => {
     const filters = [...this.state.filters];
-    filters.push([{ p: '', op: '', val: '' }]);
+    filters.push([{ prop: '', op: '', val: '' }]);
     this.setState({ filters });
   }
 
@@ -127,7 +127,7 @@ class AddClass extends PureComponent {
 
   handleAddOR = ANDidx => () => {
     const filters = [...this.state.filters];
-    filters[ANDidx].push({ p: '', op: '', val: '' });
+    filters[ANDidx].push({ property: '', op: '', val: '' });
     this.setState({ filters });
   }
 
@@ -173,8 +173,8 @@ class AddClass extends PureComponent {
                 {_classes.map((_class, key) => (
                   <MenuItem
                     key={key}
-                    value={_class.classname}
-                    selected={parentClasses.find(owner => owner.ID === _class.ID)}
+                    value={_class.ID}
+                    selected={parentClasses /* This shouldn't even work... */}
                   >
                     {_class.classname}
                   </MenuItem>
@@ -211,10 +211,10 @@ class AddClass extends PureComponent {
                     {ANDFilter.map((ORFilter, ORidx) =>  
                       <Grid item xs={12} key={ORidx} className={classes.grid}>
                         <Autocomplete
-                          value={ORFilter.p}
-                          inputValue={ORFilter.p}
-                          onChange={this.handleAutocomplete(ANDidx, ORidx, 'p')}
-                          onInputChange={this.handleFilterInput(ANDidx, ORidx, 'p')}
+                          value={ORFilter.prop}
+                          inputValue={ORFilter.prop}
+                          onChange={this.handleAutocomplete(ANDidx, ORidx, 'prop')}
+                          onInputChange={this.handleFilterInput(ANDidx, ORidx, 'prop')}
                           freeSolo
                           className={classes.flexTextfield} 
                           options={this.columns}
