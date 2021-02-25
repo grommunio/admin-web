@@ -92,7 +92,7 @@ class AddDomain extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess } = this.props;
+    const { classes, t, open, onClose } = this.props;
     const { domainname, password, domainStatus,
       maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
@@ -100,7 +100,7 @@ class AddDomain extends PureComponent {
 
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="md"
         fullWidth
@@ -180,7 +180,7 @@ class AddDomain extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
           >
             {t('Cancel')}
@@ -204,6 +204,7 @@ AddDomain.propTypes = {
   t: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };

@@ -8,7 +8,7 @@ import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 // Keep alphabetically ordered
 import authReducer from './reducers/auth';
-//import classesReducer from './reducers/classes';
+import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
@@ -17,10 +17,10 @@ import foldersReducer from './reducers/folders';
 import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 //import membersReducer from './reducers/members';
-//import mlistsReducer from './reducers/mlists';
+import mlistsReducer from './reducers/mlists';
 //import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
-//import groupsReducer from './reducers/groups';
+import groupsReducer from './reducers/groups';
 import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
 import servicesReducer from './reducers/services';
@@ -31,12 +31,15 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   combineReducers({
     auth: authReducer,
+    _classes: classesReducer,
     dashboard: dashboardReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,
+    groups: groupsReducer,
     ldap: ldapReducer,
     license: licenseReducer,
+    mLists: mlistsReducer,
     profile: profileReducer,
     roles: rolesReducer,
     services: servicesReducer,

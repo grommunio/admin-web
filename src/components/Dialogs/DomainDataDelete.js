@@ -26,8 +26,8 @@ class DomainDataDelete extends PureComponent {
         if(onSuccess) onSuccess();
         this.setState({ loading: false });
       })
-      .catch(() => {
-        if(onError) onError();
+      .catch(error => {
+        if(onError) onError(error);
         this.setState({ loading: false });
       });
   }

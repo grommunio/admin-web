@@ -27,16 +27,16 @@ const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
-//const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
-//const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
+const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
+const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
 //const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 ////const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
 //const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
-//const AsyncMlists = makeLoadableComponent(() => import("./containers/Mlists"));
-//const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MlistDetails"));
-//const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
-//const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
+const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
+const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MListDetails"));
+const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
+const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
 //const AsyncMembers = makeLoadableComponent(() => import("./containers/Members"));
 //const AsyncMemberDetails = makeLoadableComponent(() => import("./containers/MemberDetails"));
 //const AsyncBaseSetup = makeLoadableComponent(() => import("./containers/BaseSetup"));
@@ -166,6 +166,66 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/ldap`}
         exact
         component={AsyncLdap}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes`}
+        exact
+        component={AsyncClasses}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes/:classID`}
+        exact
+        component={AsyncClassDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/groups`}
+        exact
+        component={AsyncGroups}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/groups/:groupID`}
+        exact
+        component={AsyncGroupDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists`}
+        exact
+        component={AsyncMlists}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists/:mlistID`}
+        exact
+        component={AsyncMlistDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

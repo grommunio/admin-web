@@ -7,7 +7,9 @@ import {
   GROUPS_DATA_ERROR,
   GROUP_DATA_DELETE,
   GROUP_DATA_EDIT,
+  GROUP_DATA_ADD,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState={
   ready: false,
@@ -16,6 +18,7 @@ const defaultState={
 
   // Minimal data required to render group view in sane state.
   Groups: [],
+  count: 0,
 };
 
 function editGroup(state, data) {
@@ -44,6 +47,7 @@ function groupsReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Groups: action.data.data,
+        count: action.data.count,
       };
 
     case GROUPS_DATA_ERROR:
@@ -58,12 +62,19 @@ function groupsReducer(state = defaultState, action) {
       return {
         ...state,
         Groups: state.Groups.filter(group => group.ID !== action.data),
+        count: state.count - 1,
       };
 
     case GROUP_DATA_EDIT:
       return {
         ...state,
         Groups: editGroup(state.Groups, action.data),
+      };
+
+    case GROUP_DATA_ADD:
+      return {
+        ...state,
+        Groups: addItem(state.Groups, action.data),
       };
     
     default:

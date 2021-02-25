@@ -376,27 +376,33 @@ export function uploadLicense(license) {
   GROUPS
 */
 
-export function groups() {
+export function groups(domainID, params) {
   return async () => {
-    return await get('/groups');
+    return await get(buildQuery('/domains/' + domainID + '/groups', params));
   };
 }
 
-export function addGroup(group) {
+export function addGroup(domainID, group) {
   return async () => {
-    return await post('/groups', group);
+    return await post('/domains/' + domainID + '/groups', group);
   };
 }
 
-export function editGroup(group) {
+export function editGroup(domainID, group) {
   return async () => {
-    return await patch('/groups/' + group.ID, group);
+    return await patch('/domains/' + domainID + '/groups/' + group.ID, { ...group, ID: undefined });
   };
 }
 
-export function deleteGroup(id) {
+export function deleteGroup(domainID, id) {
   return async () => {
-    return await yeet('/groups/' + id);
+    return await yeet('/domains/' + domainID + '/groups/' + id);
+  };
+}
+
+export function groupDetails(domainID, id) {
+  return async () => {
+    return await get('/domains/' + domainID + '/groups/' + id);
   };
 }
 
@@ -516,27 +522,33 @@ export function deleteForward(id) {
   MLISTS
 */
 
-export function mlists() {
+export function mlists(domainID, params) {
   return async () => {
-    return await get('/mlists');
+    return await get(buildQuery('/domains/' + domainID + '/mlists', params));
   };
 }
 
-export function addMlist(mlist) {
+export function addMlist(domainID, mlist) {
   return async () => {
-    return await post('/mlists', mlist);
+    return await post('/domains/' + domainID + '/mlists', mlist);
   };
 }
 
-export function editMlist(mlist) {
+export function editMlist(domainID, mlist) {
   return async () => {
-    return await patch('/mlists/' + mlist.ID, mlist);
+    return await patch('/domains/' + domainID + '/mlists/' + mlist.ID, { ...mlist, ID: undefined });
   };
 }
 
-export function deleteMlist(id) {
+export function deleteMlist(domainID, id) {
   return async () => {
-    return await yeet('/mlists/' + id);
+    return await yeet('/domains/' + domainID + '/mlists/' + id);
+  };
+}
+
+export function mlistDetails(domainID, id) {
+  return async () => {
+    return await get('/domains/' + domainID + '/mlists/' + id);
   };
 }
 
@@ -544,27 +556,33 @@ export function deleteMlist(id) {
   CLASSES
 */
 
-export function classes() {
+export function classes(domainID, params) {
   return async () => {
-    return await get('/classes');
+    return await get(buildQuery('/domains/' + domainID + '/classes', params));
   };
 }
 
-export function addClass(Class) {
+export function addClass(domainID, _class) {
   return async () => {
-    return await post('/classes', Class);
+    return await post('/domains/' + domainID + '/classes', _class);
   };
 }
 
-export function editClass(Class) {
+export function editClass(domainID, _class) {
   return async () => {
-    return await patch('/classes/' + Class.ID, Class);
+    return await patch('/domains/' + domainID + '/classes/' + _class.ID, { ..._class, ID: undefined });
   };
 }
 
-export function deleteClass(id) {
+export function deleteClass(domainID, id) {
   return async () => {
-    return await yeet('/classes/' + id);
+    return await yeet('/domains/' + domainID + '/classes/' + id);
+  };
+}
+
+export function classDetails(domainID, id) {
+  return async () => {
+    return await get('/domains/' + domainID + '/classes/' + id);
   };
 }
 

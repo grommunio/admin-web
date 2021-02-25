@@ -4,27 +4,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import Delete from '@material-ui/icons/Delete';
+import { Paper, Typography, Button, Grid,
+  CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
+  TableSortLabel, TableBody, IconButton } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
+import { fetchMListsData, deleteMListData } from '../actions/mlists';
 import TopBar from '../components/TopBar';
-import { fetchFolderData, deleteFolderData } from '../actions/folders';
-import AddFolder from '../components/Dialogs/AddFolder';
-import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
-import { debounce } from 'debounce';
 import Feedback from '../components/Feedback';
+import { Delete } from '@material-ui/icons';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import AddMList from '../components/Dialogs/AddMList';
 
 const styles = theme => ({
   root: {
     flex: 1,
-    overflowY: 'auto',
+    overflow: 'auto',
   },
   base: {
     flexDirection: 'column',
@@ -76,65 +75,88 @@ const styles = theme => ({
     margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    match: '',
+  },
+  newButton: {
+    marginRight: 8,
   },
 });
 
-class Folders extends Component {
+class MLists extends Component {
 
   state = {
+    snackbar: null,
     adding: false,
     deleting: false,
-    snackbar: null,
+    checking: false,
     order: 'asc',
+    orderBy: 'listname',
     offset: 50,
+    match: '',
   }
 
+  columns = [
+    { label: 'Mail list name', value: 'listname' },
+    { label: 'Type', value: 'listType' },
+    { label: 'Privilege', value: 'listPrivilege' },
+  ]
+
+  listTypes = ['Normal', 'Group', 'Domain']
+
+  listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing']
+
   handleScroll = () => {
-    const { folders } = this.props;
-    if((folders.Folders.length >= folders.count)) return;
+    const { mLists } = this.props;
+    if((mLists.MLists.length >= mLists.count)) return;
     if (
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
-      const { offset, match } = this.state;
-      if(!folders.loading) this.fetchFolders({ offset });
+      const { orderBy, order, offset, match } = this.state;
+      if(!mLists.loading) this.fetchMLists({
+        sort: orderBy + ',' + order,
+        offset,
+        match: match || undefined,
+      });
       this.setState({
         offset: offset + 50,
-        match: match || undefined,
       });
     }
   }
 
   componentDidMount() {
-    this.fetchFolders({});
+    this.fetchMLists({ sort: 'listname,asc' });
   }
 
-  fetchFolders(params) {
+  fetchMLists(params) {
     const { fetch, domain } = this.props;
-    fetch(domain.ID, params).catch(error => this.setState({ snackbar: error }));
+    fetch(domain.ID, params)
+      .catch(msg => this.setState({ snackbar: msg }));
   }
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
+
+  handleAddingClose = () => this.setState({ adding: false });
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleDelete = folder => event => {
+  handleDelete = mList => event => {
     event.stopPropagation();
-    this.setState({ deleting: folder });
+    this.setState({ deleting: mList });
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
 
-  handleDeleteSuccess = () => this.setState({ deleting: false, snackbar: 'Success!' });
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' });
+  }
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
-  handleRowClicked = folder => () => {
+  handleEdit = mList => () => {
     const { history, domain } = this.props;
-    history.push('/' + domain.ID + '/folders/' + folder.folderid, { ...folder });
+    history.push('/' + domain.ID + '/mailLists/' + mList.ID, { ...mList });
   }
 
   handleNavigation = path => event => {
@@ -143,24 +165,33 @@ class Folders extends Component {
     history.push(`/${path}`);
   }
 
-  handleSort = () => this.setState({ order: this.state.order === 'asc' ? 'desc' : 'asc' })
+  handleRequestSort = orderBy => () => {
+    const { fetch, domain } = this.props;
+    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
+    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
+    
+    fetch(domain.ID, {
+      sort: orderBy + ',' + order,
+      match: match || undefined,
+    }).catch(msg => this.setState({ snackbar: msg }));
 
-  handleMatch = e => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
+    this.setState({
+      order: order,
+      orderBy,
+      offset: 0,
+    });
   }
 
   debouceFetch = debounce(value => {
-    const { order } = this.state;
-    this.fetchFolders({ match: value || undefined, sort: 'name,' + order });
+    const { order, orderBy } = this.state;
+    this.fetchMLists({ match: value || undefined, sort: orderBy + ',' + order });
   }, 200)
 
+  handleCheckClose = () => this.setState({ checking: false });
+
   render() {
-    const { classes, t, folders, domain } = this.props;
-    const { snackbar, adding, deleting, order, match } = this.state;
-    const sortedArray = [...folders.Folders].sort();
-    if(order === 'desc') sortedArray.reverse();
+    const { classes, t, mLists, domain } = this.props;
+    const { snackbar, match, orderBy, order, adding, deleting } = this.state;
 
     return (
       <div
@@ -168,11 +199,11 @@ class Folders extends Component {
         onScroll={debounce(this.handleScroll, 100)}
         id="scrollDiv"
       >
-        <TopBar/>
+        <TopBar title={domain.domainname}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Folders")}
+            {t("Mail lists")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
@@ -181,8 +212,9 @@ class Folders extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              className={classes.newButton}
             >
-              {t('New folder')}
+              {t('New mail list')}
             </Button>
             <div className={classes.actions}>
               <TextField
@@ -206,27 +238,27 @@ class Folders extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active
-                      align="left" 
-                      direction={order}
-                      onClick={this.handleSort}
-                    >
-                      {t('Folder name')}
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell>{t('Comment')}</TableCell>
-                  <TableCell>{t('Creation time')}</TableCell>
+                  {this.columns.map(column =>
+                    <TableCell key={column.value}>
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left" 
+                        direction={orderBy === column.value ? order : 'asc'}
+                        onClick={this.handleRequestSort(column.value)}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
+                    </TableCell>
+                  )}
                   <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!folders.loading && sortedArray.map((obj, idx) =>
-                  <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
-                    <TableCell>{obj.displayname}</TableCell>
-                    <TableCell>{obj.comment}</TableCell>
-                    <TableCell>{obj.creationtime}</TableCell>
+                {mLists.MLists.map((obj, idx) =>
+                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                    <TableCell>{obj.listname}</TableCell>
+                    <TableCell>{this.listTypes[obj.listType]}</TableCell>
+                    <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
@@ -236,7 +268,7 @@ class Folders extends Component {
                 )}
               </TableBody>
             </Table>
-            {(folders.Folders.length < folders.count) && <Grid container justify="center">
+            {(mLists.MLists.length < mLists.count) && <Grid container justify="center">
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper>
@@ -244,52 +276,53 @@ class Folders extends Component {
             snackbar={snackbar}
             onClose={() => this.setState({ snackbar: '' })}
           />
+          <AddMList
+            open={adding}
+            onSuccess={this.handleAddingSuccess}
+            onError={this.handleAddingError}
+            domain={domain}
+            onClose={this.handleAddingClose}
+          />
+          <DomainDataDelete
+            open={!!deleting}
+            delete={this.props.delete}
+            onSuccess={this.handleDeleteSuccess}
+            onError={this.handleDeleteError}
+            onClose={this.handleDeleteClose}
+            item={deleting.listname}
+            id={deleting.ID}
+            domainID={domain.ID}
+          />
         </div>
-        <AddFolder
-          open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          domain={domain}
-        />
-        <DomainDataDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
-          item={deleting.displayname}
-          id={deleting.folderid}
-          domainID={domain.ID}
-        />
       </div>
     );
   }
 }
 
-Folders.propTypes = {
+MLists.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  mLists: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
-  folders: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  return { folders: state.folders };
+  return { mLists: state.mLists };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, params) => {
-      await dispatch(fetchFolderData(domainID, params)).catch(msg => Promise.reject(msg));
+      await dispatch(fetchMListsData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
-      await dispatch(deleteFolderData(domainID, id)).catch(msg => Promise.reject(msg));
+      await dispatch(deleteMListData(domainID, id)).catch(error => Promise.reject(error));
     },
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Folders)));
+  withTranslation()(withStyles(styles)(MLists)));

@@ -31,6 +31,10 @@ const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/Fold
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Menu"));
 const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
+const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
+const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
+const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
+const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MListDetails"));
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
 //const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
@@ -105,6 +109,46 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/ldap`}
         exact
         component={AsyncLdap}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes`}
+        exact
+        component={AsyncClasses}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/classes/:classID`}
+        exact
+        component={AsyncClassDetails}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists`}
+        exact
+        component={AsyncMlists}
+        props={childProps}
+        key={domain.ID}
+        domain={domain}
+      />
+    )}
+    {domains.map(domain =>
+      <AuthenticatedDomainRoute
+        path={`/${domain.ID}/mailLists/:mlistID`}
+        exact
+        component={AsyncMlistDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

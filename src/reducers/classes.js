@@ -2,15 +2,19 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  CLASSES_DATA_ADD,
+  CLASSES_DATA_DELETE,
   CLASSES_DATA_ERROR,
   CLASSES_DATA_FETCH,
   CLASSES_DATA_RECEIVED,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
   error: null,
   Classes: [],
+  count: 0,
 };
 
 function classesReducer(state = defaultState, action) {
@@ -27,6 +31,7 @@ function classesReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Classes: action.data.data,
+        count: action.data.count,
       };
     
     case CLASSES_DATA_ERROR: {
@@ -36,6 +41,19 @@ function classesReducer(state = defaultState, action) {
         loading: false,
       };
     }
+
+    case CLASSES_DATA_DELETE:
+      return {
+        ...state,
+        Classes: state.Classes.filter(c => c.ID !== action.id),
+        count: state.count - 1,
+      };
+
+    case CLASSES_DATA_ADD:
+      return {
+        ...state,
+        Classes: addItem(state.Classes, action.data),
+      };
 
     default:
       return state;

@@ -5,12 +5,16 @@ import {
   MLISTS_DATA_ERROR,
   MLISTS_DATA_FETCH,
   MLISTS_DATA_RECEIVED,
+  MLIST_DATA_ADD,
+  MLIST_DATA_DELETE,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
   error: null,
-  Mlists: [],
+  MLists: [],
+  count: 0,
 };
 
 function mlistsReducer(state = defaultState, action) {
@@ -26,7 +30,8 @@ function mlistsReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Mlists: action.data.data,
+        MLists: action.data.data,
+        count: action.data.count,
       };
     
     case MLISTS_DATA_ERROR: {
@@ -36,6 +41,18 @@ function mlistsReducer(state = defaultState, action) {
         error: action.error,
       };
     }
+
+    case MLIST_DATA_ADD:
+      return {
+        ...state,
+        MLists: addItem(state.MLists, action.data),
+      };
+
+    case MLIST_DATA_DELETE:
+      return {
+        ...state,
+        MLists: state.MLists.filter(ml => ml.ID !== action.id),
+      };
 
     default:
       return state;
