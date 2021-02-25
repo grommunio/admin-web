@@ -73,9 +73,10 @@ class DomainListDetails extends PureComponent {
   ]
 
   async componentDidMount() {
-    const domain = await this.props.fetch(getStringAfterLastSlash());
+    const domain = await this.props.fetch(getStringAfterLastSlash())
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
-      domain,
+      domain: domain || {},
     });
   }
 
