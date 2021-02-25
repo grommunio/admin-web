@@ -8,10 +8,10 @@ import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Typography, Button, Grid,
   CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
-  TableSortLabel, TableBody, IconButton } from '@material-ui/core';
+  TableSortLabel, TableBody, IconButton, Tabs, Tab } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
-import { fetchClassesData, deleteClassData } from '../actions/classes';
+import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
 import TopBar from '../components/TopBar';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
@@ -19,6 +19,7 @@ import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import AddClass from '../components/Dialogs/AddClass';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import Tree from 'react-d3-tree';
 
 const styles = theme => ({
   root: {
@@ -84,6 +85,7 @@ const styles = theme => ({
 class Classes extends Component {
 
   state = {
+    tab: 0,
     snackbar: null,
     adding: false,
     deleting: false,
@@ -118,13 +120,17 @@ class Classes extends Component {
     }
   }
 
+  handleTab = (e, tab) => this.setState({ tab });
+
   componentDidMount() {
     this.fetchClasses({ sort: 'name,asc' });
   }
 
   fetchClasses(params) {
-    const { fetch, domain } = this.props;
+    const { fetch, fetchTrees, domain } = this.props;
     fetch(domain.ID, params)
+      .catch(msg => this.setState({ snackbar: msg }));
+    fetchTrees(domain.ID, {})
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
@@ -184,9 +190,31 @@ class Classes extends Component {
 
   handleCheckClose = () => this.setState({ checking: false });
 
+  renderNode = ({ nodeDatum, toggleNode }) => (
+    <g>
+      <rect width="20" height="20" x="-10" onClick={toggleNode} />
+      <text fill="black" strokeWidth="1" x="20" y="15">
+        {nodeDatum.name}
+      </text>
+      {nodeDatum.attributes?.department && (
+        <text fill="black" x="20" dy="20" strokeWidth="1">
+          Department: {nodeDatum.attributes?.department}
+        </text>
+      )}
+    </g>
+  );
+
+  getOffset() {
+    const container = this.treeContainer;
+    return {
+      x: container ? (container.clientWidth - 96 /* padding/margin */) / 4 : 0,
+      y: 20,
+    };
+  }
+
   render() {
     const { classes, t, _classes, domain } = this.props;
-    const { snackbar, match, orderBy, order, adding, deleting } = this.state;
+    const { snackbar, match, orderBy, order, adding, deleting, tab } = this.state;
 
     return (
       <div
@@ -196,7 +224,7 @@ class Classes extends Component {
       >
         <TopBar title={domain.domainname}/>
         <div className={classes.toolbar}></div>
-        <div className={classes.base}>
+        <div className={classes.base} ref={tc => (this.treeContainer = tc)} >
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Classes")}
             <span className={classes.pageTitleSecondary}> |</span>
@@ -229,7 +257,11 @@ class Classes extends Component {
               />
             </div>
           </Grid>
-          <Paper className={classes.tablePaper} elevation={1}>
+          <Tabs onChange={this.handleTab} value={tab}>
+            <Tab value={0} label="List" />
+            <Tab value={1} label="Tree" />
+          </Tabs>
+          {!tab ? <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
                 <TableRow>
@@ -265,7 +297,35 @@ class Classes extends Component {
             {(_classes.Classes.length < _classes.count) && <Grid container justify="center">
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
-          </Paper>
+          </Paper> :
+            <div style={{ display: 'flex', flex: 1 }}>
+              {_classes.Trees.map((tree, idx) =>
+                <Paper
+                  ref={r => (this[`paperRef${idx}`] = r)}
+                  id={`treePaper${idx}`}
+                  key={tree.ID}
+                  style={{ flex: 1, height: 500 }}
+                >
+                  <Tree
+                    data={tree}
+                    orientation="vertical"
+                    renderCustomNodeElement={this.renderNode}
+                    depthFactor={50}
+                    pathFunc="step"
+                    translate={this.getOffset(idx)}
+                    scaleExtent={{
+                      min: 0.1,
+                      max: 2,
+                    }}
+                    separation={{
+                      siblings: 1,
+                      nonSiblings: 2,
+                    }}
+                  />
+                </Paper>
+              )}
+            </div>
+          }
           <Feedback
             snackbar={snackbar}
             onClose={() => this.setState({ snackbar: '' })}
@@ -298,6 +358,7 @@ Classes.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   _classes: PropTypes.object.isRequired,
+  fetchTrees: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
@@ -311,6 +372,9 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, params) => {
       await dispatch(fetchClassesData(domainID, params)).catch(error => Promise.reject(error));
+    },
+    fetchTrees: async (domainID, params) => {
+      await dispatch(fetchClassesTree(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteClassData(domainID, id)).catch(error => Promise.reject(error));

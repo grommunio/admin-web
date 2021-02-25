@@ -253,7 +253,7 @@ class ClassDetails extends PureComponent {
                 {t('editHeadline', { item: 'Class' })}
               </Typography>
             </Grid>
-            <Breadcrumbs aria-label="breadcrumb">
+            <Breadcrumbs>
               {stack.map((_class, idx) =>
                 <Link
                   className={classes.breadcrumb}
