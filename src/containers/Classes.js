@@ -8,7 +8,8 @@ import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Typography, Button, Grid,
   CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
-  TableSortLabel, TableBody, IconButton, Tabs, Tab } from '@material-ui/core';
+  TableSortLabel, TableBody, IconButton, Tabs, Tab, FormControl, InputLabel, Select,
+  Input, MenuItem } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
@@ -31,6 +32,7 @@ const styles = theme => ({
     padding: theme.spacing(2),
     flex: 1,
     display: 'flex',
+    height: 'calc(100% - 100px)',
   },
   paper: {
     margin: theme.spacing(3, 2),
@@ -80,12 +82,16 @@ const styles = theme => ({
   newButton: {
     marginRight: 8,
   },
+  select: {
+    margin: theme.spacing(0, 2),
+  },
 });
 
 class Classes extends Component {
 
   state = {
     tab: 0,
+    root: -1,
     snackbar: null,
     adding: false,
     deleting: false,
@@ -121,6 +127,13 @@ class Classes extends Component {
   }
 
   handleTab = (e, tab) => this.setState({ tab });
+
+  handleRootSelect = event => {
+    console.log(event.target.value);
+    this.setState({
+      root: event.target.value,
+    });
+  }
 
   componentDidMount() {
     this.fetchClasses({ sort: 'name,asc' });
@@ -207,14 +220,14 @@ class Classes extends Component {
   getOffset() {
     const container = this.treeContainer;
     return {
-      x: container ? (container.clientWidth - 96 /* padding/margin */) / 4 : 0,
+      x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
       y: 20,
     };
   }
 
   render() {
     const { classes, t, _classes, domain } = this.props;
-    const { snackbar, match, orderBy, order, adding, deleting, tab } = this.state;
+    const { snackbar, match, orderBy, order, adding, deleting, tab, root } = this.state;
 
     return (
       <div
@@ -298,33 +311,45 @@ class Classes extends Component {
               <CircularProgress color="primary" className={classes.circularProgress}/>
             </Grid>}
           </Paper> :
-            <div style={{ display: 'flex', flex: 1 }}>
-              {_classes.Trees.map((tree, idx) =>
-                <Paper
-                  ref={r => (this[`paperRef${idx}`] = r)}
-                  id={`treePaper${idx}`}
-                  key={tree.ID}
-                  style={{ flex: 1, height: 500 }}
+            <>
+              <FormControl className={classes.select}>
+                <InputLabel>{t("Root class")}</InputLabel>
+                <Select
+                  fullWidth
+                  value={root > -1 ? root : ''}
+                  onChange={this.handleRootSelect}
+                  input={<Input />}
+                  placeholder={t('Select root class')}
                 >
-                  <Tree
-                    data={tree}
-                    orientation="vertical"
-                    renderCustomNodeElement={this.renderNode}
-                    depthFactor={50}
-                    pathFunc="step"
-                    translate={this.getOffset(idx)}
-                    scaleExtent={{
-                      min: 0.1,
-                      max: 2,
-                    }}
-                    separation={{
-                      siblings: 1,
-                      nonSiblings: 2,
-                    }}
-                  />
-                </Paper>
-              )}
-            </div>
+                  {_classes.Trees.map((tree, idx) => (
+                    <MenuItem key={idx} value={idx}>
+                      {tree.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <div style={{ display: 'flex', flex: 1, alignItems: 'stretch' }}>
+                {root !== -1 &&
+                  <Paper style={{ flex: 1 }}>
+                    <Tree
+                      data={_classes.Trees[root]}
+                      orientation="vertical"
+                      renderCustomNodeElement={this.renderNode}
+                      depthFactor={50}
+                      pathFunc="step"
+                      translate={this.getOffset()}
+                      scaleExtent={{
+                        min: 0.1,
+                        max: 2,
+                      }}
+                      separation={{
+                        siblings: 1,
+                        nonSiblings: 2,
+                      }}
+                    />
+                  </Paper>}
+              </div>
+            </>
           }
           <Feedback
             snackbar={snackbar}
