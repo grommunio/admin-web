@@ -211,8 +211,8 @@ class AddClass extends PureComponent {
                     {ANDFilter.map((ORFilter, ORidx) =>  
                       <Grid item xs={12} key={ORidx} className={classes.grid}>
                         <Autocomplete
-                          value={ORFilter.prop}
-                          inputValue={ORFilter.prop}
+                          value={ORFilter.prop || ''}
+                          inputValue={ORFilter.prop || ''}
                           onChange={this.handleAutocomplete(ANDidx, ORidx, 'prop')}
                           onInputChange={this.handleFilterInput(ANDidx, ORidx, 'prop')}
                           freeSolo
