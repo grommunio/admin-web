@@ -85,6 +85,9 @@ const styles = theme => ({
   select: {
     margin: theme.spacing(0, 2),
   },
+  tabs: {
+    marginLeft: 16,
+  },
 });
 
 class Classes extends Component {
@@ -203,17 +206,26 @@ class Classes extends Component {
 
   handleCheckClose = () => this.setState({ checking: false });
 
+  handleMatch = (e) => {
+    const { value } = e.target;
+    this.debouceFetch(value);
+    this.setState({ match: value });
+  };
+
+  debouceFetch = debounce((value) => {
+    const { order, orderBy } = this.state;
+    this.fetchClasses({
+      match: value || undefined,
+      sort: orderBy + "," + order,
+    });
+  }, 200);
+
   renderNode = ({ nodeDatum, toggleNode }) => (
     <g>
       <rect width="20" height="20" x="-10" onClick={toggleNode} />
       <text fill="black" strokeWidth="1" x="20" y="15">
         {nodeDatum.name}
       </text>
-      {nodeDatum.attributes?.department && (
-        <text fill="black" x="20" dy="20" strokeWidth="1">
-          Department: {nodeDatum.attributes?.department}
-        </text>
-      )}
     </g>
   );
 
@@ -270,7 +282,7 @@ class Classes extends Component {
               />
             </div>
           </Grid>
-          <Tabs onChange={this.handleTab} value={tab}>
+          <Tabs className={classes.tabs} onChange={this.handleTab} value={tab}>
             <Tab value={0} label="List" />
             <Tab value={1} label="Tree" />
           </Tabs>
