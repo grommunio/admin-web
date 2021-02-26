@@ -282,7 +282,13 @@ class Classes extends Component {
               />
             </div>
           </Grid>
-          <Tabs className={classes.tabs} onChange={this.handleTab} value={tab}>
+          <Tabs
+            indicatorColor="primary"
+            textColor="primary"
+            className={classes.tabs}
+            onChange={this.handleTab}
+            value={tab}
+          >
             <Tab value={0} label="List" />
             <Tab value={1} label="Tree" />
           </Tabs>
