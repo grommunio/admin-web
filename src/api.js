@@ -562,6 +562,12 @@ export function classes(domainID, params) {
   };
 }
 
+export function classesTree(domainID, params) {
+  return async () => {
+    return await get(buildQuery('/domains/' + domainID + '/classes/tree', params));
+  };
+}
+
 export function addClass(domainID, _class) {
   return async () => {
     return await post('/domains/' + domainID + '/classes', _class);

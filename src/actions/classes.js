@@ -7,15 +7,30 @@ import {
   CLASSES_DATA_ERROR,
   CLASSES_DATA_FETCH,
   CLASSES_DATA_RECEIVED,
+  CLASSES_TREE_RECEIVED,
+  CLASSES_SELECT_RECEIVED,
 } from '../actions/types';
-import { classes, addClass, editClass, deleteClass, classDetails } from '../api';
+import { classes, addClass, editClass, deleteClass, classDetails, classesTree } from '../api';
 
-export function fetchClassesData(domainID, params) {
+export function fetchClassesData(domainID, params, select) {
   return async dispatch => {
     await dispatch({ type: CLASSES_DATA_FETCH });
     try {
       const response = await dispatch(classes(domainID, params));
-      await dispatch({ type: CLASSES_DATA_RECEIVED, data: response });
+      await dispatch({ type: select ? CLASSES_SELECT_RECEIVED : CLASSES_DATA_RECEIVED, data: response });
+    } catch(error) {
+      await dispatch({ type: CLASSES_DATA_ERROR, error});
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function fetchClassesTree(domainID, params) {
+  return async dispatch => {
+    await dispatch({ type: CLASSES_DATA_FETCH });
+    try {
+      const response = await dispatch(classesTree(domainID, params));
+      await dispatch({ type: CLASSES_TREE_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: CLASSES_DATA_ERROR, error});
       return Promise.reject(error.message);

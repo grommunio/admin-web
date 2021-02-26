@@ -7,6 +7,8 @@ import {
   CLASSES_DATA_ERROR,
   CLASSES_DATA_FETCH,
   CLASSES_DATA_RECEIVED,
+  CLASSES_TREE_RECEIVED,
+  CLASSES_SELECT_RECEIVED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -14,6 +16,8 @@ const defaultState = {
   loading: false,
   error: null,
   Classes: [],
+  Trees: [],
+  Select: [],
   count: 0,
 };
 
@@ -33,7 +37,21 @@ function classesReducer(state = defaultState, action) {
         Classes: action.data.data,
         count: action.data.count,
       };
-    
+
+    case CLASSES_TREE_RECEIVED:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        Trees: action.data.data,
+      };
+
+    case CLASSES_SELECT_RECEIVED:
+      return {
+        ...state,
+        Select: action.data.data,
+      };
+  
     case CLASSES_DATA_ERROR: {
       return {
         ...state,
