@@ -105,8 +105,8 @@ class ClassDetails extends PureComponent {
   columns = [ 'username' ];
 
   async componentDidMount() {
-    const { domain, fetch, fetchClasses } = this.props;
-    fetchClasses(domain.ID)
+    const { domain, _classes, fetch, fetchClasses } = this.props;
+    if(_classes.length === 0) fetchClasses(domain.ID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const _class = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -427,7 +427,7 @@ ClassDetails.propTypes = {
 };
 
 const mapStateToProps = state => {
-  return { _classes: state._classes.Classes };
+  return { _classes: state._classes.Select };
 };
 
 const mapDispatchToProps = dispatch => {

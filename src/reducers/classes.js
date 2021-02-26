@@ -8,6 +8,7 @@ import {
   CLASSES_DATA_FETCH,
   CLASSES_DATA_RECEIVED,
   CLASSES_TREE_RECEIVED,
+  CLASSES_SELECT_RECEIVED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -16,25 +17,9 @@ const defaultState = {
   error: null,
   Classes: [],
   Trees: [],
+  Select: [],
   count: 0,
 };
-
-function buildTrees(data) {
-  const arr = [];
-  data.forEach(tree => arr.push(renameObject(tree)));
-  return arr;
-}
-
-function renameObject(input) {
-  const newObj = {
-    ...input,
-  };
-  newObj.name = input.classname;
-  for(let i = 0; i < newObj.children.length; i++) {
-    newObj.children[i] = renameObject(newObj.children[i]);
-  }
-  return newObj;
-}
 
 function classesReducer(state = defaultState, action) {
   switch (action.type) {
@@ -58,9 +43,15 @@ function classesReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Trees: buildTrees(action.data.data),
+        Trees: action.data.data,
       };
-    
+
+    case CLASSES_SELECT_RECEIVED:
+      return {
+        ...state,
+        Select: action.data.data,
+      };
+  
     case CLASSES_DATA_ERROR: {
       return {
         ...state,

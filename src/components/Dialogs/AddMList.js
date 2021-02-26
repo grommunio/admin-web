@@ -53,9 +53,12 @@ class AddMList extends PureComponent {
   ]
 
   handleEnter = () => {
-    const { fetch, domain, onError } = this.props;
-    fetch(domain.ID)
-      .catch(onError);
+    const { fetch, _classes, domain, onError } = this.props;
+    if(_classes.length === 0 ) fetch(domain.ID)
+      .catch(error => {
+        onError(error);
+        this.setState({ loading: false });
+      });
   }
 
   handleInput = field => event => {
@@ -232,7 +235,7 @@ AddMList.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    _classes: state._classes.Classes,
+    _classes: state._classes.Select,
   };
 };
 
@@ -242,7 +245,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addMListData(domainID, mList))
         .catch(message => Promise.reject(message));
     },
-    fetch: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }))
+    fetch: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
       .catch(message => Promise.reject(message)),
   };
 };

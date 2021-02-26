@@ -98,7 +98,14 @@ class AddClass extends PureComponent {
       });
   }
 
-  handleEnter = () => this.props.fetch(this.props.domain.ID);
+  handleEnter = () => {
+    const { fetch, domain, _classes } = this.props;
+    if(_classes.length === 0) fetch(domain.ID)
+      .catch(error => {
+        this.props.onError(error);
+        this.setState({ loading: false });
+      });
+  }
 
   handleFilterInput = (ANDidx, ORidx, field) => e => {
     const filters = [...this.state.filters];
@@ -295,7 +302,7 @@ AddClass.propTypes = {
 };
 
 const mapStateToProps = state => {
-  return { _classes: state._classes.Classes };
+  return { _classes: state._classes.Select };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -303,7 +310,7 @@ const mapDispatchToProps = dispatch => {
     add: async (domainID, _class) => {
       await dispatch(addClassData(domainID, _class)).catch(message => Promise.reject(message));
     },
-    fetch: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }))
+    fetch: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
       .catch(message => Promise.reject(message)),
   };
 };

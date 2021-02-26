@@ -62,8 +62,8 @@ class MListDetails extends PureComponent {
   }
 
   async componentDidMount() {
-    const { domain, fetch, fetchClasses } = this.props;
-    fetchClasses(domain.ID)
+    const { domain, fetch, _classes, fetchClasses } = this.props;
+    if(_classes.length === 0) fetchClasses(domain.ID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -274,7 +274,7 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchMListData(domainID, id))
       .then(mlist => mlist)
       .catch(message => Promise.reject(message)),
-    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }))
+    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
       .catch(message => Promise.reject(message)),
   };
 };
