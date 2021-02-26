@@ -19,6 +19,7 @@ import { editMListData, fetchMListData } from '../actions/mlists';
 import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
+import { fetchClassesData } from '../actions/classes';
 
 const styles = theme => ({
   root: {
@@ -61,18 +62,23 @@ class MListDetails extends PureComponent {
   }
 
   async componentDidMount() {
-    const { domain, fetch } = this.props;
+    const { domain, fetch, fetchClasses } = this.props;
+    fetchClasses(domain.ID)
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
-      mList: mList || {},
+      mList: mList ? {
+        ...mList,
+        class: mList.class.ID,
+      } : {},
     });
   }
 
   listTypes = [
     { ID: 0, name: "Normal" },
-    { ID: 1, name: "Group" },
     { ID: 2, name: "Domain" },
+    { ID: 3, name: "Class" },
   ]
 
   listPrivileges = [
@@ -127,9 +133,9 @@ class MListDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, domain } = this.props;
+    const { classes, t, domain, _classes } = this.props;
     const { mList, snackbar } = this.state;
-    const { listname, listType, listPrivilege, associations, specifieds } = mList;
+    const { listname, listType, listPrivilege, associations, specifieds, class: _class } = mList;
 
     return (
       <div className={classes.root}>
@@ -201,6 +207,20 @@ class MListDetails extends PureComponent {
                 value={specifieds || ''}
                 onChange={this.handleInput('specifieds')}
               />}
+              {listType === 3 && <TextField 
+                className={classes.input} 
+                label={t("Class")} 
+                fullWidth 
+                value={_class || ''}
+                onChange={this.handleInput('class')}
+                select
+              >
+                {_classes.map(c =>
+                  <MenuItem key={c.ID} value={c.ID}>
+                    {c.classname}
+                  </MenuItem>  
+                )}
+              </TextField>}
             </FormControl>
             <Button
               variant="text"
@@ -232,10 +252,18 @@ MListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  _classes: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchClasses: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    _classes: state._classes.Classes,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -246,8 +274,10 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchMListData(domainID, id))
       .then(mlist => mlist)
       .catch(message => Promise.reject(message)),
+    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }))
+      .catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(MListDetails)));
