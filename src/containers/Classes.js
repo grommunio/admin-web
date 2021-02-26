@@ -132,7 +132,6 @@ class Classes extends Component {
   handleTab = (e, tab) => this.setState({ tab });
 
   handleRootSelect = event => {
-    console.log(event.target.value);
     this.setState({
       root: event.target.value,
     });
@@ -221,7 +220,7 @@ class Classes extends Component {
   }, 200);
 
   renderNode = ({ nodeDatum, toggleNode }) => (
-    <g>
+    <g onClick={this.handleNodeClicked(nodeDatum.ID)}>
       <rect width="20" height="20" x="-10" onClick={toggleNode} />
       <text fill="black" strokeWidth="1" x="20" y="15">
         {nodeDatum.name}
@@ -235,6 +234,11 @@ class Classes extends Component {
       x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
       y: 20,
     };
+  }
+
+  handleNodeClicked = id => () => {
+    const { domain, history } = this.props;
+    history.push('/' + domain.ID + '/classes/' + id);
   }
 
   render() {
@@ -364,6 +368,8 @@ class Classes extends Component {
                         siblings: 1,
                         nonSiblings: 2,
                       }}
+                      onNodeClick={this.handleNodeClicked}
+                      collapsible={false}
                     />
                   </Paper>}
               </div>
