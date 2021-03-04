@@ -263,8 +263,7 @@ class RoleDetails extends PureComponent {
               </Grid>
             </FormControl>
             <Button
-              variant="text"
-              color="secondary"
+              variant="contained"
               onClick={() => this.props.history.push('/roles')}
               style={{ marginRight: 8 }}
             >

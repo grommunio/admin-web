@@ -58,7 +58,6 @@ class DeleteUser extends PureComponent {
           <Button
             onClick={onClose}
             variant="contained"
-            color="secondary"
           >
             {t('Close')}
           </Button>
@@ -66,6 +65,7 @@ class DeleteUser extends PureComponent {
             className={classes.delete}
             onClick={this.handleDelete(true)}
             variant="contained"
+            color="secondary"
             disabled={Orphaned.length === 0}
           >
             {t('Delete with files')}
@@ -74,6 +74,7 @@ class DeleteUser extends PureComponent {
             className={classes.delete}
             onClick={this.handleDelete(false)}
             variant="contained"
+            color="secondary"
             disabled={Orphaned.length === 0}
           >
             {t('Delete')}

@@ -68,10 +68,13 @@ class ChangeUserPassword extends PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.setState({ changingPw: false })}>
+          <Button
+            variant="contained"
+            onClick={() => this.setState({ changingPw: false })}>
             {t('Cancel')}
           </Button>
           <Button
+            variant="contained"
             color="primary"
             onClick={this.handlePasswordChange}
             disabled={checkPw !== newPw}

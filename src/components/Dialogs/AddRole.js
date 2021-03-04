@@ -229,7 +229,6 @@ class AddRole extends PureComponent {
           <Button
             onClick={onSuccess}
             variant="contained"
-            color="secondary"
           >
             Cancel
           </Button>

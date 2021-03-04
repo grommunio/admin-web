@@ -370,8 +370,7 @@ class UserDetails extends PureComponent {
               handleRemoveAlias={this.handleRemoveAlias}
             />}
             <Button
-              variant="text"
-              color="secondary"
+              variant="contained"
               onClick={history.goBack}
               style={{ marginRight: 8 }}
             >

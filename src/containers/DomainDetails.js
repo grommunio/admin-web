@@ -163,6 +163,7 @@ class DomainListDetails extends PureComponent {
                 />
                 <Button
                   variant="contained"
+                  color="primary"
                   onClick={() => this.setState({ changingPw: true })}
                   size="small"
                 >
@@ -220,8 +221,7 @@ class DomainListDetails extends PureComponent {
               />
             </FormControl>
             <Button
-              variant="text"
-              color="secondary"
+              variant="contained"
               onClick={() => this.props.history.push('/domainList')}
               style={{ marginRight: 8 }}
             >
@@ -264,10 +264,13 @@ class DomainListDetails extends PureComponent {
             />
           </DialogContent>
           <DialogActions>
-            <Button color="secondary" onClick={() => this.setState({ changingPw: false })}>
+            <Button
+              variant="contained"
+              onClick={() => this.setState({ changingPw: false })}>
               {t('Cancel')}
             </Button>
             <Button
+              variant="contained"
               color="primary"
               onClick={this.handlePasswordChange}
               disabled={checkPw !== newPw}
