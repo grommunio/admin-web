@@ -55,6 +55,7 @@ class Account extends PureComponent {
           />
           <Button
             variant="contained"
+            color="primary"
             onClick={handlePasswordChange}
             size="small"
           >

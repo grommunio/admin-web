@@ -270,7 +270,6 @@ class AddClass extends PureComponent {
           <Button
             onClick={onClose}
             variant="contained"
-            color="secondary"
           >
             {t('Cancel')}
           </Button>
