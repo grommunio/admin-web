@@ -12,6 +12,7 @@ import {
   Button,
   InputBase,
   Typography,
+  CircularProgress,
 } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Key from '@material-ui/icons/VpnKey';
@@ -80,6 +81,10 @@ const styles = theme => ({
     position: 'absolute',
     zIndex: 0,
   },
+  loader: {
+    color: 'white',
+
+  },
 });
 
 
@@ -88,7 +93,7 @@ class Login extends Component {
   state = {
     user: '',
     pass: '',
-
+    loading: false,
   }
   
   componentDidMount() {
@@ -109,15 +114,17 @@ class Login extends Component {
     const { authLogin } = this.props;
     const { user, pass } = this.state;
     event.preventDefault();
+    this.setState({ loading: true });
     authLogin(user, pass)
       .catch(err => {
+        this.setState({ loading: false });
         console.error(err);
       });
   }  
 
   render() {
     const { classes, t, auth } = this.props;
-    const { user, pass } = this.state;
+    const { user, pass, loading } = this.state;
 
     return (
       <div className={classes.root}>
@@ -160,7 +167,8 @@ class Login extends Component {
               onClick={this.handleLogin}
               disabled={!user || !pass}
             >
-              <Typography>{t('Login')}</Typography>
+              {loading ? <CircularProgress size={24}  color="inherit" className={classes.loader}/> :
+                <Typography>{('Login')}</Typography>}
             </Button>
           </Paper>
         </Paper>
