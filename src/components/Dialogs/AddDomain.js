@@ -29,7 +29,6 @@ class AddDomain extends PureComponent {
 
   state = {
     domainname: '',
-    password: '',
     domainStatus: 0,
     maxUser: '',
     title: '',
@@ -59,12 +58,11 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, password, domainStatus, maxUser,
+    const { domainname, domainStatus, maxUser,
       title, address, adminName, tel } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
-      password: password || undefined,
       domainStatus,
       maxUser,
       title,
@@ -75,7 +73,6 @@ class AddDomain extends PureComponent {
       .then(() => {
         this.setState({
           domainname: '',
-          password: '',
           domainStatus: 0,
           maxUser: '',
           title: '',
@@ -93,7 +90,7 @@ class AddDomain extends PureComponent {
 
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { domainname, password, domainStatus,
+    const { domainname, domainStatus,
       maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
@@ -118,15 +115,6 @@ class AddDomain extends PureComponent {
               required
               error={!!domainname && domainError}
             />
-            <TextField 
-              className={classes.input} 
-              label={t("Password")} 
-              fullWidth 
-              value={password || ''}
-              onChange={this.handleInput('password')}
-              type="password"
-              required
-            />
             <TextField
               select
               className={classes.input}
@@ -147,6 +135,7 @@ class AddDomain extends PureComponent {
               fullWidth 
               value={maxUser || ''}
               onChange={this.handleNumberInput('maxUser')}
+              required
             />
             <TextField 
               className={classes.input} 
@@ -189,7 +178,7 @@ class AddDomain extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={loading || !domainname || password.length < 6 || domainError}
+            disabled={loading || !domainname || !maxUser || domainError}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>
