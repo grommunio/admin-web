@@ -21,7 +21,7 @@ function Loading(props) {
       </div>
     </div>;
   } else if (props.timedOut) {
-    return <div style={{ display: 'flex' }}>
+    return <div id="loader">
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant="body1" style={{ marginRight: 8 }}>Taking a long time...</Typography>
         <Button size="small" variant="text" color="primary" onClick={ handleRetry }>Retry</Button>
