@@ -166,10 +166,11 @@ class UserDetails extends PureComponent {
     const { user } = this.state;
     this.props.edit(this.props.domain.ID, {
       ...user,
+      domainID: undefined,
       aliases: user.aliases.filter(alias => alias !== ''),
       properties: {
         ...user.properties,
-        storagequotalimit: user.properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+        storagequotalimit: user.properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit) || undefined,
       },
       roles: undefined,
     })
@@ -288,7 +289,7 @@ class UserDetails extends PureComponent {
     const { classes, t, domain, history } = this.props;
     const { user, changingPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
-    const usernameError = user.username && !user.username.match(/^([.0-9a-z_+-]+)$/);
+    const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
 
     return (
       <div className={classes.root}>
