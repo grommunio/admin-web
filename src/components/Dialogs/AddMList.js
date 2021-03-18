@@ -177,7 +177,7 @@ class AddMList extends PureComponent {
             />}
             {listPrivilege === 3 && <TextField 
               className={classes.input} 
-              label={t("Senders (separated by ','")} 
+              label={t("Senders (separated by ',')")} 
               fullWidth 
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}

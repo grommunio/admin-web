@@ -63,7 +63,6 @@ class GroupDetails extends PureComponent {
     const { domain, fetch } = this.props;
     const group = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    console.log(group);
     this.setState({
       group: group || {},
     });
