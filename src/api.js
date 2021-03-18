@@ -93,7 +93,6 @@ async function renew() {
 
 function toArray(obj) {
   const arr = [];
-  console.log(obj);
   Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
   return arr;
 }

@@ -219,7 +219,7 @@ class NavigationLinks extends PureComponent {
             </Grid>}
         <List className={classes.list}>
           {(tab === 1 || role === DOM_ADMIN) &&
-            domains.map(({ domainname: name, ID }) => {
+            domains.map(({ domainname: name, ID, domainStatus }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
                   <ListItem
@@ -230,7 +230,7 @@ class NavigationLinks extends PureComponent {
                   >
                     <Grid container alignItems="center">
                       <Domains className={classes.icon} />
-                      <ListItemText primary={name} />
+                      <ListItemText primary={name + (domainStatus !== 0 ? ` [${t('Deleted')}]` : '')} />
                     </Grid>
                   </ListItem>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
