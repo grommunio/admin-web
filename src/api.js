@@ -93,6 +93,7 @@ async function renew() {
 
 function toArray(obj) {
   const arr = [];
+  console.log(obj);
   Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
   return arr;
 }
@@ -416,12 +417,6 @@ export function folders(domainID, params) {
   };
 }
 
-export function folder(domainID, folderID) {
-  return async () => {
-    return await get('/domains/' + domainID + '/folders/'+ folderID);
-  };
-}
-
 export function addFolder(domainID, folder) {
   return async () => {
     return await post('/domains/' + domainID + '/folders', folder);
@@ -430,7 +425,7 @@ export function addFolder(domainID, folder) {
 
 export function editFolder(domainID, folder) {
   return async () => {
-    return await patch('/domains/' + domainID + '/folders/' + folder.folderid, folder);
+    return await patch('/domains/' + domainID + '/folders/' + folder.folderid, { ...folder, ID: undefined });
   };
 }
 
@@ -446,7 +441,7 @@ export function deleteFolder(domainID, id) {
 
 export function owners(domainID, folderID, params) {
   return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/folders/' + folderID + '/owners'), params);
+    return await get(buildQuery('/domains/' + domainID + '/folders/' + folderID + '/owners', params));
   };
 }
 

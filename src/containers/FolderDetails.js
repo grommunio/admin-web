@@ -82,8 +82,8 @@ class FolderDetails extends PureComponent {
     const { fetch, fetchOwners } = this.props;
     const splits = window.location.pathname.split('/');
     const folder = await fetch(splits[1], splits[3]);
-    this.setState({ folder });
-    fetchOwners(splits[1], folder.folderid);
+    this.setState({ folder: folder });
+    await fetchOwners(splits[1], folder.folderid);
   }
 
   handleInput = field => event => {
@@ -146,9 +146,10 @@ class FolderDetails extends PureComponent {
                 label={t("Folder name")} 
                 fullWidth 
                 value={folder.displayname || ''}
-                onChange={this.handleInput('displayname')}
                 autoFocus
-                disabled
+                inputProps={{
+                  disabled: true,
+                }}
               />
               <TextField
                 select
@@ -156,8 +157,9 @@ class FolderDetails extends PureComponent {
                 label={t("Container")}
                 fullWidth
                 value={folder.container || 'IPF.Note'}
-                onChange={this.handleInput('container')}
-                disabled
+                inputProps={{
+                  disabled: true,
+                }}
               >
                 {this.types.map((type, key) => (
                   <MenuItem key={key} value={type.ID}>
@@ -172,8 +174,10 @@ class FolderDetails extends PureComponent {
                 multiline
                 rows={4}
                 value={folder.comment || ''}
-                onChange={this.handleInput('comment')}
-                disabled
+                //onChange={this.handleInput('comment')}
+                inputProps={{
+                  disabled: true,
+                }}
               />
             </FormControl>
             <Grid container className={classes.grid}>
