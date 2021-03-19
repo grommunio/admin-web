@@ -10,6 +10,7 @@ import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import authReducer from './reducers/auth';
 import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
+import dbconfReducer from './reducers/dbconf';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
 import foldersReducer from './reducers/folders';
@@ -35,6 +36,7 @@ export const store = createStore(
     _classes: classesReducer,
     dashboard: dashboardReducer,
     antispam: antispamReducer,
+    dbconf: dbconfReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,

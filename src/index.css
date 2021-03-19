@@ -20,6 +20,25 @@ code {
     monospace;
 }
 
+
+pre {
+  margin:0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+pre code {
+  display: block;
+  padding: 16px 20px 16px 20px;
+  border-radius: 6px;
+  font-family: 'Courier', monospace;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 24px;
+  background: #232427;
+  color: #fff;
+}
+
 @font-face {
   font-family: "Roboto";
   font-style: normal;

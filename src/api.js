@@ -593,6 +593,28 @@ export function classDetails(domainID, id) {
 }
 
 /*
+  DBCONF
+*/
+
+export function dbconf(params) {
+  return async () => {
+    return await get(buildQuery('/system/dbconf', params));
+  };
+}
+
+export function commands(params) {
+  return async () => {
+    return await get(buildQuery('/system/dbconf/commands', params));
+  };
+}
+
+export function uploadFile(service, filename, file) {
+  return async () => {
+    return await put('/system/dbconf/' + service + '/' + filename,  { data: file });
+  };
+}
+
+/*
   MEMBERS
 */
 

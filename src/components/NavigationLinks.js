@@ -18,6 +18,7 @@ import Domains from '@material-ui/icons/Domain';
 import Folder from '@material-ui/icons/Folder';
 import Ldap from '@material-ui/icons/Contacts';
 import MLists from '@material-ui/icons/Email';
+import Storage from '@material-ui/icons/Storage';
 /*
 import Mail from '@material-ui/icons/Mail';
 import Orgs from '@material-ui/icons/GroupWork';
@@ -385,6 +386,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Ldap className={classes.icon}/>
                 <ListItemText primary={t('LDAP')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('dbconf')}
+              className={classes.li}
+              selected={location.pathname === '/dbconf'}
+            >
+              <Grid container alignItems="center">
+                <Storage className={classes.icon}/>
+                <ListItemText primary={t('DB Configuration')} />
               </Grid>
             </ListItem>
             {/*<ListItem button onClick={this.toggleDefaults} className={classes.li}>

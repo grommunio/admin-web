@@ -48,6 +48,7 @@ const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
 const AsyncLdapConfig = makeLoadableComponent(() => import("./containers/LdapConfig"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
+const AsyncDBConf = makeLoadableComponent(() => import("./containers/DBConf"));
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
 //const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
@@ -103,6 +104,12 @@ const Routes = ({ childProps, domains }) => (
       path="/ldap"
       exact
       component={AsyncLdapConfig}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/dbconf"
+      exact
+      component={AsyncDBConf}
       props={childProps}
     />
     <AuthenticatedRoute
