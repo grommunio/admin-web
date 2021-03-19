@@ -260,13 +260,13 @@ export function editUserRole(domainID, userID, roles) {
 
 export function searchLdap(params) {
   return async () => {
-    return await get(buildQuery('/ldap/search', params));
+    return await get(buildQuery('/domains/ldap/search', params));
   };
 }
 
 export function importUser(params) {
   return async () => {
-    return await post(buildQuery('/ldap/importUser', params));
+    return await post(buildQuery('/domains/ldap/importUser', params));
   };
 }
 
@@ -278,43 +278,43 @@ export function sync(domainID, userID) {
 
 export function syncAll() {
   return async () => {
-    return await post('/ldap/downsync');
+    return await post('/domains/ldap/downsync');
   };
 }
 
 export function ldapDump(params) {
   return async () => {
-    return await get(buildQuery('/ldap/dump', params));
+    return await get(buildQuery('/domains/ldap/dump', params));
   };
 }
 
 export function checkLdap(params) {
   return async () => {
-    return await get(buildQuery('/ldap/check', params));
+    return await get(buildQuery('/domains/ldap/check', params));
   };
 }
 
 export function deleteOrphans(params) {
   return async () => {
-    return await yeet(buildQuery('/ldap/check', params));
+    return await yeet(buildQuery('/domains/ldap/check', params));
   };
 }
 
 export function ldapConfig() {
   return async () => {
-    return await get('/mconf/ldap');
+    return await get('/system/mconf/ldap');
   };
 }
 
 export function updateLdap(config) {
   return async () => {
-    return await put('/mconf/ldap', config);
+    return await put('/system/mconf/ldap', config);
   };
 }
 
 export function deleteLdap() {
   return async () => {
-    return await yeet('/mconf/ldap');
+    return await yeet('/system/mconf/ldap');
   };
 }
 
