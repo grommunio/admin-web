@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   Typography, Button, Grid, TableSortLabel,
-  TextField, InputAdornment, Tabs, Tab } from '@material-ui/core';
+  TextField, InputAdornment, Tabs, Tab, IconButton } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
@@ -15,8 +15,10 @@ import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { debounce } from 'debounce';
-import { fetchDBConfData } from '../actions/dbconf';
+import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
+import GeneralDelete from '../components/Dialogs/GeneralDelete';
+import { Delete } from '@material-ui/icons';
 
 const styles = theme => ({
   root: {
@@ -129,16 +131,10 @@ class DBConf extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
-  handleEdit = role => event => {
-    this.props.history.push('/roles/' + role.ID, { ...role });
+  handleDelete = service => event => {
     event.stopPropagation();
+    this.setState({ deleting: service });
   }
-
-  handleDelete = role => event => {
-    event.stopPropagation();
-    this.setState({ deleting: role });
-  }
-
 
   handleDeleteSuccess = () => {
     this.setState({ deleting: false, snackbar: 'Success!' });
@@ -173,7 +169,7 @@ class DBConf extends Component {
 
   render() {
     const { classes, t, services, commands } = this.props;
-    const { adding, snackbar, order, match, tab } = this.state;
+    const { adding, snackbar, order, match, tab, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -243,6 +239,11 @@ class DBConf extends Component {
                 {services.map((service, idx) =>
                   <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                     <TableCell>{service}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={this.handleDelete(service)}>
+                        <Delete color="error" />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -271,6 +272,15 @@ class DBConf extends Component {
             snackbar={snackbar}
             onClose={() => this.setState({ snackbar: '' })}
           />
+          <GeneralDelete
+            open={!!deleting}
+            delete={this.props.delete}
+            onSuccess={this.handleDeleteSuccess}
+            onError={this.handleDeleteError}
+            onClose={this.handleDeleteClose}
+            item={deleting}
+            id={deleting}
+          />
           <UploadServiceFile
             open={adding}
             onClose={this.handleAddingClose}
@@ -290,6 +300,7 @@ DBConf.propTypes = {
   services: PropTypes.array.isRequired,
   commands: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -304,6 +315,9 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async params => {
       await dispatch(fetchDBConfData(params)).catch(msg => Promise.reject(msg));
+    },
+    delete: async service => {
+      await dispatch(deleteDBService(service)).catch(msg => Promise.reject(msg));
     },
   };
 };

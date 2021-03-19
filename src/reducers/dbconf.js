@@ -4,7 +4,10 @@
 import {
   DBCONF_DATA_FETCH,
   DBCONF_DATA_RECEIVED,
+  DBCONF_SERVICE_DELETE,
+  DBCONF_SERVICE_ADD,
 } from '../actions/types';
+import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -26,6 +29,19 @@ function dbconfReducer(state = defaultState, action) {
         loading: false,
         services: action.services,
         commands: action.commands,
+      };
+
+      
+    case DBCONF_SERVICE_DELETE:
+      return {
+        ...state,
+        services: state.services.filter(s => s !== action.service),
+      };
+
+    case DBCONF_SERVICE_ADD:
+      return {
+        ...state,
+        services: addItem(state.services, action.service),
       };
 
     default:

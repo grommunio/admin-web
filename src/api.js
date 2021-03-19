@@ -620,6 +620,12 @@ export function serviceFiles(service) {
   };
 }
 
+export function deleteService(service) {
+  return async () => {
+    return await yeet('/system/dbconf/' + service);
+  };
+}
+
 /*
   MEMBERS
 */
