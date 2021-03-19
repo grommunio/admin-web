@@ -7,7 +7,7 @@ import {
   DBCONF_SERVICE_DELETE,
   DBCONF_SERVICE_ADD,
 } from './types';
-import { dbconf, commands, uploadFile, serviceFiles, deleteService } from '../api';
+import { dbconf, commands, uploadFile, serviceFiles, deleteService, deleteFile } from '../api';
 
 export function fetchDBConfData(params) {
   return async dispatch => {
@@ -17,7 +17,7 @@ export function fetchDBConfData(params) {
       const commandsData = await dispatch(commands(params));
       await dispatch({ type: DBCONF_DATA_RECEIVED, services: servicesData.data, commands: commandsData });
     } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
+      console.error('failed to fetch dbconf data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);
     }
   };
@@ -30,7 +30,7 @@ export function uploadServiceFile(service, filename, file) {
       await dispatch(uploadFile(service, filename, file));
       await dispatch({ type: DBCONF_SERVICE_ADD, service });
     } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
+      console.error('failed to fetch dbconf data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);
     }
   };
@@ -53,6 +53,17 @@ export function deleteDBService(service) {
     try {
       await dispatch(deleteService(service));
       await dispatch({ type: DBCONF_SERVICE_DELETE, service });
+    } catch(err) {
+      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deleteDBFile(service, file) {
+  return async dispatch => {
+    try {
+      await dispatch(deleteFile(service, file));
     } catch(err) {
       console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);

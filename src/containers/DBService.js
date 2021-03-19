@@ -16,12 +16,15 @@ import {
   ListItemText,
   ListItem,
   Divider,
+  IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { fetchServiceFiles } from '../actions/dbconf';
+import { fetchServiceFiles, deleteDBFile } from '../actions/dbconf';
 import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
+import { Delete } from '@material-ui/icons';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 
 const styles = theme => ({
   root: {
@@ -62,6 +65,7 @@ class GroupDetails extends PureComponent {
     files: [],
     name: '',
     unsaved: false,
+    deleting: false,
   }
 
   async componentDidMount() {
@@ -85,6 +89,20 @@ class GroupDetails extends PureComponent {
     });
   }
 
+  handleDelete = file => event => {
+    event.stopPropagation();
+    this.setState({ deleting: file });
+  }
+
+  handleDeleteSuccess = () => {
+    const files = [...this.state.files].filter(f => f !== this.state.deleting);
+    this.setState({ deleting: false, snackbar: 'Success!', files });
+  }
+
+  handleDeleteClose = () => this.setState({ deleting: false });
+
+  handleDeleteError = error => this.setState({ snackbar: error });
+
   handleNavigation = path => event => {
     const { history } = this.props;
     event.preventDefault();
@@ -93,7 +111,7 @@ class GroupDetails extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { name, snackbar, files } = this.state;
+    const { name, snackbar, files, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -125,6 +143,9 @@ class GroupDetails extends PureComponent {
                   <ListItemText
                     primary={file}
                   />
+                  <IconButton onClick={this.handleDelete(file)}>
+                    <Delete color="error" />
+                  </IconButton>
                 </ListItem>
                 <Divider />
               </React.Fragment>
@@ -150,6 +171,16 @@ class GroupDetails extends PureComponent {
             snackbar={snackbar}
             onClose={() => this.setState({ snackbar: '' })}
           />
+          <DomainDataDelete
+            open={!!deleting}
+            delete={this.props.delete}
+            onSuccess={this.handleDeleteSuccess}
+            onError={this.handleDeleteError}
+            onClose={this.handleDeleteClose}
+            item={deleting}
+            id={deleting}
+            domainID={name}
+          />
         </div>
       </div>
     );
@@ -168,6 +199,8 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (service) => await dispatch(fetchServiceFiles(service))
       .then(files => files)
+      .catch(message => Promise.reject(message)),
+    delete: async (service, file) => await dispatch(deleteDBFile(service, file))
       .catch(message => Promise.reject(message)),
   };
 };
