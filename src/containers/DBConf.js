@@ -241,7 +241,7 @@ class DBConf extends Component {
               </TableHead>
               <TableBody>
                 {services.map((service, idx) =>
-                  <TableRow key={idx} hover>
+                  <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                     <TableCell>{service}</TableCell>
                   </TableRow>
                 )}

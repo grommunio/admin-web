@@ -614,6 +614,12 @@ export function uploadFile(service, filename, file) {
   };
 }
 
+export function serviceFiles(service) {
+  return async () => {
+    return await get('/system/dbconf/' + service);
+  };
+}
+
 /*
   MEMBERS
 */
