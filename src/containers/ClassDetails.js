@@ -111,7 +111,7 @@ class ClassDetails extends PureComponent {
     const _class = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
-      stack: [_class],
+      stack: _class ? [_class] : [],
       _class: _class ? {
         ..._class,
         parentClasses: _class.parentClasses.map(pc => pc.ID),
