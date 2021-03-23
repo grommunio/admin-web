@@ -12,10 +12,6 @@ import {
   TextField,
   FormControl,
   Button,
-  InputLabel,
-  Select,
-  Input,
-  Chip,
   MenuItem,
   IconButton,
 } from '@material-ui/core';
@@ -28,6 +24,7 @@ import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/ro
 import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
 import Feedback from '../components/Feedback';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   root: {
@@ -85,10 +82,10 @@ class RoleDetails extends PureComponent {
 
   async componentDidMount() {
     const { fetch, fetchUser, fetchDomains, fetchPermissions } = this.props;
+    await fetchDomains().catch(err => this.setState({ snackbar: err }));
     const role = await fetch(getStringAfterLastSlash());
     this.setState({ role });
     fetchUser().catch(err => this.setState({ snackbar: err }));
-    fetchDomains().catch(err => this.setState({ snackbar: err }));
     fetchPermissions().catch(err => this.setState({ snackbar: err }));
   }
 
@@ -102,11 +99,22 @@ class RoleDetails extends PureComponent {
     });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      role: {
+        ...this.state.role,
+        [field]: newVal,
+      },
+      unsaved: true,
+    });
+  }
+
   handleEdit = () => {
     const { role } = this.state;
     this.props.edit({
       ...role,
       users: role.users.map(user => user.ID),
+      permissions: role.permissions.map(perm => { return { ...perm, params: perm.params?.ID }; }),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -127,9 +135,9 @@ class RoleDetails extends PureComponent {
     });
   }
 
-  handleSetParams = idx => event => {
+  handleSetParams = idx => (e, newVal) => {
     const copy = [...this.state.role.permissions];
-    copy[idx].params = event.target.value;
+    copy[idx].params = newVal;
     this.setState({
       role: {
         ...this.state.role,
@@ -164,7 +172,6 @@ class RoleDetails extends PureComponent {
     const { classes, t, Users, Permissions, Domains } = this.props;
     const { snackbar, role } = this.state;
     const { name, description, users, permissions } = role;
-
     return (
       <div className={classes.root}>
         <TopBar title={t("Role")}/>
@@ -197,30 +204,21 @@ class RoleDetails extends PureComponent {
                 value={description || ''}
                 onChange={this.handleInput('description')}
               />
-              <FormControl className={classes.input}>
-                <InputLabel id="demo-mutiple-chip-label">{t('Users')}</InputLabel>
-                <Select
-                  labelId="demo-mutiple-chip-label"
-                  id="demo-mutiple-chip"
-                  multiple
-                  value={users || []}
-                  onChange={this.handleInput('users')}
-                  input={<Input id="select-multiple-chip" />}
-                  renderValue={selected => 
-                    <div className={classes.chips}>
-                      {selected.map(value => 
-                        <Chip key={value.ID} label={value.username} className={classes.chip} />
-                      )}
-                    </div>
-                  }
-                >
-                  {(Users || []).map(user => (
-                    <MenuItem selected={users.includes(user)} key={user.ID} value={user}>
-                      {user.username}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                multiple
+                options={Users || []}
+                value={users || []}
+                onChange={this.handleAutocomplete('users')}
+                getOptionLabel={(user) => user.username}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Users"
+                    placeholder="Search users..."
+                    className={classes.input} 
+                  />
+                )}
+              />
               {(permissions || []).map((permission, idx) =>
                 <div key={idx} className={classes.row}>
                   <TextField
@@ -236,21 +234,25 @@ class RoleDetails extends PureComponent {
                       </MenuItem>
                     ))}
                   </TextField>
-                  <TextField 
-                    label={t("Params")}
+                  <Autocomplete
+                    options={Domains || []}
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
+                    getOptionLabel={(domainID) => domainID.domainname ||
+                      (Domains || []).find(d => d.ID == domainID)?.domainname} // Because only ID is received
+                    //renderOption={(domain) => domain.domainname}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Params"
+                        placeholder="Search domains..."
+                      />
+                    )}
+                    className={classes.rowTextfield}
                     fullWidth
                     disabled={['SystemAdmin', ''].includes(permission.permission)}
-                    className={classes.rowTextfield}
-                    select
-                  >
-                    {Domains.map(domain => (
-                      <MenuItem key={domain.ID} value={domain.ID}>
-                        {domain.domainname}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                    autoSelect
+                  />
                   <IconButton size="small" onClick={this.removeRow(idx)}>
                     <Delete fontSize="small" color="error" />
                   </IconButton>
