@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
+export const ANTISPAM_DATA_FETCH = 'ANTISPAM_DATA_FETCH';
+export const ANTISPAM_DATA_RECEIVED = 'ANTISPAM_DATA_RECEIVED';
+export const ANTISPAM_DATA_ERROR = 'ANTISPAM_DATA_ERROR';
+
 export const AUTH_AUTHENTICATED = 'AUTH_AUTHENTICATED';
 export const AUTH_AUTHENTICATING = 'AUTH_AUTHENTICATING';
 export const AUTH_ERROR = 'AUTH_ERROR';
