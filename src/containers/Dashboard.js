@@ -13,10 +13,12 @@ import SwapPieChart from "../components/SwapPieChart";
 import DisksChart from "../components/DisksChart";
 import CPULineChart from "../components/CPULineChart";
 import ServicesChart from "../components/ServicesChart";
+import AntispamStatistics from "../components/AntispamStatistics";
 import { Paper, Typography, IconButton } from "@material-ui/core";
 import Refresh from "@material-ui/icons/Update";
 import { connect } from "react-redux";
 import { fetchDashboardData } from "../actions/dashboard";
+import { fetchAntispamData } from "../actions/antispam";
 import { withTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
@@ -79,6 +81,7 @@ class Dashboard extends Component {
   componentDidMount() {
     this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
     this.props.fetchServices().catch((msg) => this.setState({ snackbar: msg }));
+    this.props.fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
     this.fetchDashboard();
   }
 
@@ -109,6 +112,7 @@ class Dashboard extends Component {
       swapPercent,
       load,
       fetchServices,
+      statistics,
     } = this.props;
     const { snackbar } = this.state;
 
@@ -119,6 +123,7 @@ class Dashboard extends Component {
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Dashboard")}
         </Typography>
+        <AntispamStatistics data={statistics}/>
         <Paper className={classes.fixedPaper} elevation={1}>
           <div className={classes.flexRow}>
             <Typography className={classes.chartTitle} variant="h5">
@@ -171,10 +176,12 @@ Dashboard.propTypes = {
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchServices: PropTypes.func.isRequired,
+  fetchAntispam: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
   disks: PropTypes.array.isRequired,
   memory: PropTypes.array.isRequired,
   swap: PropTypes.array.isRequired,
+  statistics: PropTypes.array.isRequired,
   swapPercent: PropTypes.number,
   load: PropTypes.array.isRequired,
 };
@@ -182,6 +189,7 @@ Dashboard.propTypes = {
 const mapStateToProps = (state) => {
   return {
     ...state.dashboard.Dashboard,
+    ...state.antispam,
   };
 };
 
@@ -193,6 +201,10 @@ const mapDispatchToProps = (dispatch) => {
       ),
     fetchServices: async () =>
       await dispatch(fetchServicesData()).catch((error) =>
+        Promise.reject(error)
+      ),
+    fetchAntispam: async () =>
+      await dispatch(fetchAntispamData()).catch((error) =>
         Promise.reject(error)
       ),
   };

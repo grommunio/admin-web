@@ -25,6 +25,7 @@ import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
+import antispamReducer from './reducers/antispam';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -33,6 +34,7 @@ export const store = createStore(
     auth: authReducer,
     _classes: classesReducer,
     dashboard: dashboardReducer,
+    antispam: antispamReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,

@@ -150,6 +150,12 @@ export function postServices(service, action) {
   };
 }
 
+export function antispam() {
+  return async () => {
+    return await get('/system/antispam/stat');
+  };
+}
+
 /*
   DOMAINS
 */
