@@ -27,8 +27,6 @@ const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
-const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
-const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
 //const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 ////const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
@@ -207,26 +205,6 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/classes/:classID`}
         exact
         component={AsyncClassDetails}
-        props={childProps}
-        key={domain.ID}
-        domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
-        path={`/${domain.ID}/groups`}
-        exact
-        component={AsyncGroups}
-        props={childProps}
-        key={domain.ID}
-        domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
-        path={`/${domain.ID}/groups/:groupID`}
-        exact
-        component={AsyncGroupDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

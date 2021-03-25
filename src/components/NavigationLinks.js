@@ -28,7 +28,6 @@ import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 */
-import Groups from '@material-ui/icons/GroupWork';
 import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
@@ -286,17 +285,6 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
-                        onClick={this.handleNavigation(ID + '/groups')}
-                        selected={location.pathname.startsWith('/' + ID + '/groups')}
-                      >
-                        <Grid container alignItems="center">
-                          <Groups className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Groups')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
                         onClick={this.handleNavigation(ID + '/mailLists')}
                         selected={location.pathname.startsWith('/' + ID + '/mailLists')}
                       >
@@ -406,17 +394,6 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <Collapse in={defaultsIn} unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('groups')}
-                  selected={location.pathname.startsWith('/groups')}
-                >
-                  <Grid container alignItems="center">
-                    <People className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Groups')}/>
-                  </Grid>
-                </ListItem>
                 <ListItem
                   className={classes.li}
                   button

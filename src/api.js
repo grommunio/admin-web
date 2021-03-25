@@ -379,40 +379,6 @@ export function uploadLicense(license) {
 }
 
 /*
-  GROUPS
-*/
-
-export function groups(domainID, params) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/groups', params));
-  };
-}
-
-export function addGroup(domainID, group) {
-  return async () => {
-    return await post('/domains/' + domainID + '/groups', group);
-  };
-}
-
-export function editGroup(domainID, group) {
-  return async () => {
-    return await patch('/domains/' + domainID + '/groups/' + group.ID, { ...group, ID: undefined });
-  };
-}
-
-export function deleteGroup(domainID, id) {
-  return async () => {
-    return await yeet('/domains/' + domainID + '/groups/' + id);
-  };
-}
-
-export function groupDetails(domainID, id) {
-  return async () => {
-    return await get('/domains/' + domainID + '/groups/' + id);
-  };
-}
-
-/*
   FOLDERS
 */
 
