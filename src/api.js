@@ -190,9 +190,9 @@ export function editDomain(domain) {
   };
 }
 
-export function deleteDomain(id) {
+export function deleteDomain(id, params) {
   return async () => {
-    return await yeet('/system/domains/' + id);
+    return await yeet(buildQuery('/system/domains/' + id, params));
   };
 }
 
