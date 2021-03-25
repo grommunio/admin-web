@@ -620,6 +620,18 @@ export function serviceFiles(service) {
   };
 }
 
+export function serviceFile(service, filename) {
+  return async () => {
+    return await get('/system/dbconf/' + service + '/' + filename);
+  };
+}
+
+export function editFile(service, filename, file) {
+  return async () => {
+    return await put('/system/dbconf/' + service + '/' + filename, file);
+  };
+}
+
 export function deleteService(service) {
   return async () => {
     return await yeet('/system/dbconf/' + service);

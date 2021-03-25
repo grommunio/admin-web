@@ -7,7 +7,7 @@ import {
   DBCONF_SERVICE_DELETE,
   DBCONF_SERVICE_ADD,
 } from './types';
-import { dbconf, commands, uploadFile, serviceFiles, deleteService, deleteFile } from '../api';
+import { dbconf, commands, uploadFile, serviceFiles, serviceFile, deleteService, deleteFile, editFile } from '../api';
 
 export function fetchDBConfData(params) {
   return async dispatch => {
@@ -41,6 +41,29 @@ export function fetchServiceFiles(service) {
     try {
       const files = await dispatch(serviceFiles(service));
       return Promise.resolve(files);
+    } catch(err) {
+      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchServiceFile(service, filename) {
+  return async dispatch => {
+    try {
+      const fileData = await dispatch(serviceFile(service, filename));
+      return Promise.resolve(fileData);
+    } catch(err) {
+      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function editServiceFile(service, filename, file) {
+  return async dispatch => {
+    try {
+      await dispatch(editFile(service, filename, file));
     } catch(err) {
       console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);

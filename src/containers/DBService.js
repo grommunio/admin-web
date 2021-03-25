@@ -59,7 +59,7 @@ const styles = theme => ({
   },
 });
 
-class GroupDetails extends PureComponent {
+class DBService extends PureComponent {
 
   state = {
     files: [],
@@ -76,16 +76,6 @@ class GroupDetails extends PureComponent {
     this.setState({
       files: files?.data || [],
       name: name || '',
-    });
-  }
-
-  handleInput = field => event => {
-    this.setState({
-      group: {
-        ...this.state.group,
-        [field]: event.target.value,
-      },
-      unsaved: true,
     });
   }
 
@@ -132,14 +122,13 @@ class GroupDetails extends PureComponent {
                 label={t("Service")} 
                 className={classes.input} 
                 value={name || ''}
-                //onChange={this.handleInput('groupname')}
                 autoFocus
               />
             </FormControl>
             <Typography variant="h6">Files</Typography>
             <List>
               {files.map((file, idx) => <React.Fragment key={idx}>
-                <ListItem>
+                <ListItem button onClick={this.handleNavigation(`dbconf/${name}/${file}`)}>
                   <ListItemText
                     primary={file}
                   />
@@ -187,7 +176,7 @@ class GroupDetails extends PureComponent {
   }
 }
 
-GroupDetails.propTypes = {
+DBService.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -207,4 +196,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails)));
+  withTranslation()(withStyles(styles)(DBService)));

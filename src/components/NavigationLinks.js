@@ -392,7 +392,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('dbconf')}
               className={classes.li}
-              selected={location.pathname === '/dbconf'}
+              selected={location.pathname.startsWith('/dbconf')}
             >
               <Grid container alignItems="center">
                 <Storage className={classes.icon}/>

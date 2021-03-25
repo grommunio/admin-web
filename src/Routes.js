@@ -50,6 +50,7 @@ const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"))
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
 const AsyncDBConf = makeLoadableComponent(() => import("./containers/DBConf"));
 const AsyncDBService = makeLoadableComponent(() => import("./containers/DBService"));
+const AsyncDBFile = makeLoadableComponent(() => import("./containers/DBFile"));
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
 //const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
@@ -117,6 +118,12 @@ const Routes = ({ childProps, domains }) => (
       path="/dbconf/:serviceName"
       exact
       component={AsyncDBService}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/dbconf/:serviceName/:fileName"
+      exact
+      component={AsyncDBFile}
       props={childProps}
     />
     <AuthenticatedRoute
