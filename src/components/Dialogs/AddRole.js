@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, InputLabel, Select, Input, 
+  MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, 
 } from '@material-ui/core';
 import Delete from '@material-ui/icons/Close';
 import Add from '@material-ui/icons/AddCircle';
@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { fetchDomainData } from '../../actions/domains';
 import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -76,15 +77,18 @@ class AddRole extends PureComponent {
 
   handleAdd = () => {
     const { add, onSuccess, onError } = this.props;
+    const { users, permissions } = this.state;
+    console.log(permissions);
     this.setState({ loading: true });
     add({
       ...this.state,
       loading: undefined,
-      permissions: this.state.permissions.map(permission => {
+      users: users.map(u => u.ID),
+      permissions: permissions.map(permission => {
         const params = permission.params;
         return {
           ...permission,
-          params: params === '*' || params === '' ? params : parseInt(params),
+          params: params.ID,
         };
       }),
     })
@@ -103,6 +107,12 @@ class AddRole extends PureComponent {
       });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+    });
+  }
+
   handleSelectPermission = idx => event => {
     const copy = [...this.state.permissions];
     const input = event.target.value;
@@ -113,9 +123,9 @@ class AddRole extends PureComponent {
     this.setState({ permissions: copy });
   }
 
-  handleSetParams = idx => event => {
+  handleSetParams = idx => (e, newVal) => {
     const copy = [...this.state.permissions];
-    copy[idx].params = event.target.value;
+    copy[idx].params = newVal;
     this.setState({ permissions: copy });
   }
 
@@ -134,7 +144,7 @@ class AddRole extends PureComponent {
   render() {
     const { classes, t, open, onSuccess, Permissions, Domains, Users } = this.props;
     const { name, permissions, description, loading, users } = this.state;
-
+    const params = [{ ID: '*', domainname: 'All'}].concat(Domains);
     return (
       <Dialog
         onClose={onSuccess}
@@ -152,8 +162,23 @@ class AddRole extends PureComponent {
               className={classes.input}
               autoFocus
             />
+            <Autocomplete
+              multiple
+              options={Users || []}
+              value={users || []}
+              onChange={this.handleAutocomplete('users')}
+              getOptionLabel={(user) => user.username || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Users"
+                  placeholder="Search users..."
+                  className={classes.input} 
+                />
+              )}
+            />
             {permissions.map((permission, idx) =>
-              <div key={permission} className={classes.row}>
+              <div key={idx} className={classes.row}>
                 <TextField
                   select
                   label={t("Permission")}
@@ -167,21 +192,23 @@ class AddRole extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
-                <TextField 
-                  label={t("Params")}
+                <Autocomplete
+                  options={params || []}
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}
+                  getOptionLabel={(domain) => domain.domainname || ''}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Params"
+                      placeholder="Search domains..."
+                    />
+                  )}
+                  className={classes.rowTextfield}
                   fullWidth
                   disabled={['SystemAdmin', ''].includes(permission.permission)}
-                  className={classes.rowTextfield}
-                  select
-                >
-                  {Domains.map(domain => (
-                    <MenuItem key={domain.ID} value={domain.ID}>
-                      {domain.domainname}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  autoSelect
+                />
                 <IconButton size="small" onClick={this.removeRow(idx)}>
                   <Delete fontSize="small" color="error" />
                 </IconButton>
@@ -192,28 +219,6 @@ class AddRole extends PureComponent {
                 <Add color="primary" />
               </Button>
             </Grid>
-            <FormControl className={classes.input}>
-              <InputLabel id="demo-mutiple-chip-label">{t("Users")}</InputLabel>
-              <Select
-                labelId="demo-mutiple-chip-label"
-                id="demo-mutiple-chip"
-                multiple
-                fullWidth
-                value={users || []}
-                onChange={this.handleInput('users')}
-                input={<Input id="select-multiple-chip" />}
-              >
-                {Users.map((user, key) => (
-                  <MenuItem
-                    key={key}
-                    value={user.ID}
-                    selected={users.find(u => u.ID === user.ID)}
-                  >
-                    {user.username}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             <TextField 
               className={classes.input} 
               label={t("Description")} 

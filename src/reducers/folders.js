@@ -52,7 +52,6 @@ function foldersReducer(state = defaultState, action) {
         ...state,
         error: action.error,
         loading: false,
-        Folders: [],
       };
     }
 

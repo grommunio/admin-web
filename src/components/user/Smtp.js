@@ -29,7 +29,7 @@ class Smtp extends PureComponent {
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
         <List className={classes.list}>
-          {aliases.map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
+          {(aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
             <TextField
               className={classes.listTextfield}
               value={alias}

@@ -51,7 +51,7 @@ export function addFolderData(domainID, folder) {
       const folderData = await dispatch(addFolder(domainID, folder));
       await dispatch({ type: FOLDER_DATA_ADD, data: folderData });
       for(let i = 0; i < owners.length; i++) {
-        await dispatch(addOwner(domainID, folderData.folderid, { username: owners[i] }));
+        await dispatch(addOwner(domainID, folderData.folderid, { username: owners[i].username }));
       }
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error });
@@ -100,11 +100,13 @@ export function fetchOwnersData(domainID, folderID, params) {
   };
 }
 
-export function addOwnerData(domainID, folderID, username) {
+export function addOwnerData(domainID, folderID, ownersData) {
   return async dispatch => {
     try {
-      await dispatch(addOwner(domainID, folderID, username));
-      await dispatch({ type: OWNER_DATA_ADD, data: { displayName: username.username } });
+      for(let i = 0; i < ownersData.length; i++) {
+        await dispatch(addOwner(domainID, folderID, { username: ownersData[i].username }));
+        await dispatch({ type: OWNER_DATA_ADD, data: { displayName: ownersData[i].username } });
+      }
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

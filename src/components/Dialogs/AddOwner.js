@@ -5,12 +5,13 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  Button, DialogActions, CircularProgress, MenuItem, 
+  Button, DialogActions, CircularProgress, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -28,7 +29,7 @@ const styles = theme => ({
 class AddOwner extends PureComponent {
 
   state = {
-    username: '',
+    owners: [],
     loading: false,
   }
 
@@ -53,10 +54,10 @@ class AddOwner extends PureComponent {
   handleAdd = () => {
     const { add, onSuccess, onError, domain, folderID } = this.props;
     this.setState({ loading: true });
-    add(domain.ID, folderID, { username: this.state.username })
+    add(domain.ID, folderID, this.state.owners)
       .then(() => {
         this.setState({
-          username: '',
+          owners: [],
           loading: false,
         });
         onSuccess();
@@ -67,9 +68,15 @@ class AddOwner extends PureComponent {
       });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+    });
+  }
+
   render() {
-    const { classes, t, users, open, onSuccess } = this.props;
-    const { username, loading } = this.state;
+    const { classes, t, Users, open, onSuccess } = this.props;
+    const { owners, loading } = this.state;
 
     return (
       <Dialog
@@ -81,21 +88,21 @@ class AddOwner extends PureComponent {
         <DialogTitle>{t('addHeadline', { item: 'Owner' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
-            <TextField
-              autoFocus
-              select
-              className={classes.input}
-              label={t("Username")}
-              fullWidth
-              value={username || ''}
-              onChange={this.handleInput('username')}
-            >
-              {users.map((user, key) => (
-                <MenuItem key={key} value={user.username} /* highly unconventional, should be changed to ID @f */>
-                  {user.username}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Autocomplete
+              multiple
+              options={Users || []}
+              value={owners || []}
+              onChange={this.handleAutocomplete('owners')}
+              getOptionLabel={(user) => user.username || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Users"
+                  placeholder="Search users..."
+                  className={classes.input} 
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -110,7 +117,7 @@ class AddOwner extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username || loading}
+            disabled={owners.length === 0 || loading}
           >
             {loading ? <CircularProgress size={24}/> : 'Add'}
           </Button>
@@ -125,7 +132,7 @@ AddOwner.propTypes = {
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   fetchUsers: PropTypes.func.isRequired,
-  users: PropTypes.array.isRequired,
+  Users: PropTypes.array.isRequired,
   folderID: PropTypes.number.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
@@ -135,14 +142,14 @@ AddOwner.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    users: state.users.Users,
+    Users: state.users.Users,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, folderID, username) => {
-      await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
+    add: async (domainID, folderID, owners) => {
+      await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg));
     },
     fetchUsers: async domainID => {
       await dispatch(fetchUsersData(domainID, { sort: 'username,asc', limit: '' })).catch(msg => Promise.reject(msg));

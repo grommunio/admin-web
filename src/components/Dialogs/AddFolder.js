@@ -5,12 +5,13 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, InputLabel, Select, Input, 
+  MenuItem, Button, DialogActions, CircularProgress,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -81,6 +82,12 @@ class AddFolder extends PureComponent {
       });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+    });
+  }
+
   render() {
     const { classes, t, open, onSuccess, Users } = this.props;
     const { displayname, owners, container, comment, loading } = this.state;
@@ -125,28 +132,21 @@ class AddFolder extends PureComponent {
               value={comment}
               onChange={this.handleInput('comment')}
             />
-            <FormControl className={classes.input}>
-              <InputLabel id="demo-mutiple-chip-label">{t("Owners")}</InputLabel>
-              <Select
-                labelId="demo-mutiple-chip-label"
-                id="demo-mutiple-chip"
-                multiple
-                fullWidth
-                value={owners || []}
-                onChange={this.handleInput('owners')}
-                input={<Input id="select-multiple-chip" />}
-              >
-                {Users.map((user, key) => (
-                  <MenuItem
-                    key={key}
-                    value={user.username} /* highly unconventional, should be changed to ID @f */
-                    selected={owners.find(owner => owner.ID === user.ID)}
-                  >
-                    {user.username}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              multiple
+              options={Users || []}
+              value={owners || []}
+              onChange={this.handleAutocomplete('owners')}
+              getOptionLabel={(user) => user.username || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Users"
+                  placeholder="Search users..."
+                  className={classes.input} 
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
