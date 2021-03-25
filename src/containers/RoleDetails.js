@@ -172,6 +172,7 @@ class RoleDetails extends PureComponent {
     const { classes, t, Users, Permissions, Domains } = this.props;
     const { snackbar, role } = this.state;
     const { name, description, users, permissions } = role;
+    const params = [{ ID: '*', domainname: 'All'}].concat(Domains);
     return (
       <div className={classes.root}>
         <TopBar title={t("Role")}/>
@@ -209,7 +210,7 @@ class RoleDetails extends PureComponent {
                 options={Users || []}
                 value={users || []}
                 onChange={this.handleAutocomplete('users')}
-                getOptionLabel={(user) => user.username}
+                getOptionLabel={(user) => user.username || ''}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -235,11 +236,11 @@ class RoleDetails extends PureComponent {
                     ))}
                   </TextField>
                   <Autocomplete
-                    options={Domains || []}
+                    options={params || []}
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
                     getOptionLabel={(domainID) => domainID.domainname ||
-                      (Domains || []).find(d => d.ID == domainID)?.domainname} // Because only ID is received
+                      (params || []).find(d => d.ID == domainID)?.domainname || ''} // Because only ID is received
                     //renderOption={(domain) => domain.domainname}
                     renderInput={(params) => (
                       <TextField
