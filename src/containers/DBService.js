@@ -193,6 +193,7 @@ GroupDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  delete: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {

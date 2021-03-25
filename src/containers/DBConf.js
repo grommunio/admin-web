@@ -19,6 +19,7 @@ import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { Delete } from '@material-ui/icons';
+import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 
 const styles = theme => ({
   root: {
@@ -77,6 +78,9 @@ const styles = theme => ({
   title: {
     marginTop: 16,
   },
+  button: {
+    marginLeft: 8,
+  },
 });
 
 class DBConf extends Component {
@@ -92,6 +96,7 @@ class DBConf extends Component {
     snackbar: '',
     adding: false,
     deleting: false,
+    configuring: false,
     order: 'asc',
     match: '',
     offset: 50,
@@ -125,9 +130,9 @@ class DBConf extends Component {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+  handleAddingSuccess = () => this.setState({ adding: false, configuring: false, snackbar: 'Success!' });
 
-  handleAddingClose = () => this.setState({ adding: false });
+  handleAddingClose = () => this.setState({ adding: false, configuring: false });
 
   handleAddingError = error => this.setState({ snackbar: error });
 
@@ -169,7 +174,7 @@ class DBConf extends Component {
 
   render() {
     const { classes, t, services, commands } = this.props;
-    const { adding, snackbar, order, match, tab, deleting } = this.state;
+    const { adding, configuring, snackbar, order, match, tab, deleting } = this.state;
 
     return (
       <div className={classes.root}>
@@ -188,6 +193,14 @@ class DBConf extends Component {
               onClick={() => this.setState({ adding: true })}
             >
               {t("Create file")}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => this.setState({ configuring: true })}
+              className={classes.button}
+            >
+              {t("Configure grammm-dbconf")}
             </Button>
             <div className={classes.actions}>
               <TextField
@@ -262,7 +275,7 @@ class DBConf extends Component {
               </pre>
             ) : <Typography><i>none</i></Typography>}
             <Typography className={classes.title} variant="h6">Service</Typography>
-            {commands.key.service > 0 ? commands.service.map((key, idx) =>
+            {commands.service.length > 0 ? commands.service.map((key, idx) =>
               <pre className={classes.pre} key={idx}>
                 <code>{key}</code>
               </pre>
@@ -283,6 +296,12 @@ class DBConf extends Component {
           />
           <UploadServiceFile
             open={adding}
+            onClose={this.handleAddingClose}
+            onError={this.handleAddingError}
+            onSuccess={this.handleAddingSuccess}
+          />
+          <CreateDbconfFile
+            open={configuring}
             onClose={this.handleAddingClose}
             onError={this.handleAddingError}
             onSuccess={this.handleAddingSuccess}

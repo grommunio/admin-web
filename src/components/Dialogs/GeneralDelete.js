@@ -68,8 +68,8 @@ class GeneralDelete extends PureComponent {
 GeneralDelete.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  item: PropTypes.string,
-  id: PropTypes.number,
+  item: PropTypes.any,
+  id: PropTypes.any,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

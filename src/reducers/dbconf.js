@@ -12,7 +12,11 @@ import { addItem } from '../utils';
 const defaultState = {
   loading: false,
   services: [],
-  commands: {},
+  commands: {
+    key: [],
+    file: [],
+    service: [],
+  },
 };
 
 function dbconfReducer(state = defaultState, action) {
