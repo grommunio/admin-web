@@ -144,7 +144,7 @@ class UploadServiceFile extends PureComponent {
                 className={classes.flexTextfield}
               />
               <IconButton onClick={this.handleRemoveRow(idx)}>
-                <Delete color="primary"/>
+                <Delete color="error"/>
               </IconButton>
             </Grid>
             )}

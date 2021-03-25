@@ -614,6 +614,12 @@ export function uploadFile(service, filename, file) {
   };
 }
 
+export function renameService(oldName, name) {
+  return async () => {
+    return await patch('/system/dbconf/' + oldName, { name });
+  };
+}
+
 export function serviceFiles(service) {
   return async () => {
     return await get('/system/dbconf/' + service);

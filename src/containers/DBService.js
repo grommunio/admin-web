@@ -19,7 +19,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { fetchServiceFiles, deleteDBFile } from '../actions/dbconf';
+import { fetchServiceFiles, deleteDBFile, renameDBService } from '../actions/dbconf';
 import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
@@ -79,6 +79,12 @@ class DBService extends PureComponent {
     });
   }
 
+  handleInput = field => e => {
+    this.setState({
+      [field]: e.target.value,
+    });
+  }
+
   handleDelete = file => event => {
     event.stopPropagation();
     this.setState({ deleting: file });
@@ -97,6 +103,12 @@ class DBService extends PureComponent {
     const { history } = this.props;
     event.preventDefault();
     history.push(`/${path}`);
+  }
+
+  handleEdit = () => {
+    this.props.rename(getStringAfterLastSlash(), this.state.name)
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   render() {
@@ -123,6 +135,7 @@ class DBService extends PureComponent {
                 className={classes.input} 
                 value={name || ''}
                 autoFocus
+                onChange={this.handleInput('name')}
               />
             </FormControl>
             <Typography variant="h6">Files</Typography>
@@ -183,6 +196,7 @@ DBService.propTypes = {
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  rename: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -191,6 +205,8 @@ const mapDispatchToProps = dispatch => {
       .then(files => files)
       .catch(message => Promise.reject(message)),
     delete: async (service, file) => await dispatch(deleteDBFile(service, file))
+      .catch(message => Promise.reject(message)),
+    rename: async (service, file) => await dispatch(renameDBService(service, file))
       .catch(message => Promise.reject(message)),
   };
 };
