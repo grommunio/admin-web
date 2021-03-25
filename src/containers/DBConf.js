@@ -6,15 +6,13 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, TableSortLabel,
-  TextField, InputAdornment, Tabs, Tab, IconButton } from '@material-ui/core';
+  Typography, Button, Grid, TextField, InputAdornment, Tabs, Tab, IconButton } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
-import { debounce } from 'debounce';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
@@ -86,7 +84,7 @@ const styles = theme => ({
 class DBConf extends Component {
 
   componentDidMount() {
-    this.props.fetch({ sort: 'name,asc' })
+    this.props.fetch()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -94,38 +92,12 @@ class DBConf extends Component {
 
   state = {
     snackbar: '',
+    match: '',
     adding: false,
     deleting: false,
     configuring: false,
-    order: 'asc',
-    match: '',
     offset: 50,
     tab: 0,
-  }
-
-  handleInput = field => event => {
-    this.setState({
-      newData: {
-        ...this.state.newData,
-        [field]: event.target.value,
-      },
-    });
-  }
-
-  handleRequestSort = () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, match } = this.state;
-    const order = stateOrder === "asc" ? "desc" : "asc";
-    
-    fetch({
-      sort: 'name,' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      offset: 0,
-    });
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -157,25 +129,14 @@ class DBConf extends Component {
 
   handleMatch = e => {
     const { value } = e.target;
-    this.debouceFetch(value);
     this.setState({ match: value });
   }
-
-  debouceFetch = debounce(value => {
-    const { fetch }= this.props;
-    const { order, orderBy } = this.state;
-    fetch({ match: value || undefined, sort: orderBy + ',' + order })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
-  }, 200)
 
   handleTab = (e, tab) => this.setState({ tab });
 
   render() {
     const { classes, t, services, commands } = this.props;
-    const { adding, configuring, snackbar, order, match, tab, deleting } = this.state;
-
+    const { adding, configuring, snackbar, match, tab, deleting } = this.state;
     return (
       <div className={classes.root}>
         <TopBar/>
@@ -236,20 +197,13 @@ class DBConf extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <TableSortLabel
-                      active
-                      align="left" 
-                      direction={order}
-                      onClick={this.handleRequestSort}
-                    >
-                      {t('Name')}
-                    </TableSortLabel>
+                    {t('Name')}
                   </TableCell>
                   <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {services.map((service, idx) =>
+                {services.filter(s => s.includes(match)).map((service, idx) =>
                   <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                     <TableCell>{service}</TableCell>
                     <TableCell align="right">
@@ -332,8 +286,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async params => {
-      await dispatch(fetchDBConfData(params)).catch(msg => Promise.reject(msg));
+    fetch: async () => {
+      await dispatch(fetchDBConfData({})).catch(msg => Promise.reject(msg));
     },
     delete: async service => {
       await dispatch(deleteDBService(service)).catch(msg => Promise.reject(msg));

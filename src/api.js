@@ -598,7 +598,7 @@ export function classDetails(domainID, id) {
 
 export function dbconf(params) {
   return async () => {
-    return await get(buildQuery('/system/dbconf', params));
+    return await get(buildQuery('/system/dbconf/', params));
   };
 }
 
