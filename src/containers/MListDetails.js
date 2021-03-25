@@ -78,7 +78,7 @@ class MListDetails extends PureComponent {
   listTypes = [
     { ID: 0, name: "Normal" },
     { ID: 2, name: "Domain" },
-    { ID: 3, name: "Class" },
+    { ID: 3, name: "Group" },
   ]
 
   listPrivileges = [
@@ -139,7 +139,7 @@ class MListDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title={t("Classes")}/>
+        <TopBar title={t("Groups")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
@@ -209,7 +209,7 @@ class MListDetails extends PureComponent {
               />}
               {listType === 3 && <TextField 
                 className={classes.input} 
-                label={t("Class")} 
+                label={t("Group")} 
                 fullWidth 
                 value={_class || ''}
                 onChange={this.handleInput('class')}

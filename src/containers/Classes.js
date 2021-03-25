@@ -255,7 +255,7 @@ class Classes extends Component {
         <div className={classes.toolbar}></div>
         <div className={classes.base} ref={tc => (this.treeContainer = tc)} >
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Classes")}
+            {t("Groups")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>

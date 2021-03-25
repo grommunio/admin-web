@@ -41,7 +41,7 @@ class AddMList extends PureComponent {
   listTypes = [
     { ID: 0, name: "Normal" },
     { ID: 2, name: "Domain" },
-    { ID: 3, name: "Class" },
+    { ID: 3, name: "Group" },
   ]
 
   listPrivileges = [
@@ -184,7 +184,7 @@ class AddMList extends PureComponent {
             />}
             {listType === 3 && <TextField 
               className={classes.input} 
-              label={t("Class")} 
+              label={t("Group")} 
               fullWidth 
               value={_class || ''}
               onChange={this.handleInput('class')}

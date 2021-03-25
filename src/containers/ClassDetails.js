@@ -244,7 +244,7 @@ class ClassDetails extends PureComponent {
 
     return (
       <div className={classes.root}>
-        <TopBar title={t("Classes")}/>
+        <TopBar title={t("Groups")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
@@ -253,7 +253,7 @@ class ClassDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('editHeadline', { item: 'Class' })}
+                {t('editHeadline', { item: 'Group' })}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
