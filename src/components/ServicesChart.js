@@ -4,7 +4,8 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import { Typography, IconButton, CircularProgress } from "@material-ui/core";
+import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
+  TableRow, TableCell, TableBody } from "@material-ui/core";
 import Stop from "@material-ui/icons/HighlightOff";
 import Restart from "@material-ui/icons/Replay";
 import Start from "@material-ui/icons/PlayCircleFilledOutlined";
@@ -43,8 +44,14 @@ const styles = (theme) => ({
   chipIcon: {
     padding: 6,
   },
-  iconButton: {
-    color: "#fff",
+  label: {
+    padding: 2,
+    borderRadius: 25,
+    minWidth: 40,
+    maxWidth: 80,
+    margin: 0,
+    textAlign: 'center',
+    fontSize: 12,
   },
   activeChip: {
     color: "#fff",
@@ -142,102 +149,84 @@ class ServicesChart extends Component {
     const { classes, Services } = this.props;
     const { starting, restarting, stoping, snackbar } = this.state;
 
+    console.log(this.props.classes);
+
     return (
-      <div>
-        <div className={classes.servicePaper}>
-          {Services.map((service, idx) => (
-            <div key={idx} className={classes.serviceContainer}>
-              <div
-                className={
-                  classes.serviceBox + " " + this.getChipColor(service.state)
-                }
-              >
-                <Typography className={classes.serviceName}>
-                  {service.name}
-                </Typography>
-                <div>
-                  {stoping !== service.name ? (
-                    <IconButton
-                      onClick={this.handleServiceAction(service, "stop")}
-                      className={classes.chipIcon}
-                    >
-                      <Stop className={classes.iconButton} fontSize="small" />
-                    </IconButton>
-                  ) : (
-                    <IconButton className={classes.chipIcon}>
-                      <CircularProgress size={18} />
-                    </IconButton>
-                  )}
-                  {restarting !== service.name ? (
-                    <IconButton
-                      onClick={this.handleServiceAction(service, "restart")}
-                      className={classes.chipIcon}
-                    >
-                      <Restart
-                        className={classes.iconButton}
-                        fontSize="small"
-                      />
-                    </IconButton>
-                  ) : (
-                    <IconButton className={classes.chipIcon}>
-                      <CircularProgress size={18} />
-                    </IconButton>
-                  )}
-                  {starting !== service.name ? (
-                    <IconButton
-                      onClick={this.handleServiceAction(service, "start")}
-                      className={classes.chipIcon}
-                    >
-                      <Start className={classes.iconButton} fontSize="small" />
-                    </IconButton>
-                  ) : (
-                    <IconButton className={classes.chipIcon}>
-                      <CircularProgress size={18} />
-                    </IconButton>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className={classes.legendContainer}>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.activeChip}
-            ></span>{" "}
-            active
-          </p>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.inactiveChip}
-            ></span>{" "}
-            inactive
-          </p>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.errorChip}
-            ></span>{" "}
-            error
-          </p>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.failedChip}
-            ></span>{" "}
-            failed
-          </p>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.activatingChip}
-            ></span>{" "}
-            activating
-          </p>
-          <p className={classes.legendItem}>
-            <span
-              className={classes.rectangle + " " + classes.deactivatingChip}
-            ></span>{" "}
-            deactivating
-          </p>
-        </div>
+      <div className={classes.root}>
+        <Paper>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  {"Service"}
+                </TableCell>
+                <TableCell>
+                  {"State"}
+                </TableCell>
+                <TableCell align="center" style={{maxWidth: "80px"}}>
+                  {"Actions"}
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Services.map((service, idx) => (
+                <TableRow key={idx} hover style={{cursor: "default"}}>
+                  <TableCell>
+                    <Typography className={classes.serviceName}>
+                      {service.name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <div className={classes.label + " " + this.getChipColor(service.state)}>
+                      {service.state}
+                    </div>
+                  </TableCell>
+                  <TableCell align="right">
+                    {stoping !== service.name ? (
+                      <IconButton
+                        onClick={this.handleServiceAction(service, "stop")}
+                        className={classes.chipIcon}
+                      >
+                        <Stop className={classes.iconButton} fontSize="small" />
+                      </IconButton>
+                    ) : (
+                      <IconButton className={classes.chipIcon}>
+                        <CircularProgress size={18} />
+                      </IconButton>
+                    )}
+                    {restarting !== service.name ? (
+                      <IconButton
+                        onClick={this.handleServiceAction(service, "restart")}
+                        className={classes.chipIcon}
+                      >
+                        <Restart
+                          className={classes.iconButton}
+                          fontSize="small"
+                        />
+                      </IconButton>
+                    ) : (
+                      <IconButton className={classes.chipIcon}>
+                        <CircularProgress size={18} />
+                      </IconButton>
+                    )}
+                    {starting !== service.name ? (
+                      <IconButton
+                        onClick={this.handleServiceAction(service, "start")}
+                        className={classes.chipIcon}
+                      >
+                        <Start className={classes.iconButton} fontSize="small" />
+                      </IconButton>
+                    ) : (
+                      <IconButton className={classes.chipIcon}>
+                        <CircularProgress size={18} />
+                      </IconButton>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Paper>
         <Feedback
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}

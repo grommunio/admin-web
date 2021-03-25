@@ -75,6 +75,13 @@ const styles = (theme) => ({
   pageTitle: {
     margin: theme.spacing(2),
   },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "1fr",
+    },
+  },
 });
 
 class Dashboard extends Component {
@@ -124,19 +131,9 @@ class Dashboard extends Component {
           {t("Dashboard")}
         </Typography>
         <AntispamStatistics data={statistics}/>
-        <Paper className={classes.fixedPaper} elevation={1}>
-          <div className={classes.flexRow}>
-            <Typography className={classes.chartTitle} variant="h5">
-              {t("Services")}
-            </Typography>
-            <div className={classes.flexRowEnd}>
-              <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
-                <Refresh color="primary" />
-              </IconButton>
-            </div>
-          </div>
+        <div className={classes.grid}>
           <ServicesChart />
-        </Paper>
+        </div>
         <Paper className={classes.pieChartsPaper} elevation={1}>
           <div className={classes.pieChartContainer}>
             <CPUPieChart cpuPercent={cpuPercent} />
@@ -214,3 +211,19 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(withTranslation()(withStyles(styles)(Dashboard)));
+
+/*
+        <Paper className={classes.fixedPaper} elevation={1}>
+          <div className={classes.flexRow}>
+            <Typography className={classes.chartTitle} variant="h5">
+              {t("Services")}
+            </Typography>
+            <div className={classes.flexRowEnd}>
+              <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
+                <Refresh color="primary" />
+              </IconButton>
+            </div>
+          </div>
+          <ServicesChart />
+        </Paper>
+        */
