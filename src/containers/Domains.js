@@ -29,11 +29,11 @@ import { connect } from "react-redux";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
 import TopBar from "../components/TopBar";
 import AddDomain from "../components/Dialogs/AddDomain";
-import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import HomeIcon from "@material-ui/icons/Home";
 import blue from "../colors/blue";
 import debounce from "debounce";
 import Feedback from "../components/Feedback";
+import DeleteDomain from "../components/Dialogs/DeleteDomain";
 
 const styles = (theme) => ({
   root: {
@@ -338,7 +338,7 @@ class DomainList extends Component {
           onError={this.handleAddingError}
           onClose={this.handleAddingClose}
         />
-        <GeneralDelete
+        <DeleteDomain
           open={!!deleting}
           delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
@@ -372,8 +372,8 @@ const mapDispatchToProps = (dispatch) => {
         Promise.reject(error)
       );
     },
-    delete: async (id) => {
-      await dispatch(deleteDomainData(id)).catch((error) =>
+    delete: async (id, params) => {
+      await dispatch(deleteDomainData(id, params)).catch((error) =>
         Promise.reject(error)
       );
     },
