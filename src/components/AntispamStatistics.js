@@ -45,7 +45,6 @@ const styles = theme => ({
   },
   data: {
     fontSize: 32,
-    color: 'rgba(52, 49, 76, 1)',
     fontWeight: 600,
     lineHeight: 1.1,
     margin: theme.spacing(1, 0, 1, 0),
@@ -84,7 +83,7 @@ class AntispamStatistics extends Component {
             <NotInterestedIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.spamCount}</Typography>
-              <Typography className={classes.label}>Spamm Count</Typography>
+              <Typography className={classes.label}>Spam Count</Typography>
             </div>
           </Paper>
         </div>

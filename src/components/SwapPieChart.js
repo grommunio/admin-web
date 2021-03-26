@@ -19,7 +19,7 @@ import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -51,11 +51,11 @@ class SwapPieChart extends Component {
 
     return (
       <div>
-        <Typography className={classes.chartTitle} variant="h5">
+        <Typography className={classes.chartTitle}>
           Swap: {swap.length > 0 && swap[1].value ? swapPercent + '%' : 'None'}
         </Typography>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart height={250}>
+        <ResponsiveContainer width="100%" height={180}>
+          <PieChart height={150}>
             <defs>
               <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
@@ -82,8 +82,8 @@ class SwapPieChart extends Component {
               endAngle={-180}
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={80}
+              innerRadius={30}
+              outerRadius={50}
               label={data => this.formatLabel(data.payload.value)}
               minAngle={1}
               stroke={"none"}

@@ -11,17 +11,20 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
 } from 'recharts';
-import blue from '../colors/blue';
+import { Paper } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
+  },
+  paper: {
+    paddingTop: 1,
   },
 });
 
@@ -30,14 +33,14 @@ class LoadChart extends Component {
   render() {
     const { classes, t, load } = this.props;
     return (
-      <div>
-        <Typography className={classes.chartTitle} variant="h5">{t("Load")}</Typography>
-        <ResponsiveContainer width="100%" height={250} >
-          <AreaChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
+      <Paper className={classes.paper}>
+        <Typography className={classes.chartTitle}>{t("Load")}</Typography>
+        <ResponsiveContainer width="100%" height={200} >
+          <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
             <defs>
-              <linearGradient id="colorG" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={blue["600"]} stopOpacity={0.8}/>
-                <stop offset="95%" stopColor={blue["500"]} stopOpacity={0.1}/>
+              <linearGradient id="gradientBlue2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} />
+                <stop offset="95%" stopColor={"#6DD5FA"} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
@@ -45,15 +48,12 @@ class LoadChart extends Component {
             <YAxis />
             <Legend />
             <Tooltip labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}/>
-            <Area
-              type="monotone"
+            <Bar
               dataKey="value"
-              fillOpacity={1}
-              stroke={blue["900"]}
-              fill="url(#colorG)"/>
-          </AreaChart>
+              fill="url(#gradientBlue)"/>
+          </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Paper>
     );
   }
 }

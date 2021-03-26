@@ -19,7 +19,7 @@ import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -61,11 +61,11 @@ class CPUPieChart extends Component {
 
     return (
       <div>
-        <Typography className={classes.chartTitle} variant="h5">
+        <Typography className={classes.chartTitle}>
           {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
         </Typography>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart height={250}>
+        <ResponsiveContainer width="100%" height={180}>
+          <PieChart height={150}>
             <defs>
               <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
@@ -96,8 +96,8 @@ class CPUPieChart extends Component {
               endAngle={-180}
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={80}
+              innerRadius={30}
+              outerRadius={50}
               label
               minAngle={1}
               stroke={"none"}
