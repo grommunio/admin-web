@@ -10,6 +10,8 @@ import {
   DRAWER_DOMAINS_REVEICED,
   DRAWER_DOMAINS_FETCH,
   DOMAIN_DATA_ADD,
+  DOMAIN_DATA_EDIT,
+  DOMAIN_DATA_DELETE,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -20,6 +22,14 @@ const defaultState = {
   Domains: [],
   loading: true,
 };
+
+function editDomain(arr, item) {
+  const domains = [...arr];
+  const idx = domains.findIndex(d => d.ID === item.ID);
+  if (idx === -1) return;
+  domains[idx] = item;
+  return domains;
+}
 
 function drawerReducer(state = defaultState, action) {
   switch (action.type) {
@@ -71,6 +81,18 @@ function drawerReducer(state = defaultState, action) {
       return {
         ...state,
         Domains: addItem(state.Domains, action.data),
+      };
+
+    case DOMAIN_DATA_EDIT:
+      return {
+        ...state,
+        Domains: editDomain(state.Domains, action.data),
+      };
+
+    case DOMAIN_DATA_DELETE:
+      return {
+        ...state,
+        Domains: state.Domains.filter(d => d.ID !== action.id),
       };
 
     default:
