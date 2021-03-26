@@ -13,10 +13,6 @@ import {
   YAxis,
   Line,
 } from 'recharts';
-import red from '../colors/red';
-import green from '../colors/green';
-import blue from '../colors/blue';
-import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
@@ -25,6 +21,7 @@ import { Typography } from '@material-ui/core';
 const styles = theme => ({
   chartTitle: {
     margin: theme.spacing(2),
+    visibility: 'hidden',
   },
 });
 

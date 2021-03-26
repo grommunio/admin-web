@@ -45,7 +45,6 @@ const styles = theme => ({
   },
   data: {
     fontSize: 32,
-    color: 'rgba(52, 49, 76, 1)',
     fontWeight: 600,
     lineHeight: 1.1,
     margin: theme.spacing(1, 0, 1, 0),

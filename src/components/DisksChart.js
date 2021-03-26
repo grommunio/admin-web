@@ -15,8 +15,6 @@ import {
   LabelList,
   Cell,
 } from 'recharts';
-import { Paper } from '@material-ui/core';
-import green from '../colors/green';
 import orange from '../colors/orange';
 import red from '../colors/red';
 import { connect } from 'react-redux';
@@ -25,7 +23,7 @@ import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent'
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -56,16 +54,21 @@ class MemoryChart extends Component {
   render() {
     const { classes, disks } = this.props;
     return (
-      <Paper>
-        <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
+      <div>
+        <Typography className={classes.chartTitle}>Disks</Typography>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart
             data={disks}
-            layout="vertical"
             margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
           >
-            <YAxis type="category" dataKey="mountpoint" tick={{ fontSize: 12, wordBreak: 'break-all' }}/>
-            <XAxis type="number"/>
+          <defs>
+            <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+              <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+            </linearGradient>
+          </defs>
+            <XAxis type="category" dataKey="mountpoint" tick={{ fontSize: 12, wordBreak: 'break-all' }}/>
+            <YAxis type="number"/>
             <Tooltip
               isAnimationActive={false}
               content={<this.DiskTooltip />}
@@ -78,14 +81,16 @@ class MemoryChart extends Component {
               {disks.map((entry, index) =>
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.percent > 90 ? red['500'] : entry.percent > 80 ? orange['500'] : green['500']}
+                  fill={entry.percent > 90 ? red['500'] : entry.percent > 80 ? orange['500'] : "url(#gradientGreen)"}
                 />
               )}
               <LabelList
                 dataKey="insideLabel"
-                position="insideRight"
-                style={{ fill: 'black' }}
-              />
+                position="insideBottom"
+                angle={-90}
+                offset={100}
+                style={{fill: "black"}}
+                />
               <LabelList
                 dataKey="outsideLabel"
                 position="right"
@@ -100,7 +105,7 @@ class MemoryChart extends Component {
             />
           </BarChart>
         </ResponsiveContainer>
-      </Paper>
+      </div>
     );
   }
 }
@@ -109,6 +114,7 @@ MemoryChart.propTypes = {
   classes: PropTypes.object.isRequired,
   disks: PropTypes.array.isRequired,
 };
+
 
 export default connect(null, null)(
   withTranslation()(withStyles(styles)(MemoryChart)));

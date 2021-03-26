@@ -149,8 +149,6 @@ class ServicesChart extends Component {
     const { classes, Services } = this.props;
     const { starting, restarting, stoping, snackbar } = this.state;
 
-    console.log(this.props.classes);
-
     return (
       <div className={classes.root}>
         <Paper>

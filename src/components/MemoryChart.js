@@ -14,15 +14,13 @@ import {
   Area,
   AreaChart,
 } from 'recharts';
-import blue from '../colors/blue';
-import green from '../colors/green';
-import orange from '../colors/orange';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   chartTitle: {
     margin: theme.spacing(2),
+    visibility: 'hidden',
   },
 });
 
@@ -91,24 +89,6 @@ class MemoryChart extends Component {
               isAnimationActive={false}
             />
             <Legend />
-            <Area
-              strokeWidth={2}
-              type="monotone"
-              dataKey="total"
-              fill={"url(#gradientBlue)"}
-              stroke={"url(#gradientBlue)"}
-              fillOpacity={0.8}
-              isAnimationActive={false}
-            /> 
-            <Area
-              strokeWidth={2}
-              type="monotone"
-              dataKey="free"
-              fill={"url(#gradientBlue)"}
-              stroke={"url(#gradientBlue)"}
-              fillOpacity={0.8}
-              isAnimationActive={false}
-            />
             <Area
               strokeWidth={2}
               type="monotone"

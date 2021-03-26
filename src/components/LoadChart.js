@@ -11,18 +11,20 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Area,
-  AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
 } from 'recharts';
 import { Paper } from '@material-ui/core';
-import blue from '../colors/blue';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   chartTitle: {
     margin: theme.spacing(2),
+  },
+  paper: {
+    paddingTop: 1,
   },
 });
 
@@ -31,10 +33,10 @@ class LoadChart extends Component {
   render() {
     const { classes, t, load } = this.props;
     return (
-      <div>
+      <Paper className={classes.paper}>
         <Typography className={classes.chartTitle}>{t("Load")}</Typography>
         <ResponsiveContainer width="100%" height={200} >
-          <AreaChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
+          <BarChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
             <defs>
               <linearGradient id="gradientBlue2" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={"#2980B9"} />
@@ -46,15 +48,12 @@ class LoadChart extends Component {
             <YAxis />
             <Legend />
             <Tooltip labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}/>
-            <Area
-              type="monotone"
+            <Bar
               dataKey="value"
-              fillOpacity={1}
-              stroke={blue["900"]}
               fill="url(#gradientBlue)"/>
-          </AreaChart>
+          </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Paper>
     );
   }
 }

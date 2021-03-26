@@ -14,8 +14,7 @@ import DisksChart from "../components/DisksChart";
 import CPULineChart from "../components/CPULineChart";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
-import { Paper, Typography, IconButton } from "@material-ui/core";
-import Refresh from "@material-ui/icons/Update";
+import { Paper, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { fetchDashboardData } from "../actions/dashboard";
 import { fetchAntispamData } from "../actions/antispam";
@@ -135,7 +134,6 @@ class Dashboard extends Component {
       swap,
       swapPercent,
       load,
-      fetchServices,
       statistics,
     } = this.props;
     const { snackbar } = this.state;
@@ -180,12 +178,12 @@ class Dashboard extends Component {
             <SwapPieChart swap={swap} swapPercent={swapPercent} />
              </div>
               <div className={classes.lineChart}>
-                <LoadChart load={load} />
+              <DisksChart disks={disks} />
               </div>
             </Paper>
           </div>
           <div className={classes.disk}>
-            <DisksChart disks={disks} />
+            <LoadChart load={load} />
           </div>
         </div>
         <Feedback
