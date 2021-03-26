@@ -31,10 +31,10 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(
   combineReducers({
+    antispam: antispamReducer,
     auth: authReducer,
     _classes: classesReducer,
     dashboard: dashboardReducer,
-    antispam: antispamReducer,
     dbconf: dbconfReducer,
     domains: domainsReducer,
     drawer: drawerReducer,

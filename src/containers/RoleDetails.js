@@ -240,7 +240,7 @@ class RoleDetails extends PureComponent {
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
                     getOptionLabel={(domainID) => domainID.domainname ||
-                      (params || []).find(d => d.ID == domainID)?.domainname || ''} // Because only ID is received
+                      (params || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
                     //renderOption={(domain) => domain.domainname}
                     renderInput={(params) => (
                       <TextField
