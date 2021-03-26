@@ -35,6 +35,14 @@ class DeleteDomain extends PureComponent {
       });
   }
 
+  handlePurge = e => {
+    const val = e.target.checked;
+    this.setState({
+      purge: val,
+      deleteFiles: false,
+    });
+  }
+
   render() {
     const { t, open, item, onClose } = this.props;
     const { loading, purge, deleteFiles } = this.state;
@@ -52,7 +60,7 @@ class DeleteDomain extends PureComponent {
             control={
               <Checkbox
                 checked={purge}
-                onChange={() => this.setState({ purge: !purge })}
+                onChange={this.handlePurge}
                 name="checked"
                 color="primary"
               />
@@ -66,6 +74,7 @@ class DeleteDomain extends PureComponent {
                 onChange={() => this.setState({ deleteFiles: !deleteFiles })}
                 name="checked"
                 color="primary"
+                disabled={!purge}
               />
             }
             label="Delete files?"

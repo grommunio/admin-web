@@ -70,7 +70,7 @@ export function deleteDomainData(id, params) {
   return async dispatch => {
     try {
       await dispatch(deleteDomain(id, params));
-      await dispatch({ type: DOMAIN_DATA_DELETE, id });
+      await dispatch({ type: DOMAIN_DATA_DELETE, id, purge: params.purge });
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);

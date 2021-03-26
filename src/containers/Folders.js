@@ -121,6 +121,8 @@ class Folders extends Component {
 
   handleAddingError = error => this.setState({ snackbar: error });
 
+  handleAddingClose = () => this.setState({ adding: false });
+
   handleDelete = folder => event => {
     event.stopPropagation();
     this.setState({ deleting: folder });
@@ -247,6 +249,7 @@ class Folders extends Component {
         </div>
         <AddFolder
           open={adding}
+          onClose={this.handleAddingClose}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
           domain={domain}

@@ -251,7 +251,7 @@ class DomainList extends Component {
             </Button>
             <div className={classes.actions}>
               <FormControlLabel
-                label={t("Show deleted")}
+                label={t("Show deactivated")}
                 control={
                   <Checkbox
                     checked={showDeleted || false}

@@ -131,6 +131,7 @@ const resources = {
       "Upload": "Hochladen",
       "Download": "Herunterladen",
       "Show deleted": "Gelöschte anzeigen",
+      "Show deactivated": "Deaktivierte anzeigen",
       "Name": "Name",
       "Description": "Beschreibung",
       "Permissions": "Berechtigungen",

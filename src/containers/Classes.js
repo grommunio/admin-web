@@ -266,7 +266,7 @@ class Classes extends Component {
               onClick={this.handleAdd}
               className={classes.newButton}
             >
-              {t('New class')}
+              {t('New group')}
             </Button>
             <div className={classes.actions}>
               <TextField

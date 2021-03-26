@@ -89,7 +89,7 @@ class AddFolder extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, Users } = this.props;
+    const { classes, t, open, onSuccess, onClose, Users } = this.props;
     const { displayname, owners, container, comment, loading } = this.state;
 
     return (
@@ -151,7 +151,7 @@ class AddFolder extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
             color="secondary"
           >
@@ -178,6 +178,7 @@ AddFolder.propTypes = {
   Users: PropTypes.array.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   fetchUsers: PropTypes.func.isRequired,
