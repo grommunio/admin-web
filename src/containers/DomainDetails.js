@@ -68,8 +68,8 @@ class DomainListDetails extends PureComponent {
   }
 
   statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
+    { name: 'Activated', ID: 0 },
+    { name: 'Deactivated', ID: 3 },
   ]
 
   async componentDidMount() {

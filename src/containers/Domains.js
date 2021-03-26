@@ -301,17 +301,15 @@ class DomainList extends Component {
                       <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                         <TableCell>
                           {obj.domainname}{" "}
-                          {obj.domainStatus === 3 ? `[${t("Deleted")}]` : ""}
+                          {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
                         </TableCell>
                         <TableCell>{obj.address}</TableCell>
                         <TableCell>{obj.title}</TableCell>
                         <TableCell>{obj.maxUser}</TableCell>
                         <TableCell align="right">
-                          {!obj.domainStatus /*If not deleted*/ && (
-                            <IconButton onClick={this.handleDelete(obj)}>
-                              <Delete color="error" />
-                            </IconButton>
-                          )}
+                          <IconButton onClick={this.handleDelete(obj)}>
+                            <Delete color="error" />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );

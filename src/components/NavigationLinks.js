@@ -230,7 +230,7 @@ class NavigationLinks extends PureComponent {
                   >
                     <Grid container alignItems="center">
                       <Domains className={classes.icon} />
-                      <ListItemText primary={name + (domainStatus !== 0 ? ` [${t('Deleted')}]` : '')} />
+                      <ListItemText primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')} />
                     </Grid>
                   </ListItem>
                   <Collapse in={expandedDomain === ID} unmountOnExit>

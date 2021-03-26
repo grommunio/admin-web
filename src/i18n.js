@@ -21,6 +21,7 @@ const resources = {
       "Add and edit": "Hinzufügen & bearbeiten",
       "Confirm": "Bestätigen",
       "Deleted": "Gelöscht",
+      "Deactivated": "Deaktiviert",
       "Configuration": "Konfiguration",
       "Admin": "Admin",
       "User": "Benutzer",
