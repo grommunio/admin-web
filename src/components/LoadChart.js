@@ -15,13 +15,14 @@ import {
   AreaChart,
   CartesianGrid,
 } from 'recharts';
+import { Paper } from '@material-ui/core';
 import blue from '../colors/blue';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -31,13 +32,13 @@ class LoadChart extends Component {
     const { classes, t, load } = this.props;
     return (
       <div>
-        <Typography className={classes.chartTitle} variant="h5">{t("Load")}</Typography>
-        <ResponsiveContainer width="100%" height={250} >
+        <Typography className={classes.chartTitle}>{t("Load")}</Typography>
+        <ResponsiveContainer width="100%" height={200} >
           <AreaChart data={load} margin={{ top: 0, right: 32, left: 10, bottom: 16 }}>
             <defs>
-              <linearGradient id="colorG" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={blue["600"]} stopOpacity={0.8}/>
-                <stop offset="95%" stopColor={blue["500"]} stopOpacity={0.1}/>
+              <linearGradient id="gradientBlue2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} />
+                <stop offset="95%" stopColor={"#6DD5FA"} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" />
@@ -50,7 +51,7 @@ class LoadChart extends Component {
               dataKey="value"
               fillOpacity={1}
               stroke={blue["900"]}
-              fill="url(#colorG)"/>
+              fill="url(#gradientBlue)"/>
           </AreaChart>
         </ResponsiveContainer>
       </div>

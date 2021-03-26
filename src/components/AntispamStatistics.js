@@ -84,7 +84,7 @@ class AntispamStatistics extends Component {
             <NotInterestedIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.spamCount}</Typography>
-              <Typography className={classes.label}>Spamm Count</Typography>
+              <Typography className={classes.label}>Spam Count</Typography>
             </div>
           </Paper>
         </div>

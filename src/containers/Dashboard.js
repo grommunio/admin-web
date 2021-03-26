@@ -30,57 +30,74 @@ const styles = (theme) => ({
     overflowY: "scroll",
     overflowX: "hidden",
   },
+  dashboardLayout: {
+    display: 'grid',
+    [theme.breakpoints.up("xs")]: {
+      gridTemplateColumns: "1fr 1fr",
+      gridTemplateAreas: `"antispam antispam"
+                          "services services" 
+                          "cpu      cpu"
+                          "memory   memory"
+                          "swap     swap  "
+                          "disk     disk"`,
+    }, 
+    [theme.breakpoints.up("md")]: {
+      gridTemplateColumns: '400px 1fr 1fr 1fr',
+      gridTemplateAreas: `"antispam antispam antispam antispam"
+                          "services      cpu      cpu  cpu   " 
+                          "services   memory   memory memory "
+                          "disk     swap     swap     swap"`,
+    },           
+  },
+  antispam: {
+    gridArea: 'antispam',
+  },
+  services: {
+    gridArea: 'services',
+  },
+  cpu: {
+    gridArea: 'cpu',
+  },
+  memory: {
+    gridArea: 'memory',
+  },
+  disk: {
+    gridArea: 'disk',
+  },
+  swap: {
+    gridArea: 'swap',
+  },
+  donutAndLineChart: {
+    display: 'grid',
+    [theme.breakpoints.up("xs")]: {
+      gridTemplateColumns: "1fr 1fr",
+    },  
+    [theme.breakpoints.up("sm")]: {
+      gridTemplateColumns: '300px 1fr 1fr',
+    },     
+  },
+  donutChart: {
+    [theme.breakpoints.up("xs")]: {
+      gridColumn: '1 / 3',
+    },   
+    [theme.breakpoints.up("sm")]: {
+      gridColumn: '1 / 2',
+    },
+  },
+  lineChart: {
+    [theme.breakpoints.up("xs")]: {
+      gridColumn: '1 / 3',
+    }, 
+    [theme.breakpoints.up("sm")]: {
+      gridColumn: '2 / 4',
+    },   
+  },
   toolbar: theme.mixins.toolbar,
-  flexRow: {
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
-  },
-  flexRowEnd: {
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  chartTitle: {
-    margin: theme.spacing(2, 3),
-  },
-  fixedPaper: {
-    display: "flex",
-    flexDirection: "column",
-    borderRadius: 8,
-    minWidth: "300px",
-  },
-  pieChartsPaper: {
-    display: "flex",
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "space-around",
-    borderRadius: 8,
-    padding: theme.spacing(0, 0, 2, 0),
-  },
-  pieChartContainer: {
-    minWidth: 300,
-  },
   iconButton: {
     color: "black",
   },
-  paperGrid: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    [theme.breakpoints.down("sm")]: {
-      gridTemplateColumns: "1fr",
-    },
-  },
   pageTitle: {
     margin: theme.spacing(2),
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr 1fr',
-    [theme.breakpoints.down("sm")]: {
-      gridTemplateColumns: "1fr",
-    },
   },
 });
 
@@ -130,34 +147,46 @@ class Dashboard extends Component {
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Dashboard")}
         </Typography>
-        <AntispamStatistics data={statistics}/>
-        <div className={classes.grid}>
-          <ServicesChart />
-        </div>
-        <Paper className={classes.pieChartsPaper} elevation={1}>
-          <div className={classes.pieChartContainer}>
-            <CPUPieChart cpuPercent={cpuPercent} />
+        <div className={classes.dashboardLayout}>
+          <div className={classes.antispam}>
+            <AntispamStatistics data={statistics}/>
           </div>
-          <div className={classes.pieChartContainer}>
-            <MemoryPieChart memory={memory} />
+          <div className={classes.services}>
+            <ServicesChart/>
           </div>
-          <div className={classes.pieChartContainer}>
+          <div className={classes.cpu}>
+            <Paper elevation={1} className={classes.donutAndLineChart}>
+              <div className={classes.donutChart}>
+              <CPUPieChart cpuPercent={cpuPercent} />
+              </div>
+              <div className={classes.lineChart}>
+                <CPULineChart cpuPercent={cpuPercent} />
+              </div>
+            </Paper>
+          </div>
+          <div className={classes.memory}>
+            <Paper elevation={1} className={classes.donutAndLineChart}>
+              <div className={classes.donutChart}>
+              <MemoryPieChart memory={memory} />
+              </div>
+              <div className={classes.lineChart}>
+                <MemoryChart memory={memory} />
+              </div>
+            </Paper>
+          </div>
+          <div className={classes.swap}>
+            <Paper elevation={1} className={classes.donutAndLineChart}>
+              <div className={classes.donutChart}>
             <SwapPieChart swap={swap} swapPercent={swapPercent} />
+             </div>
+              <div className={classes.lineChart}>
+                <LoadChart load={load} />
+              </div>
+            </Paper>
           </div>
-        </Paper>
-        <div className={classes.paperGrid}>
-          <Paper className={classes.fixedPaper} elevation={1}>
-            <CPULineChart cpuPercent={cpuPercent} />
-          </Paper>
-          <Paper className={classes.fixedPaper} elevation={1}>
-            <MemoryChart memory={memory} />
-          </Paper>
-          <Paper className={classes.fixedPaper} elevation={1}>
+          <div className={classes.disk}>
             <DisksChart disks={disks} />
-          </Paper>
-          <Paper className={classes.fixedPaper} elevation={1}>
-            <LoadChart load={load} />
-          </Paper>
+          </div>
         </div>
         <Feedback
           snackbar={snackbar}
@@ -211,19 +240,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(withTranslation()(withStyles(styles)(Dashboard)));
-
-/*
-        <Paper className={classes.fixedPaper} elevation={1}>
-          <div className={classes.flexRow}>
-            <Typography className={classes.chartTitle} variant="h5">
-              {t("Services")}
-            </Typography>
-            <div className={classes.flexRowEnd}>
-              <IconButton onClick={fetchServices} style={{ marginRight: 24 }}>
-                <Refresh color="primary" />
-              </IconButton>
-            </div>
-          </div>
-          <ServicesChart />
-        </Paper>
-        */

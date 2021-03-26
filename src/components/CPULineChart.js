@@ -24,7 +24,7 @@ import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -54,14 +54,36 @@ class CPULineChart extends Component {
 
     return (
       <div>
-        <Typography className={classes.chartTitle} variant="h5">
+        <Typography className={classes.chartTitle}>
           {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
         </Typography>
-        <ResponsiveContainer width="100%" height={250} >
+        <ResponsiveContainer width="100%" height={180} >
           <LineChart
             data={cpuPercent}
             margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
           >
+            <defs>
+              <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#6DD5FA"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FFB75E"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#ED8F03"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#eef2f3"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientRed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FF512F"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#DD2476"} stopOpacity={1}/>
+              </linearGradient>
+            </defs>
             <XAxis dataKey="usage" />
             <YAxis domain={[0, 100]}/>
             <Tooltip 
@@ -72,35 +94,35 @@ class CPULineChart extends Component {
               strokeWidth={4}
               type="monotone"
               dataKey="user"
-              stroke={green['500']}
+              stroke={"url(#gradientGreen)"}
               isAnimationActive={false}
             />
             <Line
               strokeWidth={4}
               type="monotone"
               dataKey="system"
-              stroke={red['500']}
+              stroke={"url(#gradientRed)"}
               isAnimationActive={false}
             />
             <Line
               strokeWidth={4}
               type="monotone"
               dataKey="io"
-              stroke={blue['800']}
+              stroke={"url(#gradientBlue)"}
               isAnimationActive={false}
             />
             <Line
               strokeWidth={4}
               type="monotone"
               dataKey="steal"
-              stroke={blue['500']}
+              stroke={"url(#gradientBlue)"}
               isAnimationActive={false}
             />
             <Line
               strokeWidth={4}
               type="monotone"
               dataKey="interupt"
-              stroke={orange['500']}
+              stroke={"url(#gradientOrange)"}
               isAnimationActive={false}
             />
           </LineChart>

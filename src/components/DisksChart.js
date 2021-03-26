@@ -15,6 +15,7 @@ import {
   LabelList,
   Cell,
 } from 'recharts';
+import { Paper } from '@material-ui/core';
 import green from '../colors/green';
 import orange from '../colors/orange';
 import red from '../colors/red';
@@ -55,9 +56,9 @@ class MemoryChart extends Component {
   render() {
     const { classes, disks } = this.props;
     return (
-      <div>
+      <Paper>
         <Typography className={classes.chartTitle} variant="h5">Disks</Typography>
-        <ResponsiveContainer width="100%" height={250}>
+        <ResponsiveContainer width="100%" height={200}>
           <BarChart
             data={disks}
             layout="vertical"
@@ -99,7 +100,7 @@ class MemoryChart extends Component {
             />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </Paper>
     );
   }
 }

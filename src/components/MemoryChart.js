@@ -22,7 +22,7 @@ import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   chartTitle: {
-    margin: theme.spacing(2, 3),
+    margin: theme.spacing(2),
   },
 });
 
@@ -45,15 +45,41 @@ class MemoryChart extends Component {
     const { classes, memory } = this.props;
     return (
       <div>
-        <Typography className={classes.chartTitle} variant="h5">
+        <Typography className={classes.chartTitle}>
           {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
         </Typography>
-        <ResponsiveContainer width="100%" height={250} >
+        <ResponsiveContainer width="100%" height={180} >
           <AreaChart
             data={memory}
             margin={{ top: 0, right: 32, left: 10, bottom: 16 }}
             stackOffset="expand"
           >
+            <defs>
+              <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#2980B9"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#6DD5FA"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientOrange" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FFB75E"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#ED8F03"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#eef2f3"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientRed" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#FF512F"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#DD2476"} stopOpacity={1}/>
+              </linearGradient>
+              <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#eef2f3"} stopOpacity={1}/>
+              </linearGradient>
+            </defs>
             <XAxis dataKey="name" />
             <YAxis
               type="number"
@@ -69,8 +95,8 @@ class MemoryChart extends Component {
               strokeWidth={2}
               type="monotone"
               dataKey="total"
-              fill={blue['800']}
-              stroke={blue['800']}
+              fill={"url(#gradientBlue)"}
+              stroke={"url(#gradientBlue)"}
               fillOpacity={0.8}
               isAnimationActive={false}
             /> 
@@ -78,8 +104,8 @@ class MemoryChart extends Component {
               strokeWidth={2}
               type="monotone"
               dataKey="free"
-              fill={blue['800']}
-              stroke={blue['800']}
+              fill={"url(#gradientBlue)"}
+              stroke={"url(#gradientBlue)"}
               fillOpacity={0.8}
               isAnimationActive={false}
             />
@@ -87,8 +113,8 @@ class MemoryChart extends Component {
               strokeWidth={2}
               type="monotone"
               dataKey="used"
-              fill={green['500']}
-              stroke={green['500']}
+              fill={"url(#gradientGreen)"}
+              stroke={"url(#gradientGreen)"}
               fillOpacity={0.8}
               isAnimationActive={false}
             />
@@ -96,8 +122,8 @@ class MemoryChart extends Component {
               strokeWidth={2}
               type="monotone"
               dataKey="cache"
-              fill={orange['500']}
-              stroke={orange['500']}
+              fill={"url(#gradientOrange)"}
+              stroke={"url(#gradientOrange)"}
               fillOpacity={0.8}
               isAnimationActive={false}
             />
@@ -105,8 +131,8 @@ class MemoryChart extends Component {
               strokeWidth={2}
               type="monotone"
               dataKey="buffer"
-              fill={blue['500']}
-              stroke={blue['500']}
+              fill={"url(#gradientGrey)"}
+              stroke={"url(#gradientGrey)"}
               fillOpacity={0.8}
               isAnimationActive={false}
             />
