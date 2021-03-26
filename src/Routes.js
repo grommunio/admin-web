@@ -27,8 +27,6 @@ const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
-const AsyncGroups = makeLoadableComponent(() => import("./containers/Groups"));
-const AsyncGroupDetails = makeLoadableComponent(() => import("./containers/GroupDetails"));
 //const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 ////const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
@@ -48,6 +46,9 @@ const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
 const AsyncLdapConfig = makeLoadableComponent(() => import("./containers/LdapConfig"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
+const AsyncDBConf = makeLoadableComponent(() => import("./containers/DBConf"));
+const AsyncDBService = makeLoadableComponent(() => import("./containers/DBService"));
+const AsyncDBFile = makeLoadableComponent(() => import("./containers/DBFile"));
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
 //const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
@@ -103,6 +104,24 @@ const Routes = ({ childProps, domains }) => (
       path="/ldap"
       exact
       component={AsyncLdapConfig}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/dbconf"
+      exact
+      component={AsyncDBConf}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/dbconf/:serviceName"
+      exact
+      component={AsyncDBService}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/dbconf/:serviceName/:fileName"
+      exact
+      component={AsyncDBFile}
       props={childProps}
     />
     <AuthenticatedRoute
@@ -186,26 +205,6 @@ const Routes = ({ childProps, domains }) => (
         path={`/${domain.ID}/classes/:classID`}
         exact
         component={AsyncClassDetails}
-        props={childProps}
-        key={domain.ID}
-        domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
-        path={`/${domain.ID}/groups`}
-        exact
-        component={AsyncGroups}
-        props={childProps}
-        key={domain.ID}
-        domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
-        path={`/${domain.ID}/groups/:groupID`}
-        exact
-        component={AsyncGroupDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}

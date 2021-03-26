@@ -18,6 +18,7 @@ import Domains from '@material-ui/icons/Domain';
 import Folder from '@material-ui/icons/Folder';
 import Ldap from '@material-ui/icons/Contacts';
 import MLists from '@material-ui/icons/Email';
+import Storage from '@material-ui/icons/Storage';
 /*
 import Mail from '@material-ui/icons/Mail';
 import Orgs from '@material-ui/icons/GroupWork';
@@ -27,7 +28,6 @@ import DefaultData from '@material-ui/icons/AccountTree';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 */
-import Groups from '@material-ui/icons/GroupWork';
 import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
@@ -279,17 +279,6 @@ class NavigationLinks extends PureComponent {
                       >
                         <Grid container alignItems="center">
                           <Classes className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Classes')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/groups')}
-                        selected={location.pathname.startsWith('/' + ID + '/groups')}
-                      >
-                        <Grid container alignItems="center">
-                          <Groups className={classes.nestedIcon}/>
                           <ListItemText primary={t('Groups')}/>
                         </Grid>
                       </ListItem>
@@ -387,6 +376,17 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('LDAP')} />
               </Grid>
             </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('dbconf')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/dbconf')}
+            >
+              <Grid container alignItems="center">
+                <Storage className={classes.icon}/>
+                <ListItemText primary={t('DB Configuration')} />
+              </Grid>
+            </ListItem>
             {/*<ListItem button onClick={this.toggleDefaults} className={classes.li}>
               <DefaultData className={classes.icon} />
               <ListItemText primary={t('Default data')} />
@@ -394,17 +394,6 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <Collapse in={defaultsIn} unmountOnExit>
               <List component="div" disablePadding>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('groups')}
-                  selected={location.pathname.startsWith('/groups')}
-                >
-                  <Grid container alignItems="center">
-                    <People className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Groups')}/>
-                  </Grid>
-                </ListItem>
                 <ListItem
                   className={classes.li}
                   button

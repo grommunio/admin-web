@@ -12,12 +12,13 @@ import {
   TextField,
   FormControl,
   Button,
+  IconButton,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { editGroupData, fetchGroupDetails } from '../actions/groups';
+import { fetchServiceFile, editServiceFile } from '../actions/dbconf';
 import TopBar from '../components/TopBar';
-import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
+import { Add, Delete } from '@material-ui/icons';
 
 const styles = theme => ({
   root: {
@@ -32,7 +33,7 @@ const styles = theme => ({
     flexDirection: 'column',
     alignItems: 'stretch',
     justifyContent: 'flex-start',
-    overflowY: 'scroll',
+    overflowY: 'auto',
   },
   paper: {
     margin: theme.spacing(3, 2),
@@ -50,42 +51,41 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
+  flexTextfield: {
+    flex: 1,
+    margin: theme.spacing(0, 1),
+  },
 });
 
-class GroupDetails extends PureComponent {
+class DBFile extends PureComponent {
 
   state = {
-    group: {},
+    data: [],
     unsaved: false,
+    deleting: false,
   }
 
   async componentDidMount() {
-    const { domain, fetch } = this.props;
-    const group = await fetch(domain.ID, getStringAfterLastSlash())
+    const { fetch } = this.props;
+    const splits = window.location.pathname.split('/');
+    const file = await fetch(splits[2], splits[3])
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    
+    const data = [];
+    Object.entries(file?.data || {}).forEach(([key, value]) => data.push({ key, value }));
     this.setState({
-      group: group || {},
+      data,
     });
   }
 
   handleInput = field => event => {
     this.setState({
-      group: {
-        ...this.state.group,
+      data: {
+        ...this.state.data,
         [field]: event.target.value,
       },
       unsaved: true,
     });
-  }
-
-  handleEdit = () => {
-    const { edit, domain } = this.props;
-    const { group } = this.state;
-    edit(domain.ID, {
-      ...group,
-    })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   handleNavigation = path => event => {
@@ -94,14 +94,43 @@ class GroupDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
-  render() {
-    const { classes, t, domain } = this.props;
-    const { group, snackbar } = this.state;
-    const { groupname, title } = group;
+  handleDataInput = (field, idx) => e => {
+    const data = [...this.state.data];
+    data[idx][field] = e.target.value;
+    this.setState({ data });
+  }
 
+  handleAddRow = () => {
+    const data = [...this.state.data];
+    data.push({ key: '', value: '' });
+    this.setState({ data });
+  }
+
+  handleRemoveRow = idx => () => {
+    const data = [...this.state.data];
+    data.splice(idx, 1);
+    this.setState({ data });
+  }
+
+  handleEdit = () => {
+    const splits = window.location.pathname.split('/');
+    this.props.edit(splits[2], splits[3], { data: this.formatData(this.state.data) })
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+  }
+
+  formatData(data) {
+    const obj = {};
+    data.forEach(pair => obj[pair.key] = pair.value);
+    return obj;
+  }
+
+  render() {
+    const { classes, t, history } = this.props;
+    const { snackbar, data } = this.state;
     return (
       <div className={classes.root}>
-        <TopBar title={t("Groups")}/>
+        <TopBar title={t("DB Service")}/>
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
@@ -110,29 +139,38 @@ class GroupDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('editHeadline', { item: 'Groups' })}
+                {t('editHeadline', { item: 'File' })}
               </Typography>
             </Grid>
             <FormControl className={classes.form}>
-              <TextField
-                label={t("Group name")} 
-                className={classes.input} 
-                value={groupname || ''}
-                onChange={this.handleInput('groupname')}
-                autoFocus
-              />
-              <TextField
-                label={t("Title")} 
-                className={classes.input} 
-                value={title || ''}
-                onChange={this.handleInput('title')}
-                autoFocus
-              />
+              {data.map((pair, idx) => <Grid container key={idx}>
+                <TextField
+                  label="key"
+                  value={pair.key}
+                  onChange={this.handleDataInput('key', idx)}
+                  className={classes.flexTextfield}
+                />
+                <TextField
+                  label="value"
+                  value={pair.value}
+                  onChange={this.handleDataInput('value', idx)}
+                  className={classes.flexTextfield}
+                />
+                <IconButton onClick={this.handleRemoveRow(idx)}>
+                  <Delete color="error"/>
+                </IconButton>
+              </Grid>
+              )}
+              <Grid container justify="center">
+                <IconButton onClick={this.handleAddRow}>
+                  <Add color="primary"/>
+                </IconButton>
+              </Grid>
             </FormControl>
             <Button
               variant="text"
               color="secondary"
-              onClick={this.handleNavigation(domain.ID + '/groups')}
+              onClick={history.goBack}
               style={{ marginRight: 8 }}
             >
               {t('Back')}
@@ -155,26 +193,25 @@ class GroupDetails extends PureComponent {
   }
 }
 
-GroupDetails.propTypes = {
+DBFile.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    edit: async (domainID, group) => {
-      await dispatch(editGroupData(domainID, group)).catch(message => Promise.reject(message));
-    },
-    fetch: async (domainID, id) => await dispatch(fetchGroupDetails(domainID, id))
-      .then(group => group)
+    fetch: async (service, filename) => await dispatch(fetchServiceFile(service, filename))
+      .then(file => file)
+      .catch(message => Promise.reject(message)),
+    edit: async (service, filename, file) => await dispatch(editServiceFile(service, filename, file))
+      .then(file => file)
       .catch(message => Promise.reject(message)),
   };
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails)));
+  withTranslation()(withStyles(styles)(DBFile)));

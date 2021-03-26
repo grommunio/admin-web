@@ -156,7 +156,7 @@ class AddClass extends PureComponent {
         fullWidth
         onEnter={this.handleEnter}
       >
-        <DialogTitle>{t('addHeadline', { item: 'Class' })}</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'Group' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 

@@ -100,7 +100,7 @@ class MLists extends Component {
     { label: 'Privilege', value: 'listPrivilege' },
   ]
 
-  listTypes = ['Normal', 'Group', 'Domain', 'Class']
+  listTypes = ['Normal', 'Domain', 'Group']
 
   listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing']
 

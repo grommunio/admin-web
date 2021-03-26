@@ -260,13 +260,13 @@ export function editUserRole(domainID, userID, roles) {
 
 export function searchLdap(params) {
   return async () => {
-    return await get(buildQuery('/ldap/search', params));
+    return await get(buildQuery('/domains/ldap/search', params));
   };
 }
 
 export function importUser(params) {
   return async () => {
-    return await post(buildQuery('/ldap/importUser', params));
+    return await post(buildQuery('/domains/ldap/importUser', params));
   };
 }
 
@@ -278,43 +278,43 @@ export function sync(domainID, userID) {
 
 export function syncAll() {
   return async () => {
-    return await post('/ldap/downsync');
+    return await post('/domains/ldap/downsync');
   };
 }
 
 export function ldapDump(params) {
   return async () => {
-    return await get(buildQuery('/ldap/dump', params));
+    return await get(buildQuery('/domains/ldap/dump', params));
   };
 }
 
 export function checkLdap(params) {
   return async () => {
-    return await get(buildQuery('/ldap/check', params));
+    return await get(buildQuery('/domains/ldap/check', params));
   };
 }
 
 export function deleteOrphans(params) {
   return async () => {
-    return await yeet(buildQuery('/ldap/check', params));
+    return await yeet(buildQuery('/domains/ldap/check', params));
   };
 }
 
 export function ldapConfig() {
   return async () => {
-    return await get('/mconf/ldap');
+    return await get('/system/mconf/ldap');
   };
 }
 
 export function updateLdap(config) {
   return async () => {
-    return await put('/mconf/ldap', config);
+    return await put('/system/mconf/ldap', config);
   };
 }
 
 export function deleteLdap() {
   return async () => {
-    return await yeet('/mconf/ldap');
+    return await yeet('/system/mconf/ldap');
   };
 }
 
@@ -375,40 +375,6 @@ export function license() {
 export function uploadLicense(license) {
   return async () => {
     return await uploadPut('/system/license', license);
-  };
-}
-
-/*
-  GROUPS
-*/
-
-export function groups(domainID, params) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/groups', params));
-  };
-}
-
-export function addGroup(domainID, group) {
-  return async () => {
-    return await post('/domains/' + domainID + '/groups', group);
-  };
-}
-
-export function editGroup(domainID, group) {
-  return async () => {
-    return await patch('/domains/' + domainID + '/groups/' + group.ID, { ...group, ID: undefined });
-  };
-}
-
-export function deleteGroup(domainID, id) {
-  return async () => {
-    return await yeet('/domains/' + domainID + '/groups/' + id);
-  };
-}
-
-export function groupDetails(domainID, id) {
-  return async () => {
-    return await get('/domains/' + domainID + '/groups/' + id);
   };
 }
 
@@ -589,6 +555,64 @@ export function deleteClass(domainID, id) {
 export function classDetails(domainID, id) {
   return async () => {
     return await get('/domains/' + domainID + '/classes/' + id);
+  };
+}
+
+/*
+  DBCONF
+*/
+
+export function dbconf(params) {
+  return async () => {
+    return await get(buildQuery('/system/dbconf/', params));
+  };
+}
+
+export function commands(params) {
+  return async () => {
+    return await get(buildQuery('/system/dbconf/commands', params));
+  };
+}
+
+export function uploadFile(service, filename, file) {
+  return async () => {
+    return await put('/system/dbconf/' + service + '/' + filename,  { data: file });
+  };
+}
+
+export function renameService(oldName, name) {
+  return async () => {
+    return await patch('/system/dbconf/' + oldName, { name });
+  };
+}
+
+export function serviceFiles(service) {
+  return async () => {
+    return await get('/system/dbconf/' + service);
+  };
+}
+
+export function serviceFile(service, filename) {
+  return async () => {
+    return await get('/system/dbconf/' + service + '/' + filename);
+  };
+}
+
+export function editFile(service, filename, file) {
+  return async () => {
+    return await put('/system/dbconf/' + service + '/' + filename, file);
+  };
+}
+
+export function deleteService(service) {
+  return async () => {
+    return await yeet('/system/dbconf/' + service);
+  };
+}
+
+export function deleteFile(service, file) {
+  return async () => {
+    return await yeet('/system/dbconf/' + service + '/' + file);
   };
 }
 
