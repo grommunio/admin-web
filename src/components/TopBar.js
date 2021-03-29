@@ -82,6 +82,14 @@ class TopBar extends PureComponent {
     anchorEl: null,
   }
 
+  links = [
+    { key: 'mailWebAddress', title: 'E-Mail', icon: MailOutlineIcon },
+    { key: 'chatWebAddress', title: 'Chat', icon: Chat },
+    { key: 'videoWebAddress', title: 'Video', icon: Duo },
+    { key: 'fileWebAddress', title: 'Files', icon: Files },
+    { key: 'archiveWebAddress', title: 'Archive', icon: Archive },
+  ]
+
   handleMenuToggle = () => {
     const { setDrawerExpansion } = this.props;
     setDrawerExpansion();
@@ -118,56 +126,20 @@ class TopBar extends PureComponent {
               <Burger />
             </IconButton>
           </Hidden>
-          <Tooltip placement="bottom" title={t('E-Mail')}>
-            <IconButton
-              href={config.mailWebAddress}
-              disabled={!config.mailWebAddress}
-              target="_blank"
-              className={classes.iconButton}
-            >
-              <MailOutlineIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip placement="bottom" title={t('Chat')}>
-            <IconButton
-              href={config.chatWebAddress}
-              disabled={!config.chatWebAddress}
-              className={classes.iconButton}
-              target="_blank"
-            >
-              <Chat />
-            </IconButton>
-          </Tooltip>
-          <Tooltip placement="bottom" title={t('Video')}>
-            <IconButton
-              href={config.videoWebAddress}
-              disabled={!config.videoWebAddress}
-              target="_blank"
-              className={classes.iconButton}
-            >
-              <Duo />
-            </IconButton>
-          </Tooltip>
-          <Tooltip placement="bottom" title={t('Files')}>
-            <IconButton
-              href={config.fileWebAddress}
-              disabled={!config.fileWebAddress}
-              target="_blank"
-              className={classes.iconButton}
-            >
-              <Files />
-            </IconButton>
-          </Tooltip>
-          <Tooltip placement="bottom" title={t('Archive')}>
-            <IconButton
-              href={config.archiveWebAddress}
-              disabled={!config.archiveWebAddress}
-              target="_blank"
-              className={classes.iconButton}
-            >
-              <Archive />
-            </IconButton>
-          </Tooltip>
+          {this.links.map((link, idx) =>
+            <Tooltip placement="bottom" title={t(link.title)} key={idx}>
+              <span>
+                <IconButton
+                  href={config[link.key]}
+                  disabled={!config[link.key]}
+                  target="_blank"
+                  className={classes.iconButton}
+                >
+                  <link.icon />
+                </IconButton>
+              </span>
+            </Tooltip>
+          )}
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
             <Box className={classes.profileButton} onClick={this.handleMenuOpen}>
