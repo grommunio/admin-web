@@ -67,6 +67,12 @@ const styles = theme => ({
   leftIcon: {
     marginRight: 4,
   },
+  header: {
+    marginBottom: 16,
+  },
+  buttonGrid: {
+    margin: theme.spacing(1, 0, 0, 1),
+  },
 });
 
 class UserDetails extends PureComponent {
@@ -297,7 +303,7 @@ class UserDetails extends PureComponent {
         <div className={classes.toolbar}/>
         <div className={classes.base}>
           <Paper className={classes.paper} elevation={1}>
-            <Grid container>
+            <Grid container className={classes.header}>
               <Typography
                 color="primary"
                 variant="h5"
@@ -370,28 +376,30 @@ class UserDetails extends PureComponent {
               handleAddAlias={this.handleAddAlias}
               handleRemoveAlias={this.handleRemoveAlias}
             />}
-            <Button
-              variant="contained"
-              onClick={history.goBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            {[0, 1, 2, 4].includes(tab) ? <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-              disabled={!username || usernameError}
-            >
-              {t('Save')}
-            </Button> :
+            <Grid container className={classes.buttonGrid}>
               <Button
                 variant="contained"
+                onClick={history.goBack}
+                style={{ marginRight: 8 }}
+              >
+                {t('Back')}
+              </Button>
+              {[0, 1, 2, 4].includes(tab) ? <Button
+                variant="contained"
                 color="primary"
-                onClick={this.handleSaveRoles}
+                onClick={this.handleEdit}
+                disabled={!username || usernameError}
               >
                 {t('Save')}
-              </Button>}
+              </Button> :
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleSaveRoles}
+                >
+                  {t('Save')}
+                </Button>}
+            </Grid>
           </Paper>
           <Feedback
             snackbar={snackbar}

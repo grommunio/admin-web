@@ -114,7 +114,12 @@ class RoleDetails extends PureComponent {
     this.props.edit({
       ...role,
       users: role.users.map(user => user.ID),
-      permissions: role.permissions.map(perm => { return { ...perm, params: perm.params?.ID }; }),
+      permissions: role.permissions.map(perm => {
+        return {
+          ...perm,
+          params: perm.params.ID ? perm.params.ID : perm.params,
+        };
+      }),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
