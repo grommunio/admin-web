@@ -155,10 +155,11 @@ class LdapConfig extends PureComponent {
   async componentDidMount() {
     const resp = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
-    const config = resp.data;
-    const available = resp.ldapAvailable;
-    const { connection } = config;
-    const users = config.users || {};
+    const config = resp?.data;
+    if(!config) return;
+    const available = resp?.ldapAvailable;
+    const connection = config?.connection;
+    const users = config?.users || {};
     if(config.baseDn && connection) this.setState({
       available,
       baseDn: config.baseDn,
@@ -296,7 +297,7 @@ class LdapConfig extends PureComponent {
                 />
                 <LdapTextfield
                   flex
-                  label="LDAP Bind User (bindUser)"
+                  label={t("LDAP Bind User (bindUser)")}
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc="DN of the user to perform initial bind with"
