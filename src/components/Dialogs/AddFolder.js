@@ -153,7 +153,6 @@ class AddFolder extends PureComponent {
           <Button
             onClick={onClose}
             variant="contained"
-            color="secondary"
           >
             Cancel
           </Button>
