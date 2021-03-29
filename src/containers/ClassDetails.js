@@ -132,10 +132,21 @@ class ClassDetails extends PureComponent {
     });
   }
 
+  handleMemberInput = event => {
+    this.setState({
+      _class: {
+        ...this.state._class,
+        members: event.target.value,
+        filters: [],
+      },
+      unsaved: true,
+    });
+  }
+
   handleFilterInput = (ANDidx, ORidx, field) => e => {
     const filters = [...this.state._class.filters];
     filters[ANDidx][ORidx][field] = e.target.value;
-    this.setState({ _class: {...this.state._class, filters } });
+    this.setState({ _class: {...this.state._class, filters, members: '' } });
   }
 
   handleAutocomplete = (ANDidx, ORidx, field) => (e, newVal) => {
@@ -303,7 +314,7 @@ class ClassDetails extends PureComponent {
                 label={t("Members (separate by comma)")} 
                 fullWidth 
                 value={members || ''}
-                onChange={this.handleInput('members')}
+                onChange={this.handleMemberInput}
               />
             </FormControl>
             <div>

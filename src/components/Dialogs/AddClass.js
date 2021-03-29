@@ -74,6 +74,13 @@ class AddClass extends PureComponent {
     });
   }
 
+  handleMemberInput = event => {
+    this.setState({
+      members: event.target.value,
+      filters: [],
+    });
+  }
+
   handleAdd = () => {
     const { add, domain } = this.props;
     const { classname, parentClasses, members, filters } = this.state;
@@ -111,7 +118,7 @@ class AddClass extends PureComponent {
   handleFilterInput = (ANDidx, ORidx, field) => e => {
     const filters = [...this.state.filters];
     filters[ANDidx][ORidx][field] = e.target.value;
-    this.setState({ filters });
+    this.setState({ filters, members: '' });
   }
 
   handleAutocomplete = (ANDidx, ORidx, field) => (e, newVal) => {
@@ -194,7 +201,7 @@ class AddClass extends PureComponent {
               label={t("Members (separate by comma)")} 
               fullWidth 
               value={members || ''}
-              onChange={this.handleInput('members')}
+              onChange={this.handleMemberInput}
             />
           </FormControl>
           <div>
