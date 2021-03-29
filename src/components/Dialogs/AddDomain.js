@@ -79,6 +79,7 @@ class AddDomain extends PureComponent {
           address: '',
           adminName: '',
           tel: '',
+          loading: false,
         });
         this.props.onSuccess();
       })

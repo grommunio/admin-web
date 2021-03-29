@@ -107,6 +107,7 @@ class AddMList extends PureComponent {
           associations: '',
           specifieds: '',
           class: '',
+          loading: false,
         });
         onSuccess();
       })

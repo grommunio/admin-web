@@ -89,6 +89,7 @@ class AddClass extends PureComponent {
           classname: '',
           parentClasses: [],
           members: '',
+          loading: false,
         });
         this.props.onSuccess();
       })
