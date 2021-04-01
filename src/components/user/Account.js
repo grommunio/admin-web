@@ -34,11 +34,12 @@ class Account extends PureComponent {
   ]
 
   render() {
-    const { classes, t, user, domain, sizeUnit, handleInput, handlePropertyChange,
+    const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange,
       handlePasswordChange } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
-    const { language, creationtime, displaytypeex, storagequotalimit } = properties;
+    const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
+      prohibitsendquota } = properties;
     return (
       <FormControl className={classes.form}>
         <Grid container className={classes.input}>
@@ -101,8 +102,50 @@ class Account extends PureComponent {
             endAdornment:
               <FormControl>
                 <Select
-                  onChange={handleUnitChange}
-                  value={sizeUnit}
+                  onChange={handleUnitChange(storagequotalimit)}
+                  value={sizeUnits.storagequotalimit}
+                  className={classes.select}
+                >
+                  <MenuItem value={1}>MiB</MenuItem>
+                  <MenuItem value={2}>GiB</MenuItem>
+                  <MenuItem value={3}>TiB</MenuItem>
+                </Select>
+              </FormControl>,
+          }}
+        />
+        <TextField 
+          className={classes.input} 
+          label={t("Receive quota limit")}
+          fullWidth 
+          value={prohibitreceivequota || ''}
+          onChange={handleIntPropertyChange('prohibitreceivequota')}
+          InputProps={{
+            endAdornment:
+              <FormControl>
+                <Select
+                  onChange={handleUnitChange('prohibitreceivequota')}
+                  value={sizeUnits.prohibitreceivequota}
+                  className={classes.select}
+                >
+                  <MenuItem value={1}>MiB</MenuItem>
+                  <MenuItem value={2}>GiB</MenuItem>
+                  <MenuItem value={3}>TiB</MenuItem>
+                </Select>
+              </FormControl>,
+          }}
+        />
+        <TextField 
+          className={classes.input} 
+          label={t("Send quota limit")}
+          fullWidth 
+          value={prohibitsendquota || ''}
+          onChange={handleIntPropertyChange('prohibitsendquota')}
+          InputProps={{
+            endAdornment:
+              <FormControl>
+                <Select
+                  onChange={handleUnitChange('prohibitsendquota')}
+                  value={sizeUnits.prohibitsendquota}
                   className={classes.select}
                 >
                   <MenuItem value={1}>MiB</MenuItem>
@@ -184,7 +227,7 @@ Account.propTypes = {
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
   user: PropTypes.object.isRequired,
-  sizeUnit: PropTypes.number.isRequired,
+  sizeUnits: PropTypes.object.isRequired,
   handleInput: PropTypes.func.isRequired,
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,
