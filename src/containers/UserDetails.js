@@ -86,7 +86,11 @@ class UserDetails extends PureComponent {
     changingPw: false,
     snackbar: '',
     tab: 0,
-    sizeUnit: 1,
+    sizeUnits: {
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
+    },
     detaching: false,
     detachLoading: false,
   };
@@ -107,20 +111,23 @@ class UserDetails extends PureComponent {
     };
     const username = user.username.slice(0, user.username.indexOf('@'));
     const roles = (user.roles && user.roles.map(role => role.ID)) || [];
-    const storagequotalimit = properties.storagequotalimit;
-    let sizeUnit = 1;
-    // Covert to biggest possible sizeUnit
-    if(storagequotalimit % 1073741824 === 0) {
-      properties.storagequotalimit = storagequotalimit / 1073741824;
-      sizeUnit = 3;
-    } else if (storagequotalimit % 1048576 === 0) {
-      properties.storagequotalimit = storagequotalimit / 1048576;
-      sizeUnit = 2;
-    } else {
-      properties.storagequotalimit = storagequotalimit / 1024;
+    let sizeUnits = {
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
+    };
+    for(let quotaLimit in sizeUnits) {
+      for(let i = 3; i > 0; i--) {
+        let r = properties[quotaLimit] % 1024 ** i;
+        if(r === 0) {
+          sizeUnits[quotaLimit] = i;
+          properties[quotaLimit] = properties[quotaLimit] / 1024 ** i;
+          break;
+        }
+      }
     }
     return {
-      sizeUnit,
+      sizeUnits,
       user: {
         ...user,
         username,
@@ -169,14 +176,17 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { user } = this.state;
+    const { user, sizeUnits } = this.state;
     this.props.edit(this.props.domain.ID, {
       ...user,
       domainID: undefined,
       aliases: user.aliases.filter(alias => alias !== ''),
       properties: {
         ...user.properties,
-        storagequotalimit: user.properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit) || undefined,
+        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
+        prohibitreceivequota: user.properties.prohibitreceivequota * 2
+          ** (10 * sizeUnits.prohibitreceivequota) || undefined,
+        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
       },
       roles: undefined,
     })
@@ -263,7 +273,12 @@ class UserDetails extends PureComponent {
     },
   });
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+  handleUnitChange = unit => event => this.setState({
+    sizeUnits: {
+      ...this.state.sizeUnits,
+      [unit]: event.target.value,
+    },
+  });
 
   handleDetachDialog = detaching => () => this.setState({ detaching });
 
@@ -293,7 +308,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, history } = this.props;
-    const { user, changingPw, snackbar, tab, sizeUnit, detachLoading, detaching, dump} = this.state;
+    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, detaching, dump} = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
 
@@ -350,7 +365,7 @@ class UserDetails extends PureComponent {
               domain={domain}
               user={user}
               usernameError={usernameError}
-              sizeUnit={sizeUnit}
+              sizeUnits={sizeUnits}
               handleInput={this.handleInput}
               handlePropertyChange={this.handlePropertyChange}
               handleIntPropertyChange={this.handleIntPropertyChange}
