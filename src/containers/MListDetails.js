@@ -70,7 +70,7 @@ class MListDetails extends PureComponent {
     this.setState({
       mList: mList ? {
         ...mList,
-        class: mList.class.ID,
+        class: mList.class?.ID,
       } : {},
     });
   }
