@@ -61,12 +61,12 @@ class MemoryChart extends Component {
             data={disks}
             margin={{ top: 0, right: 32, left: 40, bottom: 4 }}
           >
-          <defs>
-            <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
-              <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
-            </linearGradient>
-          </defs>
+            <defs>
+              <linearGradient id="gradientGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={"#56ab2f"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#a8e063"} stopOpacity={1}/>
+              </linearGradient>
+            </defs>
             <XAxis type="category" dataKey="mountpoint" tick={{ fontSize: 12, wordBreak: 'break-all' }}/>
             <YAxis type="number"/>
             <Tooltip
@@ -85,16 +85,11 @@ class MemoryChart extends Component {
                 />
               )}
               <LabelList
-                dataKey="insideLabel"
+                dataKey="label"
                 position="insideBottom"
                 angle={-90}
                 offset={100}
-                style={{fill: "black"}}
-                />
-              <LabelList
-                dataKey="outsideLabel"
-                position="right"
-                style={{ fill: 'black' }}
+                style={{ fill: "black", fontWeight: 500 }}
               />
             </Bar>
             <Bar
