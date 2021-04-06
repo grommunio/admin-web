@@ -15,6 +15,14 @@ import { withTranslation } from "react-i18next";
 import Feedback from "./Feedback";
 
 const styles = (theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+  },
+  paper: {
+    flex: 1,
+  },
   servicePaper: {
     display: "flex",
     flexWrap: "wrap",
@@ -151,17 +159,17 @@ class ServicesChart extends Component {
 
     return (
       <div className={classes.root}>
-        <Paper>
+        <Paper className={classes.paper}>
           <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>
                   {"Service"}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   {"State"}
                 </TableCell>
-                <TableCell align="center" style={{maxWidth: "80px"}}>
+                <TableCell align="center" style={{ width: 100 }}>
                   {"Actions"}
                 </TableCell>
               </TableRow>

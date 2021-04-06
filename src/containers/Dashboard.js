@@ -41,17 +41,20 @@ const styles = (theme) => ({
                           "disk     disk"`,
     }, 
     [theme.breakpoints.up("md")]: {
-      gridTemplateColumns: '400px 1fr 1fr 1fr',
+      gridTemplateColumns: '440px 1fr 1fr 1fr',
       gridTemplateAreas: `"antispam antispam antispam antispam"
-                          "services      cpu      cpu  cpu   " 
-                          "services   memory   memory memory "
-                          "disk     swap     swap     swap"`,
+                          "services cpu      cpu      cpu     " 
+                          "services memory   memory   memory  "
+                          "services swap     swap     swap    "
+                          "services disk     disk     disk    "`,
     },           
   },
   antispam: {
     gridArea: 'antispam',
   },
   services: {
+    display: 'flex',
+    flexDirection: 'column',
     gridArea: 'services',
   },
   cpu: {
@@ -155,7 +158,7 @@ class Dashboard extends Component {
           <div className={classes.cpu}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
-              <CPUPieChart cpuPercent={cpuPercent} />
+                <CPUPieChart cpuPercent={cpuPercent} />
               </div>
               <div className={classes.lineChart}>
                 <CPULineChart cpuPercent={cpuPercent} />
@@ -165,7 +168,7 @@ class Dashboard extends Component {
           <div className={classes.memory}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
-              <MemoryPieChart memory={memory} />
+                <MemoryPieChart memory={memory} />
               </div>
               <div className={classes.lineChart}>
                 <MemoryChart memory={memory} />
@@ -175,10 +178,10 @@ class Dashboard extends Component {
           <div className={classes.swap}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
-            <SwapPieChart swap={swap} swapPercent={swapPercent} />
-             </div>
+                <SwapPieChart swap={swap} swapPercent={swapPercent} />
+              </div>
               <div className={classes.lineChart}>
-              <DisksChart disks={disks} />
+                <DisksChart disks={disks} />
               </div>
             </Paper>
           </div>
@@ -205,7 +208,7 @@ Dashboard.propTypes = {
   disks: PropTypes.array.isRequired,
   memory: PropTypes.array.isRequired,
   swap: PropTypes.array.isRequired,
-  statistics: PropTypes.array.isRequired,
+  statistics: PropTypes.object.isRequired,
   swapPercent: PropTypes.number,
   load: PropTypes.array.isRequired,
 };
