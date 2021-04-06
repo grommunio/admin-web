@@ -139,6 +139,10 @@ const resources = {
       "Permissions": "Berechtigungen",
       "Don't have a license?": "Sie haben keine Lizenz?",
       "Buy now": "Jetzt kaufen",
+      "Search": "Suchen",
+      "Mail list name": "Mail-Listenname",
+      "Privilege": "Privileg",
+      "Typ": "Typ",
 
       //LDAP
       "LDAP enabled": "LDAP aktiviert",
@@ -148,6 +152,9 @@ const resources = {
       "Custom Mapping": "Benutzerdefinierte Zuordnung",
       "No template": "Kein Template",
       "Delete config": "Konfiguration löschen",
+      "Search in LDAP": "In LDAP suchen",
+      "Sync LDAP users": "LDAP Benutzer synchronisieren",
+      "Check LDAP users": "LDAP Benutzer prüfen",
 
       // User properties
       "First name": "Vorname",
@@ -174,6 +181,8 @@ const resources = {
       "E-Mail Addresses": "E-Mail Adressen",
       "E-Mail": "E-Mail",
       "Storage quota limit": "Kontingentgrenze",
+      "Receive quota limit": "Empfangsgrenze",
+      "Send quota limit": "Sendegrenze",
     },
   },
 };
