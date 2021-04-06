@@ -252,7 +252,7 @@ class ClassDetails extends PureComponent {
     const { classes, t, domain, _classes } = this.props;
     const { _class, snackbar, unsaved, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
-
+    console.log(_classes);
     return (
       <div className={classes.root}>
         <TopBar title={t("Groups")}/>
@@ -282,7 +282,7 @@ class ClassDetails extends PureComponent {
               </Breadcrumbs>
               <TextField 
                 className={classes.input} 
-                label={t("Classname")} 
+                label={t("Groupname")} 
                 fullWidth 
                 value={classname || ''}
                 onChange={this.handleInput('classname')}
@@ -290,7 +290,7 @@ class ClassDetails extends PureComponent {
                 required
               />
               <FormControl className={classes.input}>
-                <InputLabel>{t("Parent classes")}</InputLabel>
+                <InputLabel>{t("Parent groups")}</InputLabel>
                 <Select
                   multiple
                   fullWidth
@@ -302,7 +302,6 @@ class ClassDetails extends PureComponent {
                     <MenuItem
                       key={key}
                       value={_class.ID}
-                      selected={parentClasses /* This shouldn't even work... */}
                     >
                       {_class.classname}
                     </MenuItem>
@@ -449,7 +448,7 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchClassDetails(domainID, id))
       .then(_class => _class)
       .catch(message => Promise.reject(message)),
-    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }))
+    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
       .catch(message => Promise.reject(message)),
   };
 };

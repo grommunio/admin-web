@@ -83,6 +83,8 @@ const resources = {
       "Default data": "Basisdaten",
       "Group": "Gruppe",
       "Groups": "Gruppen",
+      "Groupname": "Gruppenname",
+      "Parent groups": "Obergruppen",
       "Organization": "Organisation",
       "Organizations": "Organisationen",
       "Alias": "Alias",
