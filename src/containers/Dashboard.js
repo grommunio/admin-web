@@ -87,6 +87,7 @@ const styles = (theme) => ({
     },
   },
   lineChart: {
+    display: 'flex',
     [theme.breakpoints.up("xs")]: {
       gridColumn: '1 / 3',
     }, 

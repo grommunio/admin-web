@@ -166,7 +166,7 @@ class ServicesChart extends Component {
                 <TableCell>
                   {"Service"}
                 </TableCell>
-                <TableCell align="center">
+                <TableCell>
                   {"State"}
                 </TableCell>
                 <TableCell align="center" style={{ width: 100 }}>

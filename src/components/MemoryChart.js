@@ -18,6 +18,10 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
+  root: {
+    flex: 1,
+    width: 0,
+  },
   chartTitle: {
     margin: theme.spacing(2),
     visibility: 'hidden',
@@ -42,7 +46,7 @@ class MemoryChart extends Component {
   render() {
     const { classes, memory } = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         <Typography className={classes.chartTitle}>
           {memory.length > 0 && `Memory: ${memory[memory.length - 1].percent}%`}
         </Typography>

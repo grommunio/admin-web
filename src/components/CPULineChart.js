@@ -19,6 +19,10 @@ import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent'
 import { Typography } from '@material-ui/core';
 
 const styles = theme => ({
+  root: {
+    flex: 1,
+    width: 0,
+  },
   chartTitle: {
     margin: theme.spacing(2),
     visibility: 'hidden',
@@ -50,7 +54,7 @@ class CPULineChart extends Component {
     const { classes, cpuPercent } = this.props;
 
     return (
-      <div>
+      <div className={classes.root}>
         <Typography className={classes.chartTitle}>
           {cpuPercent.length > 0 && `CPU: ${(100 - cpuPercent[cpuPercent.length - 1].idle).toFixed(1)}%`}
         </Typography>

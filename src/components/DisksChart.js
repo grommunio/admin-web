@@ -22,6 +22,10 @@ import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 
 const styles = theme => ({
+  root: {
+    flex: 1,
+    width: 0,
+  },
   chartTitle: {
     margin: theme.spacing(2),
   },
@@ -54,7 +58,7 @@ class MemoryChart extends Component {
   render() {
     const { classes, disks } = this.props;
     return (
-      <div>
+      <div className={classes.root}>
         <Typography className={classes.chartTitle}>Disks</Typography>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart
