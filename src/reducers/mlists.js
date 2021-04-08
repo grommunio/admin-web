@@ -52,6 +52,7 @@ function mlistsReducer(state = defaultState, action) {
       return {
         ...state,
         MLists: state.MLists.filter(ml => ml.ID !== action.id),
+        count: state.count - 1,
       };
 
     default:
