@@ -143,6 +143,8 @@ const resources = {
       "Mail list name": "Mail-Listenname",
       "Privilege": "Privileg",
       "Typ": "Typ",
+      "Root group": "Wurzelgruppe",
+      "Select root group": "Wurzelgruppe auswählen",
 
       //LDAP
       "LDAP enabled": "LDAP aktiviert",

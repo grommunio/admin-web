@@ -97,7 +97,7 @@ class AddOwner extends PureComponent {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Users"
+                  label="Owners"
                   placeholder="Search users..."
                   className={classes.input} 
                 />

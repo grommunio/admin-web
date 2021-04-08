@@ -108,6 +108,7 @@ class AddFolder extends PureComponent {
               onChange={this.handleInput('displayname')}
               className={classes.input}
               autoFocus
+              required
             />
             <TextField
               select
@@ -141,7 +142,7 @@ class AddFolder extends PureComponent {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Users"
+                  label="Owners"
                   placeholder="Search users..."
                   className={classes.input} 
                 />

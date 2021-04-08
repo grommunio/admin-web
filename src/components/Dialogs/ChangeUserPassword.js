@@ -41,10 +41,10 @@ class ChangeUserPassword extends PureComponent {
 
 
   render() {
-    const { classes, t, changingPw } = this.props;
+    const { classes, t, changingPw, onClose } = this.props;
     const { newPw, checkPw } = this.state;
     return (
-      <Dialog open={changingPw}>
+      <Dialog open={changingPw} onClose={onClose}>
         <DialogTitle>{t('Change password')}</DialogTitle>
         <DialogContent className={classes.content}>
           <TextField
@@ -70,7 +70,8 @@ class ChangeUserPassword extends PureComponent {
         <DialogActions>
           <Button
             variant="contained"
-            onClick={() => this.setState({ changingPw: false })}>
+            onClick={onClose}
+          >
             {t('Cancel')}
           </Button>
           <Button

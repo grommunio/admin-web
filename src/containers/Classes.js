@@ -106,7 +106,7 @@ class Classes extends Component {
   }
 
   columns = [
-    { label: 'Classname', value: 'classname' },
+    { label: 'Groupname', value: 'classname' },
     { label: 'Listname', value: 'listname' },
   ]
 
@@ -335,13 +335,13 @@ class Classes extends Component {
           </Paper> :
             <>
               <FormControl className={classes.select}>
-                <InputLabel>{t("Root class")}</InputLabel>
+                <InputLabel>{t("Root group")}</InputLabel>
                 <Select
                   fullWidth
                   value={root > -1 ? root : ''}
                   onChange={this.handleRootSelect}
                   input={<Input />}
-                  placeholder={t('Select root class')}
+                  placeholder={t('Select root group')}
                 >
                   {_classes.Trees.map((tree, idx) => (
                     <MenuItem key={idx} value={idx}>

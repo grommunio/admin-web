@@ -240,7 +240,7 @@ class DomainListDetails extends PureComponent {
             onClose={() => this.setState({ snackbar: '' })}
           />
         </div>
-        <Dialog open={!!changingPw}>
+        <Dialog open={!!changingPw} onClose={() => this.setState({ changingPw: false })}>
           <DialogTitle>{t('Change password')}</DialogTitle>
           <DialogContent>
             <TextField 

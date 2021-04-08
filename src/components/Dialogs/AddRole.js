@@ -161,6 +161,7 @@ class AddRole extends PureComponent {
               onChange={this.handleInput('name')}
               className={classes.input}
               autoFocus
+              required
             />
             <Autocomplete
               multiple

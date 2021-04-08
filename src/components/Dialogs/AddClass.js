@@ -169,7 +169,7 @@ class AddClass extends PureComponent {
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
-              label={t("Classname")} 
+              label={t("Groupname")} 
               fullWidth 
               value={classname || ''}
               onChange={this.handleInput('classname')}
@@ -177,7 +177,7 @@ class AddClass extends PureComponent {
               required
             />
             <FormControl className={classes.input}>
-              <InputLabel>{t("Parent classes")}</InputLabel>
+              <InputLabel>{t("Parent groups")}</InputLabel>
               <Select
                 multiple
                 fullWidth

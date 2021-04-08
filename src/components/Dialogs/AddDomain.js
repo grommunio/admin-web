@@ -39,8 +39,8 @@ class AddDomain extends PureComponent {
   }
 
   statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
+    { name: 'Activated', ID: 0 },
+    { name: 'Deactivated', ID: 3 },
   ]
 
   handleInput = field => event => {

@@ -84,14 +84,13 @@ class DeleteDomain extends PureComponent {
           <Button
             onClick={onClose}
             variant="contained"
-            color="secondary"
           >
             {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleDelete}
             variant="contained"
-            color="primary"
+            color="secondary"
           >
             {loading ? <CircularProgress size={24}/> : t('Confirm')}
           </Button>
