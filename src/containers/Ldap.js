@@ -7,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
 import HomeIcon from '@material-ui/icons/Home';
 import Search from '@material-ui/icons/Search';
+import BackIcon from '@material-ui/icons/ArrowBack';
 import Import from '@material-ui/icons/ImportContacts';
 import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
   Paper, TextField, Typography } from '@material-ui/core';
@@ -38,6 +39,13 @@ const styles = theme => ({
     position: 'relative',
     top: 4,
     left: 4,
+    cursor: 'pointer',
+  },
+  backIcon: {
+    color: blue[500],
+    position: 'relative',
+    top: 4,
+    right: 4,
     cursor: 'pointer',
   },
   searchTf: {
@@ -92,6 +100,8 @@ class Ldap extends PureComponent {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
+            <BackIcon onClick={this.handleNavigation(domain.ID + '/users')} className={classes.backIcon} />
+            <span className={classes.pageTitleSecondary}>| </span>
             {t("LDAP")}
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
