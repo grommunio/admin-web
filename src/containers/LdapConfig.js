@@ -447,7 +447,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
-                  desc="Name of the PropTag the atribute maps to"
+                  desc="Name of the PropTag the attribute maps to"
                   disabled={disabled}
                 />
                 <Typography className={classes.spacer}>:</Typography>
@@ -456,7 +456,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
-                  desc="Value of the PropTag the atribute maps to"
+                  desc="Value of the PropTag the attribute maps to"
                   disabled={disabled}
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>

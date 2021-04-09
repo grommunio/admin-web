@@ -317,7 +317,7 @@ class ClassDetails extends PureComponent {
               />
             </FormControl>
             <div>
-              <Typography variant="body1">Filters (All must be true)</Typography>
+              <Typography variant="body1">{t('Filters (All must be true)')}</Typography>
               {filters && filters.map((ANDFilter, ANDidx) =>
                 <ExpansionPanel
                   className={classes.panel}
@@ -327,7 +327,7 @@ class ClassDetails extends PureComponent {
                 >
                   <ExpansionPanelSummary>
                     <Grid container justify="space-between">
-                      <Typography body="body1">One must be true</Typography>
+                      <Typography body="body1">{t('Filter (One must be true)')}</Typography>
                       <IconButton onClick={this.handleRemoveAND(ANDidx)}>
                         <Delete fontSize="small" color="error"/>
                       </IconButton>
@@ -365,7 +365,7 @@ class ClassDetails extends PureComponent {
                           </TextField>
                           <TextField
                             className={classes.flexTextfield} 
-                            label={t("Value used for comparison (binary operators)")}
+                            label={t("Compare value (binary operators)")}
                             value={ORFilter.val || ''}
                             onChange={this.handleFilterInput(ANDidx, ORidx, 'val')}
                           />
@@ -375,17 +375,17 @@ class ClassDetails extends PureComponent {
                         </Grid>
                       )}
                       <Grid container justify="center">
-                        <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>Add disjunction</Button>
+                        <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>{t('Add or-statement')}</Button>
                       </Grid>
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               )}
               <Grid container justify="center">
-                <Button variant="outlined" onClick={this.handleAddAND}>Add conjunction</Button>
+                <Button variant="outlined" onClick={this.handleAddAND}>{t('Add and-statement')}</Button>
               </Grid>
             </div>
-            <Typography variant="h6">Children</Typography>
+            <Typography variant="h6">{t('Children')}</Typography>
             <List>
               {children && children.map(child =>
                 <ListItem

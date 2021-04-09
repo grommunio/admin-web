@@ -145,6 +145,14 @@ const resources = {
       "Typ": "Typ",
       "Root group": "Wurzelgruppe",
       "Select root group": "Wurzelgruppe auswählen",
+      "Filters (All must be true)": "Filter (Alle müssen wahr sein)",
+      "Filter (All must be true)": "Filtergruppe (Mindestens eins muss wahr sein)",
+      "Name of property to match": "Name des zu prüfenden Attributs",
+      "Compare value (binary operators)": "Vergleichswert (Binäroperatoren)",
+      "Members (separate by comma)": "Mitglieder (durch Komma getrennt)",
+      "Add or-statement": "Oder-Verknüpfung hinzufügen",
+      "Add add-statement": "Und-Verknüpfung hinzufügen",
+      "Children": "Untergruppen",
 
       //LDAP
       "LDAP enabled": "LDAP aktiviert",
