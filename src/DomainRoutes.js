@@ -38,9 +38,10 @@ const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MList
 //const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
 //const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
+const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 
-const Routes = ({ childProps, domains }) => (
+const Routes = ({ childProps, domains, capabilities }) => (
   <Switch>
     <AuthenticatedRoute
       path="/"
@@ -54,6 +55,14 @@ const Routes = ({ childProps, domains }) => (
       component={AsyncLogin}
       props={childProps}
     />
+    {capabilities.includes('OrgAdmin') &&
+      <AuthenticatedRoute
+        path="/domainList/:domainID*"
+        exact
+        component={AsyncDomainListDetails}
+        props={childProps}
+      />
+    }
     {domains.map(domain =>
       <AuthenticatedDomainRoute
         path={`/${domain.ID}`}
@@ -172,6 +181,7 @@ const Routes = ({ childProps, domains }) => (
 Routes.propTypes = {
   childProps: PropTypes.object,
   domains: PropTypes.array.isRequired,
+  capabilities: PropTypes.array.isRequired,
 };
 
 export default Routes;

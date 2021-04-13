@@ -19,7 +19,7 @@ import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 //import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
-//import orgsReducer from './reducers/orgs';
+import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
 import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
@@ -42,6 +42,7 @@ export const store = createStore(
     ldap: ldapReducer,
     license: licenseReducer,
     mLists: mlistsReducer,
+    orgs: orgsReducer,
     profile: profileReducer,
     roles: rolesReducer,
     services: servicesReducer,

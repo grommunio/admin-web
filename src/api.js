@@ -388,6 +388,12 @@ export function folders(domainID, params) {
   };
 }
 
+export function folderDetails(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/' + folderID);
+  };
+}
+
 export function addFolder(domainID, folder) {
   return async () => {
     return await post('/domains/' + domainID + '/folders', folder);
@@ -434,25 +440,31 @@ export function deleteOwner(domainID, folderID, memberID) {
 
 export function orgs() {
   return async () => {
-    return await get('/orgs');
+    return await get('/system/orgs');
+  };
+}
+
+export function orgDetails(id) {
+  return async () => {
+    return await get('/system/orgs/' + id);
   };
 }
 
 export function addOrg(org) {
   return async () => {
-    return await post('/orgs', org);
+    return await post('/system/orgs', org);
   };
 }
 
 export function editOrg(org) {
   return async () => {
-    return await patch('/orgs/' + org.ID, org);
+    return await patch('/system/orgs/' + org.ID, { ...org, ID: undefined });
   };
 }
 
 export function deleteOrg(id) {
   return async () => {
-    return await yeet('/orgs/' + id);
+    return await yeet('/system/orgs/' + id);
   };
 }
 

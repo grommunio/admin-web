@@ -9,6 +9,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   CircularProgress, 
 } from '@material-ui/core';
 import { addDomainData } from '../../actions/domains';
+import { fetchOrgsData } from '../../actions/orgs';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 
@@ -35,6 +36,7 @@ class AddDomain extends PureComponent {
     address: '',
     adminName: '',
     tel: '',
+    orgID: '',
     loading: false,
   }
 
@@ -42,6 +44,10 @@ class AddDomain extends PureComponent {
     { name: 'Activated', ID: 0 },
     { name: 'Deactivated', ID: 3 },
   ]
+
+  handleEnter = () => {
+    this.props.fetch().catch(error => this.props.onError(error));
+  }
 
   handleInput = field => event => {
     this.setState({
@@ -90,8 +96,8 @@ class AddDomain extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose } = this.props;
-    const { domainname, domainStatus,
+    const { classes, t, open, onClose, orgs } = this.props;
+    const { domainname, domainStatus, orgID,
       maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
       /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
@@ -102,6 +108,7 @@ class AddDomain extends PureComponent {
         open={open}
         maxWidth="md"
         fullWidth
+        onEnter={this.handleEnter}
       >
         <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
@@ -127,6 +134,20 @@ class AddDomain extends PureComponent {
               {this.statuses.map((status, key) => (
                 <MenuItem key={key} value={status.ID}>
                   {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Organization")}
+              fullWidth
+              value={orgID || ''}
+              onChange={this.handleInput('orgID')}
+            >
+              {orgs.map((org, key) => (
+                <MenuItem key={key} value={org.ID}>
+                  {org.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -197,6 +218,14 @@ AddDomain.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
+  orgs: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    orgs: state.orgs.Orgs,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -204,8 +233,9 @@ const mapDispatchToProps = dispatch => {
     add: async domain => {
       await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
     },
+    fetch: async () => await dispatch(fetchOrgsData()).catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddDomain)));

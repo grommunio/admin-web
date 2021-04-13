@@ -86,12 +86,12 @@ class App extends Component {
 
   render() {
     const { classes, Domains } = this.props;
-    const { loading, authenticating, authenticated, role } = this.props;
+    const { loading, authenticating, authenticated, capabilities } = this.props;
     const darkMode = window.localStorage.getItem("darkMode");
     const routesProps = {
       authenticating,
       authenticated,
-      role,
+      capabilities,
       loading,
     };
 
@@ -103,7 +103,7 @@ class App extends Component {
         <MainView
           classes={classes}
           authenticated={authenticated}
-          role={role}
+          capabilities={capabilities}
           domains={Domains}
           routesProps={routesProps}
         />
@@ -118,18 +118,18 @@ App.propTypes = {
   Domains: PropTypes.array.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
-  role: PropTypes.number.isRequired,
+  capabilities: PropTypes.array.isRequired,
   loading: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => {
-  const { authenticating, authenticated, role } = state.auth;
+  const { authenticating, authenticated, capabilities } = state.auth;
   const { Domains, loading } = state.drawer;
 
   return {
     authenticating,
     authenticated,
-    role,
+    capabilities,
     Domains,
     loading,
   };

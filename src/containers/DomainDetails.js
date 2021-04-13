@@ -24,6 +24,7 @@ import TopBar from '../components/TopBar';
 import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
+import { fetchOrgsData } from '../actions/orgs';
 
 const styles = theme => ({
   root: {
@@ -73,7 +74,10 @@ class DomainListDetails extends PureComponent {
   ]
 
   async componentDidMount() {
-    const domain = await this.props.fetch(getStringAfterLastSlash())
+    const { fetch, fetchOrgs, capabilities } = this.props;
+    if(capabilities.includes('SystemAdmin')) fetchOrgs()
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
       domain: domain || {},
@@ -131,10 +135,16 @@ class DomainListDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
+  handleBack = () => {
+    const { capabilities } = this.props;
+    if(capabilities.includes('SystemAdmin')) this.props.history.push('/domainList');
+    else this.props.history.push('/' + getStringAfterLastSlash());
+  }
+
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, orgs, capabilities } = this.props;
     const { checkPw, newPw, changingPw, snackbar } = this.state;
-    const { domainname, domainStatus,
+    const { domainname, domainStatus, orgID,
       maxUser, title, address, adminName, tel } = this.state.domain;
 
     return (
@@ -184,6 +194,20 @@ class DomainListDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
+              {capabilities.includes('SystemAdmin') && <TextField
+                select
+                className={classes.input}
+                label={t("Organization")}
+                fullWidth
+                value={orgID || ''}
+                onChange={this.handleInput('orgID')}
+              >
+                {orgs.map((org, key) => (
+                  <MenuItem key={key} value={org.ID}>
+                    {org.name}
+                  </MenuItem>
+                ))}
+              </TextField>}
               <TextField 
                 className={classes.input} 
                 label={t("Maximum users")} 
@@ -222,7 +246,7 @@ class DomainListDetails extends PureComponent {
             </FormControl>
             <Button
               variant="contained"
-              onClick={() => this.props.history.push('/domainList')}
+              onClick={this.handleBack}
               style={{ marginRight: 8 }}
             >
               {t('Back')}
@@ -290,7 +314,17 @@ DomainListDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchOrgs: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
+  orgs: PropTypes.array.isRequired,
+  capabilities: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    orgs: state.orgs.Orgs,
+    capabilities: state.auth.capabilities,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -301,8 +335,9 @@ const mapDispatchToProps = dispatch => {
     fetch: async id => await dispatch(fetchDomainDetails(id))
       .then(domain => domain)
       .catch(message => Promise.reject(message)),
+    fetchOrgs: async () => await dispatch(fetchOrgsData()).catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(DomainListDetails)));

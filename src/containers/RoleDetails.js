@@ -25,6 +25,7 @@ import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
 import Feedback from '../components/Feedback';
 import { Autocomplete } from '@material-ui/lab';
+import { fetchOrgsData } from '../actions/orgs';
 
 const styles = theme => ({
   root: {
@@ -81,8 +82,9 @@ class RoleDetails extends PureComponent {
 
 
   async componentDidMount() {
-    const { fetch, fetchUser, fetchDomains, fetchPermissions } = this.props;
+    const { fetch, fetchUser, fetchDomains, fetchPermissions, fetchOrgs } = this.props;
     await fetchDomains().catch(err => this.setState({ snackbar: err }));
+    await fetchOrgs().catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const role = await fetch(getStringAfterLastSlash());
     this.setState({ role });
     fetchUser().catch(err => this.setState({ snackbar: err }));
@@ -117,7 +119,7 @@ class RoleDetails extends PureComponent {
       permissions: role.permissions.map(perm => {
         return {
           ...perm,
-          params: perm.params.ID ? perm.params.ID : perm.params,
+          params: perm.params?.ID ? perm.params.ID : perm.params,
         };
       }),
     })
@@ -174,10 +176,11 @@ class RoleDetails extends PureComponent {
   }
 
   render() {
-    const { classes, t, Users, Permissions, Domains } = this.props;
+    const { classes, t, Users, Permissions, Domains, Orgs } = this.props;
     const { snackbar, role } = this.state;
     const { name, description, users, permissions } = role;
-    const params = [{ ID: '*', domainname: 'All'}].concat(Domains);
+    const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
+    const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
     return (
       <div className={classes.root}>
         <TopBar title={t("Role")}/>
@@ -240,12 +243,12 @@ class RoleDetails extends PureComponent {
                       </MenuItem>
                     ))}
                   </TextField>
-                  <Autocomplete
-                    options={params || []}
+                  {permission.permission === 'DomainAdmin' && <Autocomplete
+                    options={domains || []}
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
                     getOptionLabel={(domainID) => domainID.domainname ||
-                      (params || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
+                      (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
                     //renderOption={(domain) => domain.domainname}
                     renderInput={(params) => (
                       <TextField
@@ -256,9 +259,25 @@ class RoleDetails extends PureComponent {
                     )}
                     className={classes.rowTextfield}
                     fullWidth
-                    disabled={['SystemAdmin', ''].includes(permission.permission)}
                     autoSelect
-                  />
+                  />}
+                  {permission.permission === 'OrgAdmin' && <Autocomplete
+                    options={orgs || []}
+                    value={permission.params}
+                    onChange={this.handleSetParams(idx)}
+                    getOptionLabel={(orgID) => orgID.name ||
+                      (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Params"
+                        placeholder="Search organizations..."
+                      />
+                    )}
+                    className={classes.rowTextfield}
+                    fullWidth
+                    autoSelect
+                  />}
                   <IconButton size="small" onClick={this.removeRow(idx)}>
                     <Delete fontSize="small" color="error" />
                   </IconButton>
@@ -305,9 +324,11 @@ RoleDetails.propTypes = {
   fetchUser: PropTypes.func.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   fetchPermissions: PropTypes.func.isRequired,
+  fetchOrgs: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   Permissions: PropTypes.array.isRequired,
   Domains: PropTypes.array.isRequired,
+  Orgs: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -315,6 +336,7 @@ const mapStateToProps = state => {
     Users: state.users.Users,
     Permissions: state.roles.Permissions,
     Domains: state.domains.Domains,
+    Orgs: state.orgs.Orgs,
   };
 };
 
@@ -332,6 +354,8 @@ const mapDispatchToProps = dispatch => {
     fetchPermissions: async () => {
       await dispatch(fetchPermissionsData({ limit: '' })).catch(message => Promise.reject(message));
     },
+    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: '' }))
+      .catch(err => Promise.reject(err)),
     fetch: async id => await dispatch(fetchRoleData(id))
       .then(role => role)
       .catch(message => Promise.reject(message)),

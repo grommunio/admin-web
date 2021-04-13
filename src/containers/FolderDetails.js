@@ -23,9 +23,10 @@ import Add from '@material-ui/icons/AddCircleOutline';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { fetchFolderDetails, addFolderData, fetchOwnersData, deleteOwnerData } from '../actions/folders';
+import { fetchFolderDetails, addFolderData, fetchOwnersData,deleteOwnerData, editFolderData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import Feedback from '../components/Feedback';
 
 const styles = theme => ({
   root: {
@@ -96,6 +97,16 @@ class FolderDetails extends PureComponent {
     });
   }
 
+  handleEdit = () => {
+    const { domain } = this.props;
+    const { folder } = this.state;
+    this.props.edit(domain.ID, {
+      ...folder,
+    })
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+  }
+
   handleAdd = () => this.setState({ adding: true });
 
   handleAddingSuccess = () => {
@@ -124,7 +135,7 @@ class FolderDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, owners } = this.props;
-    const { folder, adding, deleting } = this.state;
+    const { folder, adding, deleting, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -147,9 +158,7 @@ class FolderDetails extends PureComponent {
                 fullWidth 
                 value={folder.displayname || ''}
                 autoFocus
-                inputProps={{
-                  disabled: true,
-                }}
+                onChange={this.handleInput('displayname')}
               />
               <TextField
                 select
@@ -157,9 +166,7 @@ class FolderDetails extends PureComponent {
                 label={t("Container")}
                 fullWidth
                 value={folder.container || 'IPF.Note'}
-                inputProps={{
-                  disabled: true,
-                }}
+                onChange={this.handleInput('container')}
               >
                 {this.types.map((type, key) => (
                   <MenuItem key={key} value={type.ID}>
@@ -174,10 +181,7 @@ class FolderDetails extends PureComponent {
                 multiline
                 rows={4}
                 value={folder.comment || ''}
-                //onChange={this.handleInput('comment')}
-                inputProps={{
-                  disabled: true,
-                }}
+                onChange={this.handleInput('comment')}
               />
             </FormControl>
             <Grid container className={classes.grid}>
@@ -203,15 +207,28 @@ class FolderDetails extends PureComponent {
               </React.Fragment>
               )}
             </List>
-            <Button
-              variant="text"
-              color="primary"
-              onClick={this.props.history.goBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
+            <Grid container>
+              <Button
+                variant="contained"
+                onClick={this.props.history.goBack}
+                style={{ marginRight: 8 }}
+              >
+                {t('Back')}
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleEdit}
+                style={{ marginRight: 8 }}
+              >
+                {t('Save')}
+              </Button>
+            </Grid>
           </Paper>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: '' })}
+          />
         </div>
         {folder.folderid && <AddOwner
           open={adding}
@@ -243,6 +260,7 @@ FolderDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   add: PropTypes.func.isRequired,
+  edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   fetchOwners: PropTypes.func.isRequired,
@@ -258,6 +276,8 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, folderID) => await dispatch(fetchFolderDetails(domainID, folderID))
       .then(folder => folder)
+      .catch(msg => Promise.reject(msg)),
+    edit: async (domainID, folder) => await dispatch(editFolderData(domainID, folder))
       .catch(msg => Promise.reject(msg)),
     add: async (domainID, folder) => {
       await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));

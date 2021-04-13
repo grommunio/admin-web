@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { fetchDomainData } from '../../actions/domains';
 import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
+import { fetchOrgsData } from '../../actions/orgs';
 import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
@@ -50,7 +51,7 @@ class AddRole extends PureComponent {
   }
 
   componentDidMount() {
-    const { fetch, fetchDomains, fetchUsers } = this.props;
+    const { fetch, fetchDomains, fetchUsers, fetchOrgs } = this.props;
     fetch()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
@@ -60,6 +61,10 @@ class AddRole extends PureComponent {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
     fetchUsers()
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+    fetchOrgs()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -142,9 +147,10 @@ class AddRole extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, Permissions, Domains, Users } = this.props;
+    const { classes, t, open, onSuccess, Permissions, Domains, Users, Orgs } = this.props;
     const { name, permissions, description, loading, users } = this.state;
-    const params = [{ ID: '*', domainname: 'All'}].concat(Domains);
+    const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
+    const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
     return (
       <Dialog
         onClose={onSuccess}
@@ -193,8 +199,8 @@ class AddRole extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
-                <Autocomplete
-                  options={params || []}
+                {permission.permission === 'DomainAdmin' && <Autocomplete
+                  options={domains || []}
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(domain) => domain.domainname || ''}
@@ -207,9 +213,24 @@ class AddRole extends PureComponent {
                   )}
                   className={classes.rowTextfield}
                   fullWidth
-                  disabled={['SystemAdmin', ''].includes(permission.permission)}
                   autoSelect
-                />
+                />}
+                {permission.permission === 'OrgAdmin' && <Autocomplete
+                  options={orgs || []}
+                  value={permission.params}
+                  onChange={this.handleSetParams(idx)}
+                  getOptionLabel={(org) => org.name || ''}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Params"
+                      placeholder="Search organizations..."
+                    />
+                  )}
+                  className={classes.rowTextfield}
+                  fullWidth
+                  autoSelect
+                />}
                 <IconButton size="small" onClick={this.removeRow(idx)}>
                   <Delete fontSize="small" color="error" />
                 </IconButton>
@@ -262,9 +283,11 @@ AddRole.propTypes = {
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   Domains: PropTypes.array.isRequired,
+  Orgs: PropTypes.array.isRequired,
   Users: PropTypes.array.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
+  fetchOrgs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -272,6 +295,7 @@ const mapStateToProps = state => {
     Permissions: state.roles.Permissions,
     Domains: state.domains.Domains,
     Users: state.users.Users,
+    Orgs: state.orgs.Orgs,
   };
 };
 
@@ -283,6 +307,8 @@ const mapDispatchToProps = dispatch => {
     fetchDomains: async () => await dispatch(fetchDomainData({ limit: '' }))
       .catch(err => Promise.reject(err)),
     fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: '' }))
+      .catch(err => Promise.reject(err)),
+    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: '' }))
       .catch(err => Promise.reject(err)),
     add: async role => {
       await dispatch(addRolesData(role)).catch(err => Promise.reject(err));

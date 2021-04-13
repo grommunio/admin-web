@@ -9,7 +9,6 @@ import {
   DRAWER_DOMAINS_REVEICED,
   DRAWER_DOMAINS_FETCH,
 } from '../actions/types';
-import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 import { login, renewToken, profile, drawerDomains } from '../api';
 
 export function authLogin(user, pass) {
@@ -26,8 +25,7 @@ export function authLogin(user, pass) {
           await dispatch({ type: DRAWER_DOMAINS_FETCH });
           const domains = await dispatch(drawerDomains());
           await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-          await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
-            ? SYS_ADMIN : DOM_ADMIN));
+          await dispatch(authAuthenticated(true, profileData.capabilities));
         } else {
           clearStorage();
           await dispatch(authError());
@@ -62,8 +60,7 @@ export function authLoginWithToken(token) {
         await dispatch({ type: DRAWER_DOMAINS_FETCH });
         const domains = await dispatch(drawerDomains());
         await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-        await dispatch(authAuthenticated(true, profileData.capabilities.includes('SystemAdmin')
-          ? SYS_ADMIN : DOM_ADMIN));
+        await dispatch(authAuthenticated(true, profileData.capabilities));
       } else {
         clearStorage();
         await dispatch(authError());
@@ -88,11 +85,11 @@ export function authAuthenticating(authenticating = true) {
   };
 }
 
-export function authAuthenticated(authenticated = true, role) {
+export function authAuthenticated(authenticated = true, capabilities) {
   return {
     type: AUTH_AUTHENTICATED,
     authenticated,
-    role,
+    capabilities,
   };
 }
 

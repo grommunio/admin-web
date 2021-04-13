@@ -19,9 +19,9 @@ import Folder from '@material-ui/icons/Folder';
 import Ldap from '@material-ui/icons/Contacts';
 import MLists from '@material-ui/icons/Email';
 import Storage from '@material-ui/icons/Storage';
+import Orgs from '@material-ui/icons/GroupWork';
 /*
 import Mail from '@material-ui/icons/Mail';
-import Orgs from '@material-ui/icons/GroupWork';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
 import DefaultData from '@material-ui/icons/AccountTree';
@@ -35,7 +35,6 @@ import logo from '../res/grammm_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
-import { SYS_ADMIN, DOM_ADMIN } from '../constants';
 
 const styles = theme => ({
   drawerHeader: {
@@ -168,9 +167,9 @@ class NavigationLinks extends PureComponent {
   }
 
   render() {
-    const { classes, t, location, domains, role } = this.props;
+    const { classes, t, location, domains, capabilities } = this.props;
     const { filter, expandedDomain, tab } = this.state;
-
+    const isSysAdmin = capabilities.includes('SystemAdmin');
     return(
       <React.Fragment>
         <div className={classes.drawerHeader}>
@@ -182,7 +181,7 @@ class NavigationLinks extends PureComponent {
             className={classes.logo}
           />
         </div>
-        {role === SYS_ADMIN && <Tabs
+        {isSysAdmin && <Tabs
           onChange={(event, tab) => this.setState({ tab: tab })}
           value={tab}
           className={classes.tabs}
@@ -192,7 +191,7 @@ class NavigationLinks extends PureComponent {
           <Tab className={classes.tab} value={0} label={t('Admin')} />
           <Tab className={classes.tab} value={1} label={t('Domains')} />
         </Tabs>}
-        {(tab === 1 || role === DOM_ADMIN) &&
+        {(tab === 1 || !isSysAdmin) &&
             <Grid container>
               <TextField
                 variant="outlined"
@@ -218,7 +217,7 @@ class NavigationLinks extends PureComponent {
               />
             </Grid>}
         <List className={classes.list}>
-          {(tab === 1 || role === DOM_ADMIN) &&
+          {(tab === 1 || !isSysAdmin) &&
             domains.map(({ domainname: name, ID, domainStatus }) => {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
@@ -309,7 +308,7 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment> : null;
             })}
-          {tab === 0 && role === SYS_ADMIN && <React.Fragment>
+          {tab === 0 && isSysAdmin && <React.Fragment>
             <ListItem
               button
               onClick={this.handleNavigation('')}
@@ -332,17 +331,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Domain list')} />
               </Grid>
             </ListItem>  
-            {/*<ListItem
-              className={classes.li}
-              button
-              onClick={this.handleNavigation('orgs')}
-              selected={location.pathname.startsWith('/orgs')}
-            >
-              <Grid container alignItems="center">
-                <Orgs className={classes.icon}/>
-                <ListItemText primary={t('Organizations')}/>
-              </Grid>
-            </ListItem>
+            {/*
             <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}
@@ -363,6 +352,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Roles className={classes.icon}/>
                 <ListItemText primary={t('Roles')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              className={classes.li}
+              button
+              onClick={this.handleNavigation('orgs')}
+              selected={location.pathname.startsWith('/orgs')}
+            >
+              <Grid container alignItems="center">
+                <Orgs className={classes.icon}/>
+                <ListItemText primary={t('Organizations')}/>
               </Grid>
             </ListItem>
             <ListItem
@@ -432,13 +432,13 @@ NavigationLinks.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   domains: PropTypes.array,
-  role: PropTypes.number.isRequired,
+  capabilities: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-    role: state.auth.role,
+    capabilities: state.auth.capabilities,
   };
 };
 
