@@ -19,9 +19,9 @@ import Folder from '@material-ui/icons/Folder';
 import Ldap from '@material-ui/icons/Contacts';
 import MLists from '@material-ui/icons/Email';
 import Storage from '@material-ui/icons/Storage';
+import Orgs from '@material-ui/icons/GroupWork';
 /*
 import Mail from '@material-ui/icons/Mail';
-import Orgs from '@material-ui/icons/GroupWork';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
 import Forwards from '@material-ui/icons/Forward';
 import DefaultData from '@material-ui/icons/AccountTree';
@@ -332,17 +332,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('Domain list')} />
               </Grid>
             </ListItem>  
-            {/*<ListItem
-              className={classes.li}
-              button
-              onClick={this.handleNavigation('orgs')}
-              selected={location.pathname.startsWith('/orgs')}
-            >
-              <Grid container alignItems="center">
-                <Orgs className={classes.icon}/>
-                <ListItemText primary={t('Organizations')}/>
-              </Grid>
-            </ListItem>
+            {/*
             <ListItem
               button
               onClick={this.handleNavigation('baseSetup')}
@@ -363,6 +353,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Roles className={classes.icon}/>
                 <ListItemText primary={t('Roles')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              className={classes.li}
+              button
+              onClick={this.handleNavigation('orgs')}
+              selected={location.pathname.startsWith('/orgs')}
+            >
+              <Grid container alignItems="center">
+                <Orgs className={classes.icon}/>
+                <ListItemText primary={t('Organizations')}/>
               </Grid>
             </ListItem>
             <ListItem

@@ -27,8 +27,8 @@ const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
-//const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
-////const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
+const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
+const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
 //const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
 const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
@@ -128,6 +128,18 @@ const Routes = ({ childProps, domains }) => (
       path="/roles/:roleID"
       exact
       component={AsyncRoleDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/orgs"
+      exact
+      component={AsyncOrgs}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/orgs/:orgID*"
+      exact
+      component={AsyncOrgDetails}
       props={childProps}
     />
     {domains.map(domain =>
