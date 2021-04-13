@@ -9,7 +9,6 @@ import { Paper, Typography, Grid, Button } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import { SYS_ADMIN } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -53,8 +52,8 @@ const styles = theme => ({
 });
 
 function DomainMenu(props) {
-  const { classes, domain, t, role } = props;
-
+  const { classes, domain, t, capabilities } = props;
+  const editable = capabilities.includes('SystemAdmin');
   const handleNav = () => {
     const { domain, history } = props;
     history.push('/domainList/' + domain.ID);
@@ -72,7 +71,7 @@ function DomainMenu(props) {
                 <span className={classes.description}>{t('Domain name')}:</span>
                 {domain.domainname}
               </Typography>
-              {role === SYS_ADMIN && <div className={classes.editButtonContainer}>
+              {editable && <div className={classes.editButtonContainer}>
                 <Button
                   onClick={handleNav}
                   variant="contained"
@@ -114,12 +113,12 @@ DomainMenu.propTypes = {
   history: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
-  role: PropTypes.number,
+  capabilities: PropTypes.array,
 };
 
 const mapStateToProps = state => {
   return {
-    role: state.auth.role,
+    capabilities: state.auth.capabilities,
   };
 };
 
