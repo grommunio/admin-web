@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
+import { connect } from 'react-redux';
 
 const styles = {
   
@@ -44,9 +45,9 @@ class DeleteDomain extends PureComponent {
   }
 
   render() {
-    const { t, open, item, onClose } = this.props;
+    const { t, open, item, onClose, capabilities } = this.props;
     const { loading, purge, deleteFiles } = this.state;
-
+    const canPurge = capabilities.includes('SystemAdmin') || capabilities.includes('DomainPurge');
     return (
       <Dialog
         onClose={onClose}
@@ -55,7 +56,7 @@ class DeleteDomain extends PureComponent {
         fullWidth
       >
         <DialogTitle>{t('deleteDialog', { item })}?</DialogTitle>
-        <DialogContent>
+        {canPurge && <DialogContent>
           <FormControlLabel
             control={
               <Checkbox
@@ -79,7 +80,7 @@ class DeleteDomain extends PureComponent {
             }
             label="Delete files?"
           />
-        </DialogContent>
+        </DialogContent>}
         <DialogActions>
           <Button
             onClick={onClose}
@@ -110,6 +111,14 @@ DeleteDomain.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  capabilities: PropTypes.array.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DeleteDomain));
+const mapStateToProps = state => {
+  return {
+    capabilities: state.auth.capabilities,
+  };
+};
+
+export default connect(mapStateToProps)(
+  withTranslation()(withStyles(styles)(DeleteDomain))); 

@@ -74,8 +74,8 @@ class DomainListDetails extends PureComponent {
   ]
 
   async componentDidMount() {
-    const { fetch, fetchOrgs } = this.props;
-    fetchOrgs()
+    const { fetch, fetchOrgs, capabilities } = this.props;
+    if(capabilities.includes('SystemAdmin')) fetchOrgs()
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -135,8 +135,14 @@ class DomainListDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
+  handleBack = () => {
+    const { capabilities } = this.props;
+    if(capabilities.includes('SystemAdmin')) this.props.history.push('/domainList');
+    else this.props.history.push('/' + getStringAfterLastSlash());
+  }
+
   render() {
-    const { classes, t, orgs } = this.props;
+    const { classes, t, orgs, capabilities } = this.props;
     const { checkPw, newPw, changingPw, snackbar } = this.state;
     const { domainname, domainStatus, orgID,
       maxUser, title, address, adminName, tel } = this.state.domain;
@@ -188,7 +194,7 @@ class DomainListDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              <TextField
+              {capabilities.includes('SystemAdmin') && <TextField
                 select
                 className={classes.input}
                 label={t("Organization")}
@@ -201,7 +207,7 @@ class DomainListDetails extends PureComponent {
                     {org.name}
                   </MenuItem>
                 ))}
-              </TextField>
+              </TextField>}
               <TextField 
                 className={classes.input} 
                 label={t("Maximum users")} 
@@ -240,7 +246,7 @@ class DomainListDetails extends PureComponent {
             </FormControl>
             <Button
               variant="contained"
-              onClick={() => this.props.history.push('/domainList')}
+              onClick={this.handleBack}
               style={{ marginRight: 8 }}
             >
               {t('Back')}
@@ -311,11 +317,13 @@ DomainListDetails.propTypes = {
   fetchOrgs: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   orgs: PropTypes.array.isRequired,
+  capabilities: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     orgs: state.orgs.Orgs,
+    capabilities: state.auth.capabilities,
   };
 };
 

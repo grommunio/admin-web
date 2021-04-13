@@ -15,7 +15,7 @@ export default function LoadableMainView(props) {
         <Drawer domains={domains}/>}
       {capabilities.includes('SystemAdmin') ?
         <AdminRoutes domains={domains} childProps={routesProps}/> :
-        <DomainRoutes domains={domains} childProps={routesProps}/>}
+        <DomainRoutes domains={domains} childProps={routesProps} capabilities={capabilities}/>}
     </div>
   );
 }

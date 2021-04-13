@@ -17,6 +17,7 @@ const resources = {
       "addHeadline": "$t({{item}}) hinzufügen",
       "editHeadline": "$t({{item}}) bearbeiten",
       "deleteDialog": "Sind Sie sicher, dass Sie {{item}} löschen wollen",
+      "Delete domain": "Domain löschen",
       "Add": "Hinzufügen",
       "Add and edit": "Hinzufügen & bearbeiten",
       "Confirm": "Bestätigen",
