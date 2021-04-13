@@ -388,6 +388,12 @@ export function folders(domainID, params) {
   };
 }
 
+export function folderDetails(domainID, folderID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/folders/' + folderID);
+  };
+}
+
 export function addFolder(domainID, folder) {
   return async () => {
     return await post('/domains/' + domainID + '/folders', folder);

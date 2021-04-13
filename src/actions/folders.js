@@ -11,7 +11,7 @@ import {
   OWNER_DATA_ADD,
   FOLDERS_NEXT_SET,
 } from './types';
-import { folders, addFolder, editFolder, deleteFolder, owners, addOwner, deleteOwner } from '../api';
+import { folders, folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner, deleteOwner } from '../api';
 
 export function fetchFolderData(domainID, params) {
   return async dispatch => {
@@ -31,10 +31,8 @@ export function fetchFolderData(domainID, params) {
 export function fetchFolderDetails(domainID, folderID) {
   return async dispatch => {
     try {
-      const foldersData = await dispatch(folders(domainID, {}));
-      // eslint-disable-next-line
-      const folder = foldersData.data.find(f => f.folderid == folderID);
-      return folder ? Promise.resolve(folder) : Promise.reject('Folder not found');
+      const folder = await dispatch(folderDetails(domainID, folderID));
+      return Promise.resolve(folder);
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
