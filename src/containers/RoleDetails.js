@@ -209,6 +209,7 @@ class RoleDetails extends PureComponent {
                 label={t("Description")} 
                 fullWidth
                 multiline
+                variant="outlined"
                 rows={4}
                 value={description || ''}
                 onChange={this.handleInput('description')}
