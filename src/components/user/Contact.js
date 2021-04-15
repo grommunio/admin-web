@@ -106,6 +106,7 @@ class Contact extends PureComponent {
           value={comment || ''}
           onChange={handlePropertyChange('comment')}
           multiline
+          variant="outlined"
           rows={4}
         />
       </FormControl>

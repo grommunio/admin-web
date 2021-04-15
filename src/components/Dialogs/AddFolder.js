@@ -131,6 +131,7 @@ class AddFolder extends PureComponent {
               multiline
               rows={4}
               value={comment}
+              variant="outlined"
               onChange={this.handleInput('comment')}
             />
             <Autocomplete

@@ -179,6 +179,7 @@ class FolderDetails extends PureComponent {
                 label={t("Comment")} 
                 fullWidth
                 multiline
+                variant="outlined"
                 rows={4}
                 value={folder.comment || ''}
                 onChange={this.handleInput('comment')}
