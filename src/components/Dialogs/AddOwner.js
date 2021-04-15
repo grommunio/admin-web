@@ -132,7 +132,7 @@ AddOwner.propTypes = {
   domain: PropTypes.object.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
-  folderID: PropTypes.number.isRequired,
+  folderID: PropTypes.string.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
