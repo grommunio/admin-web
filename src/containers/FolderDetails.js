@@ -23,10 +23,10 @@ import Add from '@material-ui/icons/AddCircleOutline';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { fetchFolderDetails, addFolderData, fetchOwnersData,deleteOwnerData, editFolderData } from '../actions/folders';
+import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
-import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import Feedback from '../components/Feedback';
+import RemoveOwner from '../components/Dialogs/RemoveOwner';
 
 const styles = theme => ({
   root: {
@@ -237,15 +237,15 @@ class FolderDetails extends PureComponent {
           domain={domain}
           folderID={folder.folderid}
         />}
-        {folder.folderid && <DomainDataDelete
+        {folder.folderid && <RemoveOwner
           open={!!deleting}
-          delete={() => this.props.delete(domain.ID, folder.folderid, deleting.memberID)}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
-          item={deleting.displayName}
-          id={deleting.memberID}
+          ownerName={deleting.displayName}
           domainID={domain.ID}
+          folderID={folder.folderid}
+          memberID={deleting.memberID}
         />}
       </div>
     );
@@ -262,7 +262,6 @@ FolderDetails.propTypes = {
   add: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
   fetchOwners: PropTypes.func.isRequired,
 };
 
@@ -284,9 +283,6 @@ const mapDispatchToProps = dispatch => {
     },
     fetchOwners: async (domainID, folderID) => {
       await dispatch(fetchOwnersData(domainID, folderID, { limit: '' })).catch(msg => Promise.reject(msg));
-    },
-    delete: async (domainID, folderID, memberID) => {
-      await dispatch(deleteOwnerData(domainID, folderID, memberID)).catch(msg => Promise.reject(msg));
     },
   };
 };
