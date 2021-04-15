@@ -14,7 +14,7 @@ const styles = {
   
 };
 
-class DomainDataDelete extends PureComponent {
+class RemoveOwner extends PureComponent {
 
   state = {
     loading: false,
@@ -66,7 +66,7 @@ class DomainDataDelete extends PureComponent {
   }
 }
 
-DomainDataDelete.propTypes = {
+RemoveOwner.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   ownerName: PropTypes.string,
@@ -89,4 +89,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainDataDelete)));
+  withTranslation()(withStyles(styles)(RemoveOwner)));
