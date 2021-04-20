@@ -118,6 +118,7 @@ class UserDetails extends PureComponent {
     };
     for(let quotaLimit in sizeUnits) {
       for(let i = 3; i > 0; i--) {
+        if(properties[quotaLimit] === 0) break;
         let r = properties[quotaLimit] % 1024 ** i;
         if(r === 0) {
           sizeUnits[quotaLimit] = i;
@@ -163,12 +164,14 @@ class UserDetails extends PureComponent {
 
   handleIntPropertyChange = field => event => {
     const { user } = this.state;
-    this.setState({
+    const value = event.target.value;
+    const int = parseInt(value);
+    if(!isNaN(int) || value === '') this.setState({
       user: {
         ...user,
         properties: {
           ...user.properties,
-          [field]: parseInt(event.target.value) || '',
+          [field]: int || value,
         },
       },
       unsaved: true,
@@ -183,10 +186,10 @@ class UserDetails extends PureComponent {
       aliases: user.aliases.filter(alias => alias !== ''),
       properties: {
         ...user.properties,
-        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
+        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || 0,
         prohibitreceivequota: user.properties.prohibitreceivequota * 2
-          ** (10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
+          ** (10 * sizeUnits.prohibitreceivequota) || 0,
+        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || 0,
       },
       roles: undefined,
     })
