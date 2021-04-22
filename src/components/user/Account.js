@@ -96,7 +96,7 @@ class Account extends PureComponent {
           className={classes.input} 
           label={t("Storage quota limit")}
           fullWidth 
-          value={storagequotalimit || ''}
+          value={storagequotalimit !== undefined ? storagequotalimit : ''}
           onChange={handleIntPropertyChange('storagequotalimit')}
           InputProps={{
             endAdornment:
@@ -117,7 +117,7 @@ class Account extends PureComponent {
           className={classes.input} 
           label={t("Receive quota limit")}
           fullWidth 
-          value={prohibitreceivequota || ''}
+          value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
           onChange={handleIntPropertyChange('prohibitreceivequota')}
           InputProps={{
             endAdornment:
@@ -138,7 +138,7 @@ class Account extends PureComponent {
           className={classes.input} 
           label={t("Send quota limit")}
           fullWidth 
-          value={prohibitsendquota || ''}
+          value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
           onChange={handleIntPropertyChange('prohibitsendquota')}
           InputProps={{
             endAdornment:
