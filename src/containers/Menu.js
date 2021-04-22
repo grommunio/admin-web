@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
@@ -30,11 +30,12 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class Menu extends Component {
+class Menu extends PureComponent {
 
   state = {
     orderBy: 'domainname',
     order: 'asc',
+    sortedDomains: [],
   }
 
   columns = [
@@ -51,9 +52,29 @@ class Menu extends Component {
     history.push(`/${path}`);
   };
 
+  handleSort = orderBy => () => {
+    const sortedDomains = [...this.props.domains];
+    const { order: stateOrder, orderBy: stateOrderBy } = this.state;
+    const order = stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
+    if(orderBy === 'maxUser') {
+      if(order === 'asc') {
+        sortedDomains.sort((a, b) => a[orderBy] - b[orderBy]);
+      } else {
+        sortedDomains.sort((a, b) => b[orderBy] - a[orderBy]);
+      }
+    } else {
+      if(order === 'asc') {
+        sortedDomains.sort((a, b) => a[orderBy].localeCompare(b[orderBy]));
+      } else {
+        sortedDomains.sort((a, b) => b[orderBy].localeCompare(a[orderBy]));
+      }
+    }
+    this.setState({ sortedDomains, order, orderBy });
+  }
+
   render() {
     const { classes, t, domains } = this.props;
-    const { orderBy, order } = this.state;
+    const { orderBy, order, sortedDomains } = this.state;
     return (
       <div className={classes.root}>
         <TopBar onAdd={this.handleAdd} title="Dashboard"/>
@@ -72,7 +93,7 @@ class Menu extends Component {
                         active={orderBy === column.value}
                         align="left"
                         direction={orderBy === column.value ? order : "asc"}
-                        //onClick={this.handleRequestSort(column.value)}
+                        onClick={this.handleSort(column.value)}
                       >
                         {t(column.label)}
                       </TableSortLabel>
@@ -81,7 +102,7 @@ class Menu extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {domains.map((obj, idx) => 
+                {(sortedDomains.length > 0 ? sortedDomains : domains).map((obj, idx) => 
                   <TableRow key={idx} hover onClick={this.handleNavigation(obj.ID)}>
                     <TableCell>
                       {obj.domainname}{" "}
