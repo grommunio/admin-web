@@ -142,6 +142,8 @@ class Login extends Component {
               placeholder={t("Username")}
               value={user}
               onChange={this.handleTextinput('user')}
+              name="username"
+              id="username"
             />
           </Paper>
           <Paper component="form" onSubmit={this.handleLogin} className={classes.inputContainer}>
@@ -154,6 +156,8 @@ class Login extends Component {
               placeholder={t("Password")}
               value={pass}
               onChange={this.handleTextinput('pass')}
+              name="password"
+              id="password"
             />
           </Paper>
           {auth.error && <MuiAlert elevation={6} variant="filled" severity="error" className={classes.errorMessage}>
