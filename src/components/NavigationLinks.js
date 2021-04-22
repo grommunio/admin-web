@@ -35,6 +35,7 @@ import logo from '../res/grammm_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
+import { selectDrawerDomain } from '../actions/drawer';
 
 const styles = theme => ({
   drawerHeader: {
@@ -143,7 +144,6 @@ class NavigationLinks extends PureComponent {
 
   state = {
     tab: 0,
-    expandedDomain: -1,
     filter: '',
     defaultsIn: false,
   }
@@ -156,19 +156,17 @@ class NavigationLinks extends PureComponent {
 
   handleDrawer = domain => event => {
     event.preventDefault();
-    this.setState({ expandedDomain: domain });
+    this.props.selectDomain(domain);
     this.props.history.push(`/${domain}`);
   }
-
-  toggleDefaults = () => this.setState({ defaultsIn: !this.state.defaultsIn });
 
   handleTextInput = event => {
     this.setState({ filter: event.target.value });
   }
 
   render() {
-    const { classes, t, location, domains, capabilities } = this.props;
-    const { filter, expandedDomain, tab } = this.state;
+    const { classes, t, expandedDomain, location, domains, capabilities } = this.props;
+    const { filter, tab } = this.state;
     const isSysAdmin = capabilities.includes('SystemAdmin');
     return(
       <React.Fragment>
@@ -234,18 +232,6 @@ class NavigationLinks extends PureComponent {
                   </ListItem>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
-                      {/*<ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/configuration')}
-                        selected={stateDomains[ID] &&
-                          location.pathname.startsWith('/' + ID + '/configuration')}
-                      >
-                        <Grid container alignItems="center">
-                          <Settings className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Configuration')}/>
-                        </Grid>
-                      </ListItem>*/}
                       <ListItem
                         className={classes.li}
                         button
@@ -292,18 +278,6 @@ class NavigationLinks extends PureComponent {
                           <ListItemText primary={t('Mail lists')}/>
                         </Grid>
                       </ListItem>
-                      {/*<ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/mailAddresses')}
-                        selected={stateDomains[ID] &&
-                          location.pathname.startsWith('/' + ID + '/mailAddresses')}
-                      >
-                        <Grid container alignItems="center">
-                          <Mail className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Mail addresses')}/>
-                        </Grid>
-                      </ListItem>*/}
                     </List>
                   </Collapse>
                 </React.Fragment> : null;
@@ -330,19 +304,7 @@ class NavigationLinks extends PureComponent {
                 <Domains className={classes.icon}/>
                 <ListItemText primary={t('Domain list')} />
               </Grid>
-            </ListItem>  
-            {/*
-            <ListItem
-              button
-              onClick={this.handleNavigation('baseSetup')}
-              className={classes.li}
-              selected={location.pathname === '/baseSetup'}
-            >
-              <Grid container alignItems="center">
-                <Setup className={classes.icon}/>
-                <ListItemText primary={t('Base setup')} />
-              </Grid>
-            </ListItem>*/}
+            </ListItem>
             <ListItem
               button
               onClick={this.handleNavigation('roles')}
@@ -387,37 +349,6 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary={t('DB Configuration')} />
               </Grid>
             </ListItem>
-            {/*<ListItem button onClick={this.toggleDefaults} className={classes.li}>
-              <DefaultData className={classes.icon} />
-              <ListItemText primary={t('Default data')} />
-              { defaultsIn ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-            </ListItem>
-            <Collapse in={defaultsIn} unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('forwards')}
-                  selected={location.pathname.startsWith('/forwards')}
-                >
-                  <Grid container alignItems="center">
-                    <Forwards className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Forwards')}/>
-                  </Grid>
-                </ListItem>
-                <ListItem
-                  className={classes.li}
-                  button
-                  onClick={this.handleNavigation('members')}
-                  selected={location.pathname.startsWith('/members')}
-                >
-                  <Grid container alignItems="center">
-                    <Members className={classes.nestedIcon}/>
-                    <ListItemText primary={t('Members')}/>
-                  </Grid>
-                </ListItem>       
-              </List>
-          </Collapse>*/}
           </React.Fragment>
           }
         </List>
@@ -434,13 +365,22 @@ NavigationLinks.propTypes = {
   domains: PropTypes.array,
   capabilities: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
+  expandedDomain: PropTypes.number,
+  selectDomain: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     capabilities: state.auth.capabilities,
+    expandedDomain: state.drawer.selectedDomain,
   };
 };
 
-export default connect(mapStateToProps)(
+const mapDispatchToProps = dispatch => {
+  return {
+    selectDomain: id => dispatch(selectDrawerDomain(id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(
   withRouter(withTranslation()(withStyles(styles)(NavigationLinks))));

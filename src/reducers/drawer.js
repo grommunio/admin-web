@@ -2,13 +2,9 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
-  DRAWER_OPEN_DEFAULT,
-  DRAWER_CLOSE_DEFAULT,
   DRAWER_EXPAND,
-  DRAWER_CLOSE,
-  DRAWER_SELECTION,
   DRAWER_DOMAINS_REVEICED,
-  DRAWER_DOMAINS_FETCH,
+  SELECT_DRAWER_DOMAIN,
   DOMAIN_DATA_ADD,
   DOMAIN_DATA_EDIT,
   DOMAIN_DATA_DELETE,
@@ -17,7 +13,7 @@ import { addItem } from '../utils';
 
 const defaultState = {
   defaultOpen: false,
-  expanded: false,
+  selectedDomain: -1,
   selected: '',
   Domains: [],
   loading: true,
@@ -37,37 +33,6 @@ function drawerReducer(state = defaultState, action) {
       return {
         ...state,
         expanded: !state.expanded,
-      };
-
-    case DRAWER_CLOSE:
-      return {
-        ...state,
-        expanded: false,
-      };
-
-    case DRAWER_OPEN_DEFAULT:
-      return {
-        ...state,
-        defaultOpen: true,  
-      };
-
-    case DRAWER_CLOSE_DEFAULT:
-      return {
-        ...state,
-        defaultOpen: false,  
-      };
-
-    case DRAWER_SELECTION: {
-      return {
-        ...state,
-        selected: action.page,
-      };
-    }
-
-    case DRAWER_DOMAINS_FETCH:
-      return {
-        ...state,
-        loading: true,
       };
 
     case DRAWER_DOMAINS_REVEICED:
@@ -93,6 +58,12 @@ function drawerReducer(state = defaultState, action) {
       return {
         ...state,
         Domains: state.Domains.filter(d => d.ID !== action.id),
+      };
+
+    case SELECT_DRAWER_DOMAIN:
+      return {
+        ...state,
+        selectedDomain: action.id,
       };
 
     default:
