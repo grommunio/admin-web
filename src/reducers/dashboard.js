@@ -5,6 +5,7 @@ import {
   DASHBOARD_DATA_ERROR,
   DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 
 const defaultState = {
@@ -86,6 +87,13 @@ function dashboardReducer(state = defaultState, action) {
         loading: false,
       };
     }
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
+      };
 
     default:
       return state;

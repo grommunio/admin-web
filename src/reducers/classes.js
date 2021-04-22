@@ -9,6 +9,7 @@ import {
   CLASSES_DATA_RECEIVED,
   CLASSES_TREE_RECEIVED,
   CLASSES_SELECT_RECEIVED,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -71,6 +72,13 @@ function classesReducer(state = defaultState, action) {
       return {
         ...state,
         Classes: addItem(state.Classes, action.data),
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

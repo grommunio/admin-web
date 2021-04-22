@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  AUTH_AUTHENTICATED,
   MEMBERS_DATA_ERROR,
   MEMBERS_DATA_FETCH,
   MEMBERS_DATA_RECEIVED,
@@ -36,6 +37,13 @@ function membersReducer(state = defaultState, action) {
         error: action.error,
       };
     }
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
+      };
 
     default:
       return state;

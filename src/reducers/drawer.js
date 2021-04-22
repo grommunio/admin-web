@@ -8,6 +8,7 @@ import {
   DOMAIN_DATA_ADD,
   DOMAIN_DATA_EDIT,
   DOMAIN_DATA_DELETE,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -64,6 +65,13 @@ function drawerReducer(state = defaultState, action) {
       return {
         ...state,
         selectedDomain: action.id,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

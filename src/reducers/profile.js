@@ -5,6 +5,7 @@ import {
   PROFILE_DATA_RECEIVED,
   PROFILE_DATA_FETCH,
   PROFILE_DATA_ERROR,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 
 const defaultState = {
@@ -37,6 +38,13 @@ function profileReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: action.error,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

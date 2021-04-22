@@ -1,4 +1,5 @@
 import {
+  AUTH_AUTHENTICATED,
   LDAP_DATA_ERROR,
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
@@ -31,6 +32,13 @@ function ldapReducer(state=defaultState, action) {
         ...state,
         loading: false,
         error: action.error,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default: return state;

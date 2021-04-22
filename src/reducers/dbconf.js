@@ -6,6 +6,7 @@ import {
   DBCONF_DATA_RECEIVED,
   DBCONF_SERVICE_DELETE,
   DBCONF_SERVICE_ADD,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -46,6 +47,13 @@ function dbconfReducer(state = defaultState, action) {
       return {
         ...state,
         services: addItem(state.services, action.service),
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

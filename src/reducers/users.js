@@ -11,6 +11,7 @@ import {
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { append } from '../utils';
 
@@ -104,6 +105,13 @@ function usersReducer(state=defaultState, action) {
       return {
         ...state,
         Orphaned: [],
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default: return state;

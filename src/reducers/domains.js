@@ -8,6 +8,7 @@ import {
   DOMAIN_DATA_ADD,
   DOMAIN_NEXT_SET,
   DOMAIN_DATA_DELETE,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
@@ -71,6 +72,13 @@ function domainsReducer(state = defaultState, action) {
         Domains: action.purge ? state.Domains.filter(domain => domain.ID !== action.id)
           : deactivateDomain(state.Domains, action.id),
         count: state.count - 1,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

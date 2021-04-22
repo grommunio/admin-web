@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  AUTH_AUTHENTICATED,
   MLISTS_DATA_ERROR,
   MLISTS_DATA_FETCH,
   MLISTS_DATA_RECEIVED,
@@ -53,6 +54,13 @@ function mlistsReducer(state = defaultState, action) {
         ...state,
         MLists: state.MLists.filter(ml => ml.ID !== action.id),
         count: state.count - 1,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

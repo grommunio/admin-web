@@ -5,6 +5,7 @@ import {
   SERVICES_DATA_FETCH,
   SERVICES_DATA_RECEIVED,
   SERVICES_DATA_ERROR,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 
 const defaultState = {
@@ -34,6 +35,13 @@ function domainsReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: action.error,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

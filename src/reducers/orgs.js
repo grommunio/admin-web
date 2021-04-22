@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  AUTH_AUTHENTICATED,
   ORGS_DATA_ERROR,
   ORGS_DATA_FETCH,
   ORGS_DATA_RECEIVED,
@@ -53,6 +54,13 @@ function associationsReducer(state = defaultState, action) {
         ...state,
         Orgs: state.Orgs.filter(o => o.ID !== action.id),
         count: state.count - 1,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

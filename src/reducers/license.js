@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  AUTH_AUTHENTICATED,
   LICENSE_DATA_RECEIVED,
 } from '../actions/types';
 
@@ -16,6 +17,13 @@ function licenseReducer(state = defaultState, action) {
       return {
         ...state,
         License: action.data,
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

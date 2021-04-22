@@ -9,6 +9,7 @@ import {
   ROLE_DATA_ADD,
   ROLE_DATA_DELETE,
   ROLES_NEXT_SET,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
@@ -71,6 +72,13 @@ function rolesReducer(state = defaultState, action) {
       return {
         ...state,
         Roles: state.Roles.filter(role => role.ID !== action.ID),
+      };
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
     
     default:

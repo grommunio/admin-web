@@ -10,6 +10,7 @@ import {
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
   FOLDERS_NEXT_SET,
+  AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
@@ -80,6 +81,13 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Owners: addItem(state.Owners, action.data),
+      };
+    
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
       };
 
     default:

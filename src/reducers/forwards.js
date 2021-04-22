@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
 import {
+  AUTH_AUTHENTICATED,
   FORWARDS_DATA_ERROR,
   FORWARDS_DATA_FETCH,
   FORWARDS_DATA_RECEIVED,
@@ -36,6 +37,13 @@ function forwardsReducer(state = defaultState, action) {
         loading: false,
       };
     }
+
+    case AUTH_AUTHENTICATED:
+      return action.authenticated ? {
+        ...state,
+      } : {
+        ...defaultState,
+      };
 
     default:
       return state;
