@@ -41,7 +41,7 @@ const styles = (theme) => ({
                           "disk     disk"`,
     }, 
     [theme.breakpoints.up("md")]: {
-      gridTemplateColumns: '440px 1fr 1fr 1fr',
+      gridTemplateColumns: '524px 1fr 1fr 1fr',
       gridTemplateAreas: `"antispam antispam antispam antispam"
                           "services cpu      cpu      cpu     " 
                           "services memory   memory   memory  "
@@ -76,7 +76,7 @@ const styles = (theme) => ({
     },  
     [theme.breakpoints.up("sm")]: {
       gridTemplateColumns: '300px 1fr 1fr',
-    },     
+    },
   },
   donutChart: {
     [theme.breakpoints.up("xs")]: {

@@ -5,10 +5,11 @@ import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
-  TableRow, TableCell, TableBody } from "@material-ui/core";
+  TableRow, TableCell, TableBody, Tooltip, Grid } from "@material-ui/core";
 import Stop from "@material-ui/icons/HighlightOff";
 import Restart from "@material-ui/icons/Replay";
 import Start from "@material-ui/icons/PlayCircleFilledOutlined";
+import Enable from "@material-ui/icons/PowerSettingsNew";
 import { connect } from "react-redux";
 import { serviceAction } from "../actions/services";
 import { withTranslation } from "react-i18next";
@@ -114,6 +115,7 @@ class ServicesChart extends Component {
     starting: false,
     restarting: false,
     stoping: false,
+    enableing: false,
   };
 
   handleServiceAction = (service, action) => () => {
@@ -154,7 +156,7 @@ class ServicesChart extends Component {
   }
 
   render() {
-    const { classes, Services } = this.props;
+    const { classes, Services, t } = this.props;
     const { starting, restarting, stoping, snackbar } = this.state;
 
     return (
@@ -166,10 +168,10 @@ class ServicesChart extends Component {
                 <TableCell>
                   {"Service"}
                 </TableCell>
-                <TableCell>
-                  {"State"}
+                <TableCell align="center" style={{ width: 108 }}>
+                  {"State | Autostart"}
                 </TableCell>
-                <TableCell align="center" style={{ width: 100 }}>
+                <TableCell align="center" style={{ width: 132 }}>
                   {"Actions"}
                 </TableCell>
               </TableRow>
@@ -183,45 +185,67 @@ class ServicesChart extends Component {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <div className={classes.label + " " + this.getChipColor(service.state)}>
-                      {service.state}
-                    </div>
+                    <Grid container>
+                      <div
+                        style={{ marginRight: 4 }}
+                        className={classes.label + " " + this.getChipColor(service.state)}
+                      >
+                        {service.state}
+                      </div>
+                      <div className={classes.label + " " + this.getChipColor(service.autostart ? "active" : "error")}>
+                        {service.autostart ? "enabled" : "disabled"}
+                      </div>
+                    </Grid>
                   </TableCell>
                   <TableCell align="right">
-                    {stoping !== service.name ? (
+                    <Tooltip title={t("Enable/Disable")} placement="top">
                       <IconButton
-                        onClick={this.handleServiceAction(service, "stop")}
+                        onClick={this.handleServiceAction(service, service.autostart ? "disable" : "enable")}
                         className={classes.chipIcon}
                       >
-                        <Stop className={classes.iconButton} fontSize="small" />
+                        <Enable className={classes.iconButton} fontSize="small" />
                       </IconButton>
+                    </Tooltip>
+                    {stoping !== service.name ? (
+                      <Tooltip title={t("Stop")} placement="top">
+                        <IconButton
+                          onClick={this.handleServiceAction(service, "stop")}
+                          className={classes.chipIcon}
+                        >
+                          <Stop className={classes.iconButton} fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
                       <IconButton className={classes.chipIcon}>
                         <CircularProgress size={18} />
                       </IconButton>
                     )}
                     {restarting !== service.name ? (
-                      <IconButton
-                        onClick={this.handleServiceAction(service, "restart")}
-                        className={classes.chipIcon}
-                      >
-                        <Restart
-                          className={classes.iconButton}
-                          fontSize="small"
-                        />
-                      </IconButton>
+                      <Tooltip title={t("Restart")}placement="top">
+                        <IconButton
+                          onClick={this.handleServiceAction(service, "restart")}
+                          className={classes.chipIcon}
+                        >
+                          <Restart
+                            className={classes.iconButton}
+                            fontSize="small"
+                          />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
                       <IconButton className={classes.chipIcon}>
                         <CircularProgress size={18} />
                       </IconButton>
                     )}
                     {starting !== service.name ? (
-                      <IconButton
-                        onClick={this.handleServiceAction(service, "start")}
-                        className={classes.chipIcon}
-                      >
-                        <Start className={classes.iconButton} fontSize="small" />
-                      </IconButton>
+                      <Tooltip title={t("Start")} placement="top">
+                        <IconButton
+                          onClick={this.handleServiceAction(service, "start")}
+                          className={classes.chipIcon}
+                        >
+                          <Start className={classes.iconButton} fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
                       <IconButton className={classes.chipIcon}>
                         <CircularProgress size={18} />
