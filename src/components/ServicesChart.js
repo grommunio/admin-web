@@ -201,7 +201,8 @@ class ServicesChart extends Component {
                   <TableCell align="right">
                     <Tooltip title={t("Enable/Disable")} placement="top">
                       <IconButton
-                        onClick={this.handleServiceAction(service, service.autostart ? "disable" : "enable")}
+                        onClick={this.handleServiceAction(service, service.autostart === "enabled" ? 
+                          "disable" : "enable")}
                         className={classes.chipIcon}
                       >
                         <Enable className={classes.iconButton} fontSize="small" />
