@@ -41,7 +41,7 @@ class MemoryChart extends Component {
   }
 
   DiskTooltip = props => {
-    if (props.active && props.content && props.content._self) {
+    if (props && props.payload && props.payload.length > 0) {
       const newPayload = [
         { name: 'Percentage', value: props.payload[0].payload.percent },
         { name: 'Device', value: props.payload[0].payload.device },

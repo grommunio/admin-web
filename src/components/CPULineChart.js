@@ -32,18 +32,17 @@ const styles = theme => ({
 class CPULineChart extends Component {
 
   CPUTooltip = props => {
-    if (props.active && props.content && props.content._self) {
-      const lastIndex =  props.content._self.props.cpuPercent.length - 1;
+    if (props && props.payload && props.payload.length > 0) {
       const newPayload = [
-        { name: 'Idle', value: props.content._self.props.cpuPercent[lastIndex].idle + '%' },
-        { name: 'User', value: props.content._self.props.cpuPercent[lastIndex].user + '%' },
-        { name: 'System', value: props.content._self.props.cpuPercent[lastIndex].system + '%' },
-        { name: 'IO', value: props.content._self.props.cpuPercent[lastIndex].io + '%' },
-        { name: 'Steal', value: props.content._self.props.cpuPercent[lastIndex].steal + '%' },
-        { name: 'Interrupt', value: props.content._self.props.cpuPercent[lastIndex].interrupt + '%' },
+        { name: 'User', value: props.payload[0].payload.user + "%" },
+        { name: 'System', value: props.payload[0].payload.system + "%" },
+        { name: 'IO', value: props.payload[0].payload.io + "%" },
+        { name: 'Steal', value: props.payload[0].payload.steal + "%" },
+        { name: 'Interrupt', value: props.payload[0].payload.interript + "%" },
+        { name: 'Idle', value: props.payload[0].payload.idle + "%" },
       ];
       return <DefaultTooltipContent
-        {...props}
+        labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}
         payload={newPayload}
       />;
     }
@@ -89,6 +88,7 @@ class CPULineChart extends Component {
             <YAxis domain={[0, 100]}/>
             <Tooltip 
               isAnimationActive={false}
+              content={<this.CPUTooltip />}
             />
             <Legend />
             <Line

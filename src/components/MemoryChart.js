@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
 
 const styles = theme => ({
   root: {
@@ -42,6 +43,22 @@ class MemoryChart extends Component {
   }
 
   formatMB = value => (value / 1000000).toFixed(0) + 'MB';
+
+  TooltipContent = props => {
+    if (props && props.payload && props.payload.length > 0) {
+      const newPayload = [
+        { name: 'Used', value: this.formatLabel(props.payload[0].payload.used, 2) },
+        { name: 'Cache', value: this.formatLabel(props.payload[0].payload.cache, 2) },
+        { name: 'Buffer', value: this.formatLabel(props.payload[0].payload.buffer, 2) },
+        { name: 'Free', value: this.formatLabel(props.payload[0].payload.free, 2) },
+      ];
+      return <DefaultTooltipContent
+        labelStyle={{ color: 'black', fontSize: 18, paddingBottom: 4 }}
+        payload={newPayload}
+      />;
+    }
+    return <DefaultTooltipContent {...props} />;
+  };
 
   render() {
     const { classes, memory } = this.props;
@@ -91,6 +108,7 @@ class MemoryChart extends Component {
             <Tooltip
               formatter={this.formatMB}
               isAnimationActive={false}
+              content={<this.TooltipContent />}
             />
             <Legend />
             <Area

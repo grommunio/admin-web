@@ -83,7 +83,6 @@ class AddRole extends PureComponent {
   handleAdd = () => {
     const { add, onSuccess, onError } = this.props;
     const { users, permissions } = this.state;
-    console.log(permissions);
     this.setState({ loading: true });
     add({
       ...this.state,

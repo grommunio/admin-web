@@ -252,7 +252,6 @@ class ClassDetails extends PureComponent {
     const { classes, t, domain, _classes } = this.props;
     const { _class, snackbar, unsaved, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
-    console.log(_classes);
     return (
       <div className={classes.root}>
         <TopBar title={t("Groups")}/>
