@@ -192,8 +192,9 @@ class ServicesChart extends Component {
                       >
                         {service.state}
                       </div>
-                      <div className={classes.label + " " + this.getChipColor(service.autostart ? "active" : "error")}>
-                        {service.autostart ? "enabled" : "disabled"}
+                      <div className={classes.label + " " +
+                        this.getChipColor(service.autostart === "enabled" ? "active" : "error")}>
+                        {service.autostart}
                       </div>
                     </Grid>
                   </TableCell>
