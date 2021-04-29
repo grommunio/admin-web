@@ -469,6 +469,23 @@ export function deleteOrg(id) {
 }
 
 /*
+  LOGS
+*/
+
+export function logs(params) {
+  return async () => {
+    return await get(buildQuery('/system/logs', params));
+  };
+}
+
+export function log(filename, params) {
+  return async () => {
+    return await get(buildQuery('/system/logs/' + filename, params));
+  };
+}
+
+
+/*
   FORWARDS
 */
 

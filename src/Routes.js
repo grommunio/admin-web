@@ -55,6 +55,7 @@ const AsyncDBFile = makeLoadableComponent(() => import("./containers/DBFile"));
 const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
 const AsyncRoles = makeLoadableComponent(() => import("./containers/Roles"));
 const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDetails"));
+const AsyncLogs = makeLoadableComponent(() => import("./containers/Logs"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -104,6 +105,12 @@ const Routes = ({ childProps, domains }) => (
       path="/ldap"
       exact
       component={AsyncLdapConfig}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/logs"
+      exact
+      component={AsyncLogs}
       props={childProps}
     />
     <AuthenticatedRoute

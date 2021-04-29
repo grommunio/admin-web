@@ -20,6 +20,7 @@ import Ldap from '@material-ui/icons/Contacts';
 import MLists from '@material-ui/icons/Email';
 import Storage from '@material-ui/icons/Storage';
 import Orgs from '@material-ui/icons/GroupWork';
+import Logs from '@material-ui/icons/ViewHeadline';
 /*
 import Mail from '@material-ui/icons/Mail';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
@@ -347,6 +348,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Storage className={classes.icon}/>
                 <ListItemText primary={t('DB Configuration')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('logs')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/logs')}
+            >
+              <Grid container alignItems="center">
+                <Logs className={classes.icon}/>
+                <ListItemText primary={t('Logs')} />
               </Grid>
             </ListItem>
           </React.Fragment>
