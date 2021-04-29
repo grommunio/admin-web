@@ -153,7 +153,7 @@ class Logs extends PureComponent {
 
   render() {
     const { classes, t, logs } = this.props;
-    const { snackbar, log, skip } = this.state;
+    const { snackbar, log, skip, filename } = this.state;
 
     return (
       <div className={classes.root}>
@@ -177,7 +177,13 @@ class Logs extends PureComponent {
                 />
               </ListItem>
               {logs.Logs.map((log, idx) =>
-                <ListItem key={idx} onClick={this.handleLog(log)} button className={classes.li}>
+                <ListItem
+                  key={idx}
+                  onClick={this.handleLog(log)}
+                  button
+                  className={classes.li}
+                  selected={log === filename}
+                >
                   <ListItemText
                     primary={log}
                     primaryTypographyProps={{ color: "textPrimary" }}
@@ -186,9 +192,9 @@ class Logs extends PureComponent {
               )}
             </List>
             {<Paper elevation={1} className={classes.paper}>
-              {log.length > 0 && <IconButton onClick={this.handleScroll(1)}>
+              {log.length > 0 ? <IconButton onClick={this.handleScroll(1)}>
                 <ArrowUp />
-              </IconButton>}
+              </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
               {log.map((log, idx) =>
                 <pre
                   key={idx}
