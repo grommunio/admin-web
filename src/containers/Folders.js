@@ -76,7 +76,9 @@ const styles = theme => ({
     margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    match: '',
+  },
+  count: {
+    marginLeft: 16,
   },
 });
 
@@ -88,6 +90,7 @@ class Folders extends Component {
     snackbar: null,
     order: 'asc',
     offset: 50,
+    match: '',
   }
 
   handleScroll = () => {
@@ -204,6 +207,9 @@ class Folders extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {folders.Folders.length} folder(s)
+          </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
@@ -224,7 +230,7 @@ class Folders extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!folders.loading && sortedArray.map((obj, idx) =>
+                {sortedArray.map((obj, idx) =>
                   <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>

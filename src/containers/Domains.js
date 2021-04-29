@@ -92,6 +92,9 @@ const styles = (theme) => ({
   deletedDomain: {
     backgroundColor: "#22242f",
   },
+  count: {
+    marginLeft: 16,
+  },
 });
 
 class DomainList extends Component {
@@ -275,6 +278,9 @@ class DomainList extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {domains.Domains.length} domain(s)
+          </Typography>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>

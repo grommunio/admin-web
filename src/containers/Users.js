@@ -82,6 +82,9 @@ const styles = theme => ({
   newButton: {
     marginRight: 8,
   },
+  count: {
+    marginLeft: 16,
+  },
 });
 
 class Users extends Component {
@@ -286,6 +289,9 @@ class Users extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {users.Users.length} user(s)
+          </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
