@@ -17,6 +17,8 @@ const styles = theme => ({
   flexInput: {
     margin: theme.spacing(1),
     flex: 1,
+    display: 'flex',
+    alignItems: 'center',
   },
   quota: {
     border: `1px solid ${blue['500']}`,
@@ -38,9 +40,10 @@ const styles = theme => ({
   },
   quotaHeadline: {
     marginTop: -16,
-    marginBottom: 8,
+    marginBottom: 0,
     padding: theme.spacing(0, 0.5),
     backgroundColor: theme.palette.background.paper,
+    position: 'absolute',
   },
   labelContainer: {
     display: 'flex',
@@ -82,7 +85,7 @@ class Account extends PureComponent {
           height: 20,
           background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
         }}
       >{usedSpace}</div>
       <div
@@ -190,11 +193,8 @@ class Account extends PureComponent {
           </MenuItem>
         </TextField>
         <div className={classes.quota}>
-          <Grid container className={classes.graphContainer}>
-            <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
-            {this.calculateGraph()}
-          </Grid>
-          <Grid container>
+          <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
+          <Grid container style={{ marginTop: 8 }}>
             <TextField 
               className={classes.flexInput} 
               label={
@@ -270,6 +270,9 @@ class Account extends PureComponent {
                   </FormControl>,
               }}
             />
+            <div className={classes.flexInput}>
+              {this.calculateGraph()}
+            </div>
           </Grid>
         </div>
         <TextField
