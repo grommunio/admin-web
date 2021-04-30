@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { FormControl, Select, TextField, Typography, withStyles } from '@material-ui/core';
+import { FormControl, TextField, Typography, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
