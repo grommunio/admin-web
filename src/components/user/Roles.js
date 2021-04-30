@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { FormControl, Select, Typography, withStyles } from '@material-ui/core';
+import { FormControl, Select, TextField, Typography, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -20,27 +21,28 @@ const styles = theme => ({
 class RolesTab extends PureComponent {
 
   render() {
-    const { classes, t, roles, Roles, handleMultiSelect } = this.props;
+    const { classes, t, roles, Roles, handleAutocomplete } = this.props;
     return (
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
         <FormControl className={classes.input}>
-          <Select
+          <Autocomplete
             multiple
-            fullWidth
+            options={Roles || []}
             value={roles || []}
-            onChange={handleMultiSelect}
-            native
-          >
-            {(Roles || []).map((role, key) => (
-              <option
-                key={key}
-                value={role.ID}
-              >
-                {role.name}
-              </option>
-            ))}
-          </Select>
+            onChange={handleAutocomplete('roles')}
+            getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
+            renderOption={(role) => role?.name || role || ''}
+            filterOptions={(options, state) => options.filter(o => o.name.includes(state.inputValue))}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Roles"
+                placeholder="Search roles..."
+                className={classes.input} 
+              />
+            )}
+          />
         </FormControl>
       </FormControl>
     );
@@ -52,7 +54,7 @@ RolesTab.propTypes = {
   t: PropTypes.func.isRequired,
   roles: PropTypes.array.isRequired,
   Roles: PropTypes.array.isRequired,
-  handleMultiSelect: PropTypes.func.isRequired,
+  handleAutocomplete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
