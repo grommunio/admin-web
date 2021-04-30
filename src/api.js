@@ -215,7 +215,11 @@ export function allUsers(params) {
 export function users(domainID, params) {
   return async () => {
     return await get(buildQuery(
-      '/domains/' + domainID + '/users', { ...params, properties: 'displayname,storagequotalimit', addressType: 0 }));
+      '/domains/' + domainID + '/users', {
+        ...params,
+        properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended',
+        addressType: 0,
+      }));
   };
 }
 
@@ -253,6 +257,12 @@ export async function changeUserPassword(domainID, id, newPw) {
 export function editUserRole(domainID, userID, roles) {
   return async () => {
     return await patch('/domains/' + domainID + '/users/' + userID + '/roles', roles);
+  };
+}
+
+export function storeProps(domainID, userID, props) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID + '/storeProps?properties=' + props);
   };
 }
 

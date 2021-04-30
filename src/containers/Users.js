@@ -85,6 +85,11 @@ const styles = theme => ({
   count: {
     marginLeft: 16,
   },
+  barBackground: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#ddd',
+  },
 });
 
 class Users extends Component {
@@ -221,6 +226,19 @@ class Users extends Component {
 
   handleCheckClose = () => this.setState({ checking: false });
 
+  calculateGraph(obj) {
+    const { classes } = this.props;
+    const { storagequotalimit, messagesizeextended } = obj;
+    const percentage = (messagesizeextended / (storagequotalimit * 1024)).toFixed(0) + '%';
+    return <div className={classes.barBackground}>
+      <div style={{
+        width: percentage,
+        height: 20,
+        background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+      }}></div>
+    </div>;
+  }
+
   render() {
     const { classes, t, users, domain } = this.props;
     const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
@@ -308,7 +326,8 @@ class Users extends Component {
                       </TableSortLabel>
                     </TableCell>
                   )}
-                  <TableCell></TableCell>
+                  <TableCell>Space</TableCell>
+                  <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -319,6 +338,9 @@ class Users extends Component {
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
+                    <TableCell>
+                      {this.calculateGraph(obj)}
+                    </TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>

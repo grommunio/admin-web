@@ -82,6 +82,7 @@ class UserDetails extends PureComponent {
       roles: [],
       properties: {},
     },
+    rawData: {},
     dump: '',
     changingPw: false,
     snackbar: '',
@@ -129,6 +130,7 @@ class UserDetails extends PureComponent {
     }
     return {
       sizeUnits,
+      rawData: user,
       user: {
         ...user,
         username,
@@ -311,7 +313,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, history } = this.props;
-    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, detaching, dump} = this.state;
+    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, detaching, dump, rawData } = this.state;
     const { username, roles, aliases, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
 
@@ -375,6 +377,7 @@ class UserDetails extends PureComponent {
               handleCheckbox={this.handleCheckbox}
               handleUnitChange={this.handleUnitChange}
               handlePasswordChange={this.handlePasswordDialogToggle(true)}
+              rawData={rawData}
             />}
             {tab === 1 && <User
               user={user}

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
-  Select, TextField, withStyles } from '@material-ui/core';
+  Select, TextField, Typography, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 
@@ -14,6 +14,11 @@ const styles = theme => ({
   },
   select: {
     minWidth: 60,
+  },
+  barBackground: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#ddd',
   },
 });
 
@@ -32,6 +37,22 @@ class Account extends PureComponent {
     { name: 'Out of date', ID: 2 },
     { name: 'Deleted', ID: 3 },
   ]
+
+  calculateGraph() {
+    const { classes, rawData } = this.props;
+    console.log(rawData);
+    const { messagesizeextended: rawMSE, storagequotalimit: rawSQ } = rawData.properties || {};
+    const percentage = (rawMSE / (rawSQ * 1024)).toFixed(0) + '%';
+    return <div className={classes.barBackground}>
+      <div
+        style={{
+          width: percentage,
+          height: 20,
+          background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+        }}
+      ></div>
+    </div>;
+  }
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
@@ -84,14 +105,6 @@ class Account extends PureComponent {
             </MenuItem>
           ))}
         </TextField>
-        <TextField
-          className={classes.input}
-          label={t("Creation time")}
-          fullWidth
-          value={creationtime || ''}
-          onChange={handlePropertyChange('creationtime')}
-          disabled
-        />
         <TextField 
           className={classes.input} 
           label={t("Storage quota limit")}
@@ -102,7 +115,7 @@ class Account extends PureComponent {
             endAdornment:
               <FormControl>
                 <Select
-                  onChange={handleUnitChange(storagequotalimit)}
+                  onChange={handleUnitChange('storagequotalimit')}
                   value={sizeUnits.storagequotalimit}
                   className={classes.select}
                 >
@@ -155,6 +168,10 @@ class Account extends PureComponent {
               </FormControl>,
           }}
         />
+        <Grid container className={classes.input}>
+          <Typography color="textPrimary">{t('Used space')}</Typography>
+          {this.calculateGraph()}
+        </Grid>
         <TextField
           select
           className={classes.input}
@@ -185,6 +202,14 @@ class Account extends PureComponent {
             {t('Deutsch')}
           </MenuItem>
         </TextField>
+        <TextField
+          className={classes.input}
+          label={t("Creation time")}
+          fullWidth
+          value={creationtime || ''}
+          onChange={handlePropertyChange('creationtime')}
+          disabled
+        />
         <Grid container className={classes.input}>
           <FormControlLabel
             control={
@@ -235,6 +260,7 @@ Account.propTypes = {
   handleUnitChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
   usernameError: PropTypes.bool,
+  rawData: PropTypes.object,
 };
 
 export default withTranslation()(withStyles(styles)(Account));
