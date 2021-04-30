@@ -192,11 +192,11 @@ class Users extends Component {
   getMaxSizeFormatting(size) {
     if(!size) return '';
     if(size % 1073741824 === 0) {
-      return size / 1073741824 + ' TiB';
+      return size / 1073741824 + ' TB';
     } else if (size % 1048576 === 0) {
-      return size / 1048576 + ' GiB';
+      return size / 1048576 + ' GB';
     } else if (size % 1024 === 0) {
-      return size / 1024 + ' MiB';
+      return size / 1024 + ' MB';
     } else {
       return size + ' KiB';
     }
@@ -228,13 +228,15 @@ class Users extends Component {
 
   calculateGraph(obj) {
     const { classes } = this.props;
-    const { storagequotalimit, messagesizeextended } = obj;
-    const percentage = (messagesizeextended / (storagequotalimit * 1024)).toFixed(0) + '%';
+    const { prohibitsendquota, messagesizeextended } = obj;
+    const spaceUsed = ((messagesizeextended / (prohibitsendquota * 1024)) * 100).toFixed(0) + '%';
     return <div className={classes.barBackground}>
       <div style={{
-        width: percentage,
+        width: spaceUsed,
         height: 20,
         background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+        display: 'flex',
+        justifyContent: 'center',
       }}></div>
     </div>;
   }

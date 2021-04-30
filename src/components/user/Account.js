@@ -3,6 +3,8 @@ import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
   Select, TextField, Typography, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
+import blue from '../../colors/blue';
+import { red, yellow } from '@material-ui/core/colors';
 
 const styles = theme => ({
   form: {
@@ -10,7 +12,20 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
+    margin: theme.spacing(1, 0),
+  },
+  flexInput: {
     margin: theme.spacing(1),
+    flex: 1,
+  },
+  quota: {
+    border: `1px solid ${blue['500']}`,
+    margin: theme.spacing(2, 0),
+    padding: theme.spacing(0.5),
+    borderRadius: '8px',
+  },
+  graphContainer: {
+    padding: theme.spacing(0, 1),
   },
   select: {
     minWidth: 60,
@@ -19,6 +34,17 @@ const styles = theme => ({
     width: '100%',
     height: 20,
     backgroundColor: '#ddd',
+    position: 'relative',
+  },
+  quotaHeadline: {
+    marginTop: -16,
+    marginBottom: 8,
+    padding: theme.spacing(0, 0.5),
+    backgroundColor: theme.palette.background.paper,
+  },
+  labelContainer: {
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -40,15 +66,43 @@ class Account extends PureComponent {
 
   calculateGraph() {
     const { classes, rawData } = this.props;
-    console.log(rawData);
-    const { messagesizeextended: rawMSE, storagequotalimit: rawSQ } = rawData.properties || {};
-    const percentage = (rawMSE / (rawSQ * 1024)).toFixed(0) + '%';
+    const {
+      messagesizeextended: rawMSE,
+      storagequotalimit: rawSTQ,
+      prohibitreceivequota: rawRQ,
+      prohibitsendquota: rawSQ,
+    } = rawData.properties || {};
+    const usedSpace = ((rawMSE / rawSTQ / 1024) * 100).toFixed(0) + '%';
+    const rqPosition = (rawRQ / rawSTQ * 100).toFixed(0) + '%';
+    const sqPosition = (rawSQ / rawSTQ * 100).toFixed(0) + '%';
     return <div className={classes.barBackground}>
       <div
         style={{
-          width: percentage,
+          width: usedSpace,
           height: 20,
           background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >{usedSpace}</div>
+      <div
+        style={{
+          position: 'absolute',
+          zIndex: 5,
+          width: sqPosition,
+          height: 20,
+          borderRight: `4px solid ${yellow['500']}`,
+          top: 0,
+        }}
+      ></div>
+      <div
+        style={{
+          position: 'absolute',
+          zIndex: 5,
+          width: rqPosition,
+          height: 20,
+          borderRight: `4px solid ${red['500']}`,
+          top: 0,
         }}
       ></div>
     </div>;
@@ -105,73 +159,6 @@ class Account extends PureComponent {
             </MenuItem>
           ))}
         </TextField>
-        <TextField 
-          className={classes.input} 
-          label={t("Storage quota limit")}
-          fullWidth 
-          value={storagequotalimit !== undefined ? storagequotalimit : ''}
-          onChange={handleIntPropertyChange('storagequotalimit')}
-          InputProps={{
-            endAdornment:
-              <FormControl>
-                <Select
-                  onChange={handleUnitChange('storagequotalimit')}
-                  value={sizeUnits.storagequotalimit}
-                  className={classes.select}
-                >
-                  <MenuItem value={1}>MiB</MenuItem>
-                  <MenuItem value={2}>GiB</MenuItem>
-                  <MenuItem value={3}>TiB</MenuItem>
-                </Select>
-              </FormControl>,
-          }}
-        />
-        <TextField 
-          className={classes.input} 
-          label={t("Receive quota limit")}
-          fullWidth 
-          value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
-          onChange={handleIntPropertyChange('prohibitreceivequota')}
-          InputProps={{
-            endAdornment:
-              <FormControl>
-                <Select
-                  onChange={handleUnitChange('prohibitreceivequota')}
-                  value={sizeUnits.prohibitreceivequota}
-                  className={classes.select}
-                >
-                  <MenuItem value={1}>MiB</MenuItem>
-                  <MenuItem value={2}>GiB</MenuItem>
-                  <MenuItem value={3}>TiB</MenuItem>
-                </Select>
-              </FormControl>,
-          }}
-        />
-        <TextField 
-          className={classes.input} 
-          label={t("Send quota limit")}
-          fullWidth 
-          value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
-          onChange={handleIntPropertyChange('prohibitsendquota')}
-          InputProps={{
-            endAdornment:
-              <FormControl>
-                <Select
-                  onChange={handleUnitChange('prohibitsendquota')}
-                  value={sizeUnits.prohibitsendquota}
-                  className={classes.select}
-                >
-                  <MenuItem value={1}>MiB</MenuItem>
-                  <MenuItem value={2}>GiB</MenuItem>
-                  <MenuItem value={3}>TiB</MenuItem>
-                </Select>
-              </FormControl>,
-          }}
-        />
-        <Grid container className={classes.input}>
-          <Typography color="textPrimary">{t('Used space')}</Typography>
-          {this.calculateGraph()}
-        </Grid>
         <TextField
           select
           className={classes.input}
@@ -202,6 +189,89 @@ class Account extends PureComponent {
             {t('Deutsch')}
           </MenuItem>
         </TextField>
+        <div className={classes.quota}>
+          <Grid container className={classes.graphContainer}>
+            <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
+            {this.calculateGraph()}
+          </Grid>
+          <Grid container>
+            <TextField 
+              className={classes.flexInput} 
+              label={
+                <div className={classes.labelContainer}>
+                  {t("Send quota limit")}
+                  <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
+                </div>
+              }
+              value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
+              onChange={handleIntPropertyChange('prohibitsendquota')}
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={handleUnitChange('prohibitsendquota')}
+                      value={sizeUnits.prohibitsendquota}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
+            />
+            <TextField 
+              className={classes.flexInput}
+              label={
+                <div className={classes.labelContainer}>
+                  {t("Receive quota limit")}
+                  <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
+                </div>
+              }
+              value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
+              onChange={handleIntPropertyChange('prohibitreceivequota')}
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={handleUnitChange('prohibitreceivequota')}
+                      value={sizeUnits.prohibitreceivequota}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
+            />
+            <TextField 
+              className={classes.flexInput}
+              label={
+                <div className={classes.labelContainer}>
+                  {t("Storage quota limit")}
+                  <div style={{ width: 6, height: 6, backgroundColor: '#ddd', marginLeft: 4 }}></div>
+                </div>
+              }
+              value={storagequotalimit !== undefined ? storagequotalimit : ''}
+              onChange={handleIntPropertyChange('storagequotalimit')}
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={handleUnitChange('storagequotalimit')}
+                      value={sizeUnits.storagequotalimit}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
+            />
+          </Grid>
+        </div>
         <TextField
           className={classes.input}
           label={t("Creation time")}
