@@ -208,9 +208,9 @@ class AddUser extends PureComponent {
                       value={sizeUnit}
                       className={classes.select}
                     >
-                      <MenuItem value={1}>MiB</MenuItem>
-                      <MenuItem value={2}>GiB</MenuItem>
-                      <MenuItem value={3}>TiB</MenuItem>
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
                     </Select>
                   </FormControl>,
               }}

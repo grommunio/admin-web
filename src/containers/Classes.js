@@ -88,6 +88,9 @@ const styles = theme => ({
   tabs: {
     marginLeft: 16,
   },
+  count: {
+    margin: theme.spacing(2, 0, 0, 2),
+  },
 });
 
 class Classes extends Component {
@@ -296,6 +299,9 @@ class Classes extends Component {
             <Tab value={0} label="List" />
             <Tab value={1} label="Tree" />
           </Tabs>
+          {!tab && <Typography className={classes.count} color="textPrimary">
+            Showing {_classes.Classes.length} group(s)
+          </Typography>}
           {!tab ? <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>

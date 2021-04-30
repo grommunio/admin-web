@@ -82,6 +82,14 @@ const styles = theme => ({
   newButton: {
     marginRight: 8,
   },
+  count: {
+    marginLeft: 16,
+  },
+  barBackground: {
+    width: '100%',
+    height: 20,
+    backgroundColor: '#ddd',
+  },
 });
 
 class Users extends Component {
@@ -184,11 +192,11 @@ class Users extends Component {
   getMaxSizeFormatting(size) {
     if(!size) return '';
     if(size % 1073741824 === 0) {
-      return size / 1073741824 + ' TiB';
+      return size / 1073741824 + ' TB';
     } else if (size % 1048576 === 0) {
-      return size / 1048576 + ' GiB';
+      return size / 1048576 + ' GB';
     } else if (size % 1024 === 0) {
-      return size / 1024 + ' MiB';
+      return size / 1024 + ' MB';
     } else {
       return size + ' KiB';
     }
@@ -217,6 +225,21 @@ class Users extends Component {
   }
 
   handleCheckClose = () => this.setState({ checking: false });
+
+  calculateGraph(obj) {
+    const { classes } = this.props;
+    const { prohibitsendquota, messagesizeextended } = obj;
+    const spaceUsed = ((messagesizeextended / (prohibitsendquota * 1024)) * 100).toFixed(0) + '%';
+    return <div className={classes.barBackground}>
+      <div style={{
+        width: spaceUsed,
+        height: 20,
+        background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+        display: 'flex',
+        justifyContent: 'center',
+      }}></div>
+    </div>;
+  }
 
   render() {
     const { classes, t, users, domain } = this.props;
@@ -286,6 +309,9 @@ class Users extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {users.Users.length} user(s)
+          </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
@@ -302,7 +328,7 @@ class Users extends Component {
                       </TableSortLabel>
                     </TableCell>
                   )}
-                  <TableCell></TableCell>
+                  <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

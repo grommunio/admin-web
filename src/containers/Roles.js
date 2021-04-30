@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withTranslation } from 'react-i18next';
@@ -73,9 +73,12 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  count: {
+    marginLeft: 16,
+  },
 });
 
-class Roles extends Component {
+class Roles extends PureComponent {
 
   componentDidMount() {
     this.props.fetch({ sort: 'name,asc' })
@@ -228,6 +231,9 @@ class Roles extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {roles.Roles.length} role(s)
+          </Typography>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>

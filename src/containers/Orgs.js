@@ -90,6 +90,9 @@ const styles = (theme) => ({
   deletedorg: {
     backgroundColor: "#22242f",
   },
+  count: {
+    marginLeft: 16,
+  },
 });
 
 class Orgs extends Component {
@@ -260,6 +263,9 @@ class Orgs extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {orgs.Orgs.length} organization(s)
+          </Typography>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>

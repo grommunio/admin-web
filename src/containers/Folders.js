@@ -76,7 +76,9 @@ const styles = theme => ({
     margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    match: '',
+  },
+  count: {
+    marginLeft: 16,
   },
 });
 
@@ -88,6 +90,7 @@ class Folders extends Component {
     snackbar: null,
     order: 'asc',
     offset: 50,
+    match: '',
   }
 
   handleScroll = () => {
@@ -97,11 +100,10 @@ class Folders extends Component {
       Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
-      const { offset, match } = this.state;
+      const { offset } = this.state;
       if(!folders.loading) this.fetchFolders({ offset });
       this.setState({
         offset: offset + 50,
-        match: match || undefined,
       });
     }
   }
@@ -149,19 +151,13 @@ class Folders extends Component {
 
   handleMatch = e => {
     const { value } = e.target;
-    this.debouceFetch(value);
     this.setState({ match: value });
   }
-
-  debouceFetch = debounce(value => {
-    const { order } = this.state;
-    this.fetchFolders({ match: value || undefined, sort: 'name,' + order });
-  }, 200)
 
   render() {
     const { classes, t, folders, domain } = this.props;
     const { snackbar, adding, deleting, order, match } = this.state;
-    const sortedArray = [...folders.Folders].sort();
+    const sortedArray = [...folders.Folders.filter(f => f.displayname.toLowerCase().includes(match))].sort();
     if(order === 'desc') sortedArray.reverse();
 
     return (
@@ -204,6 +200,9 @@ class Folders extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {sortedArray.length} folder(s)
+          </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
@@ -224,7 +223,7 @@ class Folders extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!folders.loading && sortedArray.map((obj, idx) =>
+                {sortedArray.map((obj, idx) =>
                   <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>

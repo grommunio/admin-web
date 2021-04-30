@@ -111,7 +111,7 @@ class User extends PureComponent {
               }}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} style={{ paddingRight: 16 }}>
             <TextField 
               className={classes.input}
               label={t("Position")}

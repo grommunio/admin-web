@@ -13,7 +13,7 @@ import {
   ORPHANS_DELETED,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser,
-  ldapDump, checkLdap, deleteOrphans } from '../api';
+  ldapDump, checkLdap, deleteOrphans, storeProps } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -33,7 +33,15 @@ export function fetchUsersData(domainID, params) {
 export function fetchUserData(domainID, userID) {
   return async dispatch => {
     try {
-      const userData = await dispatch(user(domainID, userID));
+      let userData = await dispatch(user(domainID, userID));
+      const additionalProps = await dispatch(storeProps(domainID, userID, 'messagesizeextended'));
+      userData = {
+        ...userData,
+        properties: {
+          ...userData.properties,
+          ...additionalProps.data,
+        },
+      };
       return Promise.resolve(userData);
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});

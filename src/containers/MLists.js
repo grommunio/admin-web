@@ -79,6 +79,9 @@ const styles = theme => ({
   newButton: {
     marginRight: 8,
   },
+  count: {
+    marignLeft: 16,
+  },
 });
 
 class MLists extends Component {
@@ -234,6 +237,9 @@ class MLists extends Component {
               />
             </div>
           </Grid>
+          <Typography className={classes.count} color="textPrimary">
+            Showing {mLists.MLists.length} mail list(s)
+          </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
               <TableHead>
