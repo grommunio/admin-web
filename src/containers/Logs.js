@@ -6,21 +6,24 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withTranslation } from "react-i18next";
 import {
+  FormControlLabel,
+  Grid,
   IconButton,
   List,
   ListItem,
   ListItemText,
   Paper,
   Typography,
+  Switch
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
 import HomeIcon from "@material-ui/icons/Home";
 import ArrowUp from '@material-ui/icons/ArrowUpward';
-import ArrowDown from '@material-ui/icons/ArrowDownward';
 import blue from "../colors/blue";
 import Feedback from "../components/Feedback";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
+import { Refresh } from "@material-ui/icons";
 
 const styles = (theme) => ({
   root: {
@@ -119,6 +122,7 @@ class Logs extends PureComponent {
     log: [],
     skip: 0,
     filename: '',
+    autorefresh: false,
   };
 
   componentDidMount() {
@@ -137,11 +141,14 @@ class Logs extends PureComponent {
     if(log) this.setState({ log: log.data, filename, skip: 0 });
   }
 
-  handleScroll = addend => async () => {
-    const { skip, filename } = this.state;
-    const log = await this.props.fetchLog(filename, { skip: (skip + addend) * 20 })
+  handleScroll = async () => {
+    const { skip, filename, log } = this.state;
+    let newLog = await this.props.fetchLog(filename, { skip: (skip + 1) * 20 })
       .catch(snackbar => this.setState({ snackbar }));
-    if(log) this.setState({ log: log.data, skip: skip + addend });
+    if(newLog && newLog.data) {
+      newLog = newLog.data.concat(log);
+      this.setState({ log: newLog, skip: skip + 1 });
+    }
   }
 
   handleDate = time => async () => {
@@ -151,9 +158,38 @@ class Logs extends PureComponent {
     if(log) this.setState({ log: log.data, skip: 0 });
   }
 
+  handleRefresh = async () => {
+    const { filename, log } = this.state;
+    if(log.length === 0) this.handleLog(filename)();
+    else {
+      const lastDate = log[log.length - 1].time;
+      let newLog = await this.props.fetchLog(filename, { after: lastDate })
+        .catch(snackbar => this.setState({ snackbar }));
+      if(newLog && newLog?.data.length > 0) {
+        newLog = log.concat(newLog.data);
+        this.setState({ log: newLog, filename, skip: 0 });
+      }
+    }
+  }
+
+  fetchInterval = null;
+
+  handleAutoRefresh = ({ target: t }) => {
+    const checked = t.checked;
+    this.setState({ autorefresh: checked });
+    if(checked) this.fetchInterval = setInterval(() => {
+      this.handleRefresh();
+    }, 5000);
+    else clearInterval(this.fetchInterval);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.fetchInterval);
+  }
+
   render() {
     const { classes, t, logs } = this.props;
-    const { snackbar, log, skip, filename } = this.state;
+    const { snackbar, log, filename, autorefresh } = this.state;
 
     return (
       <div className={classes.root}>
@@ -191,8 +227,24 @@ class Logs extends PureComponent {
                 </ListItem>
               )}
             </List>
-            {<Paper elevation={1} className={classes.paper}>
-              {log.length > 0 ? <IconButton onClick={this.handleScroll(1)}>
+            <Paper elevation={1} className={classes.paper}>
+              {filename && <Grid container justify="flex-end">
+                <IconButton onClick={this.handleRefresh} style={{ marginRight: 8 }}>
+                  <Refresh />
+                </IconButton>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={autorefresh}
+                      onChange={this.handleAutoRefresh}
+                      name="autorefresh"
+                      color="primary"
+                    />
+                  }
+                  label="Autorefresh"
+                />
+              </Grid>}
+              {log.length > 0 ? <IconButton onClick={this.handleScroll}>
                 <ArrowUp />
               </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
               {log.map((log, idx) =>
@@ -204,10 +256,7 @@ class Logs extends PureComponent {
                   {'[' + log.time + ']: ' + log.message}
                 </pre>
               )}
-              {skip > 0 && <IconButton onClick={this.handleScroll(-1)}>
-                <ArrowDown />
-              </IconButton>}
-            </Paper>}
+            </Paper>
           </div>
           <Feedback
             snackbar={snackbar}
