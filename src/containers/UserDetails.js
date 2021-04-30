@@ -224,22 +224,6 @@ class UserDetails extends PureComponent {
     if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
   }
 
-  handleMultiSelect = event => {
-    const { options } = event.target;
-    const value = [];
-    for (let i = 0, l = options.length; i < l; i += 1) {
-      if (options[i].selected) {
-        value.push(parseInt(options[i].value));
-      }
-    }
-    this.setState({
-      user: {
-        ...this.state.user,
-        roles: value,
-      },
-    });
-  };
-
   handleSaveRoles = () => {
     const { editUserRoles, domain } = this.props;
     const { ID, roles } = this.state.user;
@@ -310,6 +294,16 @@ class UserDetails extends PureComponent {
   handleSuccess = () => this.setState({ snackbar: 'Success!' });
 
   handleError = msg => this.setState({ snackbar: msg.message || 'Unknown error' });
+
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      user: {
+        ...this.state.user,
+        [field]: newVal.map(r => r.ID ? r.ID : r),
+      },
+      unsaved: true,
+    });
+  }
 
   render() {
     const { classes, t, domain, history } = this.props;
@@ -389,7 +383,7 @@ class UserDetails extends PureComponent {
             />}
             {tab === 3 && <Roles
               roles={roles}
-              handleMultiSelect={this.handleMultiSelect}
+              handleAutocomplete={this.handleAutocomplete}
             />}
             {tab === 4 && <Smtp
               aliases={aliases}
