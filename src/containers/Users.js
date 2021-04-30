@@ -328,7 +328,6 @@ class Users extends Component {
                       </TableSortLabel>
                     </TableCell>
                   )}
-                  <TableCell>Space</TableCell>
                   <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
@@ -340,9 +339,6 @@ class Users extends Component {
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
-                    <TableCell>
-                      {this.calculateGraph(obj)}
-                    </TableCell>
                     <TableCell align="right">
                       <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
