@@ -84,7 +84,7 @@ const styles = (theme) => ({
     fontSize: 16,
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      backgroundColor: '#bbb',
     },
   },
   noticeLog: {
@@ -92,7 +92,7 @@ const styles = (theme) => ({
     fontWeight: 'bold',
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      backgroundColor: '#bbb',
     },
   },
   errorLog: {
@@ -100,7 +100,7 @@ const styles = (theme) => ({
     cursor: 'pointer',
     color: 'red',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      backgroundColor: '#bbb',
     },
   },
   paper: {
