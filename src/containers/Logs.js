@@ -14,7 +14,7 @@ import {
   ListItemText,
   Paper,
   Typography,
-  Switch
+  Switch,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";

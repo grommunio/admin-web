@@ -17,8 +17,6 @@ const styles = theme => ({
   flexInput: {
     margin: theme.spacing(1),
     flex: 1,
-    display: 'flex',
-    alignItems: 'center',
   },
   quota: {
     border: `1px solid ${blue['500']}`,
@@ -28,6 +26,9 @@ const styles = theme => ({
   },
   graphContainer: {
     padding: theme.spacing(0, 1),
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
   },
   select: {
     minWidth: 60,
@@ -196,7 +197,7 @@ class Account extends PureComponent {
           <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
           <Grid container style={{ marginTop: 8 }}>
             <TextField 
-              className={classes.flexInput} 
+              className={classes.flexInput}
               label={
                 <div className={classes.labelContainer}>
                   {t("Send quota limit")}
@@ -270,7 +271,7 @@ class Account extends PureComponent {
                   </FormControl>,
               }}
             />
-            <div className={classes.flexInput}>
+            <div className={classes.graphContainer}>
               {this.calculateGraph()}
             </div>
           </Grid>
