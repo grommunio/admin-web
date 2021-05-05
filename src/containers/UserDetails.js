@@ -29,6 +29,9 @@ import Contact from '../components/user/Contact';
 import Roles from '../components/user/Roles';
 import Smtp from '../components/user/Smtp';
 import ChangeUserPassword from '../components/Dialogs/ChangeUserPassword';
+import FetchMail from '../components/user/FetchMail';
+import AddFetchmail from '../components/Dialogs/AddFetchmail';
+import EditFetchmail from '../components/Dialogs/EditFetchmail';
 
 const styles = theme => ({
   root: {
@@ -78,7 +81,10 @@ const styles = theme => ({
 class UserDetails extends PureComponent {
 
   state = {
+    adding: false,
+    editing: null,
     user: {
+      fetchmail: [],
       roles: [],
       properties: {},
     },
@@ -188,6 +194,7 @@ class UserDetails extends PureComponent {
       ...user,
       domainID: undefined,
       aliases: user.aliases.filter(alias => alias !== ''),
+      fetchmail: user.fetchmail.map(e => { return { ...e, date: undefined };}),
       properties: {
         ...user.properties,
         storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || 0,
@@ -307,10 +314,58 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleFetchmailDialog = state => () => this.setState({ adding: state })
+
+  handleFetchmailEditDialog = state => () => this.setState({ editing: state })
+
+  handleSuccess = () => this.setState({ snackbar: 'Success!' });
+
+  handleError = msg => this.setState({ snackbar: msg.message || 'Unknown error' });
+
+  addFetchmail = entry => {
+    const { user } = this.state;
+    const fetchmail = [...user.fetchmail];
+    fetchmail.push(entry);
+    this.setState({
+      user: {
+        ...user,
+        fetchmail,
+      },
+      adding: false,
+    });
+  }
+
+  editFetchmail = entry => {
+    const { user, editing } = this.state;
+    const fetchmail = [...user.fetchmail];
+    fetchmail[editing] = entry;
+    this.setState({
+      user: {
+        ...user,
+        fetchmail,
+      },
+      editing: null,
+    });
+  }
+
+  handleFetchmailDelete = idx => e => {
+    const { user } = this.state;
+    const fetchmail = [...user.fetchmail];
+    e.stopPropagation();
+    fetchmail.splice(idx, 1);
+    this.setState({
+      user: {
+        ...user,
+        fetchmail,
+      },
+    });
+  }
+
   render() {
     const { classes, t, domain, history } = this.props;
-    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, detaching, dump, rawData } = this.state;
-    const { username, roles, aliases, ldapID } = user; //eslint-disable-line
+    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading,
+      detaching, adding, editing, dump, rawData } = this.state;
+    const { username, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
 
     return (
@@ -361,6 +416,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Contact")} />
               <Tab label={t("Roles")} />
               <Tab label={t("SMTP")} />
+              <Tab label={t("FetchMail")} />
             </Tabs>
             {tab === 0 && <Account
               domain={domain}
@@ -393,6 +449,12 @@ class UserDetails extends PureComponent {
               handleAddAlias={this.handleAddAlias}
               handleRemoveAlias={this.handleRemoveAlias}
             />}
+            {tab === 5 && <FetchMail
+              fetchmail={fetchmail}
+              handleAdd={this.handleFetchmailDialog(true)}
+              handleEdit={this.handleFetchmailEditDialog}
+              handleDelete={this.handleFetchmailDelete}
+            />}
             <Grid container className={classes.buttonGrid}>
               <Button
                 variant="contained"
@@ -401,18 +463,19 @@ class UserDetails extends PureComponent {
               >
                 {t('Back')}
               </Button>
-              {[0, 1, 2, 4].includes(tab) ? <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleEdit}
-                disabled={!username || usernameError}
-              >
-                {t('Save')}
-              </Button> :
+              {tab === 3 ? 
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={this.handleSaveRoles}
+                >
+                  {t('Save')}
+                </Button> :
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleEdit}
+                  disabled={!username || usernameError}
                 >
                   {t('Save')}
                 </Button>}
@@ -428,6 +491,17 @@ class UserDetails extends PureComponent {
           loading={detachLoading}
           onClose={this.handleDetachDialog(false)}
           onDetach={this.handleDetach}
+        />
+        <AddFetchmail
+          open={adding}
+          add={this.addFetchmail}
+          onClose={this.handleFetchmailDialog(false)}
+        />
+        <EditFetchmail
+          open={editing !== null}
+          entry={editing !== null ? fetchmail[editing] : editing}
+          edit={this.editFetchmail}
+          onClose={this.handleFetchmailEditDialog(null)}
         />
         <ChangeUserPassword
           onClose={this.handlePasswordDialogToggle(false)}
