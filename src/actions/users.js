@@ -32,22 +32,27 @@ export function fetchUsersData(domainID, params) {
 
 export function fetchUserData(domainID, userID) {
   return async dispatch => {
+    let userData = {};
     try {
-      let userData = await dispatch(user(domainID, userID));
+      userData = await dispatch(user(domainID, userID));
+    } catch(err) {
+      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
+      console.error('Failed to fetch users');
+      return Promise.reject(err.message);
+    }
+    try {
       const additionalProps = await dispatch(storeProps(domainID, userID, 'messagesizeextended'));
-      userData = {
+      if(additionalProps?.data) userData = {
         ...userData,
         properties: {
           ...userData.properties,
           ...additionalProps.data,
         },
       };
-      return Promise.resolve(userData);
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
-      console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      // ignore error
     }
+    return Promise.resolve(userData);
   };
 }
 
