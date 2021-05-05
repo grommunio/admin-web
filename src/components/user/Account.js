@@ -35,7 +35,7 @@ const styles = theme => ({
   },
   barBackground: {
     width: '100%',
-    height: 20,
+    height: 24,
     backgroundColor: '#ddd',
     position: 'relative',
   },
@@ -76,25 +76,35 @@ class Account extends PureComponent {
       prohibitreceivequota: rawRQ,
       prohibitsendquota: rawSQ,
     } = rawData.properties || {};
-    const usedSpace = ((rawMSE / rawSTQ / 1024) * 100).toFixed(0) + '%';
+    const usedSpace = ((rawMSE / rawSTQ / 1024) * 100 || 0).toFixed(0) + '%';
     const rqPosition = (rawRQ / rawSTQ * 100).toFixed(0) + '%';
     const sqPosition = (rawSQ / rawSTQ * 100).toFixed(0) + '%';
     return <div className={classes.barBackground}>
       <div
         style={{
+          position: 'absolute',
+          zIndex: 6,
+          top: 0,
+          width: '100%',
+        }}
+      >
+        <Typography align="center">{usedSpace}</Typography>
+      </div>
+      <div
+        style={{
           width: usedSpace,
-          height: 20,
+          height: 24,
           background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
           display: 'flex',
           justifyContent: 'flex-end',
         }}
-      >{usedSpace}</div>
+      ></div>
       <div
         style={{
           position: 'absolute',
           zIndex: 5,
           width: sqPosition,
-          height: 20,
+          height: 24,
           borderRight: `4px solid ${yellow['500']}`,
           top: 0,
         }}
@@ -104,7 +114,7 @@ class Account extends PureComponent {
           position: 'absolute',
           zIndex: 5,
           width: rqPosition,
-          height: 20,
+          height: 24,
           borderRight: `4px solid ${red['500']}`,
           top: 0,
         }}

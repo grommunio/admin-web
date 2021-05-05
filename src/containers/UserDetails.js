@@ -99,7 +99,8 @@ class UserDetails extends PureComponent {
   async componentDidMount() {
     const { fetch, fetchRoles } = this.props;
     const splits = window.location.pathname.split('/');
-    const user = await fetch(splits[1], splits[3]);
+    const user = await fetch(splits[1], splits[3])
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
 
@@ -107,6 +108,7 @@ class UserDetails extends PureComponent {
   }
 
   getStateOverwrite(user) {
+    if(!user) return;
     const properties = {
       ...user.properties,
     };
