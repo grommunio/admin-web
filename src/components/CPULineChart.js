@@ -38,7 +38,7 @@ class CPULineChart extends Component {
         { name: 'System', value: props.payload[0].payload.system + "%" },
         { name: 'IO', value: props.payload[0].payload.io + "%" },
         { name: 'Steal', value: props.payload[0].payload.steal + "%" },
-        { name: 'Interrupt', value: props.payload[0].payload.interript + "%" },
+        { name: 'Interrupt', value: props.payload[0].payload.interrupt + "%" },
         { name: 'Idle', value: props.payload[0].payload.idle + "%" },
       ];
       return <DefaultTooltipContent

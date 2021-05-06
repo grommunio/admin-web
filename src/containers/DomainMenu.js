@@ -127,8 +127,8 @@ class DomainMenu extends PureComponent {
                 {domain.adminName}
               </Typography>
               <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Max users')}:</span>
-                {domain.maxUser}
+                <span className={classes.description}>{t('Users')}:</span>
+                {`${domain.activeUsers} active, ${domain.inactiveUsers} inactive, ${domain.maxUser} maximum`}
               </Typography>
               <Typography variant="h6" className={classes.data}>
                 <span className={classes.description}>{t('Telephone')}:</span>

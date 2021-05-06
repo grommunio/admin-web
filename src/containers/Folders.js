@@ -18,7 +18,7 @@ import AddFolder from '../components/Dialogs/AddFolder';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
-import { debounce } from 'debounce';
+//import { debounce } from 'debounce';
 import Feedback from '../components/Feedback';
 
 const styles = theme => ({
@@ -91,6 +91,7 @@ class Folders extends Component {
     order: 'asc',
     offset: 50,
     match: '',
+    sortedFolders: [],
   }
 
   handleScroll = () => {
@@ -114,12 +115,16 @@ class Folders extends Component {
 
   fetchFolders(params) {
     const { fetch, domain } = this.props;
-    fetch(domain.ID, params).catch(error => this.setState({ snackbar: error }));
+    fetch(domain.ID, params)
+      .then(this.handleSort(false))
+      .catch(error => this.setState({ snackbar: error }));
   }
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+  handleAddingSuccess = () => {
+    this.setState({ adding: false, snackbar: 'Success!' }, this.handleSort(false));
+  }
 
   handleAddingError = error => this.setState({ snackbar: error });
 
@@ -132,7 +137,9 @@ class Folders extends Component {
 
   handleDeleteClose = () => this.setState({ deleting: false });
 
-  handleDeleteSuccess = () => this.setState({ deleting: false, snackbar: 'Success!' });
+  handleDeleteSuccess = () => {
+    this.setState({ deleting: false, snackbar: 'Success!' }, this.handleSort(false));
+  }
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
@@ -147,23 +154,32 @@ class Folders extends Component {
     history.push(`/${path}`);
   }
 
-  handleSort = () => this.setState({ order: this.state.order === 'asc' ? 'desc' : 'asc' })
-
   handleMatch = e => {
     const { value } = e.target;
     this.setState({ match: value });
   }
 
+  handleSort = switchOrder => () => {
+    const sortedFolders = [...this.props.folders.Folders];
+    const { order: stateOrder } = this.state;
+    const order = stateOrder === 'asc' ? 'desc' : 'asc';
+    if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
+      sortedFolders.sort((a, b) => a.displayname.localeCompare(b.displayname));
+    } else {
+      sortedFolders.sort((a, b) => b.displayname.localeCompare(a.displayname));
+    }
+    this.setState({ sortedFolders, order: switchOrder ? order : stateOrder });
+  }
+
   render() {
     const { classes, t, folders, domain } = this.props;
     const { snackbar, adding, deleting, order, match } = this.state;
-    const sortedArray = [...folders.Folders.filter(f => f.displayname.toLowerCase().includes(match))].sort();
-    if(order === 'desc') sortedArray.reverse();
+    const { sortedFolders } = this.state;
 
     return (
       <div
         className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
+        //onScroll={debounce(this.handleScroll, 100)}
         id="scrollDiv"
       >
         <TopBar/>
@@ -201,7 +217,7 @@ class Folders extends Component {
             </div>
           </Grid>
           <Typography className={classes.count} color="textPrimary">
-            Showing {sortedArray.length} folder(s)
+            Showing {sortedFolders.length} folder(s)
           </Typography>
           <Paper className={classes.tablePaper} elevation={1}>
             <Table size="small">
@@ -212,7 +228,7 @@ class Folders extends Component {
                       active
                       align="left" 
                       direction={order}
-                      onClick={this.handleSort}
+                      onClick={this.handleSort(true)}
                     >
                       {t('Folder name')}
                     </TableSortLabel>
@@ -223,7 +239,7 @@ class Folders extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sortedArray.map((obj, idx) =>
+                {sortedFolders.map((obj, idx) =>
                   <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                     <TableCell>{obj.displayname}</TableCell>
                     <TableCell>{obj.comment}</TableCell>
