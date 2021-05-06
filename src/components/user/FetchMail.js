@@ -69,8 +69,8 @@ class FetchMail extends PureComponent {
                   {entry.srcFolder}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton>
-                    <Delete color="error" onClick={handleDelete(idx)}/>
+                  <IconButton onClick={handleDelete(idx)}>
+                    <Delete color="error"/>
                   </IconButton>
                 </TableCell>
               </TableRow>
