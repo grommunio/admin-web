@@ -18,7 +18,7 @@ import AddFolder from '../components/Dialogs/AddFolder';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
-import { debounce } from 'debounce';
+//import { debounce } from 'debounce';
 import Feedback from '../components/Feedback';
 
 const styles = theme => ({
@@ -179,7 +179,7 @@ class Folders extends Component {
     return (
       <div
         className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
+        //onScroll={debounce(this.handleScroll, 100)}
         id="scrollDiv"
       >
         <TopBar/>
