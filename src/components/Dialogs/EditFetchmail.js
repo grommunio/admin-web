@@ -26,7 +26,6 @@ class AddFetchmail extends PureComponent {
 
   state = {
     ID: -1,
-    mailbox: '',
     active: true,
     srcServer: '',
     srcUser: '',
@@ -67,10 +66,9 @@ class AddFetchmail extends PureComponent {
 
   handleAdd = () => {
     const { edit } = this.props;
-    const { mailbox, active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
+    const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
     edit({
-      mailbox: mailbox,
       active: active,
       srcServer: srcServer,
       srcUser: srcUser,
@@ -90,7 +88,7 @@ class AddFetchmail extends PureComponent {
 
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { mailbox, active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
+    const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
 
     return (
@@ -105,21 +103,13 @@ class AddFetchmail extends PureComponent {
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
-              className={classes.input} 
-              label={t("Mailbox")} 
-              fullWidth 
-              value={mailbox || ''}
-              onChange={this.handleInput('mailbox')}
-              autoFocus
-              required
-            />
-            <TextField 
-              className={classes.input} 
+              className={classes.input}
               label={t("Source server")} 
               fullWidth 
               value={srcServer || ''}
               onChange={this.handleInput('srcServer')}
               required
+              autoFocus
             />
             <TextField 
               className={classes.input} 

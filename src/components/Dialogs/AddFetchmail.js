@@ -25,7 +25,6 @@ const styles = theme => ({
 class AddFetchmail extends PureComponent {
 
   state = {
-    mailbox: '',
     active: true,
     srcServer: '',
     srcUser: '',
@@ -61,10 +60,9 @@ class AddFetchmail extends PureComponent {
 
   handleAdd = () => {
     const { add } = this.props;
-    const { mailbox, active, srcServer, srcUser, srcPassword, srcAuth, srcFolder, fetchall, keep, protocol,
+    const { active, srcServer, srcUser, srcPassword, srcAuth, srcFolder, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
     add({
-      mailbox: mailbox,
       active: active,
       srcServer: srcServer,
       srcUser: srcUser,
@@ -81,7 +79,6 @@ class AddFetchmail extends PureComponent {
       extraOptions: extraOptions || null,
     });
     this.setState({
-      mailbox: '',
       active: true,
       srcServer: '',
       srcUser: '',
@@ -101,7 +98,7 @@ class AddFetchmail extends PureComponent {
 
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { mailbox, active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
+    const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
 
     return (
@@ -116,19 +113,11 @@ class AddFetchmail extends PureComponent {
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
-              label={t("Mailbox")} 
-              fullWidth 
-              value={mailbox || ''}
-              onChange={this.handleInput('mailbox')}
-              autoFocus
-              required
-            />
-            <TextField 
-              className={classes.input} 
               label={t("Source server")} 
               fullWidth 
               value={srcServer || ''}
               onChange={this.handleInput('srcServer')}
+              autoFocus
               required
             />
             <TextField 
@@ -196,6 +185,7 @@ class AddFetchmail extends PureComponent {
               value={sslFingerprint || ''}
               onChange={this.handleInput('sslFingerprint')}
               disabled={!useSSL}
+              error={!sslFingerprint.match(/^([0-9A-F]{2}(:[0-9A-F]{2})*)?$/)}
             />
             <TextField 
               className={classes.input} 

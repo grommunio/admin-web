@@ -410,7 +410,7 @@ class UserDetails extends PureComponent {
                 <Dump fontSize="small" className={classes.leftIcon}/> Dump
               </Button>
             </Grid>}
-            <Tabs value={tab} onChange={this.handleTabChange}>
+            <Tabs indicatorColor="primary" value={tab} onChange={this.handleTabChange}>
               <Tab label={t("Account")} />
               <Tab label={t("User")} />
               <Tab label={t("Contact")} />

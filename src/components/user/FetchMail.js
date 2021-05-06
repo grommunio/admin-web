@@ -30,8 +30,9 @@ const styles = theme => ({
 class FetchMail extends PureComponent {
 
   columns = [
-    { value: 'maillist', label: "Maillist" },
     { value: 'srcUser', label: "Source user" },
+    { value: 'srcServer', label: "Source server" },
+    { value: 'srcFolder', label: "Source folder" },
   ]
 
   render() {
@@ -59,10 +60,13 @@ class FetchMail extends PureComponent {
             {fetchmail.map((entry, idx) => 
               <TableRow key={idx} hover onClick={handleEdit(idx)}>
                 <TableCell>
-                  {entry.mailbox}
+                  {entry.srcUser}
                 </TableCell>
                 <TableCell>
-                  {entry.srcUser}
+                  {entry.srcServer}
+                </TableCell>
+                <TableCell>
+                  {entry.srcFolder}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton>
