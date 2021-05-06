@@ -89,8 +89,8 @@ class MemoryPieChart extends Component {
                 <stop offset="95%" stopColor={"#6DD5FA"} stopOpacity={1}/>
               </linearGradient>
               <linearGradient id="gradientOrange" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={"#FFB75E"} stopOpacity={1}/>
-                <stop offset="95%" stopColor={"#ED8F03"} stopOpacity={1}/>
+                <stop offset="5%" stopColor={"#ED8F03"} stopOpacity={1}/>
+                <stop offset="95%" stopColor={"#FFB75E"} stopOpacity={1}/>
               </linearGradient>
               <linearGradient id="gradientGrey" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={"#8e9eab"} stopOpacity={1}/>
