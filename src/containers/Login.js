@@ -128,11 +128,11 @@ class Login extends Component {
 
     return (
       <div className={classes.root}>
-        <Paper elevation={3} className={classes.loginForm}>
+        <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
           <div className={classes.logoContainer}>
             <img src={logo} width="300" alt="GRAMMM"/>
           </div>
-          <Paper component="form" onSubmit={this.handleLogin} className={classes.inputContainer}>
+          <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>
             <InputBase
               fullWidth
@@ -144,9 +144,10 @@ class Login extends Component {
               onChange={this.handleTextinput('user')}
               name="username"
               id="username"
+              autoComplete="username"
             />
           </Paper>
-          <Paper component="form" onSubmit={this.handleLogin} className={classes.inputContainer}>
+          <Paper className={classes.inputContainer}>
             <Key className={classes.inputAdornment}/>
             <InputBase
               fullWidth
@@ -158,6 +159,7 @@ class Login extends Component {
               onChange={this.handleTextinput('pass')}
               name="password"
               id="password"
+              autoComplete="currect-password"
             />
           </Paper>
           {auth.error && <MuiAlert elevation={6} variant="filled" severity="error" className={classes.errorMessage}>
@@ -166,6 +168,7 @@ class Login extends Component {
           <Paper className={classes.inputContainer}>
             <Button
               className={classes.button}
+              type="submit"
               variant="contained"
               color="primary"
               onClick={this.handleLogin}
