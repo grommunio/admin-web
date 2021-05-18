@@ -10,7 +10,7 @@ export var config = {
   archiveWebAddress: '',
   searchAttributes: [
     'assistant',
-    'co',
+    'cn',
     'company',
     'department',
     'departmentNumber',
