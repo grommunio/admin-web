@@ -365,7 +365,7 @@ class UserDetails extends PureComponent {
     const { classes, t, domain, history } = this.props;
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading,
       detaching, adding, editing, dump, rawData } = this.state;
-    const { username, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
+    const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
 
     return (
@@ -379,7 +379,7 @@ class UserDetails extends PureComponent {
                 color="primary"
                 variant="h5"
               >
-                {t('editHeadline', { item: 'User' })}
+                {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
               </Typography>
             </Grid>
             {ldapID && <Grid container className={classes.syncButtons}>
