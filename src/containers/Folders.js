@@ -16,7 +16,6 @@ import TopBar from '../components/TopBar';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 //import { debounce } from 'debounce';
 import Feedback from '../components/Feedback';
@@ -187,8 +186,6 @@ class Folders extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Folders")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

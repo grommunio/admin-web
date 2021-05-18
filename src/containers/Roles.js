@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { debounce } from 'debounce';
@@ -202,8 +201,6 @@ class Roles extends PureComponent {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Roles")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

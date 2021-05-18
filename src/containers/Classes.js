@@ -14,7 +14,6 @@ import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
 import TopBar from '../components/TopBar';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
@@ -259,8 +258,6 @@ class Classes extends Component {
         <div className={classes.base} ref={tc => (this.treeContainer = tc)} >
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Groups")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

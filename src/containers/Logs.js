@@ -18,7 +18,6 @@ import {
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
-import HomeIcon from "@material-ui/icons/Home";
 import ArrowUp from '@material-ui/icons/ArrowUpward';
 import blue from "../colors/blue";
 import Feedback from "../components/Feedback";
@@ -198,11 +197,6 @@ class Logs extends PureComponent {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Logs")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon
-              onClick={this.handleNavigation("")}
-              className={classes.homeIcon}
-            />
           </Typography>
           <div className={classes.logViewer}>
             <List style={{ width: 200 }}>

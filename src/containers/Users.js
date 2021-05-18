@@ -18,7 +18,6 @@ import { syncLdapUsers } from '../actions/ldap';
 import TopBar from '../components/TopBar';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import Feedback from '../components/Feedback';
@@ -256,8 +255,6 @@ class Users extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Users")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

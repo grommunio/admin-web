@@ -29,7 +29,6 @@ import { connect } from "react-redux";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
 import TopBar from "../components/TopBar";
 import AddDomain from "../components/Dialogs/AddDomain";
-import HomeIcon from "@material-ui/icons/Home";
 import blue from "../colors/blue";
 import debounce from "debounce";
 import Feedback from "../components/Feedback";
@@ -238,11 +237,6 @@ class DomainList extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Domain list")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon
-              onClick={this.handleNavigation("")}
-              className={classes.homeIcon}
-            ></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

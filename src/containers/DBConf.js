@@ -10,7 +10,6 @@ import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
 import Search from '@material-ui/icons/Search';
 import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
@@ -144,8 +143,6 @@ class DBConf extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("DB Configuration")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

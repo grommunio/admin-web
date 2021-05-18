@@ -5,7 +5,6 @@ import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
   Select, Typography, Switch, Tooltip } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import { fetchLdapConfig, updateLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
@@ -267,8 +266,6 @@ class LdapConfig extends PureComponent {
                 <Help fontSize="small"/>
               </IconButton>
             </Tooltip>
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
           </Typography>
           <Grid container className={classes.category}>
             <FormControlLabel

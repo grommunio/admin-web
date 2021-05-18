@@ -11,7 +11,6 @@ import TopBar from '../components/TopBar';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import { fetchLicenseData, uploadLicenseData } from '../actions/license';
 import Feedback from '../components/Feedback';
@@ -142,8 +141,6 @@ class Settings extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Settings")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Paper className={classes.paper} elevation={1}>
             <FormControl className={classes.form}>

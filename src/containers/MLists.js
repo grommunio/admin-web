@@ -13,7 +13,6 @@ import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { fetchMListsData, deleteMListData } from '../actions/mlists';
 import TopBar from '../components/TopBar';
-import HomeIcon from '@material-ui/icons/Home';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
@@ -207,8 +206,6 @@ class MLists extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Mail lists")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon}></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

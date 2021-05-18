@@ -25,7 +25,6 @@ import Delete from "@material-ui/icons/Delete";
 import Search from "@material-ui/icons/Search";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
-import HomeIcon from "@material-ui/icons/Home";
 import blue from "../colors/blue";
 import debounce from "debounce";
 import Feedback from "../components/Feedback";
@@ -232,11 +231,6 @@ class Orgs extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Organizations")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon
-              onClick={this.handleNavigation("")}
-              className={classes.homeIcon}
-            ></HomeIcon>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button
