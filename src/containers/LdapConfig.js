@@ -206,18 +206,18 @@ class LdapConfig extends PureComponent {
     if(templates === 'AD') {
       this.setState({
         templates,
-        objectID: 'entryUUID',
-        username: 'mailPrimaryAddress',
-        displayName: 'displayname',
-        searchAttributes: ["mailPrimaryAddress", "givenName", "sn", "displayname"],
+        objectID: 'objectGUID',
+        username: 'mail',
+        displayName: 'displayName',
+        searchAttributes: ["mail", "givenName", "cn", "sn", "name", "displayName"],
       });
     } else if(templates === 'OpenLDAP') {
       this.setState({
         templates,
-        objectID: 'objectGUID',
+        objectID: 'entryUUID',
         username: 'mail',
-        displayName: 'displayname',
-        searchAttributes: ["mail", "givenName", "sn", "displayname"],
+        displayName: 'displayName',
+        searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
       });
     }
   }
