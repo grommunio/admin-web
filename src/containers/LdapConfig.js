@@ -255,6 +255,16 @@ class LdapConfig extends PureComponent {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("LDAP authentification")}
+            <Tooltip
+              className={classes.tooltip}
+              title="LDAP server configuration.
+                User sychronization can be found at the list of users of individual domains"
+              placement="top"
+            >
+              <IconButton size="small">
+                <Help fontSize="small"/>
+              </IconButton>
+            </Tooltip>
             <span className={classes.pageTitleSecondary}> |</span>
             <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
           </Typography>
