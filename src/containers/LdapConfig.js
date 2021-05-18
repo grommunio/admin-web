@@ -227,7 +227,8 @@ class LdapConfig extends PureComponent {
     [field]: e.target.checked,
   });
 
-  handleSave = () => {
+  handleSave = e => {
+    e.preventDefault();
     this.props.put(this.formatData())
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(snackbar => this.setState({ snackbar }));
@@ -252,7 +253,7 @@ class LdapConfig extends PureComponent {
       <div className={classes.root}>
         <TopBar />
         <div className={classes.toolbar}></div>
-        <div className={classes.base}>
+        <form className={classes.base} onSubmit={this.handleSave}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("LDAP authentification")}
             <Tooltip
@@ -304,6 +305,9 @@ class LdapConfig extends PureComponent {
                   value={server || ''}
                   desc="Address of the LDAP server to connect to"
                   disabled={disabled}
+                  id="url"
+                  name="url"
+                  autoComplete="url"
                 />
                 <LdapTextfield
                   flex
@@ -312,6 +316,9 @@ class LdapConfig extends PureComponent {
                   value={bindUser || ''}
                   desc="DN of the user to perform initial bind with"
                   disabled={disabled}
+                  id="username"
+                  name="username"
+                  autoComplete="username"
                 />
                 <LdapTextfield
                   flex
@@ -320,6 +327,10 @@ class LdapConfig extends PureComponent {
                   value={bindPass || ''}
                   desc="Password for bindUser"
                   disabled={disabled}
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
                 />
                 <FormControlLabel
                   control={
@@ -327,6 +338,11 @@ class LdapConfig extends PureComponent {
                       checked={starttls || false}
                       onChange={this.handleCheckbox('starttls')}
                       name="starttls"
+                      inputProps={{
+                        autoComplete: 'starttls',
+                        name: 'starttls',
+                        id: 'starttls',
+                      }}
                       color="primary"
                       disabled={disabled}
                     />
@@ -351,6 +367,9 @@ class LdapConfig extends PureComponent {
                 value={baseDn || ''}
                 desc="Base DN to use for user search"
                 disabled={disabled}
+                id="baseDn"
+                name="baseDn"
+                autoComplete="baseDn"
               />
             </FormControl>
           </Paper>
@@ -363,6 +382,9 @@ class LdapConfig extends PureComponent {
                 value={objectID || ''}
                 desc="Name of an attribute that uniquely idetifies an LDAP object"
                 disabled={disabled}
+                id="objectID"
+                name="objectID"
+                autoComplete="objectID"
               />
               <LdapTextfield
                 label={t('LDAP Username Attribute (username)')}
@@ -370,6 +392,9 @@ class LdapConfig extends PureComponent {
                 value={username || ''}
                 desc="Name of the attribute that corresponds to the username (e-mail address)"
                 disabled={disabled}
+                id="username"
+                name="username"
+                autoComplete="username"
               />
               <LdapTextfield
                 label={t('LDAP Default Quota (defaultQuota)')}
@@ -377,6 +402,9 @@ class LdapConfig extends PureComponent {
                 value={defaultQuota}
                 desc="Storage quota of imported users if no mapping exists"
                 disabled={disabled}
+                id="defaultQuota"
+                name="defaultQuota"
+                autoComplete="defaultQuota"
               />
               <LdapTextfield
                 label={t('LDAP Display Name Attribute (displayName)')}
@@ -384,6 +412,9 @@ class LdapConfig extends PureComponent {
                 value={displayName || ''}
                 desc="Name of the attribute that contains the name"
                 disabled={disabled}
+                id="displayName"
+                name="displayName"
+                autoComplete="displayName"
               />
               <LdapTextfield
                 label={t('LDAP Filter (filters)')}
@@ -391,6 +422,9 @@ class LdapConfig extends PureComponent {
                 value={filter || ''}
                 desc="LDAP search filter to apply to user lookup"
                 disabled={disabled}
+                id="filter"
+                name="filter"
+                autoComplete="filter"
               />
               <LdapTextfield
                 label={t('LDAP Templates (templates)')}
@@ -399,6 +433,9 @@ class LdapConfig extends PureComponent {
                 select
                 desc="List of mapping templates to use"
                 disabled={disabled}
+                id="templates"
+                name="templates"
+                autoComplete="templates"
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
@@ -418,6 +455,9 @@ class LdapConfig extends PureComponent {
                   </Tooltip>
                 </InputLabel>
                 <Select
+                  id="searchAttributes"
+                  name="searchAttributes"
+                  autoComplete="searchAttributes"
                   multiple
                   value={searchAttributes}
                   onChange={this.handleInput('searchAttributes')}
@@ -492,12 +532,13 @@ class LdapConfig extends PureComponent {
             <Button
               variant="contained"
               color="primary"
+              type="submit"
               onClick={this.handleSave}
             >
               {t('Save')}
             </Button>
           </div>
-        </div>
+        </form>
         <DeleteConfig
           open={deleting}
           onSuccess={this.handleDeleteSuccess}
