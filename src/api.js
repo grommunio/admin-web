@@ -316,9 +316,9 @@ export function ldapConfig() {
   };
 }
 
-export function updateLdap(config) {
+export function updateLdap(config, params) {
   return async () => {
-    return await put('/system/mconf/ldap', config);
+    return await put(buildQuery('/system/mconf/ldap', params), config);
   };
 }
 

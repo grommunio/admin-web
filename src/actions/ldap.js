@@ -16,10 +16,10 @@ export function fetchLdapConfig() {
   };
 }
 
-export function updateLdapConfig(config) {
+export function updateLdapConfig(config, params) {
   return async dispatch => {
     try {
-      const resp = await dispatch(updateLdap(config));
+      const resp = await dispatch(updateLdap(config, params));
       return Promise.resolve(resp);
     } catch (err) {
       return Promise.reject(err.message);

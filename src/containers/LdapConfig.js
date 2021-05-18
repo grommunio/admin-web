@@ -118,6 +118,7 @@ class LdapConfig extends PureComponent {
     searchAttributes: [],
 
     deleting: false,
+    force: false,
     snackbar: '',
   }
 
@@ -229,7 +230,7 @@ class LdapConfig extends PureComponent {
 
   handleSave = e => {
     e.preventDefault();
-    this.props.put(this.formatData())
+    this.props.put(this.formatData(), { force: this.state.force })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(snackbar => this.setState({ snackbar }));
   }
@@ -246,7 +247,7 @@ class LdapConfig extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { available, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
+    const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
 
     return (
@@ -285,6 +286,29 @@ class LdapConfig extends PureComponent {
                 <Tooltip
                   className={classes.tooltip}
                   title="Enable LDAP service"
+                  placement="top"
+                >
+                  <IconButton size="small">
+                    <Help fontSize="small"/>
+                  </IconButton>
+                </Tooltip>
+              </span>}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={force || false}
+                  onChange={this.handleCheckbox('force')}
+                  name="disabled"
+                  color="primary"
+                  disabled={available}
+                />
+              }
+              label={<span>
+                {t('Force config save')}
+                <Tooltip
+                  className={classes.tooltip}
+                  title="Save LDAP configuration even if it's faulty"
                   placement="top"
                 >
                   <IconButton size="small">
@@ -567,7 +591,7 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => await dispatch(fetchLdapConfig())
       .then(config => config)
       .catch(message => Promise.reject(message)),
-    put: async config => await dispatch(updateLdapConfig(config))
+    put: async (config, params) => await dispatch(updateLdapConfig(config, params))
       .catch(message => Promise.reject(message)),
   };
 };
