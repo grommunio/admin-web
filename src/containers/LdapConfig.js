@@ -201,6 +201,27 @@ class LdapConfig extends PureComponent {
     [field]: t.value,
   });
 
+  handleTemplate = ({ target: t }) => {
+    const templates = t.value;
+    if(templates === 'AD') {
+      this.setState({
+        templates,
+        objectID: 'entryUUID',
+        username: 'mailPrimaryAddress',
+        displayName: 'displayname',
+        searchAttributes: ["mailPrimaryAddress", "givenName", "sn", "displayname"],
+      });
+    } else if(templates === 'OpenLDAP') {
+      this.setState({
+        templates,
+        objectID: 'objectGUID',
+        username: 'mail',
+        displayName: 'displayname',
+        searchAttributes: ["mail", "givenName", "sn", "displayname"],
+      });
+    }
+  }
+
   handleAttributeInput = (objectPart, idx) => ({ target: t }) => {
     const copy = [...this.state.attributes];
     copy[idx][objectPart] = t.value;
@@ -458,18 +479,18 @@ class LdapConfig extends PureComponent {
               />
               <LdapTextfield
                 label={t('LDAP Templates (templates)')}
-                onChange={this.handleInput('templates')}
+                onChange={this.handleTemplate}
                 value={templates}
                 select
                 desc="List of mapping templates to use"
-                disabled={!available}
+                //disabled={!available}
                 id="templates"
                 name="templates"
                 autoComplete="templates"
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
-                <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
+                <MenuItem value="AD">ActiveDirectory</MenuItem>
               </LdapTextfield>
               <FormControl className={classes.textfield}>
                 <InputLabel>
