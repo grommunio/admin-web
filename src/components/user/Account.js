@@ -68,6 +68,13 @@ class Account extends PureComponent {
     { name: 'Deleted', ID: 3 },
   ]
 
+  formatMSE(rawMSE) {
+    let exp = Math.log(rawMSE) / Math.log(1024) | 0;
+    let res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
+
+    return res + '' + (exp == 0 ? 'bytes' : 'KMGTPEZY'[exp - 1] + 'B');
+  }
+
   calculateGraph() {
     const { classes, rawData } = this.props;
     const {
@@ -76,6 +83,7 @@ class Account extends PureComponent {
       prohibitreceivequota: rawRQ,
       prohibitsendquota: rawSQ,
     } = rawData.properties || {};
+    const readableMSE = this.formatMSE(rawMSE);
     const usedSpace = ((rawMSE / rawSTQ / 1024) * 100 || 0).toFixed(0) + '%';
     const rqPosition = (rawRQ / rawSTQ * 100).toFixed(0) + '%';
     const sqPosition = (rawSQ / rawSTQ * 100).toFixed(0) + '%';
@@ -88,7 +96,7 @@ class Account extends PureComponent {
           width: '100%',
         }}
       >
-        <Typography align="center">{usedSpace}</Typography>
+        <Typography align="center">{readableMSE} ({usedSpace})</Typography>
       </div>
       <div
         style={{
