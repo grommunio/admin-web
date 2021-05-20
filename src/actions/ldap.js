@@ -20,7 +20,7 @@ export function updateLdapConfig(config, params) {
   return async dispatch => {
     try {
       const resp = await dispatch(updateLdap(config, params));
-      return Promise.resolve(resp);
+      return Promise.resolve(resp?.message);
     } catch (err) {
       return Promise.reject(err.message);
     }

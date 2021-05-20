@@ -13,12 +13,12 @@ class Feedback extends PureComponent {
         <Snackbar
           open={!!snackbar}
           onClose={onClose}
-          autoHideDuration={snackbar === 'Success!' ? 1000 : 6000}
+          autoHideDuration={(snackbar || '').includes('Success!') ? 2000 : 6000}
           transitionDuration={{ in: 0, appear: 250, enter: 250, exit: 0 }}
         >
           <Alert
             onClose={onClose}
-            severity={snackbar === 'Success!' ? "success" : "error"}
+            severity={(snackbar || '').includes('Success!') ? "success" : "error"}
             elevation={6}
             variant="filled"
           >

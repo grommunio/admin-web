@@ -261,7 +261,7 @@ class LdapConfig extends PureComponent {
   handleSave = e => {
     e.preventDefault();
     this.props.put(this.formatData(), { force: this.state.force })
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
@@ -315,7 +315,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleCheckbox('disabled')}
                   name="disabled"
                   color="primary"
-                  disabled={!available}
                 />
               }
               label={<span>
@@ -338,7 +337,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleCheckbox('force')}
                   name="disabled"
                   color="primary"
-                  disabled={!available}
                 />
               }
               label={<span>
@@ -365,7 +363,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('server')}
                   value={server || ''}
                   desc="Address of the LDAP server to connect to"
-                  disabled={!available}
                   id="url"
                   name="url"
                   autoComplete="url"
@@ -376,7 +373,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc="DN of the user to perform initial bind with"
-                  disabled={!available}
                   id="username"
                   name="username"
                   autoComplete="username"
@@ -387,7 +383,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
                   desc="Password for bindUser"
-                  disabled={!available}
                   id="password"
                   name="password"
                   type="password"
@@ -405,7 +400,6 @@ class LdapConfig extends PureComponent {
                         id: 'starttls',
                       }}
                       color="primary"
-                      disabled={!available}
                     />
                   }
                   label={<span>
@@ -427,7 +421,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
                 desc="Base DN to use for user search"
-                disabled={!available}
                 id="baseDn"
                 name="baseDn"
                 autoComplete="baseDn"
@@ -443,7 +436,6 @@ class LdapConfig extends PureComponent {
                 value={templates}
                 select
                 desc="List of mapping templates to use"
-                disabled={!available}
                 id="templates"
                 name="templates"
                 autoComplete="templates"
@@ -460,7 +452,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('filter')}
                 value={filter || ''}
                 desc="LDAP search filter to apply to user lookup"
-                disabled={!available}
                 id="filter"
                 name="filter"
                 autoComplete="filter"
@@ -470,7 +461,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('objectID')}
                 value={objectID || ''}
                 desc="Name of an attribute that uniquely idetifies an LDAP object"
-                disabled={!available}
                 id="objectID"
                 name="objectID"
                 autoComplete="objectID"
@@ -480,7 +470,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('username')}
                 value={username || ''}
                 desc="Name of the attribute that corresponds to the username (e-mail address)"
-                disabled={!available}
                 id="username"
                 name="username"
                 autoComplete="username"
@@ -490,7 +479,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('displayName')}
                 value={displayName || ''}
                 desc="Name of the attribute that contains the name"
-                disabled={!available}
                 id="displayName"
                 name="displayName"
                 autoComplete="displayName"
@@ -500,7 +488,6 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleInput('defaultQuota')}
                 value={defaultQuota}
                 desc="Storage quota of imported users if no mapping exists"
-                disabled={!available}
                 id="defaultQuota"
                 name="defaultQuota"
                 autoComplete="defaultQuota"
@@ -519,7 +506,6 @@ class LdapConfig extends PureComponent {
               className={classes.textfield}
               options={adminConfig.searchAttributes}
               multiple
-              disabled={!available}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -549,7 +535,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
                   desc="Name of the PropTag the attribute maps to"
-                  disabled={!available}
                 />
                 <Typography className={classes.spacer}>:</Typography>
                 <LdapTextfield
@@ -558,7 +543,6 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
                   desc="Value of the PropTag the attribute maps to"
-                  disabled={!available}
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
                   <Delete color="error" />
@@ -566,7 +550,7 @@ class LdapConfig extends PureComponent {
               </Grid>
             )}
             <Grid container justify="center" className={classes.addButton}>
-              <Button disabled={!available} size="small" onClick={this.handleNewRow}>
+              <Button size="small" onClick={this.handleNewRow}>
                 <Add color="primary" />
               </Button>
             </Grid>
@@ -577,7 +561,6 @@ class LdapConfig extends PureComponent {
               color="secondary"
               onClick={this.handleDelete}
               className={classes.deleteButton}
-              disabled={!available}
             >
               {t('Delete config')}
             </Button>
@@ -586,7 +569,6 @@ class LdapConfig extends PureComponent {
               color="primary"
               type="submit"
               onClick={this.handleSave}
-              disabled={!available}
             >
               {t('Save')}
             </Button>
@@ -621,6 +603,7 @@ const mapDispatchToProps = dispatch => {
       .then(config => config)
       .catch(message => Promise.reject(message)),
     put: async (config, params) => await dispatch(updateLdapConfig(config, params))
+      .then(msg => msg)
       .catch(message => Promise.reject(message)),
   };
 };
