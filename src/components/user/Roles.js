@@ -33,7 +33,8 @@ class RolesTab extends PureComponent {
             onChange={handleAutocomplete('roles')}
             getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
             renderOption={(role) => role?.name || role || ''}
-            filterOptions={(options, state) => options.filter(o => o.name.includes(state.inputValue))}
+            filterOptions={(options, state) =>
+              options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
             renderInput={(params) => (
               <TextField
                 {...params}

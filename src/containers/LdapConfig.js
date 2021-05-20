@@ -2,8 +2,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Input, InputLabel, MenuItem, Paper,
-  Select, Typography, Switch, Tooltip } from '@material-ui/core';
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
+  Typography, Switch, Tooltip, TextField } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { fetchLdapConfig, updateLdapConfig } from '../actions/ldap';
@@ -17,6 +17,7 @@ import adminConfig from '../config';
 import LdapTextfield from '../components/LdapTextfield';
 import Help from '@material-ui/icons/HelpOutline';
 import Feedback from '../components/Feedback';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   root: {
@@ -200,6 +201,12 @@ class LdapConfig extends PureComponent {
   handleInput = field => ({ target: t }) => this.setState({
     [field]: t.value,
   });
+
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+    });
+  }
 
   handleTemplate = ({ target: t }) => {
     const templates = t.value;
@@ -492,39 +499,20 @@ class LdapConfig extends PureComponent {
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
                 <MenuItem value="AD">ActiveDirectory</MenuItem>
               </LdapTextfield>
-              <FormControl className={classes.textfield}>
-                <InputLabel>
-                  {t('LDAP Search Attributes (searchAttributes)')}
-                  <Tooltip
-                    className={classes.tooltip}
-                    title="List of attributes to use for searching"
-                    placement="top"
-                  >
-                    <IconButton size="small">
-                      <Help fontSize="small"/>
-                    </IconButton>
-                  </Tooltip>
-                </InputLabel>
-                <Select
-                  id="searchAttributes"
-                  name="searchAttributes"
-                  autoComplete="searchAttributes"
-                  multiple
-                  value={searchAttributes}
-                  onChange={this.handleInput('searchAttributes')}
-                  input={<Input />}
-                  MenuProps={{
-                    style: { maxHeight: 400 },
-                  }}
-                  disabled={!available}
-                >
-                  {adminConfig.searchAttributes.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                value={searchAttributes || []}
+                onChange={this.handleAutocomplete('searchAttributes')}
+                className={classes.textfield}
+                options={adminConfig.searchAttributes}
+                multiple
+                disabled={!available}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t('LDAP Search Attributes (searchAttributes)')}
+                  />
+                )}
+              />
             </FormControl>
           </Paper>
           <Paper elevation={1} className={classes.paper}>

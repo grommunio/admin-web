@@ -6,9 +6,6 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  InputLabel,
-  Select,
-  Input,
   MenuItem,
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -90,7 +87,7 @@ class AddClass extends PureComponent {
     this.setState({ loading: true });
     add(domain.ID, {
       classname,
-      parentClasses,
+      parentClasses: parentClasses.map(c => c.ID),
       members: members ? members.replace(/\s/g, "").split(',') : [], // Make array from members separated by commas
       filters,
     })
@@ -129,6 +126,12 @@ class AddClass extends PureComponent {
     const filters = [...this.state.filters];
     filters[ANDidx][ORidx][field] = newVal;
     this.setState({ filters });
+  }
+
+  handleAuto = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+    });
   }
 
   handleAddAND = () => {
@@ -180,26 +183,21 @@ class AddClass extends PureComponent {
               autoFocus
               required
             />
-            <FormControl className={classes.input}>
-              <InputLabel>{t("Parent groups")}</InputLabel>
-              <Select
-                multiple
-                fullWidth
-                value={parentClasses || []}
-                onChange={this.handleInput('parentClasses')}
-                input={<Input />}
-              >
-                {_classes.map((_class, key) => (
-                  <MenuItem
-                    key={key}
-                    value={_class.ID}
-                    selected={parentClasses /* This shouldn't even work... */}
-                  >
-                    {_class.classname}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              value={parentClasses || []}
+              onChange={this.handleAuto('parentClasses')}
+              className={classes.input} 
+              getOptionLabel={(_class) => _class?.classname || ''}
+              renderOption={(_class) => _class?.classname || ''}
+              options={_classes}
+              multiple
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Parent groups")}
+                />
+              )}
+            />
             <TextField 
               className={classes.input} 
               label={t("Members (separate by comma)")} 
