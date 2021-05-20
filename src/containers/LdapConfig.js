@@ -95,6 +95,9 @@ const styles = theme => ({
   tooltip: {
     marginTop: -2,
   },
+  subcaption: {
+    margin: theme.spacing(1, 0, 0, 2),
+  },
 });
 
 class LdapConfig extends PureComponent {
@@ -358,7 +361,7 @@ class LdapConfig extends PureComponent {
               <div className={classes.flexRow}>
                 <LdapTextfield
                   flex
-                  label={t('LDAP-Server (server)')}
+                  label={t('LDAP-Server')}
                   onChange={this.handleInput('server')}
                   value={server || ''}
                   desc="Address of the LDAP server to connect to"
@@ -369,7 +372,7 @@ class LdapConfig extends PureComponent {
                 />
                 <LdapTextfield
                   flex
-                  label={t("LDAP Bind User (bindUser)")}
+                  label={t("LDAP Bind User")}
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc="DN of the user to perform initial bind with"
@@ -380,7 +383,7 @@ class LdapConfig extends PureComponent {
                 />
                 <LdapTextfield
                   flex
-                  label={t('LDAP Bind Password (bindPass)')}
+                  label={t('LDAP Bind Password')}
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
                   desc="Password for bindUser"
@@ -420,7 +423,7 @@ class LdapConfig extends PureComponent {
                 />
               </div>
               <LdapTextfield
-                label={t('LDAP Base DN (baseDn)')}
+                label={t('LDAP Base DN')}
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
                 desc="Base DN to use for user search"
@@ -435,47 +438,25 @@ class LdapConfig extends PureComponent {
             <FormControl className={classes.formControl}>
               <Typography variant="h6" className={classes.category}>{t('Attribute Configuration')}</Typography>
               <LdapTextfield
-                label={t('Unique Identifier Attribute (objectID)')}
-                onChange={this.handleInput('objectID')}
-                value={objectID || ''}
-                desc="Name of an attribute that uniquely idetifies an LDAP object"
+                label={t('LDAP Templates')}
+                onChange={this.handleTemplate}
+                value={templates}
+                select
+                desc="List of mapping templates to use"
                 disabled={!available}
-                id="objectID"
-                name="objectID"
-                autoComplete="objectID"
-              />
+                id="templates"
+                name="templates"
+                autoComplete="templates"
+              >
+                <MenuItem value='none'>{t('No template')}</MenuItem>
+                <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
+                <MenuItem value="AD">ActiveDirectory</MenuItem>
+              </LdapTextfield>
+              <Typography variant="body2" className={classes.subcaption}>
+                The fields below only need to be filled in if you need to override the template&apos;s defaults
+              </Typography>
               <LdapTextfield
-                label={t('LDAP Username Attribute (username)')}
-                onChange={this.handleInput('username')}
-                value={username || ''}
-                desc="Name of the attribute that corresponds to the username (e-mail address)"
-                disabled={!available}
-                id="username"
-                name="username"
-                autoComplete="username"
-              />
-              <LdapTextfield
-                label={t('LDAP Default Quota (defaultQuota)')}
-                onChange={this.handleInput('defaultQuota')}
-                value={defaultQuota}
-                desc="Storage quota of imported users if no mapping exists"
-                disabled={!available}
-                id="defaultQuota"
-                name="defaultQuota"
-                autoComplete="defaultQuota"
-              />
-              <LdapTextfield
-                label={t('LDAP Display Name Attribute (displayName)')}
-                onChange={this.handleInput('displayName')}
-                value={displayName || ''}
-                desc="Name of the attribute that contains the name"
-                disabled={!available}
-                id="displayName"
-                name="displayName"
-                autoComplete="displayName"
-              />
-              <LdapTextfield
-                label={t('LDAP Filter (filters)')}
+                label={t('LDAP Filter')}
                 onChange={this.handleInput('filter')}
                 value={filter || ''}
                 desc="LDAP search filter to apply to user lookup"
@@ -485,35 +466,66 @@ class LdapConfig extends PureComponent {
                 autoComplete="filter"
               />
               <LdapTextfield
-                label={t('LDAP Templates (templates)')}
-                onChange={this.handleTemplate}
-                value={templates}
-                select
-                desc="List of mapping templates to use"
-                //disabled={!available}
-                id="templates"
-                name="templates"
-                autoComplete="templates"
-              >
-                <MenuItem value='none'>{t('No template')}</MenuItem>
-                <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
-                <MenuItem value="AD">ActiveDirectory</MenuItem>
-              </LdapTextfield>
-              <Autocomplete
-                value={searchAttributes || []}
-                onChange={this.handleAutocomplete('searchAttributes')}
-                className={classes.textfield}
-                options={adminConfig.searchAttributes}
-                multiple
+                label={t('Unique Identifier Attribute')}
+                onChange={this.handleInput('objectID')}
+                value={objectID || ''}
+                desc="Name of an attribute that uniquely idetifies an LDAP object"
                 disabled={!available}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label={t('LDAP Search Attributes (searchAttributes)')}
-                  />
-                )}
+                id="objectID"
+                name="objectID"
+                autoComplete="objectID"
+              />
+              <LdapTextfield
+                label={t('LDAP Username Attribute')}
+                onChange={this.handleInput('username')}
+                value={username || ''}
+                desc="Name of the attribute that corresponds to the username (e-mail address)"
+                disabled={!available}
+                id="username"
+                name="username"
+                autoComplete="username"
+              />
+              <LdapTextfield
+                label={t('LDAP Display Name Attribute')}
+                onChange={this.handleInput('displayName')}
+                value={displayName || ''}
+                desc="Name of the attribute that contains the name"
+                disabled={!available}
+                id="displayName"
+                name="displayName"
+                autoComplete="displayName"
+              />
+              <LdapTextfield
+                label={t('LDAP Default Quota')}
+                onChange={this.handleInput('defaultQuota')}
+                value={defaultQuota}
+                desc="Storage quota of imported users if no mapping exists"
+                disabled={!available}
+                id="defaultQuota"
+                name="defaultQuota"
+                autoComplete="defaultQuota"
               />
             </FormControl>
+          </Paper>
+          <Paper elevation={1} className={classes.paper}>
+            <Typography variant="h6" className={classes.category}>{t('LDAP Search Attributes')}</Typography>
+            <Typography variant="caption" className={classes.category}>
+              This controls which attributes the &quot;Search in LDAP&quot;
+              functionality will look at when searching using an arbitrary search string.
+            </Typography>
+            <Autocomplete
+              value={searchAttributes || []}
+              onChange={this.handleAutocomplete('searchAttributes')}
+              className={classes.textfield}
+              options={adminConfig.searchAttributes}
+              multiple
+              disabled={!available}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                />
+              )}
+            />
           </Paper>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>
