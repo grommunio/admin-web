@@ -8,7 +8,7 @@ import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress, TextField, InputAdornment } from '@material-ui/core';
+  CircularProgress, TextField, InputAdornment, Tooltip } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Search from '@material-ui/icons/Search';
 import Delete from '@material-ui/icons/Delete';
@@ -212,14 +212,16 @@ class Users extends Component {
     this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
   }, 200)
 
-  handleUserSync = () => {
-    this.props.sync()
+  handleUserSync = importUsers => () => {
+    const { sync, domain } = this.props;
+    sync({ import: importUsers }, domain.ID)
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
   checkUsers = () => {
-    this.props.check({});
+    this.props.check({})
+      .catch(msg => this.setState({ snackbar: msg }));
     this.setState({ checking: true });
   }
 
@@ -273,21 +275,41 @@ class Users extends Component {
             >
               {t('Search in LDAP')}
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleUserSync}
-              className={classes.newButton}
+            <Tooltip placement="top" title="Syncronize already imported users of this domain">
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginRight: 16 }}
+                onClick={this.handleUserSync(false)}
+              >
+                {t('Sync LDAP users')}
+              </Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title="Import not-yet imported ldap users of this domain and synchronize already imported ones"
             >
-              {t('Sync LDAP users')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.checkUsers}
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginRight: 16 }}
+                onClick={this.handleUserSync(true)}
+              >
+                {t('Import LDAP users')}
+              </Button>
+            </Tooltip>
+            <Tooltip
+              placement="top"
+              title="Check status of imported users of this domain"
             >
-              {t('Check LDAP users')}
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.checkUsers}
+              >
+                {t('Check LDAP users')}
+              </Button>
+            </Tooltip>
             <div className={classes.actions}>
               <TextField
                 value={match}
@@ -405,7 +427,7 @@ const mapDispatchToProps = dispatch => {
     },
     check: async params => await dispatch(checkLdapUsers(params))
       .catch(error => Promise.reject(error)),
-    sync: async () => await dispatch(syncLdapUsers())
+    sync: async (params, domainID) => await dispatch(syncLdapUsers(params, domainID))
       .catch(error => Promise.reject(error)),
   };
 };

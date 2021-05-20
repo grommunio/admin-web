@@ -75,10 +75,10 @@ export function syncLdapData(domainID, userID) {
   };
 }
 
-export function syncLdapUsers() {
+export function syncLdapUsers(params, domainID) {
   return async dispatch => {
     try {
-      await dispatch(syncAll());
+      await dispatch(syncAll(params, domainID));
     } catch (err) {
       return Promise.reject(err.message);
     }

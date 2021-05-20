@@ -6,7 +6,7 @@ import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Menu
   Typography, Switch, Tooltip, TextField } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
-import { fetchLdapConfig, updateLdapConfig } from '../actions/ldap';
+import { fetchLdapConfig, syncLdapUsers, updateLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
@@ -55,6 +55,12 @@ const styles = theme => ({
   },
   textfield: {
     margin: theme.spacing(2, 2),
+  },
+  flexContainer: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginRight: 16,
   },
   flexTextfield: {
     flex: 1,
@@ -275,6 +281,9 @@ class LdapConfig extends PureComponent {
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
+  handleSync = importUser => () => this.props.sync({ import: importUser })
+    .catch(snackbar => this.setState({ snackbar }));
+
   render() {
     const { classes, t } = this.props;
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
@@ -352,6 +361,28 @@ class LdapConfig extends PureComponent {
                 </Tooltip>
               </span>}
             />
+            <div className={classes.flexContainer}>
+              <Tooltip placement="top" title="Syncronize already imported users">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: 16 }}
+                  onClick={this.handleSync(false)}
+                >
+                  Sync users
+                </Button>
+              </Tooltip>
+              <Tooltip placement="top" title="Import not-yet imported ldap users and synchronize already imported ones">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: 16 }}
+                  onClick={this.handleSync(true)}
+                >
+                  Import users
+                </Button>
+              </Tooltip>
+            </div>
           </Grid>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>{t('LDAP Server')}</Typography>
@@ -595,6 +626,7 @@ LdapConfig.propTypes = {
   history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   put: PropTypes.func.isRequired,
+  sync: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -604,6 +636,8 @@ const mapDispatchToProps = dispatch => {
       .catch(message => Promise.reject(message)),
     put: async (config, params) => await dispatch(updateLdapConfig(config, params))
       .then(msg => msg)
+      .catch(message => Promise.reject(message)),
+    sync: async params => await dispatch(syncLdapUsers(params))
       .catch(message => Promise.reject(message)),
   };
 };
