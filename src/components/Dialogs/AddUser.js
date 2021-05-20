@@ -177,6 +177,7 @@ class AddUser extends PureComponent {
               type="password"
               required
               helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
+              autoComplete="new-password"
             />
             <TextField 
               label={t("Repeat password")}

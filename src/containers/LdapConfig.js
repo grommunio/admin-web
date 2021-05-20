@@ -260,8 +260,8 @@ class LdapConfig extends PureComponent {
     this.setState({ attributes: copy });
   }
 
-  handleCheckbox = field => e => this.setState({
-    [field]: e.target.checked,
+  handleCheckbox = field => () => this.setState({
+    [field]: !this.state[field],
   });
 
   handleSave = e => {
@@ -362,7 +362,7 @@ class LdapConfig extends PureComponent {
               </span>}
             />
             <div className={classes.flexContainer}>
-              <Tooltip placement="top" title="Syncronize already imported users">
+              <Tooltip placement="top" title="Synchronize already imported users">
                 <Button
                   variant="contained"
                   color="primary"
