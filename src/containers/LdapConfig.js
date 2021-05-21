@@ -237,6 +237,8 @@ class LdapConfig extends PureComponent {
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
         filter: "objectClass=posixAccount",
       });
+    } else {
+      this.setState({ templates });
     }
   }
 

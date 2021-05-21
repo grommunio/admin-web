@@ -76,7 +76,7 @@ class Account extends PureComponent {
   }
 
   calculateGraph() {
-    const { classes, rawData } = this.props;
+    const { classes, rawData, t } = this.props;
     const {
       messagesizeextended: rawMSE,
       storagequotalimit: rawSTQ,
@@ -96,7 +96,9 @@ class Account extends PureComponent {
           width: '100%',
         }}
       >
-        <Typography align="center">{readableMSE} ({usedSpace})</Typography>
+        <Typography align="center">
+          {rawMSE ? `${readableMSE} (${usedSpace})` : t('Quota not available')}
+        </Typography>
       </div>
       <div
         style={{
