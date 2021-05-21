@@ -314,7 +314,7 @@ class LdapConfig extends PureComponent {
               color: available ? green['500'] : red['500'],
             }}
           >
-            {available ? t('LDAP available') : t('LDAP not available')}
+            {!disabled && (available ? t('LDAP available') : t('LDAP not available'))}
           </Typography>
           <Grid container className={classes.category}>
             <FormControlLabel
