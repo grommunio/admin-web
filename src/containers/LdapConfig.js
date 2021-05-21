@@ -226,6 +226,7 @@ class LdapConfig extends PureComponent {
         username: 'mail',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "name", "displayName"],
+        filter: "objectClass=user",
       });
     } else if(templates === 'OpenLDAP') {
       this.setState({
@@ -234,6 +235,7 @@ class LdapConfig extends PureComponent {
         username: 'mail',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
+        filter: "objectClass=posixAccount",
       });
     }
   }
