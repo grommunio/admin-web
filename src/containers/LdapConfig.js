@@ -553,7 +553,7 @@ class LdapConfig extends PureComponent {
               {t('Custom Mapping')}
               <Tooltip
                 className={classes.tooltip}
-                title="LDAP attribute -> PropTag mapping to used for LDAP import.
+                title="LDAP attribute to map -> Name of the user property to map to.
                   Any mappings specified take precendence over active templates"
                 placement="top"
               >
