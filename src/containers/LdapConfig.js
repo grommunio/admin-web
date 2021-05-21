@@ -3,10 +3,10 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
-  Typography, Switch, Tooltip, TextField } from '@material-ui/core';
+  Typography, Switch, Tooltip, TextField, RadioGroup, Radio } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
-import { fetchLdapConfig, syncLdapUsers, updateLdapConfig } from '../actions/ldap';
+import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
@@ -104,6 +104,9 @@ const styles = theme => ({
   subcaption: {
     margin: theme.spacing(1, 0, 0, 2),
   },
+  radioGroup: {
+    marginLeft: 16,
+  },
 });
 
 class LdapConfig extends PureComponent {
@@ -125,6 +128,7 @@ class LdapConfig extends PureComponent {
     templates: 'none',
     attributes: [],
     searchAttributes: [],
+    authBackendSelection: 'always_mysql',
 
     deleting: false,
     force: false,
@@ -163,7 +167,10 @@ class LdapConfig extends PureComponent {
   }
 
   async componentDidMount() {
-    const resp = await this.props.fetch()
+    const { fetch, fetchAuthMgr } = this.props;
+    const resp = await fetchAuthMgr()
+      .catch(snackbar => this.setState({ snackbar }));
+    const authResp = await fetch()
       .catch(snackbar => this.setState({ snackbar }));
     const config = resp?.data;
     if(!config) return;
@@ -171,6 +178,7 @@ class LdapConfig extends PureComponent {
     const connection = config?.connection || {};
     const users = config?.users || {};
     this.setState({
+      authBackendSelection: authResp?.authBackendSelection || 'always_mysql',
       available,
       baseDn: config.baseDn || '',
       disabled: config.disabled === undefined ? true : config.disabled,
@@ -268,9 +276,22 @@ class LdapConfig extends PureComponent {
     [field]: !this.state[field],
   });
 
+  handleActive = () => {
+    const { disabled, authBackendSelection } = this.state;
+    this.setState({
+      disabled: !disabled,
+      authBackendSelection: disabled ? authBackendSelection : 'always_mysql',
+    });
+  }
+
   handleSave = e => {
+    const { put, authMgr } = this.props;
+    const { force, authBackendSelection } = this.state;
     e.preventDefault();
-    this.props.put(this.formatData(), { force: this.state.force })
+    put(this.formatData(), { force: force })
+      .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
+      .catch(snackbar => this.setState({ snackbar }));
+    authMgr({ authBackendSelection })
       .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
@@ -291,7 +312,8 @@ class LdapConfig extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
-      username, filter, templates, attributes, defaultQuota, displayName, searchAttributes } = this.state;
+      username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
+      authBackendSelection } = this.state;
     return (
       <div className={classes.root}>
         <TopBar />
@@ -325,7 +347,7 @@ class LdapConfig extends PureComponent {
               control={
                 <Switch
                   checked={!disabled}
-                  onChange={this.handleCheckbox('disabled')}
+                  onChange={this.handleActive}
                   name="disabled"
                   color="primary"
                 />
@@ -460,6 +482,38 @@ class LdapConfig extends PureComponent {
                 name="baseDn"
                 autoComplete="baseDn"
               />
+            </FormControl>
+          </Paper>
+          <Paper elevation={1} className={classes.paper}>
+            <Typography variant="h6" className={classes.category}>
+              {t('Authentication manager')}
+              <Tooltip
+                className={classes.tooltip}
+                title="Primary authorization mechanism"
+                placement="top"
+              >
+                <IconButton size="small">
+                  <Help fontSize="small"/>
+                </IconButton>
+              </Tooltip>
+            </Typography>
+            <FormControl className={classes.formControl}>
+              <RadioGroup
+                name="authBackendSelection"
+                value={authBackendSelection}
+                onChange={this.handleInput("authBackendSelection")}
+                row
+                className={classes.radioGroup}
+                color="primary"
+              >
+                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label="Always MySQL" />
+                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label="Always LDAP" />
+                <FormControlLabel
+                  value="externid"
+                  control={<Radio color="primary"/>}
+                  label="First LDAP, second MySQL"
+                />
+              </RadioGroup>
             </FormControl>
           </Paper>
           <Paper className={classes.paper} elevation={1}>
@@ -631,6 +685,8 @@ LdapConfig.propTypes = {
   fetch: PropTypes.func.isRequired,
   put: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
+  authMgr: PropTypes.func.isRequired,
+  fetchAuthMgr: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -638,7 +694,13 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => await dispatch(fetchLdapConfig())
       .then(config => config)
       .catch(message => Promise.reject(message)),
+    fetchAuthMgr: async () => await dispatch(fetchAuthMgr())
+      .then(config => config)
+      .catch(message => Promise.reject(message)),
     put: async (config, params) => await dispatch(updateLdapConfig(config, params))
+      .then(msg => msg)
+      .catch(message => Promise.reject(message)),
+    authMgr: async (config) => await dispatch(updateAuthMgr(config))
       .then(msg => msg)
       .catch(message => Promise.reject(message)),
     sync: async params => await dispatch(syncLdapUsers(params))

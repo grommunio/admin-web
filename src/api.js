@@ -329,6 +329,18 @@ export function deleteLdap() {
   };
 }
 
+export function authmgr() {
+  return async () => {
+    return await get('/system/mconf/authmgr');
+  };
+}
+
+export function setAuthmgr(config) {
+  return async () => {
+    return await put('/system/mconf/authmgr', config);
+  };
+}
+
 /*
   ROLES
 */

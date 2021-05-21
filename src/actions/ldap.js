@@ -3,7 +3,7 @@ import {
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
 } from './types';
-import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap } from '../api';
+import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap, setAuthmgr, authmgr } from '../api';
 
 export function fetchLdapConfig() {
   return async dispatch => {
@@ -20,6 +20,28 @@ export function updateLdapConfig(config, params) {
   return async dispatch => {
     try {
       const resp = await dispatch(updateLdap(config, params));
+      return Promise.resolve(resp?.message);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchAuthMgr() {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(authmgr());
+      return Promise.resolve(resp);
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function updateAuthMgr(config) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(setAuthmgr(config));
       return Promise.resolve(resp?.message);
     } catch (err) {
       return Promise.reject(err.message);
