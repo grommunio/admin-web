@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TopBar from '../components/TopBar';
-import HomeIcon from '@material-ui/icons/Home';
 import Search from '@material-ui/icons/Search';
 import BackIcon from '@material-ui/icons/ArrowBack';
 import Import from '@material-ui/icons/ImportContacts';
@@ -103,8 +102,6 @@ class Ldap extends PureComponent {
             <BackIcon onClick={this.handleNavigation(domain.ID + '/users')} className={classes.backIcon} />
             <span className={classes.pageTitleSecondary}>| </span>
             {t("LDAP")}
-            <span className={classes.pageTitleSecondary}> |</span>
-            <HomeIcon onClick={this.handleNavigation('')} className={classes.homeIcon} />
           </Typography>
           <Grid container justify="center">
             <TextField

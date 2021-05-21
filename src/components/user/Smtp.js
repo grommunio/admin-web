@@ -3,7 +3,7 @@ import { Button, FormControl, Grid, IconButton, List, ListItem,
   TextField, Typography, withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { Close } from '@material-ui/icons';
+import { Delete } from '@material-ui/icons';
 
 const styles = theme => ({
   form: {
@@ -37,13 +37,13 @@ class Smtp extends PureComponent {
               onChange={handleAliasEdit(idx)}
             />
             <IconButton onClick={handleRemoveAlias(idx)}>
-              <Close color="error" />
+              <Delete color="error" />
             </IconButton>
           </ListItem>
           )}
         </List>
         <Grid container justify="center">
-          <Button onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
+          <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
         </Grid>
       </FormControl>
     );

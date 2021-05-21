@@ -197,6 +197,7 @@ class UserDetails extends PureComponent {
       fetchmail: user.fetchmail.map(e => { return { ...e, date: undefined };}),
       properties: {
         ...user.properties,
+        messagesizeextended: undefined,
         storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || 0,
         prohibitreceivequota: user.properties.prohibitreceivequota * 2
           ** (10 * sizeUnits.prohibitreceivequota) || 0,

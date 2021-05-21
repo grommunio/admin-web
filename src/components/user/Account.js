@@ -56,7 +56,7 @@ class Account extends PureComponent {
 
   types = [
     { name: 'User', ID: 0 },
-    { name: 'MList', ID: 1 },
+    { name: 'Mail list', ID: 1 },
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
   ]
@@ -150,6 +150,7 @@ class Account extends PureComponent {
               endAdornment: <div>@{domain.domainname}</div>,
             }}
             error={usernameError}
+            disabled
           />
           <Button
             variant="contained"

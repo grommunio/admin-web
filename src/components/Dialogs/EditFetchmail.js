@@ -101,7 +101,7 @@ class AddFetchmail extends PureComponent {
       >
         <DialogTitle>{t('editHeadline', { item: 'Entry' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
+          <FormControl className={classes.form} component="form" noValidate autoComplete="off">
             <TextField 
               className={classes.input}
               label={t("Source server")} 
@@ -119,21 +119,26 @@ class AddFetchmail extends PureComponent {
               onChange={this.handleInput('srcUser')}
               required
             />
+            <form autoComplete="off" noValidate>
+              <TextField
+                className={classes.input} 
+                label={t("Source password")} 
+                fullWidth 
+                value={srcPassword || ''}
+                onChange={this.handleInput('srcPassword')}
+                type="password"
+                required
+                id="new-password"
+                name='new-password'
+                autoComplete="new-password"
+              />
+            </form>
             <TextField 
               className={classes.input} 
               label={t("Source folder")} 
               fullWidth 
               value={srcFolder || ''}
               onChange={this.handleInput('srcFolder')}
-              required
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Source password")} 
-              fullWidth 
-              value={srcPassword || ''}
-              onChange={this.handleInput('srcPassword')}
-              type="password"
               required
             />
             <TextField 
