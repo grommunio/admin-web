@@ -569,7 +569,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
-                  desc="Name of the PropTag the attribute maps to"
+                  desc="LDAP attribute to map"
                 />
                 <Typography className={classes.spacer}>:</Typography>
                 <LdapTextfield
@@ -577,7 +577,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
-                  desc="Value of the PropTag the attribute maps to"
+                  desc="Name of the user property to map to"
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
                   <Delete color="error" />
