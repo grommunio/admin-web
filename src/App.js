@@ -104,7 +104,7 @@ class App extends Component {
           classes={classes}
           authenticated={authenticated}
           capabilities={capabilities}
-          domains={Domains}
+          domains={Domains || []}
           routesProps={routesProps}
         />
       </div>

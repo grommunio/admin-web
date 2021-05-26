@@ -226,6 +226,8 @@ class DomainList extends Component {
       match,
     } = this.state;
 
+    const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
+
     return (
       <div
         className={classes.root}
@@ -273,7 +275,7 @@ class DomainList extends Component {
             </div>
           </Grid>
           <Typography className={classes.count} color="textPrimary">
-            Showing {domains.Domains.length} domain(s)
+            Showing {filteredDomains.length} domain(s)
           </Typography>
           <Paper elevation={1}>
             <Table size="small">
@@ -295,25 +297,22 @@ class DomainList extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {domains.Domains.map((obj, idx) => {
-                  return obj.domainType === 1 ||
-                    (obj.domainStatus === 3 && !showDeleted) ? null : (
-                      <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                        <TableCell>
-                          {obj.domainname}{" "}
-                          {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
-                        </TableCell>
-                        <TableCell>{obj.address}</TableCell>
-                        <TableCell>{obj.title}</TableCell>
-                        <TableCell>{obj.maxUser}</TableCell>
-                        <TableCell align="right">
-                          <IconButton onClick={this.handleDelete(obj)}>
-                            <Delete color="error" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                })}
+                {filteredDomains.map((obj, idx) =>
+                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                    <TableCell>
+                      {obj.domainname}{" "}
+                      {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
+                    </TableCell>
+                    <TableCell>{obj.address}</TableCell>
+                    <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.maxUser}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={this.handleDelete(obj)}>
+                        <Delete color="error" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>)
+                }
               </TableBody>
             </Table>
             {domains.Domains.length < domains.count && (

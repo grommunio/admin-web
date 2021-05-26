@@ -119,6 +119,8 @@ class DomainListDetails extends PureComponent {
       ...domain,
       domainname: undefined,
       createDay: undefined,
+      activeUsers: undefined,
+      inactiveUsers: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
