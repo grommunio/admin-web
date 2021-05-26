@@ -100,7 +100,7 @@ class AddDomain extends PureComponent {
     const { domainname, domainStatus, orgID,
       maxUser, title, address, adminName, tel, loading } = this.state;
     const domainError = !domainname.match(
-      /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/);
+      /^[0-9a-z]([-0-9a-z]*[0-9a-z])?(\.[0-9a-z]([-0-9a-z]*[0-9a-z])?)*$/);
 
     return (
       <Dialog
