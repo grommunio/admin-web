@@ -172,14 +172,13 @@ class LdapConfig extends PureComponent {
       .catch(snackbar => this.setState({ snackbar }));
     const authResp = await fetchAuthMgr()
       .catch(snackbar => this.setState({ snackbar }));
-    console.log(resp);
     const config = resp?.data;
     if(!config) return;
     const available = resp?.ldapAvailable || false;
     const connection = config?.connection || {};
     const users = config?.users || {};
     this.setState({
-      authBackendSelection: authResp?.authBackendSelection || 'always_mysql',
+      authBackendSelection: authResp?.data?.authBackendSelection || 'always_mysql',
       available,
       baseDn: config.baseDn || '',
       disabled: config.disabled === undefined ? true : config.disabled,
