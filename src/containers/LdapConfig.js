@@ -533,9 +533,6 @@ class LdapConfig extends PureComponent {
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
                 <MenuItem value="AD">ActiveDirectory</MenuItem>
               </LdapTextfield>
-              <Typography variant="body2" className={classes.subcaption}>
-                The fields below only need to be filled in if you need to override the template&apos;s defaults
-              </Typography>
               <LdapTextfield
                 label={t('LDAP Filter')}
                 onChange={this.handleInput('filter')}
