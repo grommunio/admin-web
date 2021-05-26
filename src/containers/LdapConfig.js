@@ -168,10 +168,11 @@ class LdapConfig extends PureComponent {
 
   async componentDidMount() {
     const { fetch, fetchAuthMgr } = this.props;
-    const resp = await fetchAuthMgr()
+    const resp = await fetch()
       .catch(snackbar => this.setState({ snackbar }));
-    const authResp = await fetch()
+    const authResp = await fetchAuthMgr()
       .catch(snackbar => this.setState({ snackbar }));
+    console.log(resp);
     const config = resp?.data;
     if(!config) return;
     const available = resp?.ldapAvailable || false;
@@ -288,10 +289,10 @@ class LdapConfig extends PureComponent {
     const { put, authMgr } = this.props;
     const { force, authBackendSelection } = this.state;
     e.preventDefault();
-    put(this.formatData(), { force: force })
-      .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
-      .catch(snackbar => this.setState({ snackbar }));
-    authMgr({ authBackendSelection })
+    Promise.all([
+      put(this.formatData(), { force: force }),
+      authMgr({ authBackendSelection }),
+    ])
       .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
