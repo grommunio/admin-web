@@ -320,7 +320,7 @@ class LdapConfig extends PureComponent {
         <div className={classes.toolbar}></div>
         <form className={classes.base} onSubmit={this.handleSave}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("LDAP authentification")}
+            {t("LDAP settings")}
             <Tooltip
               className={classes.tooltip}
               title="LDAP server configuration.
@@ -416,20 +416,20 @@ class LdapConfig extends PureComponent {
               <div className={classes.flexRow}>
                 <LdapTextfield
                   flex
-                  label={t('LDAP-Server')}
+                  label={t('LDAP Server')}
                   onChange={this.handleInput('server')}
                   value={server || ''}
-                  desc="Address of the LDAP server to connect to"
+                  desc="Hostname of the LDAP server to connect to"
                   id="url"
                   name="url"
                   autoComplete="url"
                 />
                 <LdapTextfield
                   flex
-                  label={t("LDAP Bind User")}
+                  label={t("LDAP Bind DN")}
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
-                  desc="DN of the user to perform initial bind with"
+                  desc="Distinguished Name used for binding"
                   id="username"
                   name="username"
                   autoComplete="username"
@@ -439,7 +439,7 @@ class LdapConfig extends PureComponent {
                   label={t('LDAP Bind Password')}
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
-                  desc="Password for bindUser"
+                  desc="Password for bindUser (always uses LDAP Simple Authentication)"
                   id="password"
                   name="password"
                   type="password"
@@ -463,7 +463,7 @@ class LdapConfig extends PureComponent {
                     {t('STARTTLS')}
                     <Tooltip
                       className={classes.tooltip}
-                      title="Whether to initiate a StartTLS connection"
+                      title="Whether to issue a StartTLS extended operation"
                       placement="top"
                     >
                       <IconButton size="small">
@@ -477,7 +477,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Base DN')}
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
-                desc="Base DN to use for user search"
+                desc="Base DN to use for searches"
                 id="baseDn"
                 name="baseDn"
                 autoComplete="baseDn"
@@ -486,16 +486,7 @@ class LdapConfig extends PureComponent {
           </Paper>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>
-              {t('Authentication manager')}
-              <Tooltip
-                className={classes.tooltip}
-                title="Primary authorization mechanism"
-                placement="top"
-              >
-                <IconButton size="small">
-                  <Help fontSize="small"/>
-                </IconButton>
-              </Tooltip>
+              {t('User authentication mechanism')}
             </Typography>
             <FormControl className={classes.formControl}>
               <RadioGroup
@@ -506,12 +497,12 @@ class LdapConfig extends PureComponent {
                 className={classes.radioGroup}
                 color="primary"
               >
-                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label="Always MySQL" />
-                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label="Always LDAP" />
+                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label="Only MySQL" />
+                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label="Only LDAP" />
                 <FormControlLabel
                   value="externid"
                   control={<Radio color="primary"/>}
-                  label="First LDAP, second MySQL"
+                  label="Automatic"
                 />
               </RadioGroup>
             </FormControl>
