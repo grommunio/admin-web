@@ -332,16 +332,6 @@ class LdapConfig extends PureComponent {
               </IconButton>
             </Tooltip>
           </Typography>
-          <Typography
-            color="inherit"
-            variant="caption"
-            style={{
-              marginLeft: 16,
-              color: available ? green['500'] : red['500'],
-            }}
-          >
-            {!disabled && (available ? t('LDAP available') : t('LDAP not available'))}
-          </Typography>
           <Grid container className={classes.category}>
             <FormControlLabel
               control={
@@ -410,6 +400,16 @@ class LdapConfig extends PureComponent {
               </Tooltip>
             </div>
           </Grid>
+          <Typography
+            color="inherit"
+            variant="caption"
+            style={{
+              marginLeft: 16,
+              color: available ? green['500'] : red['500'],
+            }}
+          >
+            {!disabled && (available ? t('LDAP connectivity check passed') : t('LDAP connectivity check failed'))}
+          </Typography>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>{t('LDAP Server')}</Typography>
             <FormControl className={classes.formControl}>
