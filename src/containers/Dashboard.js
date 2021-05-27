@@ -41,7 +41,7 @@ const styles = (theme) => ({
                           "disk     disk"`,
     }, 
     [theme.breakpoints.up("md")]: {
-      gridTemplateColumns: '524px 1fr 1fr 1fr',
+      gridTemplateColumns: '540px 1fr 1fr 1fr',
       gridTemplateAreas: `"antispam antispam antispam antispam"
                           "services cpu      cpu      cpu     " 
                           "services memory   memory   memory  "

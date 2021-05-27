@@ -168,7 +168,7 @@ class ServicesChart extends Component {
                 <TableCell>
                   {"Service"}
                 </TableCell>
-                <TableCell align="center" style={{ width: 108 }}>
+                <TableCell align="center" style={{ width: 124 }}>
                   {"State | Autostart"}
                 </TableCell>
                 <TableCell align="center" style={{ width: 132 }}>
@@ -185,7 +185,7 @@ class ServicesChart extends Component {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Grid container>
+                    <Grid container justify="center">
                       <div
                         style={{ marginRight: 4 }}
                         className={classes.label + " " + this.getChipColor(service.state)}
