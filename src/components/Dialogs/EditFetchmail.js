@@ -101,7 +101,7 @@ class AddFetchmail extends PureComponent {
       >
         <DialogTitle>{t('editHeadline', { item: 'Entry' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form} component="form" noValidate autoComplete="off">
+          <FormControl className={classes.form} noValidate autoComplete="off">
             <TextField 
               className={classes.input}
               label={t("Source server")} 

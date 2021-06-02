@@ -110,7 +110,7 @@ class AddFetchmail extends PureComponent {
       >
         <DialogTitle>{t('addHeadline', { item: 'Entry' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form} component="form" autoComplete="off" noValidate>
+          <FormControl className={classes.form} autoComplete="off" noValidate>
             <TextField 
               className={classes.input} 
               label={t("Source server")} 
@@ -190,7 +190,6 @@ class AddFetchmail extends PureComponent {
               value={sslFingerprint || ''}
               onChange={this.handleInput('sslFingerprint')}
               disabled={!useSSL}
-              error={!sslFingerprint.match(/^([0-9A-F]{2}(:[0-9A-F]{2})*)?$/)}
             />
             <TextField 
               className={classes.input} 

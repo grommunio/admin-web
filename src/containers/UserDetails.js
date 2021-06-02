@@ -194,7 +194,11 @@ class UserDetails extends PureComponent {
       ...user,
       domainID: undefined,
       aliases: user.aliases.filter(alias => alias !== ''),
-      fetchmail: user.fetchmail.map(e => { return { ...e, date: undefined };}),
+      fetchmail: user.fetchmail.map(e => { return {
+        ...e,
+        date: undefined,
+        sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
+      };}),
       properties: {
         ...user.properties,
         messagesizeextended: undefined,
