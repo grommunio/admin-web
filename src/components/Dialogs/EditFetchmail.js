@@ -90,6 +90,7 @@ class AddFetchmail extends PureComponent {
     const { classes, t, open, onClose, username } = this.props;
     const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
+    const disabled = [srcServer, srcUser, srcPassword, protocol].includes('');
 
     return (
       <Dialog
@@ -139,7 +140,6 @@ class AddFetchmail extends PureComponent {
               fullWidth 
               value={srcFolder || ''}
               onChange={this.handleInput('srcFolder')}
-              required
             />
             <TextField 
               className={classes.input} 
@@ -255,6 +255,7 @@ class AddFetchmail extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
+            disabled={disabled}
           >
             {t('Confirm')}
           </Button>
