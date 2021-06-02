@@ -501,12 +501,14 @@ class UserDetails extends PureComponent {
           open={adding}
           add={this.addFetchmail}
           onClose={this.handleFetchmailDialog(false)}
+          username={username + '@' + domain.domainname}
         />
         <EditFetchmail
           open={editing !== null}
           entry={editing !== null ? fetchmail[editing] : editing}
           edit={this.editFetchmail}
           onClose={this.handleFetchmailEditDialog(null)}
+          username={username + '@' + domain.domainname}
         />
         <ChangeUserPassword
           onClose={this.handlePasswordDialogToggle(false)}

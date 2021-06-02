@@ -10,12 +10,16 @@ const resources = {
       "addHeadline": "Add {{item}}",
       "editHeadline": "Edit {{item}}",
       "deleteDialog": "Are you sure you want to delete {{item}}",
+      "addEntry": "Add entry for {{username}}",
+      "editEntry": "Edit entry for {{username}}",
     },
   },
   "de-DE": {
     translation: {
       "addHeadline": "$t({{item}}) hinzufügen",
       "editHeadline": "$t({{item}}) bearbeiten",
+      "addEntry": "Eintrag für {{username}} hinzufügen",
+      "editEntry": "Eintrag für {{username}} bearbeiten",
       "deleteDialog": "Sind Sie sicher, dass Sie {{item}} löschen wollen",
       "Delete domain": "Domain löschen",
       "Add": "Hinzufügen",

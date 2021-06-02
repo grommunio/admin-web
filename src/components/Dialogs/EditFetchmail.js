@@ -87,7 +87,7 @@ class AddFetchmail extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose } = this.props;
+    const { classes, t, open, onClose, username } = this.props;
     const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
       useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = this.state;
 
@@ -99,7 +99,7 @@ class AddFetchmail extends PureComponent {
         fullWidth
         onEnter={this.handleEnter}
       >
-        <DialogTitle>{t('editHeadline', { item: 'Entry' })}</DialogTitle>
+        <DialogTitle>{t('editEntry', { username: username })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form} noValidate autoComplete="off">
             <TextField 
@@ -271,6 +271,7 @@ AddFetchmail.propTypes = {
   edit: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
 };
 
 export default withTranslation()(withStyles(styles)(AddFetchmail));
