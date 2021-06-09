@@ -215,7 +215,10 @@ class Users extends Component {
   handleUserSync = importUsers => () => {
     const { sync, domain } = this.props;
     sync({ import: importUsers }, domain.ID)
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      .then(() => {
+        this.setState({ snackbar: 'Success!' });
+        this.fetchUsers({});
+      })
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
