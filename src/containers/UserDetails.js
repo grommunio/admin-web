@@ -10,7 +10,7 @@ import {
   Paper,
   Grid,
   Button,
-  Tabs, Tab,
+  Tabs, Tab, Tooltip,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
@@ -388,32 +388,38 @@ class UserDetails extends PureComponent {
               </Typography>
             </Grid>
             {ldapID && <Grid container className={classes.syncButtons}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ marginRight: 8 }}
-                onClick={this.handleDetachDialog(true)}
-                size="small"
-              >
-                <Detach fontSize="small" className={classes.leftIcon} /> Detach
-              </Button>
-              <Button
-                size="small"
-                onClick={this.handleSync}
-                variant="contained"
-                color="primary"
-                style={{ marginRight: 8 }}
-              >
-                <Sync fontSize="small" className={classes.leftIcon}/> Sync
-              </Button>
-              <Button
-                size="small"
-                onClick={this.handleDump}
-                variant="contained"
-                color="primary"
-              >
-                <Dump fontSize="small" className={classes.leftIcon}/> Dump
-              </Button>
+              <Tooltip title="Detach user from LDAP object" placement="top">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{ marginRight: 8 }}
+                  onClick={this.handleDetachDialog(true)}
+                  size="small"
+                >
+                  <Detach fontSize="small" className={classes.leftIcon} /> Detach
+                </Button>
+              </Tooltip>
+              <Tooltip title="Synchronize data from LDAP" placement="top">
+                <Button
+                  size="small"
+                  onClick={this.handleSync}
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: 8 }}
+                >
+                  <Sync fontSize="small" className={classes.leftIcon}/> Sync
+                </Button>
+              </Tooltip>
+              <Tooltip title="Show raw data" placement="top">
+                <Button
+                  size="small"
+                  onClick={this.handleDump}
+                  variant="contained"
+                  color="primary"
+                >
+                  <Dump fontSize="small" className={classes.leftIcon}/> Dump
+                </Button>
+              </Tooltip>
             </Grid>}
             <Tabs indicatorColor="primary" value={tab} onChange={this.handleTabChange}>
               <Tab label={t("Account")} />
