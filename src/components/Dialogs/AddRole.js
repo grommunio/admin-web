@@ -302,13 +302,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async () => {
-      await dispatch(fetchPermissionsData({ limit: ''})).catch(err => Promise.reject(err));
+      await dispatch(fetchPermissionsData({})).catch(err => Promise.reject(err));
     },
-    fetchDomains: async () => await dispatch(fetchDomainData({ limit: '' }))
+    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 5000, level: 0 }))
       .catch(err => Promise.reject(err)),
-    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: '' }))
+    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 5000, level: 0 }))
       .catch(err => Promise.reject(err)),
-    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: '' }))
+    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 5000, level: 0 }))
       .catch(err => Promise.reject(err)),
     add: async role => {
       await dispatch(addRolesData(role)).catch(err => Promise.reject(err));

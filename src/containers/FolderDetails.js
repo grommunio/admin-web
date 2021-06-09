@@ -102,6 +102,7 @@ class FolderDetails extends PureComponent {
     const { folder } = this.state;
     this.props.edit(domain.ID, {
       ...folder,
+      creationtime: undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -283,7 +284,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
     },
     fetchOwners: async (domainID, folderID) => {
-      await dispatch(fetchOwnersData(domainID, folderID, { limit: '' })).catch(msg => Promise.reject(msg));
+      await dispatch(fetchOwnersData(domainID, folderID, { limit: 5000, level: 0 })).catch(msg => Promise.reject(msg));
     },
   };
 };
