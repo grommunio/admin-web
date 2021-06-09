@@ -522,7 +522,7 @@ class LdapConfig extends PureComponent {
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
-                <MenuItem value="AD">ActiveDirectory</MenuItem>
+                <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
               </LdapTextfield>
               <LdapTextfield
                 label={t('LDAP Filter')}
