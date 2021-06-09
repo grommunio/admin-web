@@ -419,7 +419,7 @@ class LdapConfig extends PureComponent {
                   label={t('LDAP Server')}
                   onChange={this.handleInput('server')}
                   value={server || ''}
-                  desc="Hostname of the LDAP server to connect to"
+                  desc="Space-separated list of URIs (only schema, host and port; no base)"
                   id="url"
                   name="url"
                   autoComplete="url"
