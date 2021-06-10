@@ -97,7 +97,7 @@ class Account extends PureComponent {
         }}
       >
         <Typography align="center">
-          {rawMSE ? `${readableMSE} (${usedSpace})` : t('Quota not available')}
+          {rawMSE ? `${readableMSE} (${usedSpace})` : t('Store size indeterminate')}
         </Typography>
       </div>
       <div

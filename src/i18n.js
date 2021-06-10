@@ -158,7 +158,7 @@ const resources = {
       "Add or-statement": "Oder-Verknüpfung hinzufügen",
       "Add add-statement": "Und-Verknüpfung hinzufügen",
       "Children": "Untergruppen",
-      "Quota not available": "Quota nicht verfügbar",
+      "Quota not available": "Nachrichtenspeichergröße unbekannt",
 
       //LDAP
       "LDAP enabled": "LDAP aktiviert",
