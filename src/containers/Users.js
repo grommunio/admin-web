@@ -105,7 +105,6 @@ class Users extends Component {
   }
 
   columns = [
-    { label: 'Username', value: 'username' },
     { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
@@ -216,8 +215,9 @@ class Users extends Component {
     const { sync, domain } = this.props;
     sync({ import: importUsers }, domain.ID)
       .then(() => {
+        const { order, orderBy, match } = this.state;
         this.setState({ snackbar: 'Success!' });
-        this.fetchUsers({});
+        this.fetchUsers({ match: match || undefined, sort: orderBy + ',' + order });
       })
       .catch(msg => this.setState({ snackbar: msg }));
   }
@@ -338,16 +338,19 @@ class Users extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell>
+                    <TableSortLabel
+                      active={orderBy === 'username'}
+                      align="left" 
+                      direction={orderBy === 'username' ? order : 'asc'}
+                      onClick={this.handleRequestSort('username')}
+                    >
+                      {t('Username')}
+                    </TableSortLabel>
+                  </TableCell>
                   {this.columns.map(column =>
                     <TableCell key={column.value}>
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left" 
-                        direction={orderBy === column.value ? order : 'asc'}
-                        onClick={this.handleRequestSort(column.value)}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
+                      {t(column.label)}
                     </TableCell>
                   )}
                   <TableCell padding="checkbox"></TableCell>
