@@ -140,7 +140,7 @@ class Classes extends Component {
   }
 
   componentDidMount() {
-    this.fetchClasses({ sort: 'name,asc' });
+    this.fetchClasses({ sort: 'classname,asc' });
   }
 
   fetchClasses(params) {
