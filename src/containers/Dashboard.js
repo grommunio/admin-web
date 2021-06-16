@@ -95,6 +95,15 @@ const styles = (theme) => ({
       gridColumn: '2 / 4',
     },   
   },
+  fullChart: {
+    display: 'flex',
+    [theme.breakpoints.up("xs")]: {
+      gridColumn: '1 / 3',
+    }, 
+    [theme.breakpoints.up("sm")]: {
+      gridColumn: '1 / 4',
+    },  
+  },
   toolbar: theme.mixins.toolbar,
   iconButton: {
     color: "black",
@@ -178,10 +187,10 @@ class Dashboard extends Component {
           </div>
           <div className={classes.swap}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
-              <div className={classes.donutChart}>
+              {!!swapPercent && <div>
                 <SwapPieChart swap={swap} swapPercent={swapPercent} />
-              </div>
-              <div className={classes.lineChart}>
+              </div>}
+              <div className={!swapPercent ? classes.fullChart : classes.lineChart}>
                 <DisksChart disks={disks} />
               </div>
             </Paper>
