@@ -129,6 +129,7 @@ class LdapConfig extends PureComponent {
     attributes: [],
     searchAttributes: [],
     authBackendSelection: 'always_mysql',
+    aliases: '',
 
     deleting: false,
     force: false,
@@ -162,6 +163,7 @@ class LdapConfig extends PureComponent {
     formatted.users.templates = copy.templates === 'none' ?
       [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
     formatted.users.searchAttributes = [...this.state.searchAttributes];
+    formatted.users.aliases = copy.aliases;
 
     return formatted;
   }
@@ -194,6 +196,7 @@ class LdapConfig extends PureComponent {
       templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
       attributes: this.objectToArray(users.attributes || {}),
+      aliases: users.aliases || '',
     });
   }
 
@@ -227,7 +230,7 @@ class LdapConfig extends PureComponent {
 
   handleTemplate = ({ target: t }) => {
     const templates = t.value;
-    if(templates === 'AD') {
+    if(templates === 'ActiveDirectory') {
       this.setState({
         templates,
         objectID: 'objectGUID',
@@ -235,6 +238,7 @@ class LdapConfig extends PureComponent {
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "name", "displayName"],
         filter: "objectClass=user",
+        aliases: 'proxyAddresses',
       });
     } else if(templates === 'OpenLDAP') {
       this.setState({
@@ -244,6 +248,7 @@ class LdapConfig extends PureComponent {
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
         filter: "objectClass=posixAccount",
+        aliases: 'mailAlternativeAddress',
       });
     } else {
       this.setState({ templates });
@@ -313,7 +318,7 @@ class LdapConfig extends PureComponent {
     const { classes, t } = this.props;
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
-      authBackendSelection } = this.state;
+      authBackendSelection, aliases } = this.state;
     return (
       <div className={classes.root}>
         <TopBar />
@@ -568,6 +573,15 @@ class LdapConfig extends PureComponent {
                 id="defaultQuota"
                 name="defaultQuota"
                 autoComplete="defaultQuota"
+              />
+              <LdapTextfield
+                label={t('LDAP Aliases')}
+                onChange={this.handleInput('aliases')}
+                value={aliases}
+                desc="LDAP Alias mapping"
+                id="aliasMapping"
+                name="aliasMapping"
+                autoComplete="aliasMapping"
               />
             </FormControl>
           </Paper>
