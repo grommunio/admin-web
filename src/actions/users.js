@@ -13,7 +13,7 @@ import {
   ORPHANS_DELETED,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser,
-  ldapDump, checkLdap, deleteOrphans, storeProps } from '../api';
+  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -41,7 +41,8 @@ export function fetchUserData(domainID, userID) {
       return Promise.reject(err.message);
     }
     try {
-      const additionalProps = await dispatch(storeProps(domainID, userID, 'messagesizeextended'));
+      const additionalProps = await dispatch(storeProps(domainID, userID,
+        'messagesizeextended,storagequotalimit,prohibitreceivequota,prohibitsendquota'));
       if(additionalProps?.data) userData = {
         ...userData,
         properties: {
@@ -119,6 +120,17 @@ export function editUserData(domainID, user) {
   };
 }
 
+export function editUserStore(domainID, userID, props) {
+  return async dispatch => {
+    try {
+      await dispatch(editStoreProps(domainID, userID, props));
+    } catch(err) {
+      console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
 export function editUserRoles(domainID, userID, roles) {
   return async dispatch => {
     try {
@@ -139,6 +151,17 @@ export function deleteUserData(domainID, id, deleteFiles) {
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});
       console.error('Failed to edit user', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deleteUserStore(domainID, userID, props) {
+  return async dispatch => {
+    try {
+      await dispatch(deleteStoreProps(domainID, userID, props));
+    } catch(err) {
+      console.error('Failed to delete user storedata', err);
       return Promise.reject(err.message);
     }
   };

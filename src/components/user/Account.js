@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
-  Select, TextField, Typography, withStyles } from '@material-ui/core';
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
+  Select, TextField, Typography, withStyles, Tooltip } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import blue from '../../colors/blue';
 import { red, yellow } from '@material-ui/core/colors';
+import Delete from '@material-ui/icons/Delete';
 
 const styles = theme => ({
   form: {
@@ -29,6 +30,7 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     alignItems: 'center',
+    marginRight: 16,
   },
   select: {
     minWidth: 60,
@@ -49,6 +51,9 @@ const styles = theme => ({
   labelContainer: {
     display: 'flex',
     alignItems: 'center',
+  },
+  adornment: {
+    display: 'contents',
   },
 });
 
@@ -97,7 +102,7 @@ class Account extends PureComponent {
         }}
       >
         <Typography align="center">
-          {rawMSE ? `${readableMSE} (${usedSpace})` : t('Store size indeterminate')}
+          {rawMSE !== undefined ? `${readableMSE} (${usedSpace})` : t('Store size indeterminate')}
         </Typography>
       </div>
       <div
@@ -135,7 +140,7 @@ class Account extends PureComponent {
   render() {
     const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange,
-      handlePasswordChange } = this.props;
+      handlePasswordChange, handleQuotaDelete } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
@@ -229,7 +234,7 @@ class Account extends PureComponent {
               onChange={handleIntPropertyChange('prohibitsendquota')}
               InputProps={{
                 endAdornment:
-                  <FormControl>
+                  <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('prohibitsendquota')}
                       value={sizeUnits.prohibitsendquota}
@@ -239,6 +244,11 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
+                    <Tooltip title={('Delete quota')} placement="top">
+                      <IconButton size="small" onClick={handleQuotaDelete('prohibitsendquota')}>
+                        <Delete color="error" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -254,7 +264,7 @@ class Account extends PureComponent {
               onChange={handleIntPropertyChange('prohibitreceivequota')}
               InputProps={{
                 endAdornment:
-                  <FormControl>
+                  <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('prohibitreceivequota')}
                       value={sizeUnits.prohibitreceivequota}
@@ -264,6 +274,11 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
+                    <Tooltip title={('Delete quota')} placement="top">
+                      <IconButton size="small" onClick={handleQuotaDelete('prohibitreceivequota')}>
+                        <Delete color="error" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -279,7 +294,7 @@ class Account extends PureComponent {
               onChange={handleIntPropertyChange('storagequotalimit')}
               InputProps={{
                 endAdornment:
-                  <FormControl>
+                  <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('storagequotalimit')}
                       value={sizeUnits.storagequotalimit}
@@ -289,6 +304,11 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
+                    <Tooltip title={('Delete quota')} placement="top">
+                      <IconButton size="small" onClick={handleQuotaDelete('storagequotalimit')}>
+                        <Delete color="error" fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -354,6 +374,7 @@ Account.propTypes = {
   handleCheckbox: PropTypes.func.isRequired,
   handleUnitChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
+  handleQuotaDelete: PropTypes.func.isRequired,
   usernameError: PropTypes.bool,
   rawData: PropTypes.object,
 };
