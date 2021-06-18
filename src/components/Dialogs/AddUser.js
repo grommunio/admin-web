@@ -38,7 +38,11 @@ class AddUser extends PureComponent {
     loading: false,
     password: '',
     repeatPw: '',
-    sizeUnit: 1,
+    sizeUnits: {
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
+    },
   }
 
   types = [
@@ -65,7 +69,7 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess } = this.props;
-    const { username, password, properties } = this.state;
+    const { username, password, properties, sizeUnits } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -73,7 +77,10 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
+        prohibitreceivequota: properties.prohibitreceivequota *
+          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
+        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
     })
       .then(() => {
@@ -99,7 +106,7 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError } = this.props;
-    const { username, password, subType, properties } = this.state;
+    const { username, password, subType, properties, sizeUnits } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -108,7 +115,10 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * this.state.sizeUnit),
+        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
+        prohibitreceivequota: properties.prohibitreceivequota *
+          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
+        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
     })
       .then(user => {
@@ -138,12 +148,17 @@ class AddUser extends PureComponent {
     });
   }
 
-  handleUnitChange = event => this.setState({ sizeUnit: event.target.value });
+  handleUnitChange = unit => event => this.setState({
+    sizeUnits: {
+      ...this.state.sizeUnits,
+      [unit]: event.target.value,
+    },
+  });
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnit } = this.state;
-    const { storagequotalimit, displayname, displaytypeex } = properties;
+    const { username, loading, properties, password, repeatPw, sizeUnits } = this.state;
+    const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const usernameError = username && !username.match(/^([.0-9a-z_+-]+)$/);
     return (
       <Dialog
@@ -198,6 +213,46 @@ class AddUser extends PureComponent {
             />
             <TextField 
               className={classes.input} 
+              label={t("Send quota limit")}
+              value={prohibitsendquota || ''}
+              onChange={this.handleIntPropertyChange('prohibitsendquota')}
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={this.handleUnitChange('prohibitsendquota')}
+                      value={sizeUnits.prohibitsendquota}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Receive quota limit")}
+              value={prohibitreceivequota || ''}
+              onChange={this.handleIntPropertyChange('prohibitreceivequota')}
+              InputProps={{
+                endAdornment:
+                  <FormControl>
+                    <Select
+                      onChange={this.handleUnitChange('prohibitreceivequota')}
+                      value={sizeUnits.prohibitreceivequota}
+                      className={classes.select}
+                    >
+                      <MenuItem value={1}>MB</MenuItem>
+                      <MenuItem value={2}>GB</MenuItem>
+                      <MenuItem value={3}>TB</MenuItem>
+                    </Select>
+                  </FormControl>,
+              }}
+            />
+            <TextField 
+              className={classes.input} 
               label={t("Storage quota limit")}
               value={storagequotalimit || ''}
               onChange={this.handleIntPropertyChange('storagequotalimit')}
@@ -205,8 +260,8 @@ class AddUser extends PureComponent {
                 endAdornment:
                   <FormControl>
                     <Select
-                      onChange={this.handleUnitChange}
-                      value={sizeUnit}
+                      onChange={this.handleUnitChange('storagequotalimit')}
+                      value={sizeUnits.storagequotalimit}
                       className={classes.select}
                     >
                       <MenuItem value={1}>MB</MenuItem>

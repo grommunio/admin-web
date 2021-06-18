@@ -13,7 +13,8 @@ import {
   Tabs, Tab, Tooltip,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { fetchUserData, editUserData, editUserRoles, fetchLdapDump } from '../actions/users';
+import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
+  deleteUserStore } from '../actions/users';
 import TopBar from '../components/TopBar';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@material-ui/icons/Sync';
@@ -189,27 +190,37 @@ class UserDetails extends PureComponent {
   }
 
   handleEdit = () => {
+    const { edit, domain, editStore } = this.props;
     const { user, sizeUnits } = this.state;
-    this.props.edit(this.props.domain.ID, {
-      ...user,
-      domainID: undefined,
-      aliases: user.aliases.filter(alias => alias !== ''),
-      fetchmail: user.fetchmail.map(e => { return {
-        ...e,
-        date: undefined,
-        sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
-      };}),
-      properties: {
+    Promise.all([
+      edit(domain.ID, {
+        ...user,
+        domainID: undefined,
+        aliases: user.aliases.filter(alias => alias !== ''),
+        fetchmail: user.fetchmail.map(e => { return {
+          ...e,
+          date: undefined,
+          sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
+        };}),
+        properties: {
+          ...user.properties,
+          messagesizeextended: undefined,
+          storagequotalimit: undefined,
+          prohibitreceivequota: undefined,
+          prohibitsendquota: undefined,
+        },
+        roles: undefined,
+        ldapID: undefined,
+      }),
+      editStore(domain.ID, user.ID, {
         ...user.properties,
         messagesizeextended: undefined,
         storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || 0,
         prohibitreceivequota: user.properties.prohibitreceivequota * 2
           ** (10 * sizeUnits.prohibitreceivequota) || 0,
         prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || 0,
-      },
-      roles: undefined,
-    })
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      }),
+    ]).then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
@@ -243,6 +254,23 @@ class UserDetails extends PureComponent {
     const { ID, roles } = this.state.user;
     editUserRoles(domain.ID, ID, { roles: roles })
       .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+  }
+
+  handleQuotaDelete = prop => () => {
+    const { user } = this.state;
+    const { deleteStoreProp, domain } = this.props;
+    deleteStoreProp(domain.ID, user.ID, prop)
+      .then(() => this.setState({
+        snackbar: 'Success!',
+        user: {
+          ...user,
+          properties: {
+            ...user.properties,
+            [prop]: '',
+          },
+        },
+      }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
@@ -441,6 +469,7 @@ class UserDetails extends PureComponent {
               handleUnitChange={this.handleUnitChange}
               handlePasswordChange={this.handlePasswordDialogToggle(true)}
               rawData={rawData}
+              handleQuotaDelete={this.handleQuotaDelete}
             />}
             {tab === 1 && <User
               user={user}
@@ -541,6 +570,8 @@ UserDetails.propTypes = {
   fetch: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
+  editStore: PropTypes.func.isRequired,
+  deleteStoreProp: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
 };
 
@@ -554,6 +585,12 @@ const mapDispatchToProps = dispatch => {
     },
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
+    },
+    editStore: async (domainID, user, props) => {
+      await dispatch(editUserStore(domainID, user, props)).catch(msg => Promise.reject(msg));
+    },
+    deleteStoreProp: async (domainID, user, prop) => {
+      await dispatch(deleteUserStore(domainID, user, prop)).catch(msg => Promise.reject(msg));
     },
     editUserRoles: async (domainID, userID, roles) => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));

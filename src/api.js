@@ -266,6 +266,18 @@ export function storeProps(domainID, userID, props) {
   };
 }
 
+export function editStoreProps(domainID, userID, props) {
+  return async () => {
+    return await patch('/domains/' + domainID + '/users/'+ userID + '/storeProps', props);
+  };
+}
+
+export function deleteStoreProps(domainID, userID, props) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/'+ userID + '/storeProps?properties=' + props);
+  };
+}
+
 /* LDAP */
 
 export function searchLdap(params) {
