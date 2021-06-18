@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions,
-  CircularProgress, 
+  CircularProgress, FormControlLabel, Checkbox,
 } from '@material-ui/core';
 import { addDomainData } from '../../actions/domains';
 import { fetchOrgsData } from '../../actions/orgs';
@@ -37,6 +37,7 @@ class AddDomain extends PureComponent {
     adminName: '',
     tel: '',
     orgID: '',
+    createRole: false,
     loading: false,
   }
 
@@ -55,6 +56,12 @@ class AddDomain extends PureComponent {
     });
   }
 
+  handleCheckbox = field => event => {
+    this.setState({
+      [field]: event.target.checked,
+    });
+  }
+
   handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
@@ -65,7 +72,7 @@ class AddDomain extends PureComponent {
 
   handleAdd = () => {
     const { domainname, domainStatus, maxUser,
-      title, address, adminName, tel } = this.state;
+      title, address, adminName, tel, createRole } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
@@ -75,7 +82,7 @@ class AddDomain extends PureComponent {
       address,
       adminName,
       tel,
-    })
+    }, { createRole })
       .then(() => {
         this.setState({
           domainname: '',
@@ -86,6 +93,7 @@ class AddDomain extends PureComponent {
           adminName: '',
           tel: '',
           loading: false,
+          createRole: false,
         });
         this.props.onSuccess();
       })
@@ -98,7 +106,7 @@ class AddDomain extends PureComponent {
   render() {
     const { classes, t, open, onClose, orgs } = this.props;
     const { domainname, domainStatus, orgID,
-      maxUser, title, address, adminName, tel, loading } = this.state;
+      maxUser, title, address, adminName, tel, loading, createRole } = this.state;
     const domainError = !domainname.match(
       /^[0-9a-z]([-0-9a-z]*[0-9a-z])?(\.[0-9a-z]([-0-9a-z]*[0-9a-z])?)*$/);
 
@@ -187,6 +195,16 @@ class AddDomain extends PureComponent {
               value={tel || ''}
               onChange={this.handleInput('tel')}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={createRole}
+                  onChange={this.handleCheckbox('createRole')}
+                  color="primary"
+                />
+              }
+              label={t('Create domain admin role')}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -230,8 +248,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async domain => {
-      await dispatch(addDomainData(domain)).catch(message => Promise.reject(message));
+    add: async (domain, params) => {
+      await dispatch(addDomainData(domain, params)).catch(message => Promise.reject(message));
     },
     fetch: async () => await dispatch(fetchOrgsData()).catch(message => Promise.reject(message)),
   };

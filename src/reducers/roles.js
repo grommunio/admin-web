@@ -18,6 +18,7 @@ const defaultState = {
   error: null,
   Roles: [],
   Permissions: [],
+  count: 0,
 };
 
 function rolesReducer(state = defaultState, action) {
@@ -66,12 +67,14 @@ function rolesReducer(state = defaultState, action) {
       return {
         ...state,
         Roles: addItem(state.Roles, action.data),
+        count: state.count + 1,
       };
 
     case ROLE_DATA_DELETE:
       return {
         ...state,
         Roles: state.Roles.filter(role => role.ID !== action.ID),
+        count: state.count - 1,
       };
 
     case AUTH_AUTHENTICATED:

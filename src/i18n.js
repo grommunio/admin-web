@@ -159,6 +159,7 @@ const resources = {
       "Add add-statement": "Und-Verknüpfung hinzufügen",
       "Children": "Untergruppen",
       "Quota not available": "Nachrichtenspeichergröße unbekannt",
+      "Create domain admin role": "Domain-Admin Rolle erstellen",
 
       //LDAP
       "LDAP enabled": "LDAP aktiviert",

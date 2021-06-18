@@ -178,9 +178,9 @@ export function domain(id) {
   };
 }
 
-export function addDomain(domain) {
+export function addDomain(domain, params) {
   return async () => {
-    return await post('/system/domains', domain);
+    return await post(buildQuery('/system/domains', params), domain);
   };
 }
 

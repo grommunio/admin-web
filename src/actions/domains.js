@@ -40,10 +40,10 @@ export function fetchDomainDetails(id) {
   };
 }
 
-export function addDomainData(domain) {
+export function addDomainData(domain, params) {
   return async dispatch => {
     try {
-      const domainData = await dispatch(addDomain(domain));
+      const domainData = await dispatch(addDomain(domain, params));
       await dispatch({ type: DOMAIN_DATA_ADD, data: domainData });
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});
