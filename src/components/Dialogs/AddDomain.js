@@ -12,6 +12,8 @@ import { addDomainData } from '../../actions/domains';
 import { fetchOrgsData } from '../../actions/orgs';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { debounce } from 'debounce';
+import { checkFormat } from '../../api';
 
 const styles = theme => ({
   form: {
@@ -39,6 +41,7 @@ class AddDomain extends PureComponent {
     orgID: '',
     createRole: false,
     loading: false,
+    domainError: false,
   }
 
   statuses = [
@@ -51,10 +54,18 @@ class AddDomain extends PureComponent {
   }
 
   handleInput = field => event => {
+    const val = event.target.value;
+    if(val) this.debounceFetch({ domain: val });
     this.setState({
-      [field]: event.target.value,
+      [field]: val,
     });
   }
+
+  debounceFetch = debounce(async params => {
+    const resp = await checkFormat(params)
+      .catch(snackbar => this.setState({ snackbar, loading: false }));
+    this.setState({ domainError: !!resp?.domain });
+  }, 200)
 
   handleCheckbox = field => event => {
     this.setState({
@@ -105,10 +116,8 @@ class AddDomain extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, orgs } = this.props;
-    const { domainname, domainStatus, orgID,
+    const { domainname, domainStatus, orgID, domainError,
       maxUser, title, address, adminName, tel, loading, createRole } = this.state;
-    const domainError = !domainname.match(
-      /^[0-9a-z]([-0-9a-z]*[0-9a-z])?(\.[0-9a-z]([-0-9a-z]*[0-9a-z])?)*$/);
 
     return (
       <Dialog

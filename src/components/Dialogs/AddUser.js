@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
+import { debounce } from 'debounce';
+import { checkFormat } from '../../api';
 
 const styles = theme => ({
   form: {
@@ -43,6 +45,7 @@ class AddUser extends PureComponent {
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     },
+    usernameError: false,
   }
 
   types = [
@@ -52,10 +55,19 @@ class AddUser extends PureComponent {
   ]
 
   handleInput = field => event => {
+    const { domain } = this.props;
+    const val = event.target.value;
+    if(val) this.debounceFetch({ email: encodeURIComponent(val + '@' + domain.domainname) });
     this.setState({
-      [field]: event.target.value,
+      [field]: val,
     });
   }
+
+  debounceFetch = debounce(async params => {
+    const resp = await checkFormat(params)
+      .catch(snackbar => this.setState({ snackbar, loading: false }));
+    this.setState({ usernameError: !!resp?.email });
+  }, 200)
 
   handleCheckbox = field => event => this.setState({ [field]: event.target.checked });
 
@@ -157,9 +169,10 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits } = this.state;
+    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
-    const usernameError = username && !username.match(/^([.0-9a-z_+-]+)$/);
+    const addDisabled = usernameError || !username || loading ||
+      password !== repeatPw || !storagequotalimit || password.length < 6;
     return (
       <Dialog
         onClose={onClose}
@@ -181,7 +194,7 @@ class AddUser extends PureComponent {
               }}
               className={classes.input}
               required
-              error={usernameError}
+              error={!!username && usernameError}
             />
             <TextField 
               label={t("Password")}
@@ -307,7 +320,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!username || loading || password !== repeatPw || !storagequotalimit || password.length < 6}
+            disabled={addDisabled}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>

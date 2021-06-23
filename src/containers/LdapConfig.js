@@ -518,7 +518,7 @@ class LdapConfig extends PureComponent {
             <FormControl className={classes.formControl}>
               <Typography variant="h6" className={classes.category}>{t('Attribute Configuration')}</Typography>
               <LdapTextfield
-                label={t('LDAP Templates')}
+                label={t('LDAP Template')}
                 onChange={this.handleTemplate}
                 value={templates}
                 select

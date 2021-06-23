@@ -169,7 +169,6 @@ class DomainListDetails extends PureComponent {
                   label={t("Domain")} 
                   style={{ flex: 1, marginRight: 8 }} 
                   value={domainname || ''}
-                  onChange={this.handleInput('domainname')}
                   autoFocus
                   disabled
                 />

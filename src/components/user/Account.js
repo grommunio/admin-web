@@ -151,7 +151,6 @@ class Account extends PureComponent {
             label={t("Username")}
             value={username || ''}
             autoFocus
-            onChange={handleInput('username')}
             style={{ flex: 1, marginRight: 8 }}
             InputProps={{
               endAdornment: <div>@{domain.domainname}</div>,

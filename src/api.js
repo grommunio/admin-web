@@ -770,3 +770,13 @@ export async function changePw(oldPw, newPw) {
     return await put('/passwd', { old: oldPw, new: newPw });
   } catch(err) { return Promise.reject(err); }
 }
+
+/*
+  CHECK DOMAIN FORMAT
+*/
+
+export async function checkFormat(params) {
+  try {
+    return await get(buildQuery('/chkFormat', params));
+  } catch(err) { return Promise.reject(err); }
+}
