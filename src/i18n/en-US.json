@@ -1,0 +1,16 @@
+{
+  "addHeadline": "Add {{item}}",
+  "editHeadline": "Edit {{item}}",
+  "deleteDialog": "Are you sure you want to delete {{item}}",
+  "addEntry": "Add entry for {{username}}",
+  "editEntry": "Edit entry for {{username}}",
+  "ldap_server_desc": "Space-separated list of URIs (only schema, host and port; no base)",
+  "ldap_password_desc": "Password for bindUser (always uses LDAP Simple Authentication)",
+  "ldap_oID_desc": "Name of an attribute that uniquely identifies an LDAP object",
+  "ldap_username_desc": "Name of the attribute that corresponds to the username (e-mail address)",
+  "ldap_settingsHelp": "LDAP server configuration. User sychronization can be found at the list of users of individual domains",
+  "ldap_import_tooltip": "Import not-yet imported ldap users and synchronize already imported ones",
+  "ldap_defaultQuota_desc": "Storage quota of imported users if no mapping exists",
+  "ldap_attribute_desc": "This controls which attributes the \"Search in LDAP\" functionality will look at when searching using an arbitrary search string.",
+  "ldap_mapping_desc": "LDAP attribute to map -> Name of the user property to map to. Any mappings specified take precendence over active templates"
+}

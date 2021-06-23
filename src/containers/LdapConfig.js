@@ -328,8 +328,7 @@ class LdapConfig extends PureComponent {
             {t("LDAP settings")}
             <Tooltip
               className={classes.tooltip}
-              title="LDAP server configuration.
-                User sychronization can be found at the list of users of individual domains"
+              title={t("ldap_settingsHelp")}
               placement="top"
             >
               <IconButton size="small">
@@ -351,7 +350,7 @@ class LdapConfig extends PureComponent {
                 {t('LDAP enabled')}
                 <Tooltip
                   className={classes.tooltip}
-                  title="Enable LDAP service"
+                  title={t("Enable LDAP service")}
                   placement="top"
                 >
                   <IconButton size="small">
@@ -373,7 +372,7 @@ class LdapConfig extends PureComponent {
                 {t('Force config save')}
                 <Tooltip
                   className={classes.tooltip}
-                  title="Save LDAP configuration even if it's faulty"
+                  title={t("Save LDAP configuration even if it's faulty")}
                   placement="top"
                 >
                   <IconButton size="small">
@@ -383,24 +382,27 @@ class LdapConfig extends PureComponent {
               </span>}
             />
             <div className={classes.flexContainer}>
-              <Tooltip placement="top" title="Synchronize already imported users">
+              <Tooltip placement="top" title={t("Synchronize already imported users")}>
                 <Button
                   variant="contained"
                   color="primary"
                   style={{ marginRight: 16 }}
                   onClick={this.handleSync(false)}
                 >
-                  Sync users
+                  {t("Sync users")}
                 </Button>
               </Tooltip>
-              <Tooltip placement="top" title="Import not-yet imported ldap users and synchronize already imported ones">
+              <Tooltip
+                placement="top"
+                title={t("ldap_import_tooltip")}
+              >
                 <Button
                   variant="contained"
                   color="primary"
                   style={{ marginRight: 16 }}
                   onClick={this.handleSync(true)}
                 >
-                  Import users
+                  {t("Import users")}
                 </Button>
               </Tooltip>
             </div>
@@ -421,20 +423,20 @@ class LdapConfig extends PureComponent {
               <div className={classes.flexRow}>
                 <LdapTextfield
                   flex
-                  label={t('LDAP Server')}
+                  label='LDAP Server'
                   onChange={this.handleInput('server')}
                   value={server || ''}
-                  desc="Space-separated list of URIs (only schema, host and port; no base)"
+                  desc={t("ldap_server_desc")}
                   id="url"
                   name="url"
                   autoComplete="url"
                 />
                 <LdapTextfield
                   flex
-                  label={t("LDAP Bind DN")}
+                  label="LDAP Bind DN"
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
-                  desc="Distinguished Name used for binding"
+                  desc={t("Distinguished Name used for binding")}
                   id="username"
                   name="username"
                   autoComplete="username"
@@ -444,7 +446,7 @@ class LdapConfig extends PureComponent {
                   label={t('LDAP Bind Password')}
                   onChange={this.handleInput('bindPass')}
                   value={bindPass || ''}
-                  desc="Password for bindUser (always uses LDAP Simple Authentication)"
+                  desc={t("ldap_password_desc")}
                   id="password"
                   name="password"
                   type="password"
@@ -465,7 +467,7 @@ class LdapConfig extends PureComponent {
                     />
                   }
                   label={<span>
-                    {t('STARTTLS')}
+                    {'STARTTLS'}
                     <Tooltip
                       className={classes.tooltip}
                       title="Whether to issue a StartTLS extended operation"
@@ -479,10 +481,10 @@ class LdapConfig extends PureComponent {
                 />
               </div>
               <LdapTextfield
-                label={t('LDAP Base DN')}
+                label='LDAP Base DN'
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
-                desc="Base DN to use for searches"
+                desc={t("Base DN to use for searches")}
                 id="baseDn"
                 name="baseDn"
                 autoComplete="baseDn"
@@ -502,12 +504,12 @@ class LdapConfig extends PureComponent {
                 className={classes.radioGroup}
                 color="primary"
               >
-                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label="Only MySQL" />
-                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label="Only LDAP" />
+                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label={t("Only MySQL")} />
+                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label={t("Only LDAP")} />
                 <FormControlLabel
                   value="externid"
                   control={<Radio color="primary"/>}
-                  label="Automatic"
+                  label={t("Automatic")}
                 />
               </RadioGroup>
             </FormControl>
@@ -520,7 +522,7 @@ class LdapConfig extends PureComponent {
                 onChange={this.handleTemplate}
                 value={templates}
                 select
-                desc="List of mapping templates to use"
+                desc={t("Mapping templates to use")}
                 id="templates"
                 name="templates"
                 autoComplete="templates"
@@ -533,7 +535,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Filter')}
                 onChange={this.handleInput('filter')}
                 value={filter || ''}
-                desc="LDAP search filter to apply to user lookup"
+                desc={t("LDAP search filter to apply to user lookup")}
                 id="filter"
                 name="filter"
                 autoComplete="filter"
@@ -542,7 +544,7 @@ class LdapConfig extends PureComponent {
                 label={t('Unique Identifier Attribute')}
                 onChange={this.handleInput('objectID')}
                 value={objectID || ''}
-                desc="Name of an attribute that uniquely idetifies an LDAP object"
+                desc={t("ldap_oID_desc")}
                 id="objectID"
                 name="objectID"
                 autoComplete="objectID"
@@ -551,7 +553,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Username Attribute')}
                 onChange={this.handleInput('username')}
                 value={username || ''}
-                desc="Name of the attribute that corresponds to the username (e-mail address)"
+                desc={t("ldap_username_desc")}
                 id="username"
                 name="username"
                 autoComplete="username"
@@ -560,7 +562,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Display Name Attribute')}
                 onChange={this.handleInput('displayName')}
                 value={displayName || ''}
-                desc="Name of the attribute that contains the name"
+                desc={t("Name of the attribute that contains the name")}
                 id="displayName"
                 name="displayName"
                 autoComplete="displayName"
@@ -569,7 +571,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Default Quota')}
                 onChange={this.handleInput('defaultQuota')}
                 value={defaultQuota}
-                desc="Storage quota of imported users if no mapping exists"
+                desc={t("ldap_defaultQuota_desc")}
                 id="defaultQuota"
                 name="defaultQuota"
                 autoComplete="defaultQuota"
@@ -578,7 +580,7 @@ class LdapConfig extends PureComponent {
                 label={t('LDAP Aliases')}
                 onChange={this.handleInput('aliases')}
                 value={aliases}
-                desc="LDAP Alias mapping"
+                desc={t("LDAP alias mapping")}
                 id="aliasMapping"
                 name="aliasMapping"
                 autoComplete="aliasMapping"
@@ -588,8 +590,7 @@ class LdapConfig extends PureComponent {
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.category}>{t('LDAP Search Attributes')}</Typography>
             <Typography variant="caption" className={classes.category}>
-              This controls which attributes the &quot;Search in LDAP&quot;
-              functionality will look at when searching using an arbitrary search string.
+              {t('ldap_attribute_desc')}
             </Typography>
             <Autocomplete
               value={searchAttributes || []}
@@ -609,8 +610,7 @@ class LdapConfig extends PureComponent {
               {t('Custom Mapping')}
               <Tooltip
                 className={classes.tooltip}
-                title="LDAP attribute to map -> Name of the user property to map to.
-                  Any mappings specified take precendence over active templates"
+                title={t('ldap_mapping_desc')}
                 placement="top"
               >
                 <IconButton size="small">
@@ -625,7 +625,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('key', idx)}
                   value={mapping.key || ''}
-                  desc="LDAP attribute to map"
+                  desc={t("LDAP attribute to map")}
                 />
                 <Typography className={classes.spacer}>:</Typography>
                 <LdapTextfield
@@ -633,7 +633,7 @@ class LdapConfig extends PureComponent {
                   flex
                   onChange={this.handleAttributeInput('value', idx)}
                   value={mapping.value || ''}
-                  desc="Name of the user property to map to"
+                  desc={t("Name of the user property to map to")}
                 />
                 <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
                   <Delete color="error" />
