@@ -519,6 +519,15 @@ export function log(filename, params) {
   };
 }
 
+/*
+  SYNC
+*/
+
+export function grammmSync(params) {
+  return async () => {
+    return await get(buildQuery('/system/sync/top', params));
+  };
+}
 
 /*
   FORWARDS

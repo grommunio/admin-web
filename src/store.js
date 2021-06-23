@@ -26,6 +26,7 @@ import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
+import syncReducer from './reducers/sync';
 import antispamReducer from './reducers/antispam';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -49,6 +50,7 @@ export const store = createStore(
     roles: rolesReducer,
     services: servicesReducer,
     settings: settingsReducer,
+    sync: syncReducer,
     users: usersReducer,
   }),
   composeEnhancers(applyMiddleware(

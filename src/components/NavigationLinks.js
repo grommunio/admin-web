@@ -21,6 +21,7 @@ import MLists from '@material-ui/icons/Email';
 import Storage from '@material-ui/icons/Storage';
 import Orgs from '@material-ui/icons/GroupWork';
 import Logs from '@material-ui/icons/ViewHeadline';
+import Sync from '@material-ui/icons/Sync';
 /*
 import Mail from '@material-ui/icons/Mail';
 import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
@@ -359,6 +360,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Logs className={classes.icon}/>
                 <ListItemText primary={t('Logs')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('sync')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/sync')}
+            >
+              <Grid container alignItems="center">
+                <Sync className={classes.icon}/>
+                <ListItemText primary={t('Sync')} />
               </Grid>
             </ListItem>
           </React.Fragment>
