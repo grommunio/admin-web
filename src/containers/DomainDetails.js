@@ -117,8 +117,9 @@ class DomainListDetails extends PureComponent {
     const { domain } = this.state;
     this.props.edit({
       ...domain,
-      domainname: undefined,
+      displayname: undefined,
       createDay: undefined,
+      endDay: undefined,
       activeUsers: undefined,
       inactiveUsers: undefined,
     })
