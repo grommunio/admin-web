@@ -22,6 +22,7 @@ import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
 import { CheckCircleOutlined, HighlightOffOutlined } from "@material-ui/icons";
 import { getStringFromCommand } from "../utils";
+import SyncStatistics from "../components/SyncStatistics";
 
 const styles = (theme) => ({
   root: {
@@ -125,6 +126,7 @@ class Sync extends PureComponent {
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Mobile Devices")}
           </Typography>
+          <SyncStatistics data={sync}/>
           <Paper elevation={1}>
             <Table size="small">
               <TableHead>
