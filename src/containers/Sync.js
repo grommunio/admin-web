@@ -162,7 +162,7 @@ class Sync extends PureComponent {
                       <TableCell>{obj.devid}</TableCell>
                       <TableCell>{obj.devtype + ' / ' + obj.devagent}</TableCell>
                       <TableCell>{getStringFromCommand(obj.command)}</TableCell>
-                      <TableCell>{obj.update}</TableCell>
+                      <TableCell>{parseUnixtime(obj.update)}</TableCell>
                       <TableCell padding="checkbox">
                         {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
                       </TableCell>
