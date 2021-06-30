@@ -13,6 +13,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  TableSortLabel,
+  Tooltip,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
@@ -48,50 +50,71 @@ class Sync extends PureComponent {
 
   state = {
     snackbar: null,
+    sortedDevices: null,
+    order: 'asc',
+    orderBy: 'pid',
+    type: 'int',
   };
 
   columns = [
-    { label: "PID", value: "pid", padding: "checkbox" },
+    { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
     { label: "IP", value: "ip", padding: "checkbox" },
     { label: "User", value: "user" },
-    { label: "Start", value: "start" },
-    { label: "Dev type", value: "devtype" },
-    { label: "Dev ID", value: "devid" },
-    { label: "Dev agent", value: "devagent" },
-    { label: "Command", value: "command" },
-    { label: "Ended", value: "ended" },
-    { label: "Add info", value: "addinfo" },
-    { label: "Update", value: "update", padding: "checkbox" },
+    { label: "Start", value: "start", type: 'int' },
+    { label: "Device ID", value: "devid" },
+    { label: "Device Type / Agent", value: "devtype" },
+    { label: "Command", value: "command", type: 'int' },
+    { label: "Update", value: "update", padding: "checkbox", type: 'int' },
   ];
-
+  
   fetchInterval = null;
-
+  
   componentDidMount() {
+    const { orderBy, type } = this.state;
     this.props.fetch({})
+      .then(this.handleSort(orderBy, type, false))
       .catch(snackbar => this.setState({ snackbar }));
     this.fetchInterval = setInterval(() => {
       this.handleRefresh();
     }, 2000);
   }
-
+  
   componentWillUnmount() {
     clearInterval(this.fetchInterval);
   }
-
+  
   handleNavigation = (path) => (event) => {
     const { history } = this.props;
     event.preventDefault();
     history.push(`/${path}`);
   };
-
+  
   handleRefresh = () => {
+    const { orderBy, type } = this.state;
     this.props.fetch({})
+      .then(this.handleSort(orderBy, type, false))
       .catch(snackbar => this.setState({ snackbar }));
+  }
+
+  handleSort = (attribute, type, switchOrder) => () => {
+    const sortedDevices = [...this.props.sync];
+    const { order: stateOrder, orderBy } = this.state;
+    const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
+    if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
+      sortedDevices.sort((a, b) =>
+        type !== 'int' ? a[attribute].localeCompare(b[attribute]) : a[attribute] - b[attribute]
+      );
+    } else {
+      sortedDevices.sort((a, b) => 
+        type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
+      );
+    }
+    this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
   render() {
     const { classes, t, sync } = this.props;
-    const { snackbar } = this.state;
+    const { snackbar, sortedDevices, order, orderBy } = this.state;
 
     return (
       <div className={classes.root}>
@@ -106,8 +129,18 @@ class Sync extends PureComponent {
               <TableHead>
                 <TableRow>
                   {this.columns.map((column) => (
-                    <TableCell key={column.value} padding={column.padding || 'default'}>
-                      {t(column.label)}
+                    <TableCell
+                      key={column.value}
+                      padding={column.padding || 'default'}
+                    >
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left" 
+                        direction={order}
+                        onClick={this.handleSort(column.value, column.type, true)}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
                     </TableCell>
                   ))}
                   <TableCell padding="checkbox">
@@ -116,18 +149,23 @@ class Sync extends PureComponent {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {sync.map((obj, idx) =>
-                  <TableRow key={idx} hover>
-                    {this.columns.map((column) => (
-                      <TableCell key={column.value} padding={column.padding || 'default'}>
-                        {obj[column.value]}
+                {(sortedDevices || sync).map((obj, idx) =>
+                  <Tooltip key={idx} placement="top" title={obj.addinfo}>
+                    <TableRow hover>
+                      <TableCell padding="checkbox">{obj.pid}</TableCell>
+                      <TableCell padding="checkbox">{obj.ip}</TableCell>
+                      <TableCell>{obj.user}</TableCell>
+                      <TableCell>{obj.start}</TableCell>
+                      <TableCell>{obj.devid}</TableCell>
+                      <TableCell>{obj.devtype + ' / ' + obj.devagent}</TableCell>
+                      <TableCell>{obj.command}</TableCell>
+                      <TableCell>{obj.update}</TableCell>
+                      <TableCell padding="checkbox">
+                        {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
                       </TableCell>
-                    ))}
-                    <TableCell padding="checkbox">
-                      {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
-                    </TableCell>
-                  </TableRow>)
-                }
+                    </TableRow>
+                  </Tooltip>
+                )}
               </TableBody>
             </Table>
           </Paper>
@@ -150,7 +188,7 @@ Sync.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  return { sync: state.sync.Sync };
+  return { sync: state.sync.Sync || [] };
 };
 
 const mapDispatchToProps = (dispatch) => {
