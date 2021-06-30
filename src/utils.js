@@ -75,3 +75,39 @@ export function cloneObject(obj) {
   }
   return clone;
 }
+
+export function getStringFromCommand(command) {
+  switch (command) {
+    case 0: return 'Sync';
+    case 1: return 'SendMail';
+    case 2: return 'SmartForward';
+    case 3: return 'SmartReply';
+    case 4: return 'GetAttachment';
+    case 9: return 'FolderSync';
+    case 10: return 'FolderCreate';
+    case 11: return 'FolderDelete';
+    case 12: return 'FolderUpdate';
+    case 13: return 'MoveItems';
+    case 14: return 'GetItemEstimate';
+    case 15: return 'MeetingResponse';
+    case 16: return 'Search';
+    case 17: return 'Settings';
+    case 18: return 'Ping';
+    case 19: return 'ItemOperations';
+    case 20: return 'Provision';
+    case 21: return 'ResolveRecipients';
+    case 22: return 'ValidateCert';
+
+    case -1: return 'GetHierarchy';
+    case -2: return 'CreateCollection';
+    case -3: return 'DeleteCollection';
+    case -4: return 'MoveCollection';
+    case -5: return 'Notify';
+
+    case -100: return 'WebserviceDevice';
+    case -101: return 'WebserviceUsers';
+    case -102: return 'WebserviceInfo';
+    default: return '';
+  }
+}
+
