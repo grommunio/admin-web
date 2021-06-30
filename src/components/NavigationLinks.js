@@ -370,7 +370,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Sync className={classes.icon}/>
-                <ListItemText primary={t('Sync')} />
+                <ListItemText primary={t('Mobile Devices')} />
               </Grid>
             </ListItem>
           </React.Fragment>

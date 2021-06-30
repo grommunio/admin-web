@@ -192,6 +192,7 @@
   "LDAP Search Attributes": "LDAP Such-Attribute",
   "ldap_attribute_desc": "Steuert, welche Attribute die \"$t(Search in LDAP)\" Funktionalität verwendet, wenn man eine beliebige Suchanfrage schickt.",
   "ldap_mapping_desc": "$t(LDAP attribute to map) -> $t(Name of the user property to map to). Jede spezifizierte Abbildung überschreibt aktive Templates",
+  "Mobile Devices": "Mobilgeräte",
 
   "First name": "Vorname",
   "Initials": "Initialien",

@@ -99,7 +99,7 @@ class Sync extends PureComponent {
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Sync")}
+            {t("Mobile Devices")}
           </Typography>
           <Paper elevation={1}>
             <Table size="small">
