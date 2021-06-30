@@ -59,6 +59,13 @@ export function setDateString(date) {
     .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }
 
+export function parseUnixtime(time) {
+  const parsedTime = moment.unix(time);
+  return store.getState().settings.language === 'de-DE' ?
+    parsedTime.format('DD.MM.YYYY HH:mm:ss') :
+    parsedTime.format('MM-DD-YYYY h:mm:ss a');
+}
+
 export function append(arr, newArr) {
   let copy = [...arr];
   copy = copy.concat(newArr);

@@ -21,7 +21,7 @@ import TopBar from "../components/TopBar";
 import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
 import { CheckCircleOutlined, HighlightOffOutlined } from "@material-ui/icons";
-import { getStringFromCommand } from "../utils";
+import { getStringFromCommand, parseUnixtime } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
 
 const styles = (theme) => ({
@@ -158,7 +158,7 @@ class Sync extends PureComponent {
                       <TableCell padding="checkbox">{obj.pid}</TableCell>
                       <TableCell padding="checkbox">{obj.ip}</TableCell>
                       <TableCell>{obj.user}</TableCell>
-                      <TableCell>{obj.start}</TableCell>
+                      <TableCell>{parseUnixtime(obj.start)}</TableCell>
                       <TableCell>{obj.devid}</TableCell>
                       <TableCell>{obj.devtype + ' / ' + obj.devagent}</TableCell>
                       <TableCell>{getStringFromCommand(obj.command)}</TableCell>
