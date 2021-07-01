@@ -29,6 +29,7 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import Roles from '../components/user/Roles';
 import Smtp from '../components/user/Smtp';
+import SyncTab from '../components/user/Sync';
 import ChangeUserPassword from '../components/Dialogs/ChangeUserPassword';
 import FetchMail from '../components/user/FetchMail';
 import AddFetchmail from '../components/Dialogs/AddFetchmail';
@@ -456,6 +457,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Roles")} />
               <Tab label={t("SMTP")} />
               <Tab label={t("FetchMail")} />
+              <Tab label={t("Mobile Devices")} />
             </Tabs>
             {tab === 0 && <Account
               domain={domain}
@@ -494,6 +496,10 @@ class UserDetails extends PureComponent {
               handleAdd={this.handleFetchmailDialog(true)}
               handleEdit={this.handleFetchmailEditDialog}
               handleDelete={this.handleFetchmailDelete}
+            />}
+            {tab === 6 && <SyncTab
+              domain={domain.ID}
+              user={user.ID}
             />}
             <Grid container className={classes.buttonGrid}>
               <Button

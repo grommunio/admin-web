@@ -11,9 +11,10 @@ import {
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
+  USERS_SYNC_RECEIVED,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser,
-  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps } from '../api';
+  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -76,6 +77,17 @@ export function fetchLdapDump(params) {
     try {
       const data = await dispatch(ldapDump(params));
       return Promise.resolve(data);
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchUserSync(domainID, userID) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(userSync(domainID, userID));
+      await dispatch({type: USERS_SYNC_RECEIVED, data});
     } catch(err) {
       return Promise.reject(err.message);
     }

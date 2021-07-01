@@ -278,6 +278,12 @@ export function deleteStoreProps(domainID, userID, props) {
   };
 }
 
+export function userSync(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID + '/sync');
+  };
+}
+
 /* LDAP */
 
 export function searchLdap(params) {

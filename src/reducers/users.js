@@ -12,6 +12,7 @@ import {
   ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
   AUTH_AUTHENTICATED,
+  USERS_SYNC_RECEIVED,
 } from '../actions/types';
 import { append } from '../utils';
 
@@ -22,6 +23,7 @@ const defaultState = {
   count: 0,
   Users: [],
   Orphaned: [],
+  Sync: [],
 };
 
 function addUser(arr, user) {
@@ -105,6 +107,12 @@ function usersReducer(state=defaultState, action) {
       return {
         ...state,
         Orphaned: [],
+      };
+
+    case USERS_SYNC_RECEIVED:
+      return {
+        ...state,
+        Sync: action.data.data,
       };
 
     case AUTH_AUTHENTICATED:
