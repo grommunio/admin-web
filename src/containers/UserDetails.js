@@ -96,9 +96,9 @@ class UserDetails extends PureComponent {
     snackbar: '',
     tab: 0,
     sizeUnits: {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
+      storagequotalimit: 0,
+      prohibitreceivequota: 0,
+      prohibitsendquota: 0,
     },
     detaching: false,
     detachLoading: false,
@@ -123,20 +123,22 @@ class UserDetails extends PureComponent {
     const username = user.username.slice(0, user.username.indexOf('@'));
     const roles = (user.roles && user.roles.map(role => role.ID)) || [];
     let sizeUnits = {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
+      storagequotalimit: 0,
+      prohibitreceivequota: 0,
+      prohibitsendquota: 0,
     };
     for(let quotaLimit in sizeUnits) {
-      for(let i = 3; i > 0; i--) {
+      properties[quotaLimit] = properties[quotaLimit] / 1024;
+      for(let i = 2; i >= 0; i--) {
         if(properties[quotaLimit] === 0) break;
         let r = properties[quotaLimit] % 1024 ** i;
         if(r === 0) {
-          sizeUnits[quotaLimit] = i;
+          sizeUnits[quotaLimit] = i + 1;
           properties[quotaLimit] = properties[quotaLimit] / 1024 ** i;
           break;
         }
       }
+      properties[quotaLimit] = Math.ceil(properties[quotaLimit]);
     }
     return {
       sizeUnits,
