@@ -171,8 +171,7 @@ class AddUser extends PureComponent {
     const { classes, t, domain, open, onClose } = this.props;
     const { username, loading, properties, password, repeatPw, sizeUnits, usernameError } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
-    const addDisabled = usernameError || !username || loading ||
-      password !== repeatPw || !storagequotalimit || password.length < 6;
+    const addDisabled = usernameError || !username || loading || password !== repeatPw || password.length < 6;
     return (
       <Dialog
         onClose={onClose}
@@ -311,8 +310,7 @@ class AddUser extends PureComponent {
             onClick={this.handleAddAndEdit}
             variant="contained"
             color="primary"
-            disabled={usernameError || !username || loading || password !== repeatPw
-              || !storagequotalimit || password.length < 6}
+            disabled={addDisabled}
           >
             {loading ? <CircularProgress size={24}/> : t('Add and edit')}
           </Button>
