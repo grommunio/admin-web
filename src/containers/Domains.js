@@ -300,7 +300,7 @@ class DomainList extends Component {
                 {filteredDomains.map((obj, idx) =>
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>
-                      {obj.domainname}{" "}
+                      {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
                       {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
                     </TableCell>
                     <TableCell>{obj.address}</TableCell>
