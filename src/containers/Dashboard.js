@@ -34,6 +34,7 @@ const styles = (theme) => ({
     [theme.breakpoints.up("xs")]: {
       gridTemplateColumns: "1fr 1fr",
       gridTemplateAreas: `"antispam antispam"
+                          "headline headline"
                           "services services" 
                           "cpu      cpu"
                           "memory   memory"
@@ -43,6 +44,7 @@ const styles = (theme) => ({
     [theme.breakpoints.up("md")]: {
       gridTemplateColumns: '540px 1fr 1fr 1fr',
       gridTemplateAreas: `"antispam antispam antispam antispam"
+                          "headline headline headline headline"
                           "services cpu      cpu      cpu     " 
                           "services memory   memory   memory  "
                           "services swap     swap     swap    "
@@ -68,6 +70,9 @@ const styles = (theme) => ({
   },
   swap: {
     gridArea: 'swap',
+  },
+  headline: {
+    display: 'grid',
   },
   donutAndLineChart: {
     display: 'grid',
@@ -156,7 +161,7 @@ class Dashboard extends Component {
         <TopBar />
         <div className={classes.toolbar} />
         <Typography variant="h2" className={classes.pageTitle}>
-          {t("Dashboard")}
+          {t("Spam statistics")}
         </Typography>
         <div className={classes.dashboardLayout}>
           <div className={classes.antispam}>
@@ -164,6 +169,11 @@ class Dashboard extends Component {
           </div>
           <div className={classes.services}>
             <ServicesChart/>
+          </div>
+          <div className={classes.headline}>
+            <Typography variant="h2" className={classes.pageTitle}>
+              {t("Performance")}
+            </Typography>
           </div>
           <div className={classes.cpu}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
