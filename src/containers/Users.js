@@ -278,7 +278,7 @@ class Users extends Component {
             >
               {t('Search in LDAP')}
             </Button>
-            <Tooltip placement="top" title="Syncronize already imported users of this domain">
+            <Tooltip placement="top" title="Synchronize imported users for this domain">
               <Button
                 variant="contained"
                 color="primary"
@@ -290,7 +290,7 @@ class Users extends Component {
             </Tooltip>
             <Tooltip
               placement="top"
-              title="Import not-yet imported ldap users of this domain and synchronize already imported ones"
+              title="Import new users from LDAP for this domain and synchronize previously imported ones"
             >
               <Button
                 variant="contained"
