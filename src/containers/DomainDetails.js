@@ -17,6 +17,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Tabs,
+  Tab,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
@@ -25,6 +27,7 @@ import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchOrgsData } from '../actions/orgs';
+import SyncPolicies from '../components/SyncPolicies';
 
 const styles = theme => ({
   root: {
@@ -57,15 +60,28 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
+  tabs: {
+    marginTop: 16,
+  },
 });
 
 class DomainListDetails extends PureComponent {
 
   state = {
-    domain: {},
+    domainname: '',
+    domainStatus: 0,
+    orgID: '',
+    maxUser: 0,
+    title: '',
+    address: '',
+    adminName: '',
+    tel: '',
+    syncPolicy: {},
+    defaultPolicy: {},
     changingPw: false,
     newPw: '',
     checkPw: '',
+    tab: 0,
   }
 
   statuses = [
@@ -79,49 +95,39 @@ class DomainListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const defaultPolicy = domain.defaultPolicy;
+    domain.syncPolicy = domain.syncPolicy || {};
     this.setState({
-      domain: domain || {},
+      ...(domain || {}),
+      defaultPolicy,
     });
   }
 
   handleInput = field => event => {
     this.setState({
-      domain: {
-        ...this.state.domain,
-        [field]: event.target.value,
-      },
-      unsaved: true,
+      [field]: event.target.value,
     });
   }
 
   handleCheckbox = field => event => this.setState({
-    domain: {
-      ...this.state.domain,
-      [field]: event.target.checked,
-    },
+    [field]: event.target.checked,
     unsaved: true,
   });
 
-  handleNumberInput = field => event => {
-    let input = event.target.value;
-    if(input && input.match("^\\d*?$")) input = parseInt(input);
-    this.setState({
-      domain: {
-        ...this.state.domain,
-        [field]: input,
-      },
-    });
-  }
-
   handleEdit = () => {
-    const { domain } = this.state;
+    const { ID, domainname, domainStatus, orgID,
+      maxUser, title, address, adminName, tel, syncPolicy } = this.state;
     this.props.edit({
-      ...domain,
-      displayname: undefined,
-      createDay: undefined,
-      endDay: undefined,
-      activeUsers: undefined,
-      inactiveUsers: undefined,
+      ID,
+      domainname,
+      domainStatus,
+      orgID: Number.isInteger(orgID) ? orgID : null,
+      maxUser: parseInt(maxUser) || null,
+      title,
+      address,
+      adminName,
+      tel,
+      syncPolicy,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -144,12 +150,52 @@ class DomainListDetails extends PureComponent {
     else this.props.history.push('/' + getStringAfterLastSlash());
   }
 
+  handleTab = (e, tab) => this.setState({ tab })
+
+  handleSyncChange = field => event => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: event.target.value,
+      },
+    });
+  }
+
+  handleRadio = field => event => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: parseInt(event.target.value),
+      },
+    });
+  }
+
+  handleSyncCheckboxChange = field => (event, newVal) => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: newVal ? 1 : 0,
+      },
+    });
+  }
+
+  handleSlider = field => (event, newVal) => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: newVal,
+      },
+    });
+  }
+
   render() {
     const { classes, t, orgs, capabilities } = this.props;
-    const { checkPw, newPw, changingPw, snackbar } = this.state;
-    const { domainname, domainStatus, orgID,
-      maxUser, title, address, adminName, tel } = this.state.domain;
-
+    const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
+      tel, defaultPolicy, syncPolicy, checkPw, newPw, changingPw, snackbar, tab } = this.state;
     return (
       <div className={classes.root}>
         <TopBar title={t("Domain list")}/>
@@ -164,7 +210,11 @@ class DomainListDetails extends PureComponent {
                 {t('editHeadline', { item: 'Domain' })}
               </Typography>
             </Grid>
-            <FormControl className={classes.form}>
+            <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
+              <Tab value={0} label={t('Domain')} />
+              <Tab value={1} label={t('Sync policies')} />
+            </Tabs>
+            {tab === 0 && <FormControl className={classes.form}>
               <Grid container className={classes.input}>
                 <TextField
                   label={t("Domain")} 
@@ -204,6 +254,7 @@ class DomainListDetails extends PureComponent {
                 value={orgID || ''}
                 onChange={this.handleInput('orgID')}
               >
+                <MenuItem value='None'>{t('None')}</MenuItem>
                 {orgs.map((org, key) => (
                   <MenuItem key={key} value={org.ID}>
                     {org.name}
@@ -215,7 +266,7 @@ class DomainListDetails extends PureComponent {
                 label={t("Maximum users")} 
                 fullWidth 
                 value={maxUser || ''}
-                onChange={this.handleNumberInput('maxUser')}
+                onChange={this.handleInput('maxUser')}
               />
               <TextField 
                 className={classes.input} 
@@ -245,7 +296,15 @@ class DomainListDetails extends PureComponent {
                 value={tel || ''}
                 onChange={this.handleInput('tel')}
               />
-            </FormControl>
+            </FormControl>}
+            {tab === 1 && <SyncPolicies
+              defaultPolicy={defaultPolicy || {}}
+              syncPolicy={syncPolicy}
+              handleChange={this.handleSyncChange}
+              handleCheckbox={this.handleSyncCheckboxChange}
+              handleRadio={this.handleRadio}
+              handleSlider={this.handleSlider}
+            />}
             <Button
               variant="contained"
               onClick={this.handleBack}
