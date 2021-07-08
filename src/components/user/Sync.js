@@ -86,9 +86,9 @@ class Sync extends PureComponent {
         <Table size="small">
           <TableHead>
             <TableRow>
-              {this.columns.map((column) =>
+              {this.columns.map((column, key) =>
                 <TableCell
-                  key={column.value}
+                  key={key}
                   padding={column.padding || 'default'}
                 >
                   <TableSortLabel

@@ -100,9 +100,9 @@ class UserDetails extends PureComponent {
     snackbar: '',
     tab: 0,
     sizeUnits: {
-      storagequotalimit: 0,
-      prohibitreceivequota: 0,
-      prohibitsendquota: 0,
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
     },
     detaching: false,
     detachLoading: false,
@@ -128,11 +128,12 @@ class UserDetails extends PureComponent {
     const username = user.username.slice(0, user.username.indexOf('@'));
     const roles = (user.roles && user.roles.map(role => role.ID)) || [];
     let sizeUnits = {
-      storagequotalimit: 0,
-      prohibitreceivequota: 0,
-      prohibitsendquota: 0,
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
     };
     for(let quotaLimit in sizeUnits) {
+      if(properties[quotaLimit] === undefined) continue;
       properties[quotaLimit] = properties[quotaLimit] / 1024;
       for(let i = 2; i >= 0; i--) {
         if(properties[quotaLimit] === 0) break;
@@ -232,10 +233,10 @@ class UserDetails extends PureComponent {
       editStore(domain.ID, user.ID, {
         ...user.properties,
         messagesizeextended: undefined,
-        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || 0,
+        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
         prohibitreceivequota: user.properties.prohibitreceivequota * 2
-          ** (10 * sizeUnits.prohibitreceivequota) || 0,
-        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || 0,
+          ** (10 * sizeUnits.prohibitreceivequota) || undefined,
+        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
       }),
     ]).then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
