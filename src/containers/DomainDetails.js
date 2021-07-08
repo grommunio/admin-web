@@ -102,6 +102,7 @@ class DomainListDetails extends PureComponent {
       syncPolicy: {
         ...defaultPolicy,
         ...domain.syncPolicy,
+        maxattsize: (domain.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
       },
       defaultPolicy,
     });
@@ -206,7 +207,7 @@ class DomainListDetails extends PureComponent {
         syncPolicy.unapprovedinromapplist : syncPolicy.unapprovedinromapplist.split(','),
       devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
       devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
-      maxattsize: parseInt(syncPolicy.maxattsize) || '',
+      maxattsize: parseInt(syncPolicy.maxattsize) * 1048576 || '',
       maxemailhtmlbodytruncsize: parseInt(syncPolicy.maxemailhtmlbodytruncsize) || 0,
       maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
     };

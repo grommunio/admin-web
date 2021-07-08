@@ -291,6 +291,9 @@ class SyncPolicies extends PureComponent {
           color="primary"
           value={maxattsize}
           onChange={handleChange("maxattsize")}
+          InputProps={{
+            endAdornment: 'MB',
+          }}
         />
         <div>
           <Typography gutterBottom>
