@@ -99,6 +99,10 @@ class DomainListDetails extends PureComponent {
     domain.syncPolicy = domain.syncPolicy || {};
     this.setState({
       ...(domain || {}),
+      syncPolicy: {
+        ...defaultPolicy,
+        ...domain.syncPolicy,
+      },
       defaultPolicy,
     });
   }
@@ -116,7 +120,7 @@ class DomainListDetails extends PureComponent {
 
   handleEdit = () => {
     const { ID, domainname, domainStatus, orgID,
-      maxUser, title, address, adminName, tel, syncPolicy } = this.state;
+      maxUser, title, address, adminName, tel } = this.state;
     this.props.edit({
       ID,
       domainname,
@@ -127,7 +131,7 @@ class DomainListDetails extends PureComponent {
       address,
       adminName,
       tel,
-      syncPolicy,
+      syncPolicy: this.getPolicyDiff(),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -192,10 +196,39 @@ class DomainListDetails extends PureComponent {
     });
   }
 
+  getPolicyDiff() {
+    const { defaultPolicy, syncPolicy } = this.state;
+    const formattedPolicy = {
+      ...syncPolicy,
+      approvedapplist: Array.isArray(syncPolicy.approvedapplist) ?
+        syncPolicy.approvedapplist : syncPolicy.approvedapplist.split(','),
+      unapprovedinromapplist: Array.isArray(syncPolicy.unapprovedinromapplist) ?
+        syncPolicy.unapprovedinromapplist : syncPolicy.unapprovedinromapplist.split(','),
+      devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
+      devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
+      maxattsize: parseInt(syncPolicy.maxattsize) || '',
+      maxemailhtmlbodytruncsize: parseInt(syncPolicy.maxemailhtmlbodytruncsize) || 0,
+      maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
+    };
+    const result = {};
+    for(const [key, value] of Object.entries(defaultPolicy)) {
+      if (formattedPolicy[key] !== value) {
+        result[key] = formattedPolicy[key];
+      }
+    }
+    if (formattedPolicy.approvedapplist.toString() === defaultPolicy.approvedapplist.toString()) {
+      result.approvedapplist = undefined;
+    }
+    if (formattedPolicy.unapprovedinromapplist.toString() === defaultPolicy.unapprovedinromapplist.toString()) {
+      result.unapprovedinromapplist = undefined;
+    }
+    return result;
+  }
+
   render() {
     const { classes, t, orgs, capabilities } = this.props;
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
-      tel, defaultPolicy, syncPolicy, checkPw, newPw, changingPw, snackbar, tab } = this.state;
+      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab } = this.state;
     return (
       <div className={classes.root}>
         <TopBar title={t("Domain list")}/>
@@ -298,7 +331,6 @@ class DomainListDetails extends PureComponent {
               />
             </FormControl>}
             {tab === 1 && <SyncPolicies
-              defaultPolicy={defaultPolicy || {}}
               syncPolicy={syncPolicy}
               handleChange={this.handleSyncChange}
               handleCheckbox={this.handleSyncCheckboxChange}

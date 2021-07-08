@@ -21,7 +21,7 @@ const styles = theme => ({
 class SyncPolicies extends PureComponent {
 
   render() {
-    const { classes, t, defaultPolicy, syncPolicy, handleChange, handleRadio,
+    const { classes, t, syncPolicy, handleChange, handleRadio,
       handleSlider, handleCheckbox } = this.props;
     const { allowbluetooth, allowbrowser, allowcam, allowconsumeremail, allowdesktopsync,
       allowhtmlemail, allowinternetsharing, allowirda, allowpopimapemail, allowremotedesk,
@@ -31,7 +31,7 @@ class SyncPolicies extends PureComponent {
       maxattsize, maxcalagefilter, maxdevpwfailedattempts, maxemailagefilter, maxemailbodytruncsize,
       maxemailhtmlbodytruncsize, maxinacttimedevlock, mindevcomplexchars, mindevpwlenngth,
       pwrecoveryenabled, reqdevenc, reqencsmimealgorithm, reqencsmimemessages, reqmansyncroam,
-      reqsignedsmimealgorithm, reqsignedsmimemessages, unapprovedinromapplist } = defaultPolicy;
+      reqsignedsmimealgorithm, reqsignedsmimemessages, unapprovedinromapplist } = syncPolicy;
     return (
       <FormControl className={classes.form}>
         <FormControl component="fieldset">
@@ -51,7 +51,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowbrowser !== undefined ? !!syncPolicy.allowbrowser : !!allowbrowser}
+              checked={!!allowbrowser}
               onChange={handleCheckbox('allowbrowser')}
               color="primary"
             />
@@ -61,7 +61,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowcam !== undefined ? !!syncPolicy.allowcam : !!allowcam}
+              checked={!!allowcam}
               onChange={handleCheckbox('allowcam')}
               color="primary"
             />
@@ -71,7 +71,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowconsumeremail !== undefined ? !!syncPolicy.allowconsumeremail : !!allowconsumeremail}
+              checked={!!allowconsumeremail}
               onChange={handleCheckbox('allowconsumeremail')}
               color="primary"
             />
@@ -81,7 +81,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowdesktopsync !== undefined ? !!syncPolicy.allowdesktopsync : !!allowdesktopsync}
+              checked={!!allowdesktopsync}
               onChange={handleCheckbox('allowdesktopsync')}
               color="primary"
             />
@@ -91,7 +91,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowhtmlemail !== undefined ? !!syncPolicy.allowhtmlemail : !!allowhtmlemail}
+              checked={!!allowhtmlemail}
               onChange={handleCheckbox('allowhtmlemail')}
               color="primary"
             />
@@ -101,7 +101,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowinternetsharing !== undefined ? !!syncPolicy.allowinternetsharing : !!allowinternetsharing}
+              checked={!!allowinternetsharing}
               onChange={handleCheckbox('allowinternetsharing')}
               color="primary"
             />
@@ -111,7 +111,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowirda !== undefined ? !!syncPolicy.allowirda : !!allowirda}
+              checked={!!allowirda}
               onChange={handleCheckbox('allowirda')}
               color="primary"
             />
@@ -121,7 +121,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowpopimapemail !== undefined ? !!syncPolicy.allowpopimapemail : !!allowpopimapemail}
+              checked={!!allowpopimapemail}
               onChange={handleCheckbox('allowpopimapemail')}
               color="primary"
             />
@@ -131,7 +131,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowremotedesk !== undefined ? !!syncPolicy.allowremotedesk : !!allowremotedesk}
+              checked={!!allowremotedesk}
               onChange={handleCheckbox('allowremotedesk')}
               color="primary"
             />
@@ -141,7 +141,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowsimpledevpw !== undefined ? !!syncPolicy.allowsimpledevpw : !!allowsimpledevpw}
+              checked={!!allowsimpledevpw}
               onChange={handleCheckbox('allowsimpledevpw')}
               color="primary"
             />
@@ -153,8 +153,7 @@ class SyncPolicies extends PureComponent {
           <RadioGroup
             color="primary"
             row
-            value={syncPolicy.allowsmimeencalgneg !== undefined ? syncPolicy.allowsmimeencalgneg :
-              allowsmimeencalgneg === undefined ? '' : allowsmimeencalgneg}
+            value={allowsmimeencalgneg === undefined ? '' : allowsmimeencalgneg}
             onChange={handleRadio('allowsmimeencalgneg')}
           >
             <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Not allow')} />
@@ -165,7 +164,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowsmimesoftcerts !== undefined ? !!syncPolicy.allowsmimesoftcerts : !!allowsmimesoftcerts}
+              checked={!!allowsmimesoftcerts}
               onChange={handleCheckbox('allowsmimesoftcerts')}
               color="primary"
             />
@@ -175,7 +174,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowstoragecard !== undefined ? !!syncPolicy.allowstoragecard : !!allowstoragecard}
+              checked={!!allowstoragecard}
               onChange={handleCheckbox('allowstoragecard')}
               color="primary"
             />
@@ -185,7 +184,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowtextmessaging !== undefined ? !!syncPolicy.allowtextmessaging : !!allowtextmessaging}
+              checked={!!allowtextmessaging}
               onChange={handleCheckbox('allowtextmessaging')}
               color="primary"
             />
@@ -195,7 +194,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowunsignedapps !== undefined ? !!syncPolicy.allowunsignedapps : !!allowunsignedapps}
+              checked={!!allowunsignedapps}
               onChange={handleCheckbox('allowunsignedapps')}
               color="primary"
             />
@@ -205,7 +204,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowcam !== undefined ? !!syncPolicy.allowunsigninstallpacks : !!allowunsigninstallpacks}
+              checked={!!allowunsigninstallpacks}
               onChange={handleCheckbox('allowunsigninstallpacks')}
               color="primary"
             />
@@ -215,7 +214,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowwifi !== undefined ? !!syncPolicy.allowwifi : !!allowwifi}
+              checked={!!allowwifi}
               onChange={handleCheckbox('allowwifi')}
               color="primary"
             />
@@ -225,7 +224,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.alphanumpwreq !== undefined ? !!syncPolicy.alphanumpwreq : !!alphanumpwreq}
+              checked={!!alphanumpwreq}
               onChange={handleCheckbox('alphanumpwreq')}
               color="primary"
             />
@@ -235,7 +234,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.attenabled !== undefined ? !!syncPolicy.attenabled : !!attenabled}
+              checked={!!attenabled}
               onChange={handleCheckbox('attenabled')}
               color="primary"
             />
@@ -245,7 +244,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.devencenabled !== undefined ? !!syncPolicy.devencenabled : !!devencenabled}
+              checked={!!devencenabled}
               onChange={handleCheckbox('devencenabled')}
               color="primary"
             />
@@ -255,7 +254,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.devpwenabled !== undefined ? !!syncPolicy.devpwenabled : !!devpwenabled}
+              checked={!!devpwenabled}
               onChange={handleCheckbox('devpwenabled')}
               color="primary"
             />
@@ -266,20 +265,20 @@ class SyncPolicies extends PureComponent {
           className={classes.slider}
           label={t("Min number of passwords to store")}
           color="primary"
-          value={syncPolicy.devpwhistory !== undefined ? syncPolicy.devpwhistory : devpwhistory}
+          value={devpwhistory}
           onChange={handleChange("devpwhistory")}
         />
         <TextField
           className={classes.slider}
           label={t('Device password history')}
           color="primary"
-          value={syncPolicy.devpwexpiration !== undefined ? syncPolicy.devpwexpiration : devpwexpiration}
+          value={devpwexpiration}
           onChange={handleChange("devpwexpiration")}
         />
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.allowcam !== pwrecoveryenabled ? !!syncPolicy.pwrecoveryenabled : !!pwrecoveryenabled}
+              checked={!!pwrecoveryenabled}
               onChange={handleCheckbox('pwrecoveryenabled')}
               color="primary"
             />
@@ -290,7 +289,7 @@ class SyncPolicies extends PureComponent {
           className={classes.slider}
           label={t("Max attachment size")}
           color="primary"
-          value={syncPolicy.maxattsize !== undefined ? syncPolicy.maxattsize : maxattsize}
+          value={maxattsize}
           onChange={handleChange("maxattsize")}
         />
         <div>
@@ -299,7 +298,7 @@ class SyncPolicies extends PureComponent {
           </Typography>
           <Slider
             className={classes.slider}
-            value={syncPolicy.maxdevpwfailedattempts !== undefined ? syncPolicy.maxdevpwfailedattempts : maxdevpwfailedattempts || 8}
+            value={maxdevpwfailedattempts || 8}
             valueLabelDisplay="auto"
             step={1}
             marks
@@ -313,8 +312,7 @@ class SyncPolicies extends PureComponent {
           <RadioGroup
             color="primary"
             row
-            value={syncPolicy.maxcalagefilter !== undefined ? syncPolicy.maxcalagefilter :
-              maxcalagefilter === undefined ? '' : maxcalagefilter}
+            value={maxcalagefilter === undefined ? '' : maxcalagefilter}
             onChange={handleRadio('maxcalagefilter')}
           >
             <FormControlLabel value={4} control={<Radio color="primary"/>} label={t('2 weeks')} />
@@ -329,8 +327,7 @@ class SyncPolicies extends PureComponent {
           <RadioGroup
             color="primary"
             row
-            value={syncPolicy.maxemailagefilter !== undefined ? syncPolicy.maxemailagefilter :
-              maxemailagefilter === undefined ? '' : maxemailagefilter}
+            value={maxemailagefilter === undefined ? '' : maxemailagefilter}
             onChange={handleRadio('maxemailagefilter')}
           >
             <FormControlLabel value={1} control={<Radio color="primary"/>} label={t('1 day')} />
@@ -346,7 +343,7 @@ class SyncPolicies extends PureComponent {
           label={t("Truncation size for plain-text E-Mails")}
           helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
           color="primary"
-          value={syncPolicy.maxemailbodytruncsize !== undefined ? syncPolicy.maxemailbodytruncsize : maxemailbodytruncsize}
+          value={maxemailbodytruncsize}
           onChange={handleChange("maxemailbodytruncsize")}
         />
         <TextField
@@ -354,20 +351,20 @@ class SyncPolicies extends PureComponent {
           label={t("Truncation size for HTML E-Mails")}
           helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
           color="primary"
-          value={syncPolicy.maxemailhtmlbodytruncsize !== undefined ? syncPolicy.maxemailhtmlbodytruncsize : maxemailhtmlbodytruncsize}
+          value={maxemailhtmlbodytruncsize}
           onChange={handleChange("maxemailhtmlbodytruncsize")}
         />
         <TextField
           className={classes.slider}
           label={t("Inactivity (seconds) before device locks itself")}
           color="primary"
-          value={syncPolicy.maxinacttimedevlock !== undefined ? syncPolicy.maxinacttimedevlock : maxinacttimedevlock}
+          value={maxinacttimedevlock}
           onChange={handleChange("maxinacttimedevlock")}
         />
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.reqdevenc !== undefined ? !!syncPolicy.reqdevenc : !!reqdevenc}
+              checked={!!reqdevenc}
               onChange={handleCheckbox('allowcam')}
               color="primary"
             />
@@ -379,8 +376,7 @@ class SyncPolicies extends PureComponent {
           <RadioGroup
             color="primary"
             row
-            value={syncPolicy.reqencsmimealgorithm !== undefined ? syncPolicy.reqencsmimealgorithm :
-              reqencsmimealgorithm === undefined ? '' : reqencsmimealgorithm}
+            value={reqencsmimealgorithm === undefined ? '' : reqencsmimealgorithm}
             onChange={handleRadio('reqencsmimealgorithm')}
           >
             <FormControlLabel value={0} control={<Radio color="primary"/>} label="TripleDES" />
@@ -396,7 +392,7 @@ class SyncPolicies extends PureComponent {
           </Typography>
           <Slider
             className={classes.slider}
-            value={syncPolicy.mindevpwlenngth !== undefined ? syncPolicy.mindevpwlenngth : mindevpwlenngth || 4}
+            value={mindevpwlenngth || 4}
             valueLabelDisplay="auto"
             step={1}
             marks
@@ -411,7 +407,7 @@ class SyncPolicies extends PureComponent {
           </Typography>
           <Slider
             className={classes.slider}
-            value={syncPolicy.mindevcomplexchars !== undefined ? syncPolicy.mindevcomplexchars : mindevcomplexchars || 3}
+            value={mindevcomplexchars || 3}
             valueLabelDisplay="auto"
             step={1}
             marks
@@ -423,7 +419,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.reqencsmimemessages !== undefined ? !!syncPolicy.reqencsmimemessages : !!reqencsmimemessages}
+              checked={!!reqencsmimemessages}
               onChange={handleCheckbox('reqencsmimemessages')}
               color="primary"
             />
@@ -433,7 +429,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.reqmansyncroam !== undefined ? !!syncPolicy.reqmansyncroam : !!reqmansyncroam}
+              checked={!!reqmansyncroam}
               onChange={handleCheckbox('reqmansyncroam')}
               color="primary"
             />
@@ -445,8 +441,7 @@ class SyncPolicies extends PureComponent {
           <RadioGroup
             color="primary"
             row
-            value={syncPolicy.reqsignedsmimealgorithm !== undefined ? syncPolicy.reqsignedsmimealgorithm :
-              reqsignedsmimealgorithm === undefined ? '' : reqsignedsmimealgorithm}
+            value={reqsignedsmimealgorithm === undefined ? '' : reqsignedsmimealgorithm}
             onChange={handleRadio('reqsignedsmimealgorithm')}
           >
             <FormControlLabel value={0} control={<Radio color="primary"/>} label="SHA1" />
@@ -456,7 +451,7 @@ class SyncPolicies extends PureComponent {
         <FormControlLabel
           control={
             <Checkbox
-              checked={syncPolicy.reqsignedsmimemessages !== undefined ? !!syncPolicy.reqsignedsmimemessages : !!reqsignedsmimemessages}
+              checked={!!reqsignedsmimemessages}
               onChange={handleCheckbox('reqsignedsmimemessages')}
               color="primary"
             />
@@ -468,7 +463,7 @@ class SyncPolicies extends PureComponent {
           label={t("Approved in-ROM applications")}
           helperText="app1,app2,app3,..."
           color="primary"
-          value={syncPolicy.approvedapplist !== undefined ? syncPolicy.approvedapplist : approvedapplist}
+          value={approvedapplist}
           onChange={handleChange("approvedapplist")}
         />
         <TextField
@@ -476,7 +471,7 @@ class SyncPolicies extends PureComponent {
           label={t("Not approved in-ROM applications")}
           helperText="app1,app2,app3,..."
           color="primary"
-          value={syncPolicy.unapprovedinromapplist !== undefined ? syncPolicy.unapprovedinromapplist : unapprovedinromapplist}
+          value={unapprovedinromapplist}
           onChange={handleChange("unapprovedinromapplist")}
         />
       </FormControl>
@@ -487,7 +482,6 @@ class SyncPolicies extends PureComponent {
 SyncPolicies.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  defaultPolicy: PropTypes.object.isRequired,
   syncPolicy: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
