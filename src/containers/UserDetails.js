@@ -34,6 +34,8 @@ import ChangeUserPassword from '../components/Dialogs/ChangeUserPassword';
 import FetchMail from '../components/user/FetchMail';
 import AddFetchmail from '../components/Dialogs/AddFetchmail';
 import EditFetchmail from '../components/Dialogs/EditFetchmail';
+import SyncPolicies from '../components/SyncPolicies';
+import { getPolicyDiff } from '../utils';
 
 const styles = theme => ({
   root: {
@@ -90,6 +92,8 @@ class UserDetails extends PureComponent {
       roles: [],
       properties: {},
     },
+    syncPolicy: {},
+    defaultPolicy: {},
     rawData: {},
     dump: '',
     changingPw: false,
@@ -111,11 +115,13 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-
-    this.setState(this.getStateOverwrite(user));
+    const defaultPolicy = user.defaultPolicy || {};
+    console.log(user);
+    user.syncPolicy = user.syncPolicy || {};
+    this.setState(this.getStateOverwrite(user, defaultPolicy));
   }
 
-  getStateOverwrite(user) {
+  getStateOverwrite(user, defaultPolicy) {
     if(!user) return;
     const properties = {
       ...user.properties,
@@ -148,7 +154,15 @@ class UserDetails extends PureComponent {
         username,
         roles,
         properties,
+        syncPolicy: undefined,
+        defaultPolicy: undefined,
       },
+      syncPolicy: {
+        ...defaultPolicy,
+        ...user.syncPolicy,
+        maxattsize: (user.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
+      },
+      defaultPolicy,
     };
   }
 
@@ -194,7 +208,7 @@ class UserDetails extends PureComponent {
 
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
-    const { user, sizeUnits } = this.state;
+    const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
     Promise.all([
       edit(domain.ID, {
         ...user,
@@ -212,6 +226,7 @@ class UserDetails extends PureComponent {
           prohibitreceivequota: undefined,
           prohibitsendquota: undefined,
         },
+        syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
         roles: undefined,
         ldapID: undefined,
       }),
@@ -397,13 +412,52 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleSyncChange = field => event => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: event.target.value,
+      },
+    });
+  }
+
+  handleRadio = field => event => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: parseInt(event.target.value),
+      },
+    });
+  }
+
+  handleSyncCheckboxChange = field => (event, newVal) => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: newVal ? 1 : 0,
+      },
+    });
+  }
+
+  handleSlider = field => (event, newVal) => {
+    const { syncPolicy } = this.state;
+    this.setState({
+      syncPolicy: {
+        ...syncPolicy,
+        [field]: newVal,
+      },
+    });
+  }
+
   render() {
     const { classes, t, domain, history } = this.props;
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading,
-      detaching, adding, editing, dump, rawData } = this.state;
+      detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
-
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -460,6 +514,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("SMTP")} />
               <Tab label={t("FetchMail")} />
               <Tab label={t("Mobile Devices")} />
+              <Tab label={t("Sync policy")} />
             </Tabs>
             {tab === 0 && <Account
               domain={domain}
@@ -502,6 +557,13 @@ class UserDetails extends PureComponent {
             {tab === 6 && <SyncTab
               domain={domain.ID}
               user={user.ID}
+            />}
+            {tab === 7 && <SyncPolicies
+              syncPolicy={syncPolicy}
+              handleChange={this.handleSyncChange}
+              handleCheckbox={this.handleSyncCheckboxChange}
+              handleRadio={this.handleRadio}
+              handleSlider={this.handleSlider}
             />}
             <Grid container className={classes.buttonGrid}>
               <Button

@@ -792,3 +792,9 @@ export function defaultSyncPolicy() {
     return await get('/service/syncPolicy/default');
   };
 }
+
+export function defaultDomainSyncPolicy(domainID) {
+  return async () => {
+    return await get(`/domains/${domainID}/syncPolicy`);
+  };
+}

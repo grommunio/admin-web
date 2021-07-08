@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import TopBar from '../components/TopBar';
 import { changeDomainPassword } from '../api';
-import { getStringAfterLastSlash } from '../utils';
+import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchOrgsData } from '../actions/orgs';
 import SyncPolicies from '../components/SyncPolicies';
@@ -121,7 +121,7 @@ class DomainListDetails extends PureComponent {
 
   handleEdit = () => {
     const { ID, domainname, domainStatus, orgID,
-      maxUser, title, address, adminName, tel } = this.state;
+      maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = this.state;
     this.props.edit({
       ID,
       domainname,
@@ -132,7 +132,7 @@ class DomainListDetails extends PureComponent {
       address,
       adminName,
       tel,
-      syncPolicy: this.getPolicyDiff(),
+      syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -195,35 +195,6 @@ class DomainListDetails extends PureComponent {
         [field]: newVal,
       },
     });
-  }
-
-  getPolicyDiff() {
-    const { defaultPolicy, syncPolicy } = this.state;
-    const formattedPolicy = {
-      ...syncPolicy,
-      approvedapplist: Array.isArray(syncPolicy.approvedapplist) ?
-        syncPolicy.approvedapplist : syncPolicy.approvedapplist.split(','),
-      unapprovedinromapplist: Array.isArray(syncPolicy.unapprovedinromapplist) ?
-        syncPolicy.unapprovedinromapplist : syncPolicy.unapprovedinromapplist.split(','),
-      devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
-      devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
-      maxattsize: parseInt(syncPolicy.maxattsize) * 1048576 || '',
-      maxemailhtmlbodytruncsize: parseInt(syncPolicy.maxemailhtmlbodytruncsize) || 0,
-      maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
-    };
-    const result = {};
-    for(const [key, value] of Object.entries(defaultPolicy)) {
-      if (formattedPolicy[key] !== value) {
-        result[key] = formattedPolicy[key];
-      }
-    }
-    if (formattedPolicy.approvedapplist.toString() === defaultPolicy.approvedapplist.toString()) {
-      result.approvedapplist = undefined;
-    }
-    if (formattedPolicy.unapprovedinromapplist.toString() === defaultPolicy.unapprovedinromapplist.toString()) {
-      result.unapprovedinromapplist = undefined;
-    }
-    return result;
   }
 
   render() {
