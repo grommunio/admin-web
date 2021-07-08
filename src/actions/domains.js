@@ -10,7 +10,7 @@ import {
   DOMAIN_NEXT_SET,
   DOMAIN_DATA_DELETE,
 } from '../actions/types';
-import { domains, addDomain, editDomain, deleteDomain, domain } from '../api';
+import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy } from '../api';
 
 export function fetchDomainData(params) {
   return async dispatch => {
@@ -31,6 +31,8 @@ export function fetchDomainDetails(id) {
   return async dispatch => {
     try {
       const domainData = await dispatch(domain(id));
+      const defaultPolicy = await dispatch(defaultSyncPolicy());
+      domainData.defaultPolicy = defaultPolicy.data;
       return Promise.resolve(domainData);
     } catch(error) {
       await dispatch({ type: DOMAIN_DATA_ERROR, error});

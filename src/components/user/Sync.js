@@ -37,7 +37,7 @@ class Sync extends PureComponent {
     const { orderBy, type } = this.state; 
     fetch(domain, user)
       .then(this.handleSort(orderBy, type, false))
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }
 
   state = {
@@ -86,9 +86,9 @@ class Sync extends PureComponent {
         <Table size="small">
           <TableHead>
             <TableRow>
-              {this.columns.map((column) =>
+              {this.columns.map((column, key) =>
                 <TableCell
-                  key={column.value}
+                  key={key}
                   padding={column.padding || 'default'}
                 >
                   <TableSortLabel
@@ -140,7 +140,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, userID) => await dispatch(fetchUserSync(domainID, userID))
-      .catch(err => console.log(err)),
+      .catch(err => console.error(err)),
   };
 };
 

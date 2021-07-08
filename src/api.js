@@ -786,3 +786,15 @@ export async function checkFormat(params) {
     return await get(buildQuery('/chkFormat', params));
   } catch(err) { return Promise.reject(err); }
 }
+
+export function defaultSyncPolicy() {
+  return async () => {
+    return await get('/service/syncPolicy/default');
+  };
+}
+
+export function defaultDomainSyncPolicy(domainID) {
+  return async () => {
+    return await get(`/domains/${domainID}/syncPolicy`);
+  };
+}

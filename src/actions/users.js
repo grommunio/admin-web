@@ -13,7 +13,7 @@ import {
   ORPHANS_DELETED,
   USERS_SYNC_RECEIVED,
 } from './types';
-import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser,
+import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync } from '../api';
 
 export function fetchUsersData(domainID, params) {
@@ -50,6 +50,15 @@ export function fetchUserData(domainID, userID) {
           ...userData.properties,
           ...additionalProps.data,
         },
+      };
+    } catch(err) {
+      // ignore error
+    }
+    try {
+      const defaultPolicy = await dispatch(defaultDomainSyncPolicy(domainID));
+      userData = {
+        ...userData,
+        defaultPolicy: defaultPolicy?.data || {},
       };
     } catch(err) {
       // ignore error

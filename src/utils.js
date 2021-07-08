@@ -118,3 +118,30 @@ export function getStringFromCommand(command) {
   }
 }
 
+export function getPolicyDiff(defaultPolicy, syncPolicy) {
+  const formattedPolicy = {
+    ...syncPolicy,
+    approvedapplist: Array.isArray(syncPolicy.approvedapplist) ?
+      syncPolicy.approvedapplist : syncPolicy.approvedapplist.split(','),
+    unapprovedinromapplist: Array.isArray(syncPolicy.unapprovedinromapplist) ?
+      syncPolicy.unapprovedinromapplist : syncPolicy.unapprovedinromapplist.split(','),
+    devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
+    devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
+    maxattsize: parseInt(syncPolicy.maxattsize) * 1048576 || '',
+    maxemailhtmlbodytruncsize: parseInt(syncPolicy.maxemailhtmlbodytruncsize) || 0,
+    maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
+  };
+  const result = {};
+  for(const [key, value] of Object.entries(defaultPolicy)) {
+    if (formattedPolicy[key] !== value) {
+      result[key] = formattedPolicy[key];
+    }
+  }
+  if (formattedPolicy.approvedapplist.toString() === defaultPolicy.approvedapplist.toString()) {
+    result.approvedapplist = undefined;
+  }
+  if (formattedPolicy.unapprovedinromapplist.toString() === defaultPolicy.unapprovedinromapplist.toString()) {
+    result.unapprovedinromapplist = undefined;
+  }
+  return result;
+}

@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography} from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
@@ -115,5 +114,4 @@ AntispamStatistics.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-export default connect(null, null)(
-  withTranslation()(withStyles(styles)(AntispamStatistics)));
+export default withTranslation()(withStyles(styles)(AntispamStatistics));
