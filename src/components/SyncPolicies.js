@@ -11,6 +11,7 @@ import { Checkbox, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioG
 const styles = theme => ({
   form: {
     width: '100%',
+    marginTop: 12,
   },
   slider: {
     maxWidth: 400,
@@ -501,7 +502,7 @@ class SyncPolicies extends PureComponent {
             <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Unlimited')} />
           </RadioGroup>
         </FormControl>
-        <FormControl component="fieldset" className={classes.radio}>
+        <FormControl component="fieldset" className={classes.radio} style={{ marginBottom: 8 }}>
           <FormLabel component="legend">{t('Max E-Mail age')}</FormLabel>
           <RadioGroup
             color="primary"

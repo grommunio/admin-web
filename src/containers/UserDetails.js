@@ -116,7 +116,6 @@ class UserDetails extends PureComponent {
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
-    console.log(user);
     user.syncPolicy = user.syncPolicy || {};
     this.setState(this.getStateOverwrite(user, defaultPolicy));
   }
