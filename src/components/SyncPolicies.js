@@ -5,16 +5,25 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup,
+import { Checkbox, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup,
   Slider, TextField, Typography } from '@material-ui/core';
 
 const styles = theme => ({
   form: {
     width: '100%',
-    marginTop: theme.spacing(4),
   },
   slider: {
     maxWidth: 400,
+  },
+  gridTf: {
+    flex: 1,
+    margin: theme.spacing(0, 1, 1, 0),
+  },
+  header: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  radio: {
+    marginTop: 8,
   },
 });
 
@@ -34,7 +43,8 @@ class SyncPolicies extends PureComponent {
       reqsignedsmimealgorithm, reqsignedsmimemessages, unapprovedinromapplist } = syncPolicy;
     return (
       <FormControl className={classes.form}>
-        <FormControl component="fieldset">
+        <Typography variant="h6" className={classes.header}>{t('Apps and devices')}</Typography>
+        <FormControl component="fieldset" className={classes.radio}>
           <FormLabel component="legend">{t('Allow Bluetooth')}</FormLabel>
           <RadioGroup
             color="primary"
@@ -48,253 +58,184 @@ class SyncPolicies extends PureComponent {
             <FormControlLabel value={2} control={<Radio color="primary"/>} label={t('Allow')} />
           </RadioGroup>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowbrowser}
-              onChange={handleCheckbox('allowbrowser')}
-              color="primary"
-            />
-          }
-          label={t('Allow browser')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowcam}
-              onChange={handleCheckbox('allowcam')}
-              color="primary"
-            />
-          }
-          label={t('Allow cam')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowconsumeremail}
-              onChange={handleCheckbox('allowconsumeremail')}
-              color="primary"
-            />
-          }
-          label={t('Allow consumer E-Mail')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowdesktopsync}
-              onChange={handleCheckbox('allowdesktopsync')}
-              color="primary"
-            />
-          }
-          label={t('Allow desktop sync')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowhtmlemail}
-              onChange={handleCheckbox('allowhtmlemail')}
-              color="primary"
-            />
-          }
-          label={t('Allow html E-Mail')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowinternetsharing}
-              onChange={handleCheckbox('allowinternetsharing')}
-              color="primary"
-            />
-          }
-          label={t('Allow internet sharing')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowirda}
-              onChange={handleCheckbox('allowirda')}
-              color="primary"
-            />
-          }
-          label={t('Allow IrDA')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowpopimapemail}
-              onChange={handleCheckbox('allowpopimapemail')}
-              color="primary"
-            />
-          }
-          label={t('Allow POP/IMAP E-Mail')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowremotedesk}
-              onChange={handleCheckbox('allowremotedesk')}
-              color="primary"
-            />
-          }
-          label={t('Allow remote desk')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowsimpledevpw}
-              onChange={handleCheckbox('allowsimpledevpw')}
-              color="primary"
-            />
-          }
-          label={t('Allow simple passwords')}
-        />
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{t('Allow encrypt algorithm negotiation')}</FormLabel>
-          <RadioGroup
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowbrowser}
+                onChange={handleCheckbox('allowbrowser')}
+                color="primary"
+              />
+            }
+            label={t('Allow browser')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowcam}
+                onChange={handleCheckbox('allowcam')}
+                color="primary"
+              />
+            }
+            label={t('Allow cam')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowtextmessaging}
+                onChange={handleCheckbox('allowtextmessaging')}
+                color="primary"
+              />
+            }
+            label={t('Allow text messaging')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowunsignedapps}
+                onChange={handleCheckbox('allowunsignedapps')}
+                color="primary"
+              />
+            }
+            label={t('Allow unsigned apps')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowunsigninstallpacks}
+                onChange={handleCheckbox('allowunsigninstallpacks')}
+                color="primary"
+              />
+            }
+            label={t('Allow unsigned install packs')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowinternetsharing}
+                onChange={handleCheckbox('allowinternetsharing')}
+                color="primary"
+              />
+            }
+            label={t('Allow internet sharing')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowirda}
+                onChange={handleCheckbox('allowirda')}
+                color="primary"
+              />
+            }
+            label={t('Allow IrDA')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowstoragecard}
+                onChange={handleCheckbox('allowstoragecard')}
+                color="primary"
+              />
+            }
+            label={t('Allow storage card')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowwifi}
+                onChange={handleCheckbox('allowwifi')}
+                color="primary"
+              />
+            }
+            label={t('Allow WiFi')}
+          />
+        </Grid>
+        <Grid container>
+          <TextField
+            className={classes.gridTf}
+            label={t("Approved in-ROM applications")}
+            helperText="app1,app2,app3,..."
             color="primary"
-            row
-            value={allowsmimeencalgneg === undefined ? '' : allowsmimeencalgneg}
-            onChange={handleRadio('allowsmimeencalgneg')}
-          >
-            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Not allow')} />
-            <FormControlLabel value={1} control={<Radio color="primary"/>} label={t('Only strong')} />
-            <FormControlLabel value={2} control={<Radio color="primary"/>} label={t('Any')} />
-          </RadioGroup>
-        </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowsmimesoftcerts}
-              onChange={handleCheckbox('allowsmimesoftcerts')}
-              color="primary"
-            />
-          }
-          label={t('Allow soft certificates')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowstoragecard}
-              onChange={handleCheckbox('allowstoragecard')}
-              color="primary"
-            />
-          }
-          label={t('Allow storage card')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowtextmessaging}
-              onChange={handleCheckbox('allowtextmessaging')}
-              color="primary"
-            />
-          }
-          label={t('Allow text messaging')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowunsignedapps}
-              onChange={handleCheckbox('allowunsignedapps')}
-              color="primary"
-            />
-          }
-          label={t('Allow unsigned apps')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowunsigninstallpacks}
-              onChange={handleCheckbox('allowunsigninstallpacks')}
-              color="primary"
-            />
-          }
-          label={t('Allow unsigned install packs')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!allowwifi}
-              onChange={handleCheckbox('allowwifi')}
-              color="primary"
-            />
-          }
-          label={t('Allow WiFi')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!alphanumpwreq}
-              onChange={handleCheckbox('alphanumpwreq')}
-              color="primary"
-            />
-          }
-          label={t('Requires alphanumeric password')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!attenabled}
-              onChange={handleCheckbox('attenabled')}
-              color="primary"
-            />
-          }
-          label={t('Enable attachments')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!devencenabled}
-              onChange={handleCheckbox('devencenabled')}
-              color="primary"
-            />
-          }
-          label={t('Enable device encryption (Deprecated)')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!devpwenabled}
-              onChange={handleCheckbox('devpwenabled')}
-              color="primary"
-            />
-          }
-          label={t('Device password required')}
-        />
-        <TextField
-          className={classes.slider}
-          label={t("Min number of passwords to store")}
-          color="primary"
-          value={devpwhistory}
-          onChange={handleChange("devpwhistory")}
-        />
-        <TextField
-          className={classes.slider}
-          label={t('Device password history')}
-          color="primary"
-          value={devpwexpiration}
-          onChange={handleChange("devpwexpiration")}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!pwrecoveryenabled}
-              onChange={handleCheckbox('pwrecoveryenabled')}
-              color="primary"
-            />
-          }
-          label={t('Password recovery enabled')}
-        />
-        <TextField
-          className={classes.slider}
-          label={t("Max attachment size")}
-          color="primary"
-          value={maxattsize}
-          onChange={handleChange("maxattsize")}
-          InputProps={{
-            endAdornment: 'MB',
-          }}
-        />
+            value={approvedapplist}
+            onChange={handleChange("approvedapplist")}
+          />
+          <TextField
+            className={classes.gridTf}
+            label={t("Not approved in-ROM applications")}
+            helperText="app1,app2,app3,..."
+            color="primary"
+            value={unapprovedinromapplist}
+            onChange={handleChange("unapprovedinromapplist")}
+          />
+          <TextField
+            className={classes.gridTf}
+            label={t("Inactivity (seconds) before device locks itself")}
+            color="primary"
+            value={maxinacttimedevlock}
+            onChange={handleChange("maxinacttimedevlock")}
+          />
+        </Grid>
+
+
+        <Typography variant="h6" className={classes.header}>{t('Passwords')}</Typography>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!alphanumpwreq}
+                onChange={handleCheckbox('alphanumpwreq')}
+                color="primary"
+              />
+            }
+            label={t('Requires alphanumeric password')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!devpwenabled}
+                onChange={handleCheckbox('devpwenabled')}
+                color="primary"
+              />
+            }
+            label={t('Device password required')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowsimpledevpw}
+                onChange={handleCheckbox('allowsimpledevpw')}
+                color="primary"
+              />
+            }
+            label={t('Allow simple passwords')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!pwrecoveryenabled}
+                onChange={handleCheckbox('pwrecoveryenabled')}
+                color="primary"
+              />
+            }
+            label={t('Password recovery enabled')}
+          />
+        </Grid>
+        <Grid container>
+          <TextField
+            className={classes.gridTf}
+            label={t("Min number of passwords to store")}
+            color="primary"
+            value={devpwhistory}
+            onChange={handleChange("devpwhistory")}
+          />
+          <TextField
+            className={classes.gridTf}
+            label={t('Device password history')}
+            color="primary"
+            value={devpwexpiration}
+            onChange={handleChange("devpwexpiration")}
+          />
+        </Grid>
         <div>
           <Typography gutterBottom>
             {t('Max failed password attempts')}
@@ -310,85 +251,6 @@ class SyncPolicies extends PureComponent {
             onChange={handleSlider("maxdevpwfailedattempts")}
           />
         </div>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{t('Max calendar age')}</FormLabel>
-          <RadioGroup
-            color="primary"
-            row
-            value={maxcalagefilter === undefined ? '' : maxcalagefilter}
-            onChange={handleRadio('maxcalagefilter')}
-          >
-            <FormControlLabel value={4} control={<Radio color="primary"/>} label={t('2 weeks')} />
-            <FormControlLabel value={5} control={<Radio color="primary"/>} label={t('1 month')} />
-            <FormControlLabel value={6} control={<Radio color="primary"/>} label={t('3 months')} />
-            <FormControlLabel value={7} control={<Radio color="primary"/>} label={t('6 months')} />
-            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Unlimited')} />
-          </RadioGroup>
-        </FormControl>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{t('Max E-Mail age')}</FormLabel>
-          <RadioGroup
-            color="primary"
-            row
-            value={maxemailagefilter === undefined ? '' : maxemailagefilter}
-            onChange={handleRadio('maxemailagefilter')}
-          >
-            <FormControlLabel value={1} control={<Radio color="primary"/>} label={t('1 day')} />
-            <FormControlLabel value={2} control={<Radio color="primary"/>} label={t('3 days')} />
-            <FormControlLabel value={3} control={<Radio color="primary"/>} label={t('1 week')} />
-            <FormControlLabel value={4} control={<Radio color="primary"/>} label={t('2 weeks')} />
-            <FormControlLabel value={5} control={<Radio color="primary"/>} label={t('1 month')} />
-            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('All')} />
-          </RadioGroup>
-        </FormControl>
-        <TextField
-          className={classes.slider}
-          label={t("Truncation size for plain-text E-Mails")}
-          helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
-          color="primary"
-          value={maxemailbodytruncsize}
-          onChange={handleChange("maxemailbodytruncsize")}
-        />
-        <TextField
-          className={classes.slider}
-          label={t("Truncation size for HTML E-Mails")}
-          helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
-          color="primary"
-          value={maxemailhtmlbodytruncsize}
-          onChange={handleChange("maxemailhtmlbodytruncsize")}
-        />
-        <TextField
-          className={classes.slider}
-          label={t("Inactivity (seconds) before device locks itself")}
-          color="primary"
-          value={maxinacttimedevlock}
-          onChange={handleChange("maxinacttimedevlock")}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!reqdevenc}
-              onChange={handleCheckbox('allowcam')}
-              color="primary"
-            />
-          }
-          label={t('Device encryption')}
-        />
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{t('Encrypt algorithm')}</FormLabel>
-          <RadioGroup
-            color="primary"
-            row
-            value={reqencsmimealgorithm === undefined ? '' : reqencsmimealgorithm}
-            onChange={handleRadio('reqencsmimealgorithm')}
-          >
-            <FormControlLabel value={0} control={<Radio color="primary"/>} label="TripleDES" />
-            <FormControlLabel value={1} control={<Radio color="primary"/>} label="DES" />
-            <FormControlLabel value={2} control={<Radio color="primary"/>} label="RC2128bit" />
-            <FormControlLabel value={3} control={<Radio color="primary"/>} label="RC264bit" />
-            <FormControlLabel value={4} control={<Radio color="primary"/>} label="RC240bit" />
-          </RadioGroup>
-        </FormControl>
         <div>
           <Typography gutterBottom>
             {t('Minumim device password length')}
@@ -419,27 +281,92 @@ class SyncPolicies extends PureComponent {
             onChange={handleSlider("mindevcomplexchars")}
           />
         </div>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!reqencsmimemessages}
-              onChange={handleCheckbox('reqencsmimemessages')}
-              color="primary"
-            />
-          }
-          label={t('Requires encrypted messages')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!reqmansyncroam}
-              onChange={handleCheckbox('reqmansyncroam')}
-              color="primary"
-            />
-          }
-          label={t('Requires manual synchronization')}
-        />
-        <FormControl component="fieldset">
+
+
+
+
+        <Typography variant="h6" className={classes.header}>{t('Encryption and signing')}</Typography>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowsmimesoftcerts}
+                onChange={handleCheckbox('allowsmimesoftcerts')}
+                color="primary"
+              />
+            }
+            label={t('Allow soft certificates')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!reqdevenc}
+                onChange={handleCheckbox('allowcam')}
+                color="primary"
+              />
+            }
+            label={t('Device encryption')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!reqencsmimemessages}
+                onChange={handleCheckbox('reqencsmimemessages')}
+                color="primary"
+              />
+            }
+            label={t('Requires encrypted messages')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!devencenabled}
+                onChange={handleCheckbox('devencenabled')}
+                color="primary"
+              />
+            }
+            label={t('Enable device encryption (Deprecated)')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!reqsignedsmimemessages}
+                onChange={handleCheckbox('reqsignedsmimemessages')}
+                color="primary"
+              />
+            }
+            label={t('Requires message signing')}
+          />
+        </Grid>
+        <FormControl component="fieldset" className={classes.radio}>
+          <FormLabel component="legend">{t('Encrypt algorithm')}</FormLabel>
+          <RadioGroup
+            color="primary"
+            row
+            value={reqencsmimealgorithm === undefined ? '' : reqencsmimealgorithm}
+            onChange={handleRadio('reqencsmimealgorithm')}
+          >
+            <FormControlLabel value={0} control={<Radio color="primary"/>} label="TripleDES" />
+            <FormControlLabel value={1} control={<Radio color="primary"/>} label="DES" />
+            <FormControlLabel value={2} control={<Radio color="primary"/>} label="RC2128bit" />
+            <FormControlLabel value={3} control={<Radio color="primary"/>} label="RC264bit" />
+            <FormControlLabel value={4} control={<Radio color="primary"/>} label="RC240bit" />
+          </RadioGroup>
+        </FormControl>
+        <FormControl component="fieldset" className={classes.radio}>
+          <FormLabel component="legend">{t('Allow encrypt algorithm negotiation')}</FormLabel>
+          <RadioGroup
+            color="primary"
+            row
+            value={allowsmimeencalgneg === undefined ? '' : allowsmimeencalgneg}
+            onChange={handleRadio('allowsmimeencalgneg')}
+          >
+            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Not allow')} />
+            <FormControlLabel value={1} control={<Radio color="primary"/>} label={t('Only strong')} />
+            <FormControlLabel value={2} control={<Radio color="primary"/>} label={t('Any')} />
+          </RadioGroup>
+        </FormControl>
+        <FormControl component="fieldset" className={classes.radio}>
           <FormLabel component="legend">{t('Message signing algorithm')}</FormLabel>
           <RadioGroup
             color="primary"
@@ -451,32 +378,145 @@ class SyncPolicies extends PureComponent {
             <FormControlLabel value={1} control={<Radio color="primary"/>} label="MD5" />
           </RadioGroup>
         </FormControl>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={!!reqsignedsmimemessages}
-              onChange={handleCheckbox('reqsignedsmimemessages')}
-              color="primary"
-            />
-          }
-          label={t('Requires message signing')}
+
+
+
+
+        <Typography variant="h6" className={classes.header}>{t('E-Mail')}</Typography>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowhtmlemail}
+                onChange={handleCheckbox('allowhtmlemail')}
+                color="primary"
+              />
+            }
+            label={t('Allow html E-Mail')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowconsumeremail}
+                onChange={handleCheckbox('allowconsumeremail')}
+                color="primary"
+              />
+            }
+            label={t('Allow consumer E-Mail')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowpopimapemail}
+                onChange={handleCheckbox('allowpopimapemail')}
+                color="primary"
+              />
+            }
+            label={t('Allow POP/IMAP E-Mail')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!attenabled}
+                onChange={handleCheckbox('attenabled')}
+                color="primary"
+              />
+            }
+            label={t('Enable attachments')}
+          />
+        </Grid>
+        <TextField
+          className={classes.slider}
+          label={t("Max attachment size")}
+          color="primary"
+          value={maxattsize}
+          onChange={handleChange("maxattsize")}
+          InputProps={{
+            endAdornment: 'MB',
+          }}
         />
         <TextField
           className={classes.slider}
-          label={t("Approved in-ROM applications")}
-          helperText="app1,app2,app3,..."
+          label={t("Truncation size for plain-text E-Mails")}
+          helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
           color="primary"
-          value={approvedapplist}
-          onChange={handleChange("approvedapplist")}
+          value={maxemailbodytruncsize}
+          onChange={handleChange("maxemailbodytruncsize")}
         />
         <TextField
           className={classes.slider}
-          label={t("Not approved in-ROM applications")}
-          helperText="app1,app2,app3,..."
+          label={t("Truncation size for HTML E-Mails")}
+          helperText="(-1=unlimited, 0=header only, >0=truncate to size)"
           color="primary"
-          value={unapprovedinromapplist}
-          onChange={handleChange("unapprovedinromapplist")}
+          value={maxemailhtmlbodytruncsize}
+          onChange={handleChange("maxemailhtmlbodytruncsize")}
         />
+
+
+        <Typography variant="h6" className={classes.header}>{t('Synchronisation')}</Typography>
+        <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowremotedesk}
+                onChange={handleCheckbox('allowremotedesk')}
+                color="primary"
+              />
+            }
+            label={t('Allow remote desk')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!reqmansyncroam}
+                onChange={handleCheckbox('reqmansyncroam')}
+                color="primary"
+              />
+            }
+            label={t('Requires manual synchronization')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={!!allowdesktopsync}
+                onChange={handleCheckbox('allowdesktopsync')}
+                color="primary"
+              />
+            }
+            label={t('Allow desktop sync')}
+          />
+        </Grid>
+        <FormControl component="fieldset" className={classes.radio}>
+          <FormLabel component="legend">{t('Max calendar age')}</FormLabel>
+          <RadioGroup
+            color="primary"
+            row
+            value={maxcalagefilter === undefined ? '' : maxcalagefilter}
+            onChange={handleRadio('maxcalagefilter')}
+          >
+            <FormControlLabel value={4} control={<Radio color="primary"/>} label={t('2 weeks')} />
+            <FormControlLabel value={5} control={<Radio color="primary"/>} label={t('1 month')} />
+            <FormControlLabel value={6} control={<Radio color="primary"/>} label={t('3 months')} />
+            <FormControlLabel value={7} control={<Radio color="primary"/>} label={t('6 months')} />
+            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('Unlimited')} />
+          </RadioGroup>
+        </FormControl>
+        <FormControl component="fieldset" className={classes.radio}>
+          <FormLabel component="legend">{t('Max E-Mail age')}</FormLabel>
+          <RadioGroup
+            color="primary"
+            row
+            value={maxemailagefilter === undefined ? '' : maxemailagefilter}
+            onChange={handleRadio('maxemailagefilter')}
+          >
+            <FormControlLabel value={1} control={<Radio color="primary"/>} label={t('1 day')} />
+            <FormControlLabel value={2} control={<Radio color="primary"/>} label={t('3 days')} />
+            <FormControlLabel value={3} control={<Radio color="primary"/>} label={t('1 week')} />
+            <FormControlLabel value={4} control={<Radio color="primary"/>} label={t('2 weeks')} />
+            <FormControlLabel value={5} control={<Radio color="primary"/>} label={t('1 month')} />
+            <FormControlLabel value={0} control={<Radio color="primary"/>} label={t('All')} />
+          </RadioGroup>
+        </FormControl>
       </FormControl>
     );
   }
