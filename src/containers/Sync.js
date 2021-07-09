@@ -15,14 +15,21 @@ import {
   TableBody,
   TableSortLabel,
   Tooltip,
+  Grid,
+  InputAdornment,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  MenuItem,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
 import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
-import { CheckCircleOutlined, HighlightOffOutlined } from "@material-ui/icons";
-import { getStringFromCommand, parseUnixtime } from "../utils";
+import { CheckCircleOutlined, HighlightOffOutlined, Search } from "@material-ui/icons";
+import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
+import { grey, red } from "@material-ui/core/colors";
 
 const styles = (theme) => ({
   root: {
@@ -46,6 +53,35 @@ const styles = (theme) => ({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  buttonGrid: {
+    margin: theme.spacing(0, 2, 2, 3),
+  },
+  select: {
+    maxWidth: 200,
+    marginRight: 8,
+  },
+  defaultRow: {
+    fontWeight: 400,
+  },
+  terminated: {
+    color: grey['500'],
+    fontWeight: 400,
+  },
+  cell: {
+    color: 'inherit',
+    fontWeight: 'inherit',
+  },
+  justUpdated: {
+    fontWeight: 'bold',
+  },
+  darkred: {
+    color: red['900'],
+    fontWeight: 400,
+  },
+  red: {
+    color: red['500'],
+    fontWeight: 400,
+  },
 });
 
 class Sync extends PureComponent {
@@ -53,27 +89,31 @@ class Sync extends PureComponent {
   state = {
     snackbar: null,
     sortedDevices: null,
-    order: 'asc',
-    orderBy: 'pid',
+    order: 'desc',
+    orderBy: 'update',
     type: 'int',
+    match: '',
+    showPush: true,
+    onlyActive: false,
+    filterEnded: 20,
+    filterUpdated: 120,
   };
 
   columns = [
     { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
     { label: "IP", value: "ip", padding: "checkbox" },
     { label: "User", value: "user" },
-    { label: "Start", value: "start", type: 'int' },
-    { label: "Device ID", value: "devid" },
-    { label: "Device Type / Agent", value: "devtype" },
     { label: "Command", value: "command", type: 'int' },
-    { label: "Update", value: "update", padding: "checkbox", type: 'int' },
+    { label: "Time", value: 'update', type: 'int' },
+    { label: "Device ID", value: "devid" },
+    { label: "Info", value: "addinfo" },
   ];
   
   fetchInterval = null;
   
   componentDidMount() {
-    const { orderBy, type } = this.state;
-    this.props.fetch({})
+    const { orderBy, type, filterEnded, filterUpdated } = this.state;
+    this.props.fetch({ filterEnded, filterUpdated })
       .then(this.handleSort(orderBy, type, false))
       .catch(snackbar => this.setState({ snackbar }));
     this.fetchInterval = setInterval(() => {
@@ -92,8 +132,8 @@ class Sync extends PureComponent {
   };
   
   handleRefresh = () => {
-    const { orderBy, type } = this.state;
-    this.props.fetch({})
+    const { orderBy, type, filterEnded, filterUpdated } = this.state;
+    this.props.fetch({ filterEnded, filterUpdated })
       .then(this.handleSort(orderBy, type, false))
       .catch(snackbar => this.setState({ snackbar }));
   }
@@ -114,9 +154,32 @@ class Sync extends PureComponent {
     this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
+  getRowClass(row, diff) {
+    const { classes } = this.props;
+    if(row.justUpdated) return classes.justUpdated;
+    if(row.ended !== 0) return classes.terminated;
+    if(row.push && diff > 32) return classes.darkred;
+    if(!row.push && diff > 2) return classes.red;
+    return classes.defaultRow;
+  }
+
+  getMatch(row) {
+    const { match, showPush, onlyActive } = this.state;
+    const lcMatch = match.toLowerCase();
+    const { user, devtype, devagent, ip } = row;
+    const stringMatch = user.toLowerCase().includes(lcMatch) || devtype.toLowerCase().includes(lcMatch) ||
+      devagent.toLowerCase().includes(lcMatch) || ip.toLowerCase().includes(lcMatch);
+    return stringMatch && (!onlyActive || row.ended === 0) && (showPush || !row.push);
+  }
+
+  handleInput = field => ({ target: t }) => this.setState({ [field]: t.value });
+
+  handleCheckbox = field => ({ target: t }) => this.setState({ [field]: t.checked });
+
   render() {
     const { classes, t, sync } = this.props;
-    const { snackbar, sortedDevices, order, orderBy } = this.state;
+    const { snackbar, sortedDevices, order, orderBy, match, showPush, onlyActive,
+      filterEnded, filterUpdated } = this.state;
 
     return (
       <div className={classes.root}>
@@ -126,6 +189,73 @@ class Sync extends PureComponent {
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Mobile Devices")}
           </Typography>
+          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showPush}
+                  onChange={this.handleCheckbox('showPush')}
+                  color="primary"
+                />
+              }
+              label={t('Show push connections')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={onlyActive}
+                  onChange={this.handleCheckbox('onlyActive')}
+                  color="primary"
+                />
+              }
+              label={t('Only show active connections')}
+            />
+            <TextField
+              value={filterUpdated}
+              onChange={this.handleInput('filterUpdated')}
+              label={t("Last updated (seconds)")}
+              className={classes.select}
+              select
+              color="primary"
+              fullWidth
+            >
+              <MenuItem value={60}>10</MenuItem>
+              <MenuItem value={60}>30</MenuItem>
+              <MenuItem value={60}>60</MenuItem>
+              <MenuItem value={120}>120</MenuItem>
+            </TextField>
+            <TextField
+              value={filterEnded}
+              onChange={this.handleInput('filterEnded')}
+              label={t("Last ended (seconds)")}
+              className={classes.select}
+              select
+              color="primary"
+              fullWidth
+            >
+              <MenuItem value={20}>3</MenuItem>
+              <MenuItem value={20}>5</MenuItem>
+              <MenuItem value={20}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+            </TextField>
+            <div className={classes.actions}>
+              <TextField
+                value={match}
+                onChange={this.handleInput('match')}
+                placeholder={t("Filter")}
+                variant="outlined"
+                className={classes.textfield}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                }}
+                color="primary"
+              />
+            </div>
+          </Grid>
           <SyncStatistics data={sync}/>
           <Paper elevation={1}>
             <Table size="small">
@@ -152,23 +282,26 @@ class Sync extends PureComponent {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(sortedDevices || sync).map((obj, idx) =>
-                  <Tooltip key={idx} placement="top" title={obj.addinfo}>
-                    <TableRow hover>
-                      <TableCell padding="checkbox">{obj.pid}</TableCell>
-                      <TableCell padding="checkbox">{obj.ip}</TableCell>
-                      <TableCell>{obj.user}</TableCell>
-                      <TableCell>{parseUnixtime(obj.start)}</TableCell>
-                      <TableCell>{obj.devid}</TableCell>
-                      <TableCell>{obj.devtype + ' / ' + obj.devagent}</TableCell>
-                      <TableCell>{getStringFromCommand(obj.command)}</TableCell>
-                      <TableCell>{parseUnixtime(obj.update)}</TableCell>
-                      <TableCell padding="checkbox">
-                        {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
-                      </TableCell>
-                    </TableRow>
-                  </Tooltip>
-                )}
+                {(sortedDevices || sync).map((obj, idx) => {
+                  const timePast = getTimePast(obj.diff);
+                  const matches = this.getMatch(obj);
+                  return matches ? (
+                    <Tooltip key={idx} placement="top" title={obj.devtype + ' / ' + obj.devagent}>
+                      <TableRow hover className={this.getRowClass(obj, obj.diff)}>
+                        <TableCell className={classes.cell} padding="checkbox">{obj.pid}</TableCell>
+                        <TableCell className={classes.cell} padding="checkbox">{obj.ip}</TableCell>
+                        <TableCell className={classes.cell}>{obj.user}</TableCell>
+                        <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
+                        <TableCell className={classes.cell}>{timePast}</TableCell>
+                        <TableCell className={classes.cell}>{obj.devid}</TableCell>
+                        <TableCell className={classes.cell}>{obj.addinfo}</TableCell>
+                        <TableCell className={classes.cell} padding="checkbox">
+                          {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
+                        </TableCell>
+                      </TableRow>
+                    </Tooltip>
+                  ) : null;
+                })}
               </TableBody>
             </Table>
           </Paper>
