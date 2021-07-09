@@ -20,7 +20,7 @@ function domainsReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Sync: action.data.data,
+        Sync: action.data,
       };
 
 

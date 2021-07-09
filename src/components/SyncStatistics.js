@@ -51,7 +51,7 @@ const styles = theme => ({
   },
 });
 
-class AntispamStatistics extends PureComponent {
+class SyncStatistics extends PureComponent {
 
   render() {
     const {classes, data} = this.props;
@@ -113,10 +113,10 @@ class AntispamStatistics extends PureComponent {
   }
 }
 
-AntispamStatistics.propTypes = {
+SyncStatistics.propTypes = {
   classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 export default connect(null, null)(
-  withTranslation()(withStyles(styles)(AntispamStatistics)));
+  withTranslation()(withStyles(styles)(SyncStatistics)));

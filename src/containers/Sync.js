@@ -21,8 +21,9 @@ import TopBar from "../components/TopBar";
 import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
 import { CheckCircleOutlined, HighlightOffOutlined } from "@material-ui/icons";
-import { getStringFromCommand, parseUnixtime } from "../utils";
+import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
+import { grey, red } from "@material-ui/core/colors";
 
 const styles = (theme) => ({
   root: {
@@ -46,6 +47,28 @@ const styles = (theme) => ({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
+  defaultRow: {
+    fontWeight: 400,
+  },
+  terminated: {
+    color: grey['500'],
+    fontWeight: 400,
+  },
+  cell: {
+    color: 'inherit',
+    fontWeight: 'inherit',
+  },
+  justUpdated: {
+    fontWeight: 'bold',
+  },
+  darkred: {
+    color: red['900'],
+    fontWeight: 400,
+  },
+  red: {
+    color: red['500'],
+    fontWeight: 400,
+  },
 });
 
 class Sync extends PureComponent {
@@ -53,8 +76,8 @@ class Sync extends PureComponent {
   state = {
     snackbar: null,
     sortedDevices: null,
-    order: 'asc',
-    orderBy: 'pid',
+    order: 'desc',
+    orderBy: 'update',
     type: 'int',
   };
 
@@ -62,11 +85,10 @@ class Sync extends PureComponent {
     { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
     { label: "IP", value: "ip", padding: "checkbox" },
     { label: "User", value: "user" },
-    { label: "Start", value: "start", type: 'int' },
+    { label: "Time", value: 'update' },
     { label: "Device ID", value: "devid" },
-    { label: "Device Type / Agent", value: "devtype" },
+    { label: "Info", value: "addinfo" },
     { label: "Command", value: "command", type: 'int' },
-    { label: "Update", value: "update", padding: "checkbox", type: 'int' },
   ];
   
   fetchInterval = null;
@@ -114,6 +136,15 @@ class Sync extends PureComponent {
     this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
+  getRowClass(row, diff) {
+    const { classes } = this.props;
+    if(row.justUpdated) return classes.justUpdated;
+    if(row.ended !== 0) return classes.terminated;
+    if(row.push && diff > 32) return classes.darkred;
+    if(!row.push && diff > 2) return classes.red;
+    return classes.defaultRow;
+  }
+
   render() {
     const { classes, t, sync } = this.props;
     const { snackbar, sortedDevices, order, orderBy } = this.state;
@@ -152,23 +183,25 @@ class Sync extends PureComponent {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(sortedDevices || sync).map((obj, idx) =>
-                  <Tooltip key={idx} placement="top" title={obj.addinfo}>
-                    <TableRow hover>
-                      <TableCell padding="checkbox">{obj.pid}</TableCell>
-                      <TableCell padding="checkbox">{obj.ip}</TableCell>
-                      <TableCell>{obj.user}</TableCell>
-                      <TableCell>{parseUnixtime(obj.start)}</TableCell>
-                      <TableCell>{obj.devid}</TableCell>
-                      <TableCell>{obj.devtype + ' / ' + obj.devagent}</TableCell>
-                      <TableCell>{getStringFromCommand(obj.command)}</TableCell>
-                      <TableCell>{parseUnixtime(obj.update)}</TableCell>
-                      <TableCell padding="checkbox">
-                        {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
-                      </TableCell>
-                    </TableRow>
-                  </Tooltip>
-                )}
+                {(sortedDevices || sync).map((obj, idx) => {
+                  const timePast = getTimePast(obj.diff);
+                  return (
+                    <Tooltip key={idx} placement="top" title={obj.devtype + ' / ' + obj.devagent}>
+                      <TableRow hover className={this.getRowClass(obj, obj.diff)}>
+                        <TableCell className={classes.cell} padding="checkbox">{obj.pid}</TableCell>
+                        <TableCell className={classes.cell} padding="checkbox">{obj.ip}</TableCell>
+                        <TableCell className={classes.cell}>{obj.user}</TableCell>
+                        <TableCell className={classes.cell}>{timePast}</TableCell>
+                        <TableCell className={classes.cell}>{obj.devid}</TableCell>
+                        <TableCell className={classes.cell}>{obj.addinfo}</TableCell>
+                        <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
+                        <TableCell className={classes.cell} padding="checkbox">
+                          {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
+                        </TableCell>
+                      </TableRow>
+                    </Tooltip>
+                  );
+                })}
               </TableBody>
             </Table>
           </Paper>

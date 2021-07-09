@@ -66,6 +66,18 @@ export function parseUnixtime(time) {
     parsedTime.format('MM-DD-YYYY h:mm:ss a');
 }
 
+export function getTimeDiff(time) {
+  if(!time) return 0;
+  return moment().unix() - time;
+}
+
+export function getTimePast(diff) {
+  const duration = moment.duration(diff * 1000);
+  const minutes = duration.minutes();
+  const seconds = duration.seconds();
+  return `${minutes > 9 ? minutes : '0' + minutes}:${seconds > 9 ? seconds : '0' + seconds}`;
+}
+
 export function append(arr, newArr) {
   let copy = [...arr];
   copy = copy.concat(newArr);
