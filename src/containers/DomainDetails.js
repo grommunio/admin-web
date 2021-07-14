@@ -27,7 +27,7 @@ import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchOrgsData } from '../actions/orgs';
-import SyncPolicies from '../components/SyncPolicies';
+import SlimSyncPolicies from '../components/SlimSyncPolicies';
 
 const styles = theme => ({
   root: {
@@ -200,7 +200,7 @@ class DomainListDetails extends PureComponent {
   render() {
     const { classes, t, orgs, capabilities } = this.props;
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
-      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab } = this.state;
+      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy } = this.state;
     return (
       <div className={classes.root}>
         <TopBar title={t("Domain list")}/>
@@ -302,11 +302,11 @@ class DomainListDetails extends PureComponent {
                 onChange={this.handleInput('tel')}
               />
             </FormControl>}
-            {tab === 1 && <SyncPolicies
+            {tab === 1 && <SlimSyncPolicies
               syncPolicy={syncPolicy}
+              defaultPolicy={defaultPolicy}
               handleChange={this.handleSyncChange}
               handleCheckbox={this.handleSyncCheckboxChange}
-              handleRadio={this.handleRadio}
               handleSlider={this.handleSlider}
             />}
             <Button

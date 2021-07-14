@@ -34,8 +34,8 @@ import ChangeUserPassword from '../components/Dialogs/ChangeUserPassword';
 import FetchMail from '../components/user/FetchMail';
 import AddFetchmail from '../components/Dialogs/AddFetchmail';
 import EditFetchmail from '../components/Dialogs/EditFetchmail';
-import SyncPolicies from '../components/SyncPolicies';
 import { getPolicyDiff } from '../utils';
+import SlimSyncPolicies from '../components/SlimSyncPolicies';
 
 const styles = theme => ({
   root: {
@@ -454,7 +454,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, history } = this.props;
-    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading,
+    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
       detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
@@ -558,11 +558,11 @@ class UserDetails extends PureComponent {
               domain={domain.ID}
               user={user.ID}
             />}
-            {tab === 7 && <SyncPolicies
+            {tab === 7 && <SlimSyncPolicies
               syncPolicy={syncPolicy}
+              defaultPolicy={defaultPolicy}
               handleChange={this.handleSyncChange}
               handleCheckbox={this.handleSyncCheckboxChange}
-              handleRadio={this.handleRadio}
               handleSlider={this.handleSlider}
             />}
             <Grid container className={classes.buttonGrid}>
