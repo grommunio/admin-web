@@ -1,4 +1,4 @@
-PACKAGE_NAME = grammm-admin-web
+PACKAGE_NAME = grommunio-admin-web
 
 # Tools
 
