@@ -31,6 +31,7 @@ import Feedback from "../components/Feedback";
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
+import { HelpOutline } from "@material-ui/icons";
 
 const styles = (theme) => ({
   root: {
@@ -231,6 +232,13 @@ class Orgs extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Organizations")}
+            <IconButton
+              size="small"
+              href="https://docs.grammm.com/admin/tutorials.html#organizations"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

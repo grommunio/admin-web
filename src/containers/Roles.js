@@ -18,6 +18,7 @@ import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { debounce } from 'debounce';
+import { HelpOutline } from '@material-ui/icons';
 
 const styles = theme => ({
   root: {
@@ -201,6 +202,13 @@ class Roles extends PureComponent {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Roles")}
+            <IconButton
+              size="small"
+              href="https://docs.grammm.com/admin/tutorials.html#id1"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

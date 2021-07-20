@@ -15,7 +15,7 @@ import Feedback from '../components/Feedback';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Delete } from '@material-ui/icons';
+import { Delete, HelpOutline } from '@material-ui/icons';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 
 const styles = theme => ({
@@ -143,6 +143,13 @@ class DBConf extends Component {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("DB Configuration")}
+            <IconButton
+              size="small"
+              href="https://docs.grammm.com/admin/tutorials.html#adding-a-grammm-dbconf-file"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <Button

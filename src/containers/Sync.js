@@ -21,12 +21,13 @@ import {
   FormControlLabel,
   Checkbox,
   MenuItem,
+  IconButton,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
 import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
-import { CheckCircleOutlined, HighlightOffOutlined, Search } from "@material-ui/icons";
+import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined, Search } from "@material-ui/icons";
 import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
 import { grey, red } from "@material-ui/core/colors";
@@ -188,6 +189,13 @@ class Sync extends PureComponent {
         <div className={classes.base}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("Mobile Devices")}
+            <IconButton
+              size="small"
+              href="https://docs.grammm.com/admin/tutorials.html#mobile-devices"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
           </Typography>
           <Grid container alignItems="flex-end" className={classes.buttonGrid}>
             <FormControlLabel
