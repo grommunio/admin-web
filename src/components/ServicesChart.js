@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020 grammm GmbH
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
@@ -11,9 +11,10 @@ import Restart from "@material-ui/icons/Replay";
 import Start from "@material-ui/icons/PlayCircleFilledOutlined";
 import Enable from "@material-ui/icons/PowerSettingsNew";
 import { connect } from "react-redux";
-import { serviceAction } from "../actions/services";
 import { withTranslation } from "react-i18next";
 import Feedback from "./Feedback";
+import ConfirmRestartStop from "./Dialogs/ConfirmRestartStop";
+import { serviceAction } from '../actions/services';
 
 const styles = (theme) => ({
   root: {
@@ -109,17 +110,19 @@ const styles = (theme) => ({
   },
 });
 
-class ServicesChart extends Component {
+class ServicesChart extends PureComponent {
   state = {
     snackbar: null,
     starting: false,
     restarting: false,
     stoping: false,
     enableing: false,
+    service: null,
+    action: '',
   };
 
   handleServiceAction = (service, action) => () => {
-    this.setState({ [action + "ing"]: service.name });
+    this.setState({ [action + "ing"]: service.name, service: null });
     this.props
       .serviceAction(service.unit, action)
       .then(() => this.setState({ [action + "ing"]: false }))
@@ -155,9 +158,13 @@ class ServicesChart extends Component {
     }
   }
 
+  handleDialog = (service, action) => () => this.setState({ service, action });
+
+  handleCloseDialog = () => this.setState({ service: null });
+
   render() {
     const { classes, Services, t } = this.props;
-    const { starting, restarting, stoping, snackbar } = this.state;
+    const { starting, restarting, stoping, snackbar, service, action } = this.state;
 
     return (
       <div className={classes.root}>
@@ -211,7 +218,7 @@ class ServicesChart extends Component {
                     {stoping !== service.name ? (
                       <Tooltip title={t("Stop")} placement="top">
                         <IconButton
-                          onClick={this.handleServiceAction(service, "stop")}
+                          onClick={this.handleDialog(service, "stop")}
                           className={classes.chipIcon}
                         >
                           <Stop className={classes.iconButton} fontSize="small" />
@@ -225,7 +232,7 @@ class ServicesChart extends Component {
                     {restarting !== service.name ? (
                       <Tooltip title={t("Restart")}placement="top">
                         <IconButton
-                          onClick={this.handleServiceAction(service, "restart")}
+                          onClick={this.handleDialog(service, "restart")}
                           className={classes.chipIcon}
                         >
                           <Restart
@@ -259,6 +266,13 @@ class ServicesChart extends Component {
             </TableBody>
           </Table>
         </Paper>
+        <ConfirmRestartStop
+          open={!!service}
+          handleConfirm={this.handleServiceAction(service, action)}
+          onClose={this.handleCloseDialog}
+          service={service}
+          action={action}
+        />
         <Feedback
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}
@@ -292,5 +306,5 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withTranslation()(withStyles(styles)(ServicesChart)));
