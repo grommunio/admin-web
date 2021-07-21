@@ -97,10 +97,10 @@ class Login extends Component {
   }
   
   componentDidMount() {
-    let grammmAuthJwt = window.localStorage.getItem("grammmAuthJwt");
-    if(grammmAuthJwt) {
+    let grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
+    if(grommunioAuthJwt) {
       const { authLoginWithToken } = this.props;
-      authLoginWithToken(grammmAuthJwt).catch(err => console.error(err));
+      authLoginWithToken(grommunioAuthJwt).catch(err => console.error(err));
     }
   }
 
@@ -205,8 +205,8 @@ const mapDispatchToProps = dispatch => {
     authLogin: async (user, pass) => {
       await dispatch(authLogin(user, pass)).catch(msg => Promise.reject(msg));
     },
-    authLoginWithToken: async grammmAuthJwt => {
-      await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));
+    authLoginWithToken: async grommunioAuthJwt => {
+      await dispatch(authLoginWithToken(grommunioAuthJwt)).catch(msg => Promise.reject(msg));
     },
   };
 };

@@ -529,7 +529,7 @@ export function log(filename, params) {
   SYNC
 */
 
-export function grammmSync(params) {
+export function grommunioSync(params) {
   return async () => {
     return await get(buildQuery('/system/sync/top', params));
   };

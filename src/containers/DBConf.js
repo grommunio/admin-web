@@ -145,7 +145,7 @@ class DBConf extends Component {
             {t("DB Configuration")}
             <IconButton
               size="small"
-              href="https://docs.grammm.com/admin/tutorials.html#adding-a-grammm-dbconf-file"
+              href="https://docs.grammm.com/admin/tutorials.html#adding-a-grommunio-dbconf-file"
               target="_blank"
             >
               <HelpOutline fontSize="small"/>
@@ -165,7 +165,7 @@ class DBConf extends Component {
               onClick={() => this.setState({ configuring: true })}
               className={classes.button}
             >
-              {t("Configure grammm-dbconf")}
+              {t("Configure grommunio-dbconf")}
             </Button>
             <div className={classes.actions}>
               <TextField

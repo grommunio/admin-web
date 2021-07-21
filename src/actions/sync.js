@@ -4,14 +4,14 @@
 import {
   SYNC_DATA_RECEIVED,
 } from './types';
-import { grammmSync } from '../api';
+import { grommunioSync } from '../api';
 import { getTimeDiff } from '../utils';
 import store from '../store';
 
 export function fetchSyncData(params) {
   return async dispatch => {
     try {
-      let syncData = await dispatch(grammmSync(params));
+      let syncData = await dispatch(grommunioSync(params));
       const currentState = store.getState().sync.Sync;
       const currentLength = currentState.length;
       syncData = syncData.data;

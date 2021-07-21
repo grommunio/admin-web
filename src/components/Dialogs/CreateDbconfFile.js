@@ -70,7 +70,7 @@ class CreateDbconfFile extends PureComponent {
     const { upload } = this.props;
     const { service, data } = this.state;
     this.setState({ loading: true });
-    upload('grammm-dbconf', service, this.formatData(data))
+    upload('grommunio-dbconf', service, this.formatData(data))
       .then(() => {
         this.setState({
           data: [],
@@ -103,7 +103,7 @@ class CreateDbconfFile extends PureComponent {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Configure grammmm-dbconf</DialogTitle>
+        <DialogTitle>Configure grommunio-dbconf</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
