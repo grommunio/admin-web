@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+
 import {
   ANTISPAM_DATA_ERROR,
   ANTISPAM_DATA_FETCH,

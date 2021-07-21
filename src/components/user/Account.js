@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
   Select, TextField, Typography, withStyles, Tooltip } from '@material-ui/core';

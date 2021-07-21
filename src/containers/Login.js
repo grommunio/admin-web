@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020 grammm GmbH
+// SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
