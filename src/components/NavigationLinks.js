@@ -33,7 +33,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
-import logo from '../res/grammm_logo_light.svg';
+import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
@@ -176,7 +176,7 @@ class NavigationLinks extends PureComponent {
           <img
             src={logo}
             width="140"
-            alt="GRAMMM"
+            alt="grommunio"
             onClick={this.handleNavigation('')}
             className={classes.logo}
           />

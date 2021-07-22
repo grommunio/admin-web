@@ -22,7 +22,7 @@ import {
   authLoginWithToken,
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
-import logo from '../res/grammm_logo.svg';
+import logo from '../res/grommunio_logo_default.svg';
 
 const styles = theme => ({
   /* || General */
@@ -48,6 +48,7 @@ const styles = theme => ({
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
+    margin: theme.spacing(1, 0, 0, 0),
   },
   button: {
     width: '100%',
@@ -130,7 +131,7 @@ class Login extends Component {
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
           <div className={classes.logoContainer}>
-            <img src={logo} width="300" alt="GRAMMM"/>
+            <img src={logo} width="300" alt="grommunio"/>
           </div>
           <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>
