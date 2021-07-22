@@ -798,3 +798,10 @@ export function defaultDomainSyncPolicy(domainID) {
     return await get(`/domains/${domainID}/syncPolicy`);
   };
 }
+
+export function status() {
+  return async () => {
+    return await fetch("https://mail.grammm.com:8080/statusthisisjustinternalforthemoment/format/json") // Change when API adds endpoint
+      .then(handleErrors);
+  };
+}
