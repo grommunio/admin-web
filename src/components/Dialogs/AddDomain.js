@@ -55,7 +55,7 @@ class AddDomain extends PureComponent {
 
   handleInput = field => event => {
     const val = event.target.value;
-    if(val) this.debounceFetch({ domain: val });
+    if(val && field === 'domainname') this.debounceFetch({ domain: val });
     this.setState({
       [field]: val,
     });
