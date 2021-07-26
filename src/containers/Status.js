@@ -16,7 +16,7 @@ import { connect } from "react-redux";
 import TopBar from "../components/TopBar";
 import blue from "../colors/blue";
 import Feedback from "../components/Feedback";
-import { fetchStatusData } from '../actions/status';
+import { fetchVhostsData, fetchVhostStatusData } from '../actions/status';
 import ServerZones from "../components/status/ServerZones";
 import FilterZones from "../components/status/FilterZones";
 import Connections from "../components/status/Connections";
@@ -122,6 +122,7 @@ const styles = (theme) => ({
 class Status extends PureComponent {
 
   state = {
+    vhost: 'local',
     snackbar: null,
     data: {
       connections: {},
@@ -135,7 +136,10 @@ class Status extends PureComponent {
   fetchInterval = null;
 
   async componentDidMount() {
-    this.fetchData();
+    this.props.fetch()
+      .then(() => {
+        if(this.props.vhosts.includes('local')) this.setState({ vhost: 'local'});
+      });
     this.fetchInterval = setInterval(() => {
       this.fetchData();
     }, 1000);
@@ -148,10 +152,12 @@ class Status extends PureComponent {
   };
 
   fetchData = async () => {
-    const data = await 
-    this.props.fetch({ sort: "name,asc" })
-      .catch(snackbar => this.setState({ snackbar }));
-    if(data) this.setState({ data });
+    const { vhost } = this.state;
+    if(vhost) {
+      const data = await this.props.fetchVhostStatus(this.state.vhost)
+        .catch(snackbar => this.setState({ snackbar }));
+      if(data) this.setState({ data });
+    }
   }
 
   componentWillUnmount() {
@@ -171,9 +177,13 @@ class Status extends PureComponent {
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
 
+  handleChange = field => e => {
+    this.setState({ [field]: e.target.value });
+  }
+
   render() {
-    const { classes, t } = this.props;
-    const { snackbar, data, interval } = this.state;
+    const { classes, t, vhosts } = this.props;
+    const { snackbar, data, interval, vhost } = this.state;
     const { connections, serverZones, filterZones } = data;
     return (
       <div className={classes.root}>
@@ -183,6 +193,17 @@ class Status extends PureComponent {
           <Typography variant="h1" className={classes.pageTitle}>
             {t("Live Status")} - {data.hostName}
           </Typography>
+          <TextField
+            select
+            value={vhost}
+            label="Vhost"
+            className={classes.tf}
+            onChange={this.handleChange('vhost')}
+          >
+            {vhosts.map((host, key) =>
+              <MenuItem value={host} key={key}>{host}</MenuItem>
+            )}
+          </TextField>
           <TextField
             select
             value={interval}
@@ -226,16 +247,20 @@ Status.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchVhostStatus: PropTypes.func.isRequired,
+  vhosts: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  return { logs: state.logs };
+  return { vhosts: state.status.vhosts };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetch: async (params) => 
-      await dispatch(fetchStatusData(params))
+    fetch: async () => await dispatch(fetchVhostsData())
+      .catch((error) => Promise.reject(error)),
+    fetchVhostStatus: async name => 
+      await dispatch(fetchVhostStatusData(name))
         .then(data => data)
         .catch((error) => Promise.reject(error)),
   };

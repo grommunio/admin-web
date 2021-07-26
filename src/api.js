@@ -799,9 +799,14 @@ export function defaultDomainSyncPolicy(domainID) {
   };
 }
 
-export function status() {
+export function vhosts() {
   return async () => {
-    return await fetch("https://mail.grammm.com:8080/statusthisisjustinternalforthemoment/format/json") // Change when API adds endpoint
-      .then(handleErrors);
+    return await get('/system/vhostStatus');
+  };
+}
+
+export function vhostStatus(name) {
+  return async () => {
+    return await get('/system/vhostStatus/' + name);
   };
 }

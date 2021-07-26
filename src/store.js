@@ -18,6 +18,7 @@ import foldersReducer from './reducers/folders';
 import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 import logsReducer from './reducers/logs';
+import statusReducer from './reducers/status';
 //import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
@@ -50,6 +51,7 @@ export const store = createStore(
     roles: rolesReducer,
     services: servicesReducer,
     settings: settingsReducer,
+    status: statusReducer,
     sync: syncReducer,
     users: usersReducer,
   }),
