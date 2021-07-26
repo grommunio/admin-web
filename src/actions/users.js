@@ -14,7 +14,8 @@ import {
   USERS_SYNC_RECEIVED,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
-  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync } from '../api';
+  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
+  userDelegates, editUserDelegates } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -97,6 +98,27 @@ export function fetchUserSync(domainID, userID) {
     try {
       const data = await dispatch(userSync(domainID, userID));
       await dispatch({type: USERS_SYNC_RECEIVED, data});
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchUserDelegates(domainID, userID) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(userDelegates(domainID, userID));
+      return Promise.resolve(data);
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function setUserDelegates(domainID, userID, delegates) {
+  return async dispatch => {
+    try {
+      await dispatch(editUserDelegates(domainID, userID, delegates));
     } catch(err) {
       return Promise.reject(err.message);
     }

@@ -142,7 +142,7 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, usernameError, handleUnitChange,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange,
       handlePasswordChange, handleQuotaDelete } = this.props;
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
@@ -158,7 +158,6 @@ class Account extends PureComponent {
             InputProps={{
               endAdornment: <div>@{domain.domainname}</div>,
             }}
-            error={usernameError}
             disabled
           />
           <Button
@@ -377,7 +376,6 @@ Account.propTypes = {
   handleUnitChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
   handleQuotaDelete: PropTypes.func.isRequired,
-  usernameError: PropTypes.bool,
   rawData: PropTypes.object,
 };
 
