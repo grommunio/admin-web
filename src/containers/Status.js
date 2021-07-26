@@ -1,0 +1,272 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+
+import React, { PureComponent } from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import { withTranslation } from "react-i18next";
+import {
+  MenuItem,
+  Paper,
+  TableContainer,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import { connect } from "react-redux";
+import TopBar from "../components/TopBar";
+import blue from "../colors/blue";
+import Feedback from "../components/Feedback";
+import { fetchVhostsData, fetchVhostStatusData } from '../actions/status';
+import ServerZones from "../components/status/ServerZones";
+import FilterZones from "../components/status/FilterZones";
+import Connections from "../components/status/Connections";
+import Requests from "../components/status/Requests";
+
+const styles = (theme) => ({
+  root: {
+    flex: 1,
+    overflow: "auto",
+  },
+  base: {
+    flexDirection: "column",
+    padding: theme.spacing(2),
+    flex: 1,
+    display: "flex",
+  },
+  grid: {
+    padding: theme.spacing(0, 2),
+  },
+  toolbar: theme.mixins.toolbar,
+  flexRowEnd: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  pageTitle: {
+    margin: theme.spacing(2),
+  },
+  pageTitleSecondary: {
+    color: "#aaa",
+  },
+  homeIcon: {
+    color: blue[500],
+    position: "relative",
+    top: 4,
+    left: 4,
+    cursor: "pointer",
+  },
+  circularProgress: {
+    margin: theme.spacing(1, 0),
+  },
+  textfield: {
+    margin: theme.spacing(2, 0, 1, 0),
+  },
+  tools: {
+    margin: theme.spacing(0, 2, 2, 2),
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
+  },
+  actions: {
+    display: 'flex',
+    flex: 1,
+    margin: theme.spacing(0, 4, 0, 0),
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  buttonGrid: {
+    margin: theme.spacing(0, 2, 2, 2),
+  },
+  logViewer: {
+    display: 'flex',
+    flex: 1,
+  },
+  log: {
+    fontSize: 16,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#bbb',
+    },
+  },
+  noticeLog: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: '#bbb',
+    },
+  },
+  errorLog: {
+    fontSize: 16,
+    cursor: 'pointer',
+    color: 'red',
+    '&:hover': {
+      backgroundColor: '#bbb',
+    },
+  },
+  paper: {
+    flex: 1,
+    padding: theme.spacing(2),
+  },
+  table: {
+    margin: theme.spacing(0, 0, 4, 0),
+  },
+  li: {
+    cursor: 'pointer',
+  },
+  tf: {
+    margin: theme.spacing(2),
+    maxWidth: 200,
+  },
+});
+
+class Status extends PureComponent {
+
+  state = {
+    vhost: 'local',
+    snackbar: null,
+    data: {
+      connections: {},
+      sharedZones: {},
+      serverZones: {},
+      filterZones: {},
+    },
+    interval: 1000,
+  };
+
+  fetchInterval = null;
+
+  async componentDidMount() {
+    this.props.fetch()
+      .then(() => {
+        if(this.props.vhosts.includes('local')) this.setState({ vhost: 'local'});
+      });
+    this.fetchInterval = setInterval(() => {
+      this.fetchData();
+    }, 1000);
+  }
+
+  handleNavigation = (path) => (event) => {
+    const { history } = this.props;
+    event.preventDefault();
+    history.push(`/${path}`);
+  };
+
+  fetchData = async () => {
+    const { vhost } = this.state;
+    if(vhost) {
+      const data = await this.props.fetchVhostStatus(this.state.vhost)
+        .catch(snackbar => this.setState({ snackbar }));
+      if(data) this.setState({ data });
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.fetchInterval);
+  }
+
+  handleIntervalChange = ({ target: t }) => {
+    const interval = t.value;
+    clearInterval(this.fetchInterval);
+    this.setState({ interval });
+    this.fetchInterval = setInterval(() => {
+      this.fetchData();
+    }, interval);
+  }
+
+  toSortedArray = obj => Object.entries(obj)
+    .map(([server, values]) => ({ server, values }))
+    .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
+
+  handleChange = field => e => {
+    this.setState({ [field]: e.target.value });
+  }
+
+  render() {
+    const { classes, t, vhosts } = this.props;
+    const { snackbar, data, interval, vhost } = this.state;
+    const { connections, serverZones, filterZones } = data;
+    return (
+      <div className={classes.root}>
+        <TopBar />
+        <div className={classes.toolbar}></div>
+        <div className={classes.base}>
+          <Typography variant="h1" className={classes.pageTitle}>
+            {t("Live Status")} - {data.hostName}
+          </Typography>
+          <TextField
+            select
+            value={vhost}
+            label="Vhost"
+            className={classes.tf}
+            onChange={this.handleChange('vhost')}
+          >
+            {vhosts.map((host, key) =>
+              <MenuItem value={host} key={key}>{host}</MenuItem>
+            )}
+          </TextField>
+          <TextField
+            select
+            value={interval}
+            label="Update interval"
+            className={classes.tf}
+            onChange={this.handleIntervalChange}
+          >
+            <MenuItem value={1000}>1 second</MenuItem>
+            <MenuItem value={2000}>2 seconds</MenuItem>
+            <MenuItem value={3000}>3 seconds</MenuItem>
+            <MenuItem value={5000}>5 seconds</MenuItem>
+            <MenuItem value={10000}>10 seconds</MenuItem>
+          </TextField>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Connections")}
+          </Typography>
+          <Connections data={connections} />
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Requests")}
+          </Typography>
+          <Requests data={connections} />
+          <div className={classes.logViewer}>
+            <TableContainer component={Paper} className={classes.paper}>
+              <Typography style={{ marginBottom: 8 }} variant="h5">Host details</Typography>
+              <ServerZones serverZones={this.toSortedArray(serverZones)} />
+              <FilterZones filterZones={filterZones} />
+            </TableContainer>
+          </div>
+          <Feedback
+            snackbar={snackbar}
+            onClose={() => this.setState({ snackbar: "" })}
+          />
+        </div>
+      </div>
+    );
+  }
+}
+
+Status.propTypes = {
+  classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+  fetch: PropTypes.func.isRequired,
+  fetchVhostStatus: PropTypes.func.isRequired,
+  vhosts: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = (state) => {
+  return { vhosts: state.status.vhosts };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetch: async () => await dispatch(fetchVhostsData())
+      .catch((error) => Promise.reject(error)),
+    fetchVhostStatus: async name => 
+      await dispatch(fetchVhostStatusData(name))
+        .then(data => data)
+        .catch((error) => Promise.reject(error)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withTranslation()(withStyles(styles)(Status)));

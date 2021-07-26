@@ -57,6 +57,7 @@ const AsyncRoles = makeLoadableComponent(() => import("./containers/Roles"));
 const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDetails"));
 const AsyncLogs = makeLoadableComponent(() => import("./containers/Logs"));
 const AsyncSync = makeLoadableComponent(() => import("./containers/Sync"));
+const AsyncStatus = makeLoadableComponent(() => import("./containers/Status"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -118,6 +119,12 @@ const Routes = ({ childProps, domains }) => (
       path="/sync"
       exact
       component={AsyncSync}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/status"
+      exact
+      component={AsyncStatus}
       props={childProps}
     />
     <AuthenticatedRoute

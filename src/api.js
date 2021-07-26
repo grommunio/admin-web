@@ -798,3 +798,15 @@ export function defaultDomainSyncPolicy(domainID) {
     return await get(`/domains/${domainID}/syncPolicy`);
   };
 }
+
+export function vhosts() {
+  return async () => {
+    return await get('/system/vhostStatus');
+  };
+}
+
+export function vhostStatus(name) {
+  return async () => {
+    return await get('/system/vhostStatus/' + name);
+  };
+}

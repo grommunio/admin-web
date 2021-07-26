@@ -38,6 +38,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
+import { TableChart } from '@material-ui/icons';
 
 const styles = theme => ({
   drawerHeader: {
@@ -371,6 +372,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Sync className={classes.icon}/>
                 <ListItemText primary={t('Mobile Devices')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('status')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/status')}
+            >
+              <Grid container alignItems="center">
+                <TableChart className={classes.icon}/>
+                <ListItemText primary={t('Live Status')} />
               </Grid>
             </ListItem>
           </React.Fragment>
