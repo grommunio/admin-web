@@ -780,6 +780,16 @@ export async function deleteMailAddress(domain, id) {
 }
 
 /*
+  MAIL-QUEUE
+*/
+
+export function mailq() {
+  return async () => {
+    return await get('/system/mailq');
+  };
+}
+
+/*
   BASE SUTUP
 */
 

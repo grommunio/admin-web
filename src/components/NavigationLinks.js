@@ -38,7 +38,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { TableChart } from '@material-ui/icons';
+import { QueryBuilder, TableChart } from '@material-ui/icons';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
@@ -362,6 +362,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Logs className={classes.icon}/>
                 <ListItemText primary={t('Logs')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('mailq')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/mailq')}
+            >
+              <Grid container alignItems="center">
+                <QueryBuilder className={classes.icon}/>
+                <ListItemText primary={t('Mail queue')} />
               </Grid>
             </ListItem>
             <ListItem
