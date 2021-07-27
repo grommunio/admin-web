@@ -33,6 +33,8 @@ import blue from "../colors/blue";
 import debounce from "debounce";
 import Feedback from "../components/Feedback";
 import DeleteDomain from "../components/Dialogs/DeleteDomain";
+import { SYSTEM_ADMIN_WRITE } from "../constants";
+import { CapabilityContext } from "../CapabilityContext";
 
 const styles = (theme) => ({
   root: {
@@ -225,7 +227,7 @@ class DomainList extends Component {
       orderBy,
       match,
     } = this.state;
-
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
     return (
@@ -245,6 +247,7 @@ class DomainList extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              disabled={!writable}
             >
               {t("New domain")}
             </Button>
@@ -307,9 +310,9 @@ class DomainList extends Component {
                     <TableCell>{obj.title}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error" />
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>)
                 }
@@ -349,6 +352,7 @@ class DomainList extends Component {
   }
 }
 
+DomainList.contextType = CapabilityContext;
 DomainList.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

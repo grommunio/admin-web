@@ -28,6 +28,8 @@ import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
+import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -91,7 +93,7 @@ class DomainListDetails extends PureComponent {
 
   async componentDidMount() {
     const { fetch, fetchOrgs, capabilities } = this.props;
-    if(capabilities.includes('SystemAdmin')) fetchOrgs()
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) fetchOrgs()
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -151,7 +153,7 @@ class DomainListDetails extends PureComponent {
 
   handleBack = () => {
     const { capabilities } = this.props;
-    if(capabilities.includes('SystemAdmin')) this.props.history.push('/domainList');
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) this.props.history.push('/domainList');
     else this.props.history.push('/' + getStringAfterLastSlash());
   }
 
@@ -199,6 +201,7 @@ class DomainListDetails extends PureComponent {
 
   render() {
     const { classes, t, orgs, capabilities } = this.props;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy } = this.state;
     return (
@@ -228,14 +231,14 @@ class DomainListDetails extends PureComponent {
                   autoFocus
                   disabled
                 />
-                <Button
+                {writable && <Button
                   variant="contained"
                   color="primary"
                   onClick={() => this.setState({ changingPw: true })}
                   size="small"
                 >
                   {t('Change password')}
-                </Button>
+                </Button>}
               </Grid>
               <TextField
                 select
@@ -251,7 +254,7 @@ class DomainListDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              {capabilities.includes('SystemAdmin') && <TextField
+              {capabilities.includes(SYSTEM_ADMIN_READ) && <TextField
                 select
                 className={classes.input}
                 label={t("Organization")}
@@ -320,6 +323,7 @@ class DomainListDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -373,6 +377,7 @@ class DomainListDetails extends PureComponent {
   }
 }
 
+DomainListDetails.contextType = CapabilityContext;
 DomainListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

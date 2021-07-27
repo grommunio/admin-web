@@ -55,7 +55,7 @@ class Delegates extends PureComponent {
   }
 
   render() {
-    const { classes, t, Users, userID, history } = this.props;
+    const { classes, t, Users, userID, history, disabled } = this.props;
     const { delegates, snackbar } = this.state;
     return (
       <>
@@ -92,6 +92,7 @@ class Delegates extends PureComponent {
             variant="contained"
             color="primary"
             onClick={this.handleSave}
+            disabled={disabled}
           >
             {t('Save')}
           </Button>
@@ -115,6 +116,7 @@ Delegates.propTypes = {
   userID: PropTypes.number.isRequired,
   setUserDelegates: PropTypes.func.isRequired,
   history: PropTypes.number.isRequired,
+  disabled: PropTypes.bool,
 };
 
 const mapStateToProps = state => {
@@ -125,7 +127,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, userID) => await dispatch(fetchUserDelegates(domainID, userID))
       .catch(err => console.error(err)),
-    fetchUsers: async domainID => await dispatch(fetchUsersData(domainID, { limit: 1000000 }))
+    fetchUsers: async domainID => await dispatch(fetchUsersData(domainID, { limit: 10000 }))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))

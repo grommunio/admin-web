@@ -37,6 +37,8 @@ import EditFetchmail from '../components/Dialogs/EditFetchmail';
 import { getPolicyDiff } from '../utils';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import Delegates from '../components/user/Delegates';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -455,6 +457,7 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, history } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
       detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
@@ -551,6 +554,7 @@ class UserDetails extends PureComponent {
             {tab === 5 && <Delegates
               domainID={domain.ID}
               userID={user.ID}
+              disabled={!writable}
             />}
             {tab === 6 && <FetchMail
               fetchmail={fetchmail}
@@ -581,6 +585,7 @@ class UserDetails extends PureComponent {
                 variant="contained"
                 color="primary"
                 onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
+                disabled={!writable}
               >
                 {t('Save')}
               </Button>
@@ -624,6 +629,7 @@ class UserDetails extends PureComponent {
   }
 }
 
+UserDetails.contextType = CapabilityContext;
 UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

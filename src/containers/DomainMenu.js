@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
 import { PureComponent } from 'react';
 import { deleteDomainData } from '../actions/domains';
+import { ORG_ADMIN } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -82,7 +83,7 @@ class DomainMenu extends PureComponent {
   render() {
     const { classes, domain, t, capabilities } = this.props;
     const { deleting } = this.state;
-    const editable = capabilities.includes('SystemAdmin') || capabilities.includes('OrgAdmin');
+    const editable = capabilities.includes(ORG_ADMIN);
 
     return (
       <div className={classes.root}>

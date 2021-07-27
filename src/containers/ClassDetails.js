@@ -33,6 +33,8 @@ import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -250,6 +252,7 @@ class ClassDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, _classes } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { _class, snackbar, unsaved, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
     return (
@@ -408,7 +411,7 @@ class ClassDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
-              disabled={!unsaved}
+              disabled={!unsaved || writable}
             >
               {t('Save')}
             </Button>
@@ -423,6 +426,7 @@ class ClassDetails extends PureComponent {
   }
 }
 
+ClassDetails.contextType = CapabilityContext;
 ClassDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

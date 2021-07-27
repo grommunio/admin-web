@@ -18,6 +18,8 @@ import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import AddMList from '../components/Dialogs/AddMList';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -194,6 +196,7 @@ class MLists extends Component {
   render() {
     const { classes, t, mLists, domain } = this.props;
     const { snackbar, match, orderBy, order, adding, deleting } = this.state;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
 
     return (
       <div
@@ -213,6 +216,7 @@ class MLists extends Component {
               color="primary"
               onClick={this.handleAdd}
               className={classes.newButton}
+              disabled={!writable}
             >
               {t('New mail list')}
             </Button>
@@ -263,9 +267,9 @@ class MLists extends Component {
                     <TableCell>{this.listTypes[obj.listType]}</TableCell>
                     <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -302,6 +306,7 @@ class MLists extends Component {
   }
 }
 
+MLists.contextType = CapabilityContext;
 MLists.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

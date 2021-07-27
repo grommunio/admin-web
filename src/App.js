@@ -14,6 +14,7 @@ import background from "./res/bootback.svg";
 import backgroundDark from "./res/bootback-dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
+import { CapabilityContext } from "./CapabilityContext";
 
 const styles = {
   root: {
@@ -91,7 +92,6 @@ class App extends Component {
     const routesProps = {
       authenticating,
       authenticated,
-      capabilities,
       loading,
     };
 
@@ -100,13 +100,15 @@ class App extends Component {
         <div
           className={darkMode === "true" ? classes.darkLayer : classes.layer}
         />
-        <MainView
-          classes={classes}
-          authenticated={authenticated}
-          capabilities={capabilities}
-          domains={Domains || []}
-          routesProps={routesProps}
-        />
+        <CapabilityContext.Provider value={capabilities}>
+          <MainView
+            classes={classes}
+            authenticated={authenticated}
+            capabilities={capabilities}
+            domains={Domains || []}
+            routesProps={routesProps}
+          />
+        </CapabilityContext.Provider>
       </div>
     );
   }

@@ -9,6 +9,8 @@ import { withTranslation } from 'react-i18next';
 import blue from '../../colors/blue';
 import { red, yellow } from '@material-ui/core/colors';
 import Delete from '@material-ui/icons/Delete';
+import { DOMAIN_ADMIN_WRITE } from '../../constants';
+import { CapabilityContext } from '../../CapabilityContext';
 
 const styles = theme => ({
   form: {
@@ -144,6 +146,7 @@ class Account extends PureComponent {
     const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange,
       handlePasswordChange, handleQuotaDelete } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
@@ -160,14 +163,14 @@ class Account extends PureComponent {
             }}
             disabled
           />
-          <Button
+          {writable && <Button
             variant="contained"
             color="primary"
             onClick={handlePasswordChange}
             size="small"
           >
             {t('Change password')}
-          </Button>
+          </Button>}
         </Grid>
         {ldapID && <TextField 
           label={t("LDAP ID")}
@@ -350,7 +353,7 @@ class Account extends PureComponent {
           <FormControlLabel
             control={
               <Checkbox
-                        checked={pop3_imap || false /*eslint-disable-line*/}
+                checked={pop3_imap || false /*eslint-disable-line*/}
                 onChange={handleCheckbox('pop3_imap')}
                 color="primary"
               />
@@ -363,6 +366,7 @@ class Account extends PureComponent {
   }
 }
 
+Account.contextType = CapabilityContext;
 Account.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
