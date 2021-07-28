@@ -16,29 +16,15 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
-import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { Autocomplete } from '@material-ui/lab';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -51,7 +37,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
   select: {
     minWidth: 60,
   },
@@ -154,115 +139,115 @@ class MListDetails extends PureComponent {
     const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class } = this.state;
 
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Groups")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'Mail list' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Mail list name")} 
-                fullWidth 
-                value={listname}
-                autoFocus
-                required
-                inputProps={{
-                  disabled: true,
-                }}
-              />
-              <TextField
-                select
-                className={classes.input}
-                label={t("Type")}
-                fullWidth
-                value={listType}
-                inputProps={{
-                  disabled: true,
-                }}
-              >
-                {this.listTypes.map((status, key) => (
-                  <MenuItem key={key} value={status.ID}>
-                    {status.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Privilege")}
-                fullWidth
-                value={listPrivilege}
-                onChange={this.handlePrivilegeChange}
-              >
-                {this.listPrivileges.map((status, key) => (
-                  <MenuItem key={key} value={status.ID}>
-                    {status.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {listType === 0 && <TextField 
-                className={classes.input} 
-                label={t("Recipients (separated by ',')")} 
-                fullWidth 
-                value={associations || ''}
-                onChange={this.handleInput('associations')}
-              />}
-              {listPrivilege === 3 && <TextField 
-                className={classes.input} 
-                label={t("Senders (separated by ','")} 
-                fullWidth 
-                value={specifieds || ''}
-                onChange={this.handleInput('specifieds')}
-              />}
-              {listType === 3 && <Autocomplete
-                value={_class}
-                getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
-                renderOption={(_class) => _class?.classname || ''}
-                onChange={this.handleAutocomplete('class')}
-                className={classes.input} 
-                options={_classes}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label={t("Group")}
-                  />
-                )}
-                filterOptions={(options, state) =>
-                  options.filter(o => o.classname.toLowerCase().includes(state.inputValue.toLowerCase()))}
-              />}
-            </FormControl>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={this.handleNavigation(domain.ID + '/mailLists')}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('Mail lists')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+              {t('editHeadline', { item: 'Mail list' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Mail list name")} 
+              fullWidth 
+              value={listname}
+              autoFocus
+              required
+              inputProps={{
+                disabled: true,
+              }}
+            />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Type")}
+              fullWidth
+              value={listType}
+              inputProps={{
+                disabled: true,
+              }}
+            >
+              {this.listTypes.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Privilege")}
+              fullWidth
+              value={listPrivilege}
+              onChange={this.handlePrivilegeChange}
+            >
+              {this.listPrivileges.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {listType === 0 && <TextField 
+              className={classes.input} 
+              label={t("Recipients (separated by ',')")} 
+              fullWidth 
+              value={associations || ''}
+              onChange={this.handleInput('associations')}
+            />}
+            {listPrivilege === 3 && <TextField 
+              className={classes.input} 
+              label={t("Senders (separated by ','")} 
+              fullWidth 
+              value={specifieds || ''}
+              onChange={this.handleInput('specifieds')}
+            />}
+            {listType === 3 && <Autocomplete
+              value={_class}
+              getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
+              renderOption={(_class) => _class?.classname || ''}
+              onChange={this.handleAutocomplete('class')}
+              className={classes.input} 
+              options={_classes}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Group")}
+                />
+              )}
+              filterOptions={(options, state) =>
+                options.filter(o => o.classname.toLowerCase().includes(state.inputValue.toLowerCase()))}
+            />}
+          </FormControl>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={this.handleNavigation(domain.ID + '/mailLists')}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+        <Feedback
+          snackbar={snackbar}
+          onClose={() => this.setState({ snackbar: '' })}
+        />
+      </ViewWrapper>
     );
   }
 }

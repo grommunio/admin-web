@@ -14,28 +14,13 @@ import {
   Button,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
-import Feedback from '../components/Feedback';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -47,10 +32,6 @@ const styles = theme => ({
   },
   input: {
     marginBottom: theme.spacing(3),
-  },
-  toolbar: theme.mixins.toolbar,
-  select: {
-    minWidth: 60,
   },
 });
 
@@ -102,63 +83,59 @@ class OrgDetails extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Groups")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'Organization' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Name")}
-                onChange={this.handleInput('name')}
-                fullWidth 
-                value={name || ''}
-                autoFocus
-                required
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Description")} 
-                fullWidth
-                onChange={this.handleInput('description')}
-                value={description || ''}
-                multiline
-                rows={4}
-                variant="outlined"
-              />
-            </FormControl>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={this.handleNavigation('orgs')}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('Organizations')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+              {t('editHeadline', { item: 'Organization' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Name")}
+              onChange={this.handleInput('name')}
+              fullWidth 
+              value={name || ''}
+              autoFocus
+              required
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Description")} 
+              fullWidth
+              onChange={this.handleInput('description')}
+              value={description || ''}
+              multiline
+              rows={4}
+              variant="outlined"
+            />
+          </FormControl>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={this.handleNavigation('orgs')}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+      </ViewWrapper>
     );
   }
 }

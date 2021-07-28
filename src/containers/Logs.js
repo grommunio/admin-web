@@ -17,67 +17,12 @@ import {
   Switch,
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import TopBar from "../components/TopBar";
 import ArrowUp from '@material-ui/icons/ArrowUpward';
-import blue from "../colors/blue";
-import Feedback from "../components/Feedback";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
 import { Refresh } from "@material-ui/icons";
+import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
-  root: {
-    flex: 1,
-    overflow: "auto",
-  },
-  base: {
-    flexDirection: "column",
-    padding: theme.spacing(2),
-    flex: 1,
-    display: "flex",
-  },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
-  pageTitleSecondary: {
-    color: "#aaa",
-  },
-  homeIcon: {
-    color: blue[500],
-    position: "relative",
-    top: 4,
-    left: 4,
-    cursor: "pointer",
-  },
-  circularProgress: {
-    margin: theme.spacing(1, 0),
-  },
-  textfield: {
-    margin: theme.spacing(2, 0, 1, 0),
-  },
-  tools: {
-    margin: theme.spacing(0, 2, 2, 2),
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
-  },
   logViewer: {
     display: 'flex',
     flex: 1,
@@ -191,73 +136,66 @@ class Logs extends PureComponent {
     const { snackbar, log, filename, autorefresh } = this.state;
 
     return (
-      <div className={classes.root}>
-        <TopBar />
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Logs")}
-          </Typography>
-          <div className={classes.logViewer}>
-            <List style={{ width: 200 }}>
-              <ListItem>
+      <TableViewContainer
+        headline={t("Logs")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <div className={classes.logViewer}>
+          <List style={{ width: 200 }}>
+            <ListItem>
+              <ListItemText
+                primary="Log files"
+                primaryTypographyProps={{ color: "primary", variant: 'h6' }}
+              />
+            </ListItem>
+            {logs.Logs.map((log, idx) =>
+              <ListItem
+                key={idx}
+                onClick={this.handleLog(log)}
+                button
+                className={classes.li}
+                selected={log === filename}
+              >
                 <ListItemText
-                  primary="Log files"
-                  primaryTypographyProps={{ color: "primary", variant: 'h6' }}
+                  primary={log}
+                  primaryTypographyProps={{ color: "textPrimary" }}
                 />
               </ListItem>
-              {logs.Logs.map((log, idx) =>
-                <ListItem
-                  key={idx}
-                  onClick={this.handleLog(log)}
-                  button
-                  className={classes.li}
-                  selected={log === filename}
-                >
-                  <ListItemText
-                    primary={log}
-                    primaryTypographyProps={{ color: "textPrimary" }}
+            )}
+          </List>
+          <Paper elevation={1} className={classes.paper}>
+            {filename && <Grid container justify="flex-end">
+              <IconButton onClick={this.handleRefresh} style={{ marginRight: 8 }}>
+                <Refresh />
+              </IconButton>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={autorefresh}
+                    onChange={this.handleAutoRefresh}
+                    name="autorefresh"
+                    color="primary"
                   />
-                </ListItem>
-              )}
-            </List>
-            <Paper elevation={1} className={classes.paper}>
-              {filename && <Grid container justify="flex-end">
-                <IconButton onClick={this.handleRefresh} style={{ marginRight: 8 }}>
-                  <Refresh />
-                </IconButton>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={autorefresh}
-                      onChange={this.handleAutoRefresh}
-                      name="autorefresh"
-                      color="primary"
-                    />
-                  }
-                  label="Autorefresh"
-                />
-              </Grid>}
-              {log.length > 0 ? <IconButton onClick={this.handleScroll}>
-                <ArrowUp />
-              </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
-              {log.map((log, idx) =>
-                <pre
-                  key={idx}
-                  className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
-                  onClick={this.handleDate(log.time)}
-                >
-                  {'[' + log.time + ']: ' + log.message}
-                </pre>
-              )}
-            </Paper>
-          </div>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: "" })}
-          />
+                }
+                label="Autorefresh"
+              />
+            </Grid>}
+            {log.length > 0 ? <IconButton onClick={this.handleScroll}>
+              <ArrowUp />
+            </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
+            {log.map((log, idx) =>
+              <pre
+                key={idx}
+                className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
+                onClick={this.handleDate(log.time)}
+              >
+                {'[' + log.time + ']: ' + log.message}
+              </pre>
+            )}
+          </Paper>
         </div>
-      </div>
+      </TableViewContainer>
     );
   }
 }

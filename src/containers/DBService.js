@@ -20,29 +20,14 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchServiceFiles, deleteDBFile, renameDBService } from '../actions/dbconf';
-import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
-import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'auto',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -54,10 +39,6 @@ const styles = theme => ({
   },
   input: {
     marginBottom: theme.spacing(3),
-  },
-  toolbar: theme.mixins.toolbar,
-  select: {
-    minWidth: 60,
   },
 });
 
@@ -119,76 +100,72 @@ class DBService extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
-      <div className={classes.root}>
-        <TopBar title={t("DB Service")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'Service' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <TextField
-                label={t("Service")} 
-                className={classes.input} 
-                value={name || ''}
-                autoFocus
-                onChange={this.handleInput('name')}
-              />
-            </FormControl>
-            <Typography variant="h6">Files</Typography>
-            <List>
-              {files.map((file, idx) => <React.Fragment key={idx}>
-                <ListItem button onClick={this.handleNavigation(`dbconf/${name}/${file}`)}>
-                  <ListItemText
-                    primary={file}
-                  />
-                  {writable && <IconButton onClick={this.handleDelete(file)}>
-                    <Delete color="error" />
-                  </IconButton>}
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-              )}
-            </List>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={this.handleNavigation('dbconf')}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('DB Service')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-          <DomainDataDelete
-            open={!!deleting}
-            delete={this.props.delete}
-            onSuccess={this.handleDeleteSuccess}
-            onError={this.handleDeleteError}
-            onClose={this.handleDeleteClose}
-            item={deleting}
-            id={deleting}
-            domainID={name}
-          />
-        </div>
-      </div>
+              {t('editHeadline', { item: 'Service' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <TextField
+              label={t("Service")} 
+              className={classes.input} 
+              value={name || ''}
+              autoFocus
+              onChange={this.handleInput('name')}
+            />
+          </FormControl>
+          <Typography variant="h6">Files</Typography>
+          <List>
+            {files.map((file, idx) => <React.Fragment key={idx}>
+              <ListItem button onClick={this.handleNavigation(`dbconf/${name}/${file}`)}>
+                <ListItemText
+                  primary={file}
+                />
+                {writable && <IconButton onClick={this.handleDelete(file)}>
+                  <Delete color="error" />
+                </IconButton>}
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+            )}
+          </List>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={this.handleNavigation('dbconf')}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+        <DomainDataDelete
+          open={!!deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting}
+          id={deleting}
+          domainID={name}
+        />
+      </ViewWrapper>
     );
   }
 }

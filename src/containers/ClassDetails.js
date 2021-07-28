@@ -28,29 +28,14 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editClassData, fetchClassDetails, fetchClassesData } from '../actions/classes';
-import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
-import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -63,7 +48,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
   select: {
     minWidth: 60,
   },
@@ -256,172 +240,168 @@ class ClassDetails extends PureComponent {
     const { _class, snackbar, unsaved, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Groups")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
+      <ViewWrapper
+        topbarTitle={t('Groups')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
+              color="primary"
+              variant="h5"
+            >
+              {t('editHeadline', { item: 'Group' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <Breadcrumbs className={classes.breadcrumbs}>
+              {stack.map((_class, idx) =>
+                <Link
+                  className={classes.breadcrumb}
+                  key={_class.ID}
+                  color="inherit"
+                  onClick={this.handleBreadcrumb(_class.ID, idx)}
+                >
+                  {_class.classname}
+                </Link>
+              )}
+            </Breadcrumbs>
+            <TextField 
+              className={classes.input} 
+              label={t("Groupname")} 
+              fullWidth 
+              value={classname || ''}
+              onChange={this.handleInput('classname')}
+              autoFocus
+              required
+            />
+            <FormControl className={classes.input}>
+              <InputLabel>{t("Parent groups")}</InputLabel>
+              <Select
+                multiple
+                fullWidth
+                value={parentClasses || []}
+                onChange={this.handleInput('parentClasses')}
+                input={<Input />}
               >
-                {t('editHeadline', { item: 'Group' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <Breadcrumbs className={classes.breadcrumbs}>
-                {stack.map((_class, idx) =>
-                  <Link
-                    className={classes.breadcrumb}
-                    key={_class.ID}
-                    color="inherit"
-                    onClick={this.handleBreadcrumb(_class.ID, idx)}
+                {_classes.map((_class, key) => (
+                  <MenuItem
+                    key={key}
+                    value={_class.ID}
                   >
                     {_class.classname}
-                  </Link>
-                )}
-              </Breadcrumbs>
-              <TextField 
-                className={classes.input} 
-                label={t("Groupname")} 
-                fullWidth 
-                value={classname || ''}
-                onChange={this.handleInput('classname')}
-                autoFocus
-                required
-              />
-              <FormControl className={classes.input}>
-                <InputLabel>{t("Parent groups")}</InputLabel>
-                <Select
-                  multiple
-                  fullWidth
-                  value={parentClasses || []}
-                  onChange={this.handleInput('parentClasses')}
-                  input={<Input />}
-                >
-                  {_classes.map((_class, key) => (
-                    <MenuItem
-                      key={key}
-                      value={_class.ID}
-                    >
-                      {_class.classname}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField 
-                className={classes.input} 
-                label={t("Members (separate by comma)")} 
-                fullWidth 
-                value={members || ''}
-                onChange={this.handleMemberInput}
-              />
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
-            <div>
-              <Typography variant="body1">{t('Filters (All must be true)')}</Typography>
-              {filters && filters.map((ANDFilter, ANDidx) =>
-                <ExpansionPanel
-                  className={classes.panel}
-                  elevation={2 /* 1 has global overwrite */}
-                  key={ANDidx}
-                  defaultExpanded
-                >
-                  <ExpansionPanelSummary>
-                    <Grid container justify="space-between">
-                      <Typography body="body1">{t('Filter (One must be true)')}</Typography>
-                      <IconButton onClick={this.handleRemoveAND(ANDidx)}>
-                        <Delete fontSize="small" color="error"/>
-                      </IconButton>
-                    </Grid>
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <Grid container>
-                      {ANDFilter.map((ORFilter, ORidx) =>  
-                        <Grid item xs={12} key={ORidx} className={classes.grid}>
-                          <Autocomplete
-                            value={ORFilter.prop || ''}
-                            inputValue={ORFilter.prop || ''}
-                            onChange={this.handleAutocomplete(ANDidx, ORidx, 'prop')}
-                            onInputChange={this.handleFilterInput(ANDidx, ORidx, 'prop')}
-                            freeSolo
-                            className={classes.flexTextfield} 
-                            options={this.columns}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label={t("Name of property to match")}
-                              />
-                            )}
-                          />
-                          <TextField
-                            className={classes.flexTextfield} 
-                            label={t("Comparison operator")}
-                            value={ORFilter.op || ''}
-                            onChange={this.handleFilterInput(ANDidx, ORidx, 'op')}
-                            select
-                          >
-                            {this.operators.map(op =>
-                              <MenuItem value={op.value} key={op.label}>{op.label}</MenuItem>
-                            )}
-                          </TextField>
-                          <TextField
-                            className={classes.flexTextfield} 
-                            label={t("Compare value (binary operators)")}
-                            value={ORFilter.val || ''}
-                            onChange={this.handleFilterInput(ANDidx, ORidx, 'val')}
-                          />
-                          {filters[ANDidx].length > 1 && <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)}>
-                            <Delete fontSize="small" color="error"/>
-                          </IconButton>}
-                        </Grid>
-                      )}
-                      <Grid container justify="center">
-                        <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>{t('Add or-statement')}</Button>
+            <TextField 
+              className={classes.input} 
+              label={t("Members (separate by comma)")} 
+              fullWidth 
+              value={members || ''}
+              onChange={this.handleMemberInput}
+            />
+          </FormControl>
+          <div>
+            <Typography variant="body1">{t('Filters (All must be true)')}</Typography>
+            {filters && filters.map((ANDFilter, ANDidx) =>
+              <ExpansionPanel
+                className={classes.panel}
+                elevation={2 /* 1 has global overwrite */}
+                key={ANDidx}
+                defaultExpanded
+              >
+                <ExpansionPanelSummary>
+                  <Grid container justify="space-between">
+                    <Typography body="body1">{t('Filter (One must be true)')}</Typography>
+                    <IconButton onClick={this.handleRemoveAND(ANDidx)}>
+                      <Delete fontSize="small" color="error"/>
+                    </IconButton>
+                  </Grid>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container>
+                    {ANDFilter.map((ORFilter, ORidx) =>  
+                      <Grid item xs={12} key={ORidx} className={classes.grid}>
+                        <Autocomplete
+                          value={ORFilter.prop || ''}
+                          inputValue={ORFilter.prop || ''}
+                          onChange={this.handleAutocomplete(ANDidx, ORidx, 'prop')}
+                          onInputChange={this.handleFilterInput(ANDidx, ORidx, 'prop')}
+                          freeSolo
+                          className={classes.flexTextfield} 
+                          options={this.columns}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label={t("Name of property to match")}
+                            />
+                          )}
+                        />
+                        <TextField
+                          className={classes.flexTextfield} 
+                          label={t("Comparison operator")}
+                          value={ORFilter.op || ''}
+                          onChange={this.handleFilterInput(ANDidx, ORidx, 'op')}
+                          select
+                        >
+                          {this.operators.map(op =>
+                            <MenuItem value={op.value} key={op.label}>{op.label}</MenuItem>
+                          )}
+                        </TextField>
+                        <TextField
+                          className={classes.flexTextfield} 
+                          label={t("Compare value (binary operators)")}
+                          value={ORFilter.val || ''}
+                          onChange={this.handleFilterInput(ANDidx, ORidx, 'val')}
+                        />
+                        {filters[ANDidx].length > 1 && <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)}>
+                          <Delete fontSize="small" color="error"/>
+                        </IconButton>}
                       </Grid>
+                    )}
+                    <Grid container justify="center">
+                      <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>{t('Add or-statement')}</Button>
                     </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              )}
-              <Grid container justify="center">
-                <Button variant="outlined" onClick={this.handleAddAND}>{t('Add and-statement')}</Button>
-              </Grid>
-            </div>
-            <Typography variant="h6">{t('Children')}</Typography>
-            <List>
-              {children && children.map(child =>
-                <ListItem
-                  key={child.ID}
-                  button
-                  onClick={this.handleChildClicked(child)}
-                >
-                  <ListItemText primary={child.classname} />
-                </ListItem>
-              )}
-            </List>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={this.handleNavigation(domain.ID + '/classes')}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-              disabled={!unsaved || writable}
-            >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            )}
+            <Grid container justify="center">
+              <Button variant="outlined" onClick={this.handleAddAND}>{t('Add and-statement')}</Button>
+            </Grid>
+          </div>
+          <Typography variant="h6">{t('Children')}</Typography>
+          <List>
+            {children && children.map(child =>
+              <ListItem
+                key={child.ID}
+                button
+                onClick={this.handleChildClicked(child)}
+              >
+                <ListItemText primary={child.classname} />
+              </ListItem>
+            )}
+          </List>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={this.handleNavigation(domain.ID + '/classes')}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!unsaved || writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+      </ViewWrapper>
     );
   }
 }

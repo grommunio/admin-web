@@ -12,57 +12,20 @@ import { Paper, Typography, Button, Grid,
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { fetchMListsData, deleteMListData } from '../actions/mlists';
-import TopBar from '../components/TopBar';
-import blue from '../colors/blue';
-import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import AddMList from '../components/Dialogs/AddMList';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
-  root: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  base: {
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-  },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
   tablePaper: {
     margin: theme.spacing(3, 2),
     borderRadius: 6,
   },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  pageTitleSecondary: {
-    color: '#aaa',
-  },
-  homeIcon: {
-    color: blue[500],
-    position: 'relative',
-    top: 4,
-    left: 4,
-    cursor: 'pointer',
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
@@ -199,109 +162,99 @@ class MLists extends Component {
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
 
     return (
-      <div
-        className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
-        id="scrollDiv"
+      <TableViewContainer
+        handleScroll={this.handleScroll}
+        headline={t("Mail lists")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
-        <TopBar title={domain.domainname}/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Mail lists")}
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
-            <Button
-              variant="contained"
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAdd}
+            className={classes.newButton}
+            disabled={!writable}
+          >
+            {t('New mail list')}
+          </Button>
+          <div className={classes.actions}>
+            <TextField
+              value={match}
+              onChange={this.handleMatch}
+              label={t("Search")}
+              variant="outlined"
+              className={classes.textfield}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
               color="primary"
-              onClick={this.handleAdd}
-              className={classes.newButton}
-              disabled={!writable}
-            >
-              {t('New mail list')}
-            </Button>
-            <div className={classes.actions}>
-              <TextField
-                value={match}
-                onChange={this.handleMatch}
-                label={t("Search")}
-                variant="outlined"
-                className={classes.textfield}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                color="primary"
-              />
-            </div>
-          </Grid>
-          <Typography className={classes.count} color="textPrimary">
+            />
+          </div>
+        </Grid>
+        <Typography className={classes.count} color="textPrimary">
             Showing {mLists.MLists.length} mail list(s)
-          </Typography>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left" 
-                        direction={orderBy === column.value ? order : 'asc'}
-                        onClick={this.handleRequestSort(column.value)}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
-                    </TableCell>
-                  )}
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {mLists.MLists.map((obj, idx) =>
-                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.listname}</TableCell>
-                    <TableCell>{this.listTypes[obj.listType]}</TableCell>
-                    <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>
+        </Typography>
+        <Paper className={classes.tablePaper} elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {this.columns.map(column =>
+                  <TableCell key={column.value}>
+                    <TableSortLabel
+                      active={orderBy === column.value}
+                      align="left" 
+                      direction={orderBy === column.value ? order : 'asc'}
+                      onClick={this.handleRequestSort(column.value)}
+                    >
+                      {t(column.label)}
+                    </TableSortLabel>
+                  </TableCell>
                 )}
-              </TableBody>
-            </Table>
-            {(mLists.MLists.length < mLists.count) && <Grid container justify="center">
-              <CircularProgress color="primary" className={classes.circularProgress}/>
-            </Grid>}
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-          <AddMList
-            open={adding}
-            onSuccess={this.handleAddingSuccess}
-            onError={this.handleAddingError}
-            domain={domain}
-            onClose={this.handleAddingClose}
-          />
-          <DomainDataDelete
-            open={!!deleting}
-            delete={this.props.delete}
-            onSuccess={this.handleDeleteSuccess}
-            onError={this.handleDeleteError}
-            onClose={this.handleDeleteClose}
-            item={deleting.listname}
-            id={deleting.ID}
-            domainID={domain.ID}
-          />
-        </div>
-      </div>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {mLists.MLists.map((obj, idx) =>
+                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableCell>{obj.listname}</TableCell>
+                  <TableCell>{this.listTypes[obj.listType]}</TableCell>
+                  <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                      <Delete color="error"/>
+                    </IconButton>}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          {(mLists.MLists.length < mLists.count) && <Grid container justify="center">
+            <CircularProgress color="primary" className={classes.circularProgress}/>
+          </Grid>}
+        </Paper>
+        <AddMList
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={domain}
+          onClose={this.handleAddingClose}
+        />
+        <DomainDataDelete
+          open={!!deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting.listname}
+          id={deleting.ID}
+          domainID={domain.ID}
+        />
+      </TableViewContainer>
     );
   }
 }

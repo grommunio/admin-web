@@ -16,27 +16,12 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { fetchServiceFile, editServiceFile } from '../actions/dbconf';
-import TopBar from '../components/TopBar';
-import Feedback from '../components/Feedback';
 import { Add, Delete } from '@material-ui/icons';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'auto',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -45,13 +30,6 @@ const styles = theme => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
-  },
-  input: {
-    marginBottom: theme.spacing(3),
-  },
-  toolbar: theme.mixins.toolbar,
-  select: {
-    minWidth: 60,
   },
   flexTextfield: {
     flex: 1,
@@ -132,67 +110,63 @@ class DBFile extends PureComponent {
     const { snackbar, data } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
-      <div className={classes.root}>
-        <TopBar title={t("DB Service")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'File' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              {data.map((pair, idx) => <Grid container key={idx}>
-                <TextField
-                  label="key"
-                  value={pair.key}
-                  onChange={this.handleDataInput('key', idx)}
-                  className={classes.flexTextfield}
-                />
-                <TextField
-                  label="value"
-                  value={pair.value}
-                  onChange={this.handleDataInput('value', idx)}
-                  className={classes.flexTextfield}
-                />
-                {writable && <IconButton onClick={this.handleRemoveRow(idx)}>
-                  <Delete color="error"/>
-                </IconButton>}
-              </Grid>
-              )}
-              {writable && <Grid container justify="center">
-                <IconButton onClick={this.handleAddRow}>
-                  <Add color="primary"/>
-                </IconButton>
-              </Grid>}
-            </FormControl>
-            <Button
-              variant="text"
-              color="secondary"
-              onClick={history.goBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('DB Service')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+              {t('editHeadline', { item: 'File' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            {data.map((pair, idx) => <Grid container key={idx}>
+              <TextField
+                label="key"
+                value={pair.key}
+                onChange={this.handleDataInput('key', idx)}
+                className={classes.flexTextfield}
+              />
+              <TextField
+                label="value"
+                value={pair.value}
+                onChange={this.handleDataInput('value', idx)}
+                className={classes.flexTextfield}
+              />
+              {writable && <IconButton onClick={this.handleRemoveRow(idx)}>
+                <Delete color="error"/>
+              </IconButton>}
+            </Grid>
+            )}
+            {writable && <Grid container justify="center">
+              <IconButton onClick={this.handleAddRow}>
+                <Add color="primary"/>
+              </IconButton>
+            </Grid>}
+          </FormControl>
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={history.goBack}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+      </ViewWrapper>
     );
   }
 }

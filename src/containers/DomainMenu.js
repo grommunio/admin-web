@@ -4,7 +4,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import TopBar from '../components/TopBar';
 import { Paper, Typography, Grid, Button } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
@@ -13,6 +12,7 @@ import DeleteDomain from '../components/Dialogs/DeleteDomain';
 import { PureComponent } from 'react';
 import { deleteDomainData } from '../actions/domains';
 import { ORG_ADMIN } from '../constants';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   root: {
@@ -86,58 +86,56 @@ class DomainMenu extends PureComponent {
     const editable = capabilities.includes(ORG_ADMIN);
 
     return (
-      <div className={classes.root}>
-        <TopBar/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Grid container direction="column" className={classes.container}>
-              <Grid item className={classes.firstRow}>
-                <Typography variant="h6">
-                  <span className={classes.description}>{t('Domain name')}:</span>
-                  {domain.domainname}
-                </Typography>
-                {editable && <div className={classes.editButtonContainer}>
-                  <Button
-                    onClick={this.handleNav}
-                    variant="contained"
-                    color="primary"
-                    style={{ marginRight: 8 }}
-                  >
-                    {t('editHeadline', { item: 'domain' })}
-                  </Button>
-                  <Button
-                    onClick={this.handleDelete}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    {t('Delete domain')}
-                  </Button>
-                </div>}
-              </Grid>
-              <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Title')}:</span>
-                {domain.title}
+      <TableViewContainer
+        headline={t("Domain overview")}
+      >
+        <Paper className={classes.tablePaper} elevation={1}>
+          <Grid container direction="column" className={classes.container}>
+            <Grid item className={classes.firstRow}>
+              <Typography variant="h6">
+                <span className={classes.description}>{t('Domain name')}:</span>
+                {domain.domainname}
               </Typography>
-              <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Address')}:</span>
-                {domain.address}
-              </Typography>
-              <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Admin')}:</span>
-                {domain.adminName}
-              </Typography>
-              <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Users')}:</span>
-                {`${domain.activeUsers} active, ${domain.inactiveUsers} inactive, ${domain.maxUser} maximum`}
-              </Typography>
-              <Typography variant="h6" className={classes.data}>
-                <span className={classes.description}>{t('Telephone')}:</span>
-                {domain.tel}
-              </Typography>
+              {editable && <div className={classes.editButtonContainer}>
+                <Button
+                  onClick={this.handleNav}
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: 8 }}
+                >
+                  {t('editHeadline', { item: 'domain' })}
+                </Button>
+                <Button
+                  onClick={this.handleDelete}
+                  variant="contained"
+                  color="secondary"
+                >
+                  {t('Delete domain')}
+                </Button>
+              </div>}
             </Grid>
-          </Paper>
-        </div>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Title')}:</span>
+              {domain.title}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Address')}:</span>
+              {domain.address}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Admin')}:</span>
+              {domain.adminName}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Users')}:</span>
+              {`${domain.activeUsers} active, ${domain.inactiveUsers} inactive, ${domain.maxUser} maximum`}
+            </Typography>
+            <Typography variant="h6" className={classes.data}>
+              <span className={classes.description}>{t('Telephone')}:</span>
+              {domain.tel}
+            </Typography>
+          </Grid>
+        </Paper>
         <DeleteDomain
           open={deleting}
           delete={this.props.delete}
@@ -147,7 +145,7 @@ class DomainMenu extends PureComponent {
           item={domain.domainname}
           id={domain.ID}
         />
-      </div>
+      </TableViewContainer>
     );
   }
 }

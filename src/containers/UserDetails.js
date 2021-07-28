@@ -15,7 +15,6 @@ import {
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
   deleteUserStore } from '../actions/users';
-import TopBar from '../components/TopBar';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@material-ui/icons/Sync';
 import Detach from '@material-ui/icons/SyncDisabled';
@@ -23,7 +22,6 @@ import Dump from '@material-ui/icons/Receipt';
 import { syncLdapData } from '../actions/ldap';
 import DetachDialog from '../components/Dialogs/DetachDialog';
 import DumpDialog from '../components/Dialogs/DumpDialog';
-import Feedback from '../components/Feedback';
 import Account from '../components/user/Account';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
@@ -39,37 +37,13 @@ import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
     borderRadius: 6,
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    margin: theme.spacing(1),
-  },
-  toolbar: theme.mixins.toolbar,
-  column: {
-    margin: theme.spacing(1, 2),
   },
   syncButtons: {
     margin: theme.spacing(2, 0),
@@ -462,140 +436,136 @@ class UserDetails extends PureComponent {
       detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Users")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container className={classes.header}>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
-              </Typography>
-            </Grid>
-            {ldapID && <Grid container className={classes.syncButtons}>
-              <Tooltip title="Detach user from LDAP object" placement="top">
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  style={{ marginRight: 8 }}
-                  onClick={this.handleDetachDialog(true)}
-                  size="small"
-                >
-                  <Detach fontSize="small" className={classes.leftIcon} /> Detach
-                </Button>
-              </Tooltip>
-              <Tooltip title="Synchronize data from LDAP" placement="top">
-                <Button
-                  size="small"
-                  onClick={this.handleSync}
-                  variant="contained"
-                  color="primary"
-                  style={{ marginRight: 8 }}
-                >
-                  <Sync fontSize="small" className={classes.leftIcon}/> Sync
-                </Button>
-              </Tooltip>
-              <Tooltip title="Show raw data" placement="top">
-                <Button
-                  size="small"
-                  onClick={this.handleDump}
-                  variant="contained"
-                  color="primary"
-                >
-                  <Dump fontSize="small" className={classes.leftIcon}/> Dump
-                </Button>
-              </Tooltip>
-            </Grid>}
-            <Tabs indicatorColor="primary" value={tab} onChange={this.handleTabChange}>
-              <Tab label={t("Account")} />
-              <Tab label={t("User")} />
-              <Tab label={t("Contact")} />
-              <Tab label={t("Roles")} />
-              <Tab label={t("SMTP")} />
-              <Tab label={t("Delegates")} />
-              <Tab label={t("FetchMail")} />
-              <Tab label={t("Mobile Devices")} />
-              <Tab label={t("Sync policy")} />
-            </Tabs>
-            {tab === 0 && <Account
-              domain={domain}
-              user={user}
-              sizeUnits={sizeUnits}
-              handleInput={this.handleInput}
-              handlePropertyChange={this.handlePropertyChange}
-              handleIntPropertyChange={this.handleIntPropertyChange}
-              handleCheckbox={this.handleCheckbox}
-              handleUnitChange={this.handleUnitChange}
-              handlePasswordChange={this.handlePasswordDialogToggle(true)}
-              rawData={rawData}
-              handleQuotaDelete={this.handleQuotaDelete}
-            />}
-            {tab === 1 && <User
-              user={user}
-              handlePropertyChange={this.handlePropertyChange}
-            />}
-            {tab === 2 && <Contact
-              user={user}
-              handlePropertyChange={this.handlePropertyChange}
-            />}
-            {tab === 3 && <Roles
-              roles={roles}
-              handleAutocomplete={this.handleAutocomplete}
-            />}
-            {tab === 4 && <Smtp
-              aliases={aliases}
-              handleAliasEdit={this.handleAliasEdit}
-              handleAddAlias={this.handleAddAlias}
-              handleRemoveAlias={this.handleRemoveAlias}
-            />}
-            {tab === 5 && <Delegates
-              domainID={domain.ID}
-              userID={user.ID}
-              disabled={!writable}
-            />}
-            {tab === 6 && <FetchMail
-              fetchmail={fetchmail}
-              handleAdd={this.handleFetchmailDialog(true)}
-              handleEdit={this.handleFetchmailEditDialog}
-              handleDelete={this.handleFetchmailDelete}
-            />}
-            {tab === 7 && <SyncTab
-              domain={domain.ID}
-              user={user.ID}
-            />}
-            {tab === 8 && <SlimSyncPolicies
-              syncPolicy={syncPolicy}
-              defaultPolicy={defaultPolicy}
-              handleChange={this.handleSyncChange}
-              handleCheckbox={this.handleSyncCheckboxChange}
-              handleSlider={this.handleSlider}
-            />}
-            {tab !== 5 && <Grid container className={classes.buttonGrid}>
+      <ViewWrapper
+        topbarTitle={t('Users')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container className={classes.header}>
+            <Typography
+              color="primary"
+              variant="h5"
+            >
+              {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
+            </Typography>
+          </Grid>
+          {ldapID && <Grid container className={classes.syncButtons}>
+            <Tooltip title="Detach user from LDAP object" placement="top">
               <Button
                 variant="contained"
-                onClick={history.goBack}
+                color="secondary"
+                style={{ marginRight: 8 }}
+                onClick={this.handleDetachDialog(true)}
+                size="small"
+              >
+                <Detach fontSize="small" className={classes.leftIcon} /> Detach
+              </Button>
+            </Tooltip>
+            <Tooltip title="Synchronize data from LDAP" placement="top">
+              <Button
+                size="small"
+                onClick={this.handleSync}
+                variant="contained"
+                color="primary"
                 style={{ marginRight: 8 }}
               >
-                {t('Back')}
+                <Sync fontSize="small" className={classes.leftIcon}/> Sync
               </Button>
+            </Tooltip>
+            <Tooltip title="Show raw data" placement="top">
               <Button
+                size="small"
+                onClick={this.handleDump}
                 variant="contained"
                 color="primary"
-                onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
-                disabled={!writable}
               >
-                {t('Save')}
+                <Dump fontSize="small" className={classes.leftIcon}/> Dump
               </Button>
-            </Grid>}
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
+            </Tooltip>
+          </Grid>}
+          <Tabs indicatorColor="primary" value={tab} onChange={this.handleTabChange}>
+            <Tab label={t("Account")} />
+            <Tab label={t("User")} />
+            <Tab label={t("Contact")} />
+            <Tab label={t("Roles")} />
+            <Tab label={t("SMTP")} />
+            <Tab label={t("Delegates")} />
+            <Tab label={t("FetchMail")} />
+            <Tab label={t("Mobile Devices")} />
+            <Tab label={t("Sync policy")} />
+          </Tabs>
+          {tab === 0 && <Account
+            domain={domain}
+            user={user}
+            sizeUnits={sizeUnits}
+            handleInput={this.handleInput}
+            handlePropertyChange={this.handlePropertyChange}
+            handleIntPropertyChange={this.handleIntPropertyChange}
+            handleCheckbox={this.handleCheckbox}
+            handleUnitChange={this.handleUnitChange}
+            handlePasswordChange={this.handlePasswordDialogToggle(true)}
+            rawData={rawData}
+            handleQuotaDelete={this.handleQuotaDelete}
+          />}
+          {tab === 1 && <User
+            user={user}
+            handlePropertyChange={this.handlePropertyChange}
+          />}
+          {tab === 2 && <Contact
+            user={user}
+            handlePropertyChange={this.handlePropertyChange}
+          />}
+          {tab === 3 && <Roles
+            roles={roles}
+            handleAutocomplete={this.handleAutocomplete}
+          />}
+          {tab === 4 && <Smtp
+            aliases={aliases}
+            handleAliasEdit={this.handleAliasEdit}
+            handleAddAlias={this.handleAddAlias}
+            handleRemoveAlias={this.handleRemoveAlias}
+          />}
+          {tab === 5 && <Delegates
+            domainID={domain.ID}
+            userID={user.ID}
+            disabled={!writable}
+          />}
+          {tab === 6 && <FetchMail
+            fetchmail={fetchmail}
+            handleAdd={this.handleFetchmailDialog(true)}
+            handleEdit={this.handleFetchmailEditDialog}
+            handleDelete={this.handleFetchmailDelete}
+          />}
+          {tab === 7 && <SyncTab
+            domain={domain.ID}
+            user={user.ID}
+          />}
+          {tab === 8 && <SlimSyncPolicies
+            syncPolicy={syncPolicy}
+            defaultPolicy={defaultPolicy}
+            handleChange={this.handleSyncChange}
+            handleCheckbox={this.handleSyncCheckboxChange}
+            handleSlider={this.handleSlider}
+          />}
+          {tab !== 5 && <Grid container className={classes.buttonGrid}>
+            <Button
+              variant="contained"
+              onClick={history.goBack}
+              style={{ marginRight: 8 }}
+            >
+              {t('Back')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
+              disabled={!writable}
+            >
+              {t('Save')}
+            </Button>
+          </Grid>}
+        </Paper>
         <DetachDialog
           open={detaching}
           loading={detachLoading}
@@ -624,7 +594,7 @@ class UserDetails extends PureComponent {
           user={user}
         />
         <DumpDialog onClose={this.handleCloseDump} open={!!dump} dump={dump} />
-      </div>
+      </ViewWrapper>
     );
   }
 }

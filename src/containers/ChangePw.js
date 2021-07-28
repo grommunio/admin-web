@@ -11,25 +11,10 @@ import {
   FormControl,
   Button,
 } from '@material-ui/core';
-import TopBar from '../components/TopBar';
 import { changePw } from '../api';
-import Feedback from '../components/Feedback';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -42,7 +27,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(2),
   },
-  toolbar: theme.mixins.toolbar,
 });
 
 class ChangePw extends Component {
@@ -69,57 +53,54 @@ class ChangePw extends Component {
     const { oldPw, newPw, reType, snackbar } = this.state;
 
     return (
-      <div className={classes.root}>
-        <TopBar/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Old password")} 
-                fullWidth 
-                value={oldPw || ''}
-                onChange={this.handleInput('oldPw')}
-                type="password"
-                autoFocus
-              />
-            </FormControl>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("New password")} 
-                fullWidth 
-                value={newPw || ''}
-                onChange={this.handleInput('newPw')}
-                type="password"
-              />
-            </FormControl>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Repeat new password")} 
-                fullWidth 
-                value={reType || ''}
-                onChange={this.handleInput('reType')}
-                type="password"
-              />
-            </FormControl>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSave}
-              disabled={!newPw || !oldPw || !reType || newPw !== reType}
-            >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+      <ViewWrapper
+        topbarTitle={t('Domain list')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Old password")} 
+              fullWidth 
+              value={oldPw || ''}
+              onChange={this.handleInput('oldPw')}
+              type="password"
+              autoFocus
+              autoCapitalize=""
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("New password")} 
+              fullWidth 
+              value={newPw || ''}
+              onChange={this.handleInput('newPw')}
+              type="password"
+            />
+          </FormControl>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Repeat new password")} 
+              fullWidth 
+              value={reType || ''}
+              onChange={this.handleInput('reType')}
+              type="password"
+            />
+          </FormControl>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleSave}
+            disabled={!newPw || !oldPw || !reType || newPw !== reType}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+      </ViewWrapper>
     );
   }
 }

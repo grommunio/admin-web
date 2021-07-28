@@ -17,33 +17,18 @@ import {
 } from '@material-ui/core';
 import { fetchAllUsers } from '../actions/users';
 import { connect } from 'react-redux';
-import TopBar from '../components/TopBar';
 import Add from '@material-ui/icons/AddCircle';
 import Delete from '@material-ui/icons/Delete';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
 import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
-import Feedback from '../components/Feedback';
 import { Autocomplete } from '@material-ui/lab';
 import { fetchOrgsData } from '../actions/orgs';
 import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -56,7 +41,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
   select: {
     minWidth: 60,
   },
@@ -185,136 +169,132 @@ class RoleDetails extends PureComponent {
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Role")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'Role' })}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Name")} 
-                fullWidth
-                autoFocus
-                value={name || ''}
-                onChange={this.handleInput('name')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Description")} 
-                fullWidth
-                multiline
-                variant="outlined"
-                rows={4}
-                value={description || ''}
-                onChange={this.handleInput('description')}
-              />
-              <Autocomplete
-                multiple
-                options={Users || []}
-                value={users || []}
-                onChange={this.handleAutocomplete('users')}
-                getOptionLabel={(user) => user.username || ''}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Users"
-                    placeholder="Search users..."
-                    className={classes.input} 
-                  />
-                )}
-              />
-              {(permissions || []).map((permission, idx) =>
-                <div key={idx} className={classes.row}>
-                  <TextField
-                    select
-                    label={t("Permission")}
-                    value={permission.permission || ''}
-                    onChange={this.handleSelectPermission(idx)}
-                    fullWidth
-                  >
-                    {Permissions.map((name) => (
-                      <MenuItem key={name} value={name}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
-                    options={domains || []}
-                    value={permission.params}
-                    onChange={this.handleSetParams(idx)}
-                    getOptionLabel={(domainID) => domainID.domainname ||
-                      (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
-                    //renderOption={(domain) => domain.domainname}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Params"
-                        placeholder="Search domains..."
-                      />
-                    )}
-                    className={classes.rowTextfield}
-                    fullWidth
-                    autoSelect
-                  />}
-                  {permission.permission === ORG_ADMIN && <Autocomplete
-                    options={orgs || []}
-                    value={permission.params}
-                    onChange={this.handleSetParams(idx)}
-                    getOptionLabel={(orgID) => orgID.name ||
-                      (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Params"
-                        placeholder="Search organizations..."
-                      />
-                    )}
-                    className={classes.rowTextfield}
-                    fullWidth
-                    autoSelect
-                  />}
-                  <IconButton size="small" onClick={this.removeRow(idx)}>
-                    <Delete fontSize="small" color="error" />
-                  </IconButton>
-                </div>
-              )}
-              <Grid container justify="center" className={classes.addButton}>
-                <Button size="small" onClick={this.handleNewRow}>
-                  <Add color="primary" />
-                </Button>
-              </Grid>
-            </FormControl>
-            <Button
-              variant="contained"
-              onClick={() => this.props.history.push('/roles')}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('Role')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
-      </div>
+              {t('editHeadline', { item: 'Role' })}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Name")} 
+              fullWidth
+              autoFocus
+              value={name || ''}
+              onChange={this.handleInput('name')}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Description")} 
+              fullWidth
+              multiline
+              variant="outlined"
+              rows={4}
+              value={description || ''}
+              onChange={this.handleInput('description')}
+            />
+            <Autocomplete
+              multiple
+              options={Users || []}
+              value={users || []}
+              onChange={this.handleAutocomplete('users')}
+              getOptionLabel={(user) => user.username || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Users"
+                  placeholder="Search users..."
+                  className={classes.input} 
+                />
+              )}
+            />
+            {(permissions || []).map((permission, idx) =>
+              <div key={idx} className={classes.row}>
+                <TextField
+                  select
+                  label={t("Permission")}
+                  value={permission.permission || ''}
+                  onChange={this.handleSelectPermission(idx)}
+                  fullWidth
+                >
+                  {Permissions.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      {name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
+                  options={domains || []}
+                  value={permission.params}
+                  onChange={this.handleSetParams(idx)}
+                  getOptionLabel={(domainID) => domainID.domainname ||
+                      (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
+                  //renderOption={(domain) => domain.domainname}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Params"
+                      placeholder="Search domains..."
+                    />
+                  )}
+                  className={classes.rowTextfield}
+                  fullWidth
+                  autoSelect
+                />}
+                {permission.permission === ORG_ADMIN && <Autocomplete
+                  options={orgs || []}
+                  value={permission.params}
+                  onChange={this.handleSetParams(idx)}
+                  getOptionLabel={(orgID) => orgID.name ||
+                      (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Params"
+                      placeholder="Search organizations..."
+                    />
+                  )}
+                  className={classes.rowTextfield}
+                  fullWidth
+                  autoSelect
+                />}
+                <IconButton size="small" onClick={this.removeRow(idx)}>
+                  <Delete fontSize="small" color="error" />
+                </IconButton>
+              </div>
+            )}
+            <Grid container justify="center" className={classes.addButton}>
+              <Button size="small" onClick={this.handleNewRow}>
+                <Add color="primary" />
+              </Button>
+            </Grid>
+          </FormControl>
+          <Button
+            variant="contained"
+            onClick={() => this.props.history.push('/roles')}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
+      </ViewWrapper>
     );
   }
 }
