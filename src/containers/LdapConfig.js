@@ -430,12 +430,17 @@ class LdapConfig extends PureComponent {
                 <LdapTextfield
                   flex
                   label='LDAP Server'
+                  autoFocus
+                  placeholder="ldap://[::1]:389/"
                   onChange={this.handleInput('server')}
                   value={server || ''}
                   desc={t("ldap_server_desc")}
                   id="url"
                   name="url"
                   autoComplete="url"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <LdapTextfield
                   flex
