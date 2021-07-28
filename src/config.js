@@ -59,6 +59,7 @@ var setConfig = (newConfig) => {
 
 fetch('//' + window.location.host + '/config.json')
   .then(response => response.json())
+  .catch(err => console.error(err))
   .then(res => {
     if (res) {
       setConfig({ ...res });
@@ -67,5 +68,6 @@ fetch('//' + window.location.host + '/config.json')
       }
     }
   });
+
 
 export default config;

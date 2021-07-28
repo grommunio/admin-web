@@ -87,7 +87,7 @@ Result will be created in `/dist`
 # Server-side configuration
 
 In order to get the correct configuration for production, create a `config.json` in
-`/usr/share/grommunio/admin/webapp/config.json` 
+`/usr/share/grommunio-admin-web/config.json` 
 
 Following props are available:
 
