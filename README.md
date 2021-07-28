@@ -42,12 +42,7 @@ Copy this file to `./Caddyfile`.
 cp Caddyfile.example Caddyfile
 ```
 
-Using a grammm-VM, with `grammm-admin-api.service` runnning, the configuration should work out of the box.
-
-In VM:
-```
-systemctl restart grammm-admin-api.service
-```
+Using a grommunio-VM, with `grommunio-admin-api.service` runnning, the configuration should work out of the box.
 
 The Caddyfile includes these necessary lines
 ```
@@ -57,7 +52,7 @@ reverse_proxy /config.json localhost:8080 # Address of config.json
 reverse_proxy http://127.0.0.1:3000 # Address of webapp (default yarn port)
 ```
 * `:4000`: Specifies the port the Caddyserver will run on and can be accessed with your browser.
-* `reverse_proxy /api/v1/* localhost:8080`: Specifies the address http requests to `/api/v1/*` will be redirected to. This has to be the location `grammm-admin-api.service` runs on.
+* `reverse_proxy /api/v1/* localhost:8080`: Specifies the address http requests to `/api/v1/*` will be redirected to. This has to be the location `grommunio-admin-api.service` runs on.
 * `reverse_proxy /config.json localhost:8080`: Specifies the location of `config.json`.
 * `reverse_proxy http://127.0.0.1:3000`: Specifies the address the webapp is running on with yarn. Per default, yarn runs on port 3000, so this should only be changed if changes to `./.env` are made.
 
@@ -91,15 +86,8 @@ Result will be created in `/dist`
 
 # Server-side configuration
 
-## Necessary services
-
-* `grammm-admin-api.service`: Used to login and get any data from database
-
-
-## Nginx config
-
-In order to get the correct configuration for production, create a config.json in
-`/usr/share/grammm/admin/webapp/config.json` 
+In order to get the correct configuration for production, create a `config.json` in
+`/usr/share/grommunio/admin/webapp/config.json` 
 
 Following props are available:
 

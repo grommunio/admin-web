@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import {
   AUTH_AUTHENTICATING,
@@ -14,11 +14,11 @@ import { login, renewToken, profile, drawerDomains } from '../api';
 export function authLogin(user, pass) {
   return async dispatch => {
     try {
-      const { grammmAuthJwt: token } = await dispatch(login(user, pass));
+      const { grommunioAuthJwt: token } = await dispatch(login(user, pass));
       if(token) {
-        document.cookie = "grammmAuthJwt=" + token + ';path=/'
+        document.cookie = "grommunioAuthJwt=" + token + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
-        window.localStorage.setItem('grammmAuthJwt', token);
+        window.localStorage.setItem('grommunioAuthJwt', token);
         const profileData = await dispatch(profile());
         await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
@@ -45,14 +45,14 @@ export function authLogin(user, pass) {
 
 export function authLoginWithToken(token) {
   return async dispatch => {
-    document.cookie = "grammmAuthJwt=" + token + ';path=/'
+    document.cookie = "grommunioAuthJwt=" + token + ';path=/'
       + (window.location.protocol === 'https:' ? ';secure' : '');
     try {
-      const { grammmAuthJwt: newToken } = await dispatch(renewToken());
+      const { grommunioAuthJwt: newToken } = await dispatch(renewToken());
       if(newToken) {
-        document.cookie = "grammmAuthJwt=" + newToken + ';path=/'
+        document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
-        window.localStorage.setItem('grammmAuthJwt', newToken);
+        window.localStorage.setItem('grommunioAuthJwt', newToken);
       }
       const profileData = await dispatch(profile());
       await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
@@ -100,6 +100,6 @@ function authError() {
 }
 
 function clearStorage() {
-  window.localStorage.removeItem('grammmAuthJwt');
-  document.cookie = "grammmAuthJwt=;path=/" + (window.location.protocol === 'https:' ? ';secure' : '');
+  window.localStorage.removeItem('grommunioAuthJwt');
+  document.cookie = "grommunioAuthJwt=;path=/" + (window.location.protocol === 'https:' ? ';secure' : '');
 }

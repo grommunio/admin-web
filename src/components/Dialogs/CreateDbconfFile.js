@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -70,7 +70,7 @@ class CreateDbconfFile extends PureComponent {
     const { upload } = this.props;
     const { service, data } = this.state;
     this.setState({ loading: true });
-    upload('grammm-dbconf', service, this.formatData(data))
+    upload('grommunio-dbconf', service, this.formatData(data))
       .then(() => {
         this.setState({
           data: [],
@@ -103,7 +103,7 @@ class CreateDbconfFile extends PureComponent {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Configure grammmm-dbconf</DialogTitle>
+        <DialogTitle>Configure grommunio-dbconf</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -33,7 +33,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Classes from '@material-ui/icons/Class';
 import Roles from '@material-ui/icons/VerifiedUser';
 import grey from '../colors/grey';
-import logo from '../res/grammm_logo_light.svg';
+import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
@@ -177,7 +177,7 @@ class NavigationLinks extends PureComponent {
           <img
             src={logo}
             width="140"
-            alt="GRAMMM"
+            alt="grommunio"
             onClick={this.handleNavigation('')}
             className={classes.logo}
           />

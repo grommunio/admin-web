@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
@@ -22,7 +22,7 @@ import {
   authLoginWithToken,
 } from '../actions/auth';
 import MuiAlert from '@material-ui/lab/Alert';
-import logo from '../res/grammm_logo.svg';
+import logo from '../res/grommunio_logo_default.svg';
 
 const styles = theme => ({
   /* || General */
@@ -48,6 +48,7 @@ const styles = theme => ({
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
+    margin: theme.spacing(1, 0, 0, 0),
   },
   button: {
     width: '100%',
@@ -97,10 +98,10 @@ class Login extends Component {
   }
   
   componentDidMount() {
-    let grammmAuthJwt = window.localStorage.getItem("grammmAuthJwt");
-    if(grammmAuthJwt) {
+    let grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
+    if(grommunioAuthJwt) {
       const { authLoginWithToken } = this.props;
-      authLoginWithToken(grammmAuthJwt).catch(err => console.error(err));
+      authLoginWithToken(grommunioAuthJwt).catch(err => console.error(err));
     }
   }
 
@@ -130,7 +131,7 @@ class Login extends Component {
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
           <div className={classes.logoContainer}>
-            <img src={logo} width="300" alt="GRAMMM"/>
+            <img src={logo} width="300" alt="grommunio"/>
           </div>
           <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>
@@ -205,8 +206,8 @@ const mapDispatchToProps = dispatch => {
     authLogin: async (user, pass) => {
       await dispatch(authLogin(user, pass)).catch(msg => Promise.reject(msg));
     },
-    authLoginWithToken: async grammmAuthJwt => {
-      await dispatch(authLoginWithToken(grammmAuthJwt)).catch(msg => Promise.reject(msg));
+    authLoginWithToken: async grommunioAuthJwt => {
+      await dispatch(authLoginWithToken(grommunioAuthJwt)).catch(msg => Promise.reject(msg));
     },
   };
 };

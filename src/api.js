@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-present grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 const baseUrl = '//' + window.location.host + '/api/v1';
 
@@ -529,7 +529,7 @@ export function log(filename, params) {
   SYNC
 */
 
-export function grammmSync(params) {
+export function grommunioSync(params) {
   return async () => {
     return await get(buildQuery('/system/sync/top', params));
   };
