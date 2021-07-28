@@ -12,6 +12,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addMListData } from '../../actions/mlists';
 import { fetchClassesData } from '../../actions/classes';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -94,7 +95,7 @@ class AddMList extends PureComponent {
       listname,
       listType,
       listPrivilege,
-      class: _class || undefined,
+      class: _class.ID || undefined,
       /* Strip whitespaces and split on ',' */
       associations: associations ? associations.replace(/\s/g, "").split(',') : undefined, 
       specifieds: specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
@@ -115,6 +116,12 @@ class AddMList extends PureComponent {
         onError(error);
         this.setState({ loading: false });
       });
+  }
+
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+    });
   }
 
   render() {
@@ -183,8 +190,22 @@ class AddMList extends PureComponent {
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}
             />}
-            {listType === 3 && <TextField 
+            {listType === 3 && <Autocomplete
+              value={_class}
+              getOptionLabel={_class => _class.classname || ''}
+              renderOption={(_class) => _class?.classname || ''}
+              onChange={this.handleAutocomplete('class')}
               className={classes.input} 
+              options={_classes}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Group")}
+                />
+              )}
+            />}
+            {listType === 3 && <TextField 
+              className={classes.input}
               label={t("Group")} 
               fullWidth 
               value={_class || ''}

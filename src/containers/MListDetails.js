@@ -22,6 +22,7 @@ import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   root: {
@@ -59,22 +60,25 @@ const styles = theme => ({
 class MListDetails extends PureComponent {
 
   state = {
-    mList: {},
+    listname: '',
+    listType: 0,
+    listPrivilege: 0,
+    associations: '',
+    specifieds: '',
+    class: '',
     unsaved: false,
   }
 
   async componentDidMount() {
-    const { domain, fetch, _classes, fetchClasses } = this.props;
-    if(_classes.length === 0) fetchClasses(domain.ID)
+    const { domain, fetch, fetchClasses } = this.props;
+    await fetchClasses(domain.ID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      mList: mList ? {
-        ...mList,
-        class: mList.class?.ID,
-      } : {},
-    });
+    this.setState( mList ? {
+      ...mList,
+      class: mList.class?.ID,
+    } : {});
   }
 
   listTypes = [
@@ -115,14 +119,18 @@ class MListDetails extends PureComponent {
 
   handleEdit = () => {
     const { edit, domain } = this.props;
-    const { mList } = this.state;
+    const { ID, listname, listType, listPrivilege, associations, specifieds, class: _class } = this.state;
     edit(domain.ID, {
-      ...mList,
+      ID,
+      listname,
+      listType,
+      listPrivilege,
+      class: _class || '',
       /* Strip whitespaces and split on ',' */
-      associations: Array.isArray(mList.associations) ? mList.associations :
-        mList.associations ? mList.associations.replace(/\s/g, "").split(',') : undefined, 
-      specifieds: Array.isArray(mList.specifieds) ? mList.specifieds :
-        mList.specifieds ? mList.specifieds.replace(/\s/g, "").split(',') : undefined,
+      associations: Array.isArray(associations) ? associations :
+        associations ? associations.replace(/\s/g, "").split(',') : undefined, 
+      specifieds: Array.isArray(specifieds) ? specifieds :
+        specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -134,11 +142,16 @@ class MListDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal?.ID || '',
+    });
+  }
+
   render() {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { mList, snackbar } = this.state;
-    const { listname, listType, listPrivilege, associations, specifieds, class: _class } = mList;
+    const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class } = this.state;
 
     return (
       <div className={classes.root}>
@@ -159,7 +172,7 @@ class MListDetails extends PureComponent {
                 className={classes.input} 
                 label={t("Mail list name")} 
                 fullWidth 
-                value={listname || ''}
+                value={listname}
                 autoFocus
                 required
                 inputProps={{
@@ -171,7 +184,7 @@ class MListDetails extends PureComponent {
                 className={classes.input}
                 label={t("Type")}
                 fullWidth
-                value={listType || 0}
+                value={listType}
                 inputProps={{
                   disabled: true,
                 }}
@@ -187,7 +200,7 @@ class MListDetails extends PureComponent {
                 className={classes.input}
                 label={t("Privilege")}
                 fullWidth
-                value={listPrivilege || 0}
+                value={listPrivilege}
                 onChange={this.handlePrivilegeChange}
               >
                 {this.listPrivileges.map((status, key) => (
@@ -210,20 +223,22 @@ class MListDetails extends PureComponent {
                 value={specifieds || ''}
                 onChange={this.handleInput('specifieds')}
               />}
-              {listType === 3 && <TextField 
+              {listType === 3 && <Autocomplete
+                value={_class}
+                getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
+                renderOption={(_class) => _class?.classname || ''}
+                onChange={this.handleAutocomplete('class')}
                 className={classes.input} 
-                label={t("Group")} 
-                fullWidth 
-                value={_class || ''}
-                onChange={this.handleInput('class')}
-                select
-              >
-                {_classes.map(c =>
-                  <MenuItem key={c.ID} value={c.ID}>
-                    {c.classname}
-                  </MenuItem>  
+                options={_classes}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t("Group")}
+                  />
                 )}
-              </TextField>}
+                filterOptions={(options, state) =>
+                  options.filter(o => o.classname.toLowerCase().includes(state.inputValue.toLowerCase()))}
+              />}
             </FormControl>
             <Button
               variant="text"
@@ -267,7 +282,7 @@ MListDetails.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    _classes: state._classes.Classes,
+    _classes: state._classes.Select,
   };
 };
 

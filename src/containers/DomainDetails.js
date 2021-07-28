@@ -30,6 +30,7 @@ import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   root: {
@@ -128,7 +129,7 @@ class DomainListDetails extends PureComponent {
       ID,
       domainname,
       domainStatus,
-      orgID: Number.isInteger(orgID) ? orgID : null,
+      orgID: Number.isInteger(orgID) ? orgID : 0,
       maxUser: parseInt(maxUser) || null,
       title,
       address,
@@ -199,6 +200,12 @@ class DomainListDetails extends PureComponent {
     });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal?.ID || '',
+    });
+  }
+
   render() {
     const { classes, t, orgs, capabilities } = this.props;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
@@ -254,21 +261,22 @@ class DomainListDetails extends PureComponent {
                   </MenuItem>
                 ))}
               </TextField>
-              {capabilities.includes(SYSTEM_ADMIN_READ) && <TextField
-                select
-                className={classes.input}
-                label={t("Organization")}
-                fullWidth
-                value={orgID || ''}
-                onChange={this.handleInput('orgID')}
-              >
-                <MenuItem value='None'>{t('None')}</MenuItem>
-                {orgs.map((org, key) => (
-                  <MenuItem key={key} value={org.ID}>
-                    {org.name}
-                  </MenuItem>
-                ))}
-              </TextField>}
+              {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
+                value={orgID}
+                getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
+                renderOption={(org) => org?.name || ''}
+                onChange={this.handleAutocomplete('orgID')}
+                className={classes.input} 
+                options={orgs}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t("Organization")}
+                  />
+                )}
+                filterOptions={(options, state) =>
+                  options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
+              />}
               <TextField 
                 className={classes.input} 
                 label={t("Maximum users")} 

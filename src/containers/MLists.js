@@ -81,7 +81,7 @@ const styles = theme => ({
     marginRight: 8,
   },
   count: {
-    marignLeft: 16,
+    marginLeft: 16,
   },
 });
 

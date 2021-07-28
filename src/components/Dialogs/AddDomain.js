@@ -14,6 +14,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
+import { Autocomplete } from '@material-ui/lab';
 
 const styles = theme => ({
   form: {
@@ -82,7 +83,7 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, domainStatus, maxUser,
+    const { domainname, domainStatus, maxUser, orgID,
       title, address, adminName, tel, createRole } = this.state;
     this.setState({ loading: true });
     this.props.add({
@@ -93,6 +94,7 @@ class AddDomain extends PureComponent {
       address,
       adminName,
       tel,
+      orgID: orgID.ID,
     }, { createRole })
       .then(() => {
         this.setState({
@@ -112,6 +114,12 @@ class AddDomain extends PureComponent {
         this.props.onError(error);
         this.setState({ loading: false });
       });
+  }
+
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+    });
   }
 
   render() {
@@ -154,20 +162,20 @@ class AddDomain extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Organization")}
-              fullWidth
-              value={orgID || ''}
-              onChange={this.handleInput('orgID')}
-            >
-              {orgs.map((org, key) => (
-                <MenuItem key={key} value={org.ID}>
-                  {org.name}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Autocomplete
+              value={orgID}
+              getOptionLabel={org => org.name || ''}
+              renderOption={(org) => org?.name || ''}
+              onChange={this.handleAutocomplete('orgID')}
+              className={classes.input} 
+              options={orgs}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Organization")}
+                />
+              )}
+            />
             <TextField 
               className={classes.input} 
               label={t("Maximum users")} 
