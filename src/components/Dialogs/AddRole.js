@@ -16,6 +16,7 @@ import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
 import { fetchOrgsData } from '../../actions/orgs';
 import { Autocomplete } from '@material-ui/lab';
+import { ORG_ADMIN } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -198,7 +199,7 @@ class AddRole extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
-                {permission.permission === 'DomainAdmin' && <Autocomplete
+                {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
                   options={domains || []}
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}
@@ -214,7 +215,7 @@ class AddRole extends PureComponent {
                   fullWidth
                   autoSelect
                 />}
-                {permission.permission === 'OrgAdmin' && <Autocomplete
+                {permission.permission === ORG_ADMIN && <Autocomplete
                   options={orgs || []}
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}

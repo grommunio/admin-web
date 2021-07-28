@@ -17,6 +17,8 @@ import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { Delete, HelpOutline } from '@material-ui/icons';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -136,6 +138,7 @@ class DBConf extends Component {
   render() {
     const { classes, t, services, commands } = this.props;
     const { adding, configuring, snackbar, match, tab, deleting } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <div className={classes.root}>
         <TopBar/>
@@ -156,6 +159,7 @@ class DBConf extends Component {
               variant="contained"
               color="primary"
               onClick={() => this.setState({ adding: true })}
+              disabled={!writable}
             >
               {t("Create file")}
             </Button>
@@ -164,6 +168,7 @@ class DBConf extends Component {
               color="primary"
               onClick={() => this.setState({ configuring: true })}
               className={classes.button}
+              disabled={!writable}
             >
               {t("Configure grommunio-dbconf")}
             </Button>
@@ -211,9 +216,9 @@ class DBConf extends Component {
                   <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                     <TableCell>{service}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(service)}>
+                      {writable && <IconButton onClick={this.handleDelete(service)}>
                         <Delete color="error" />
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -270,6 +275,7 @@ class DBConf extends Component {
   }
 }
 
+DBConf.contextType = CapabilityContext;
 DBConf.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

@@ -38,7 +38,8 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { TableChart } from '@material-ui/icons';
+import { QueryBuilder, TableChart } from '@material-ui/icons';
+import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
   drawerHeader: {
@@ -170,7 +171,7 @@ class NavigationLinks extends PureComponent {
   render() {
     const { classes, t, expandedDomain, location, domains, capabilities } = this.props;
     const { filter, tab } = this.state;
-    const isSysAdmin = capabilities.includes('SystemAdmin');
+    const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
     return(
       <React.Fragment>
         <div className={classes.drawerHeader}>
@@ -361,6 +362,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Logs className={classes.icon}/>
                 <ListItemText primary={t('Logs')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('mailq')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/mailq')}
+            >
+              <Grid container alignItems="center">
+                <QueryBuilder className={classes.icon}/>
+                <ListItemText primary={t('Mail queue')} />
               </Grid>
             </ListItem>
             <ListItem

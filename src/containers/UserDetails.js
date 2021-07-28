@@ -36,6 +36,9 @@ import AddFetchmail from '../components/Dialogs/AddFetchmail';
 import EditFetchmail from '../components/Dialogs/EditFetchmail';
 import { getPolicyDiff } from '../utils';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
+import Delegates from '../components/user/Delegates';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -454,10 +457,10 @@ class UserDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, history } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
       detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
-    const usernameError = user.username && !user.username.match(/^([.0-9A-Za-z_+-]+)$/);
     return (
       <div className={classes.root}>
         <TopBar title={t("Users")}/>
@@ -512,6 +515,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Contact")} />
               <Tab label={t("Roles")} />
               <Tab label={t("SMTP")} />
+              <Tab label={t("Delegates")} />
               <Tab label={t("FetchMail")} />
               <Tab label={t("Mobile Devices")} />
               <Tab label={t("Sync policy")} />
@@ -519,7 +523,6 @@ class UserDetails extends PureComponent {
             {tab === 0 && <Account
               domain={domain}
               user={user}
-              usernameError={usernameError}
               sizeUnits={sizeUnits}
               handleInput={this.handleInput}
               handlePropertyChange={this.handlePropertyChange}
@@ -548,24 +551,29 @@ class UserDetails extends PureComponent {
               handleAddAlias={this.handleAddAlias}
               handleRemoveAlias={this.handleRemoveAlias}
             />}
-            {tab === 5 && <FetchMail
+            {tab === 5 && <Delegates
+              domainID={domain.ID}
+              userID={user.ID}
+              disabled={!writable}
+            />}
+            {tab === 6 && <FetchMail
               fetchmail={fetchmail}
               handleAdd={this.handleFetchmailDialog(true)}
               handleEdit={this.handleFetchmailEditDialog}
               handleDelete={this.handleFetchmailDelete}
             />}
-            {tab === 6 && <SyncTab
+            {tab === 7 && <SyncTab
               domain={domain.ID}
               user={user.ID}
             />}
-            {tab === 7 && <SlimSyncPolicies
+            {tab === 8 && <SlimSyncPolicies
               syncPolicy={syncPolicy}
               defaultPolicy={defaultPolicy}
               handleChange={this.handleSyncChange}
               handleCheckbox={this.handleSyncCheckboxChange}
               handleSlider={this.handleSlider}
             />}
-            <Grid container className={classes.buttonGrid}>
+            {tab !== 5 && <Grid container className={classes.buttonGrid}>
               <Button
                 variant="contained"
                 onClick={history.goBack}
@@ -573,23 +581,15 @@ class UserDetails extends PureComponent {
               >
                 {t('Back')}
               </Button>
-              {tab === 3 ? 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleSaveRoles}
-                >
-                  {t('Save')}
-                </Button> :
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleEdit}
-                  disabled={!username || usernameError}
-                >
-                  {t('Save')}
-                </Button>}
-            </Grid>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
+                disabled={!writable}
+              >
+                {t('Save')}
+              </Button>
+            </Grid>}
           </Paper>
           <Feedback
             snackbar={snackbar}
@@ -629,6 +629,7 @@ class UserDetails extends PureComponent {
   }
 }
 
+UserDetails.contextType = CapabilityContext;
 UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

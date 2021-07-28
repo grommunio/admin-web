@@ -8,6 +8,7 @@ import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogCon
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
+import { DOMAIN_PURGE } from '../../constants';
 
 const styles = {
   
@@ -47,7 +48,7 @@ class DeleteDomain extends PureComponent {
   render() {
     const { t, open, item, onClose, capabilities } = this.props;
     const { loading, purge, deleteFiles } = this.state;
-    const canPurge = capabilities.includes('SystemAdmin') || capabilities.includes('DomainPurge');
+    const canPurge = capabilities.includes(DOMAIN_PURGE);
     return (
       <Dialog
         onClose={onClose}

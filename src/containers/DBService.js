@@ -25,6 +25,8 @@ import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -114,6 +116,7 @@ class DBService extends PureComponent {
   render() {
     const { classes, t } = this.props;
     const { name, snackbar, files, deleting } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
       <div className={classes.root}>
@@ -145,9 +148,9 @@ class DBService extends PureComponent {
                   <ListItemText
                     primary={file}
                   />
-                  <IconButton onClick={this.handleDelete(file)}>
+                  {writable && <IconButton onClick={this.handleDelete(file)}>
                     <Delete color="error" />
-                  </IconButton>
+                  </IconButton>}
                 </ListItem>
                 <Divider />
               </React.Fragment>
@@ -165,6 +168,7 @@ class DBService extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -189,6 +193,7 @@ class DBService extends PureComponent {
   }
 }
 
+DBService.contextType = CapabilityContext;
 DBService.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

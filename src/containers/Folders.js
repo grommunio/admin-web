@@ -19,6 +19,8 @@ import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import blue from '../colors/blue';
 //import { debounce } from 'debounce';
 import Feedback from '../components/Feedback';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -172,6 +174,7 @@ class Folders extends Component {
 
   render() {
     const { classes, t, folders, domain } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, adding, deleting, order, match } = this.state;
     const { sortedFolders } = this.state;
 
@@ -192,6 +195,7 @@ class Folders extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              disabled={!writable}
             >
               {t('New folder')}
             </Button>
@@ -242,9 +246,9 @@ class Folders extends Component {
                     <TableCell>{obj.comment}</TableCell>
                     <TableCell>{obj.creationtime}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -281,6 +285,7 @@ class Folders extends Component {
   }
 }
 
+Folders.contextType = CapabilityContext;
 Folders.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

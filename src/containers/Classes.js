@@ -20,6 +20,8 @@ import { Delete } from '@material-ui/icons';
 import AddClass from '../components/Dialogs/AddClass';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import Tree from 'react-d3-tree';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -245,6 +247,7 @@ class Classes extends Component {
 
   render() {
     const { classes, t, _classes, domain } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, match, orderBy, order, adding, deleting, tab, root } = this.state;
 
     return (
@@ -265,6 +268,7 @@ class Classes extends Component {
               color="primary"
               onClick={this.handleAdd}
               className={classes.newButton}
+              disabled={!writable}
             >
               {t('New group')}
             </Button>
@@ -324,9 +328,9 @@ class Classes extends Component {
                     <TableCell>{obj.classname}</TableCell>
                     <TableCell>{obj.listname}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -405,6 +409,7 @@ class Classes extends Component {
   }
 }
 
+Classes.contextType = CapabilityContext;
 Classes.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

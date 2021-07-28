@@ -21,6 +21,8 @@ import LdapTextfield from '../components/LdapTextfield';
 import Help from '@material-ui/icons/HelpOutline';
 import Feedback from '../components/Feedback';
 import { Autocomplete } from '@material-ui/lab';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -319,6 +321,7 @@ class LdapConfig extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
       authBackendSelection, aliases } = this.state;
@@ -663,6 +666,7 @@ class LdapConfig extends PureComponent {
               color="primary"
               type="submit"
               onClick={this.handleSave}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -683,6 +687,7 @@ class LdapConfig extends PureComponent {
   }
 }
 
+LdapConfig.contextType = CapabilityContext;
 LdapConfig.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

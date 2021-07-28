@@ -19,6 +19,8 @@ import blue from '../colors/blue';
 import Feedback from '../components/Feedback';
 import { debounce } from 'debounce';
 import { HelpOutline } from '@material-ui/icons';
+import { CapabilityContext } from '../CapabilityContext';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -190,6 +192,7 @@ class Roles extends PureComponent {
   render() {
     const { classes, t, roles } = this.props;
     const { adding, snackbar, deleting, order, match } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
       <div
@@ -215,6 +218,7 @@ class Roles extends PureComponent {
               variant="contained"
               color="primary"
               onClick={() => this.setState({ adding: true })}
+              disabled={!writable}
             >
               {t("New role")}
             </Button>
@@ -265,9 +269,9 @@ class Roles extends PureComponent {
                     <TableCell>{obj.description}</TableCell>
                     <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -301,6 +305,7 @@ class Roles extends PureComponent {
   }
 }
 
+Roles.contextType = CapabilityContext;
 Roles.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

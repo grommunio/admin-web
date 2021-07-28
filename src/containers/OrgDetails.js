@@ -18,6 +18,8 @@ import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -97,6 +99,7 @@ class OrgDetails extends PureComponent {
     const { classes, t } = this.props;
     const { org, snackbar } = this.state;
     const { name, description } = org;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
       <div className={classes.root}>
@@ -145,6 +148,7 @@ class OrgDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -159,6 +163,7 @@ class OrgDetails extends PureComponent {
   }
 }
 
+OrgDetails.contextType = CapabilityContext;
 OrgDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

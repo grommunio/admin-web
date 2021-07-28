@@ -20,6 +20,8 @@ import TopBar from '../components/TopBar';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -134,6 +136,7 @@ class MListDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, _classes } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { mList, snackbar } = this.state;
     const { listname, listType, listPrivilege, associations, specifieds, class: _class } = mList;
 
@@ -234,6 +237,7 @@ class MListDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -248,6 +252,7 @@ class MListDetails extends PureComponent {
   }
 }
 
+MListDetails.contextType = CapabilityContext;
 MListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

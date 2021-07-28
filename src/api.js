@@ -284,6 +284,18 @@ export function userSync(domainID, userID) {
   };
 }
 
+export function userDelegates(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID + '/delegates');
+  };
+}
+
+export function editUserDelegates(domainID, userID, delegates) {
+  return async () => {
+    return await put('/domains/' + domainID + '/users/'+ userID + '/delegates', delegates);
+  };
+}
+
 /* LDAP */
 
 export function searchLdap(params) {
@@ -696,6 +708,22 @@ export function deleteFile(service, file) {
 }
 
 /*
+  VHOSTS
+*/
+
+export function vhosts() {
+  return async () => {
+    return await get('/system/vhostStatus');
+  };
+}
+
+export function vhostStatus(name) {
+  return async () => {
+    return await get('/system/vhostStatus/' + name);
+  };
+}
+
+/*
   MEMBERS
 */
 
@@ -752,6 +780,16 @@ export async function deleteMailAddress(domain, id) {
 }
 
 /*
+  MAIL-QUEUE
+*/
+
+export function mailq() {
+  return async () => {
+    return await get('/system/mailq');
+  };
+}
+
+/*
   BASE SUTUP
 */
 
@@ -799,14 +837,3 @@ export function defaultDomainSyncPolicy(domainID) {
   };
 }
 
-export function vhosts() {
-  return async () => {
-    return await get('/system/vhostStatus');
-  };
-}
-
-export function vhostStatus(name) {
-  return async () => {
-    return await get('/system/vhostStatus/' + name);
-  };
-}

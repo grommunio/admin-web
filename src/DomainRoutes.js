@@ -13,6 +13,7 @@ import AuthenticatedRoute from "./components/AuthenticatedRoute";
 import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 import DefaultRedirect from "./components/DefaultRedirect";
 import NotFound from "./containers/NotFound";
+import { ORG_ADMIN } from "./constants";
 
 function makeLoadableComponent(loader) {
   return Loadable({
@@ -55,7 +56,7 @@ const Routes = ({ childProps, domains, capabilities }) => (
       component={AsyncLogin}
       props={childProps}
     />
-    {capabilities.includes('OrgAdmin') &&
+    {capabilities.includes(ORG_ADMIN) &&
       <AuthenticatedRoute
         path="/domainList/:domainID*"
         exact

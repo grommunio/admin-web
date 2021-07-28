@@ -21,6 +21,8 @@ import DeleteUser from '../components/Dialogs/DeleteUser';
 import blue from '../colors/blue';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import Feedback from '../components/Feedback';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -247,8 +249,8 @@ class Users extends Component {
 
   render() {
     const { classes, t, users, domain } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
-
     return (
       <div
         className={classes.root}
@@ -267,6 +269,7 @@ class Users extends Component {
               color="primary"
               onClick={this.handleAdd}
               className={classes.newButton}
+              disabled={!writable}
             >
               {t('New user')}
             </Button>
@@ -275,6 +278,7 @@ class Users extends Component {
               color="primary"
               onClick={this.handleNavigation(domain.ID + '/ldap')}
               className={classes.newButton}
+              disabled={!writable}
             >
               {t('Search in LDAP')}
             </Button>
@@ -284,6 +288,7 @@ class Users extends Component {
                 color="primary"
                 style={{ marginRight: 16 }}
                 onClick={this.handleUserSync(false)}
+                disabled={!writable}
               >
                 {t('Sync LDAP users')}
               </Button>
@@ -297,6 +302,7 @@ class Users extends Component {
                 color="primary"
                 style={{ marginRight: 16 }}
                 onClick={this.handleUserSync(true)}
+                disabled={!writable}
               >
                 {t('Import LDAP users')}
               </Button>
@@ -309,6 +315,7 @@ class Users extends Component {
                 variant="contained"
                 color="primary"
                 onClick={this.checkUsers}
+                disabled={!writable}
               >
                 {t('Check LDAP users')}
               </Button>
@@ -365,9 +372,9 @@ class Users extends Component {
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error"/>
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>;
                 })}
@@ -407,6 +414,7 @@ class Users extends Component {
   }
 }
 
+Users.contextType = CapabilityContext;
 Users.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

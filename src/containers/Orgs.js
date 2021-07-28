@@ -32,6 +32,8 @@ import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
 import { HelpOutline } from "@material-ui/icons";
+import { SYSTEM_ADMIN_WRITE } from "../constants";
+import { CapabilityContext } from "../CapabilityContext";
 
 const styles = (theme) => ({
   root: {
@@ -220,6 +222,7 @@ class Orgs extends Component {
       orderBy,
       match,
     } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
       <div
@@ -245,6 +248,7 @@ class Orgs extends Component {
               variant="contained"
               color="primary"
               onClick={this.handleAdd}
+              disabled={!writable}
             >
               {t("New organization")}
             </Button>
@@ -293,9 +297,9 @@ class Orgs extends Component {
                     <TableCell>{obj.name}</TableCell>
                     <TableCell>{obj.description}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={this.handleDelete(obj)}>
+                      {writable && <IconButton onClick={this.handleDelete(obj)}>
                         <Delete color="error" />
-                      </IconButton>
+                      </IconButton>}
                     </TableCell>
                   </TableRow>
                 )}
@@ -335,6 +339,7 @@ class Orgs extends Component {
   }
 }
 
+Orgs.contextType = CapabilityContext;
 Orgs.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

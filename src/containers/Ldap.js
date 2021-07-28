@@ -17,6 +17,8 @@ import { fetchLdapData } from '../actions/ldap';
 import { debounce } from 'debounce';
 import ImportDialog from '../components/Dialogs/ImportDialog';
 import Feedback from '../components/Feedback';
+import { CapabilityContext } from '../CapabilityContext';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -93,6 +95,7 @@ class Ldap extends PureComponent {
   render() {
     const { classes, t, domain, ldapUsers } = this.props;
     const { loading, snackbar, confirming } = this.state;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     return (
       <div className={classes.root}>
         <TopBar title={domain.domainname}/>
@@ -130,9 +133,9 @@ class Ldap extends PureComponent {
                     primaryTypographyProps={{ color: 'primary' }}
                     secondary={user.email}
                   />
-                  <IconButton onClick={this.handleImport(user)}>
+                  {writable && <IconButton onClick={this.handleImport(user)}>
                     <Import />
-                  </IconButton>
+                  </IconButton>}
                 </ListItem>
                 <Divider />
               </React.Fragment>
@@ -168,6 +171,7 @@ class Ldap extends PureComponent {
   }
 }
 
+Ldap.contextType = CapabilityContext;
 Ldap.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

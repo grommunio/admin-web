@@ -19,6 +19,8 @@ import { fetchServiceFile, editServiceFile } from '../actions/dbconf';
 import TopBar from '../components/TopBar';
 import Feedback from '../components/Feedback';
 import { Add, Delete } from '@material-ui/icons';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -128,6 +130,7 @@ class DBFile extends PureComponent {
   render() {
     const { classes, t, history } = this.props;
     const { snackbar, data } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <div className={classes.root}>
         <TopBar title={t("DB Service")}/>
@@ -156,16 +159,16 @@ class DBFile extends PureComponent {
                   onChange={this.handleDataInput('value', idx)}
                   className={classes.flexTextfield}
                 />
-                <IconButton onClick={this.handleRemoveRow(idx)}>
+                {writable && <IconButton onClick={this.handleRemoveRow(idx)}>
                   <Delete color="error"/>
-                </IconButton>
+                </IconButton>}
               </Grid>
               )}
-              <Grid container justify="center">
+              {writable && <Grid container justify="center">
                 <IconButton onClick={this.handleAddRow}>
                   <Add color="primary"/>
                 </IconButton>
-              </Grid>
+              </Grid>}
             </FormControl>
             <Button
               variant="text"
@@ -179,6 +182,7 @@ class DBFile extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -193,6 +197,7 @@ class DBFile extends PureComponent {
   }
 }
 
+DBFile.contextType = CapabilityContext;
 DBFile.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

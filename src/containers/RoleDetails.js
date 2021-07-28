@@ -26,6 +26,8 @@ import { fetchDomainData } from '../actions/domains';
 import Feedback from '../components/Feedback';
 import { Autocomplete } from '@material-ui/lab';
 import { fetchOrgsData } from '../actions/orgs';
+import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -181,6 +183,7 @@ class RoleDetails extends PureComponent {
     const { name, description, users, permissions } = role;
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <div className={classes.root}>
         <TopBar title={t("Role")}/>
@@ -244,7 +247,7 @@ class RoleDetails extends PureComponent {
                       </MenuItem>
                     ))}
                   </TextField>
-                  {permission.permission === 'DomainAdmin' && <Autocomplete
+                  {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
                     options={domains || []}
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
@@ -262,7 +265,7 @@ class RoleDetails extends PureComponent {
                     fullWidth
                     autoSelect
                   />}
-                  {permission.permission === 'OrgAdmin' && <Autocomplete
+                  {permission.permission === ORG_ADMIN && <Autocomplete
                     options={orgs || []}
                     value={permission.params}
                     onChange={this.handleSetParams(idx)}
@@ -301,6 +304,7 @@ class RoleDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={this.handleEdit}
+              disabled={!writable}
             >
               {t('Save')}
             </Button>
@@ -315,6 +319,7 @@ class RoleDetails extends PureComponent {
   }
 }
 
+RoleDetails.contextType = CapabilityContext;
 RoleDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

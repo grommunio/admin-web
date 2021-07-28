@@ -14,6 +14,8 @@ import i18n from '../i18n';
 import blue from '../colors/blue';
 import { fetchLicenseData, uploadLicenseData } from '../actions/license';
 import Feedback from '../components/Feedback';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -134,6 +136,7 @@ class Settings extends Component {
   render() {
     const { classes, t, settings, license } = this.props;
     const { snackbar } = this.state;
+    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <div className={classes.root}>
         <TopBar/>
@@ -171,7 +174,7 @@ class Settings extends Component {
             <Grid container alignItems="center">
               <Grid item className={classes.gridItem}>
                 <Typography variant="h5" className={classes.headline}>{t('License')}</Typography>
-                <Button
+                {writable && <Button
                   className={classes.upload}
                   variant="contained"
                   color="primary"
@@ -179,10 +182,10 @@ class Settings extends Component {
                   size="small"
                 >
                   {t('Upload')}
-                </Button>
+                </Button>}
               </Grid>
-              <Typography variant="body2">{t("Don't have a license?")}</Typography>
-              <Button
+              {writable && <Typography variant="body2">{t("Don't have a license?")}</Typography>}
+              {writable && <Button
                 className={classes.upload}
                 variant="contained"
                 color="primary"
@@ -191,7 +194,7 @@ class Settings extends Component {
                 size="small"
               >
                 {t('Buy now')}
-              </Button>
+              </Button>}
             </Grid>
             <Grid container direction="column" className={classes.licenseContainer}>
               <Typography className={classes.data}>
@@ -234,6 +237,7 @@ class Settings extends Component {
   }
 }
 
+Settings.contextType = CapabilityContext;
 Settings.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

@@ -56,6 +56,7 @@ const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainM
 const AsyncRoles = makeLoadableComponent(() => import("./containers/Roles"));
 const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDetails"));
 const AsyncLogs = makeLoadableComponent(() => import("./containers/Logs"));
+const AsyncMailQ = makeLoadableComponent(() => import("./containers/MailQ"));
 const AsyncSync = makeLoadableComponent(() => import("./containers/Sync"));
 const AsyncStatus = makeLoadableComponent(() => import("./containers/Status"));
 
@@ -113,6 +114,12 @@ const Routes = ({ childProps, domains }) => (
       path="/logs"
       exact
       component={AsyncLogs}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/mailq"
+      exact
+      component={AsyncMailQ}
       props={childProps}
     />
     <AuthenticatedRoute

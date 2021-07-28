@@ -27,6 +27,8 @@ import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } fr
 import AddOwner from '../components/Dialogs/AddOwner';
 import Feedback from '../components/Feedback';
 import RemoveOwner from '../components/Dialogs/RemoveOwner';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   root: {
@@ -136,6 +138,7 @@ class FolderDetails extends PureComponent {
 
   render() {
     const { classes, t, domain, owners } = this.props;
+    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { folder, adding, deleting, snackbar } = this.state;
 
     return (
@@ -193,7 +196,7 @@ class FolderDetails extends PureComponent {
               >
                 {t('Owners')}
               </Typography>
-              <IconButton onClick={this.handleAdd}>
+              <IconButton onClick={this.handleAdd} disabled={!writable}>
                 <Add fontSize="small" color="primary" />
               </IconButton>
             </Grid>
@@ -201,7 +204,7 @@ class FolderDetails extends PureComponent {
               {owners.map(owner => <React.Fragment key={owner.memberID}>
                 <ListItem>
                   <ListItemText primary={owner.displayName} />
-                  <IconButton onClick={this.handleDelete(owner)}>
+                  <IconButton onClick={this.handleDelete(owner)} disabled={!writable}>
                     <Delete fontSize="small" color="error"/>
                   </IconButton>
                 </ListItem>
@@ -222,6 +225,7 @@ class FolderDetails extends PureComponent {
                 color="primary"
                 onClick={this.handleEdit}
                 style={{ marginRight: 8 }}
+                disabled={!writable}
               >
                 {t('Save')}
               </Button>
@@ -254,6 +258,7 @@ class FolderDetails extends PureComponent {
   }
 }
 
+FolderDetails.contextType = CapabilityContext;
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
