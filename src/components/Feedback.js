@@ -35,7 +35,7 @@ class Feedback extends PureComponent {
 
 Feedback.propTypes = {
   snackbar: PropTypes.string,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
 };
 
 export default Feedback;

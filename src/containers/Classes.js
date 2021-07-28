@@ -13,59 +13,21 @@ import { Paper, Typography, Button, Grid,
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
-import TopBar from '../components/TopBar';
-import blue from '../colors/blue';
-import Feedback from '../components/Feedback';
 import { Delete } from '@material-ui/icons';
 import AddClass from '../components/Dialogs/AddClass';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import Tree from 'react-d3-tree';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
-  root: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  base: {
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-    height: 'calc(100% - 100px)',
-  },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
   tablePaper: {
     margin: theme.spacing(3, 2),
     borderRadius: 6,
   },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  pageTitleSecondary: {
-    color: '#aaa',
-  },
-  homeIcon: {
-    color: blue[500],
-    position: 'relative',
-    top: 4,
-    left: 4,
-    cursor: 'pointer',
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
@@ -251,114 +213,110 @@ class Classes extends Component {
     const { snackbar, match, orderBy, order, adding, deleting, tab, root } = this.state;
 
     return (
-      <div
-        className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
-        id="scrollDiv"
+      <TableViewContainer
+        handleScroll={this.handleScroll}
+        headline={t("Groups")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        baseRef={tc => (this.treeContainer = tc)}
       >
-        <TopBar title={domain.domainname}/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base} ref={tc => (this.treeContainer = tc)} >
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Groups")}
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleAdd}
-              className={classes.newButton}
-              disabled={!writable}
-            >
-              {t('New group')}
-            </Button>
-            <div className={classes.actions}>
-              <TextField
-                value={match}
-                onChange={this.handleMatch}
-                label={t("Search")}
-                variant="outlined"
-                className={classes.textfield}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                color="primary"
-              />
-            </div>
-          </Grid>
-          <Tabs
-            indicatorColor="primary"
-            textColor="primary"
-            className={classes.tabs}
-            onChange={this.handleTab}
-            value={tab}
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAdd}
+            className={classes.newButton}
+            disabled={!writable}
           >
-            <Tab value={0} label="List" />
-            <Tab value={1} label="Tree" />
-          </Tabs>
-          {!tab && <Typography className={classes.count} color="textPrimary">
+            {t('New group')}
+          </Button>
+          <div className={classes.actions}>
+            <TextField
+              value={match}
+              onChange={this.handleMatch}
+              label={t("Search")}
+              variant="outlined"
+              className={classes.textfield}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              color="primary"
+            />
+          </div>
+        </Grid>
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          className={classes.tabs}
+          onChange={this.handleTab}
+          value={tab}
+        >
+          <Tab value={0} label="List" />
+          <Tab value={1} label="Tree" />
+        </Tabs>
+        {!tab && <Typography className={classes.count} color="textPrimary">
             Showing {_classes.Classes.length} group(s)
-          </Typography>}
-          {!tab ? <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left" 
-                        direction={orderBy === column.value ? order : 'asc'}
-                        onClick={this.handleRequestSort(column.value)}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
-                    </TableCell>
-                  )}
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {_classes.Classes.map((obj, idx) =>
-                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.classname}</TableCell>
-                    <TableCell>{obj.listname}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>
+        </Typography>}
+        {!tab ? <Paper className={classes.tablePaper} elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {this.columns.map(column =>
+                  <TableCell key={column.value}>
+                    <TableSortLabel
+                      active={orderBy === column.value}
+                      align="left" 
+                      direction={orderBy === column.value ? order : 'asc'}
+                      onClick={this.handleRequestSort(column.value)}
+                    >
+                      {t(column.label)}
+                    </TableSortLabel>
+                  </TableCell>
                 )}
-              </TableBody>
-            </Table>
-            {(_classes.Classes.length < _classes.count) && <Grid container justify="center">
-              <CircularProgress color="primary" className={classes.circularProgress}/>
-            </Grid>}
-          </Paper> :
-            <>
-              <FormControl className={classes.select}>
-                <InputLabel>{t("Root group")}</InputLabel>
-                <Select
-                  fullWidth
-                  value={root > -1 ? root : ''}
-                  onChange={this.handleRootSelect}
-                  input={<Input />}
-                  placeholder={t('Select root group')}
-                >
-                  {_classes.Trees.map((tree, idx) => (
-                    <MenuItem key={idx} value={idx}>
-                      {tree.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <div style={{ display: 'flex', flex: 1, alignItems: 'stretch' }}>
-                {root !== -1 &&
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {_classes.Classes.map((obj, idx) =>
+                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableCell>{obj.classname}</TableCell>
+                  <TableCell>{obj.listname}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                      <Delete color="error"/>
+                    </IconButton>}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          {(_classes.Classes.length < _classes.count) && <Grid container justify="center">
+            <CircularProgress color="primary" className={classes.circularProgress}/>
+          </Grid>}
+        </Paper> :
+          <>
+            <FormControl className={classes.select}>
+              <InputLabel>{t("Root group")}</InputLabel>
+              <Select
+                fullWidth
+                value={root > -1 ? root : ''}
+                onChange={this.handleRootSelect}
+                input={<Input />}
+                placeholder={t('Select root group')}
+              >
+                {_classes.Trees.map((tree, idx) => (
+                  <MenuItem key={idx} value={idx}>
+                    {tree.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div style={{ display: 'flex', flex: 1, alignItems: 'stretch' }}>
+              {root !== -1 &&
                   <Paper style={{ flex: 1 }}>
                     <Tree
                       data={_classes.Trees[root]}
@@ -379,32 +337,27 @@ class Classes extends Component {
                       collapsible={false}
                     />
                   </Paper>}
-              </div>
-            </>
-          }
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-          <AddClass
-            open={adding}
-            onSuccess={this.handleAddingSuccess}
-            onError={this.handleAddingError}
-            domain={domain}
-            onClose={this.handleAddingClose}
-          />
-          <DomainDataDelete
-            open={!!deleting}
-            delete={this.props.delete}
-            onSuccess={this.handleDeleteSuccess}
-            onError={this.handleDeleteError}
-            onClose={this.handleDeleteClose}
-            item={deleting.name}
-            id={deleting.ID}
-            domainID={domain.ID}
-          />
-        </div>
-      </div>
+            </div>
+          </>
+        }
+        <AddClass
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          domain={domain}
+          onClose={this.handleAddingClose}
+        />
+        <DomainDataDelete
+          open={!!deleting}
+          delete={this.props.delete}
+          onSuccess={this.handleDeleteSuccess}
+          onError={this.handleDeleteError}
+          onClose={this.handleDeleteClose}
+          item={deleting.name}
+          id={deleting.ID}
+          domainID={domain.ID}
+        />
+      </TableViewContainer>
     );
   }
 }

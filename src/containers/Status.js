@@ -13,105 +13,24 @@ import {
   Typography,
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import TopBar from "../components/TopBar";
-import blue from "../colors/blue";
-import Feedback from "../components/Feedback";
 import { fetchVhostsData, fetchVhostStatusData } from '../actions/status';
 import ServerZones from "../components/status/ServerZones";
 import FilterZones from "../components/status/FilterZones";
 import Connections from "../components/status/Connections";
 import Requests from "../components/status/Requests";
+import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
-  root: {
-    flex: 1,
-    overflow: "auto",
-  },
-  base: {
-    flexDirection: "column",
-    padding: theme.spacing(2),
-    flex: 1,
-    display: "flex",
-  },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
   pageTitle: {
     margin: theme.spacing(2),
-  },
-  pageTitleSecondary: {
-    color: "#aaa",
-  },
-  homeIcon: {
-    color: blue[500],
-    position: "relative",
-    top: 4,
-    left: 4,
-    cursor: "pointer",
-  },
-  circularProgress: {
-    margin: theme.spacing(1, 0),
-  },
-  textfield: {
-    margin: theme.spacing(2, 0, 1, 0),
-  },
-  tools: {
-    margin: theme.spacing(0, 2, 2, 2),
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
   },
   logViewer: {
     display: 'flex',
     flex: 1,
   },
-  log: {
-    fontSize: 16,
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#bbb',
-    },
-  },
-  noticeLog: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#bbb',
-    },
-  },
-  errorLog: {
-    fontSize: 16,
-    cursor: 'pointer',
-    color: 'red',
-    '&:hover': {
-      backgroundColor: '#bbb',
-    },
-  },
   paper: {
     flex: 1,
     padding: theme.spacing(2),
-  },
-  table: {
-    margin: theme.spacing(0, 0, 4, 0),
-  },
-  li: {
-    cursor: 'pointer',
   },
   tf: {
     margin: theme.spacing(2),
@@ -186,58 +105,51 @@ class Status extends PureComponent {
     const { snackbar, data, interval, vhost } = this.state;
     const { connections, serverZones, filterZones } = data;
     return (
-      <div className={classes.root}>
-        <TopBar />
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h1" className={classes.pageTitle}>
-            {t("Live Status")} - {data.hostName}
-          </Typography>
-          <TextField
-            select
-            value={vhost}
-            label="Vhost"
-            className={classes.tf}
-            onChange={this.handleChange('vhost')}
-          >
-            {vhosts.map((host, key) =>
-              <MenuItem value={host} key={key}>{host}</MenuItem>
-            )}
-          </TextField>
-          <TextField
-            select
-            value={interval}
-            label="Update interval"
-            className={classes.tf}
-            onChange={this.handleIntervalChange}
-          >
-            <MenuItem value={1000}>1 second</MenuItem>
-            <MenuItem value={2000}>2 seconds</MenuItem>
-            <MenuItem value={3000}>3 seconds</MenuItem>
-            <MenuItem value={5000}>5 seconds</MenuItem>
-            <MenuItem value={10000}>10 seconds</MenuItem>
-          </TextField>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Connections")}
-          </Typography>
-          <Connections data={connections} />
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Requests")}
-          </Typography>
-          <Requests data={connections} />
-          <div className={classes.logViewer}>
-            <TableContainer component={Paper} className={classes.paper}>
-              <Typography style={{ marginBottom: 8 }} variant="h5">Host details</Typography>
-              <ServerZones serverZones={this.toSortedArray(serverZones)} />
-              <FilterZones filterZones={filterZones} />
-            </TableContainer>
-          </div>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: "" })}
-          />
+      <TableViewContainer
+        headline={t("Live Status")  + ' - ' + data.hostName}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <TextField
+          select
+          value={vhost}
+          label="Vhost"
+          className={classes.tf}
+          onChange={this.handleChange('vhost')}
+        >
+          {vhosts.map((host, key) =>
+            <MenuItem value={host} key={key}>{host}</MenuItem>
+          )}
+        </TextField>
+        <TextField
+          select
+          value={interval}
+          label="Update interval"
+          className={classes.tf}
+          onChange={this.handleIntervalChange}
+        >
+          <MenuItem value={1000}>1 second</MenuItem>
+          <MenuItem value={2000}>2 seconds</MenuItem>
+          <MenuItem value={3000}>3 seconds</MenuItem>
+          <MenuItem value={5000}>5 seconds</MenuItem>
+          <MenuItem value={10000}>10 seconds</MenuItem>
+        </TextField>
+        <Typography variant="h2" className={classes.pageTitle}>
+          {t("Connections")}
+        </Typography>
+        <Connections data={connections} />
+        <Typography variant="h2" className={classes.pageTitle}>
+          {t("Requests")}
+        </Typography>
+        <Requests data={connections} />
+        <div className={classes.logViewer}>
+          <TableContainer component={Paper} className={classes.paper}>
+            <Typography style={{ marginBottom: 8 }} variant="h5">Host details</Typography>
+            <ServerZones serverZones={this.toSortedArray(serverZones)} />
+            <FilterZones filterZones={filterZones} />
+          </TableContainer>
         </div>
-      </div>
+      </TableViewContainer>
     );
   }
 }

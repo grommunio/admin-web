@@ -7,7 +7,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { withTranslation } from "react-i18next";
 import {
   Paper,
-  Typography,
   Table,
   TableHead,
   TableRow,
@@ -24,29 +23,14 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { connect } from "react-redux";
-import TopBar from "../components/TopBar";
-import Feedback from "../components/Feedback";
 import { fetchSyncData } from "../actions/sync";
 import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined, Search } from "@material-ui/icons";
 import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
 import { grey, red } from "@material-ui/core/colors";
+import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
-  root: {
-    flex: 1,
-    overflow: "auto",
-  },
-  base: {
-    flexDirection: "column",
-    padding: theme.spacing(2),
-    flex: 1,
-    display: "flex",
-  },
-  toolbar: theme.mixins.toolbar,
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
   actions: {
     display: 'flex',
     flex: 1,
@@ -183,142 +167,139 @@ class Sync extends PureComponent {
       filterEnded, filterUpdated } = this.state;
 
     return (
-      <div className={classes.root}>
-        <TopBar />
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Mobile Devices")}
-            <IconButton
-              size="small"
-              href="https://docs.grammm.com/admin/tutorials.html#mobile-devices"
-              target="_blank"
-            >
-              <HelpOutline fontSize="small"/>
-            </IconButton>
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={showPush}
-                  onChange={this.handleCheckbox('showPush')}
-                  color="primary"
-                />
-              }
-              label={t('Show push connections')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={onlyActive}
-                  onChange={this.handleCheckbox('onlyActive')}
-                  color="primary"
-                />
-              }
-              label={t('Only show active connections')}
-            />
-            <TextField
-              value={filterUpdated}
-              onChange={this.handleInput('filterUpdated')}
-              label={t("Last updated (seconds)")}
-              className={classes.select}
-              select
-              color="primary"
-              fullWidth
-            >
-              <MenuItem value={60}>10</MenuItem>
-              <MenuItem value={60}>30</MenuItem>
-              <MenuItem value={60}>60</MenuItem>
-              <MenuItem value={120}>120</MenuItem>
-            </TextField>
-            <TextField
-              value={filterEnded}
-              onChange={this.handleInput('filterEnded')}
-              label={t("Last ended (seconds)")}
-              className={classes.select}
-              select
-              color="primary"
-              fullWidth
-            >
-              <MenuItem value={20}>3</MenuItem>
-              <MenuItem value={20}>5</MenuItem>
-              <MenuItem value={20}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-            </TextField>
-            <div className={classes.actions}>
-              <TextField
-                value={match}
-                onChange={this.handleInput('match')}
-                placeholder={t("Filter")}
-                variant="outlined"
-                className={classes.textfield}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
+      <TableViewContainer
+        handleScroll={this.handleScroll}
+        headline={<>
+          {t("Mobile Devices")}
+          <IconButton
+            size="small"
+            href="https://docs.grammm.com/admin/tutorials.html#mobile-devices"
+            target="_blank"
+          >
+            <HelpOutline fontSize="small"/>
+          </IconButton>
+        </>
+        }
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPush}
+                onChange={this.handleCheckbox('showPush')}
                 color="primary"
               />
-            </div>
-          </Grid>
-          <SyncStatistics data={sync}/>
-          <Paper elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map((column) => (
-                    <TableCell
-                      key={column.value}
-                      padding={column.padding || 'default'}
-                    >
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left" 
-                        direction={order}
-                        onClick={this.handleSort(column.value, column.type, true)}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
-                  <TableCell padding="checkbox">
-                    {t('Push')}
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(sortedDevices || sync).map((obj, idx) => {
-                  const timePast = getTimePast(obj.diff);
-                  const matches = this.getMatch(obj);
-                  return matches ? (
-                    <Tooltip key={idx} placement="top" title={obj.devtype + ' / ' + obj.devagent}>
-                      <TableRow hover className={this.getRowClass(obj, obj.diff)}>
-                        <TableCell className={classes.cell} padding="checkbox">{obj.pid}</TableCell>
-                        <TableCell className={classes.cell} padding="checkbox">{obj.ip}</TableCell>
-                        <TableCell className={classes.cell}>{obj.user}</TableCell>
-                        <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
-                        <TableCell className={classes.cell}>{timePast}</TableCell>
-                        <TableCell className={classes.cell}>{obj.devid}</TableCell>
-                        <TableCell className={classes.cell}>{obj.addinfo}</TableCell>
-                        <TableCell className={classes.cell} padding="checkbox">
-                          {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
-                        </TableCell>
-                      </TableRow>
-                    </Tooltip>
-                  ) : null;
-                })}
-              </TableBody>
-            </Table>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: "" })}
+            }
+            label={t('Show push connections')}
           />
-        </div>
-      </div>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={onlyActive}
+                onChange={this.handleCheckbox('onlyActive')}
+                color="primary"
+              />
+            }
+            label={t('Only show active connections')}
+          />
+          <TextField
+            value={filterUpdated}
+            onChange={this.handleInput('filterUpdated')}
+            label={t("Last updated (seconds)")}
+            className={classes.select}
+            select
+            color="primary"
+            fullWidth
+          >
+            <MenuItem value={60}>10</MenuItem>
+            <MenuItem value={60}>30</MenuItem>
+            <MenuItem value={60}>60</MenuItem>
+            <MenuItem value={120}>120</MenuItem>
+          </TextField>
+          <TextField
+            value={filterEnded}
+            onChange={this.handleInput('filterEnded')}
+            label={t("Last ended (seconds)")}
+            className={classes.select}
+            select
+            color="primary"
+            fullWidth
+          >
+            <MenuItem value={20}>3</MenuItem>
+            <MenuItem value={20}>5</MenuItem>
+            <MenuItem value={20}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+          </TextField>
+          <div className={classes.actions}>
+            <TextField
+              value={match}
+              onChange={this.handleInput('match')}
+              placeholder={t("Filter")}
+              variant="outlined"
+              className={classes.textfield}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              color="primary"
+            />
+          </div>
+        </Grid>
+        <SyncStatistics data={sync}/>
+        <Paper elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {this.columns.map((column) => (
+                  <TableCell
+                    key={column.value}
+                    padding={column.padding || 'default'}
+                  >
+                    <TableSortLabel
+                      active={orderBy === column.value}
+                      align="left" 
+                      direction={order}
+                      onClick={this.handleSort(column.value, column.type, true)}
+                    >
+                      {t(column.label)}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+                <TableCell padding="checkbox">
+                  {t('Push')}
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(sortedDevices || sync).map((obj, idx) => {
+                const timePast = getTimePast(obj.diff);
+                const matches = this.getMatch(obj);
+                return matches ? (
+                  <Tooltip key={idx} placement="top" title={obj.devtype + ' / ' + obj.devagent}>
+                    <TableRow hover className={this.getRowClass(obj, obj.diff)}>
+                      <TableCell className={classes.cell} padding="checkbox">{obj.pid}</TableCell>
+                      <TableCell className={classes.cell} padding="checkbox">{obj.ip}</TableCell>
+                      <TableCell className={classes.cell}>{obj.user}</TableCell>
+                      <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
+                      <TableCell className={classes.cell}>{timePast}</TableCell>
+                      <TableCell className={classes.cell}>{obj.devid}</TableCell>
+                      <TableCell className={classes.cell}>{obj.addinfo}</TableCell>
+                      <TableCell className={classes.cell} padding="checkbox">
+                        {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
+                      </TableCell>
+                    </TableRow>
+                  </Tooltip>
+                ) : null;
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      </TableViewContainer>
     );
   }
 }

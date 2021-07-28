@@ -12,58 +12,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Delete from '@material-ui/icons/Delete';
 import Search from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
-import TopBar from '../components/TopBar';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
-import blue from '../colors/blue';
-//import { debounce } from 'debounce';
-import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
-  root: {
-    flex: 1,
-    overflowY: 'auto',
-  },
-  base: {
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-  },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
   tablePaper: {
     margin: theme.spacing(3, 2),
     borderRadius: 6,
   },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  pageTitleSecondary: {
-    color: '#aaa',
-  },
-  homeIcon: {
-    color: blue[500],
-    position: 'relative',
-    top: 4,
-    left: 4,
-    cursor: 'pointer',
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
@@ -179,90 +141,79 @@ class Folders extends Component {
     const { sortedFolders } = this.state;
 
     return (
-      <div
-        className={classes.root}
-        //onScroll={debounce(this.handleScroll, 100)}
-        id="scrollDiv"
+      <TableViewContainer
+        headline={t("Folders")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
-        <TopBar/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Folders")}
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
-            <Button
-              variant="contained"
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAdd}
+            disabled={!writable}
+          >
+            {t('New folder')}
+          </Button>
+          <div className={classes.actions}>
+            <TextField
+              value={match}
+              onChange={this.handleMatch}
+              label={t("Search")}
+              variant="outlined"
+              className={classes.textfield}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
               color="primary"
-              onClick={this.handleAdd}
-              disabled={!writable}
-            >
-              {t('New folder')}
-            </Button>
-            <div className={classes.actions}>
-              <TextField
-                value={match}
-                onChange={this.handleMatch}
-                label={t("Search")}
-                variant="outlined"
-                className={classes.textfield}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                color="primary"
-              />
-            </div>
-          </Grid>
-          <Typography className={classes.count} color="textPrimary">
+            />
+          </div>
+        </Grid>
+        <Typography className={classes.count} color="textPrimary">
             Showing {sortedFolders.length} folder(s)
-          </Typography>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active
-                      align="left" 
-                      direction={order}
-                      onClick={this.handleSort(true)}
-                    >
-                      {t('Folder name')}
-                    </TableSortLabel>
+        </Typography>
+        <Paper className={classes.tablePaper} elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <TableSortLabel
+                    active
+                    align="left" 
+                    direction={order}
+                    onClick={this.handleSort(true)}
+                  >
+                    {t('Folder name')}
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>{t('Comment')}</TableCell>
+                <TableCell>{t('Creation time')}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedFolders.map((obj, idx) =>
+                <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
+                  <TableCell>{obj.displayname}</TableCell>
+                  <TableCell>{obj.comment}</TableCell>
+                  <TableCell>{obj.creationtime}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                      <Delete color="error"/>
+                    </IconButton>}
                   </TableCell>
-                  <TableCell>{t('Comment')}</TableCell>
-                  <TableCell>{t('Creation time')}</TableCell>
-                  <TableCell></TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {sortedFolders.map((obj, idx) =>
-                  <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
-                    <TableCell>{obj.displayname}</TableCell>
-                    <TableCell>{obj.comment}</TableCell>
-                    <TableCell>{obj.creationtime}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-            {(folders.Folders.length < folders.count) && <Grid container justify="center">
-              <CircularProgress color="primary" className={classes.circularProgress}/>
-            </Grid>}
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
+              )}
+            </TableBody>
+          </Table>
+          {(folders.Folders.length < folders.count) && <Grid container justify="center">
+            <CircularProgress color="primary" className={classes.circularProgress}/>
+          </Grid>}
+        </Paper>
         <AddFolder
           open={adding}
           onClose={this.handleAddingClose}
@@ -280,7 +231,7 @@ class Folders extends Component {
           id={deleting.folderid}
           domainID={domain.ID}
         />
-      </div>
+      </TableViewContainer>
     );
   }
 }

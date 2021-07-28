@@ -27,58 +27,16 @@ import Delete from "@material-ui/icons/Delete";
 import Search from "@material-ui/icons/Search";
 import { connect } from "react-redux";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
-import TopBar from "../components/TopBar";
 import AddDomain from "../components/Dialogs/AddDomain";
-import blue from "../colors/blue";
 import debounce from "debounce";
-import Feedback from "../components/Feedback";
 import DeleteDomain from "../components/Dialogs/DeleteDomain";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
+import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
-  root: {
-    flex: 1,
-    overflow: "auto",
-  },
-  base: {
-    flexDirection: "column",
-    padding: theme.spacing(2),
-    flex: 1,
-    display: "flex",
-  },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
-  pageTitleSecondary: {
-    color: "#aaa",
-  },
-  homeIcon: {
-    color: blue[500],
-    position: "relative",
-    top: 4,
-    left: 4,
-    cursor: "pointer",
-  },
   circularProgress: {
     margin: theme.spacing(1, 0),
-  },
-  textfield: {
-    margin: theme.spacing(2, 0, 1, 0),
-  },
-  tools: {
-    margin: theme.spacing(0, 2, 2, 2),
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
   },
   actions: {
     display: 'flex',
@@ -90,9 +48,6 @@ const styles = (theme) => ({
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
   },
-  deletedDomain: {
-    backgroundColor: "#22242f",
-  },
   count: {
     marginLeft: 16,
   },
@@ -100,7 +55,7 @@ const styles = (theme) => ({
 
 class DomainList extends Component {
   state = {
-    snackbar: null,
+    snackbar: '',
     showDeleted: false,
     adding: false,
     deleting: false,
@@ -231,107 +186,97 @@ class DomainList extends Component {
     const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
     return (
-      <div
-        className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
-        id="scrollDiv"
+      <TableViewContainer
+        handleScroll={this.handleScroll}
+        headline={t("Domain list")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
-        <TopBar />
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Domain list")}
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleAdd}
-              disabled={!writable}
-            >
-              {t("New domain")}
-            </Button>
-            <div className={classes.actions}>
-              <FormControlLabel
-                label={t("Show deactivated")}
-                control={
-                  <Checkbox
-                    checked={showDeleted || false}
-                    onChange={this.handleCheckbox("showDeleted")}
-                  />
-                }
-              />
-              <TextField
-                value={match}
-                onChange={this.handleMatch}
-                placeholder={t("search domains")}
-                variant={"outlined"}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                color="primary"
-              />
-            </div>
-          </Grid>
-          <Typography className={classes.count} color="textPrimary">
-            Showing {filteredDomains.length} domain(s)
-          </Typography>
-          <Paper elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map((column) => (
-                    <TableCell key={column.value}>
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left"
-                        direction={orderBy === column.value ? order : "asc"}
-                        onClick={this.handleRequestSort(column.value)}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
-                  <TableCell padding="checkbox" />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredDomains.map((obj, idx) =>
-                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>
-                      {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
-                      {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
-                    </TableCell>
-                    <TableCell>{obj.address}</TableCell>
-                    <TableCell>{obj.title}</TableCell>
-                    <TableCell>{obj.maxUser}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error" />
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>)
-                }
-              </TableBody>
-            </Table>
-            {domains.Domains.length < domains.count && (
-              <Grid container justify="center">
-                <CircularProgress
-                  color="primary"
-                  className={classes.circularProgress}
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAdd}
+            disabled={!writable}
+          >
+            {t("New domain")}
+          </Button>
+          <div className={classes.actions}>
+            <FormControlLabel
+              label={t("Show deactivated")}
+              control={
+                <Checkbox
+                  checked={showDeleted || false}
+                  onChange={this.handleCheckbox("showDeleted")}
                 />
-              </Grid>
-            )}
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: "" })}
-          />
-        </div>
+              }
+            />
+            <TextField
+              value={match}
+              onChange={this.handleMatch}
+              placeholder={t("search domains")}
+              variant={"outlined"}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              color="primary"
+            />
+          </div>
+        </Grid>
+        <Typography className={classes.count} color="textPrimary">
+          Showing {filteredDomains.length} domain(s)
+        </Typography>
+        <Paper elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {this.columns.map((column) => (
+                  <TableCell key={column.value}>
+                    <TableSortLabel
+                      active={orderBy === column.value}
+                      align="left"
+                      direction={orderBy === column.value ? order : "asc"}
+                      onClick={this.handleRequestSort(column.value)}
+                    >
+                      {t(column.label)}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+                <TableCell padding="checkbox" />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredDomains.map((obj, idx) =>
+                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableCell>
+                    {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
+                    {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
+                  </TableCell>
+                  <TableCell>{obj.address}</TableCell>
+                  <TableCell>{obj.title}</TableCell>
+                  <TableCell>{obj.maxUser}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                      <Delete color="error" />
+                    </IconButton>}
+                  </TableCell>
+                </TableRow>)
+              }
+            </TableBody>
+          </Table>
+          {domains.Domains.length < domains.count && (
+            <Grid container justify="center">
+              <CircularProgress
+                color="primary"
+                className={classes.circularProgress}
+              />
+            </Grid>
+          )}
+        </Paper>
         <AddDomain
           open={adding}
           onSuccess={this.handleAddingSuccess}
@@ -347,7 +292,7 @@ class DomainList extends Component {
           item={deleting.domainname}
           id={deleting.ID}
         />
-      </div>
+      </TableViewContainer>
     );
   }
 }

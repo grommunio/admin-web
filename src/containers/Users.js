@@ -15,57 +15,20 @@ import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
-import TopBar from '../components/TopBar';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
-import blue from '../colors/blue';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
-import Feedback from '../components/Feedback';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
-  root: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  base: {
-    flexDirection: 'column',
-    padding: theme.spacing(2),
-    flex: 1,
-    display: 'flex',
-  },
-  paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
-  },
   tablePaper: {
     margin: theme.spacing(3, 2),
     borderRadius: 6,
   },
-  grid: {
-    padding: theme.spacing(0, 2),
-  },
-  toolbar: theme.mixins.toolbar,
-  flexRowEnd: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  pageTitle: {
-    margin: theme.spacing(2),
-  },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  pageTitleSecondary: {
-    color: '#aaa',
-  },
-  homeIcon: {
-    color: blue[500],
-    position: 'relative',
-    top: 4,
-    left: 4,
-    cursor: 'pointer',
   },
   circularProgress: {
     margin: theme.spacing(1, 0),
@@ -252,143 +215,134 @@ class Users extends Component {
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
     return (
-      <div
-        className={classes.root}
-        onScroll={debounce(this.handleScroll, 100)}
-        id="scrollDiv"
+      <TableViewContainer
+        handleScroll={this.handleScroll}
+        headline={t("Users")}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
-        <TopBar/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {t("Users")}
-          </Typography>
-          <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+            
+        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAdd}
+            className={classes.newButton}
+            disabled={!writable}
+          >
+            {t('New user')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleNavigation(domain.ID + '/ldap')}
+            className={classes.newButton}
+            disabled={!writable}
+          >
+            {t('Search in LDAP')}
+          </Button>
+          <Tooltip placement="top" title="Synchronize imported users for this domain">
             <Button
               variant="contained"
               color="primary"
-              onClick={this.handleAdd}
-              className={classes.newButton}
+              style={{ marginRight: 16 }}
+              onClick={this.handleUserSync(false)}
               disabled={!writable}
             >
-              {t('New user')}
+              {t('Sync LDAP users')}
             </Button>
+          </Tooltip>
+          <Tooltip
+            placement="top"
+            title="Import new users from LDAP for this domain and synchronize previously imported ones"
+          >
             <Button
               variant="contained"
               color="primary"
-              onClick={this.handleNavigation(domain.ID + '/ldap')}
-              className={classes.newButton}
+              style={{ marginRight: 16 }}
+              onClick={this.handleUserSync(true)}
               disabled={!writable}
             >
-              {t('Search in LDAP')}
+              {t('Import LDAP users')}
             </Button>
-            <Tooltip placement="top" title="Synchronize imported users for this domain">
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ marginRight: 16 }}
-                onClick={this.handleUserSync(false)}
-                disabled={!writable}
-              >
-                {t('Sync LDAP users')}
-              </Button>
-            </Tooltip>
-            <Tooltip
-              placement="top"
-              title="Import new users from LDAP for this domain and synchronize previously imported ones"
+          </Tooltip>
+          <Tooltip
+            placement="top"
+            title="Check status of imported users of this domain"
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.checkUsers}
+              disabled={!writable}
             >
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ marginRight: 16 }}
-                onClick={this.handleUserSync(true)}
-                disabled={!writable}
-              >
-                {t('Import LDAP users')}
-              </Button>
-            </Tooltip>
-            <Tooltip
-              placement="top"
-              title="Check status of imported users of this domain"
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.checkUsers}
-                disabled={!writable}
-              >
-                {t('Check LDAP users')}
-              </Button>
-            </Tooltip>
-            <div className={classes.actions}>
-              <TextField
-                value={match}
-                onChange={this.handleMatch}
-                label={t("Search")}
-                variant="outlined"
-                className={classes.textfield}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                color="primary"
-              />
-            </div>
-          </Grid>
-          <Typography className={classes.count} color="textPrimary">
+              {t('Check LDAP users')}
+            </Button>
+          </Tooltip>
+          <div className={classes.actions}>
+            <TextField
+              value={match}
+              onChange={this.handleMatch}
+              label={t("Search")}
+              variant="outlined"
+              className={classes.textfield}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              color="primary"
+            />
+          </div>
+        </Grid>
+        <Typography className={classes.count} color="textPrimary">
             Showing {users.Users.length} user(s)
-          </Typography>
-          <Paper className={classes.tablePaper} elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active={orderBy === 'username'}
-                      align="left" 
-                      direction={orderBy === 'username' ? order : 'asc'}
-                      onClick={this.handleRequestSort('username')}
-                    >
-                      {t('Username')}
-                    </TableSortLabel>
+        </Typography>
+        <Paper className={classes.tablePaper} elevation={1}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'username'}
+                    align="left" 
+                    direction={orderBy === 'username' ? order : 'asc'}
+                    onClick={this.handleRequestSort('username')}
+                  >
+                    {t('Username')}
+                  </TableSortLabel>
+                </TableCell>
+                {this.columns.map(column =>
+                  <TableCell key={column.value}>
+                    {t(column.label)}
                   </TableCell>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      {t(column.label)}
-                    </TableCell>
-                  )}
-                  <TableCell padding="checkbox"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.Users.map((obj, idx) => {
-                  const properties = obj.properties || {};
-                  return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                    <TableCell>{obj.username}</TableCell>
-                    <TableCell>{properties.displayname}</TableCell>
-                    <TableCell>{obj.ldapID || ''}</TableCell>
-                    <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)}>
-                        <Delete color="error"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>;
-                })}
-              </TableBody>
-            </Table>
-            {(users.Users.length < users.count) && <Grid container justify="center">
-              <CircularProgress color="primary" className={classes.circularProgress}/>
-            </Grid>}
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
+                )}
+                <TableCell padding="checkbox"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.Users.map((obj, idx) => {
+                const properties = obj.properties || {};
+                return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableCell>{obj.username}</TableCell>
+                  <TableCell>{properties.displayname}</TableCell>
+                  <TableCell>{obj.ldapID || ''}</TableCell>
+                  <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                      <Delete color="error"/>
+                    </IconButton>}
+                  </TableCell>
+                </TableRow>;
+              })}
+            </TableBody>
+          </Table>
+          {(users.Users.length < users.count) && <Grid container justify="center">
+            <CircularProgress color="primary" className={classes.circularProgress}/>
+          </Grid>}
+        </Paper>
         <AddUser
           open={adding}
           onSuccess={this.handleAddingSuccess}
@@ -409,7 +363,7 @@ class Users extends Component {
           onClose={this.handleCheckClose}
           onError={this.handleDeleteError}
         />
-      </div>
+      </TableViewContainer>
     );
   }
 }
