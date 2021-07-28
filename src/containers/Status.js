@@ -122,7 +122,7 @@ const styles = (theme) => ({
 class Status extends PureComponent {
 
   state = {
-    vhost: 'local',
+    vhost: '',
     snackbar: null,
     data: {
       connections: {},
