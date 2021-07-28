@@ -22,29 +22,14 @@ import {
 import Add from '@material-ui/icons/AddCircleOutline';
 import Delete from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
-import TopBar from '../components/TopBar';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
-import Feedback from '../components/Feedback';
 import RemoveOwner from '../components/Dialogs/RemoveOwner';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -57,7 +42,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(2),
   },
-  toolbar: theme.mixins.toolbar,
   grid: {
     display: 'flex',
     alignItems: 'center',
@@ -142,100 +126,96 @@ class FolderDetails extends PureComponent {
     const { folder, adding, deleting, snackbar } = this.state;
 
     return (
-      <div className={classes.root}>
-        <TopBar title="Folders"/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('Folder details')}
-              </Typography>
-            </Grid>
-            <FormControl className={classes.form}>
-              <TextField 
-                className={classes.input} 
-                label={t("Folder name")} 
-                fullWidth 
-                value={folder.displayname || ''}
-                autoFocus
-                onChange={this.handleInput('displayname')}
-              />
-              <TextField
-                select
-                className={classes.input}
-                label={t("Container")}
-                fullWidth
-                value={folder.container || 'IPF.Note'}
-                onChange={this.handleInput('container')}
-              >
-                {this.types.map((type, key) => (
-                  <MenuItem key={key} value={type.ID}>
-                    {type.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField 
-                className={classes.input} 
-                label={t("Comment")} 
-                fullWidth
-                multiline
-                variant="outlined"
-                rows={4}
-                value={folder.comment || ''}
-                onChange={this.handleInput('comment')}
-              />
-            </FormControl>
-            <Grid container className={classes.grid}>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('Owners')}
-              </Typography>
-              <IconButton onClick={this.handleAdd} disabled={!writable}>
-                <Add fontSize="small" color="primary" />
-              </IconButton>
-            </Grid>
-            <List dense>
-              {owners.map(owner => <React.Fragment key={owner.memberID}>
-                <ListItem>
-                  <ListItemText primary={owner.displayName} />
-                  <IconButton onClick={this.handleDelete(owner)} disabled={!writable}>
-                    <Delete fontSize="small" color="error"/>
-                  </IconButton>
-                </ListItem>
-                <Divider />
-              </React.Fragment>
-              )}
-            </List>
-            <Grid container>
-              <Button
-                variant="contained"
-                onClick={this.props.history.goBack}
-                style={{ marginRight: 8 }}
-              >
-                {t('Back')}
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleEdit}
-                style={{ marginRight: 8 }}
-                disabled={!writable}
-              >
-                {t('Save')}
-              </Button>
-            </Grid>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
+      <ViewWrapper
+        topbarTitle={t('Folders')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
+              color="primary"
+              variant="h5"
+            >
+              {t('Folder details')}
+            </Typography>
+          </Grid>
+          <FormControl className={classes.form}>
+            <TextField 
+              className={classes.input} 
+              label={t("Folder name")} 
+              fullWidth 
+              value={folder.displayname || ''}
+              autoFocus
+              onChange={this.handleInput('displayname')}
+            />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Container")}
+              fullWidth
+              value={folder.container || 'IPF.Note'}
+              onChange={this.handleInput('container')}
+            >
+              {this.types.map((type, key) => (
+                <MenuItem key={key} value={type.ID}>
+                  {type.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField 
+              className={classes.input} 
+              label={t("Comment")} 
+              fullWidth
+              multiline
+              variant="outlined"
+              rows={4}
+              value={folder.comment || ''}
+              onChange={this.handleInput('comment')}
+            />
+          </FormControl>
+          <Grid container className={classes.grid}>
+            <Typography
+              color="primary"
+              variant="h5"
+            >
+              {t('Owners')}
+            </Typography>
+            <IconButton onClick={this.handleAdd} disabled={!writable}>
+              <Add fontSize="small" color="primary" />
+            </IconButton>
+          </Grid>
+          <List dense>
+            {owners.map(owner => <React.Fragment key={owner.memberID}>
+              <ListItem>
+                <ListItemText primary={owner.displayName} />
+                <IconButton onClick={this.handleDelete(owner)} disabled={!writable}>
+                  <Delete fontSize="small" color="error"/>
+                </IconButton>
+              </ListItem>
+              <Divider />
+            </React.Fragment>
+            )}
+          </List>
+          <Grid container>
+            <Button
+              variant="contained"
+              onClick={this.props.history.goBack}
+              style={{ marginRight: 8 }}
+            >
+              {t('Back')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleEdit}
+              style={{ marginRight: 8 }}
+              disabled={!writable}
+            >
+              {t('Save')}
+            </Button>
+          </Grid>
+        </Paper>
         {folder.folderid && <AddOwner
           open={adding}
           onSuccess={this.handleAddingSuccess}
@@ -253,7 +233,7 @@ class FolderDetails extends PureComponent {
           folderID={folder.folderid}
           memberID={deleting.memberID}
         />}
-      </div>
+      </ViewWrapper>
     );
   }
 }

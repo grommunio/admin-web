@@ -22,31 +22,16 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
-import TopBar from '../components/TopBar';
 import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
-import Feedback from '../components/Feedback';
 import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { Autocomplete } from '@material-ui/lab';
+import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
-  root: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-  },
-  base: {
-    padding: theme.spacing(2, 2),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-    overflowY: 'scroll',
-  },
   paper: {
     margin: theme.spacing(3, 2),
     padding: theme.spacing(2),
@@ -59,7 +44,6 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
   select: {
     minWidth: 60,
   },
@@ -212,135 +196,131 @@ class DomainListDetails extends PureComponent {
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy } = this.state;
     return (
-      <div className={classes.root}>
-        <TopBar title={t("Domain list")}/>
-        <div className={classes.toolbar}/>
-        <div className={classes.base}>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container>
-              <Typography
-                color="primary"
-                variant="h5"
-              >
-                {t('editHeadline', { item: 'Domain' })}
-              </Typography>
-            </Grid>
-            <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
-              <Tab value={0} label={t('Domain')} />
-              <Tab value={1} label={t('Sync policies')} />
-            </Tabs>
-            {tab === 0 && <FormControl className={classes.form}>
-              <Grid container className={classes.input}>
-                <TextField
-                  label={t("Domain")} 
-                  style={{ flex: 1, marginRight: 8 }} 
-                  value={domainname || ''}
-                  autoFocus
-                  disabled
-                />
-                {writable && <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => this.setState({ changingPw: true })}
-                  size="small"
-                >
-                  {t('Change password')}
-                </Button>}
-              </Grid>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Status")}
-                fullWidth
-                value={domainStatus || 0}
-                onChange={this.handleInput('domainStatus')}
-              >
-                {this.statuses.map((status, key) => (
-                  <MenuItem key={key} value={status.ID}>
-                    {status.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
-                value={orgID}
-                getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
-                renderOption={(org) => org?.name || ''}
-                onChange={this.handleAutocomplete('orgID')}
-                className={classes.input} 
-                options={orgs}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label={t("Organization")}
-                  />
-                )}
-                filterOptions={(options, state) =>
-                  options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
-              />}
-              <TextField 
-                className={classes.input} 
-                label={t("Maximum users")} 
-                fullWidth 
-                value={maxUser || ''}
-                onChange={this.handleInput('maxUser')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Title")} 
-                fullWidth 
-                value={title || ''}
-                onChange={this.handleInput('title')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Address")} 
-                fullWidth 
-                value={address || ''}
-                onChange={this.handleInput('address')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Administrator")} 
-                fullWidth 
-                value={adminName || ''}
-                onChange={this.handleInput('adminName')}
-              />
-              <TextField 
-                className={classes.input} 
-                label={t("Telephone")} 
-                fullWidth 
-                value={tel || ''}
-                onChange={this.handleInput('tel')}
-              />
-            </FormControl>}
-            {tab === 1 && <SlimSyncPolicies
-              syncPolicy={syncPolicy}
-              defaultPolicy={defaultPolicy}
-              handleChange={this.handleSyncChange}
-              handleCheckbox={this.handleSyncCheckboxChange}
-              handleSlider={this.handleSlider}
-            />}
-            <Button
-              variant="contained"
-              onClick={this.handleBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
+      <ViewWrapper
+        topbarTitle={t('Domain list')}
+        snackbar={snackbar}
+        onSnackbarClose={() => this.setState({ snackbar: '' })}
+      >
+        <Paper className={classes.paper} elevation={1}>
+          <Grid container>
+            <Typography
               color="primary"
-              onClick={this.handleEdit}
-              disabled={!writable}
+              variant="h5"
             >
-              {t('Save')}
-            </Button>
-          </Paper>
-          <Feedback
-            snackbar={snackbar}
-            onClose={() => this.setState({ snackbar: '' })}
-          />
-        </div>
+              {t('editHeadline', { item: 'Domain' })}
+            </Typography>
+          </Grid>
+          <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
+            <Tab value={0} label={t('Domain')} />
+            <Tab value={1} label={t('Sync policies')} />
+          </Tabs>
+          {tab === 0 && <FormControl className={classes.form}>
+            <Grid container className={classes.input}>
+              <TextField
+                label={t("Domain")} 
+                style={{ flex: 1, marginRight: 8 }} 
+                value={domainname || ''}
+                autoFocus
+                disabled
+              />
+              {writable && <Button
+                variant="contained"
+                color="primary"
+                onClick={() => this.setState({ changingPw: true })}
+                size="small"
+              >
+                {t('Change password')}
+              </Button>}
+            </Grid>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Status")}
+              fullWidth
+              value={domainStatus || 0}
+              onChange={this.handleInput('domainStatus')}
+            >
+              {this.statuses.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
+              value={orgID}
+              getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
+              renderOption={(org) => org?.name || ''}
+              onChange={this.handleAutocomplete('orgID')}
+              className={classes.input} 
+              options={orgs}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Organization")}
+                />
+              )}
+              filterOptions={(options, state) =>
+                options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
+            />}
+            <TextField 
+              className={classes.input} 
+              label={t("Maximum users")} 
+              fullWidth 
+              value={maxUser || ''}
+              onChange={this.handleInput('maxUser')}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Title")} 
+              fullWidth 
+              value={title || ''}
+              onChange={this.handleInput('title')}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Address")} 
+              fullWidth 
+              value={address || ''}
+              onChange={this.handleInput('address')}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Administrator")} 
+              fullWidth 
+              value={adminName || ''}
+              onChange={this.handleInput('adminName')}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Telephone")} 
+              fullWidth 
+              value={tel || ''}
+              onChange={this.handleInput('tel')}
+            />
+          </FormControl>}
+          {tab === 1 && <SlimSyncPolicies
+            syncPolicy={syncPolicy}
+            defaultPolicy={defaultPolicy}
+            handleChange={this.handleSyncChange}
+            handleCheckbox={this.handleSyncCheckboxChange}
+            handleSlider={this.handleSlider}
+          />}
+          <Button
+            variant="contained"
+            onClick={this.handleBack}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleEdit}
+            disabled={!writable}
+          >
+            {t('Save')}
+          </Button>
+        </Paper>
         <Dialog open={!!changingPw} onClose={() => this.setState({ changingPw: false })}>
           <DialogTitle>{t('Change password')}</DialogTitle>
           <DialogContent>
@@ -380,7 +360,7 @@ class DomainListDetails extends PureComponent {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </ViewWrapper>
     );
   }
 }
