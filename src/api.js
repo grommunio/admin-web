@@ -491,9 +491,9 @@ export function deleteOwner(domainID, folderID, memberID) {
   ORGS
 */
 
-export function orgs() {
+export function orgs(params) {
   return async () => {
-    return await get('/system/orgs');
+    return await get(buildQuery('/system/orgs', params));
   };
 }
 

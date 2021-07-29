@@ -156,6 +156,12 @@ class MLists extends Component {
 
   handleCheckClose = () => this.setState({ checking: false });
 
+  handleMatch = (e) => {
+    const { value } = e.target;
+    this.debouceFetch(value);
+    this.setState({ match: value });
+  };
+
   render() {
     const { classes, t, mLists, domain } = this.props;
     const { snackbar, match, orderBy, order, adding, deleting } = this.state;

@@ -196,7 +196,7 @@ class Folders extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedFolders.map((obj, idx) =>
+              {sortedFolders.filter(f => f.displayname.toLowerCase().includes(match.toLowerCase())).map((obj, idx) =>
                 <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                   <TableCell>{obj.displayname}</TableCell>
                   <TableCell>{obj.comment}</TableCell>

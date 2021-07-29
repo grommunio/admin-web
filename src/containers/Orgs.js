@@ -208,7 +208,7 @@ class Orgs extends Component {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              placeholder={t("search organizations")}
+              placeholder={t("Search organizations")}
               variant={"outlined"}
               InputProps={{
                 startAdornment: (

@@ -141,8 +141,8 @@ class Roles extends PureComponent {
 
   debouceFetch = debounce(value => {
     const { fetch }= this.props;
-    const { order, orderBy } = this.state;
-    fetch({ match: value || undefined, sort: orderBy + ',' + order })
+    const { order } = this.state;
+    fetch({ match: value || undefined, sort: 'name,' + order })
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });

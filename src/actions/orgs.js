@@ -9,11 +9,11 @@ import {
 } from '../actions/types';
 import { orgs, orgDetails, addOrg, editOrg, deleteOrg } from '../api';
 
-export function fetchOrgsData() {
+export function fetchOrgsData(params) {
   return async dispatch => {
     await dispatch({ type: ORGS_DATA_FETCH });
     try {
-      const orgData = await dispatch(orgs());
+      const orgData = await dispatch(orgs(params));
       await dispatch({ type: ORGS_DATA_RECEIVED, data: orgData });
     } catch(error) {
       console.error(error);
