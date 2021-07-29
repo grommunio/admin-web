@@ -173,7 +173,7 @@ class Sync extends PureComponent {
           {t("Mobile Devices")}
           <IconButton
             size="small"
-            href="https://docs.grammm.com/admin/tutorials.html#mobile-devices"
+            href="https://docs.grommunio.com/admin/administration.html#mobile-devices"
             target="_blank"
           >
             <HelpOutline fontSize="small"/>

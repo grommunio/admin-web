@@ -160,7 +160,7 @@ class Roles extends PureComponent {
           {t("Roles")}
           <IconButton
             size="small"
-            href="https://docs.grammm.com/admin/tutorials.html#id1"
+            href="https://docs.grommunio.com/admin/administration.html#id1"
             target="_blank"
           >
             <HelpOutline fontSize="small"/>

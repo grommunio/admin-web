@@ -186,7 +186,7 @@ class Orgs extends Component {
           {t("Organizations")}
           <IconButton
             size="small"
-            href="https://docs.grammm.com/admin/tutorials.html#organizations"
+            href="https://docs.grommunio.com/admin/administration.html#organizations"
             target="_blank"
           >
             <HelpOutline fontSize="small"/>
