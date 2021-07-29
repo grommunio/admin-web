@@ -5,18 +5,13 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { withTranslation } from "react-i18next";
-import {
-  Divider,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { fetchMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   logViewer: {
-    display: 'flex',
     flex: 1,
   },
   log: {
@@ -30,12 +25,19 @@ const styles = (theme) => ({
     flex: 1,
     padding: theme.spacing(2),
   },
+  divider: {
+    margin: theme.spacing(2, 0),
+  },
+  header: {
+    marginBottom: 8,
+  },
 });
 
 class MailQ extends PureComponent {
 
   state = {
-    q: [],
+    postfixMailq: '',
+    gromoxMailq: '',
     snackbar: '',
   };
 
@@ -45,7 +47,7 @@ class MailQ extends PureComponent {
     this.fetchData();
     this.fetchInterval = setInterval(() => {
       this.fetchData();
-    }, 5000);
+    }, 10000);
   }
 
   handleNavigation = (path) => (event) => {
@@ -55,12 +57,10 @@ class MailQ extends PureComponent {
   };
 
   fetchData = async () => {
-    const q = [...this.state.q];
     const data = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
-    if(data && data.length > 0) {
-      q.push(data);
-      this.setState({ q });
+    if(data) {
+      this.setState({ ...data });
     }
   }
 
@@ -70,7 +70,7 @@ class MailQ extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { snackbar, q } = this.state;
+    const { snackbar, postfixMailq, gromoxMailq } = this.state;
     return (
       <TableViewContainer
         headline={t("Mail queue")}
@@ -79,23 +79,20 @@ class MailQ extends PureComponent {
       >  
         <div className={classes.logViewer}>
           <Paper elevation={1} className={classes.paper}>
-            {q.length === 0 && <Typography>&lt;no logs&gt;</Typography>}
-            {q.map(({postfixMailq, gromoxMailq}, idx) => <>
-              <pre
-                key={idx}
-                className={classes.log}
-              >
-                {postfixMailq}
-              </pre>
-              <pre
-                key={idx}
-                className={classes.log}
-              >
-                {gromoxMailq}
-              </pre>
-              <Divider />
-            </>
-            )}
+            <Typography variant="h6" className={classes.header}>Postfix mail queue</Typography>
+            <pre
+              className={classes.log}
+            >
+              {postfixMailq}
+            </pre>
+          </Paper>
+          <Paper elevation={1} className={classes.paper}>
+            <Typography variant="h6" className={classes.header}>Gromox mail queue</Typography>
+            <pre
+              className={classes.log}
+            >
+              {gromoxMailq}
+            </pre>
           </Paper>
         </div>
       </TableViewContainer>
