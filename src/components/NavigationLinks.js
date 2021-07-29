@@ -194,7 +194,7 @@ class NavigationLinks extends PureComponent {
           <Tab className={classes.tab} value={1} label={t('Domains')} />
         </Tabs>}
         {(tab === 1 || !isSysAdmin) &&
-            <Grid container>
+            <Grid container component="form" autoComplete="off">
               <TextField
                 variant="outlined"
                 label={t('Search')}
