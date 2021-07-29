@@ -237,7 +237,7 @@ class ClassDetails extends PureComponent {
   render() {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { _class, snackbar, unsaved, stack } = this.state;
+    const { _class, snackbar, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
     return (
       <ViewWrapper
@@ -396,7 +396,7 @@ class ClassDetails extends PureComponent {
             variant="contained"
             color="primary"
             onClick={this.handleEdit}
-            disabled={!unsaved || writable}
+            disabled={!writable}
           >
             {t('Save')}
           </Button>
