@@ -12,10 +12,10 @@ function FilterZones(props) {
   return (
     <div>
       {Object.entries(filterZones).map(([uri, values], key) =>
-        uri.startsWith('client::') ? <ClientConnection key={key} uri={uri} serverZones={values}/> :
-          uri.startsWith('uri::') ? <PathConnection key={key} uri={uri} serverZones={values}/> :
-            uri.startsWith('upstream::') ? <UpstreamConnection key={key} uri={uri} serverZones={values}/> : 
-              <AgentConnection key={key} serverZones={values}/>
+        uri.startsWith('client::') ? <ClientConnection key={key} uri={uri} serverZones={values || {}}/> :
+          uri.startsWith('uri::') ? <PathConnection key={key} uri={uri} serverZones={values || {}}/> :
+            uri.startsWith('upstream::') ? <UpstreamConnection key={key} uri={uri} serverZones={values || {}}/> : 
+              <AgentConnection key={key} serverZones={values || {}}/>
       )}
     </div>
   );

@@ -137,16 +137,16 @@ class Status extends PureComponent {
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Connections")}
         </Typography>
-        <Connections data={connections} />
+        <Connections data={connections || {}} />
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Requests")}
         </Typography>
-        <Requests data={connections} />
+        <Requests data={connections || {}} />
         <div className={classes.logViewer}>
           <TableContainer component={Paper} className={classes.paper}>
             <Typography style={{ marginBottom: 8 }} variant="h5">Host details</Typography>
-            <ServerZones serverZones={this.toSortedArray(serverZones)} />
-            <FilterZones filterZones={filterZones} />
+            <ServerZones serverZones={this.toSortedArray(serverZones || {})} />
+            <FilterZones filterZones={filterZones || {}} />
           </TableContainer>
         </div>
       </TableViewContainer>
