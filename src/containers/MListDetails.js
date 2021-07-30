@@ -81,24 +81,17 @@ class MListDetails extends PureComponent {
   ]
 
   handlePrivilegeChange = event => {
-    const { mList } = this.state;
+    const { specifieds } = this.state;
     const val = event.target.value;
     this.setState({
-      mList: {
-        ...mList,
-        listPrivilege: val,
-        specifieds: val === 3 ? mList.specifieds : '', /* Specifieds only available if privilege "specific" */
-      },
+      listPrivilege: val,
+      specifieds: val === 3 ? specifieds : '',
     });
   }
 
   handleInput = field => event => {
     this.setState({
-      mList: {
-        ...this.state.mList,
-        [field]: event.target.value,
-      },
-      unsaved: true,
+      [field]: event.target.value,
     });
   }
 
@@ -110,7 +103,7 @@ class MListDetails extends PureComponent {
       listname,
       listType,
       listPrivilege,
-      class: _class || '',
+      class: _class || undefined,
       /* Strip whitespaces and split on ',' */
       associations: Array.isArray(associations) ? associations :
         associations ? associations.replace(/\s/g, "").split(',') : undefined, 

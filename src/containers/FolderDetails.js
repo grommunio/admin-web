@@ -186,7 +186,7 @@ class FolderDetails extends PureComponent {
             </IconButton>
           </Grid>
           <List dense>
-            {owners.map(owner => <React.Fragment key={owner.memberID}>
+            {owners.map((owner, idx) => <React.Fragment key={idx}>
               <ListItem>
                 <ListItemText primary={owner.displayName} />
                 <IconButton onClick={this.handleDelete(owner)} disabled={!writable}>
