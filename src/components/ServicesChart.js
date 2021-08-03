@@ -15,6 +15,7 @@ import { withTranslation } from "react-i18next";
 import Feedback from "./Feedback";
 import ConfirmRestartStop from "./Dialogs/ConfirmRestartStop";
 import { serviceAction } from '../actions/services';
+import { setDateTimeString } from "../utils";
 
 const styles = (theme) => ({
   root: {
@@ -187,9 +188,19 @@ class ServicesChart extends PureComponent {
               {Services.map((service, idx) => (
                 <TableRow key={idx} hover style={{cursor: "default"}}>
                   <TableCell>
-                    <Typography className={classes.serviceName}>
-                      {service.name}
-                    </Typography>
+                    <Tooltip
+                      title={service.description ? <>
+                        <Typography>{service.description}</Typography>
+                        <Typography variant="caption">
+                          {service.since ? `${t('since')} ${setDateTimeString(service.since)}` : ''}
+                        </Typography>
+                      </> : ''}
+                      placement="top"
+                    >
+                      <Typography className={classes.serviceName}>
+                        {service.name}
+                      </Typography>
+                    </Tooltip>
                   </TableCell>
                   <TableCell>
                     <Grid container justify="center">
@@ -201,7 +212,7 @@ class ServicesChart extends PureComponent {
                       </div>
                       <div className={classes.label + " " +
                         this.getChipColor(service.autostart === "enabled" ? "active" : "error")}>
-                        {service.autostart}
+                        {service.autostart || 'error'}
                       </div>
                     </Grid>
                   </TableCell>
