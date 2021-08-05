@@ -61,7 +61,7 @@ class Requests extends PureComponent {
   }
 
   render() {
-    const { classes, data } = this.props;
+    const { classes, t, data } = this.props;
 
     return (
       <div className={classes.root}>
@@ -70,7 +70,7 @@ class Requests extends PureComponent {
             <CheckCircle className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.accepted}</Typography>
-              <Typography className={classes.label}>Accepted</Typography>
+              <Typography className={classes.label}>{t("Accepted")}</Typography>
             </div>
           </Paper>
         </div>
@@ -79,7 +79,7 @@ class Requests extends PureComponent {
             <CallReceived className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.handled}</Typography>
-              <Typography className={classes.label}>Handled</Typography>
+              <Typography className={classes.label}>{t("Handled")}</Typography>
             </div>
           </Paper>
         </div>
@@ -88,7 +88,7 @@ class Requests extends PureComponent {
             <Functions className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.requests}</Typography>
-              <Typography className={classes.label}>Total</Typography>
+              <Typography className={classes.label}>{t("Total")}</Typography>
             </div>
           </Paper>
         </div>
@@ -100,6 +100,7 @@ class Requests extends PureComponent {
 Requests.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 export default withTranslation()(withStyles(styles)(Requests));

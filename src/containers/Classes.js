@@ -234,7 +234,7 @@ class Classes extends Component {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              label={t("Search")}
+              placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
               InputProps={{
@@ -255,8 +255,8 @@ class Classes extends Component {
           onChange={this.handleTab}
           value={tab}
         >
-          <Tab value={0} label="List" />
-          <Tab value={1} label="Tree" />
+          <Tab value={0} label={t("List")} />
+          <Tab value={1} label={t("Tree")} />
         </Tabs>
         {!tab && <Typography className={classes.count} color="textPrimary">
             Showing {_classes.Classes.length} group(s)

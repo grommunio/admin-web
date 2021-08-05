@@ -159,7 +159,7 @@ class Folders extends Component {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              label={t("Search")}
+              placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
               InputProps={{

@@ -91,7 +91,7 @@ class Ldap extends PureComponent {
         <Grid container justify="center">
           <TextField
             autoFocus
-            label="Search LDAP"
+            placeholder={t("Search LDAP")}
             onChange={this.handleLdapSearch}
             variant="outlined"
             color="primary"

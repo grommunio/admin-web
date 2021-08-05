@@ -42,7 +42,7 @@ const styles = (theme) => ({
     margin: theme.spacing(0, 2, 2, 3),
   },
   select: {
-    maxWidth: 200,
+    maxWidth: 224,
     marginRight: 8,
   },
   defaultRow: {
@@ -170,7 +170,7 @@ class Sync extends PureComponent {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={<>
-          {t("Mobile Devices")}
+          {t("Mobile devices")}
           <IconButton
             size="small"
             href="https://docs.grommunio.com/admin/administration.html#mobile-devices"

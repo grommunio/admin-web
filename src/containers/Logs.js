@@ -145,7 +145,7 @@ class Logs extends PureComponent {
           <List style={{ width: 200 }}>
             <ListItem>
               <ListItemText
-                primary="Log files"
+                primary={t("Log files")}
                 primaryTypographyProps={{ color: "primary", variant: 'h6' }}
               />
             </ListItem>

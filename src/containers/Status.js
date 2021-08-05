@@ -106,7 +106,7 @@ class Status extends PureComponent {
     const { connections, serverZones, filterZones } = data;
     return (
       <TableViewContainer
-        headline={t("Live Status")  + ' - ' + data.hostName}
+        headline={t("Live Status")  + ' - ' + data.hostName || ''}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
@@ -124,15 +124,15 @@ class Status extends PureComponent {
         <TextField
           select
           value={interval}
-          label="Update interval"
+          label={t("Update interval")}
           className={classes.tf}
           onChange={this.handleIntervalChange}
         >
-          <MenuItem value={1000}>1 second</MenuItem>
-          <MenuItem value={2000}>2 seconds</MenuItem>
-          <MenuItem value={3000}>3 seconds</MenuItem>
-          <MenuItem value={5000}>5 seconds</MenuItem>
-          <MenuItem value={10000}>10 seconds</MenuItem>
+          <MenuItem value={1000}>1 {t("second")}</MenuItem>
+          <MenuItem value={2000}>2 {t("seconds")}</MenuItem>
+          <MenuItem value={3000}>3 {t("seconds")}</MenuItem>
+          <MenuItem value={5000}>5 {t("seconds")}</MenuItem>
+          <MenuItem value={10000}>10 {t("seconds")}</MenuItem>
         </TextField>
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Connections")}
@@ -144,7 +144,7 @@ class Status extends PureComponent {
         <Requests data={connections || {}} />
         <div className={classes.logViewer}>
           <TableContainer component={Paper} className={classes.paper}>
-            <Typography style={{ marginBottom: 8 }} variant="h5">Host details</Typography>
+            <Typography style={{ marginBottom: 8 }} variant="h5">{t("Host details")}</Typography>
             <ServerZones serverZones={this.toSortedArray(serverZones || {})} />
             <FilterZones filterZones={filterZones || {}} />
           </TableContainer>

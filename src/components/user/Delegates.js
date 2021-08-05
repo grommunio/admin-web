@@ -72,7 +72,7 @@ class Delegates extends PureComponent {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Delegates"
+                  label={t("Delegates")}
                   placeholder="Search delegates..."
                   className={classes.input} 
                 />

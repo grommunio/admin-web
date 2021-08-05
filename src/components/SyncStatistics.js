@@ -54,7 +54,7 @@ const styles = theme => ({
 class SyncStatistics extends PureComponent {
 
   render() {
-    const {classes, data} = this.props;
+    const {classes, t, data} = this.props;
     const openConnections = data.length || 0;
     const pushConnections = data.filter(e => e.push).length || 0;
     const users = new Set(data.map(e => e.user)).size || 0;
@@ -68,7 +68,7 @@ class SyncStatistics extends PureComponent {
             <TapAndPlay className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{openConnections}</Typography>
-              <Typography className={classes.label}>Open connections</Typography>
+              <Typography className={classes.label}>{t("Open connections")}</Typography>
             </div>
           </Paper>
         </div>
@@ -77,7 +77,7 @@ class SyncStatistics extends PureComponent {
             <Notifications className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{pushConnections}</Typography>
-              <Typography className={classes.label}>Push connections</Typography>
+              <Typography className={classes.label}>{t("Push connections")}</Typography>
             </div>
           </Paper>
         </div>
@@ -86,7 +86,7 @@ class SyncStatistics extends PureComponent {
             <Person className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{users}</Typography>
-              <Typography className={classes.label}>Users</Typography>
+              <Typography className={classes.label}>{t("Users")}</Typography>
             </div>
           </Paper>
         </div>
@@ -95,7 +95,7 @@ class SyncStatistics extends PureComponent {
             <Devices className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{devices}</Typography>
-              <Typography className={classes.label}>Devices</Typography>
+              <Typography className={classes.label}>{t("Devices")}</Typography>
             </div>
           </Paper>
         </div>
@@ -104,7 +104,7 @@ class SyncStatistics extends PureComponent {
             <Router className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{hosts}</Typography>
-              <Typography className={classes.label}>Hosts</Typography>
+              <Typography className={classes.label}>{t("Hosts")}</Typography>
             </div>
           </Paper>
         </div>
@@ -116,6 +116,7 @@ class SyncStatistics extends PureComponent {
 SyncStatistics.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 export default connect(null, null)(

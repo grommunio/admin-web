@@ -84,7 +84,7 @@ class Sync extends PureComponent {
     return (
       <FormControl className={classes.form}>
         <Grid container alignItems="center"  className={classes.headline}>
-          <Typography variant="h6">{t('Mobile Devices')}</Typography>
+          <Typography variant="h6">{t('Mobile devices')}</Typography>
         </Grid>
         <Table size="small">
           <TableHead>

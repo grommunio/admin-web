@@ -61,7 +61,7 @@ class Connections extends PureComponent {
   }
 
   render() {
-    const { classes, data } = this.props;
+    const { classes, t, data } = this.props;
 
     return (
       <div className={classes.root}>
@@ -70,7 +70,7 @@ class Connections extends PureComponent {
             <Router className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.active}</Typography>
-              <Typography className={classes.label}>Active</Typography>
+              <Typography className={classes.label}>{t("Active")}</Typography>
             </div>
           </Paper>
         </div>
@@ -79,7 +79,7 @@ class Connections extends PureComponent {
             <Scanner className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.reading}</Typography>
-              <Typography className={classes.label}>Reading</Typography>
+              <Typography className={classes.label}>{t("Reading")}</Typography>
             </div>
           </Paper>
         </div>
@@ -88,7 +88,7 @@ class Connections extends PureComponent {
             <Create className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.writing}</Typography>
-              <Typography className={classes.label}>Writing</Typography>
+              <Typography className={classes.label}>{t("Writing")}</Typography>
             </div>
           </Paper>
         </div>
@@ -97,7 +97,7 @@ class Connections extends PureComponent {
             <HourglassEmpty className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.waiting}</Typography>
-              <Typography className={classes.label}>Waiting</Typography>
+              <Typography className={classes.label}>{t("Waiting")}</Typography>
             </div>
           </Paper>
         </div>
@@ -109,6 +109,7 @@ class Connections extends PureComponent {
 Connections.propTypes = {
   classes: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 export default withTranslation()(withStyles(styles)(Connections));

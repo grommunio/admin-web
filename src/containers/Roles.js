@@ -183,7 +183,7 @@ class Roles extends PureComponent {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              placeholder={t("search roles")}
+              placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
               InputProps={{

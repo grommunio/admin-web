@@ -492,7 +492,7 @@ class UserDetails extends PureComponent {
             <Tab label={t("SMTP")} />
             <Tab label={t("Delegates")} />
             <Tab label={t("FetchMail")} />
-            <Tab label={t("Mobile Devices")} />
+            <Tab label={t("Mobile devices")} />
             <Tab label={t("Sync policy")} />
           </Tabs>
           {tab === 0 && <Account

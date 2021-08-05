@@ -383,7 +383,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Sync className={classes.icon}/>
-                <ListItemText primary={t('Mobile Devices')} />
+                <ListItemText primary={t('Mobile devices')} />
               </Grid>
             </ListItem>
             <ListItem
@@ -394,7 +394,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <TableChart className={classes.icon}/>
-                <ListItemText primary={t('Live Status')} />
+                <ListItemText primary={t('Live status')} />
               </Grid>
             </ListItem>
           </React.Fragment>

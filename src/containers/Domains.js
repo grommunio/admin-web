@@ -214,7 +214,7 @@ class DomainList extends Component {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              placeholder={t("search domains")}
+              placeholder={t("Search")}
               variant={"outlined"}
               InputProps={{
                 startAdornment: (
