@@ -19,6 +19,8 @@ import {
   DialogActions,
   Tabs,
   Tab,
+  FormControlLabel,
+  Checkbox,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
@@ -69,6 +71,7 @@ class DomainListDetails extends PureComponent {
     newPw: '',
     checkPw: '',
     tab: 0,
+    chat: false,
   }
 
   statuses = [
@@ -107,7 +110,7 @@ class DomainListDetails extends PureComponent {
   });
 
   handleEdit = () => {
-    const { ID, domainname, domainStatus, orgID,
+    const { ID, domainname, domainStatus, orgID, chat,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = this.state;
     this.props.edit({
       ID,
@@ -120,6 +123,7 @@ class DomainListDetails extends PureComponent {
       adminName,
       tel,
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
+      chat,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -194,7 +198,8 @@ class DomainListDetails extends PureComponent {
     const { classes, t, orgs, capabilities } = this.props;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
-      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy } = this.state;
+      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
+      chat } = this.state;
     return (
       <ViewWrapper
         topbarTitle={t('Domain list')}
@@ -296,6 +301,17 @@ class DomainListDetails extends PureComponent {
               fullWidth 
               value={tel || ''}
               onChange={this.handleInput('tel')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              className={classes.input} 
+              label={t('grommunio-chat Team')}
             />
           </FormControl>}
           {tab === 1 && <SlimSyncPolicies
