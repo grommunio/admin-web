@@ -305,7 +305,7 @@ class DomainListDetails extends PureComponent {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={chat}
+                  checked={chat || false}
                   onChange={this.handleCheckbox('chat')}
                   color="primary"
                 />

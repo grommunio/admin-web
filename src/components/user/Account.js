@@ -369,7 +369,7 @@ class Account extends PureComponent {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={chat}
+                  checked={chat || false}
                   onChange={handleChatUser}
                   color="primary"
                 />
@@ -380,7 +380,7 @@ class Account extends PureComponent {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={chatAdmin}
+                  checked={chatAdmin || false}
                   onChange={handleCheckbox('chatAdmin')}
                   color="primary"
                 />
