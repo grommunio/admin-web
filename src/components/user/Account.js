@@ -145,9 +145,9 @@ class Account extends PureComponent {
   render() {
     const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange,
-      handlePasswordChange, handleQuotaDelete } = this.props;
+      handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID } = user; //eslint-disable-line
+    const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID, chat, chatAdmin } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
     return (
@@ -361,6 +361,35 @@ class Account extends PureComponent {
             label={t('Allow POP3/IMAP logins')}
           />
         </Grid>
+        <Tooltip
+          placement="top-start"
+          title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
+        >
+          <Grid container className={classes.input}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat}
+                  onChange={handleChatUser}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!domain.chat}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chatAdmin}
+                  onChange={handleCheckbox('chatAdmin')}
+                  color="primary"
+                />
+              }
+              disabled={!chat || !domain.chat}
+              label={t('grommunio-chat admin permissions')}
+            />
+          </Grid>
+        </Tooltip>
       </FormControl>
     );
   }
@@ -380,6 +409,7 @@ Account.propTypes = {
   handleUnitChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
   handleQuotaDelete: PropTypes.func.isRequired,
+  handleChatUser: PropTypes.func.isRequired,
   rawData: PropTypes.object,
 };
 

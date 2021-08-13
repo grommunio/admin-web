@@ -43,6 +43,7 @@ class AddDomain extends PureComponent {
     createRole: false,
     loading: false,
     domainError: false,
+    chat: false,
   }
 
   statuses = [
@@ -84,7 +85,7 @@ class AddDomain extends PureComponent {
 
   handleAdd = () => {
     const { domainname, domainStatus, maxUser, orgID,
-      title, address, adminName, tel, createRole } = this.state;
+      title, address, adminName, tel, createRole, chat } = this.state;
     this.setState({ loading: true });
     this.props.add({
       domainname,
@@ -95,6 +96,7 @@ class AddDomain extends PureComponent {
       adminName,
       tel,
       orgID: orgID.ID,
+      chat,
     }, { createRole })
       .then(() => {
         this.setState({
@@ -107,6 +109,7 @@ class AddDomain extends PureComponent {
           tel: '',
           loading: false,
           createRole: false,
+          chat: false,
         });
         this.props.onSuccess();
       })
@@ -124,7 +127,7 @@ class AddDomain extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, orgs } = this.props;
-    const { domainname, domainStatus, orgID, domainError,
+    const { domainname, domainStatus, orgID, domainError, chat,
       maxUser, title, address, adminName, tel, loading, createRole } = this.state;
 
     return (
@@ -222,6 +225,16 @@ class AddDomain extends PureComponent {
               }
               label={t('Create domain admin role')}
             />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat Team')}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -268,7 +281,8 @@ const mapDispatchToProps = dispatch => {
     add: async (domain, params) => {
       await dispatch(addDomainData(domain, params)).catch(message => Promise.reject(message));
     },
-    fetch: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 5000, level: 0 })).catch(message => Promise.reject(message)),
+    fetch: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 5000, level: 0 }))
+      .catch(message => Promise.reject(message)),
   };
 };
 

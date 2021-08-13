@@ -429,6 +429,14 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleChatUser = e => {
+    const { checked } = e.target;
+    this.setState({
+      chat: checked,
+      chatAdmin: false,
+    });
+  }
+
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -507,6 +515,7 @@ class UserDetails extends PureComponent {
             handlePasswordChange={this.handlePasswordDialogToggle(true)}
             rawData={rawData}
             handleQuotaDelete={this.handleQuotaDelete}
+            handleChatUser={this.handleChatUser}
           />}
           {tab === 1 && <User
             user={user}
