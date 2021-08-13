@@ -38,6 +38,7 @@ import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
+import { fetchDomainDetails } from '../actions/domains';
 
 const styles = theme => ({
   paper: {
@@ -83,21 +84,23 @@ class UserDetails extends PureComponent {
     },
     detaching: false,
     detachLoading: false,
+    domainDetails: {},
   };
 
   async componentDidMount() {
-    const { fetch, fetchRoles } = this.props;
+    const { fetch, fetchRoles, fetchDomainDetails, domain } = this.props;
     const splits = window.location.pathname.split('/');
     const user = await fetch(splits[1], splits[3])
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    const domainDetails = await fetchDomainDetails(domain.ID);
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
     user.syncPolicy = user.syncPolicy || {};
-    this.setState(this.getStateOverwrite(user, defaultPolicy));
+    this.setState(this.getStateOverwrite(user, defaultPolicy, domainDetails));
   }
 
-  getStateOverwrite(user, defaultPolicy) {
+  getStateOverwrite(user, defaultPolicy, domainDetails) {
     if(!user) return;
     const properties = {
       ...user.properties,
@@ -140,6 +143,7 @@ class UserDetails extends PureComponent {
         maxattsize: (user.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
       },
       defaultPolicy,
+      domainDetails,
     };
   }
 
@@ -441,7 +445,7 @@ class UserDetails extends PureComponent {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
-      detaching, adding, editing, dump, rawData, syncPolicy } = this.state;
+      detaching, adding, editing, dump, rawData, syncPolicy, domainDetails } = this.state;
     const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     return (
       <ViewWrapper
@@ -504,7 +508,7 @@ class UserDetails extends PureComponent {
             <Tab label={t("Sync policy")} />
           </Tabs>
           {tab === 0 && <Account
-            domain={domain}
+            domain={domainDetails.ID ? domainDetails : domain}
             user={user}
             sizeUnits={sizeUnits}
             handleInput={this.handleInput}
@@ -622,6 +626,7 @@ UserDetails.propTypes = {
   editUserRoles: PropTypes.func.isRequired,
   editStore: PropTypes.func.isRequired,
   deleteStoreProp: PropTypes.func.isRequired,
+  fetchDomainDetails: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
 };
 
@@ -633,6 +638,9 @@ const mapDispatchToProps = dispatch => {
     fetchRoles: async () => {
       await dispatch(fetchRolesData({ sort: 'name,asc' })).catch(msg => Promise.reject(msg));
     },
+    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(msg => Promise.reject(msg)),
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
     },
