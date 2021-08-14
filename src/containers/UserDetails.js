@@ -436,8 +436,11 @@ class UserDetails extends PureComponent {
   handleChatUser = e => {
     const { checked } = e.target;
     this.setState({
-      chat: checked,
-      chatAdmin: false,
+      user: {
+        ...this.state.user,
+        chat: checked,
+        chatAdmin: false,
+      },
     });
   }
 
