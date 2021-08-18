@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Select, FormControlLabel, Checkbox, Tooltip,
+  MenuItem, Button, DialogActions, CircularProgress, Select,
 } from '@material-ui/core';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -46,8 +46,6 @@ class AddUser extends PureComponent {
       prohibitsendquota: 1,
     },
     usernameError: false,
-    chat: false,
-    chatAdmin: false,
   }
 
   types = [
@@ -91,13 +89,11 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, chat, chatAdmin } = this.state;
+    const { username, password, properties, sizeUnits } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
       password,
-      chat,
-      chatAdmin,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -119,8 +115,6 @@ class AddUser extends PureComponent {
           loading: false,
           password: '',
           repeatPw: '',
-          chat: false,
-          chatAdmin: false,
         });
         onSuccess();
       })
@@ -132,14 +126,12 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, chat, chatAdmin } = this.state;
+    const { username, password, subType, properties, sizeUnits } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
       password,
       subType,
-      chat,
-      chatAdmin,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -185,8 +177,7 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError,
-      chat, chatAdmin } = this.state;
+    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || password !== repeatPw || password.length < 6;
     return (
@@ -314,40 +305,6 @@ class AddUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <Tooltip
-              placement="top-start"
-              title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
-            >
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={chat}
-                    onChange={this.handleChatUser}
-                    color="primary"
-                  />
-                }
-                label={t('Create grommunio-chat User')}
-                disabled={!domain.chat}
-              />
-            </Tooltip>
-            <Tooltip
-              placement="top-start"
-              title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
-            >
-          
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={chatAdmin}
-                    onChange={this.handleCheckbox('chatAdmin')}
-                    color="primary"
-                  />
-                }
-                disabled={!chat || !domain.chat}
-                label={t('grommunio-chat admin permissions')}
-              />
-            </Tooltip>
           </FormControl>
         </DialogContent>
         <DialogActions>
