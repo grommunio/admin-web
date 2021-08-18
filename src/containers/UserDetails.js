@@ -58,6 +58,12 @@ const styles = theme => ({
   buttonGrid: {
     margin: theme.spacing(1, 0, 0, 1),
   },
+  tabsContainer: {
+    flex: 1,
+  },
+  scroller: {
+    width: 0,
+  },
 });
 
 class UserDetails extends PureComponent {
@@ -499,17 +505,28 @@ class UserDetails extends PureComponent {
               </Button>
             </Tooltip>
           </Grid>}
-          <Tabs indicatorColor="primary" value={tab} onChange={this.handleTabChange}>
-            <Tab label={t("Account")} />
-            <Tab label={t("User")} />
-            <Tab label={t("Contact")} />
-            <Tab label={t("Roles")} />
-            <Tab label={t("SMTP")} />
-            <Tab label={t("Delegates")} />
-            <Tab label={t("FetchMail")} />
-            <Tab label={t("Mobile devices")} />
-            <Tab label={t("Sync policy")} />
-          </Tabs>
+          <div className={classes.tabsContainer}>
+            <Tabs
+              indicatorColor="primary"
+              value={tab}
+              onChange={this.handleTabChange}
+              variant="scrollable"
+              scrollButtons="off"
+              classes={{
+                scroller: classes.scroller,
+              }}
+            >
+              <Tab label={t("Account")} />
+              <Tab label={t("User")} />
+              <Tab label={t("Contact")} />
+              <Tab label={t("Roles")} />
+              <Tab label={t("SMTP")} />
+              <Tab label={t("Delegates")} />
+              <Tab label={t("FetchMail")} />
+              <Tab label={t("Mobile devices")} />
+              <Tab label={t("Sync policy")} />
+            </Tabs>
+          </div>
           {tab === 0 && <Account
             domain={domainDetails.ID ? domainDetails : domain}
             user={user}
