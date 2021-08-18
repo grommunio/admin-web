@@ -511,7 +511,7 @@ class UserDetails extends PureComponent {
               value={tab}
               onChange={this.handleTabChange}
               variant="scrollable"
-              scrollButtons="off"
+              scrollButtons="desktop"
               classes={{
                 scroller: classes.scroller,
               }}
