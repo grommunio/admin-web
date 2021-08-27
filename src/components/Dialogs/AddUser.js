@@ -115,6 +115,7 @@ class AddUser extends PureComponent {
           loading: false,
           password: '',
           repeatPw: '',
+          usernameError: false,
         });
         onSuccess();
       })
