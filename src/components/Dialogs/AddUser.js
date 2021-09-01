@@ -218,6 +218,9 @@ class AddUser extends PureComponent {
               className={classes.input}
               type="password"
               required
+              FormHelperTextProps={{
+                error: true,
+              }}
               helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
               autoComplete="new-password"
             />
@@ -229,6 +232,9 @@ class AddUser extends PureComponent {
               className={classes.input}
               type="password"
               required
+              FormHelperTextProps={{
+                error: true,
+              }}
               helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
             />
             <TextField 
