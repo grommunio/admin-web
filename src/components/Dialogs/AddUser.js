@@ -55,11 +55,17 @@ class AddUser extends PureComponent {
   ]
 
   handleInput = field => event => {
+    this.setState({
+      [field]: event.target.value,
+    });
+  }
+
+  handleUsernameInput = event => {
     const { domain } = this.props;
     const val = event.target.value;
     if(val) this.debounceFetch({ email: encodeURIComponent(val + '@' + domain.domainname) });
     this.setState({
-      [field]: val,
+      username: val,
     });
   }
 
@@ -195,7 +201,7 @@ class AddUser extends PureComponent {
               label={t("Username")}
               value={username || ''}
               autoFocus
-              onChange={this.handleInput('username')}
+              onChange={this.handleUsernameInput}
               style={{ flex: 1, marginRight: 8 }}
               InputProps={{
                 endAdornment: <div>@{domain.domainname}</div>,
