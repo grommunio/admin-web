@@ -75,14 +75,20 @@ const MainView = Loadable({
 });
 
 class App extends Component {
-  componentDidMount() {
-    const { dispatch } = this.props;
+
+  constructor(props) {
+    super(props);
+    const { changeSettings } = props;
     const lang = localStorage.getItem("lang");
     if (lang) {
       i18n.changeLanguage(lang);
-      dispatch(changeSettings("language", lang));
+      changeSettings("language", lang);
     }
-    dispatch(authAuthenticating(false));
+  }
+
+  componentDidMount() {
+    const { authAuthenticating } = this.props;
+    authAuthenticating(false);
   }
 
   render() {
@@ -116,7 +122,8 @@ class App extends Component {
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  changeSettings: PropTypes.func.isRequired,
+  authAuthenticating: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
   authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
@@ -137,4 +144,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps)(withStyles(styles)(App)));
+const mapDispatchToProps = dispatch => {
+  return {
+    changeSettings: (field, value) => dispatch(changeSettings(field, value)),
+    authAuthenticating: state => dispatch(authAuthenticating(state)),
+  };
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App)));
