@@ -246,6 +246,7 @@
   "showingOrgs": "{{count}} Organisation(en) gezeigt",
   "showingRoles": "{{count}} Rolle(n) gezeigt",
   "showingUser": "{{count}} Benutzer gezeigt",
+  "Active users": "Aktive Benutzer",
 
   "First name": "Vorname",
   "Initials": "Initialien",

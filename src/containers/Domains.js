@@ -69,6 +69,7 @@ class DomainList extends Component {
     { label: "Domain", value: "domainname" },
     { label: "Address", value: "address" },
     { label: "Title", value: "title" },
+    { label: "Active users", value: "activeUsers" },
     { label: "Maximum users", value: "maxUser" },
   ];
 
@@ -258,6 +259,7 @@ class DomainList extends Component {
                   </TableCell>
                   <TableCell>{obj.address}</TableCell>
                   <TableCell>{obj.title}</TableCell>
+                  <TableCell>{obj.activeUsers}</TableCell>
                   <TableCell>{obj.maxUser}</TableCell>
                   <TableCell align="right">
                     {writable && <IconButton onClick={this.handleDelete(obj)}>
