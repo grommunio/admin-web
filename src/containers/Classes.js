@@ -259,7 +259,7 @@ class Classes extends Component {
           <Tab value={1} label={t("Tree")} />
         </Tabs>
         {!tab && <Typography className={classes.count} color="textPrimary">
-            Showing {_classes.Classes.length} group(s)
+          {t("showingGroups", { count: _classes.Classes.length })}
         </Typography>}
         {!tab ? <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">

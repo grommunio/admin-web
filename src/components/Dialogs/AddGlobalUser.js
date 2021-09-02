@@ -218,7 +218,7 @@ class AddGlobalUser extends PureComponent {
               options={Domains || []}
               value={domain}
               onChange={this.handleAutocomplete('domain')}
-              getOptionLabel={(domainID) => domainID.domainname}
+              getOptionLabel={(domain) => domain.domainname || ''}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -394,7 +394,7 @@ AddGlobalUser.propTypes = {
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   Domains: PropTypes.array.isRequired,
-  fetchDomains: PropTypes.array.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

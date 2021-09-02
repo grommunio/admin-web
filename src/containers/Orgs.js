@@ -222,7 +222,7 @@ class Orgs extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {orgs.Orgs.length} organization(s)
+          {t("showingOrgs", { count: orgs.Orgs.length })}
         </Typography>
         <Paper elevation={1}>
           <Table size="small">

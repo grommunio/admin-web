@@ -174,7 +174,7 @@ class Folders extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {sortedFolders.length} folder(s)
+          {t("showingFolders", { count: sortedFolders.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">

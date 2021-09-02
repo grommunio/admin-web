@@ -203,7 +203,7 @@ class MLists extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {mLists.MLists.length} mail list(s)
+          {t("showingMLists", { count: mLists.MLists.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">

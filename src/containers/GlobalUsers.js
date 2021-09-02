@@ -185,7 +185,7 @@ class GlobalUsers extends Component {
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={t("Global Users")}
+        headline={t("Global users")}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       > 
@@ -218,7 +218,7 @@ class GlobalUsers extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {users.Users.length} user(s)
+          {t("showingUser", { count: users.Users.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">

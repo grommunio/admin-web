@@ -228,7 +228,7 @@ class DomainList extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-          Showing {filteredDomains.length} domain(s)
+          {t("showingDomains", { count: filteredDomains.length })}
         </Typography>
         <Paper elevation={1}>
           <Table size="small">

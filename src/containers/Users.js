@@ -221,7 +221,6 @@ class Users extends Component {
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
-            
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
@@ -298,7 +297,7 @@ class Users extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {users.Users.length} user(s)
+          {t("showingUser", { count: users.Users.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">

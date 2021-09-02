@@ -198,7 +198,7 @@ class Roles extends PureComponent {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-            Showing {roles.Roles.length} role(s)
+          {t("showingRoles", { count: roles.Roles.length })}
         </Typography>
         <Paper elevation={1}>
           <Table size="small">

@@ -75,14 +75,14 @@ const MainView = Loadable({
 });
 
 class App extends Component {
-  async componentDidMount() {
+  componentDidMount() {
     const { dispatch } = this.props;
     const lang = localStorage.getItem("lang");
     if (lang) {
       i18n.changeLanguage(lang);
-      await dispatch(changeSettings("language", lang));
+      dispatch(changeSettings("language", lang));
     }
-    await dispatch(authAuthenticating(false));
+    dispatch(authAuthenticating(false));
   }
 
   render() {

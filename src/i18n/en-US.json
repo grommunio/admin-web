@@ -12,5 +12,13 @@
   "ldap_import_tooltip": "Import not-yet imported ldap users and synchronize already imported ones",
   "ldap_defaultQuota_desc": "Storage quota of imported users if no mapping exists",
   "ldap_attribute_desc": "This controls which attributes the \"Search in LDAP\" functionality will look at when searching using an arbitrary search string.",
-  "ldap_mapping_desc": "LDAP attribute to map -> Name of the user property to map to. Any mappings specified take precendence over active templates"
+  "ldap_mapping_desc": "LDAP attribute to map -> Name of the user property to map to. Any mappings specified take precendence over active templates",
+
+  "showingGroups": "Showing {{count}} group(s)",
+  "showingDomains": "Showing {{count}} domain(s)",
+  "showingFolders": "Showing {{count}} folder(s)",
+  "showingMLists": "Showing {{count}} mail list(s)",
+  "showingOrgs": "Showing {{count}} organization(s)",
+  "showingRoles": "Showing {{count}} role(s)",
+  "showingUser": "Showing {{count}} user(s)"
 }
