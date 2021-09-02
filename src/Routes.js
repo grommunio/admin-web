@@ -27,6 +27,7 @@ const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
+const AsyncGlobalUsersList = makeLoadableComponent(() => import("./containers/GlobalUsers"));
 const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 //const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
@@ -84,6 +85,12 @@ const Routes = ({ childProps, domains }) => (
       path="/domainList/:domainID*"
       exact
       component={AsyncDomainListDetails}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/users"
+      exact
+      component={AsyncGlobalUsersList}
       props={childProps}
     />
     <AuthenticatedRoute

@@ -311,6 +311,17 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <ListItem
               button
+              onClick={this.handleNavigation('users')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/users')}
+            >
+              <Grid container alignItems="center">
+                <People className={classes.icon}/>
+                <ListItemText primary={t('Global users')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
               onClick={this.handleNavigation('roles')}
               className={classes.li}
               selected={location.pathname === '/roles'}
