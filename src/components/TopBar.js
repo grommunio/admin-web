@@ -23,6 +23,10 @@ import Archive from '@material-ui/icons/Archive';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
+import german from '../res/flag_of_germany.svg';
+import english from '../res/flag_of_uk.svg';
+import i18n from 'i18next';
+import { changeSettings } from '../actions/settings';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -74,6 +78,9 @@ const styles = theme => ({
     color: mode === 'light' ? '#aaa' : '#444',
     marginLeft: 4,
   },
+  flag: {
+    cursor: 'pointer',
+  },
 });
 
 class TopBar extends PureComponent {
@@ -115,8 +122,16 @@ class TopBar extends PureComponent {
     authLogout();
   }
 
+  handleLangChange = () => {
+    const { changeSettings, settings } = this.props;
+    const lang = settings.lang === 'en-US' ? 'de-DE' : 'en-US';
+    i18n.changeLanguage(lang);
+    changeSettings('lang', lang);
+    window.localStorage.setItem('lang', lang);
+  }
+
   render() {
-    const { classes, t, profile, title, onAdd, fetching } = this.props;
+    const { classes, t, profile, title, onAdd, fetching, settings } = this.props;
     const { anchorEl } = this.state;
     return (
       <AppBar position="fixed" className={classes.root}>
@@ -146,6 +161,13 @@ class TopBar extends PureComponent {
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
+            <img
+              src={settings.lang === 'en-US' ? german : english}
+              alt="flag"
+              width={32}
+              className={classes.flag}
+              onClick={this.handleLangChange}
+            />
             <Menu
               id="simple-menu"
               anchorEl={anchorEl}
@@ -193,13 +215,16 @@ TopBar.propTypes = {
   onAdd: PropTypes.func,
   fetching: PropTypes.bool,
   authLogout: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
+  changeSettings: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { domains, users, folders, dashboard, services } = state;
+  const { domains, users, folders, dashboard, services, settings } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
+    settings,
     fetching: domains.loading || users.loading || folders.loading
       || dashboard.loading || services.loading ,
   };
@@ -212,6 +237,9 @@ const mapDispatchToProps = dispatch => {
     },
     authLogout: async () => {
       await dispatch(authLogout());
+    },
+    changeSettings: async (field, value) => {
+      await dispatch(changeSettings(field, value));
     },
   };
 };
