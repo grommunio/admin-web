@@ -27,7 +27,7 @@ class Feedback extends PureComponent {
             elevation={6}
             variant="filled"
           >
-            {(snackbar || '').includes('error') && config.devMode ?
+            {(snackbar || '') === "The server encountered an error while processing the request." && config.devMode ?
               <img src={PANIK} alt="PANIK" height="80"/>:
               (snackbar || '')}
             
