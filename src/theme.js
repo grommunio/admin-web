@@ -46,6 +46,11 @@ const theme = createMuiTheme({
           cursor: 'pointer',
         },
       },
+      root: {
+        '&:nth-of-type(even)': {
+          backgroundColor: '#eee',
+        },
+      },
     },
     MuiButton: {
       contained: {

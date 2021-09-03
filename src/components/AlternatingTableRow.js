@@ -2,7 +2,7 @@ import { TableRow, withStyles } from "@material-ui/core";
 
 const AlternatingTableRow = withStyles((theme) => ({
   root: {
-    '&:nth-of-type(odd)': {
+    '&:nth-of-type(even)': {
       backgroundColor: theme.palette.action.hover,
     },
   },
