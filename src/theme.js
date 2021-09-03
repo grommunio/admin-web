@@ -48,7 +48,7 @@ const theme = createMuiTheme({
       },
       root: {
         '&:nth-of-type(even)': {
-          backgroundColor: '#eee',
+          backgroundColor: mode === 'light' ? '#eee' : '#242830',
         },
       },
     },
