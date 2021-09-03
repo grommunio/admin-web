@@ -6,6 +6,8 @@ import { Portal, Snackbar } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import Alert from '@material-ui/lab/Alert';
+import PANIK from '../res/panik.png';
+import { config } from '../config';
 
 class Feedback extends PureComponent {
   
@@ -25,7 +27,10 @@ class Feedback extends PureComponent {
             elevation={6}
             variant="filled"
           >
-            {snackbar || ''}
+            {(snackbar || '').includes('error') && config.devMode ?
+              <img src={PANIK} alt="PANIK" height="80"/>:
+              (snackbar || '')}
+            
           </Alert>
         </Snackbar>
       </Portal>
