@@ -75,6 +75,7 @@ class UserDetails extends PureComponent {
       fetchmail: [],
       roles: [],
       properties: {},
+      aliases: [],
     },
     syncPolicy: {},
     defaultPolicy: {},
@@ -103,10 +104,11 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
     user.syncPolicy = user.syncPolicy || {};
-    this.setState(this.getStateOverwrite(user, defaultPolicy, domainDetails));
+    this.setState(this.getStateOverwrite(user, defaultPolicy));
+    this.setState({ domainDetails });
   }
 
-  getStateOverwrite(user, defaultPolicy, domainDetails) {
+  getStateOverwrite(user, defaultPolicy) {
     if(!user) return;
     const properties = {
       ...user.properties,
@@ -149,7 +151,6 @@ class UserDetails extends PureComponent {
         maxattsize: (user.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
       },
       defaultPolicy,
-      domainDetails,
     };
   }
 
@@ -233,13 +234,14 @@ class UserDetails extends PureComponent {
     const { sync, domain } = this.props;
     const { user } = this.state;
     sync(domain.ID, user.ID)
-      .then(user => 
+      .then(user => {
+        const defaultPolicy = user.defaultPolicy || {};
+        user.syncPolicy = user.syncPolicy || {};
         this.setState({
-          ...this.getStateOverwrite(user),
+          ...this.getStateOverwrite(user, defaultPolicy),
           snackbar: 'Success!',
-        })
-      )
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+        });
+      }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
   handleDump = () => {

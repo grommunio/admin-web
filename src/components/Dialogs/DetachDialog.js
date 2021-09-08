@@ -15,12 +15,7 @@ class DetachDialog extends PureComponent {
 
   state = {
     loading: false,
-    force: false,
   }
-
-  handleChange = event => {
-    this.setState({ force: event.target.checked });
-  };
 
   render() {
     const { t, open, loading, onClose, onDetach } = this.props;
