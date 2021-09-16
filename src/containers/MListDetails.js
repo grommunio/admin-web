@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
-import { getStringAfterLastSlash } from '../utils';
+import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
@@ -52,6 +52,7 @@ class MListDetails extends PureComponent {
     specifieds: '',
     class: '',
     unsaved: false,
+    autocompleteInput: '',
   }
 
   async componentDidMount() {
@@ -62,7 +63,8 @@ class MListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState( mList ? {
       ...mList,
-      class: mList.class?.ID,
+      class: mList.class.ID,
+      autocompleteInput: mList.class.classname,
     } : {});
   }
 
@@ -123,13 +125,15 @@ class MListDetails extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal?.ID || '',
+      autocompleteInput: newVal?.classname || '',
     });
   }
 
   render() {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class } = this.state;
+    const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class,
+      autocompleteInput } = this.state;
 
     return (
       <ViewWrapper
@@ -204,6 +208,9 @@ class MListDetails extends PureComponent {
             />}
             {listType === 3 && <Autocomplete
               value={_class}
+              inputValue={autocompleteInput}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
               renderOption={(_class) => _class?.classname || ''}
               onChange={this.handleAutocomplete('class')}
@@ -213,10 +220,10 @@ class MListDetails extends PureComponent {
                 <TextField
                   {...params}
                   label={t("Group")}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
-              filterOptions={(options, state) =>
-                options.filter(o => o.classname.toLowerCase().includes(state.inputValue.toLowerCase()))}
+              filterOptions={getAutocompleteOptions('classname')}
             />}
           </FormControl>
           <Button

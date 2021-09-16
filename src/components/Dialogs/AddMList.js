@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { addMListData } from '../../actions/mlists';
 import { fetchClassesData } from '../../actions/classes';
 import { Autocomplete } from '@material-ui/lab';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -37,6 +38,7 @@ class AddMList extends PureComponent {
     specifieds: '',
     class: '',
     loading: false,
+    autocompleteInput: '',
   }
 
   listTypes = [
@@ -109,6 +111,7 @@ class AddMList extends PureComponent {
           specifieds: '',
           class: '',
           loading: false,
+          autocompleteInput: '',
         });
         onSuccess();
       })
@@ -121,13 +124,14 @@ class AddMList extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal || '',
+      autocompleteInput: newVal?.classname || '',
     });
   }
 
   render() {
     const { classes, t, open, onClose, _classes } = this.props;
-    const { listname, listType, listPrivilege, associations, specifieds, loading, class: _class } = this.state;
-
+    const { listname, listType, listPrivilege, associations, specifieds, loading, class: _class,
+      autocompleteInput } = this.state;
     return (
       <Dialog
         onClose={onClose}
@@ -192,6 +196,10 @@ class AddMList extends PureComponent {
             />}
             {listType === 3 && <Autocomplete
               value={_class}
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('classname')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={_class => _class.classname || ''}
               renderOption={(_class) => _class?.classname || ''}
               onChange={this.handleAutocomplete('class')}
@@ -201,23 +209,10 @@ class AddMList extends PureComponent {
                 <TextField
                   {...params}
                   label={t("Group")}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />}
-            {listType === 3 && <TextField 
-              className={classes.input}
-              label={t("Group")} 
-              fullWidth 
-              value={_class || ''}
-              onChange={this.handleInput('class')}
-              select
-            >
-              {_classes.map(c =>
-                <MenuItem key={c.ID} value={c.ID}>
-                  {c.classname}
-                </MenuItem>  
-              )}
-            </TextField>}
           </FormControl>
         </DialogContent>
         <DialogActions>

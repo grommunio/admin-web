@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { addClassData, fetchClassesData } from '../../actions/classes';
 import { Autocomplete } from '@material-ui/lab';
 import { Delete } from '@material-ui/icons';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -51,6 +52,7 @@ class AddClass extends PureComponent {
     members: '',
     filters: [],
     loading: false,
+    autocompleteInput: '',
   }
 
   operators = [
@@ -90,6 +92,7 @@ class AddClass extends PureComponent {
       parentClasses: parentClasses.map(c => c.ID),
       members: members ? members.replace(/\s/g, "").split(',') : [], // Make array from members separated by commas
       filters,
+      autocompleteInput: undefined,
     })
       .then(() => {
         this.setState({
@@ -98,6 +101,7 @@ class AddClass extends PureComponent {
           members: '',
           filters: [],
           loading: false,
+          autocompleteInput: '',
         });
         this.props.onSuccess();
       })
@@ -131,6 +135,7 @@ class AddClass extends PureComponent {
   handleAuto = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal,
+      autocompleteInput: '',
     });
   }
 
@@ -161,7 +166,7 @@ class AddClass extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, _classes } = this.props;
-    const { classname, parentClasses, members, filters, loading } = this.state;
+    const { classname, parentClasses, members, filters, loading, autocompleteInput } = this.state;
 
     return (
       <Dialog
@@ -185,6 +190,10 @@ class AddClass extends PureComponent {
             />
             <Autocomplete
               value={parentClasses || []}
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('classname')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               onChange={this.handleAuto('parentClasses')}
               className={classes.input} 
               getOptionLabel={(_class) => _class?.classname || ''}
@@ -195,6 +204,7 @@ class AddClass extends PureComponent {
                 <TextField
                   {...params}
                   label={t("Parent groups")}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />
