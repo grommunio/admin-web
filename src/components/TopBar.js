@@ -142,7 +142,7 @@ class TopBar extends PureComponent {
             </IconButton>
           </Hidden>
           {this.links.map((link, idx) =>
-            <Tooltip placement="bottom" title={t(link.title)} key={idx}>
+            <Tooltip placement="bottom" title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}>
               <span>
                 <IconButton
                   href={config[link.key]}
