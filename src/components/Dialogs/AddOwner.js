@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
 import { Autocomplete } from '@material-ui/lab';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -31,6 +32,7 @@ class AddOwner extends PureComponent {
   state = {
     owners: [],
     loading: false,
+    autocompleteInput: '',
   }
 
   componentDidMount() {
@@ -47,10 +49,6 @@ class AddOwner extends PureComponent {
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
-
   handleAdd = () => {
     const { add, onSuccess, onError, domain, folderID } = this.props;
     this.setState({ loading: true });
@@ -58,6 +56,7 @@ class AddOwner extends PureComponent {
       .then(() => {
         this.setState({
           owners: [],
+          autocompleteInput: '',
           loading: false,
         });
         onSuccess();
@@ -71,13 +70,13 @@ class AddOwner extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal,
+      autocompleteInput: '',
     });
   }
 
   render() {
-    const { classes, t, Users, open, onSuccess } = this.props;
-    const { owners, loading } = this.state;
-
+    const { classes, t, open, onSuccess, Users } = this.props;
+    const { owners, loading, autocompleteInput } = this.state;
     return (
       <Dialog
         onClose={onSuccess}
@@ -90,6 +89,10 @@ class AddOwner extends PureComponent {
           <FormControl className={classes.form}>
             <Autocomplete
               multiple
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('username')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               options={Users || []}
               value={owners || []}
               onChange={this.handleAutocomplete('owners')}
@@ -99,7 +102,8 @@ class AddOwner extends PureComponent {
                   {...params}
                   label="Owners"
                   placeholder="Search users..."
-                  className={classes.input} 
+                  className={classes.input}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />

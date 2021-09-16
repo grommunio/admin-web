@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
 import { Autocomplete } from '@material-ui/lab';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -34,6 +35,7 @@ class AddFolder extends PureComponent {
     owners: [],
     comment: '',
     loading: false,
+    autocompleteInput: '',
   }
 
   componentDidMount() {
@@ -65,6 +67,7 @@ class AddFolder extends PureComponent {
     add(domain.ID, {
       ...this.state,
       loading: undefined,
+      autocompleteInput: undefined,
     })
       .then(() => {
         this.setState({
@@ -73,6 +76,7 @@ class AddFolder extends PureComponent {
           owners: [],
           comment: '',
           loading: false,
+          autocompleteInput: '',
         });
         onSuccess();
       })
@@ -85,12 +89,13 @@ class AddFolder extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal,
+      autocompleteInput: '',
     });
   }
 
   render() {
     const { classes, t, open, onSuccess, onClose, Users } = this.props;
-    const { displayname, owners, container, comment, loading } = this.state;
+    const { displayname, owners, container, comment, loading, autocompleteInput } = this.state;
 
     return (
       <Dialog
@@ -136,16 +141,21 @@ class AddFolder extends PureComponent {
             />
             <Autocomplete
               multiple
+              inputValue={autocompleteInput}
               options={Users || []}
+              filterOptions={getAutocompleteOptions('username')}
               value={owners || []}
               onChange={this.handleAutocomplete('owners')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(user) => user.username || ''}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Owners"
                   placeholder="Search users..."
-                  className={classes.input} 
+                  className={classes.input}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />

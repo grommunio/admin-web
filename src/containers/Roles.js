@@ -106,6 +106,8 @@ class Roles extends PureComponent {
 
   handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
 
+  handleAddingClose = () => this.setState({ adding: false });
+
   handleAddingError = error => this.setState({ snackbar: error });
 
   handleEdit = role => event => {
@@ -242,6 +244,7 @@ class Roles extends PureComponent {
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
+          onClose={this.handleAddingClose}
         />
         <GeneralDelete
           open={!!deleting}

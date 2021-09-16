@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import Add from '@material-ui/icons/AddCircle';
 import Delete from '@material-ui/icons/Delete';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
-import { getStringAfterLastSlash } from '../utils';
+import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
 import { Autocomplete } from '@material-ui/lab';
 import { fetchOrgsData } from '../actions/orgs';
@@ -63,6 +63,7 @@ class RoleDetails extends PureComponent {
       users: [],
       permissions: [],
     },
+    autocompleteInput: '',
     snackbar: '',
   };
 
@@ -77,13 +78,19 @@ class RoleDetails extends PureComponent {
     fetchPermissions().catch(err => this.setState({ snackbar: err }));
   }
 
-  handleInput = field => event => {
+  handleRoleInput = field => event => {
     this.setState({
       role: {
         ...this.state.role,
         [field]: event.target.value,
       },
       unsaved: true,
+    });
+  }
+
+  handleInput = field => event => {
+    this.setState({
+      [field]: event.target.value,
     });
   }
 
@@ -94,6 +101,7 @@ class RoleDetails extends PureComponent {
         [field]: newVal,
       },
       unsaved: true,
+      autocompleteInput: '',
     });
   }
 
@@ -109,7 +117,7 @@ class RoleDetails extends PureComponent {
         };
       }),
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      .then(() => this.setState({ snackbar: 'Success!', autocompleteInput: '' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
@@ -163,7 +171,7 @@ class RoleDetails extends PureComponent {
 
   render() {
     const { classes, t, Users, Permissions, Domains, Orgs } = this.props;
-    const { snackbar, role } = this.state;
+    const { snackbar, role, autocompleteInput } = this.state;
     const { name, description, users, permissions } = role;
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
@@ -190,7 +198,7 @@ class RoleDetails extends PureComponent {
               fullWidth
               autoFocus
               value={name || ''}
-              onChange={this.handleInput('name')}
+              onChange={this.handleRoleInput('name')}
             />
             <TextField 
               className={classes.input} 
@@ -200,20 +208,23 @@ class RoleDetails extends PureComponent {
               variant="outlined"
               rows={4}
               value={description || ''}
-              onChange={this.handleInput('description')}
+              onChange={this.handleRoleInput('description')}
             />
             <Autocomplete
               multiple
               options={Users || []}
               value={users || []}
               onChange={this.handleAutocomplete('users')}
+              filterOptions={getAutocompleteOptions('username')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(user) => user.username || ''}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label="Users"
                   placeholder="Search users..."
-                  className={classes.input} 
+                  className={classes.input}
                 />
               )}
             />

@@ -10,6 +10,7 @@ import { Autocomplete } from '@material-ui/lab';
 import { fetchUserDelegates, fetchUsersData, setUserDelegates } from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -32,6 +33,7 @@ class Delegates extends PureComponent {
   state = {
     delegates: [],
     snackbar: '',
+    autocompleteInput: '',
   };
 
   async componentDidMount() {
@@ -42,21 +44,28 @@ class Delegates extends PureComponent {
     if(delegates) this.setState({ delegates: delegates.data });
   }
 
+  handleInput = field => event => {
+    this.setState({
+      [field]: event.target.value,
+    });
+  }
+
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal.map(r => r.username ? r.username : r),
+      autocompleteInput: '',
     });
   }
 
   handleSave = () => {
     const { setUserDelegates, userID, domainID } = this.props;
     setUserDelegates(domainID, userID, this.state.delegates)
-      .then(() => this.setState({ snackbar: 'Success!' }));
+      .then(() => this.setState({ snackbar: 'Success!', autocompleteInput: '' }));
   }
 
   render() {
     const { classes, t, Users, userID, history, disabled } = this.props;
-    const { delegates, snackbar } = this.state;
+    const { delegates, snackbar, autocompleteInput } = this.state;
     return (
       <>
         <FormControl className={classes.form}>
@@ -65,6 +74,10 @@ class Delegates extends PureComponent {
             <Autocomplete
               multiple
               options={Users.filter(u => u.ID !== userID) || []}
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('username')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               value={delegates || []}
               onChange={this.handleAutocomplete('delegates')}
               getOptionLabel={(delegate) => delegate.username || delegate || ''}
@@ -74,7 +87,8 @@ class Delegates extends PureComponent {
                   {...params}
                   label={t("Delegates")}
                   placeholder="Search delegates..."
-                  className={classes.input} 
+                  className={classes.input}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />

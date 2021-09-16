@@ -247,6 +247,8 @@
   "showingRoles": "{{count}} Rolle(n) gezeigt",
   "showingUser": "{{count}} Benutzer gezeigt",
   "Active users": "Aktive Benutzer",
+  "Filter more precisely": "Filtern Sie präziser",
+  "No options": "Keine Optionen",
 
   "First name": "Vorname",
   "Initials": "Initialien",

@@ -155,3 +155,10 @@ export function getPolicyDiff(defaultPolicy, syncPolicy) {
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export const getAutocompleteOptions = filterAttribute => (options, state) => {
+  const magnitude = Math.round(Math.log10(options.length) - 2);
+
+  return state.inputValue.length < magnitude ? []
+    : options.filter(o => o[filterAttribute].includes(state.inputValue));
+};

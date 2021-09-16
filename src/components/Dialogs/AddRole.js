@@ -17,6 +17,7 @@ import { addRolesData, fetchPermissionsData } from '../../actions/roles';
 import { fetchOrgsData } from '../../actions/orgs';
 import { Autocomplete } from '@material-ui/lab';
 import { ORG_ADMIN } from '../../constants';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -49,6 +50,7 @@ class AddRole extends PureComponent {
     permissions: [{ permission: '', params: '' }],
     users: [],
     loading: false,
+    autocompleteInput: '',
   }
 
   componentDidMount() {
@@ -88,6 +90,7 @@ class AddRole extends PureComponent {
     add({
       ...this.state,
       loading: undefined,
+      autocompleteInput: undefined,
       users: users.map(u => u.ID),
       permissions: permissions.map(permission => {
         const params = permission.params;
@@ -101,6 +104,7 @@ class AddRole extends PureComponent {
         this.setState({
           name: '',
           description: '',
+          autocompleteInput: '',
           permissions: [{ permission: '', params: '' }],
           loading: false,
         });
@@ -115,6 +119,7 @@ class AddRole extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal,
+      autocompleteInput: '',
     });
   }
 
@@ -147,13 +152,14 @@ class AddRole extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, Permissions, Domains, Users, Orgs } = this.props;
-    const { name, permissions, description, loading, users } = this.state;
+    const { classes, t, open, onClose, onSuccess, Permissions, Domains, Users, Orgs } = this.props;
+    const { name, permissions, description, loading, users, autocompleteInput } = this.state;
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
+
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -172,6 +178,9 @@ class AddRole extends PureComponent {
             <Autocomplete
               multiple
               options={Users || []}
+              filterOptions={getAutocompleteOptions('username')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               value={users || []}
               onChange={this.handleAutocomplete('users')}
               getOptionLabel={(user) => user.username || ''}
@@ -180,7 +189,8 @@ class AddRole extends PureComponent {
                   {...params}
                   label="Users"
                   placeholder="Search users..."
-                  className={classes.input} 
+                  className={classes.input}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />
@@ -281,6 +291,7 @@ AddRole.propTypes = {
   fetch: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   Domains: PropTypes.array.isRequired,
