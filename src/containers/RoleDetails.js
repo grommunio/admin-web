@@ -114,6 +114,7 @@ class RoleDetails extends PureComponent {
         return {
           ...perm,
           params: perm.params?.ID ? perm.params.ID : perm.params,
+          autocompleteInput: undefined,
         };
       }),
     })
@@ -281,6 +282,9 @@ class RoleDetails extends PureComponent {
                 />}
                 {permission.permission === ORG_ADMIN && <Autocomplete
                   options={orgs || []}
+                  filterOptions={getAutocompleteOptions('name')}
+                  noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
+                    t('Filter more precisely') + '...' : t('No options')}
                   value={permission.params}
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(orgID) => orgID.name ||
@@ -290,6 +294,7 @@ class RoleDetails extends PureComponent {
                       {...params}
                       label="Params"
                       placeholder="Search organizations..."
+                      onChange={this.handleAutocompleteInput(idx)}
                     />
                   )}
                   className={classes.rowTextfield}

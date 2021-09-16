@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { Autocomplete } from '@material-ui/lab';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -44,6 +45,7 @@ class AddDomain extends PureComponent {
     loading: false,
     domainError: false,
     chat: false,
+    autocompleteInput: '',
   }
 
   statuses = [
@@ -110,6 +112,7 @@ class AddDomain extends PureComponent {
           loading: false,
           createRole: false,
           chat: false,
+          autocompleteInput: '',
         });
         this.props.onSuccess();
       })
@@ -122,13 +125,14 @@ class AddDomain extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal || '',
+      autocompleteInput: newVal?.name || '',
     });
   }
 
   render() {
     const { classes, t, open, onClose, orgs } = this.props;
     const { domainname, domainStatus, orgID, domainError, chat,
-      maxUser, title, address, adminName, tel, loading, createRole } = this.state;
+      maxUser, title, address, adminName, tel, loading, createRole, autocompleteInput } = this.state;
 
     return (
       <Dialog
@@ -167,6 +171,10 @@ class AddDomain extends PureComponent {
             </TextField>
             <Autocomplete
               value={orgID}
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('name')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={org => org.name || ''}
               renderOption={(org) => org?.name || ''}
               onChange={this.handleAutocomplete('orgID')}
@@ -176,6 +184,7 @@ class AddDomain extends PureComponent {
                 <TextField
                   {...params}
                   label={t("Organization")}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
             />

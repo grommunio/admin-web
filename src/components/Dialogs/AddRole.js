@@ -106,7 +106,7 @@ class AddRole extends PureComponent {
           name: '',
           description: '',
           autocompleteInput: '',
-          permissions: [{ permission: '', params: '' }],
+          permissions: [{ permission: '', params: '', autocompleteInput: '' }],
           loading: false,
         });
         onSuccess();
@@ -138,7 +138,7 @@ class AddRole extends PureComponent {
   handleSetParams = idx => (e, newVal) => {
     const copy = [...this.state.permissions];
     copy[idx].params = newVal;
-    copy[idx].autocompleteInput = newVal?.domainname || '';
+    copy[idx].autocompleteInput = newVal?.domainname || newVal?.name || '';
     this.setState({ permissions: copy });
   }
 
@@ -161,7 +161,7 @@ class AddRole extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose, Permissions, Users, Orgs, Domains } = this.props;
+    const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = this.props;
     const { name, permissions, description, loading, users, autocompleteInput } = this.state;
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
@@ -242,6 +242,10 @@ class AddRole extends PureComponent {
                 {permission.permission === ORG_ADMIN && <Autocomplete
                   options={orgs || []}
                   value={permission.params}
+                  inputValue={permission.autocompleteInput}
+                  filterOptions={getAutocompleteOptions('name')}
+                  noOptionsText={permission.autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
+                    t('Filter more precisely') + '...' : t('No options')}
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(org) => org.name || ''}
                   renderInput={(params) => (
@@ -249,6 +253,7 @@ class AddRole extends PureComponent {
                       {...params}
                       label="Params"
                       placeholder="Search organizations..."
+                      onChange={this.handleAutocompleteInput(idx)}
                     />
                   )}
                   className={classes.rowTextfield}

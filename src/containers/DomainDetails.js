@@ -25,7 +25,7 @@ import {
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import { changeDomainPassword } from '../api';
-import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
+import { getStringAfterLastSlash, getPolicyDiff, getAutocompleteOptions } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
@@ -72,6 +72,7 @@ class DomainListDetails extends PureComponent {
     checkPw: '',
     tab: 0,
     chat: false,
+    autocompleteInput: '',
   }
 
   statuses = [
@@ -81,7 +82,7 @@ class DomainListDetails extends PureComponent {
 
   async componentDidMount() {
     const { fetch, fetchOrgs, capabilities } = this.props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) fetchOrgs()
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) await fetchOrgs()
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -191,6 +192,7 @@ class DomainListDetails extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal?.ID || '',
+      autocompleteInput: newVal?.name || '',
     });
   }
 
@@ -199,7 +201,8 @@ class DomainListDetails extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
-      chat } = this.state;
+      chat, autocompleteInput } = this.state;
+    
     return (
       <ViewWrapper
         topbarTitle={t('Domain list')}
@@ -252,20 +255,24 @@ class DomainListDetails extends PureComponent {
               ))}
             </TextField>
             {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
+              // inputValue={autocompleteInput} <- This breaks the textfield value,
+              //    but somehow works without it
               value={orgID}
+              filterOptions={getAutocompleteOptions('name')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
               renderOption={(org) => org?.name || ''}
               onChange={this.handleAutocomplete('orgID')}
-              className={classes.input} 
+              className={classes.input}
               options={orgs}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label={t("Organization")}
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
-              filterOptions={(options, state) =>
-                options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
             />}
             <TextField 
               className={classes.input} 
