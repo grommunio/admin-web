@@ -210,7 +210,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
     },
     fetchUsers: async domainID => {
-      await dispatch(fetchUsersData(domainID, { sort: 'username,asc', limit: 5000, level: 0 }))
+      await dispatch(fetchUsersData(domainID, { sort: 'username,asc', limit: 1000000, level: 0 }))
         .catch(msg => Promise.reject(msg));
     },
   };

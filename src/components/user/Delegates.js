@@ -141,7 +141,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, userID) => await dispatch(fetchUserDelegates(domainID, userID))
       .catch(err => console.error(err)),
-    fetchUsers: async domainID => await dispatch(fetchUsersData(domainID, { limit: 10000 }))
+    fetchUsers: async domainID => await dispatch(fetchUsersData(domainID, { limit: 1000000, level: 0 }))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))
