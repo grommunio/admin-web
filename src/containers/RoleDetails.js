@@ -127,6 +127,7 @@ class RoleDetails extends PureComponent {
     copy[idx].permission = input;
     if(input === 'SystemAdmin') {
       copy[idx].params = '';
+      copy[idx].autocompleteInput = '';
     }
     this.setState({
       role: {
@@ -139,6 +140,18 @@ class RoleDetails extends PureComponent {
   handleSetParams = idx => (e, newVal) => {
     const copy = [...this.state.role.permissions];
     copy[idx].params = newVal;
+    copy[idx].autocompleteInput = newVal?.domainname || '';
+    this.setState({
+      role: {
+        ...this.state.role,
+        permissions: copy,
+      },
+    });
+  }
+
+  handleAutocompleteInput = idx => e => {
+    const copy = [...this.state.role.permissions];
+    copy[idx].autocompleteInput = e.target.value;
     this.setState({
       role: {
         ...this.state.role,
@@ -149,7 +162,7 @@ class RoleDetails extends PureComponent {
 
   handleNewRow = () => {
     const copy = [...this.state.role.permissions];
-    copy.push({ permission: '', params: '' });
+    copy.push({ permission: '', params: '', autocompleteInput: '' });
     this.setState({
       role: {
         ...this.state.role,
@@ -246,6 +259,10 @@ class RoleDetails extends PureComponent {
                 {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
                   options={domains || []}
                   value={permission.params}
+                  inputValue={permission.autocompleteInput}
+                  filterOptions={getAutocompleteOptions('domainname')}
+                  noOptionsText={(permission.autocompleteInput || '').length < Math.round(Math.log10(Domains.length) - 2) ?
+                    t('Filter more precisely') + '...' : t('No options')}
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(domainID) => domainID.domainname ||
                       (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
@@ -255,6 +272,7 @@ class RoleDetails extends PureComponent {
                       {...params}
                       label="Params"
                       placeholder="Search domains..."
+                      onChange={this.handleAutocompleteInput(idx)}
                     />
                   )}
                   className={classes.rowTextfield}

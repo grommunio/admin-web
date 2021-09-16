@@ -16,6 +16,7 @@ import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { Autocomplete } from '@material-ui/lab';
+import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -52,6 +53,7 @@ class AddGlobalUser extends PureComponent {
     },
     usernameError: false,
     domain: '',
+    autocompleteInput: '',
   }
 
   types = [
@@ -128,6 +130,7 @@ class AddGlobalUser extends PureComponent {
           password: '',
           repeatPw: '',
           usernameError: false,
+          autocompleteInput: '',
         });
         onSuccess();
       })
@@ -188,19 +191,22 @@ class AddGlobalUser extends PureComponent {
     },
   });
 
-  handleAutocomplete = (field) => (e, domain) => {
+  handleAutocomplete = (e, domain) => {
     const { username } = this.state;
     if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
     this.setState({
-      [field]: domain,
+      domain,
+      autocompleteInput: domain?.domainname || '',
     });
   }
 
   render() {
-    const { classes, t, open, onClose, Domains, fetchDomains } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError, domain } = this.state;
+    const { classes, t, open, onClose, fetchDomains, Domains } = this.props;
+    const { username, loading, properties, password, repeatPw, sizeUnits,
+      usernameError, domain, autocompleteInput } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || password !== repeatPw || password.length < 6;
+    
     return (
       <Dialog
         onClose={onClose}
@@ -217,7 +223,11 @@ class AddGlobalUser extends PureComponent {
             <Autocomplete
               options={Domains || []}
               value={domain}
-              onChange={this.handleAutocomplete('domain')}
+              inputValue={autocompleteInput}
+              filterOptions={getAutocompleteOptions('domainname')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
+              onChange={this.handleAutocomplete}
               getOptionLabel={(domain) => domain.domainname || ''}
               renderInput={(params) => (
                 <TextField
@@ -225,6 +235,7 @@ class AddGlobalUser extends PureComponent {
                   label="Domain"
                   placeholder="Search domains..."
                   autoFocus
+                  onChange={this.handleInput('autocompleteInput')}
                 />
               )}
               style={{ flex: 1, marginRight: 8 }}

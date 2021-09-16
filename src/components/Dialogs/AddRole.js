@@ -47,7 +47,7 @@ class AddRole extends PureComponent {
   state = {
     name: '',
     description: '',
-    permissions: [{ permission: '', params: '' }],
+    permissions: [{ permission: '', params: '', autocompleteInput: '' }],
     users: [],
     loading: false,
     autocompleteInput: '',
@@ -96,6 +96,7 @@ class AddRole extends PureComponent {
         const params = permission.params;
         return {
           ...permission,
+          autocompleteInput: undefined,
           params: params.ID,
         };
       }),
@@ -129,6 +130,7 @@ class AddRole extends PureComponent {
     copy[idx].permission = input;
     if(input === 'SystemAdmin') {
       copy[idx].params = '';
+      copy[idx].autocompleteInput = '';
     }
     this.setState({ permissions: copy });
   }
@@ -136,12 +138,19 @@ class AddRole extends PureComponent {
   handleSetParams = idx => (e, newVal) => {
     const copy = [...this.state.permissions];
     copy[idx].params = newVal;
+    copy[idx].autocompleteInput = newVal?.domainname || '';
+    this.setState({ permissions: copy });
+  }
+
+  handleAutocompleteInput = idx => e => {
+    const copy = [...this.state.permissions];
+    copy[idx].autocompleteInput = e.target.value;
     this.setState({ permissions: copy });
   }
 
   handleNewRow = () => {
     const copy = [...this.state.permissions];
-    copy.push({ permission: '', params: '' });
+    copy.push({ permission: '', params: '', autocompleteInput: '' });
     this.setState({ permissions: copy });
   }
 
@@ -152,10 +161,10 @@ class AddRole extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose, onSuccess, Permissions, Domains, Users, Orgs } = this.props;
+    const { classes, t, open, onClose, Permissions, Users, Orgs, Domains } = this.props;
     const { name, permissions, description, loading, users, autocompleteInput } = this.state;
-    const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
+    const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
 
     return (
       <Dialog
@@ -212,6 +221,10 @@ class AddRole extends PureComponent {
                 {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
                   options={domains || []}
                   value={permission.params}
+                  inputValue={permission.autocompleteInput}
+                  filterOptions={getAutocompleteOptions('domainname')}
+                  noOptionsText={permission.autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
+                    t('Filter more precisely') + '...' : t('No options')}
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(domain) => domain.domainname || ''}
                   renderInput={(params) => (
@@ -219,6 +232,7 @@ class AddRole extends PureComponent {
                       {...params}
                       label="Params"
                       placeholder="Search domains..."
+                      onChange={this.handleAutocompleteInput(idx)}
                     />
                   )}
                   className={classes.rowTextfield}
@@ -265,7 +279,7 @@ class AddRole extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onClose}
             variant="contained"
           >
             Cancel
