@@ -76,6 +76,7 @@ class UserDetails extends PureComponent {
       roles: [],
       properties: {},
       aliases: [],
+      status: 0,
     },
     syncPolicy: {},
     defaultPolicy: {},

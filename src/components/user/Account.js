@@ -73,9 +73,7 @@ class Account extends PureComponent {
 
   statuses = [
     { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
-    { name: 'Out of date', ID: 2 },
-    { name: 'Deleted', ID: 3 },
+    { name: 'Shared', ID: 4 },
   ]
 
   formatMSE(rawMSE) {
@@ -147,7 +145,7 @@ class Account extends PureComponent {
       handleIntPropertyChange, handleCheckbox, handleUnitChange,
       handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { username, addressStatus, properties, smtp, pop3_imap, changePassword, ldapID, chat, chatAdmin } = user; //eslint-disable-line
+    const { username, status, properties, smtp, pop3_imap, changePassword, ldapID, chat, chatAdmin } = user; //eslint-disable-line
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
     return (
@@ -163,7 +161,7 @@ class Account extends PureComponent {
             }}
             disabled
           />
-          {writable && <Button
+          {writable && status !== 4 && <Button
             variant="contained"
             color="primary"
             onClick={handlePasswordChange}
@@ -184,8 +182,8 @@ class Account extends PureComponent {
           className={classes.input}
           label={t("Status")}
           fullWidth
-          value={addressStatus || 0}
-          onChange={handleInput('addressStatus')}
+          value={status || 0}
+          onChange={handleInput('status')}
         >
           {this.statuses.map((status, key) => (
             <MenuItem key={key} value={status.ID}>

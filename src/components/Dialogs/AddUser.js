@@ -37,6 +37,7 @@ class AddUser extends PureComponent {
       storagequotalimit: '',
       displaytypeex: 0,
     },
+    status: 0,
     loading: false,
     password: '',
     repeatPw: '',
@@ -47,6 +48,11 @@ class AddUser extends PureComponent {
     },
     usernameError: false,
   }
+
+  statuses = [
+    { name: 'Normal', ID: 0 },
+    { name: 'Shared', ID: 4 },
+  ]
 
   types = [
     { name: 'Normal', ID: 0 },
@@ -95,11 +101,12 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits } = this.state;
+    const { username, password, properties, sizeUnits, status } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
-      password,
+      password: status === 4 ? undefined : password,
+      status,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -133,11 +140,12 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits } = this.state;
+    const { username, password, subType, properties, sizeUnits, status } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
-      password,
+      password: status === 4 ? undefined : password,
+      status,
       subType,
       properties: {
         ...properties,
@@ -184,9 +192,10 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError } = this.state;
+    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError, status } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
-    const addDisabled = usernameError || !username || loading || password !== repeatPw || password.length < 6;
+    const addDisabled = usernameError || !username || loading || 
+      ((password !== repeatPw || password.length < 6) && status !== 4);
     return (
       <Dialog
         onClose={onClose}
@@ -197,6 +206,20 @@ class AddUser extends PureComponent {
         <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Status")}
+              fullWidth
+              value={status || 0}
+              onChange={this.handleInput('status')}
+            >
+              {this.statuses.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField 
               label={t("Username")}
               value={username || ''}
@@ -210,7 +233,7 @@ class AddUser extends PureComponent {
               required
               error={!!username && usernameError}
             />
-            <TextField 
+            {status !== 4 && <TextField 
               label={t("Password")}
               value={password || ''}
               onChange={this.handleInput('password')}
@@ -223,8 +246,8 @@ class AddUser extends PureComponent {
               }}
               helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
               autoComplete="new-password"
-            />
-            <TextField 
+            />}
+            {status !== 4 && <TextField 
               label={t("Repeat password")}
               value={repeatPw || ''}
               onChange={this.handleInput('repeatPw')}
@@ -236,7 +259,7 @@ class AddUser extends PureComponent {
                 error: true,
               }}
               helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
-            />
+            />}
             <TextField 
               label={t("Display name")}
               value={displayname || ''}

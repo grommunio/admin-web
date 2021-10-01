@@ -43,6 +43,7 @@ class AddGlobalUser extends PureComponent {
       storagequotalimit: '',
       displaytypeex: 0,
     },
+    status: 0,
     loading: false,
     password: '',
     repeatPw: '',
@@ -60,6 +61,11 @@ class AddGlobalUser extends PureComponent {
     { name: 'Normal', ID: 0 },
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
+  ]
+
+  statuses = [
+    { name: 'Normal', ID: 0 },
+    { name: 'Shared', ID: 4 },
   ]
 
   handleInput = field => event => {
@@ -103,11 +109,12 @@ class AddGlobalUser extends PureComponent {
 
   handleAdd = () => {
     const { add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, domain } = this.state;
+    const { username, password, properties, sizeUnits, domain, status } = this.state;
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
-      password,
+      password: status === 4 ? undefined : password,
+      status,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -126,6 +133,7 @@ class AddGlobalUser extends PureComponent {
             displaytypeex: 0,
           },
           sizeUnit: 1,
+          status: 0,
           loading: false,
           password: '',
           repeatPw: '',
@@ -142,12 +150,13 @@ class AddGlobalUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, domain } = this.state;
+    const { username, password, subType, properties, sizeUnits, domain, status } = this.state;
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
-      password,
+      password: status === 4 ? undefined : password,
       subType,
+      status,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -203,9 +212,10 @@ class AddGlobalUser extends PureComponent {
   render() {
     const { classes, t, open, onClose, fetchDomains, Domains } = this.props;
     const { username, loading, properties, password, repeatPw, sizeUnits,
-      usernameError, domain, autocompleteInput } = this.state;
+      usernameError, domain, autocompleteInput, status } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
-    const addDisabled = usernameError || !username || loading || password !== repeatPw || password.length < 6;
+    const addDisabled = usernameError || !username || loading ||
+      ((password !== repeatPw || password.length < 6) && status !== 4);
     
     return (
       <Dialog
@@ -242,6 +252,20 @@ class AddGlobalUser extends PureComponent {
               className={classes.input}
               autoSelect
             />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Status")}
+              fullWidth
+              value={status || 0}
+              onChange={this.handleInput('status')}
+            >
+              {this.statuses.map((status, key) => (
+                <MenuItem key={key} value={status.ID}>
+                  {status.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField 
               label={t("Username")}
               value={username || ''}
@@ -255,7 +279,7 @@ class AddGlobalUser extends PureComponent {
               required
               error={!!username && usernameError}
             />
-            <TextField 
+            {status !== 4 && <TextField 
               label={t("Password")}
               value={password || ''}
               onChange={this.handleInput('password')}
@@ -268,8 +292,8 @@ class AddGlobalUser extends PureComponent {
               }}
               helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
               autoComplete="new-password"
-            />
-            <TextField 
+            />}
+            {status !== 4 && <TextField 
               label={t("Repeat password")}
               value={repeatPw || ''}
               onChange={this.handleInput('repeatPw')}
@@ -282,7 +306,7 @@ class AddGlobalUser extends PureComponent {
               }}
               autoComplete="off"
               helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
-            />
+            />}
             <TextField 
               label={t("Display name")}
               value={displayname || ''}
