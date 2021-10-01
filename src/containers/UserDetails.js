@@ -165,6 +165,26 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleStatusInput = async event => {
+    const { user } = this.state;
+    const { value } = event.target;
+    const { edit, domain } = this.props;
+    // Immidiately write user status to DB
+    await edit(domain.ID, {
+      ID: user.ID,
+      status: value,
+    }).then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    this.setState({
+      user: {
+        ...user,
+        status: value,
+      },
+      unsaved: true,
+      changingPw: value === 0 && user.status === 4,
+    });
+  }
+
   handlePropertyChange = field => event => {
     const { user } = this.state;
     this.setState({
@@ -534,7 +554,7 @@ class UserDetails extends PureComponent {
             domain={domainDetails.ID ? domainDetails : domain}
             user={user}
             sizeUnits={sizeUnits}
-            handleInput={this.handleInput}
+            handleStatusInput={this.handleStatusInput}
             handlePropertyChange={this.handlePropertyChange}
             handleIntPropertyChange={this.handleIntPropertyChange}
             handleCheckbox={this.handleCheckbox}

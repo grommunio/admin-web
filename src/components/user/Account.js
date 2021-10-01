@@ -141,7 +141,7 @@ class Account extends PureComponent {
   }
 
   render() {
-    const { classes, t, user, domain, sizeUnits, handleInput, handlePropertyChange,
+    const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange,
       handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -183,7 +183,7 @@ class Account extends PureComponent {
           label={t("Status")}
           fullWidth
           value={status || 0}
-          onChange={handleInput('status')}
+          onChange={handleStatusInput}
         >
           {this.statuses.map((status, key) => (
             <MenuItem key={key} value={status.ID}>
@@ -400,7 +400,7 @@ Account.propTypes = {
   domain: PropTypes.object,
   user: PropTypes.object.isRequired,
   sizeUnits: PropTypes.object.isRequired,
-  handleInput: PropTypes.func.isRequired,
+  handleStatusInput: PropTypes.func.isRequired,
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
