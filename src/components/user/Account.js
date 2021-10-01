@@ -161,7 +161,7 @@ class Account extends PureComponent {
             }}
             disabled
           />
-          {writable && status !== 4 && <Button
+          {writable && status !== 4 && ldapID === null && <Button
             variant="contained"
             color="primary"
             onClick={handlePasswordChange}
