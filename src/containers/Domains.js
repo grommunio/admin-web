@@ -242,6 +242,7 @@ class DomainList extends Component {
                       align="left"
                       direction={orderBy === column.value ? order : "asc"}
                       onClick={this.handleRequestSort(column.value)}
+                      disabled={column.value === 'activeUsers'}
                     >
                       {t(column.label)}
                     </TableSortLabel>
