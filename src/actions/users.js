@@ -15,7 +15,7 @@ import {
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
-  userDelegates, editUserDelegates } from '../api';
+  userDelegates, editUserDelegates, addPermittedUser, permittedUsers, deletePermittedUser } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -115,6 +115,17 @@ export function fetchUserDelegates(domainID, userID) {
   };
 }
 
+export function fetchPermittedUsers(domainID, userID, params) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(permittedUsers(domainID, userID, params));
+      return Promise.resolve(data);
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
 export function setUserDelegates(domainID, userID, delegates) {
   return async dispatch => {
     try {
@@ -142,6 +153,18 @@ export function addUserData(domainID, user) {
       let resp = await dispatch(addUser(domainID, user));
       if(resp) await dispatch({type: USER_DATA_ADD, user: resp});
       return Promise.resolve(resp);
+    } catch(err) {
+      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
+      console.error('Failed to add user', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function addPermittedUserData(domainID, user, permittedUser) {
+  return async dispatch => {
+    try {
+      await dispatch(addPermittedUser(domainID, user, permittedUser));
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
       console.error('Failed to add user', err);
@@ -203,6 +226,17 @@ export function deleteUserStore(domainID, userID, props) {
   return async dispatch => {
     try {
       await dispatch(deleteStoreProps(domainID, userID, props));
+    } catch(err) {
+      console.error('Failed to delete user storedata', err);
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deletePermittedUserData(domainID, userID, id) {
+  return async dispatch => {
+    try {
+      await dispatch(deletePermittedUser(domainID, userID, id));
     } catch(err) {
       console.error('Failed to delete user storedata', err);
       return Promise.reject(err.message);

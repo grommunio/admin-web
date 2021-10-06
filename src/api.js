@@ -296,6 +296,24 @@ export function editUserDelegates(domainID, userID, delegates) {
   };
 }
 
+export function permittedUsers(domainID, userID, params) {
+  return async () => {
+    return await get(buildQuery('/domains/' + domainID + '/users/'+ userID + '/storeAccess', params));
+  };
+}
+
+export function addPermittedUser(domainID, userID, permittedUser) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/'+ userID + '/storeAccess', permittedUser);
+  };
+}
+
+export function deletePermittedUser(domainID, userID, id) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/'+ userID + '/storeAccess/' + id);
+  };
+}
+
 /* LDAP */
 
 export function searchLdap(params) {

@@ -35,6 +35,7 @@ import EditFetchmail from '../components/Dialogs/EditFetchmail';
 import { getPolicyDiff } from '../utils';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import Delegates from '../components/user/Delegates';
+import Permissions from '../components/user/Permissions.js';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
@@ -545,6 +546,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Roles")} />
               <Tab label={t("SMTP")} />
               <Tab label={t("Delegates")} />
+              <Tab label={t("Permitted Users")} />
               <Tab label={t("FetchMail")} />
               <Tab label={t("Mobile devices")} />
               <Tab label={t("Sync policy")} />
@@ -587,17 +589,22 @@ class UserDetails extends PureComponent {
             userID={user.ID}
             disabled={!writable}
           />}
-          {tab === 6 && <FetchMail
+          {tab === 6 && <Permissions
+            domainID={domain.ID}
+            userID={user.ID}
+            disabled={!writable}
+          />}
+          {tab === 7 && <FetchMail
             fetchmail={fetchmail}
             handleAdd={this.handleFetchmailDialog(true)}
             handleEdit={this.handleFetchmailEditDialog}
             handleDelete={this.handleFetchmailDelete}
           />}
-          {tab === 7 && <SyncTab
+          {tab === 8 && <SyncTab
             domain={domain.ID}
             user={user.ID}
           />}
-          {tab === 8 && <SlimSyncPolicies
+          {tab === 9 && <SlimSyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}
