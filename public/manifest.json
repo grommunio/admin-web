@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "grommunio admin",
+  "name": "grommunio admin web",
   "icons": [
     {
       "src": "favicon.ico",
