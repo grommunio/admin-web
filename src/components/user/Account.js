@@ -44,7 +44,7 @@ const styles = theme => ({
   barBackground: {
     width: '100%',
     height: 24,
-    backgroundColor: '#ddd',
+    backgroundColor: '#949494',
     position: 'relative',
   },
   quotaHeadline: {

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Divider, FormControl, Grid, InputLabel, Select, TextField, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -41,6 +41,11 @@ const styles = theme => ({
   propertyInput: {
     margin: theme.spacing(1, 1, 1, 1),
     flex: 1,
+  },
+  countrySelect: {
+    margin: theme.spacing(1),
+    flex: 1,
+    marginLeft: 8,
   },
 });
 
@@ -180,20 +185,19 @@ class User extends PureComponent {
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
-            <FormControl className={classes.propertyInput}>
-              <InputLabel>{t("Country")}</InputLabel>
-              <Select
+            <FormControl className={classes.countrySelect}>
+              <InputLabel variant="standard">{t("Country")}</InputLabel>
+              <NativeSelect
                 value={country || "Germany"}
                 onChange={handlePropertyChange('country')}
                 fullWidth
-                native
               >
                 {world.map(country =>
                   <option key={country.id} value={country.name}>
                     {country.name}
                   </option>  
                 )}
-              </Select>
+              </NativeSelect>
             </FormControl>
             <TextField 
               className={classes.propertyInput} 
