@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import PropTypes from "prop-types";
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
-  TableRow, TableCell, TableBody, Tooltip, Grid } from "@material-ui/core";
-import Stop from "@material-ui/icons/HighlightOff";
-import Restart from "@material-ui/icons/Replay";
-import Start from "@material-ui/icons/PlayCircleFilledOutlined";
-import Enable from "@material-ui/icons/PowerSettingsNew";
+  TableRow, TableCell, TableBody, Tooltip, Grid } from "@mui/material";
+import Stop from "@mui/icons-material/HighlightOff";
+import Restart from "@mui/icons-material/Replay";
+import Start from "@mui/icons-material/PlayCircleFilledOutlined";
+import Enable from "@mui/icons-material/PowerSettingsNew";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import Feedback from "./Feedback";
@@ -31,12 +31,12 @@ const styles = (theme) => ({
     flexWrap: "wrap",
     borderRadius: 8,
     padding: theme.spacing(0, 0, 2, 0),
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       justifyContent: "center",
     },
   },
   serviceContainer: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(1, 2, 1, 2),
   },
   serviceBox: {
     width: 232,
@@ -203,7 +203,7 @@ class ServicesChart extends PureComponent {
                     </Tooltip>
                   </TableCell>
                   <TableCell>
-                    <Grid container justify="center">
+                    <Grid container justifyContent="center">
                       <div
                         style={{ marginRight: 4 }}
                         className={classes.label + " " + this.getChipColor(service.state)}
@@ -222,7 +222,7 @@ class ServicesChart extends PureComponent {
                         onClick={this.handleServiceAction(service, service.autostart === "enabled" ? 
                           "disable" : "enable")}
                         className={classes.chipIcon}
-                      >
+                        size="large">
                         <Enable className={classes.iconButton} fontSize="small" />
                       </IconButton>
                     </Tooltip>
@@ -231,12 +231,12 @@ class ServicesChart extends PureComponent {
                         <IconButton
                           onClick={this.handleDialog(service, "stop")}
                           className={classes.chipIcon}
-                        >
+                          size="large">
                           <Stop className={classes.iconButton} fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <IconButton className={classes.chipIcon}>
+                      <IconButton className={classes.chipIcon} size="large">
                         <CircularProgress size={18} />
                       </IconButton>
                     )}
@@ -245,7 +245,7 @@ class ServicesChart extends PureComponent {
                         <IconButton
                           onClick={this.handleDialog(service, "restart")}
                           className={classes.chipIcon}
-                        >
+                          size="large">
                           <Restart
                             className={classes.iconButton}
                             fontSize="small"
@@ -253,7 +253,7 @@ class ServicesChart extends PureComponent {
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <IconButton className={classes.chipIcon}>
+                      <IconButton className={classes.chipIcon} size="large">
                         <CircularProgress size={18} />
                       </IconButton>
                     )}
@@ -262,12 +262,12 @@ class ServicesChart extends PureComponent {
                         <IconButton
                           onClick={this.handleServiceAction(service, "start")}
                           className={classes.chipIcon}
-                        >
+                          size="large">
                           <Start className={classes.iconButton} fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     ) : (
-                      <IconButton className={classes.chipIcon}>
+                      <IconButton className={classes.chipIcon} size="large">
                         <CircularProgress size={18} />
                       </IconButton>
                     )}

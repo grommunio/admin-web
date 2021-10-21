@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   Button, DialogActions, CircularProgress, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
@@ -112,7 +112,7 @@ class AddOwner extends PureComponent {
         <DialogActions>
           <Button
             onClick={onSuccess}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

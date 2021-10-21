@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -12,7 +12,7 @@ import {
   TextField,
   FormControl,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { getStringAfterLastSlash } from '../utils';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
@@ -22,8 +22,8 @@ import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -119,7 +119,6 @@ class OrgDetails extends PureComponent {
             />
           </FormControl>
           <Button
-            variant="text"
             color="secondary"
             onClick={this.handleNavigation('orgs')}
             style={{ marginRight: 8 }}

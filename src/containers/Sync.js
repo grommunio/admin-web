@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
 import {
   Paper,
@@ -21,25 +21,25 @@ import {
   Checkbox,
   MenuItem,
   IconButton,
-} from "@material-ui/core";
+} from "@mui/material";
 import { connect } from "react-redux";
 import { fetchSyncData } from "../actions/sync";
-import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined, Search } from "@material-ui/icons";
+import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined, Search } from "@mui/icons-material";
 import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
-import { grey, red } from "@material-ui/core/colors";
+import { grey, red } from "@mui/material/colors";
 import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
+    margin: theme.spacing(0, 2, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 3),
+    padding: theme.spacing(0, 0, 2, 2),
   },
   select: {
     maxWidth: 224,
@@ -242,7 +242,7 @@ class Sync extends PureComponent {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -258,7 +258,7 @@ class Sync extends PureComponent {
                 {this.columns.map((column) => (
                   <TableCell
                     key={column.value}
-                    padding={column.padding || 'default'}
+                    padding={column.padding || 'normal'}
                   >
                     <TableSortLabel
                       active={orderBy === column.value}

@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions, CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOrgData } from '../../actions/orgs';
@@ -68,8 +68,9 @@ class AddOrg extends PureComponent {
         open={open}
         maxWidth="md"
         fullWidth
-        onEnter={this.handleEnter}
-      >
+        TransitionProps={{
+          onEnter: this.handleEnter,
+        }}>
         <DialogTitle>{t('addHeadline', { item: 'Organization' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
@@ -97,7 +98,7 @@ class AddOrg extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

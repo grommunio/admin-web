@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import {
   Hidden,
   Drawer,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   setDrawerExpansion,
 } from '../actions/drawer';
@@ -29,6 +29,7 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: '#2d323b',
+    // eslint-disable-next-line max-len
     boxShadow: 'rgba(0, 0, 0, 0.06) 0px 5px 5px -3px, rgba(0, 0, 0, 0.043) 0px 8px 10px 1px, rgba(0, 0, 0, 0.035) 0px 3px 14px 2px',
     color: '#e6e6e6',
     overflowX: 'hidden',
@@ -57,7 +58,7 @@ function ResponsiveDrawer(props) {
           <NavigationLinks domains={domains}/>
         </Drawer>
       </Hidden>
-      <Hidden mdDown implementation="css">
+      <Hidden lgDown implementation="css">
         <Drawer
           classes={{
             paper: classes.drawerPaper,

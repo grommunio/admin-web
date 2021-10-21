@@ -3,24 +3,24 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade,
   Box, 
   Menu,
   MenuItem,
-  Tooltip} from '@material-ui/core';
-import Add from '@material-ui/icons/Add';
+  Tooltip} from '@mui/material';
+import Add from '@mui/icons-material/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import Burger from '@material-ui/icons/Menu';
+import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
-import Duo from '@material-ui/icons/Duo';
-import Chat from '@material-ui/icons/Chat';
-import Files from '@material-ui/icons/Description';
-import Archive from '@material-ui/icons/Archive';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import Duo from '@mui/icons-material/Duo';
+import Chat from '@mui/icons-material/Chat';
+import Files from '@mui/icons-material/Description';
+import Archive from '@mui/icons-material/Archive';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
 import german from '../res/flag_of_germany.svg';
@@ -137,19 +137,22 @@ class TopBar extends PureComponent {
       <AppBar position="fixed" className={classes.root}>
         <Toolbar className={classes.root}>
           <Hidden lgUp>
-            <IconButton color="inherit" onClick={this.handleMenuToggle}>
+            <IconButton color="inherit" onClick={this.handleMenuToggle} size="large">
               <Burger />
             </IconButton>
           </Hidden>
           {this.links.map((link, idx) =>
-            <Tooltip placement="bottom" title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}>
+            <Tooltip
+              placement="bottom"
+              title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
+            >
               <span>
                 <IconButton
                   href={config[link.key]}
                   disabled={!config[link.key]}
                   target="_blank"
                   className={classes.iconButton}
-                >
+                  size="large">
                   <link.icon />
                 </IconButton>
               </span>

@@ -2,18 +2,18 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   Grid,
   Typography,
   IconButton, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { uploadServiceFile } from '../../actions/dbconf';
-import { Add, Delete } from '@material-ui/icons';
+import { Add, Delete } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -28,7 +28,7 @@ const styles = theme => ({
   },
   flexTextfield: {
     flex: 1,
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 1, 0, 1),
   },
 });
 
@@ -143,13 +143,13 @@ class UploadServiceFile extends PureComponent {
                 onChange={this.handleDataInput('value', idx)}
                 className={classes.flexTextfield}
               />
-              <IconButton onClick={this.handleRemoveRow(idx)}>
+              <IconButton onClick={this.handleRemoveRow(idx)} size="large">
                 <Delete color="error"/>
               </IconButton>
             </Grid>
             )}
-            <Grid container justify="center">
-              <IconButton onClick={this.handleAddRow}>
+            <Grid container justifyContent="center">
+              <IconButton onClick={this.handleAddRow} size="large">
                 <Add color="primary"/>
               </IconButton>
             </Grid>
@@ -158,7 +158,7 @@ class UploadServiceFile extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

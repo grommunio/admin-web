@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { Paper, Typography} from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { Create, HourglassEmpty, Router, Scanner } from '@material-ui/icons';
+import { Create, HourglassEmpty, Router, Scanner } from '@mui/icons-material';
 
 const styles = theme => ({
   root: {
@@ -15,7 +15,7 @@ const styles = theme => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '1fr 1fr',
     },
   },
@@ -23,7 +23,7 @@ const styles = theme => ({
     flex: 1,
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',

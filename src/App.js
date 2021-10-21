@@ -3,7 +3,7 @@
 
 import React, { Component } from "react";
 import "./App.css";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import Loadable from "react-loadable";
 import Loader from "./components/Loading";
@@ -103,6 +103,7 @@ class App extends Component {
 
     return (
       <div className={darkMode === "true" ? classes.darkRoot : classes.root}>
+
         <div
           className={darkMode === "true" ? classes.darkLayer : classes.layer}
         />

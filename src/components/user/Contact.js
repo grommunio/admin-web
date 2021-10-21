@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Divider, FormControl, Grid, TextField, Typography, withStyles } from '@material-ui/core';
+import { Divider, FormControl, Grid, TextField, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 
@@ -12,7 +13,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   headline: {
     margin: theme.spacing(0, 0, 2, 0),
@@ -21,7 +22,7 @@ const styles = theme => ({
     display: 'flex',
   },
   divider: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
   },
 });
 

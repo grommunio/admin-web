@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -13,7 +13,7 @@ import {
   FormControl,
   Button,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
 import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
@@ -21,13 +21,13 @@ import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -212,7 +212,11 @@ class MListDetails extends PureComponent {
               noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
                 t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
-              renderOption={(_class) => _class?.classname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.classname || ''}
+                </li>
+              )}
               onChange={this.handleAutocomplete('class')}
               className={classes.input} 
               options={_classes}
@@ -227,7 +231,6 @@ class MListDetails extends PureComponent {
             />}
           </FormControl>
           <Button
-            variant="text"
             color="secondary"
             onClick={this.handleNavigation(domain.ID + '/mailLists')}
             style={{ marginRight: 8 }}

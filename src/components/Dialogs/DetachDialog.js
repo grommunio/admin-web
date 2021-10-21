@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
 const styles = {
@@ -31,7 +31,6 @@ class DetachDialog extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
             color="secondary"
           >
             {t('Cancel')}

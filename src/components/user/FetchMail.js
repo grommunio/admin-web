@@ -8,11 +8,11 @@ import { FormControl, Grid, IconButton,
   TableCell,
   TableHead,
   TableRow,
-  Typography,
-  withStyles } from '@material-ui/core';
+  Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { AddCircleOutline, Delete } from '@material-ui/icons';
+import { AddCircleOutline, Delete } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -23,7 +23,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 0, 2, 0),
   },
   listItem: {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1, 0, 1, 0),
   },
   listTextfield: {
     flex: 1,
@@ -44,7 +44,7 @@ class FetchMail extends PureComponent {
       <FormControl className={classes.form}>
         <Grid container alignItems="center"  className={classes.headline}>
           <Typography variant="h6">{t('Fetchmail')}</Typography>
-          <IconButton onClick={handleAdd}>
+          <IconButton onClick={handleAdd} size="large">
             <AddCircleOutline color="primary" fontSize="small"/>
           </IconButton>
         </Grid>
@@ -72,7 +72,7 @@ class FetchMail extends PureComponent {
                   {entry.srcFolder}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={handleDelete(idx)}>
+                  <IconButton onClick={handleDelete(idx)} size="large">
                     <Delete color="error"/>
                   </IconButton>
                 </TableCell>

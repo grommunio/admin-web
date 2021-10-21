@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
 import {
   MenuItem,
@@ -11,7 +11,7 @@ import {
   TableContainer,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { connect } from "react-redux";
 import { fetchVhostsData, fetchVhostStatusData } from '../actions/status';
 import ServerZones from "../components/status/ServerZones";
@@ -22,7 +22,7 @@ import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   logViewer: {
     display: 'flex',
@@ -30,10 +30,10 @@ const styles = (theme) => ({
   },
   paper: {
     flex: 1,
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
   },
   tf: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
     maxWidth: 200,
   },
 });

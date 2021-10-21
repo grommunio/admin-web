@@ -3,7 +3,7 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
 import {
   Paper,
@@ -21,10 +21,10 @@ import {
   CircularProgress,
   TextField,
   InputAdornment,
-} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import Delete from "@material-ui/icons/Delete";
-import Search from "@material-ui/icons/Search";
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Delete from "@mui/icons-material/Delete";
+import Search from "@mui/icons-material/Search";
 import { connect } from "react-redux";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
 import AddDomain from "../components/Dialogs/AddDomain";
@@ -36,7 +36,7 @@ import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   actions: {
     display: 'flex',
@@ -220,7 +220,7 @@ class DomainList extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -263,7 +263,7 @@ class DomainList extends Component {
                   <TableCell>{obj.activeUsers}</TableCell>
                   <TableCell>{obj.maxUser}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
                       <Delete color="error" />
                     </IconButton>}
                   </TableCell>
@@ -272,7 +272,7 @@ class DomainList extends Component {
             </TableBody>
           </Table>
           {domains.Domains.length < domains.count && (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <CircularProgress
                 color="primary"
                 className={classes.circularProgress}

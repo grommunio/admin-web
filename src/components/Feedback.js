@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React from 'react';
-import { Portal, Snackbar } from '@material-ui/core';
+import { Portal, Snackbar } from '@mui/material';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/lab/Alert';
 import PANIK from '../res/panik.png';
 import { config } from '../config';
 
@@ -16,6 +16,10 @@ class Feedback extends PureComponent {
     return (
       <Portal>
         <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
           open={!!snackbar}
           onClose={onClose}
           autoHideDuration={(snackbar || '').includes('Success!') ? 2000 : 6000}

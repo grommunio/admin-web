@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
-  Slider, TextField, Typography } from '@material-ui/core';
+  Slider, TextField, Typography } from '@mui/material';
 import blue from '../colors/blue';
 
 const styles = theme => ({
@@ -157,6 +157,8 @@ class SlimSyncPolicies extends PureComponent {
             className: devpwexpiration === defaultPolicy.devpwexpiration ? "" : classes.blueCheckbox,
           }}
           onChange={handleChange("devpwexpiration")}
+          variant="standard"
+          style={{ marginBottom: 8 }}
         />
         <TextField
           className={classes.slider}
@@ -166,6 +168,8 @@ class SlimSyncPolicies extends PureComponent {
           InputLabelProps={{
             className: maxinacttimedevlock === defaultPolicy.maxinacttimedevlock ? "" : classes.blueCheckbox,
           }}
+          variant="standard"
+          style={{ marginBottom: 8 }}
         />
         <TextField
           className={classes.slider}
@@ -176,6 +180,7 @@ class SlimSyncPolicies extends PureComponent {
             className: devpwhistory === defaultPolicy.devpwhistory ? "" : classes.blueCheckbox,
           }}
           onChange={handleChange("devpwhistory")}
+          variant="standard"
         />
       </FormControl>
     );

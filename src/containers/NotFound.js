@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { Typography, Button, Grid } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Typography, Button, Grid } from '@mui/material';
 import { withRouter } from 'react-router';
 
 const styles = {
@@ -22,7 +22,7 @@ export default withRouter(withStyles(styles)(function NotFound(props) {
 
   return (
     <div className={classes.root}>
-      <Grid container justify="center" direction="column" alignItems="center">
+      <Grid container justifyContent="center" direction="column" alignItems="center">
         <Typography variant="h1">
           Page not found
         </Typography>

@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
 import {
   FormControlLabel,
@@ -15,11 +15,11 @@ import {
   Paper,
   Typography,
   Switch,
-} from "@material-ui/core";
+} from "@mui/material";
 import { connect } from "react-redux";
-import ArrowUp from '@material-ui/icons/ArrowUpward';
+import ArrowUp from '@mui/icons-material/ArrowUpward';
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { Refresh } from "@material-ui/icons";
+import { Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
@@ -52,7 +52,7 @@ const styles = (theme) => ({
   },
   paper: {
     flex: 1,
-    padding: theme.spacing(1),
+    padding: theme.spacing(1, 1, 1, 1),
   },
   li: {
     cursor: 'pointer',
@@ -165,8 +165,8 @@ class Logs extends PureComponent {
             )}
           </List>
           <Paper elevation={1} className={classes.paper}>
-            {filename && <Grid container justify="flex-end">
-              <IconButton onClick={this.handleRefresh} style={{ marginRight: 8 }}>
+            {filename && <Grid container justifyContent="flex-end">
+              <IconButton onClick={this.handleRefresh} style={{ marginRight: 8 }} size="large">
                 <Refresh />
               </IconButton>
               <FormControlLabel
@@ -181,7 +181,7 @@ class Logs extends PureComponent {
                 label="Autorefresh"
               />
             </Grid>}
-            {log.length > 0 ? <IconButton onClick={this.handleScroll}>
+            {log.length > 0 ? <IconButton onClick={this.handleScroll} size="large">
               <ArrowUp />
             </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
             {log.map((log, idx) =>

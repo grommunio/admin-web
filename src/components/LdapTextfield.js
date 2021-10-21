@@ -2,12 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { TextField, withStyles } from '@material-ui/core';
+import { TextField } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 const styles = theme => ({
   textfield: {
-    margin: theme.spacing(2, 2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   flexTextfield: {
     flex: 1,

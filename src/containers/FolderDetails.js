@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -18,9 +18,9 @@ import {
   ListItemText,
   IconButton,
   Divider,
-} from '@material-ui/core';
-import Add from '@material-ui/icons/AddCircleOutline';
-import Delete from '@material-ui/icons/Delete';
+} from '@mui/material';
+import Add from '@mui/icons-material/AddCircleOutline';
+import Delete from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
@@ -31,8 +31,8 @@ import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -181,7 +181,7 @@ class FolderDetails extends PureComponent {
             >
               {t('Owners')}
             </Typography>
-            <IconButton onClick={this.handleAdd} disabled={!writable}>
+            <IconButton onClick={this.handleAdd} disabled={!writable} size="large">
               <Add fontSize="small" color="primary" />
             </IconButton>
           </Grid>
@@ -189,7 +189,7 @@ class FolderDetails extends PureComponent {
             {owners.map((owner, idx) => <React.Fragment key={idx}>
               <ListItem>
                 <ListItemText primary={owner.displayName} />
-                <IconButton onClick={this.handleDelete(owner)} disabled={!writable}>
+                <IconButton onClick={this.handleDelete(owner)} disabled={!writable} size="large">
                   <Delete fontSize="small" color="error"/>
                 </IconButton>
               </ListItem>
@@ -199,7 +199,7 @@ class FolderDetails extends PureComponent {
           </List>
           <Grid container>
             <Button
-              variant="contained"
+              color="secondary"
               onClick={this.props.history.goBack}
               style={{ marginRight: 8 }}
             >
@@ -269,7 +269,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
     },
     fetchOwners: async (domainID, folderID) => {
-      await dispatch(fetchOwnersData(domainID, folderID, { limit: 1000000, level: 0 })).catch(msg => Promise.reject(msg));
+      await dispatch(fetchOwnersData(domainID, folderID, { limit: 1000000, level: 0 }))
+        .catch(msg => Promise.reject(msg));
     },
   };
 };

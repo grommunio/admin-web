@@ -2,20 +2,20 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, 
-} from '@material-ui/core';
-import Delete from '@material-ui/icons/Close';
-import Add from '@material-ui/icons/AddCircle';
+} from '@mui/material';
+import Delete from '@mui/icons-material/Close';
+import Add from '@mui/icons-material/AddCircle';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { fetchDomainData } from '../../actions/domains';
 import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
 import { fetchOrgsData } from '../../actions/orgs';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { ORG_ADMIN } from '../../constants';
 import { getAutocompleteOptions } from '../../utils';
 
@@ -34,6 +34,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 1, 0, 1),
   },
   row: {
+    marginLeft: 8,
     display: 'flex',
     alignItems: 'flex-end',
   },
@@ -211,6 +212,7 @@ class AddRole extends PureComponent {
                   value={permission.permission || ''}
                   onChange={this.handleSelectPermission(idx)}
                   fullWidth
+                  variant="standard"
                 >
                   {Permissions.map((name) => (
                     <MenuItem key={name} value={name}>
@@ -233,6 +235,7 @@ class AddRole extends PureComponent {
                       label="Params"
                       placeholder="Search domains..."
                       onChange={this.handleAutocompleteInput(idx)}
+                      variant="standard"
                     />
                   )}
                   className={classes.rowTextfield}
@@ -254,6 +257,7 @@ class AddRole extends PureComponent {
                       label="Params"
                       placeholder="Search organizations..."
                       onChange={this.handleAutocompleteInput(idx)}
+                      variant="standard"
                     />
                   )}
                   className={classes.rowTextfield}
@@ -265,7 +269,7 @@ class AddRole extends PureComponent {
                 </IconButton>
               </div>
             )}
-            <Grid container justify="center" className={classes.addButton}>
+            <Grid container justifyContent="center" className={classes.addButton}>
               <Button size="small" onClick={this.handleNewRow}>
                 <Add color="primary" />
               </Button>
@@ -285,9 +289,9 @@ class AddRole extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button
             onClick={this.handleAdd}

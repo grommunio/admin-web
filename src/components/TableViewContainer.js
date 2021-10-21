@@ -3,7 +3,8 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, Typography, withStyles } from '@material-ui/core';
+import { debounce, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import TopBar from './TopBar';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
@@ -15,13 +16,13 @@ const styles = theme => ({
   },
   base: {
     flexDirection: "column",
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
     flex: 1,
     display: "flex",
   },
   toolbar: theme.mixins.toolbar,
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
 });
 

@@ -3,7 +3,7 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
 import {
   Paper,
@@ -19,23 +19,23 @@ import {
   CircularProgress,
   TextField,
   InputAdornment,
-} from "@material-ui/core";
-import IconButton from "@material-ui/core/IconButton";
-import Delete from "@material-ui/icons/Delete";
-import Search from "@material-ui/icons/Search";
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Delete from "@mui/icons-material/Delete";
+import Search from "@mui/icons-material/Search";
 import { connect } from "react-redux";
 import debounce from "debounce";
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
-import { HelpOutline } from "@material-ui/icons";
+import { HelpOutline } from "@mui/icons-material";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   actions: {
     display: 'flex',
@@ -213,7 +213,7 @@ class Orgs extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -249,7 +249,7 @@ class Orgs extends Component {
                   <TableCell>{obj.name}</TableCell>
                   <TableCell>{obj.description}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
                       <Delete color="error" />
                     </IconButton>}
                   </TableCell>
@@ -258,7 +258,7 @@ class Orgs extends Component {
             </TableBody>
           </Table>
           {orgs.Orgs.length < orgs.count && (
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <CircularProgress
                 color="primary"
                 className={classes.circularProgress}

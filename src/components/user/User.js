@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Divider, FormControl, Grid, InputLabel, Select, TextField, Typography, withStyles } from '@material-ui/core';
+import { Divider, FormControl, Grid, InputLabel, Select, TextField, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import world from '../../res/world.json';
@@ -13,13 +14,14 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   divider: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
   },
   address: {
-    height: 128,
+    margin: theme.spacing(1),
+    flex: 1,
   },
   gridItem: {
     display: 'flex',
@@ -33,15 +35,12 @@ const styles = theme => ({
   },
   grid: {
     display: 'flex',
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
     flex: 1,
   },
   propertyInput: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
     flex: 1,
-  },
-  textarea: {
-    height: 84,
   },
 });
 
@@ -99,18 +98,18 @@ class User extends PureComponent {
         </Grid>
         <Divider className={classes.divider} />
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={6} style={{ display: 'flex' }}>
             <TextField 
               className={classes.address}
               label={t("Address")}
-              variant="outlined"
-              fullWidth
               value={streetaddress || ''}
               onChange={handlePropertyChange('streetaddress')}
               multiline
               rows={3}
               inputProps={{
-                className: classes.textarea,
+                style: {
+                  height: 95,
+                },
               }}
             />
           </Grid>

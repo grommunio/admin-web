@@ -2,17 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   MenuItem, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addMListData } from '../../actions/mlists';
 import { fetchClassesData } from '../../actions/classes';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
@@ -138,8 +138,9 @@ class AddMList extends PureComponent {
         open={open}
         maxWidth="md"
         fullWidth
-        onEnter={this.handleEnter}
-      >
+        TransitionProps={{
+          onEnter: this.handleEnter,
+        }}>
         <DialogTitle>{t('addHeadline', { item: 'Mail list' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
@@ -218,7 +219,7 @@ class AddMList extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

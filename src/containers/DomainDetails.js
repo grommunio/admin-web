@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -21,7 +21,7 @@ import {
   Tab,
   FormControlLabel,
   Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import { changeDomainPassword } from '../api';
@@ -30,13 +30,13 @@ import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -262,7 +262,11 @@ class DomainListDetails extends PureComponent {
               noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
                 t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
-              renderOption={(org) => org?.name || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.name || ''}
+                </li>
+              )}
               onChange={this.handleAutocomplete('orgID')}
               className={classes.input}
               options={orgs}
@@ -329,7 +333,7 @@ class DomainListDetails extends PureComponent {
             handleSlider={this.handleSlider}
           />}
           <Button
-            variant="contained"
+            color="secondary"
             onClick={this.handleBack}
             style={{ marginRight: 8 }}
           >
@@ -369,7 +373,7 @@ class DomainListDetails extends PureComponent {
           </DialogContent>
           <DialogActions>
             <Button
-              variant="contained"
+              color="secondary"
               onClick={() => this.setState({ changingPw: false })}>
               {t('Cancel')}
             </Button>

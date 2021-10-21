@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -12,33 +12,30 @@ import {
   TextField,
   FormControl,
   Button,
-  InputLabel,
-  Select,
   MenuItem,
-  Input,
-  ExpansionPanel,
-  ExpansionPanelSummary,
+  Accordion,
+  AccordionSummary,
   IconButton,
-  ExpansionPanelDetails,
+  AccordionDetails,
   List,
   ListItem,
   ListItemText,
   Breadcrumbs,
   Link,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { editClassData, fetchClassDetails, fetchClassesData } from '../actions/classes';
 import { getStringAfterLastSlash } from '../utils';
-import { Delete } from '@material-ui/icons';
-import { Autocomplete } from '@material-ui/lab';
+import { Delete } from '@mui/icons-material';
+import { Autocomplete } from '@mui/lab';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -57,10 +54,10 @@ const styles = theme => ({
   },
   grid: {
     display: 'flex',
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   breadcrumbs: {
-    marginBottom: 8,
+    marginBottom: 16,
   },
   breadcrumb: {
     cursor: 'pointer',
@@ -73,6 +70,7 @@ class ClassDetails extends PureComponent {
     _class: {},
     stack: [],
     unsaved: false,
+    autocompleteInput: '',
   }
 
   operators = [
@@ -100,7 +98,7 @@ class ClassDetails extends PureComponent {
       stack: _class ? [_class] : [],
       _class: _class ? {
         ..._class,
-        parentClasses: _class.parentClasses.map(pc => pc.ID),
+        //parentClasses: _class.parentClasses.map(pc => pc.ID),
         filters: _class.filters || [],
         members: _class.members.toString(),
         children: _class.children || [],
@@ -174,6 +172,7 @@ class ClassDetails extends PureComponent {
       members: _class.members ?
         _class.members.replace(/\s/g, "").split(',') : [], // Make array from members separated by commas
       children: undefined,
+      parentClasses: _class.parentClasses.map(pc => pc.ID),
     })
       .then(() => this.setState({ snackbar: 'Success!', unsaved: false }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -234,10 +233,26 @@ class ClassDetails extends PureComponent {
     });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      _class: {
+        ...this.state._class,
+        [field]: newVal,
+      },
+      autocompleteInput: '',
+    });
+  }
+
+  handleAutocompleteInput = event => {
+    this.setState({
+      autocompleteInput: event.target.value,
+    });
+  }
+
   render() {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { _class, snackbar, stack } = this.state;
+    const { _class, autocompleteInput, snackbar, stack } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
     return (
       <ViewWrapper
@@ -276,25 +291,29 @@ class ClassDetails extends PureComponent {
               autoFocus
               required
             />
-            <FormControl className={classes.input}>
-              <InputLabel>{t("Parent groups")}</InputLabel>
-              <Select
-                multiple
-                fullWidth
-                value={parentClasses || []}
-                onChange={this.handleInput('parentClasses')}
-                input={<Input />}
-              >
-                {_classes.map((_class, key) => (
-                  <MenuItem
-                    key={key}
-                    value={_class.ID}
-                  >
-                    {_class.classname}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              multiple
+              className={classes.input} 
+              options={_classes || []}
+              inputValue={autocompleteInput}
+              value={parentClasses || []}
+              onChange={this.handleAutocomplete('parentClasses')}
+              //getOptionLabel={(classID) => _classes.find(r => r.ID === classID)?.classname || ''}
+              getOptionLabel={(_class) => _class.classname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.classname}
+                </li>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Parent groups")}
+                  placeholder={t("Search groups...")}
+                  onChange={this.handleAutocompleteInput}
+                />
+              )}
+            />
             <TextField 
               className={classes.input} 
               label={t("Members (separate by comma)")} 
@@ -306,21 +325,21 @@ class ClassDetails extends PureComponent {
           <div>
             <Typography variant="body1">{t('Filters (All must be true)')}</Typography>
             {filters && filters.map((ANDFilter, ANDidx) =>
-              <ExpansionPanel
+              <Accordion
                 className={classes.panel}
                 elevation={2 /* 1 has global overwrite */}
                 key={ANDidx}
                 defaultExpanded
               >
-                <ExpansionPanelSummary>
-                  <Grid container justify="space-between">
+                <AccordionSummary>
+                  <Grid container justifyContent="space-between">
                     <Typography body="body1">{t('Filter (One must be true)')}</Typography>
-                    <IconButton onClick={this.handleRemoveAND(ANDidx)}>
+                    <IconButton onClick={this.handleRemoveAND(ANDidx)} size="large">
                       <Delete fontSize="small" color="error"/>
                     </IconButton>
                   </Grid>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                </AccordionSummary>
+                <AccordionDetails>
                   <Grid container>
                     {ANDFilter.map((ORFilter, ORidx) =>  
                       <Grid item xs={12} key={ORidx} className={classes.grid}>
@@ -356,19 +375,20 @@ class ClassDetails extends PureComponent {
                           value={ORFilter.val || ''}
                           onChange={this.handleFilterInput(ANDidx, ORidx, 'val')}
                         />
-                        {filters[ANDidx].length > 1 && <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)}>
+                        {filters[ANDidx].length > 1 &&
+                        <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)} size="large">
                           <Delete fontSize="small" color="error"/>
                         </IconButton>}
                       </Grid>
                     )}
-                    <Grid container justify="center">
+                    <Grid container justifyContent="center">
                       <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>{t('Add or-statement')}</Button>
                     </Grid>
                   </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                </AccordionDetails>
+              </Accordion>
             )}
-            <Grid container justify="center">
+            <Grid container justifyContent="center">
               <Button variant="outlined" onClick={this.handleAddAND}>{t('Add and-statement')}</Button>
             </Grid>
           </div>
@@ -431,8 +451,9 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchClassDetails(domainID, id))
       .then(_class => _class)
       .catch(message => Promise.reject(message)),
-    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
-      .catch(message => Promise.reject(message)),
+    fetchClasses: async (domainID) =>
+      await dispatch(fetchClassesData(domainID, { sort: 'classname,asc', level: 0, limit: 1000000 }, true))
+        .catch(message => Promise.reject(message)),
   };
 };
 

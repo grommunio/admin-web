@@ -6,7 +6,8 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import Loadable from 'react-loadable';
 import { BrowserRouter as Router } from "react-router-dom";
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import { StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
 import { store } from './store';
 import Loading from './components/Loading';
@@ -31,11 +32,13 @@ function main() {
 
   ReactDOM.render(
     <Provider store={store}>
-      <MuiThemeProvider theme={theme}>
-        <Router>
-          <LoadableApp />
-        </Router>
-      </MuiThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <LoadableApp />
+          </Router>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Provider>,
     document.getElementById('root')
   );

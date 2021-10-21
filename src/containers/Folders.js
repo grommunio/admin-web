@@ -3,14 +3,14 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import Delete from '@material-ui/icons/Delete';
-import Search from '@material-ui/icons/Search';
+  TextField, InputAdornment } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Delete from '@mui/icons-material/Delete';
+import Search from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
@@ -21,14 +21,14 @@ import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   tablePaper: {
-    margin: theme.spacing(3, 2),
+    margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
   },
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   textfield: {
     margin: theme.spacing(2, 0, 1, 0),
@@ -165,7 +165,7 @@ class Folders extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -202,7 +202,7 @@ class Folders extends Component {
                   <TableCell>{obj.comment}</TableCell>
                   <TableCell>{obj.creationtime}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -210,7 +210,7 @@ class Folders extends Component {
               )}
             </TableBody>
           </Table>
-          {(folders.Folders.length < folders.count) && <Grid container justify="center">
+          {(folders.Folders.length < folders.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper>

@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -13,18 +13,18 @@ import {
   FormControl,
   Button,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchServiceFile, editServiceFile } from '../actions/dbconf';
-import { Add, Delete } from '@material-ui/icons';
+import { Add, Delete } from '@mui/icons-material';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -33,7 +33,7 @@ const styles = theme => ({
   },
   flexTextfield: {
     flex: 1,
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 1, 0, 1),
   },
 });
 
@@ -131,26 +131,27 @@ class DBFile extends PureComponent {
                 value={pair.key}
                 onChange={this.handleDataInput('key', idx)}
                 className={classes.flexTextfield}
+                variant="standard"
               />
               <TextField
                 label="value"
                 value={pair.value}
                 onChange={this.handleDataInput('value', idx)}
                 className={classes.flexTextfield}
+                variant="standard"
               />
-              {writable && <IconButton onClick={this.handleRemoveRow(idx)}>
+              {writable && <IconButton onClick={this.handleRemoveRow(idx)} size="large">
                 <Delete color="error"/>
               </IconButton>}
             </Grid>
             )}
-            {writable && <Grid container justify="center">
-              <IconButton onClick={this.handleAddRow}>
+            {writable && <Grid container justifyContent="center">
+              <IconButton onClick={this.handleAddRow} size="large">
                 <Add color="primary"/>
               </IconButton>
             </Grid>}
           </FormControl>
           <Button
-            variant="text"
             color="secondary"
             onClick={history.goBack}
             style={{ marginRight: 8 }}

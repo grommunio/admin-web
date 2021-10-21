@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, TableBody, TableHead, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import StyledTableCell from './StyledTableCell';
 import AlternatingTableRow from '../AlternatingTableRow';
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import {
   Tooltip,
@@ -16,7 +16,7 @@ import {
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 const styles = theme => ({
   root: {
@@ -24,7 +24,7 @@ const styles = theme => ({
     width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
     visibility: 'hidden',
   },
 });

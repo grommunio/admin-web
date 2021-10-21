@@ -685,43 +685,43 @@ export function commands(params) {
 
 export function uploadFile(service, filename, file) {
   return async () => {
-    return await put('/system/dbconf/' + service + '/' + filename,  { data: file });
+    return await put('/system/dbconf/' + service + '/' + filename + '/',  { data: file });
   };
 }
 
 export function renameService(oldName, name) {
   return async () => {
-    return await patch('/system/dbconf/' + oldName, { name });
+    return await patch('/system/dbconf/' + oldName + '/', { name });
   };
 }
 
 export function serviceFiles(service) {
   return async () => {
-    return await get('/system/dbconf/' + service);
+    return await get('/system/dbconf/' + service + '/');
   };
 }
 
 export function serviceFile(service, filename) {
   return async () => {
-    return await get('/system/dbconf/' + service + '/' + filename);
+    return await get('/system/dbconf/' + service + '/' + filename + '/');
   };
 }
 
 export function editFile(service, filename, file) {
   return async () => {
-    return await put('/system/dbconf/' + service + '/' + filename, file);
+    return await put('/system/dbconf/' + service + '/' + filename + '/', file);
   };
 }
 
 export function deleteService(service) {
   return async () => {
-    return await yeet('/system/dbconf/' + service);
+    return await yeet('/system/dbconf/' + service + '/');
   };
 }
 
 export function deleteFile(service, file) {
   return async () => {
-    return await yeet('/system/dbconf/' + service + '/' + file);
+    return await yeet('/system/dbconf/' + service + '/' + file + '/');
   };
 }
 

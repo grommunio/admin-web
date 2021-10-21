@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   Grid,
   Typography,
   MenuItem, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { uploadServiceFile } from '../../actions/dbconf';
@@ -27,7 +27,7 @@ const styles = theme => ({
   },
   flexTextfield: {
     flex: 1,
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 1, 0, 1),
   },
   gridTypo: {
     minWidth: 120,
@@ -140,7 +140,7 @@ class CreateDbconfFile extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

@@ -9,8 +9,8 @@ import { FormControl, Grid,
   TableHead,
   TableRow,
   TableSortLabel,
-  Typography,
-  withStyles } from '@material-ui/core';
+  Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { parseUnixtime } from '../../utils';
@@ -26,7 +26,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 0, 2, 0),
   },
   listItem: {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1, 0, 1, 0),
   },
   listTextfield: {
     flex: 1,
@@ -92,7 +92,7 @@ class Sync extends PureComponent {
               {this.columns.map((column, key) =>
                 <TableCell
                   key={key}
-                  padding={column.padding || 'default'}
+                  padding={column.padding || 'normal'}
                 >
                   <TableSortLabel
                     active={orderBy === column.value}

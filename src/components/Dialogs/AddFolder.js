@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
@@ -94,12 +94,12 @@ class AddFolder extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, onClose, Users } = this.props;
+    const { classes, t, open, onClose, Users } = this.props;
     const { displayname, owners, container, comment, loading, autocompleteInput } = this.state;
 
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onClose}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -164,7 +164,7 @@ class AddFolder extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             Cancel
           </Button>

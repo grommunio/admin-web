@@ -3,9 +3,9 @@
 
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
-import { Paper, Typography } from "@material-ui/core";
+import { Paper, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
@@ -23,10 +23,10 @@ const styles = (theme) => ({
   },
   paper: {
     flex: 1,
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
   },
   divider: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
   },
   header: {
     marginBottom: 8,
