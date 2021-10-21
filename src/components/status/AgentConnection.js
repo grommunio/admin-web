@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import windowsLogo from '../../res/windows.svg';
 import macos from '../../res/macos.svg';
 import thunderbird from '../../res/thunderbird.svg';
@@ -9,7 +9,7 @@ import linux from '../../res/linux.svg';
 import bsd from '../../res/bsd.svg';
 import android from '../../res/android.svg';
 import { capitalizeFirstLetter } from '../../utils';
-import { HelpOutline } from '@material-ui/icons';
+import { HelpOutline } from '@mui/icons-material';
 
 function AgentConnection(props) {
   const { serverZones } = props;

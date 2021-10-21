@@ -3,15 +3,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress, TextField, InputAdornment, Tooltip } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
-import Search from '@material-ui/icons/Search';
-import Delete from '@material-ui/icons/Delete';
+  CircularProgress, TextField, InputAdornment, Tooltip } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import Search from '@mui/icons-material/Search';
+import Delete from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
@@ -24,14 +24,14 @@ import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   tablePaper: {
-    margin: theme.spacing(3, 2),
+    margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
   },
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   textfield: {
     margin: theme.spacing(2, 0, 1, 0),
@@ -288,7 +288,7 @@ class Users extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -309,6 +309,10 @@ class Users extends Component {
                     align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
                     onClick={this.handleRequestSort('username')}
+                    color="primary"
+                    sx={{
+                      color: 'text.primary',
+                    }}
                   >
                     {t('Username')}
                   </TableSortLabel>
@@ -324,21 +328,23 @@ class Users extends Component {
             <TableBody>
               {users.Users.map((obj, idx) => {
                 const properties = obj.properties || {};
-                return <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
-                  <TableCell>{obj.username}</TableCell>
-                  <TableCell>{properties.displayname}</TableCell>
-                  <TableCell>{obj.ldapID || ''}</TableCell>
-                  <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
-                      <Delete color="error"/>
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>;
+                return (
+                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                    <TableCell>{obj.username}</TableCell>
+                    <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{obj.ldapID || ''}</TableCell>
+                    <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
+                    <TableCell align="right">
+                      {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                        <Delete color="error"/>
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>
+                );
               })}
             </TableBody>
           </Table>
-          {(users.Users.length < users.count) && <Grid container justify="center">
+          {(users.Users.length < users.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper>

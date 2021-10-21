@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -14,15 +14,15 @@ import {
   Button,
   MenuItem,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import { fetchAllUsers } from '../actions/users';
 import { connect } from 'react-redux';
-import Add from '@material-ui/icons/AddCircle';
-import Delete from '@material-ui/icons/Delete';
+import Add from '@mui/icons-material/AddCircle';
+import Delete from '@mui/icons-material/Delete';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
 import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { fetchOrgsData } from '../actions/orgs';
 import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -30,8 +30,8 @@ import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -48,6 +48,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 1, 0, 1),
   },
   row: {
+    marginLeft: 8,
     display: 'flex',
     alignItems: 'flex-end',
   },
@@ -250,6 +251,7 @@ class RoleDetails extends PureComponent {
                   value={permission.permission || ''}
                   onChange={this.handleSelectPermission(idx)}
                   fullWidth
+                  variant="standard"
                 >
                   {Permissions.map((name) => (
                     <MenuItem key={name} value={name}>
@@ -262,18 +264,20 @@ class RoleDetails extends PureComponent {
                   value={permission.params}
                   inputValue={permission.autocompleteInput}
                   filterOptions={getAutocompleteOptions('domainname')}
-                  noOptionsText={(permission.autocompleteInput || '').length < Math.round(Math.log10(Domains.length) - 2) ?
-                    t('Filter more precisely') + '...' : t('No options')}
+                  noOptionsText={
+                    (permission.autocompleteInput || '').length < Math.round(Math.log10(Domains.length) - 2) ?
+                      t('Filter more precisely') + '...' : t('No options')
+                  }
                   onChange={this.handleSetParams(idx)}
                   getOptionLabel={(domainID) => domainID.domainname ||
                       (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
-                  //renderOption={(domain) => domain.domainname}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       label="Params"
                       placeholder="Search domains..."
                       onChange={this.handleAutocompleteInput(idx)}
+                      variant="standard"
                     />
                   )}
                   className={classes.rowTextfield}
@@ -295,6 +299,7 @@ class RoleDetails extends PureComponent {
                       label="Params"
                       placeholder="Search organizations..."
                       onChange={this.handleAutocompleteInput(idx)}
+                      variant="standard"
                     />
                   )}
                   className={classes.rowTextfield}
@@ -306,14 +311,14 @@ class RoleDetails extends PureComponent {
                 </IconButton>
               </div>
             )}
-            <Grid container justify="center" className={classes.addButton}>
+            <Grid container justifyContent="center" className={classes.addButton}>
               <Button size="small" onClick={this.handleNewRow}>
                 <Add color="primary" />
               </Button>
             </Grid>
           </FormControl>
           <Button
-            variant="contained"
+            color="secondary"
             onClick={() => this.props.history.push('/roles')}
             style={{ marginRight: 8 }}
           >

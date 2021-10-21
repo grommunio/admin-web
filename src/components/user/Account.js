@@ -3,12 +3,13 @@
 
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
-  Select, TextField, Typography, withStyles, Tooltip } from '@material-ui/core';
+  Select, TextField, Typography, Tooltip } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import blue from '../../colors/blue';
-import { red, yellow } from '@material-ui/core/colors';
-import Delete from '@material-ui/icons/Delete';
+import { red, yellow } from '@mui/material/colors';
+import Delete from '@mui/icons-material/Delete';
 import { DOMAIN_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 
@@ -18,20 +19,20 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   flexInput: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
     flex: 1,
   },
   quota: {
     border: `1px solid ${blue['500']}`,
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
     padding: theme.spacing(0.5),
     borderRadius: '8px',
   },
   graphContainer: {
-    padding: theme.spacing(0, 1),
+    padding: theme.spacing(0, 1, 0, 1),
     display: 'flex',
     flex: 1,
     alignItems: 'center',
@@ -241,6 +242,7 @@ class Account extends PureComponent {
                       onChange={handleUnitChange('prohibitsendquota')}
                       value={sizeUnits.prohibitsendquota}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>
@@ -271,6 +273,7 @@ class Account extends PureComponent {
                       onChange={handleUnitChange('prohibitreceivequota')}
                       value={sizeUnits.prohibitreceivequota}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>
@@ -301,6 +304,7 @@ class Account extends PureComponent {
                       onChange={handleUnitChange('storagequotalimit')}
                       value={sizeUnits.storagequotalimit}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>

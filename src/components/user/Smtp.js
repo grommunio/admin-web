@@ -3,10 +3,11 @@
 
 import React, { PureComponent } from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
-  TextField, Typography, withStyles } from '@material-ui/core';
+  TextField, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { Delete } from '@material-ui/icons';
+import { Delete } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -17,7 +18,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 0, 2, 0),
   },
   listItem: {
-    padding: theme.spacing(1, 0),
+    padding: theme.spacing(1, 0, 1, 0),
   },
   listTextfield: {
     flex: 1,
@@ -39,13 +40,13 @@ class Smtp extends PureComponent {
               label={'Alias ' + (idx + 1)}
               onChange={handleAliasEdit(idx)}
             />
-            <IconButton onClick={handleRemoveAlias(idx)}>
+            <IconButton onClick={handleRemoveAlias(idx)} size="large">
               <Delete color="error" />
             </IconButton>
           </ListItem>
           )}
         </List>
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
         </Grid>
       </FormControl>

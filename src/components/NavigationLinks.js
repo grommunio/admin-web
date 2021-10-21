@@ -2,50 +2,50 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import List from '@material-ui/core/List';
-import Collapse from '@material-ui/core/Collapse';
-import Search from '@material-ui/icons/Search';
-import Dashboard from '@material-ui/icons/Dashboard';
-import People from '@material-ui/icons/People';
-import Domains from '@material-ui/icons/Domain';
-import Folder from '@material-ui/icons/Folder';
-import Ldap from '@material-ui/icons/Contacts';
-import MLists from '@material-ui/icons/Email';
-import Storage from '@material-ui/icons/Storage';
-import Orgs from '@material-ui/icons/GroupWork';
-import Logs from '@material-ui/icons/ViewHeadline';
-import Sync from '@material-ui/icons/Sync';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import List from '@mui/material/List';
+import Collapse from '@mui/material/Collapse';
+import Search from '@mui/icons-material/Search';
+import Dashboard from '@mui/icons-material/Dashboard';
+import People from '@mui/icons-material/People';
+import Domains from '@mui/icons-material/Domain';
+import Folder from '@mui/icons-material/Folder';
+import Ldap from '@mui/icons-material/Contacts';
+import MLists from '@mui/icons-material/Email';
+import Storage from '@mui/icons-material/Storage';
+import Orgs from '@mui/icons-material/GroupWork';
+import Logs from '@mui/icons-material/ViewHeadline';
+import Sync from '@mui/icons-material/Sync';
 /*
-import Mail from '@material-ui/icons/Mail';
-import Setup from '@material-ui/icons/SettingsApplicationsOutlined';
-import Forwards from '@material-ui/icons/Forward';
-import DefaultData from '@material-ui/icons/AccountTree';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Mail from '@mui/icons-material/Mail';
+import Setup from '@mui/icons-material/SettingsApplicationsOutlined';
+import Forwards from '@mui/icons-material/Forward';
+import DefaultData from '@mui/icons-material/AccountTree';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 */
-import Classes from '@material-ui/icons/Class';
-import Roles from '@material-ui/icons/VerifiedUser';
+import Classes from '@mui/icons-material/Class';
+import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
-import { Grid, Tabs, Tab, TextField, InputAdornment } from '@material-ui/core';
+import { Grid, Tabs, Tab, TextField, InputAdornment } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { QueryBuilder, TableChart } from '@material-ui/icons';
+import { QueryBuilder, TableChart } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
   drawerHeader: {
     display: 'flex',
     alignItems: 'center',
-    padding: theme.spacing(0, 2),
+    padding: theme.spacing(0, 2, 0, 2),
     ...theme.mixins.toolbar,
     justifyContent: 'center',
     height: 68,
@@ -129,7 +129,7 @@ const styles = theme => ({
     color: 'white',
   },
   textfield: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
         borderColor: 'grey',
@@ -210,7 +210,7 @@ class NavigationLinks extends PureComponent {
                   classes: { root: classes.input },
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search />
+                      <Search color="secondary" />
                     </InputAdornment>
                   ),
                 }}

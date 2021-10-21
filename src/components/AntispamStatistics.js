@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { Paper, Typography} from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import MailOutlineIcon from '@material-ui/icons/MailOutline';
-import NotInterestedIcon from '@material-ui/icons/NotInterested';
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
-import StorageIcon from '@material-ui/icons/Storage';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import StorageIcon from '@mui/icons-material/Storage';
 
 const styles = theme => ({
   root: {
@@ -18,7 +18,7 @@ const styles = theme => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '1fr 1fr',
     },
   },

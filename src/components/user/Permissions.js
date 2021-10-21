@@ -3,15 +3,16 @@
 
 import React, { PureComponent, Fragment } from 'react';
 import { Divider, FormControl, Grid, IconButton, List, ListItem, ListItemText,
-  Typography, withStyles } from '@material-ui/core';
+  Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deletePermittedUserData, fetchPermittedUsers } from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
-import Delete from '@material-ui/icons/Delete';
-import { AddCircleOutline } from '@material-ui/icons';
+import Delete from '@mui/icons-material/Delete';
+import { AddCircleOutline } from '@mui/icons-material';
 import AddPermittedUser from '../Dialogs/AddPermittedUser';
 
 const styles = theme => ({
@@ -20,7 +21,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   headline: {
     margin: theme.spacing(0, 0, 2, 0),
@@ -84,7 +85,7 @@ class Permissions extends PureComponent {
       <FormControl className={classes.form}>
         <Grid container alignItems="center"  className={classes.headline}>
           <Typography variant="h6">{t('Permitted Users')}</Typography>
-          <IconButton onClick={this.handleAddDialog(true)}>
+          <IconButton onClick={this.handleAddDialog(true)} size="large">
             <AddCircleOutline color="primary" fontSize="small"/>
           </IconButton>
         </Grid>
@@ -92,7 +93,7 @@ class Permissions extends PureComponent {
           {(permittedUsers || []).map((user, key) => <Fragment key={key}>
             <ListItem className={classes.listItem}>
               <ListItemText primary={user.displayName} />
-              <IconButton onClick={this.handleRemoveUser(user.ID, key)}>
+              <IconButton onClick={this.handleRemoveUser(user.ID, key)} size="large">
                 <Delete color="error" />
               </IconButton>
             </ListItem>

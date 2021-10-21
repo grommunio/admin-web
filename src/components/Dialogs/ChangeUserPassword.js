@@ -1,22 +1,22 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import {
   TextField,
   Button,
   DialogTitle,
   DialogContent, Dialog, DialogActions,
-} from '@material-ui/core';
+} from '@mui/material';
 import { PureComponent } from 'react';
 import { changeUserPassword } from '../../api';
 import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   content: {
-    padding: theme.spacing(1, 4),
+    padding: theme.spacing(1, 4, 1, 4),
   },
   input: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
 });
 
@@ -69,7 +69,7 @@ class ChangeUserPassword extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            variant="contained"
+            color="secondary"
             onClick={onClose}
           >
             {t('Cancel')}

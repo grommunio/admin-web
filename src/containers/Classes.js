@@ -3,17 +3,17 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import debounce from 'debounce';
 import { withTranslation } from 'react-i18next';
 import { Paper, Typography, Button, Grid,
   CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton, Tabs, Tab, FormControl, InputLabel, Select,
-  Input, MenuItem } from '@material-ui/core';
-import Search from '@material-ui/icons/Search';
+  Input, MenuItem } from '@mui/material';
+import Search from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
-import { Delete } from '@material-ui/icons';
+import { Delete } from '@mui/icons-material';
 import AddClass from '../components/Dialogs/AddClass';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import Tree from 'react-d3-tree';
@@ -23,14 +23,14 @@ import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   tablePaper: {
-    margin: theme.spacing(3, 2),
+    margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
   },
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   textfield: {
     margin: theme.spacing(2, 0, 1, 0),
@@ -46,7 +46,7 @@ const styles = theme => ({
     marginRight: 8,
   },
   select: {
-    margin: theme.spacing(0, 2),
+    margin: theme.spacing(0, 2, 0, 2),
   },
   tabs: {
     marginLeft: 16,
@@ -240,7 +240,7 @@ class Classes extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -286,7 +286,7 @@ class Classes extends Component {
                   <TableCell>{obj.classname}</TableCell>
                   <TableCell>{obj.listname}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -294,7 +294,7 @@ class Classes extends Component {
               )}
             </TableBody>
           </Table>
-          {(_classes.Classes.length < _classes.count) && <Grid container justify="center">
+          {(_classes.Classes.length < _classes.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper> :

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 function ClientConnection(props) {
   const { uri, serverZones } = props;

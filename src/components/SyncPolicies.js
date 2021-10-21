@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup,
-  Slider, TextField, Typography } from '@material-ui/core';
+  Slider, TextField, Typography } from '@mui/material';
 
 const styles = theme => ({
   form: {
@@ -48,7 +48,6 @@ class SyncPolicies extends PureComponent {
         <FormControl component="fieldset" className={classes.radio}>
           <FormLabel component="legend">{t('Allow Bluetooth')}</FormLabel>
           <RadioGroup
-            color="primary"
             row
             value={syncPolicy.allowbluetooth !== undefined ? syncPolicy.allowbluetooth :
               allowbluetooth === undefined ? '' : allowbluetooth}
@@ -435,6 +434,8 @@ class SyncPolicies extends PureComponent {
           InputProps={{
             endAdornment: 'MB',
           }}
+          variant="standard"
+          style={{ marginBottom: 8 }}
         />
         <TextField
           className={classes.slider}
@@ -443,6 +444,8 @@ class SyncPolicies extends PureComponent {
           color="primary"
           value={maxemailbodytruncsize}
           onChange={handleChange("maxemailbodytruncsize")}
+          variant="standard"
+          style={{ marginBottom: 8 }}
         />
         <TextField
           className={classes.slider}
@@ -451,6 +454,7 @@ class SyncPolicies extends PureComponent {
           color="primary"
           value={maxemailhtmlbodytruncsize}
           onChange={handleChange("maxemailhtmlbodytruncsize")}
+          variant="standard"
         />
 
 

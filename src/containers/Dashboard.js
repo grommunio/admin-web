@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@mui/styles";
 import PropTypes from "prop-types";
 import TopBar from "../components/TopBar";
 import LoadChart from "../components/LoadChart";
@@ -14,7 +14,7 @@ import DisksChart from "../components/DisksChart";
 import CPULineChart from "../components/CPULineChart";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
-import { Paper, Typography } from "@material-ui/core";
+import { Paper, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchDashboardData } from "../actions/dashboard";
 import { fetchAntispamData } from "../actions/antispam";
@@ -25,7 +25,7 @@ import Feedback from "../components/Feedback";
 const styles = (theme) => ({
   root: {
     flex: 1,
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     overflowY: "scroll",
     overflowX: "hidden",
   },
@@ -114,7 +114,7 @@ const styles = (theme) => ({
     color: "black",
   },
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
 });
 

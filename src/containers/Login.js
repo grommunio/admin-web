@@ -3,7 +3,7 @@
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
@@ -13,15 +13,15 @@ import {
   InputBase,
   Typography,
   CircularProgress,
-} from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Key from '@material-ui/icons/VpnKey';
+} from '@mui/material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Key from '@mui/icons-material/VpnKey';
 import background from '../res/bootback.svg';
 import {
   authLogin,
   authLoginWithToken,
 } from '../actions/auth';
-import MuiAlert from '@material-ui/lab/Alert';
+import MuiAlert from '@mui/lab/Alert';
 import logo from '../res/grommunio_logo_default.svg';
 
 const styles = theme => ({
@@ -34,7 +34,6 @@ const styles = theme => ({
     overflow: 'auto',
     zIndex: 10,
   },
-
   /* || Login Form */
   loginForm: {
     display: 'flex',
@@ -59,12 +58,13 @@ const styles = theme => ({
     alignItems: 'Center',
     maxWidth: '100%',
     borderRadius: 10,
+    margin: theme.spacing(1, 2, 1, 2),
   },
   input: {
     margin: theme.spacing(1, 1, 1, 0),
   },
   inputAdornment: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   errorMessage: {
     margin: theme.spacing(1, 2, 0, 2),

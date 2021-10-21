@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import {
   XAxis,
   YAxis,
@@ -27,7 +27,7 @@ const styles = theme => ({
     width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
 });
 

@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
 import TopBar from './TopBar';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
@@ -15,7 +15,7 @@ const styles = theme => ({
     flexDirection: 'column',
   },
   base: {
-    padding: theme.spacing(2, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -25,7 +25,7 @@ const styles = theme => ({
   },
   toolbar: theme.mixins.toolbar,
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
 });
 

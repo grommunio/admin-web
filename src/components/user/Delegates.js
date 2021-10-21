@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Button, FormControl, Grid, TextField, Typography, withStyles } from '@material-ui/core';
+import { Button, FormControl, Grid, TextField, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { fetchUserDelegates, fetchUsersData, setUserDelegates } from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
@@ -18,7 +19,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   headline: {
     margin: theme.spacing(0, 0, 2, 0),
@@ -81,7 +82,11 @@ class Delegates extends PureComponent {
               value={delegates || []}
               onChange={this.handleAutocomplete('delegates')}
               getOptionLabel={(delegate) => delegate.username || delegate || ''}
-              renderOption={(user) => user?.username || user || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.username || ''}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -96,9 +101,9 @@ class Delegates extends PureComponent {
         </FormControl>
         <Grid container className={classes.buttonGrid}>
           <Button
-            variant="contained"
             onClick={history.goBack}
             style={{ marginRight: 8 }}
+            color="secondary"
           >
             {t('Back')}
           </Button>
@@ -129,7 +134,7 @@ Delegates.propTypes = {
   domainID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
   setUserDelegates: PropTypes.func.isRequired,
-  history: PropTypes.number.isRequired,
+  history: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
 };
 

@@ -3,8 +3,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { Paper, Typography, Grid, Button } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Paper, Typography, Grid, Button } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
@@ -22,14 +22,14 @@ const styles = theme => ({
   },
   base: {
     flexDirection: 'column',
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
     flex: 1,
     display: 'flex',
     overflow: 'auto',
   }, 
   toolbar: theme.mixins.toolbar,
   tablePaper: {
-    margin: theme.spacing(3, 2),
+    margin: theme.spacing(3, 2, 3, 2),
   },
   description: {
     display: 'inline-block',
@@ -40,7 +40,7 @@ const styles = theme => ({
     padding: '8px 0',
   },
   container: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   firstRow: {
     display: 'flex',

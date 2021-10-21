@@ -3,12 +3,12 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Search from '@material-ui/icons/Search';
-import BackIcon from '@material-ui/icons/ArrowBack';
-import Import from '@material-ui/icons/ImportContacts';
+import { withStyles } from '@mui/styles';
+import Search from '@mui/icons-material/Search';
+import BackIcon from '@mui/icons-material/ArrowBack';
+import Import from '@mui/icons-material/ImportContacts';
 import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
-  Paper, TextField, Typography } from '@material-ui/core';
+  Paper, TextField, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { connect } from 'react-redux';
@@ -21,7 +21,7 @@ import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   backIcon: {
     color: blue[500],
@@ -34,7 +34,7 @@ const styles = theme => ({
     maxWidth: 500,
   },
   loaderContainer: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
 });
 
@@ -88,7 +88,7 @@ class Ldap extends PureComponent {
           <span className={classes.pageTitleSecondary}>| </span>
           {t("LDAP")}
         </Typography>
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <TextField
             autoFocus
             placeholder={t("Search LDAP")}
@@ -115,7 +115,7 @@ class Ldap extends PureComponent {
                   primaryTypographyProps={{ color: 'primary' }}
                   secondary={user.email}
                 />
-                {writable && <IconButton onClick={this.handleImport(user)}>
+                {writable && <IconButton onClick={this.handleImport(user)} size="large">
                   <Import />
                 </IconButton>}
               </ListItem>
@@ -124,7 +124,7 @@ class Ldap extends PureComponent {
             )}
           </List>
         </Paper>}
-        <Grid container justify="center" className={classes.loaderContainer}>
+        <Grid container justifyContent="center" className={classes.loaderContainer}>
           <Grow
             in={loading}
             timeout={{

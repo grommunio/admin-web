@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress, Select,
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -15,7 +15,7 @@ import { addUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
@@ -228,7 +228,7 @@ class AddGlobalUser extends PureComponent {
         }}
       >
         <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
+        <DialogContent>
           <FormControl className={classes.form}>
             <Autocomplete
               options={Domains || []}
@@ -248,7 +248,6 @@ class AddGlobalUser extends PureComponent {
                   onChange={this.handleInput('autocompleteInput')}
                 />
               )}
-              style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
               autoSelect
             />
@@ -283,7 +282,6 @@ class AddGlobalUser extends PureComponent {
               label={t("Password")}
               value={password || ''}
               onChange={this.handleInput('password')}
-              style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
               type="password"
               required
@@ -297,7 +295,6 @@ class AddGlobalUser extends PureComponent {
               label={t("Repeat password")}
               value={repeatPw || ''}
               onChange={this.handleInput('repeatPw')}
-              style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
               type="password"
               required
@@ -311,7 +308,6 @@ class AddGlobalUser extends PureComponent {
               label={t("Display name")}
               value={displayname || ''}
               onChange={this.handlePropertyChange('displayname')}
-              style={{ flex: 1, marginRight: 8 }}
               className={classes.input}
             />
             <TextField 
@@ -326,6 +322,7 @@ class AddGlobalUser extends PureComponent {
                       onChange={this.handleUnitChange('prohibitsendquota')}
                       value={sizeUnits.prohibitsendquota}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>
@@ -346,6 +343,7 @@ class AddGlobalUser extends PureComponent {
                       onChange={this.handleUnitChange('prohibitreceivequota')}
                       value={sizeUnits.prohibitreceivequota}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>
@@ -366,6 +364,7 @@ class AddGlobalUser extends PureComponent {
                       onChange={this.handleUnitChange('storagequotalimit')}
                       value={sizeUnits.storagequotalimit}
                       className={classes.select}
+                      variant="standard"
                     >
                       <MenuItem value={1}>MB</MenuItem>
                       <MenuItem value={2}>GB</MenuItem>
@@ -393,7 +392,7 @@ class AddGlobalUser extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

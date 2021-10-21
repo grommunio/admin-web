@@ -2,28 +2,29 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   MenuItem,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Grid,
   Typography,
   IconButton, 
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addClassData, fetchClassesData } from '../../actions/classes';
-import { Autocomplete } from '@material-ui/lab';
-import { Delete } from '@material-ui/icons';
+import { Autocomplete } from '@mui/lab';
+import { Delete } from '@mui/icons-material';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
   form: {
     width: '100%',
+    marginTop: theme.spacing(4),
   },
   input: {
     marginBottom: theme.spacing(3),
@@ -37,7 +38,7 @@ const styles = theme => ({
   },
   grid: {
     display: 'flex',
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   marginTop: {
     marginTop: 8,
@@ -174,8 +175,9 @@ class AddClass extends PureComponent {
         open={open}
         maxWidth="md"
         fullWidth
-        onEnter={this.handleEnter}
-      >
+        TransitionProps={{
+          onEnter: this.handleEnter,
+        }}>
         <DialogTitle>{t('addHeadline', { item: 'Group' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
@@ -197,7 +199,12 @@ class AddClass extends PureComponent {
               onChange={this.handleAuto('parentClasses')}
               className={classes.input} 
               getOptionLabel={(_class) => _class?.classname || ''}
-              renderOption={(_class) => _class?.classname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.classname || ''}
+                </li>
+              )}
+              rende
               options={_classes}
               multiple
               renderInput={(params) => (
@@ -219,21 +226,21 @@ class AddClass extends PureComponent {
           <div>
             <Typography variant="body1">{t('Filters (All must be true)')}</Typography>
             {filters.map((ANDFilter, ANDidx) =>
-              <ExpansionPanel
+              <Accordion
                 className={classes.panel}
                 elevation={2 /* 1 has global overwrite */}
                 key={ANDidx}
                 defaultExpanded
               >
-                <ExpansionPanelSummary>
-                  <Grid container justify="space-between">
+                <AccordionSummary>
+                  <Grid container justifyContent="space-between">
                     <Typography body="body1">{t('Filter (One must be true)')}</Typography>
-                    <IconButton onClick={this.handleRemoveAND(ANDidx)}>
+                    <IconButton onClick={this.handleRemoveAND(ANDidx)} size="large">
                       <Delete fontSize="small" color="error"/>
                     </IconButton>
                   </Grid>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                </AccordionSummary>
+                <AccordionDetails>
                   <Grid container>
                     {ANDFilter.map((ORFilter, ORidx) =>  
                       <Grid item xs={12} key={ORidx} className={classes.grid}>
@@ -269,19 +276,20 @@ class AddClass extends PureComponent {
                           value={ORFilter.val || ''}
                           onChange={this.handleFilterInput(ANDidx, ORidx, 'val')}
                         />
-                        {filters[ANDidx].length > 1 && <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)}>
+                        {filters[ANDidx].length > 1 &&
+                        <IconButton onClick={this.handleRemoveOR(ANDidx, ORidx)} size="large">
                           <Delete fontSize="small" color="error"/>
                         </IconButton>}
                       </Grid>
                     )}
-                    <Grid container justify="center" className={classes.marginTop}>
+                    <Grid container justifyContent="center" className={classes.marginTop}>
                       <Button variant="outlined" onClick={this.handleAddOR(ANDidx)}>{t('Add or-statement')}</Button>
                     </Grid>
                   </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                </AccordionDetails>
+              </Accordion>
             )}
-            <Grid container justify="center" className={classes.marginTop}>
+            <Grid container justifyContent="center" className={classes.marginTop}>
               <Button variant="outlined" onClick={this.handleAddAND}>{t('Add and-statement')}</Button>
             </Grid>
           </div>
@@ -289,7 +297,7 @@ class AddClass extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

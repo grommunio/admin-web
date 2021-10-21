@@ -2,19 +2,19 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions,
   CircularProgress, FormControlLabel, Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
 import { addDomainData } from '../../actions/domains';
 import { fetchOrgsData } from '../../actions/orgs';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
 const styles = theme => ({
@@ -140,8 +140,9 @@ class AddDomain extends PureComponent {
         open={open}
         maxWidth="md"
         fullWidth
-        onEnter={this.handleEnter}
-      >
+        TransitionProps={{
+          onEnter: this.handleEnter,
+        }}>
         <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
@@ -176,7 +177,11 @@ class AddDomain extends PureComponent {
               noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
                 t('Filter more precisely') + '...' : t('No options')}
               getOptionLabel={org => org.name || ''}
-              renderOption={(org) => org?.name || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.name || ''}
+                </li>
+              )}
               onChange={this.handleAutocomplete('orgID')}
               className={classes.input} 
               options={orgs}
@@ -249,7 +254,7 @@ class AddDomain extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Cancel')}
           </Button>

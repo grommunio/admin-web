@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -11,14 +11,14 @@ import {
   Grid,
   Button,
   Tabs, Tab, Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
   deleteUserStore } from '../actions/users';
 import { fetchRolesData } from '../actions/roles';
-import Sync from '@material-ui/icons/Sync';
-import Detach from '@material-ui/icons/SyncDisabled';
-import Dump from '@material-ui/icons/Receipt';
+import Sync from '@mui/icons-material/Sync';
+import Detach from '@mui/icons-material/SyncDisabled';
+import Dump from '@mui/icons-material/Receipt';
 import { syncLdapData } from '../actions/ldap';
 import DetachDialog from '../components/Dialogs/DetachDialog';
 import DumpDialog from '../components/Dialogs/DumpDialog';
@@ -43,12 +43,12 @@ import { fetchDomainDetails } from '../actions/domains';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   syncButtons: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
   },
   leftIcon: {
     marginRight: 4,
@@ -535,7 +535,7 @@ class UserDetails extends PureComponent {
               value={tab}
               onChange={this.handleTabChange}
               variant="scrollable"
-              scrollButtons="desktop"
+              scrollButtons="auto"
               classes={{
                 scroller: classes.scroller,
               }}
@@ -613,9 +613,9 @@ class UserDetails extends PureComponent {
           />}
           {tab !== 5 && <Grid container className={classes.buttonGrid}>
             <Button
-              variant="contained"
               onClick={history.goBack}
               style={{ marginRight: 8 }}
+              color="secondary"
             >
               {t('Back')}
             </Button>

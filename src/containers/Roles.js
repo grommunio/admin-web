@@ -3,19 +3,19 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@material-ui/core';
-import Search from '@material-ui/icons/Search';
-import Delete from '@material-ui/icons/Delete';
+  TextField, InputAdornment } from '@mui/material';
+import Search from '@mui/icons-material/Search';
+import Delete from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { debounce } from 'debounce';
-import { HelpOutline } from '@material-ui/icons';
+import { HelpOutline } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -25,7 +25,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 2, 2, 2),
   },
   circularProgress: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   actions: {
     display: 'flex',
@@ -191,7 +191,7 @@ class Roles extends PureComponent {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -228,7 +228,7 @@ class Roles extends PureComponent {
                   <TableCell>{obj.description}</TableCell>
                   <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)}>
+                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -236,7 +236,7 @@ class Roles extends PureComponent {
               )}
             </TableBody>
           </Table>
-          {(roles.Roles.length < roles.count) && <Grid container justify="center">
+          {(roles.Roles.length < roles.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper>

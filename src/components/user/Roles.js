@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { FormControl, TextField, Typography, withStyles } from '@material-ui/core';
+import { FormControl, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 
 const styles = theme => ({
   form: {
@@ -14,7 +15,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1, 1, 1, 1),
   },
   headline: {
     margin: theme.spacing(0, 0, 2, 0),
@@ -35,14 +36,18 @@ class RolesTab extends PureComponent {
             value={roles || []}
             onChange={handleAutocomplete('roles')}
             getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
-            renderOption={(role) => role?.name || role || ''}
+            renderOption={(props, option) => (
+              <li {...props} key={option.ID}>
+                {option.name || option || ''}
+              </li>
+            )}
             filterOptions={(options, state) =>
               options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Roles"
-                placeholder="Search roles..."
+                label={t("Roles")}
+                placeholder={t("Search roles...")}
                 className={classes.input} 
               />
             )}

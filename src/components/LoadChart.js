@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import {
   XAxis,
   YAxis,
@@ -15,7 +15,7 @@ import {
   BarChart,
   CartesianGrid,
 } from 'recharts';
-import { Paper } from '@material-ui/core';
+import { Paper } from '@mui/material';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 
@@ -25,7 +25,7 @@ const styles = theme => ({
     width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   paper: {
     paddingTop: 1,

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions,
@@ -10,11 +10,11 @@ import { Dialog, DialogTitle, DialogContent,Button,
   ListItem,
   ListItemText,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deleteOrphanedUsers } from '../../actions/users';
-import { red } from '@material-ui/core/colors';
+import { red } from '@mui/material/colors';
 
 const styles = {
   delete: {
@@ -57,7 +57,7 @@ class DeleteUser extends PureComponent {
         <DialogActions>
           <Button
             onClick={onClose}
-            variant="contained"
+            color="secondary"
           >
             {t('Close')}
           </Button>

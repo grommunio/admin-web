@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -17,11 +17,11 @@ import {
   ListItem,
   Divider,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchServiceFiles, deleteDBFile, renameDBService } from '../actions/dbconf';
 import { getStringAfterLastSlash } from '../utils';
-import { Delete } from '@material-ui/icons';
+import { Delete } from '@mui/icons-material';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -29,8 +29,8 @@ import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
   form: {
@@ -130,7 +130,7 @@ class DBService extends PureComponent {
                 <ListItemText
                   primary={file}
                 />
-                {writable && <IconButton onClick={this.handleDelete(file)}>
+                {writable && <IconButton onClick={this.handleDelete(file)} size="large">
                   <Delete color="error" />
                 </IconButton>}
               </ListItem>
@@ -139,7 +139,6 @@ class DBService extends PureComponent {
             )}
           </List>
           <Button
-            variant="text"
             color="secondary"
             onClick={this.handleNavigation('dbconf')}
             style={{ marginRight: 8 }}

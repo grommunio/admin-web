@@ -3,9 +3,9 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import TopBar from '../components/TopBar';
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Typography } from '@material-ui/core';
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { selectDrawerDomain } from '../actions/drawer';
@@ -13,19 +13,19 @@ import { selectDrawerDomain } from '../actions/drawer';
 const styles = theme => ({
   root: {
     flex: 1,
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
     overflowY: "scroll",
     overflowX: "hidden",
   },
   base: {
     flexDirection: 'column',
-    padding: theme.spacing(2, 0),
+    padding: theme.spacing(2, 0, 2, 0),
     flex: 1,
     display: 'flex',
     overflow: 'auto',
   },
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   toolbar: theme.mixins.toolbar,
 });

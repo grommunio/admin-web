@@ -3,16 +3,16 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, TextField, InputAdornment, Tabs, Tab, IconButton } from '@material-ui/core';
-import Search from '@material-ui/icons/Search';
+  Typography, Button, Grid, TextField, InputAdornment, Tabs, Tab, IconButton } from '@mui/material';
+import Search from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Delete, HelpOutline } from '@material-ui/icons';
+import { Delete, HelpOutline } from '@mui/icons-material';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -20,7 +20,7 @@ import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
   },
   buttonGrid: {
     margin: theme.spacing(0, 2, 2, 2),
@@ -33,7 +33,7 @@ const styles = theme => ({
     alignItems: 'flex-end',
   },
   pre: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   title: {
     marginTop: 16,
@@ -143,7 +143,7 @@ class DBConf extends Component {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search />
+                    <Search color="secondary" />
                   </InputAdornment>
                 ),
               }}
@@ -177,7 +177,7 @@ class DBConf extends Component {
                 <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                   <TableCell>{service}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(service)}>
+                    {writable && <IconButton onClick={this.handleDelete(service)} size="large">
                       <Delete color="error" />
                     </IconButton>}
                   </TableCell>

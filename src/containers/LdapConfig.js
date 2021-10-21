@@ -2,25 +2,25 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
-  Typography, Switch, Tooltip, TextField, RadioGroup, Radio } from '@material-ui/core';
+  Typography, Switch, Tooltip, TextField, RadioGroup, Radio } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
-import Add from '@material-ui/icons/Add';
-import Delete from '@material-ui/icons/Close';
-import { green, red } from '@material-ui/core/colors';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Close';
+import { green, red } from '@mui/material/colors';
 import adminConfig from '../config';
 import LdapTextfield from '../components/LdapTextfield';
-import Help from '@material-ui/icons/HelpOutline';
+import Help from '@mui/icons-material/HelpOutline';
 import Feedback from '../components/Feedback';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/lab';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 
@@ -32,14 +32,14 @@ const styles = theme => ({
   },
   base: {
     flexDirection: 'column',
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 2, 2, 2),
     flex: 1,
     display: 'flex',
     overflow: 'auto',
   }, 
   toolbar: theme.mixins.toolbar,
   pageTitle: {
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   homeIcon: {
     color: blue[500],
@@ -59,7 +59,7 @@ const styles = theme => ({
     margin: theme.spacing(2, 0, 1, 2),
   },
   textfield: {
-    margin: theme.spacing(2, 2),
+    margin: theme.spacing(2, 2, 2, 2),
   },
   flexContainer: {
     display: 'flex',
@@ -73,7 +73,7 @@ const styles = theme => ({
     minWidth: 400,
   },
   flexRow: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(0, 1, 0, 1),
     flexWrap: 'wrap',
     display: 'flex',
   },
@@ -646,12 +646,15 @@ class LdapConfig extends PureComponent {
                   value={mapping.value || ''}
                   desc={t("Name of the user property to map to")}
                 />
-                <IconButton onClick={this.removeRow(idx)} className={classes.removeButton}>
+                <IconButton
+                  onClick={this.removeRow(idx)}
+                  className={classes.removeButton}
+                  size="large">
                   <Delete color="error" />
                 </IconButton>
               </Grid>
             )}
-            <Grid container justify="center" className={classes.addButton}>
+            <Grid container justifyContent="center" className={classes.addButton}>
               <Button size="small" onClick={this.handleNewRow}>
                 <Add color="primary" />
               </Button>

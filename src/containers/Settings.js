@@ -3,10 +3,10 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Typography, FormControl, TextField, MenuItem, Switch, FormLabel,
-  Grid, Divider, Button } from '@material-ui/core';
+  Grid, Divider, Button } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
@@ -17,8 +17,8 @@ import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   paper: {
-    margin: theme.spacing(3, 2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3, 2, 3, 2),
+    padding: theme.spacing(2, 2, 2, 2),
   },
   form: {
     width: '100%',
@@ -36,10 +36,10 @@ const styles = theme => ({
     padding: '8px 0',
   },
   licenseContainer: {
-    margin: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0, 1, 0),
   },
   divider: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 2, 0),
   },
   upload: {
     margin: theme.spacing(0, 0, 0, 1),
