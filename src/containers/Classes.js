@@ -54,6 +54,11 @@ const styles = theme => ({
   count: {
     margin: theme.spacing(2, 0, 0, 2),
   },
+  treeContainer: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'stretch',
+  },
 });
 
 class Classes extends Component {
@@ -300,7 +305,7 @@ class Classes extends Component {
         </Paper> :
           <>
             <FormControl className={classes.select}>
-              <InputLabel>{t("Root group")}</InputLabel>
+              <InputLabel variant="standard">{t("Root group")}</InputLabel>
               <Select
                 fullWidth
                 value={root > -1 ? root : ''}
@@ -315,7 +320,7 @@ class Classes extends Component {
                 ))}
               </Select>
             </FormControl>
-            <div style={{ display: 'flex', flex: 1, alignItems: 'stretch' }}>
+            <div className={classes.treeContainer}>
               {root !== -1 &&
                   <Paper style={{ flex: 1 }}>
                     <Tree

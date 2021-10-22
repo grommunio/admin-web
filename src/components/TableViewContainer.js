@@ -13,6 +13,8 @@ const styles = theme => ({
   root: {
     flex: 1,
     overflow: "auto",
+    display: 'flex',
+    flexDirection: 'column',
   },
   base: {
     flexDirection: "column",
