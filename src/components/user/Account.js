@@ -331,7 +331,7 @@ class Account extends PureComponent {
           onChange={handlePropertyChange('creationtime')}
           disabled
         />
-        <Grid container className={classes.input}>
+        {status !== 4 && <Grid container className={classes.input}>
           <FormControlLabel
             control={
               <Checkbox
@@ -362,8 +362,8 @@ class Account extends PureComponent {
             }
             label={t('Allow POP3/IMAP logins')}
           />
-        </Grid>
-        <Tooltip
+        </Grid>}
+        {status !== 4 && <Tooltip
           placement="top-start"
           title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
         >
@@ -391,7 +391,7 @@ class Account extends PureComponent {
               label={t('grommunio-chat admin permissions')}
             />
           </Grid>
-        </Tooltip>
+        </Tooltip>}
       </FormControl>
     );
   }
