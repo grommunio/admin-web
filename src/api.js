@@ -284,6 +284,18 @@ export function userSync(domainID, userID) {
   };
 }
 
+export function remoteWipeEngage(domainID, userID, deviceId, password) {
+  return async () => {
+    return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', { password });
+  };
+}
+
+export function remoteWipeCancel(domainID, userID, deviceId) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe');
+  };
+}
+
 export function userDelegates(domainID, userID) {
   return async () => {
     return await get('/domains/' + domainID + '/users/'+ userID + '/delegates');
