@@ -71,10 +71,10 @@ export function editFolderData(domainID, folder) {
   };
 }
 
-export function deleteFolderData(domainID, id) {
+export function deleteFolderData(domainID, id, params) {
   return async dispatch => {
     try {
-      await dispatch(deleteFolder(domainID, id));
+      await dispatch(deleteFolder(domainID, id, params));
       await dispatch({ type: FOLDER_DATA_DELETE, id });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});

@@ -14,10 +14,10 @@ import Search from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
-import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
+import DeleteFolder from '../components/Dialogs/DeleteFolder';
 
 const styles = theme => ({
   tablePaper: {
@@ -221,7 +221,7 @@ class Folders extends Component {
           onError={this.handleAddingError}
           domain={domain}
         />
-        <DomainDataDelete
+        <DeleteFolder
           open={!!deleting}
           delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
@@ -256,8 +256,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, params) => {
       await dispatch(fetchFolderData(domainID, params)).catch(msg => Promise.reject(msg));
     },
-    delete: async (domainID, id) => {
-      await dispatch(deleteFolderData(domainID, id)).catch(msg => Promise.reject(msg));
+    delete: async (domainID, id, params) => {
+      await dispatch(deleteFolderData(domainID, id, params)).catch(msg => Promise.reject(msg));
     },
   };
 };

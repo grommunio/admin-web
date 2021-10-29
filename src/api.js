@@ -99,7 +99,7 @@ function toArray(obj) {
 
 function buildQuery(endpoint, params) {
   let query = endpoint;
-  const paramsArray = toArray(params);
+  const paramsArray = toArray(params || {});
   if(paramsArray.length === 0) return query;
   query += '?';
   paramsArray.forEach(param => query += ![undefined].includes(param.val) ? `${param.name}=${param.val}&` : '');
@@ -477,9 +477,9 @@ export function editFolder(domainID, folder) {
   };
 }
 
-export function deleteFolder(domainID, id) {
+export function deleteFolder(domainID, id, params) {
   return async () => {
-    return await yeet('/domains/' + domainID + '/folders/' + id);
+    return await yeet(buildQuery('/domains/' + domainID + '/folders/' + id, params));
   };
 }
 
