@@ -254,7 +254,7 @@ class AddGlobalUser extends PureComponent {
             <TextField
               select
               className={classes.input}
-              label={t("Status")}
+              label={t("Mode")}
               fullWidth
               value={status || 0}
               onChange={this.handleInput('status')}
