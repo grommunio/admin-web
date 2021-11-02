@@ -40,14 +40,15 @@ const styles = theme => ({
     flexDirection: 'column',
     flex: 1,
     maxWidth: 450,
-    background: 'rgba(250, 250, 250, 0.9    )',
+    background: 'rgba(250, 250, 250, 0.9)',
     borderRadius: 30,
     zIndex: 1,
+    padding: theme.spacing(1, 0),
   },
   logoContainer: {
     display: 'flex',
     justifyContent: 'center',
-    margin: theme.spacing(1, 0, 0, 0),
+    margin: theme.spacing(1, 0),
   },
   button: {
     width: '100%',
