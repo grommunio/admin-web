@@ -50,8 +50,11 @@ class PasswordSafetyDialog extends PureComponent {
           />
         </DialogTitle>
         <DialogContent className={classes.content}>
-          <Typography variant="h6">
+          <Typography variant="h6" align="center" style={{ marginBottom: 8 }}>
             Remote wipe of device {deviceID || '<unknown>'} engaged
+          </Typography>
+          <Typography variant="body1">
+            {t('RemoteWipeExplanation')}
           </Typography>
           <TextField
             style={{ marginTop: 16 }}
