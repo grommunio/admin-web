@@ -365,28 +365,6 @@ class LdapConfig extends PureComponent {
                 </Tooltip>
               </span>}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={force || false}
-                  onChange={this.handleCheckbox('force')}
-                  name="disabled"
-                  color="primary"
-                />
-              }
-              label={<span>
-                {t('Force config save')}
-                <Tooltip
-                  className={classes.tooltip}
-                  title={t("Save LDAP configuration even if it's faulty")}
-                  placement="top"
-                >
-                  <IconButton size="small">
-                    <Help fontSize="small"/>
-                  </IconButton>
-                </Tooltip>
-              </span>}
-            />
             <div className={classes.flexContainer}>
               <Tooltip placement="top" title={t("Synchronize already imported users")}>
                 <Button
@@ -678,6 +656,29 @@ class LdapConfig extends PureComponent {
             >
               {t('Save')}
             </Button>
+            <FormControlLabel
+              className={classes.attribute}
+              control={
+                <Checkbox
+                  checked={force || false}
+                  onChange={this.handleCheckbox('force')}
+                  name="disabled"
+                  color="primary"
+                />
+              }
+              label={<span>
+                {t('Force config save')}
+                <Tooltip
+                  className={classes.tooltip}
+                  title={t("Save LDAP configuration even if it's faulty")}
+                  placement="top"
+                >
+                  <IconButton size="small">
+                    <Help fontSize="small"/>
+                  </IconButton>
+                </Tooltip>
+              </span>}
+            />
           </div>
         </form>
         <DeleteConfig
