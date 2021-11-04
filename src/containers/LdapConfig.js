@@ -317,6 +317,7 @@ class LdapConfig extends PureComponent {
   handleDeleteError = error => this.setState({ snackbar: error });
 
   handleSync = importUser => () => this.props.sync({ import: importUser })
+    .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
     .catch(snackbar => this.setState({ snackbar }));
 
   render() {

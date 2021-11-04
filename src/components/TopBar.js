@@ -124,9 +124,9 @@ class TopBar extends PureComponent {
 
   handleLangChange = () => {
     const { changeSettings, settings } = this.props;
-    const lang = settings.lang === 'en-US' ? 'de-DE' : 'en-US';
+    const lang = settings.language === 'en-US' ? 'de-DE' : 'en-US';
     i18n.changeLanguage(lang);
-    changeSettings('lang', lang);
+    changeSettings('language', lang);
     window.localStorage.setItem('lang', lang);
   }
 
@@ -165,8 +165,8 @@ class TopBar extends PureComponent {
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
             <img
-              src={settings.lang === 'en-US' ? german : english}
-              alt="flag"
+              src={settings.language === 'en-US' ? german : english}
+              alt=""
               width={32}
               className={classes.flag}
               onClick={this.handleLangChange}
