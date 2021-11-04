@@ -40,7 +40,6 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
-import { cancelRemoteWipe, engageRemoteWipe } from '../actions/sync';
 
 const styles = theme => ({
   paper: {
@@ -475,21 +474,6 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleRemoteWipeConfirm = password => {
-    const { wipeItOffTheFaceOfEarth, domain } = this.props;
-    const { wiping, user } = this.state;
-
-    wipeItOffTheFaceOfEarth(domain.ID, user.ID, wiping, password)
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-  
-  handleRemoteWipeCancel = deviceID => () => {
-    const { panicStopWiping, domain } = this.props;
-
-    panicStopWiping(domain.ID, this.state.user.ID, deviceID)
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -617,10 +601,8 @@ class UserDetails extends PureComponent {
             handleDelete={this.handleFetchmailDelete}
           />}
           {tab === 8 && <SyncTab
-            domain={domain.ID}
-            user={user.ID}
-            handleRemoteWipeConfirm={this.handleRemoteWipeConfirm}
-            handleRemoteWipeCancel={this.handleRemoteWipeCancel}
+            domainID={domain.ID}
+            userID={user.ID}
           />}
           {tab === 9 && <SlimSyncPolicies
             syncPolicy={syncPolicy}
@@ -696,8 +678,6 @@ UserDetails.propTypes = {
   deleteStoreProp: PropTypes.func.isRequired,
   fetchDomainDetails: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
-  wipeItOffTheFaceOfEarth: PropTypes.func.isRequired,
-  panicStopWiping: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -730,12 +710,6 @@ const mapDispatchToProps = dispatch => {
     dump: async params => await dispatch(fetchLdapDump(params))
       .then(data => Promise.resolve(data))
       .catch(msg => Promise.reject(msg)),
-    wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, password) =>
-      await dispatch(engageRemoteWipe(domainID, userID, deviceID, password))
-        .catch(err => Promise.reject(err)),
-    panicStopWiping: async (domainID, userID, deviceID) =>
-      await dispatch(cancelRemoteWipe(domainID, userID, deviceID))
-        .catch(err => Promise.reject(err)),
   };
 };
 

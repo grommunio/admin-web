@@ -45,6 +45,7 @@ export function cancelRemoteWipe(domainID, userID, deviceID) {
   return async dispatch => {
     try {
       await dispatch(remoteWipeCancel(domainID, userID, deviceID));
+      return Promise.resolve();
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

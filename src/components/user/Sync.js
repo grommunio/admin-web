@@ -20,6 +20,8 @@ import { parseUnixtime } from '../../utils';
 import { fetchUserSync } from '../../actions/users';
 import { connect } from 'react-redux';
 import PasswordSafetyDialog from '../Dialogs/PasswordSafetyDialog';
+import { cancelRemoteWipe, engageRemoteWipe } from '../../actions/sync';
+import Feedback from '../Feedback';
 
 const styles = theme => ({
   form: {
@@ -40,14 +42,15 @@ const styles = theme => ({
 class Sync extends PureComponent {
 
   componentDidMount() {
-    const { fetch, domain, user } = this.props;
+    const { fetch, domainID, userID } = this.props;
     const { orderBy, type } = this.state; 
-    fetch(domain, user)
+    fetch(domainID, userID)
       .then(this.handleSort(orderBy, type, false))
       .catch(err => console.error(err));
   }
 
   state = {
+    snackbar: '',
     sortedDevices: null,
     order: 'asc',
     orderBy: 'pid',
@@ -57,7 +60,7 @@ class Sync extends PureComponent {
 
   columns = [
     { label: "Device ID", value: "deviceid" },
-    { label: "Device user", value: "deviceid" },
+    { label: "Device user", value: "deviceuser" },
     { label: "Device Type / Agent", value: "devicetype" },
     { label: "First sync", value: "firstsynctime", type: 'int' },
     { label: "Last update", value: "lastudpatetime", type: 'int' },
@@ -95,9 +98,38 @@ class Sync extends PureComponent {
     }
   }
 
+  handleRemoteWipeConfirm = password => {
+    const { wipeItOffTheFaceOfEarth, domainID, userID } = this.props;
+    const { wiping } = this.state;
+
+    wipeItOffTheFaceOfEarth(domainID, userID, wiping, password)
+      .then(() => this.updateWipeStatus(2, wiping))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+  
+  handleRemoteWipeCancel = deviceID => () => {
+    const { panicStopWiping, domainID, userID } = this.props;
+    panicStopWiping(domainID, userID, deviceID)
+      .then(() => this.updateWipeStatus(1, deviceID))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
+  updateWipeStatus(status, deviceID) {
+    const { sortedDevices } = this.state;
+    const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
+    const copy = [...sortedDevices];
+    copy[idx].wipeStatus = status;
+    this.setState({
+      snackbar: "Success!",
+      sortedDevices: copy,
+      wiping: '',
+    });
+    return true;
+  }
+
   render() {
-    const { classes, t, sync, handleRemoteWipeCancel, handleRemoteWipeConfirm } = this.props;
-    const { sortedDevices, order, orderBy, wiping } = this.state;
+    const { classes, t, sync } = this.props;
+    const { sortedDevices, order, orderBy, wiping, snackbar } = this.state;
 
     return (
       <FormControl className={classes.form}>
@@ -137,16 +169,16 @@ class Sync extends PureComponent {
                 <TableCell>{obj.foldersSynced + '/' + obj.foldersSyncable}</TableCell>
                 <TableCell>{this.getWipeStatus(obj.wipeStatus)}</TableCell>
                 <TableCell style={{ display: 'flex' }}>
-                  <Tooltip title="Cancel remote wipe" placement="top">
-                    <IconButton onClick={handleRemoteWipeCancel(obj.deviceid)}>
-                      <DoNotDisturbOn />
+                  {obj.wipeStatus >= 2 && <Tooltip title="Cancel remote wipe" placement="top">
+                    <IconButton onClick={this.handleRemoteWipeCancel(obj.deviceid)}>
+                      <DoNotDisturbOn color="secondary"/>
                     </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Remote wipe" placement="top">
+                  </Tooltip>}
+                  {obj.wipeStatus < 2 && <Tooltip title="Remote wipe" placement="top">
                     <IconButton onClick={this.handleRemoteWipeDialog(obj.deviceid)}>
                       <CleaningServices color="error" />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>}
                 </TableCell>
               </TableRow>
             )}
@@ -156,7 +188,11 @@ class Sync extends PureComponent {
           open={Boolean(wiping)}
           deviceID={wiping}
           onClose={this.handleRemoteWipeDialog('')}
-          onConfirm={handleRemoteWipeConfirm}
+          onConfirm={this.handleRemoteWipeConfirm}
+        />
+        <Feedback
+          snackbar={snackbar || ''}
+          onClose={() => this.setState({ snackbar: '' })}
         />
       </FormControl>
     );
@@ -168,10 +204,10 @@ Sync.propTypes = {
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   sync: PropTypes.array.isRequired,
-  domain: PropTypes.number,
-  user: PropTypes.number,
-  handleRemoteWipeCancel: PropTypes.func.isRequired,
-  handleRemoteWipeConfirm: PropTypes.func.isRequired,
+  domainID: PropTypes.number,
+  userID: PropTypes.number,
+  wipeItOffTheFaceOfEarth: PropTypes.func.isRequired,
+  panicStopWiping: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -184,6 +220,13 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, userID) => await dispatch(fetchUserSync(domainID, userID))
       .catch(err => console.error(err)),
+    wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, password) =>
+      await dispatch(engageRemoteWipe(domainID, userID, deviceID, password))
+        .catch(err => Promise.reject(err)),
+    panicStopWiping: async (domainID, userID, deviceID) =>
+      await dispatch(cancelRemoteWipe(domainID, userID, deviceID))
+        .then(resp => resp)
+        .catch(err => Promise.reject(err)),
   };
 };
 
