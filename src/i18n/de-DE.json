@@ -277,5 +277,7 @@
   "E-Mail": "E-Mail",
   "Storage quota limit": "Kontingentgrenze",
   "Receive quota limit": "Empfangsgrenze",
-  "Send quota limit": "Sendegrenze"
+  "Send quota limit": "Sendegrenze",
+
+  "RemoteWipeExplanation": "Abhängig vom Gerät, wird nicht nur der Account entfernt. Stattdessen können auch alle Ihre Daten inklusive Fotos, Dokumente, installierte Apps usw. gelöscht, und das Gerät zurück auf Werkeinstellungen zurückgesetzt werden. Gehen Sie sorgfältig vor."
 }

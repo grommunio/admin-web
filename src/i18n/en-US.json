@@ -20,5 +20,7 @@
   "showingMLists": "Showing {{count}} mail list(s)",
   "showingOrgs": "Showing {{count}} organization(s)",
   "showingRoles": "Showing {{count}} role(s)",
-  "showingUser": "Showing {{count}} user(s)"
+  "showingUser": "Showing {{count}} user(s)",
+
+  "RemoteWipeExplanation": "Depending on the device, this will not just remove the account. It will also delete all photos, documents, apps, etc. on the device and reset it to factory settings. Proceed with caution."
 }

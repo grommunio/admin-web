@@ -601,8 +601,8 @@ class UserDetails extends PureComponent {
             handleDelete={this.handleFetchmailDelete}
           />}
           {tab === 8 && <SyncTab
-            domain={domain.ID}
-            user={user.ID}
+            domainID={domain.ID}
+            userID={user.ID}
           />}
           {tab === 9 && <SlimSyncPolicies
             syncPolicy={syncPolicy}
