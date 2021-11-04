@@ -101,12 +101,13 @@ class UserDetails extends PureComponent {
     const splits = window.location.pathname.split('/');
     const user = await fetch(splits[1], splits[3])
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const domainDetails = await fetchDomainDetails(domain.ID);
-    fetchRoles()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
     user.syncPolicy = user.syncPolicy || {};
     this.setState(this.getStateOverwrite(user, defaultPolicy));
+    
+    fetchRoles()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    const domainDetails = await fetchDomainDetails(domain.ID);
     this.setState({ domainDetails });
   }
 
@@ -479,7 +480,7 @@ class UserDetails extends PureComponent {
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
       detaching, adding, editing, dump, rawData, syncPolicy, domainDetails } = this.state;
-    const { username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
+    const { ID, username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
     return (
       <ViewWrapper
         topbarTitle={t('Users')}
@@ -541,15 +542,15 @@ class UserDetails extends PureComponent {
               }}
             >
               <Tab label={t("Account")} />
-              <Tab label={t("User")} />
-              <Tab label={t("Contact")} />
-              <Tab label={t("Roles")} />
-              <Tab label={t("SMTP")} />
-              <Tab label={t("Delegates")} />
-              <Tab label={t("Permitted Users")} />
-              <Tab label={t("FetchMail")} />
-              <Tab label={t("Mobile devices")} />
-              <Tab label={t("Sync policy")} />
+              <Tab label={t("User")} disabled={!ID}/>
+              <Tab label={t("Contact")} disabled={!ID}/>
+              <Tab label={t("Roles")} disabled={!ID}/>
+              <Tab label={t("SMTP")} disabled={!ID}/>
+              <Tab label={t("Delegates")} disabled={!ID}/>
+              <Tab label={t("Permitted Users")} disabled={!ID}/>
+              <Tab label={t("FetchMail")} disabled={!ID}/>
+              <Tab label={t("Mobile devices")} disabled={!ID}/>
+              <Tab label={t("Sync policy")} disabled={!ID}/>
             </Tabs>
           </div>
           {tab === 0 && <Account
