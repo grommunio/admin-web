@@ -244,7 +244,7 @@ class Users extends Component {
             <Button
               variant="contained"
               color="primary"
-              style={{ marginRight: 16 }}
+              className={classes.newButton}
               onClick={this.handleUserSync(false)}
               disabled={!writable}
             >
@@ -258,7 +258,7 @@ class Users extends Component {
             <Button
               variant="contained"
               color="primary"
-              style={{ marginRight: 16 }}
+              className={classes.newButton}
               onClick={this.handleUserSync(true)}
               disabled={!writable}
             >
