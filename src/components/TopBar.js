@@ -23,8 +23,8 @@ import Archive from '@mui/icons-material/Archive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
-import german from '../res/flag_of_germany.svg';
-import english from '../res/flag_of_uk.svg';
+import german from '../res/germany.svg';
+import english from '../res/united-states.svg';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { fetchLicenseData } from '../actions/license';
@@ -182,7 +182,7 @@ class TopBar extends PureComponent {
             <img
               src={settings.language === 'en-US' ? german : english}
               alt=""
-              width={32}
+              width={35}
               className={classes.flag}
               onClick={this.handleLangChange}
             />
