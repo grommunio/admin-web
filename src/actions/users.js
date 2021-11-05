@@ -24,6 +24,7 @@ export function fetchUsersData(domainID, params) {
       const data = await dispatch(users(domainID, params));
       if(!params.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
       else await dispatch({ type: USERS_NEXT_SET, data });
+      return data;
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');

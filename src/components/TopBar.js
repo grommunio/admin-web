@@ -27,6 +27,10 @@ import german from '../res/flag_of_germany.svg';
 import english from '../res/flag_of_uk.svg';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
+import { fetchLicenseData } from '../actions/license';
+import LicenseIcon from './LicenseIcon';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { CapabilityContext } from '../CapabilityContext';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -97,6 +101,11 @@ class TopBar extends PureComponent {
     { key: 'archiveWebAddress', title: 'Archive', icon: Archive },
   ]
 
+  componentDidMount() {
+    const { fetch } = this.props;
+    fetch();
+  }
+
   handleMenuToggle = () => {
     const { setDrawerExpansion } = this.props;
     setDrawerExpansion();
@@ -131,8 +140,10 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, title, onAdd, fetching, settings } = this.props;
+    const { classes, t, profile, title, onAdd, fetching, settings, license } = this.props;
     const { anchorEl } = this.state;
+    const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
+  
     return (
       <AppBar position="fixed" className={classes.root}>
         <Toolbar className={classes.root}>
@@ -164,6 +175,10 @@ class TopBar extends PureComponent {
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
+            {licenseVisible && <LicenseIcon
+              activated={license.product && license.product !== "Community"}
+              handleNavigation={this.handleNavigation}
+            />}
             <img
               src={settings.language === 'en-US' ? german : english}
               alt=""
@@ -207,6 +222,7 @@ class TopBar extends PureComponent {
   }
 }
 
+TopBar.contextType = CapabilityContext;
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
@@ -220,14 +236,17 @@ TopBar.propTypes = {
   authLogout: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
+  license: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { domains, users, folders, dashboard, services, settings } = state;
+  const { domains, users, folders, dashboard, services, settings, license } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
     settings,
+    license: license.License,
     fetching: domains.loading || users.loading || folders.loading
       || dashboard.loading || services.loading ,
   };
@@ -244,6 +263,8 @@ const mapDispatchToProps = dispatch => {
     changeSettings: async (field, value) => {
       await dispatch(changeSettings(field, value));
     },
+    fetch: async () => await dispatch(fetchLicenseData())
+      .catch(err => Promise.reject(err)),
   };
 };
 

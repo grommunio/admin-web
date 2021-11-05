@@ -5,14 +5,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, Typography, FormControl, TextField, MenuItem, Switch, FormLabel,
-  Grid, Divider, Button } from '@mui/material';
+import { Paper, FormControl, TextField, MenuItem, Switch, FormLabel } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
-import { fetchLicenseData, uploadLicenseData } from '../actions/license';
-import { SYSTEM_ADMIN_WRITE } from '../constants';
-import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
@@ -59,11 +55,6 @@ class Settings extends Component {
     snackbar: '',
   }
 
-  componentDidMount() {
-    this.props.fetch()
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-
   langs = [
     { ID: 'en-US', name: 'English' },
     { ID: 'de-DE', name: 'Deutsch' },
@@ -92,20 +83,9 @@ class Settings extends Component {
     history.push(`/${path}`);
   }
 
-  handleUpload = () => {
-    this.imageInputRef.click();
-  }
-
-  handleUploadConfirm = event => {
-    this.props.upload(event.target.files[0])
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-
   render() {
-    const { classes, t, settings, license } = this.props;
+    const { classes, t, settings } = this.props;
     const { snackbar } = this.state;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <TableViewContainer
         headline={t("Settings")}
@@ -137,97 +117,32 @@ class Settings extends Component {
               />
             </FormControl>
           </FormControl>
-          <Divider className={classes.divider}/>
-          <Grid container alignItems="center">
-            <Grid item className={classes.gridItem}>
-              <Typography variant="h5" className={classes.headline}>{t('License')}</Typography>
-              {writable && <Button
-                className={classes.upload}
-                variant="contained"
-                color="primary"
-                onClick={this.handleUpload}
-                size="small"
-              >
-                {t('Upload')}
-              </Button>}
-            </Grid>
-            {writable && <Typography variant="body2">{t("Don't have a license?")}</Typography>}
-            {writable && <Button
-              className={classes.upload}
-              variant="contained"
-              color="primary"
-              href="https://grammm.com/produkte/"
-              target="_blank"
-              size="small"
-            >
-              {t('Buy now')}
-            </Button>}
-          </Grid>
-          <Grid container direction="column" className={classes.licenseContainer}>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Product')}:</span>
-              {license.product}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Created')}:</span>
-              {license.notBefore}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Expires')}:</span>
-              {license.notAfter}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Users')}:</span>
-              {license.currentUsers}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Max users')}:</span>
-              {license.maxUsers}
-            </Typography>
-          </Grid>
         </Paper>
-        <input
-          accept=".crt,.pem"
-          style={{ display: 'none' }}
-          id="raised-button-file"
-          type="file"
-          ref={r => (this.imageInputRef = r)}
-          onChange={this.handleUploadConfirm}
-        />
       </TableViewContainer>
     );
   }
 }
 
-Settings.contextType = CapabilityContext;
 Settings.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  license: PropTypes.object.isRequired,
-  upload: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { settings, license } = state;
+  const { settings } = state;
   return {
     settings,
-    license: license.License,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async () => await dispatch(fetchLicenseData())
-      .catch(err => Promise.reject(err)),
     changeSettings: async (field, value) => {
       await dispatch(changeSettings(field, value));
     },
-    upload: async license => await dispatch(uploadLicenseData(license))
-      .catch(err => Promise.reject(err)),
   };
 };
 

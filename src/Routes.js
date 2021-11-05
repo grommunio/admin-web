@@ -30,15 +30,10 @@ const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/
 const AsyncGlobalUsersList = makeLoadableComponent(() => import("./containers/GlobalUsers"));
 const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
-//const AsyncForwards = makeLoadableComponent(() => import("./containers/Forwards"));
-//const AsyncForwardDetails = makeLoadableComponent(() => import("./containers/ForwardDetails"));
 const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
 const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MListDetails"));
 const AsyncClasses = makeLoadableComponent(() => import("./containers/Classes"));
 const AsyncClassDetails = makeLoadableComponent(() => import("./containers/ClassDetails"));
-//const AsyncMembers = makeLoadableComponent(() => import("./containers/Members"));
-//const AsyncMemberDetails = makeLoadableComponent(() => import("./containers/MemberDetails"));
-//const AsyncBaseSetup = makeLoadableComponent(() => import("./containers/BaseSetup"));
 const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"));
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
@@ -50,9 +45,6 @@ const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/Fold
 const AsyncDBConf = makeLoadableComponent(() => import("./containers/DBConf"));
 const AsyncDBService = makeLoadableComponent(() => import("./containers/DBService"));
 const AsyncDBFile = makeLoadableComponent(() => import("./containers/DBFile"));
-//const AsyncConfig = makeLoadableComponent(() => import("./containers/Config"));
-//const AsyncMailAddresses = makeLoadableComponent(() => import("./containers/MailAddresses"));
-//const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
 const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
 const AsyncRoles = makeLoadableComponent(() => import("./containers/Roles"));
 const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDetails"));
@@ -60,6 +52,7 @@ const AsyncLogs = makeLoadableComponent(() => import("./containers/Logs"));
 const AsyncMailQ = makeLoadableComponent(() => import("./containers/MailQ"));
 const AsyncSync = makeLoadableComponent(() => import("./containers/Sync"));
 const AsyncStatus = makeLoadableComponent(() => import("./containers/Status"));
+const AsyncLicense = makeLoadableComponent(() => import("./containers/License"));
 
 const Routes = ({ childProps, domains }) => (
   <Switch>
@@ -133,6 +126,12 @@ const Routes = ({ childProps, domains }) => (
       path="/sync"
       exact
       component={AsyncSync}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/license"
+      exact
+      component={AsyncLicense}
       props={childProps}
     />
     <AuthenticatedRoute
