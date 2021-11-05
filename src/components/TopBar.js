@@ -103,7 +103,7 @@ class TopBar extends PureComponent {
 
   componentDidMount() {
     const { fetch } = this.props;
-    fetch();
+    if(this.context.includes(SYSTEM_ADMIN_WRITE)) fetch();
   }
 
   handleMenuToggle = () => {
@@ -264,7 +264,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(changeSettings(field, value));
     },
     fetch: async () => await dispatch(fetchLicenseData())
-      .catch(err => Promise.reject(err)),
+      .catch(err => console.error(err)),
   };
 };
 
