@@ -162,3 +162,9 @@ export const getAutocompleteOptions = filterAttribute => (options, state) => {
   return state.inputValue.length < magnitude ? []
     : options.filter(o => o[filterAttribute].includes(state.inputValue));
 };
+
+export async function copyToClipboard(text) {
+  return navigator.clipboard.writeText(text)
+    .then(() => true)
+    .catch(() => false);
+}

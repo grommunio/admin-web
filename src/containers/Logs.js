@@ -15,12 +15,16 @@ import {
   Paper,
   Typography,
   Switch,
+  Portal,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { connect } from "react-redux";
 import ArrowUp from '@mui/icons-material/ArrowUpward';
 import { fetchLogsData, fetchLogData } from "../actions/logs";
 import { Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
+import { copyToClipboard } from "../utils";
 
 const styles = (theme) => ({
   logViewer: {
@@ -67,6 +71,7 @@ class Logs extends PureComponent {
     skip: 0,
     filename: '',
     autorefresh: false,
+    clipboardMessage: '',
   };
 
   componentDidMount() {
@@ -131,9 +136,18 @@ class Logs extends PureComponent {
     clearInterval(this.fetchInterval);
   }
 
+  handleCopyToClipboard = msg => async () => {
+    const success = await copyToClipboard(msg).catch(err => err);
+    if(success) {
+      this.setState({ clipboardMessage: 'copied log line contents into clipboard' });
+    }
+  }
+
+  handleSnackbarClose = () => this.setState({ clipboardMessage: '' });
+
   render() {
     const { classes, t, logs } = this.props;
-    const { snackbar, log, filename, autorefresh } = this.state;
+    const { snackbar, log, filename, autorefresh, clipboardMessage } = this.state;
 
     return (
       <TableViewContainer
@@ -188,13 +202,34 @@ class Logs extends PureComponent {
               <pre
                 key={idx}
                 className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
-                onClick={this.handleDate(log.time)}
+                onClick={this.handleCopyToClipboard(log.message)}
               >
                 {'[' + log.time + ']: ' + log.message}
               </pre>
             )}
           </Paper>
         </div>
+        <Portal>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            open={!!clipboardMessage}
+            onClose={this.handleSnackbarClose}
+            autoHideDuration={2000}
+            transitionDuration={{ in: 0, appear: 250, enter: 250, exit: 0 }}
+          >
+            <Alert
+              onClose={this.handleSnackbarClose}
+              severity={"success"}
+              elevation={6}
+              variant="filled"
+            >
+              {clipboardMessage}
+            </Alert>
+          </Snackbar>
+        </Portal>
       </TableViewContainer>
     );
   }
