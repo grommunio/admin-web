@@ -63,7 +63,7 @@ class DomainMenu extends PureComponent {
 
   handleNav = () => {
     const { domain, history } = this.props;
-    history.push('/domainList/' + domain.ID);
+    history.push('/domains/' + domain.ID);
   };
 
   handleDelete = (event) => {

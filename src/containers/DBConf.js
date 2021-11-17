@@ -103,7 +103,7 @@ class DBConf extends Component {
     return (
       <TableViewContainer
         headline={<>
-          {t("DB Configuration")}
+          {t("Configuration DB")}
           <IconButton
             size="small"
             href="https://docs.grammm.com/admin/tutorials.html#adding-a-grommunio-dbconf-file"

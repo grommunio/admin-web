@@ -69,13 +69,13 @@ const Routes = ({ childProps, domains }) => (
       props={childProps}
     />
     <AuthenticatedRoute
-      path="/domainList"
+      path="/domains"
       exact
       component={AsyncDomainList}
       props={childProps}
     />
     <AuthenticatedRoute
-      path="/domainList/:domainID*"
+      path="/domains/:domainID*"
       exact
       component={AsyncDomainListDetails}
       props={childProps}
@@ -105,7 +105,7 @@ const Routes = ({ childProps, domains }) => (
       props={childProps}
     />
     <AuthenticatedRoute
-      path="/ldap"
+      path="/directory"
       exact
       component={AsyncLdapConfig}
       props={childProps}

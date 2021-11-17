@@ -54,7 +54,7 @@ class ChangePw extends Component {
 
     return (
       <ViewWrapper
-        topbarTitle={t('Domain list')}
+        topbarTitle={t('Dashboard')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

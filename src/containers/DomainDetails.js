@@ -143,7 +143,7 @@ class DomainListDetails extends PureComponent {
 
   handleBack = () => {
     const { capabilities } = this.props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) this.props.history.push('/domainList');
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) this.props.history.push('/domains');
     else this.props.history.push('/' + getStringAfterLastSlash());
   }
 
@@ -205,7 +205,7 @@ class DomainListDetails extends PureComponent {
     
     return (
       <ViewWrapper
-        topbarTitle={t('Domain list')}
+        topbarTitle={t('Domains')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

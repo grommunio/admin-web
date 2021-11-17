@@ -131,7 +131,7 @@ class DomainList extends Component {
   handleAddingError = (error) => this.setState({ snackbar: error });
 
   handleEdit = (domain) => (event) => {
-    this.props.history.push("/domainList/" + domain.ID, { ...domain });
+    this.props.history.push("/domains/" + domain.ID, { ...domain });
     event.stopPropagation();
   };
 
@@ -189,7 +189,7 @@ class DomainList extends Component {
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={t("Domain list")}
+        headline={t("Domains")}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

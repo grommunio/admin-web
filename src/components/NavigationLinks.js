@@ -22,20 +22,12 @@ import Storage from '@mui/icons-material/Storage';
 import Orgs from '@mui/icons-material/GroupWork';
 import Logs from '@mui/icons-material/ViewHeadline';
 import Sync from '@mui/icons-material/Sync';
-/*
-import Mail from '@mui/icons-material/Mail';
-import Setup from '@mui/icons-material/SettingsApplicationsOutlined';
-import Forwards from '@mui/icons-material/Forward';
-import DefaultData from '@mui/icons-material/AccountTree';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-*/
 import Classes from '@mui/icons-material/Class';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
-import { Grid, Tabs, Tab, TextField, InputAdornment } from '@mui/material';
+import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
 import { QueryBuilder, TableChart } from '@mui/icons-material';
@@ -141,6 +133,10 @@ const styles = theme => ({
         borderColor: theme.palette.primary.main,
       },
     },
+  },
+  subheader: {
+    marginLeft: 8,
+    fontWeight: 600,
   },
 });
 
@@ -287,6 +283,7 @@ class NavigationLinks extends PureComponent {
                 </React.Fragment> : null;
             })}
           {tab === 0 && isSysAdmin && <React.Fragment>
+            <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
             <ListItem
               button
               onClick={this.handleNavigation('')}
@@ -298,39 +295,7 @@ class NavigationLinks extends PureComponent {
                 <ListItemText primary="Dashboard"/>
               </Grid>
             </ListItem>
-            <ListItem
-              button
-              onClick={this.handleNavigation('domainList')}
-              className={classes.li}
-              selected={location.pathname.startsWith('/domainList')}
-            >
-              <Grid container alignItems="center">
-                <Domains className={classes.icon}/>
-                <ListItemText primary={t('Domain list')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
-              onClick={this.handleNavigation('users')}
-              className={classes.li}
-              selected={location.pathname.startsWith('/users')}
-            >
-              <Grid container alignItems="center">
-                <People className={classes.icon}/>
-                <ListItemText primary={t('Global users')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
-              onClick={this.handleNavigation('roles')}
-              className={classes.li}
-              selected={location.pathname === '/roles'}
-            >
-              <Grid container alignItems="center">
-                <Roles className={classes.icon}/>
-                <ListItemText primary={t('Roles')} />
-              </Grid>
-            </ListItem>
+            <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
             <ListItem
               className={classes.li}
               button
@@ -344,13 +309,47 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <ListItem
               button
-              onClick={this.handleNavigation('ldap')}
+              onClick={this.handleNavigation('domains')}
               className={classes.li}
-              selected={location.pathname === '/ldap'}
+              selected={location.pathname.startsWith('/domains')}
+            >
+              <Grid container alignItems="center">
+                <Domains className={classes.icon}/>
+                <ListItemText primary={t('Domains')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('users')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/users')}
+            >
+              <Grid container alignItems="center">
+                <People className={classes.icon}/>
+                <ListItemText primary={t('Users')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('roles')}
+              className={classes.li}
+              selected={location.pathname === '/roles'}
+            >
+              <Grid container alignItems="center">
+                <Roles className={classes.icon}/>
+                <ListItemText primary={t('Roles')} />
+              </Grid>
+            </ListItem>
+            <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
+            <ListItem
+              button
+              onClick={this.handleNavigation('directory')}
+              className={classes.li}
+              selected={location.pathname === '/directory'}
             >
               <Grid container alignItems="center">
                 <Ldap className={classes.icon}/>
-                <ListItemText primary={t('LDAP')} />
+                <ListItemText primary={t('Directory')} />
               </Grid>
             </ListItem>
             <ListItem
@@ -361,9 +360,10 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Storage className={classes.icon}/>
-                <ListItemText primary={t('DB Configuration')} />
+                <ListItemText primary={t('Configuration DB')} />
               </Grid>
             </ListItem>
+            <Typography variant="inherit" className={classes.subheader}>{t('Monitoring')}</Typography>
             <ListItem
               button
               onClick={this.handleNavigation('logs')}

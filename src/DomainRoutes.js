@@ -58,7 +58,7 @@ const Routes = ({ childProps, domains, capabilities }) => (
     />
     {capabilities.includes(ORG_ADMIN) &&
       <AuthenticatedRoute
-        path="/domainList/:domainID*"
+        path="/domains/:domainID*"
         exact
         component={AsyncDomainListDetails}
         props={childProps}

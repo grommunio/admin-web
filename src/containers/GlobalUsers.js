@@ -185,7 +185,7 @@ class GlobalUsers extends Component {
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={t("Global users")}
+        headline={t("Users")}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       > 
