@@ -161,7 +161,7 @@ class Dashboard extends Component {
         <TopBar />
         <div className={classes.toolbar} />
         <Typography variant="h2" className={classes.pageTitle}>
-          {t("Spam statistics")}
+          {t("Mail filter statistics")}
         </Typography>
         <div className={classes.dashboardLayout}>
           <div className={classes.antispam}>
