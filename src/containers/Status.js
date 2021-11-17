@@ -22,7 +22,10 @@ import TableViewContainer from "../components/TableViewContainer";
 
 const styles = (theme) => ({
   pageTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2, 2, 1, 2),
+  },
+  subtitle: {
+    margin: theme.spacing(0, 2, 2, 2),
   },
   logViewer: {
     display: 'flex',
@@ -107,6 +110,7 @@ class Status extends PureComponent {
     return (
       <TableViewContainer
         headline={t("Live Status")  + ' - ' + data.hostName || ''}
+        subtitle="A comprehensive overview of all requests being processed of all nodes"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
@@ -137,14 +141,27 @@ class Status extends PureComponent {
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Connections")}
         </Typography>
+        <Typography variant="caption" className={classes.subtitle}>
+          Current active connections being processed
+        </Typography>
         <Connections data={connections || {}} />
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Requests")}
         </Typography>
+        <Typography variant="caption" className={classes.subtitle}>
+          All processed requests by the services
+        </Typography>
         <Requests data={connections || {}} />
         <div className={classes.logViewer}>
           <TableContainer component={Paper} className={classes.paper}>
-            <Typography style={{ marginBottom: 8 }} variant="h5">{t("Host details")}</Typography>
+            <div style={{ marginBottom: 8 }}>
+              <Typography variant="h5">
+                {t("Host details")}
+              </Typography>
+              <Typography variant="caption">
+                Detailed and summarized overview over all requests
+              </Typography>
+            </div>
             <ServerZones serverZones={this.toSortedArray(serverZones || {})} />
             <FilterZones filterZones={filterZones || {}} />
           </TableContainer>

@@ -24,14 +24,18 @@ const styles = theme => ({
   },
   toolbar: theme.mixins.toolbar,
   pageTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2, 2, 1, 2),
+  },
+  subtitle: {
+    margin: theme.spacing(0, 2, 2, 2),
   },
 });
 
 class TableViewContainer extends PureComponent {
 
   render() {
-    const { classes, children, baseRef, topbarTitle, handleScroll, headline, snackbar, onSnackbarClose } = this.props;
+    const { classes, children, baseRef, topbarTitle, handleScroll, headline, subtitle,
+      snackbar, onSnackbarClose } = this.props;
     return (
       <div
         className={classes.root}
@@ -44,6 +48,9 @@ class TableViewContainer extends PureComponent {
           <Typography variant="h2" className={classes.pageTitle}>
             {headline}
           </Typography>
+          {subtitle && <Typography variant="caption" className={classes.subtitle}>
+            {subtitle}
+          </Typography>}
           {children}
         </div>
         <Feedback
@@ -71,6 +78,7 @@ TableViewContainer.propTypes = {
   ]).isRequired,
   snackbar: PropTypes.string,
   onSnackbarClose: PropTypes.func,
+  subtitle: PropTypes.string,
 };
 
 export default withTranslation()(withStyles(styles)(TableViewContainer));

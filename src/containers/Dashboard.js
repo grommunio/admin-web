@@ -114,7 +114,10 @@ const styles = (theme) => ({
     color: "black",
   },
   pageTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2, 2, 1, 2),
+  },
+  subtitle: {
+    margin: theme.spacing(0, 2, 2, 2),
   },
 });
 
@@ -163,6 +166,9 @@ class Dashboard extends Component {
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Mail filter statistics")}
         </Typography>
+        <Typography variant="caption" className={classes.subtitle}>
+          Mail filter statistics provide an overview of the mail volume processed.
+        </Typography>
         <div className={classes.dashboardLayout}>
           <div className={classes.antispam}>
             <AntispamStatistics data={statistics}/>
@@ -173,6 +179,10 @@ class Dashboard extends Component {
           <div className={classes.headline}>
             <Typography variant="h2" className={classes.pageTitle}>
               {t("Performance")}
+            </Typography>
+            <Typography variant="caption" className={classes.subtitle}>
+              Performance overview delivers insight information of the system&apos;s health,
+              the current service status as well as available resources.
             </Typography>
           </div>
           <div className={classes.cpu}>

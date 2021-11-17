@@ -190,6 +190,7 @@ class DomainList extends Component {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Domains")}
+        subtitle="The domains overview shows all configured and accepted mail domains for the installation."
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

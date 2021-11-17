@@ -186,6 +186,8 @@ class GlobalUsers extends Component {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Users")}
+        subtitle="The users overview shows a full list of all configured and accepted users,
+          regardless of its associated domain."
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       > 

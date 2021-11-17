@@ -192,6 +192,8 @@ class Orgs extends Component {
             <HelpOutline fontSize="small"/>
           </IconButton>
         </>}
+        subtitle="Organizations group multiple domains together to a single tenant,
+          sharing resources such as a shared global adress book."
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

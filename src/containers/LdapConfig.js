@@ -39,7 +39,10 @@ const styles = theme => ({
   }, 
   toolbar: theme.mixins.toolbar,
   pageTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2, 2, 1, 2),
+  },
+  subtitle: {
+    margin: theme.spacing(0, 2, 2, 2),
   },
   homeIcon: {
     color: blue[500],
@@ -342,6 +345,10 @@ class LdapConfig extends PureComponent {
                 <Help fontSize="small"/>
               </IconButton>
             </Tooltip>
+          </Typography>
+          <Typography variant="caption" className={classes.subtitle}>
+            The directory configuration manages synchronization,
+            import and authentication from an LDAP-based directory made available
           </Typography>
           <Grid container className={classes.category}>
             <FormControlLabel
