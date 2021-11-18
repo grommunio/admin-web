@@ -109,8 +109,9 @@ class Status extends PureComponent {
     const { connections, serverZones, filterZones } = data;
     return (
       <TableViewContainer
-        headline={t("Live Status")  + ' - ' + data.hostName || ''}
+        headline={t("Live Status")  + (data.hostName ? ' - ' + data.hostName : '')}
         subtitle="A comprehensive overview of all requests being processed of all nodes"
+        href="https://docs.grommunio.com/admin/administration.html#live-status"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

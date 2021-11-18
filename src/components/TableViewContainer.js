@@ -3,11 +3,12 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, Typography } from '@mui/material';
+import { debounce, IconButton, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import TopBar from './TopBar';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
+import { HelpOutline } from '@mui/icons-material';
 
 const styles = theme => ({
   root: {
@@ -35,7 +36,7 @@ class TableViewContainer extends PureComponent {
 
   render() {
     const { classes, children, baseRef, topbarTitle, handleScroll, headline, subtitle,
-      snackbar, onSnackbarClose } = this.props;
+      snackbar, onSnackbarClose, href } = this.props;
     return (
       <div
         className={classes.root}
@@ -47,6 +48,13 @@ class TableViewContainer extends PureComponent {
         <div className={classes.base} ref={baseRef}>
           <Typography variant="h2" className={classes.pageTitle}>
             {headline}
+            {href && <IconButton
+              size="small"
+              href={href}
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>}
           </Typography>
           {subtitle && <Typography variant="caption" className={classes.subtitle}>
             {subtitle}
@@ -79,6 +87,7 @@ TableViewContainer.propTypes = {
   snackbar: PropTypes.string,
   onSnackbarClose: PropTypes.func,
   subtitle: PropTypes.string,
+  href: PropTypes.string,
 };
 
 export default withTranslation()(withStyles(styles)(TableViewContainer));

@@ -341,7 +341,11 @@ class LdapConfig extends PureComponent {
               title={t("ldap_settingsHelp")}
               placement="top"
             >
-              <IconButton size="small">
+              <IconButton
+                size="small"
+                href="https://docs.grommunio.com/admin/administration.html#ldap"
+                target="_blank"
+              >
                 <Help fontSize="small"/>
               </IconButton>
             </Tooltip>

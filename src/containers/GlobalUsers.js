@@ -188,6 +188,7 @@ class GlobalUsers extends Component {
         headline={t("Users")}
         subtitle="The users overview shows a full list of all configured and accepted users,
           regardless of its associated domain."
+        href="https://docs.grommunio.com/admin/administration.html#users"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       > 

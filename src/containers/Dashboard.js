@@ -14,13 +14,14 @@ import DisksChart from "../components/DisksChart";
 import CPULineChart from "../components/CPULineChart";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
-import { Paper, Typography } from "@mui/material";
+import { IconButton, Paper, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchDashboardData } from "../actions/dashboard";
 import { fetchAntispamData } from "../actions/antispam";
 import { withTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
+import { HelpOutline } from "@mui/icons-material";
 
 const styles = (theme) => ({
   root: {
@@ -165,6 +166,13 @@ class Dashboard extends Component {
         <div className={classes.toolbar} />
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Mail filter statistics")}
+          <IconButton
+            size="small"
+            href="https://docs.grommunio.com/admin/administration.html#antispam"
+            target="_blank"
+          >
+            <HelpOutline fontSize="small"/>
+          </IconButton>
         </Typography>
         <Typography variant="caption" className={classes.subtitle}>
           Mail filter statistics provide an overview of the mail volume processed.
@@ -179,6 +187,13 @@ class Dashboard extends Component {
           <div className={classes.headline}>
             <Typography variant="h2" className={classes.pageTitle}>
               {t("Performance")}
+              <IconButton
+                size="small"
+                href="https://docs.grommunio.com/admin/administration.html#services"
+                target="_blank"
+              >
+                <HelpOutline fontSize="small"/>
+              </IconButton>
             </Typography>
             <Typography variant="caption" className={classes.subtitle}>
               Performance overview delivers insight information of the system&apos;s health,

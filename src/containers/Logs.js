@@ -153,6 +153,7 @@ class Logs extends PureComponent {
       <TableViewContainer
         headline={t("Logs")}
         subtitle="Logs provide enable insight into service operation"
+        href="https://docs.grommunio.com/admin/administration.html#logs"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

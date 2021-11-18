@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Delete, HelpOutline } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -102,16 +102,9 @@ class DBConf extends Component {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <TableViewContainer
-        headline={<>
-          {t("Configuration DB")}
-          <IconButton
-            size="small"
-            href="https://docs.grammm.com/admin/tutorials.html#adding-a-grommunio-dbconf-file"
-            target="_blank"
-          >
-            <HelpOutline fontSize="small"/>
-          </IconButton>
-        </>}
+        headline={t("Configuration DB")}
+        href="https://docs.grommunio.com/admin/administration.html#db-configuration"
+        subtitle="Here you can create and edit configuration files to manage services"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

@@ -28,7 +28,6 @@ import debounce from "debounce";
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
-import { HelpOutline } from "@mui/icons-material";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
@@ -182,16 +181,8 @@ class Orgs extends Component {
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={<>
-          {t("Organizations")}
-          <IconButton
-            size="small"
-            href="https://docs.grommunio.com/admin/administration.html#organizations"
-            target="_blank"
-          >
-            <HelpOutline fontSize="small"/>
-          </IconButton>
-        </>}
+        headline={t("Organizations")}
+        href="https://docs.grommunio.com/admin/administration.html#organizations"
         subtitle="Organizations group multiple domains together to a single tenant,
           sharing resources such as a shared global adress book."
         snackbar={snackbar}

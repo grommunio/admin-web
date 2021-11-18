@@ -192,6 +192,7 @@ class DomainList extends Component {
         headline={t("Domains")}
         subtitle="The domains overview shows all configured and accepted mail domains for the installation."
         snackbar={snackbar}
+        href="https://docs.grommunio.com/admin/administration.html#domains"
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>

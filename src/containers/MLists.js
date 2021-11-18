@@ -171,6 +171,8 @@ class MLists extends Component {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Mail lists")}
+        subtitle="Mail lists are mailboxes which forward e-mails to all its members"
+        href="https://docs.grommunio.com/admin/administration.html#mail-lists"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

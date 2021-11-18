@@ -218,6 +218,8 @@ class Users extends Component {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Users")}
+        subtitle="This users overview shows a full list of all configured and accepted users of this domain."
+        href="https://docs.grommunio.com/admin/administration.html#users"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
