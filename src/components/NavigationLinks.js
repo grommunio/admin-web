@@ -135,7 +135,7 @@ const styles = theme => ({
     },
   },
   subheader: {
-    marginLeft: 8,
+    margin: theme.spacing(2, 0, 0, 1),
     fontWeight: 600,
   },
 });
