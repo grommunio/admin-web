@@ -4,11 +4,14 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions, CircularProgress,
+import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
+  CircularProgress, Autocomplete,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOrgData } from '../../actions/orgs';
+import { getAutocompleteOptions } from '../../utils';
+import { fetchDomainData } from '../../actions/domains';
 
 const styles = theme => ({
   form: {
@@ -28,7 +31,16 @@ class AddOrg extends PureComponent {
   state = {
     name: '',
     description: '',
+    autocompleteInput: '',
+    domains: [],
     loading: false,
+  }
+
+  handleEnter = () => {
+    const { fetch, Domains } = this.props;
+    if(Domains.length === 0) {
+      fetch();
+    }
   }
 
   handleInput = field => event => {
@@ -39,16 +51,18 @@ class AddOrg extends PureComponent {
 
   handleAdd = () => {
     const { add, onSuccess, onError } = this.props;
-    const { name, description } = this.state;
+    const { name, description, domains } = this.state;
     this.setState({ loading: true });
     add({
       name,
       description,
+      domains: domains.map(d => d.ID),
     })
       .then(() => {
         this.setState({
           name: '',
           description: '',
+          domains: [],
         });
         onSuccess();
       })
@@ -58,9 +72,16 @@ class AddOrg extends PureComponent {
       });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal,
+      autocompleteInput: '',
+    });
+  }
+
   render() {
-    const { classes, t, open, onClose } = this.props;
-    const { name, description, loading } = this.state;
+    const { classes, t, open, onClose, Domains } = this.props;
+    const { name, description, domains, autocompleteInput, loading } = this.state;
 
     return (
       <Dialog
@@ -93,6 +114,27 @@ class AddOrg extends PureComponent {
               rows={4}
               variant="outlined"
             />
+            <Autocomplete
+              multiple
+              options={Domains || []}
+              filterOptions={getAutocompleteOptions('domainname')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
+              value={domains || []}
+              onChange={this.handleAutocomplete('domains')}
+              getOptionLabel={(user) => user.domainname || ''}
+              autoSelect
+              autoHighlight
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Domains"
+                  placeholder="Search domains..."
+                  className={classes.input}
+                  onChange={this.handleInput('autocompleteInput')}
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -119,15 +161,25 @@ class AddOrg extends PureComponent {
 AddOrg.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  fetch: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  Domains: PropTypes.array.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    Domains: state.domains.Domains,
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
+    fetch: async () =>
+      await dispatch(fetchDomainData({ sort: 'domainname,asc' })),
     add: async org => {
       await dispatch(addOrgData(org))
         .catch(message => Promise.reject(message));
@@ -135,5 +187,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddOrg)));

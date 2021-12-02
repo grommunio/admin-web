@@ -12,13 +12,15 @@ import {
   TextField,
   FormControl,
   Button,
+  Autocomplete,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { getStringAfterLastSlash } from '../utils';
+import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import { fetchDomainData } from '../actions/domains';
 
 const styles = theme => ({
   paper: {
@@ -40,16 +42,16 @@ class OrgDetails extends PureComponent {
   state = {
     org: {},
     unsaved: false,
+    autocompleteInput: '',
   }
 
   async componentDidMount() {
-    const { fetch } = this.props;
+    const { fetch, fetchDomains } = this.props;
+    fetchDomains();
     const org = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
-      org: org ? {
-        ...org,
-      } : {},
+      org: org || {},
     });
   }
 
@@ -63,9 +65,17 @@ class OrgDetails extends PureComponent {
     });
   }
 
+  handleACInput = e => this.setState({
+    autocompleteInput: e.target.value,
+  });
+
   handleEdit = () => {
     const { edit } = this.props;
-    edit(this.state.org)
+    const { org } = this.state;
+    edit({
+      ...org,
+      domains: org.domains.map(d => d.ID),
+    })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
@@ -76,10 +86,21 @@ class OrgDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      org: {
+        ...this.state.org,
+        [field]: newVal,
+      },
+      autocompleteInput: '',
+      unsaved: true,
+    });
+  }
+
   render() {
-    const { classes, t } = this.props;
-    const { org, snackbar } = this.state;
-    const { name, description } = org;
+    const { classes, t, Domains } = this.props;
+    const { org, snackbar, autocompleteInput } = this.state;
+    const { name, description, domains } = org;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -117,6 +138,27 @@ class OrgDetails extends PureComponent {
               rows={4}
               variant="outlined"
             />
+            <Autocomplete
+              multiple
+              options={Domains || []}
+              filterOptions={getAutocompleteOptions('domainname')}
+              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
+                t('Filter more precisely') + '...' : t('No options')}
+              value={domains || []}
+              onChange={this.handleAutocomplete('domains')}
+              getOptionLabel={(user) => user.domainname || ''}
+              autoSelect
+              autoHighlight
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Domains"
+                  placeholder="Search domains..."
+                  className={classes.input}
+                  onChange={this.handleACInput}
+                />
+              )}
+            />
           </FormControl>
           <Button
             color="secondary"
@@ -143,21 +185,28 @@ OrgDetails.contextType = CapabilityContext;
 OrgDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
+  Domains: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    Domains: state.domains.Domains,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    edit: async org => {
-      await dispatch(editOrgData(org)).catch(message => Promise.reject(message));
-    },
+    edit: async org => await dispatch(editOrgData(org)).catch(message => Promise.reject(message)),
     fetch: async id => await dispatch(fetchOrgsDetails(id))
       .then(org => org)
       .catch(message => Promise.reject(message)),
+    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' })),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(OrgDetails)));

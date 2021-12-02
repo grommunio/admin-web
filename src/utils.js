@@ -160,7 +160,7 @@ export const getAutocompleteOptions = filterAttribute => (options, state) => {
   const magnitude = Math.round(Math.log10(options.length) - 2);
 
   return state.inputValue.length < magnitude ? []
-    : options.filter(o => o[filterAttribute].includes(state.inputValue));
+    : options.filter(o => o[filterAttribute]?.includes(state.inputValue));
 };
 
 export async function copyToClipboard(text) {
