@@ -116,6 +116,9 @@ const theme = createTheme({
       fontSize: '1.5em',
       fontWeight: 'bold',
     },
+    caption: {
+      color: mode === 'light' ? '#000' : '#fff',
+    },
   },
   palette: {
     mode: mode,
