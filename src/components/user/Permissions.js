@@ -13,7 +13,6 @@ import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
 import Delete from '@mui/icons-material/Delete';
 import { AddCircleOutline } from '@mui/icons-material';
-import AddPermittedUser from '../Dialogs/AddPermittedUser';
 
 const styles = theme => ({
   form: {
@@ -103,14 +102,6 @@ class Permissions extends PureComponent {
         <Feedback
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: '' })}
-        />
-        <AddPermittedUser
-          open={adding}
-          domainID={domainID}
-          userID={userID}
-          onSuccess={this.handleAddSuccess}
-          onError={this.handleAddError}
-          onClose={this.handleAddDialog(false)}
         />
       </FormControl>
     );

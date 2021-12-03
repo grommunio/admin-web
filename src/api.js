@@ -314,9 +314,9 @@ export function permittedUsers(domainID, userID, params) {
   };
 }
 
-export function addPermittedUser(domainID, userID, permittedUser) {
+export function setPermittedUser(domainID, userID, permittedUsers) {
   return async () => {
-    return await post('/domains/' + domainID + '/users/'+ userID + '/storeAccess', permittedUser);
+    return await put('/domains/' + domainID + '/users/'+ userID + '/storeAccess', permittedUsers);
   };
 }
 

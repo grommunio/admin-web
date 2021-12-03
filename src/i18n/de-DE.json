@@ -250,6 +250,8 @@
   "Not configured": "Nicht konfiguriert",
   "Clear folder data": "Ordnerdaten löschen",
   "Mail filter statistics": "Mail-Filter Statistik",
+  "Full permission users": "Vollberechtigte Benutzer",
+  "Mailbox permissions": "Mailbox Berechtigungen",
 
   "First name": "Vorname",
   "Initials": "Initialien",

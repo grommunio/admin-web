@@ -15,7 +15,7 @@ import {
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
-  userDelegates, editUserDelegates, addPermittedUser, permittedUsers, deletePermittedUser } from '../api';
+  userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -162,10 +162,10 @@ export function addUserData(domainID, user) {
   };
 }
 
-export function addPermittedUserData(domainID, user, permittedUser) {
+export function setPermittedUserData(domainID, user, permittedUsers) {
   return async dispatch => {
     try {
-      await dispatch(addPermittedUser(domainID, user, permittedUser));
+      await dispatch(setPermittedUser(domainID, user, permittedUsers));
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
       console.error('Failed to add user', err);
