@@ -280,5 +280,24 @@
   "Receive quota limit": "Empfangsgrenze",
   "Send quota limit": "Sendegrenze",
 
+  "groups_sub": "Gruppen bieten einen einfachen Weg, um Gruppen von Benutzern zu klassifizieren",
+  "dbconf_sub": "Hier können Sie Konfigurationsdateien für die Serviceverwaltung erstellen und bearbeiten",
+  "domains_sub": "Die Dommainübersicht zeigt alle konfigurierten und akzeptierten E-Mail Domains für diese Installation",
+  "folders_sub": "Ordner bieten geteilten Zugriff auf Informationen in dieser Domain",
+  "globalusers_sub": "Diese Benutzerübersicht zeigt die vollständige Liste alle konfigurierten und akzeptierten Benutzer, unabhängig ihrer zugehörigen Domain",
+  "ldap_sub": "Die Directory Konfiguration verwaltet synchronisation, importierung und authentikation eines LDAP-basierten Directory",
+  "license_sub": "In dieser Ansicht können Sie Ihre Lizenz hochladen und überprüfen, welche Benutzer Benutzer-Slots besetzen",
+  "logs_sub": "Logs bieten Einsicht in Service Operationen",
+  "mailq_sub": "Die Mail Warteschlange bietet eine Übersicht über verarbeitete E-Mails",
+  "mlists_sub": "Mail Listen sind Mailboxen, die E-Mails an alle Ihre Mitglieder weiterleitet",
+  "orgs_sub": "Organisationen gruppieren mehrere Domains zu einem einzigen Pächter zusammen, um Resourcen, wie das globale Addressbuch zu teilen",
+  "roles_sub": "Rollen bieten einen Überblick über alle verfügbaren Rollen, um auf Admin UI und API zuzugreifen",
+  "settings_sub": "Lokale Einstellungen, die nur diesen Browser beeinflussen",
+  "livestatus_sub": "Eine verständliche Übersicht über alle verarbeiteten Anfragen aller Knoten",
+  "sync_sub": "Auflistung aller Mobilgeräte mit momentaner Aktivität",
+  "users_sub": "Diese Benutzerübersicht zeigt die vollständige Liste alle konfigurierten und akzeptierten Benutzer dieser Domain",
+  "mailfilter_sub": "E-Mail Filter Statistiken bieten einen Überblick über das Verarbeitungsvolumen von E-Mails",
+  "performance_sub": "Performance Übersicht liefert Informationen über die Gesundheit des Systems und den aktuellen Status der Services als auch verfügbare Resourcen",
+
   "RemoteWipeExplanation": "Abhängig vom Gerät, wird nicht nur der Account entfernt. Stattdessen können auch alle Ihre Daten inklusive Fotos, Dokumente, installierte Apps usw. gelöscht, und das Gerät zurück auf Werkeinstellungen zurückgesetzt werden. Gehen Sie sorgfältig vor."
 }

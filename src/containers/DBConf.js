@@ -104,7 +104,7 @@ class DBConf extends Component {
       <TableViewContainer
         headline={t("Configuration DB")}
         href="https://docs.grommunio.com/admin/administration.html#db-configuration"
-        subtitle="Here you can create and edit configuration files to manage services"
+        subtitle={t('dbconf_sub')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

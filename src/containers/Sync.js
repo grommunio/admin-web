@@ -180,7 +180,7 @@ class Sync extends PureComponent {
           </IconButton>
         </>
         }
-        subtitle="Listing of all mobile devices with current activity"
+        subtitle={t('sync_sub')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

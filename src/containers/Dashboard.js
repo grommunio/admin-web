@@ -175,7 +175,7 @@ class Dashboard extends Component {
           </IconButton>
         </Typography>
         <Typography variant="caption" className={classes.subtitle}>
-          Mail filter statistics provide an overview of the mail volume processed.
+          {t("mailfilter_sub")}
         </Typography>
         <div className={classes.dashboardLayout}>
           <div className={classes.antispam}>
@@ -196,8 +196,7 @@ class Dashboard extends Component {
               </IconButton>
             </Typography>
             <Typography variant="caption" className={classes.subtitle}>
-              Performance overview delivers insight information of the system&apos;s health,
-              the current service status as well as available resources.
+              {t("performance_sub")}
             </Typography>
           </div>
           <div className={classes.cpu}>

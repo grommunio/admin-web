@@ -22,5 +22,25 @@
   "showingRoles": "Showing {{count}} role(s)",
   "showingUser": "Showing {{count}} user(s)",
 
-  "RemoteWipeExplanation": "Depending on the device, this will not just remove the account. It will also delete all photos, documents, apps, etc. on the device and reset it to factory settings. Proceed with caution."
+  "RemoteWipeExplanation": "Depending on the device, this will not just remove the account. It will also delete all photos, documents, apps, etc. on the device and reset it to factory settings. Proceed with caution.",
+
+  "groups_sub": "Groups provide and easy way to classify groups of users",
+  "dbconf_sub": "Here you can create and edit configuration files to manage services",
+  "domains_sub": "The domains overview shows all configured and accepted mail domains for the installation.",
+  "folders_sub": "Folders provide shared access to information in this domain",
+  "globalusers_sub": "This users overview shows a full list of all configured and accepted users, regardless of its associated domain.",
+  "ldap_sub": "The directory configuration manages synchronization, import and authentication of an LDAP-based directory",
+  "license_sub": "In this view you can upload your license and check which users occupy user slots",
+  "logs_sub": "Logs provide insight into service operation",
+  "mailq_sub": "The mail queue provides an overview over processed e-mails",
+  "mlists_sub": "Mail lists are mailboxes which forward e-mails to all its members",
+  "orgs_sub": "Organizations group multiple domains together to a single tenant, sharing resources such as a shared global adress book.",
+  "roles_sub": "Roles provide an overview over all roles available for access to the Admin UI and API.",
+  "settings_sub": "Local settings which only effect this browser",
+  "livestatus_sub": "A comprehensive overview over all requests being processed of all nodes",
+  "sync_sub": "Listing of all mobile devices with current activity",
+  "users_sub": "This users overview shows a full list of all configured and accepted users of this domain.",
+  "mailfilter_sub": "Mail filter statistics provide an overview over the mail volume processed.",
+  "performance_sub": "Performance overview delivers information of the system's health, the current service status as well as available resources."
+
 }

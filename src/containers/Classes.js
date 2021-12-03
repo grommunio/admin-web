@@ -221,7 +221,7 @@ class Classes extends Component {
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Groups")}
-        subtitle="Groups provide and easy way to classify groups of users"
+        subtitle={t("groups_sub")}
         href="https://docs.grommunio.com/admin/administration.html#groups"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

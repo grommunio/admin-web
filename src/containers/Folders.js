@@ -143,7 +143,7 @@ class Folders extends Component {
     return (
       <TableViewContainer
         headline={t("Folders")}
-        subtitle="Folders provide shared access to information in this domain"
+        subtitle={t('folders_sub')}
         href="https://docs.grommunio.com/admin/administration.html#folders"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

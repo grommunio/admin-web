@@ -183,8 +183,7 @@ class Orgs extends Component {
         handleScroll={this.handleScroll}
         headline={t("Organizations")}
         href="https://docs.grommunio.com/admin/administration.html#organizations"
-        subtitle="Organizations group multiple domains together to a single tenant,
-          sharing resources such as a shared global adress book."
+        subtitle={t("orgs_sub")}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

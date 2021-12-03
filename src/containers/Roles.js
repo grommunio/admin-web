@@ -169,7 +169,7 @@ class Roles extends PureComponent {
           </IconButton>
         </span>
         }
-        subtitle="Roles provide an overview of all roles available for access to the Admin UI and API."
+        subtitle={t('roles_sub')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >

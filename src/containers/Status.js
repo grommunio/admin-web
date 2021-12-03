@@ -110,7 +110,7 @@ class Status extends PureComponent {
     return (
       <TableViewContainer
         headline={t("Live Status")  + (data.hostName ? ' - ' + data.hostName : '')}
-        subtitle="A comprehensive overview of all requests being processed of all nodes"
+        subtitle={t('livestatus_sub')}
         href="https://docs.grommunio.com/admin/administration.html#live-status"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

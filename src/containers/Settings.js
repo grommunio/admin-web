@@ -89,7 +89,7 @@ class Settings extends Component {
     return (
       <TableViewContainer
         headline={t("Settings")}
-        subtitle="Local settings which only effect this browser"
+        subtitle={t('settings_sub')}
         href="https://docs.grommunio.com/admin/administration.html#settings"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

@@ -100,7 +100,7 @@ class License extends PureComponent {
     return (
       <TableViewContainer
         headline={t("License")}
-        subtitle="In this view you can upload your license and check which users occupy user slots"
+        subtitle={t('license_sub')}
         href="https://docs.grommunio.com/admin/administration.html#license"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

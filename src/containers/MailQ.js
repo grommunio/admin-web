@@ -74,7 +74,7 @@ class MailQ extends PureComponent {
     return (
       <TableViewContainer
         headline={t("Mail queue")}
-        subtitle="The mail queue provides an overview over e-mails actively being processed"
+        subtitle={t("mailq_sub")}
         href="https://docs.grommunio.com/admin/administration.html#id2"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}

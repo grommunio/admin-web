@@ -351,8 +351,7 @@ class LdapConfig extends PureComponent {
             </Tooltip>
           </Typography>
           <Typography variant="caption" className={classes.subtitle}>
-            The directory configuration manages synchronization,
-            import and authentication from an LDAP-based directory made available
+            {t('ldap_sub')}
           </Typography>
           <Grid container className={classes.category}>
             <FormControlLabel
