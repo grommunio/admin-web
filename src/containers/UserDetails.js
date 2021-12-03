@@ -220,6 +220,14 @@ class UserDetails extends PureComponent {
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
+    const storePayload = {
+      messagesizeextended: undefined,
+      storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
+      prohibitreceivequota: user.properties.prohibitreceivequota * 2
+        ** (10 * sizeUnits.prohibitreceivequota) || undefined,
+      prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
+    };
+
     Promise.all([
       edit(domain.ID, {
         ...user,
@@ -241,14 +249,9 @@ class UserDetails extends PureComponent {
         roles: undefined,
         ldapID: undefined,
       }),
-      editStore(domain.ID, user.ID, {
-        ...user.properties,
-        messagesizeextended: undefined,
-        storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: user.properties.prohibitreceivequota * 2
-          ** (10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
-      }),
+      Object.keys(storePayload).filter(k => storePayload[k] !== undefined).length > 0 ?
+        editStore(domain.ID, user.ID, storePayload)
+        : () => null,
     ]).then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
