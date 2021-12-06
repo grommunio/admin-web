@@ -122,7 +122,7 @@ class CPULineChart extends Component {
             <Line
               strokeWidth={4}
               type="monotone"
-              dataKey="interupt"
+              dataKey="interrupt"
               stroke={"url(#gradientOrange)"}
               isAnimationActive={false}
             />
