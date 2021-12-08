@@ -63,8 +63,8 @@ class MListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState( mList ? {
       ...mList,
-      class: mList.class.ID,
-      autocompleteInput: mList.class.classname,
+      class: mList.class?.ID || '',
+      autocompleteInput: mList.class?.classname || '',
     } : {});
   }
 
