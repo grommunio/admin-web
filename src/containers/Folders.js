@@ -258,9 +258,9 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, params) => {
       await dispatch(fetchFolderData(domainID, params)).catch(msg => Promise.reject(msg));
     },
-    delete: async (domainID, id, params) => {
-      await dispatch(deleteFolderData(domainID, id, params)).catch(msg => Promise.reject(msg));
-    },
+    delete: async (domainID, id, params) =>
+      await dispatch(deleteFolderData(domainID, id, params))
+        .catch(msg => Promise.reject(msg)),
   };
 };
 

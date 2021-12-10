@@ -388,6 +388,17 @@ class NavigationLinks extends PureComponent {
             </ListItem>
             <ListItem
               button
+              onClick={this.handleNavigation('taskq')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/taskq')}
+            >
+              <Grid container alignItems="center">
+                <QueryBuilder className={classes.icon}/>
+                <ListItemText primary={t('Task queue')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
               onClick={this.handleNavigation('sync')}
               className={classes.li}
               selected={location.pathname.startsWith('/sync')}

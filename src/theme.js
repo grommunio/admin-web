@@ -6,6 +6,7 @@ import { createTheme } from '@mui/material/styles';
 
 import grey from './colors/grey';
 import blue from './colors/blue';
+import red from './colors/red';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -33,6 +34,18 @@ const theme = createTheme({
           backgroundColor: mode === 'light' ? '#fff' : blue[600],
           color: mode === 'light' ? '#333' : '#fff',
           boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        colorSecondary: {
+          backgroundColor: red['500'],
+          color: '#000',
+        },
+        colorPrimary: {
+          backgroundColor: blue['300'],
+          color: '#000',
         },
       },
     },
