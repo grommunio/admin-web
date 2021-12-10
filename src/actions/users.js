@@ -15,7 +15,8 @@ import {
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
-  userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser, usersPlain } from '../api';
+  userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser, usersPlain,
+  userCount } from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -33,13 +34,26 @@ export function fetchUsersData(domainID, params) {
   };
 }
 
-export function fetchPlainUsersData(domainID) {
+export function fetchPlainUsersData(domainID, params) {
   return async dispatch => {
     await dispatch({type: USERS_DATA_FETCH});
     try {
-      const data = await dispatch(usersPlain(domainID));
+      const data = await dispatch(usersPlain(domainID, params));
       await dispatch({ type: USERS_DATA_RECEIVED, data });
       return data;
+    } catch(err) {
+      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
+      console.error('Failed to fetch users');
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchUserCount(domainID) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(userCount(domainID));
+      return data.count;
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');

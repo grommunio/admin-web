@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { fetchPlainUsersData } from '../actions/users';
+import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
 
 const styles = theme => ({
   paper: {
@@ -51,10 +51,17 @@ class License extends PureComponent {
     domainsExpanded: false,
     expandedDomainIdxs: [],
     domainUsers: {},
+    counts: {},
   }
 
   componentDidMount() {
     this.props.fetchDomains()
+      .then(async () => {
+        const { Domains, fetchCount } = this.props;
+        const counts = {};
+        Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
+        this.setState({ counts });
+      })
       .catch(snackbar => this.setState({ snackbar }));
   }
 
@@ -91,11 +98,15 @@ class License extends PureComponent {
     });
   }
 
+  handleNavigation = domainID => () => {
+    this.props.history.push(`/${domainID}/users`);
+  }
+
   toggleDomainExpansion = () => this.setState({ domainsExpanded: !this.state.domainsExpanded });
 
   render() {
     const { classes, t, license, Domains } = this.props;
-    const { snackbar, expandedDomainIdxs, domainUsers, domainsExpanded } = this.state;
+    const { snackbar, expandedDomainIdxs, domainUsers, domainsExpanded, counts } = this.state;
 
     return (
       <TableViewContainer
@@ -154,7 +165,7 @@ class License extends PureComponent {
                 {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
                   <ListItemButton onClick={this.handleExpansion(ID, idx)}>
                     <ListItemText
-                      primary={domainname}
+                      primary={`${domainname} (${counts[domainname] || '<count not available>'})`}
                     />
                     {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
                   </ListItemButton>
@@ -167,6 +178,9 @@ class License extends PureComponent {
                       ) : <div className={classes.progressContainer}>
                         <CircularProgress/>
                       </div>}
+                      <ListItemButton onClick={this.handleNavigation(ID)} sx={{ pl: 4 }}>
+                        <ListItemText primary={t('View all') + "..."}/>
+                      </ListItemButton>
                     </List>
                   </Collapse>
                 </React.Fragment>)}
@@ -199,6 +213,7 @@ License.propTypes = {
   upload: PropTypes.func.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
+  fetchCount: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
 };
 
@@ -216,8 +231,10 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchDomainData({ sort: 'domainname,asc', level: 0, limit: 10000 }))
         .catch(error => Promise.reject(error));
     },
+    fetchCount: async domainID => await dispatch(fetchUserCount(domainID))
+      .catch(error => Promise.reject(error)),
     fetchUsers: async (domainID) => 
-      await dispatch(fetchPlainUsersData(domainID))
+      await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
       .catch(err => Promise.reject(err)),

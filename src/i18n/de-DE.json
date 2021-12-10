@@ -279,6 +279,7 @@
   "Storage quota limit": "Kontingentgrenze",
   "Receive quota limit": "Empfangsgrenze",
   "Send quota limit": "Sendegrenze",
+  "View all": "Zeige alle",
 
   "groups_sub": "Gruppen bieten einen einfachen Weg, um Gruppen von Benutzern zu klassifizieren",
   "dbconf_sub": "Hier können Sie Konfigurationsdateien für die Serviceverwaltung erstellen und bearbeiten",
