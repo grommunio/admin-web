@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { fetchUsersData } from '../actions/users';
+import { fetchPlainUsersData } from '../actions/users';
 
 const styles = theme => ({
   paper: {
@@ -217,7 +217,7 @@ const mapDispatchToProps = dispatch => {
         .catch(error => Promise.reject(error));
     },
     fetchUsers: async (domainID) => 
-      await dispatch(fetchUsersData(domainID, { sort: 'username,asc', level: 0, status: 0, limit: 10000 }))
+      await dispatch(fetchPlainUsersData(domainID))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
       .catch(err => Promise.reject(err)),

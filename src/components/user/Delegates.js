@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Autocomplete } from '@mui/lab';
-import { fetchPermittedUsers, fetchUserDelegates, fetchUsersData, setUserDelegates,
+import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
   setPermittedUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
@@ -201,7 +201,7 @@ const mapDispatchToProps = dispatch => {
       .catch(err => console.error(err)),
     fetchPermittedUsers: async (domainID, userID) => await dispatch(fetchPermittedUsers(domainID, userID, {}))
       .catch(err => console.error(err)),
-    fetchUsers: async domainID => await dispatch(fetchUsersData(domainID, { limit: 1000000, level: 0 }))
+    fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))

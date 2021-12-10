@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
-import { fetchUsersData } from '../../actions/users';
+import { fetchPlainUsersData } from '../../actions/users';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 
@@ -155,7 +155,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg));
     },
     fetchUsers: async domainID => {
-      await dispatch(fetchUsersData(domainID, { sort: 'username,asc', limit: 1000000, level: 0 }))
+      await dispatch(fetchPlainUsersData(domainID))
         .catch(msg => Promise.reject(msg));
     },
   };

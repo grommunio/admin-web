@@ -223,6 +223,17 @@ export function users(domainID, params) {
   };
 }
 
+export function usersPlain(domainID) {
+  return async () => {
+    return await get(buildQuery(
+      '/domains/' + domainID + '/users', {
+        level: 0,
+        limit: 1000000,
+        sort: 'username,asc',
+      }));
+  };
+}
+
 export function user(domainID, userID) {
   return async () => {
     return await get('/domains/' + domainID + '/users/'+ userID);
