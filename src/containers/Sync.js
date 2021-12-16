@@ -283,13 +283,13 @@ class Sync extends PureComponent {
                 return matches ? (
                   <Tooltip key={idx} placement="top" title={obj.devtype + ' / ' + obj.devagent}>
                     <TableRow hover className={this.getRowClass(obj, obj.diff)}>
-                      <TableCell className={classes.cell} padding="checkbox">{obj.pid}</TableCell>
-                      <TableCell className={classes.cell} padding="checkbox">{obj.ip}</TableCell>
-                      <TableCell className={classes.cell}>{obj.user}</TableCell>
+                      <TableCell className={classes.cell} padding="checkbox">{obj.pid || ''}</TableCell>
+                      <TableCell className={classes.cell} padding="checkbox">{obj.ip || ''}</TableCell>
+                      <TableCell className={classes.cell}>{obj.user || ''}</TableCell>
                       <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
                       <TableCell className={classes.cell}>{timePast}</TableCell>
-                      <TableCell className={classes.cell}>{obj.devid}</TableCell>
-                      <TableCell className={classes.cell}>{obj.addinfo}</TableCell>
+                      <TableCell className={classes.cell}>{obj.devid || ''}</TableCell>
+                      <TableCell className={classes.cell}>{obj.addinfo || ''}</TableCell>
                       <TableCell className={classes.cell} padding="checkbox">
                         {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}
                       </TableCell>
