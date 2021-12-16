@@ -30,7 +30,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { QueryBuilder, TableChart } from '@mui/icons-material';
+import { QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
@@ -393,7 +393,7 @@ class NavigationLinks extends PureComponent {
               selected={location.pathname.startsWith('/taskq')}
             >
               <Grid container alignItems="center">
-                <QueryBuilder className={classes.icon}/>
+                <TaskAlt className={classes.icon}/>
                 <ListItemText primary={t('Task queue')} />
               </Grid>
             </ListItem>

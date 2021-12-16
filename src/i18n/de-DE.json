@@ -254,6 +254,16 @@
   "Full permission users": "Vollberechtigte Benutzer",
   "Mailbox permissions": "Mailbox Berechtigungen",
   "Updated": "Aktualisiert",
+  "Running": "Läuft",
+  "Not running": "Läuft nicht",
+  "Start server": "Starte Server",
+  "Search tasks": "Suche Tasks",
+  "Queued": "In Warteschlange",
+  "Loaded": "Geladen",
+  "Completed": "Abgeschlossen",
+  "Error": "Fehler",
+  "Cancelled": "Abgebrochen",
+
 
   "First name": "Vorname",
   "Initials": "Initialien",

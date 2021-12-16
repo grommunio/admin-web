@@ -59,7 +59,7 @@ class TasQ extends Component {
   state = {
     snackbar: '',
     orderBy: 'created',
-    order: "asc",
+    order: "desc",
     match: "",
     offset: 50,
   };
@@ -71,31 +71,8 @@ class TasQ extends Component {
     { label: "Updated", value: "updated" },
   ];
 
-  handleScroll = () => {
-    const { taskq } = this.props;
-    if (taskq.Tasks.length >= taskq.count) return;
-    if (
-      Math.floor(
-        document.getElementById("scrollDiv").scrollHeight -
-          document.getElementById("scrollDiv").scrollTop
-      ) <=
-      document.getElementById("scrollDiv").offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if (!taskq.loading)
-        this.fetchtaskq({
-          sort: orderBy + "," + order,
-          offset,
-          match: match || undefined,
-        });
-      this.setState({
-        offset: offset + 50,
-      });
-    }
-  };
-
   componentDidMount() {
-    this.fetchtaskq();
+    this.fetchtaskq({ sort: 'created,desc' });
   }
 
   fetchtaskq(params) {
@@ -152,6 +129,18 @@ class TasQ extends Component {
     this.props.stop().catch((msg) => this.setState({ snackbar: msg }));
   }
 
+  getTaskState(state) {
+    switch(state) {
+      case 0: return "Queued";
+      case 1: return "Loaded";
+      case 2: return "Running";
+      case 3: return "Completed";
+      case 4: return "Error";
+      case 5: return "Cancelled";
+      default: return "Unknown";
+    }
+  }
+
   render() {
     const { classes, t, taskq } = this.props;
     const {
@@ -164,7 +153,6 @@ class TasQ extends Component {
 
     return (
       <TableViewContainer
-        handleScroll={this.handleScroll}
         headline={t("Task queue")}
         href="https://docs.grommunio.com/admin/administration.html#taskq"
         // subtitle={t("taskq_sub")}
@@ -174,7 +162,7 @@ class TasQ extends Component {
         <Grid container alignItems="flex-end" className={classes.chipGrid}>
           <Chip
             className={classes.chip}
-            label={taskq.running ? "Running" : "Not running"}
+            label={t(taskq.running ? "Running" : "Not running")}
             color={taskq.running ? "success" : "secondary"}
           />
           <Chip
@@ -239,9 +227,9 @@ class TasQ extends Component {
               {taskq.Tasks.map((obj, idx) => 
                 <TableRow key={idx}>
                   <TableCell>{obj.command}</TableCell>
-                  <TableCell>{obj.state}</TableCell>
-                  <TableCell>{setDateTimeString(obj.created)}</TableCell>
-                  <TableCell>{setDateTimeString(obj.updated)}</TableCell>
+                  <TableCell>{t(this.getTaskState(obj.state))}</TableCell>
+                  <TableCell>{obj.created ? setDateTimeString(obj.created) : ''}</TableCell>
+                  <TableCell>{obj.updated ? setDateTimeString(obj.updated) : ''}</TableCell>
                 </TableRow>
               )}
             </TableBody>
