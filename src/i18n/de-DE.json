@@ -296,7 +296,7 @@
 
   "groups_sub": "Gruppen bieten einen einfachen Weg, um Gruppen von Benutzern zu klassifizieren",
   "dbconf_sub": "Hier können Sie Konfigurationsdateien für die Serviceverwaltung erstellen und bearbeiten",
-  "domains_sub": "Die Dommainübersicht zeigt alle konfigurierten und akzeptierten E-Mail Domains für diese Installation",
+  "domains_sub": "Die Domainübersicht zeigt alle konfigurierten und akzeptierten E-Mail Domains für diese Installation",
   "folders_sub": "Ordner bieten geteilten Zugriff auf Informationen in dieser Domain",
   "globalusers_sub": "Diese Benutzerübersicht zeigt die vollständige Liste alle konfigurierten und akzeptierten Benutzer, unabhängig ihrer zugehörigen Domain",
   "ldap_sub": "Die Directory Konfiguration verwaltet synchronisation, importierung und authentikation eines LDAP-basierten Directory",
