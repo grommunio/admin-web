@@ -74,8 +74,9 @@ export function editFolderData(domainID, folder) {
 export function deleteFolderData(domainID, id, params) {
   return async dispatch => {
     try {
-      await dispatch(deleteFolder(domainID, id, params));
-      await dispatch({ type: FOLDER_DATA_DELETE, id });
+      const resp = await dispatch(deleteFolder(domainID, id, params));
+      if(resp?.taskID) return resp;
+      else await dispatch({ type: FOLDER_DATA_DELETE, id });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

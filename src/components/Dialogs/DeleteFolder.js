@@ -17,6 +17,7 @@ class DeleteFolder extends PureComponent {
   state = {
     loading: false,
     clear: false,
+    taskMessage: '',
   }
 
   handleDelete = () => {
@@ -24,9 +25,16 @@ class DeleteFolder extends PureComponent {
     const { clear } = this.state;
     this.setState({ loading: true });
     this.props.delete(domainID, id, { clear })
-      .then(() => {
-        if(onSuccess) onSuccess();
-        this.setState({ loading: false, clear: false });
+      .then(response => {
+        if(response?.taskID) {
+          this.setState({
+            taskMessage: response.message || 'Task created',
+            loading: false,
+          });
+        } else {
+          onSuccess();
+          this.setState({ loading: false, clear: false });
+        }
       })
       .catch(error => {
         if(onError) onError(error);
@@ -36,9 +44,21 @@ class DeleteFolder extends PureComponent {
 
   handleCheckbox = e => this.setState({ clear: e.target.checked })
 
+  getStateFromId(id) {
+    switch(id) {
+      case 0: return 'Queued';
+      case 1: return 'Loaded';
+      case 2: return 'Running';
+      case 3: return 'Completed';
+      case 4: return 'Error';
+      case 5: return 'Cancelled';
+      default: return 'Unknown';
+    }
+  }
+
   render() {
     const { t, open, item, onClose } = this.props;
-    const { loading, clear } = this.state;
+    const { loading, clear, taskMessage } = this.state;
 
     return (
       <Dialog
@@ -47,27 +67,27 @@ class DeleteFolder extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
+        <DialogTitle>{taskMessage ? taskMessage : `Are you sure you want to delete ${item}?`}</DialogTitle>
         <DialogContent>
-          <FormControlLabel
+          {!taskMessage && <FormControlLabel
             control={<Checkbox onChange={this.handleCheckbox} value={clear} />}
             label={t('Clear folder data')}
-          />
+          />}
         </DialogContent>
         <DialogActions>
           <Button
             onClick={onClose}
             color="secondary"
           >
-            {t('Cancel')}
+            {t(taskMessage ? 'Close' : 'Cancel')}
           </Button>
-          <Button
+          {!taskMessage && <Button
             onClick={this.handleDelete}
             variant="contained"
             color="secondary"
           >
             {loading ? <CircularProgress size={24}/> : t('Confirm')}
-          </Button>
+          </Button>}
         </DialogActions>
       </Dialog>
     );

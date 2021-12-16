@@ -41,6 +41,7 @@ const AsyncMlistDetails = makeLoadableComponent(() => import("./containers/MList
 //const AsyncMailAddressDetails = makeLoadableComponent(() => import("./containers/MailAddressDetails"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
+const AsyncTaskQ = makeLoadableComponent(() => import("./containers/TaskQ"));
 
 const Routes = ({ childProps, domains, capabilities }) => (
   <Switch>
@@ -164,6 +165,12 @@ const Routes = ({ childProps, domains, capabilities }) => (
         domain={domain}
       />
     )}
+    <AuthenticatedRoute
+      path="/taskq"
+      exact
+      component={AsyncTaskQ}
+      props={childProps}
+    />
     <AuthenticatedRoute
       path={`/settings`}
       exact

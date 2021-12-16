@@ -160,13 +160,13 @@ class Sync extends PureComponent {
           <TableBody>
             {(sortedDevices || sync).map((obj, idx) =>
               <TableRow key={idx}>
-                <TableCell>{obj.deviceid}</TableCell>
-                <TableCell>{obj.deviceuser}</TableCell>
-                <TableCell>{obj.devicetype + ' / ' + obj.useragent}</TableCell>
-                <TableCell>{parseUnixtime(obj.firstsynctime)}</TableCell>
-                <TableCell>{parseUnixtime(obj.lastupdatetime)}</TableCell>
-                <TableCell>{obj.asversion}</TableCell>
-                <TableCell>{obj.foldersSynced + '/' + obj.foldersSyncable}</TableCell>
+                <TableCell>{obj.deviceid || ''}</TableCell>
+                <TableCell>{obj.deviceuser || ''}</TableCell>
+                <TableCell>{(obj.devicetype || '') + ' / ' + (obj.useragent || '')}</TableCell>
+                <TableCell>{obj.firstsynctime ? parseUnixtime(obj.firstsynctime) : ''}</TableCell>
+                <TableCell>{obj.lastupdatetime ? parseUnixtime(obj.lastupdatetime) : ''}</TableCell>
+                <TableCell>{obj.asversion || ''}</TableCell>
+                <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
                 <TableCell>{this.getWipeStatus(obj.wipeStatus)}</TableCell>
                 <TableCell style={{ display: 'flex' }}>
                   {obj.wipeStatus >= 2 && <Tooltip title="Cancel remote wipe" placement="top">

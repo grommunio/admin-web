@@ -838,6 +838,34 @@ export function mailq() {
 }
 
 /*
+  TASK-QUEUE
+*/
+
+export function taskq(params) {
+  return async () => {
+    return await get(buildQuery('/tasq/tasks', params));
+  };
+}
+
+export function startTaskq(params) {
+  return async () => {
+    return await post(buildQuery('/tasq/start', params));
+  };
+}
+
+export function stopTaskq(params) {
+  return async () => {
+    return await post(buildQuery('/tasq/stop', params));
+  };
+}
+
+export function taskqStatus(params) {
+  return async () => {
+    return await get(buildQuery('/tasq/status', params));
+  };
+}
+
+/*
   BASE SUTUP
 */
 

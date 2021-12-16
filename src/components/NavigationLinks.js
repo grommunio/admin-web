@@ -30,7 +30,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { QueryBuilder, TableChart } from '@mui/icons-material';
+import { QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
@@ -282,6 +282,17 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment> : null;
             })}
+          {(tab === 0 && !isSysAdmin) && <ListItem
+            button
+            onClick={this.handleNavigation('taskq')}
+            className={classes.li}
+            selected={location.pathname.startsWith('/taskq')}
+          >
+            <Grid container alignItems="center">
+              <TaskAlt className={classes.icon}/>
+              <ListItemText primary={t('Task queue')} />
+            </Grid>
+          </ListItem>}
           {tab === 0 && isSysAdmin && <React.Fragment>
             <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
             <ListItem
@@ -384,6 +395,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <QueryBuilder className={classes.icon}/>
                 <ListItemText primary={t('Mail queue')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('taskq')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/taskq')}
+            >
+              <Grid container alignItems="center">
+                <TaskAlt className={classes.icon}/>
+                <ListItemText primary={t('Task queue')} />
               </Grid>
             </ListItem>
             <ListItem

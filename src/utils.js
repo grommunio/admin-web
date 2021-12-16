@@ -72,6 +72,8 @@ export function getTimeDiff(time) {
 }
 
 export function getTimePast(diff) {
+  if(diff === null || diff === undefined) return "Unknown";
+  
   const duration = moment.duration(diff * 1000);
   const minutes = duration.minutes();
   const seconds = duration.seconds();
