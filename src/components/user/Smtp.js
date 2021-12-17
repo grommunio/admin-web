@@ -3,6 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
+  MenuItem,
   TextField, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -23,12 +24,20 @@ const styles = theme => ({
   listTextfield: {
     flex: 1,
   },
+  select: {
+    width: 180,
+    marginRight: 8,
+  },
+  bottom: {
+    margin: theme.spacing(2, 0, 4, 0),
+  },
 });
 
 class Smtp extends PureComponent {
 
   render() {
-    const { classes, t, aliases, handleAliasEdit, handleRemoveAlias, handleAddAlias } = this.props;
+    const { classes, t, aliases, forward, forwardError, handleForwardInput, handleAliasEdit, handleRemoveAlias,
+      handleAddAlias } = this.props;
     return (
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
@@ -49,6 +58,26 @@ class Smtp extends PureComponent {
         <Grid container justifyContent="center">
           <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
         </Grid>
+        <Typography variant="h6" className={classes.headline}>{t('E-Mail forward')}</Typography>
+        <Grid container className={classes.bottom} >
+          <TextField
+            className={classes.select}
+            value={forward.forwardType === undefined ? '' : forward.forwardType}
+            label={t('Forward type')}
+            onChange={handleForwardInput('forwardType')}
+            select
+          >
+            <MenuItem value={0}>{t('CC')}</MenuItem>
+            <MenuItem value={1}>{t('Redirect')}</MenuItem>
+          </TextField>
+          <TextField
+            error={forwardError}
+            className={classes.listTextfield}
+            value={forward.destination || ''}
+            label={t('Destination')}
+            onChange={handleForwardInput('destination')}
+          />
+        </Grid>
       </FormControl>
     );
   }
@@ -58,9 +87,12 @@ Smtp.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   aliases: PropTypes.array.isRequired,
+  forward: PropTypes.object.isRequired,
   handleAliasEdit: PropTypes.func.isRequired,
   handleAddAlias: PropTypes.func.isRequired,
   handleRemoveAlias: PropTypes.func.isRequired,
+  handleForwardInput: PropTypes.func.isRequired,
+  forwardError: PropTypes.bool,
 };
 
 export default withTranslation()(withStyles(styles)(Smtp));

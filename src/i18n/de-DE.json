@@ -263,7 +263,11 @@
   "Completed": "Abgeschlossen",
   "Error": "Fehler",
   "Cancelled": "Abgebrochen",
-
+  "Forward type": "Weiterleitungs Art",
+  "Destination": "Ziel",
+  "CC": "CC",
+  "Redirect": "Umleitung",
+  "E-Mail forward": "E-Mail Weiterleitung",
 
   "First name": "Vorname",
   "Initials": "Initialien",

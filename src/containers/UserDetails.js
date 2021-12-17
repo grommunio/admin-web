@@ -39,6 +39,8 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
+import { debounce } from 'debounce';
+import { checkFormat } from '../api';
 
 const styles = theme => ({
   paper: {
@@ -73,6 +75,7 @@ class UserDetails extends PureComponent {
     editing: null,
     user: {
       fetchmail: [],
+      forward: {},
       roles: [],
       properties: {},
       aliases: [],
@@ -93,6 +96,7 @@ class UserDetails extends PureComponent {
     detaching: false,
     detachLoading: false,
     domainDetails: {},
+    forwardError: false,
   };
 
   async componentDidMount() {
@@ -166,6 +170,34 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleForwardInput = field => e => {
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        forward: {
+          ...user.forward,
+          [field]: e.target.value,
+        },
+      },
+      unsaved: true,
+    });
+    if(field === 'destination') {
+      const mail = e.target.value;
+      this.debounceFetch(mail ? { email: encodeURIComponent(mail) } : null);
+    }
+  }
+
+  debounceFetch = debounce(async params => {
+    if(!params) {
+      this.setState({ forwardError: false });
+    } else {
+      const resp = await checkFormat(params)
+        .catch(snackbar => this.setState({ snackbar, loading: false }));
+      this.setState({ forwardError: !!resp?.email });
+    }
+  }, 200)
+
   handleStatusInput = async event => {
     const { user } = this.state;
     const { value } = event.target;
@@ -219,32 +251,34 @@ class UserDetails extends PureComponent {
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
+    const { aliases, fetchmail, forward, properties } = user;
     const storePayload = {
       messagesizeextended: undefined,
-      storagequotalimit: user.properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
-      prohibitreceivequota: user.properties.prohibitreceivequota * 2
+      storagequotalimit: properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
+      prohibitreceivequota: properties.prohibitreceivequota * 2
         ** (10 * sizeUnits.prohibitreceivequota) || undefined,
-      prohibitsendquota: user.properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
+      prohibitsendquota: properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
     };
 
     Promise.all([
       edit(domain.ID, {
         ...user,
         domainID: undefined,
-        aliases: user.aliases.filter(alias => alias !== ''),
-        fetchmail: user.fetchmail.map(e => { return {
+        aliases: aliases.filter(alias => alias !== ''),
+        fetchmail: fetchmail.map(e => { return {
           ...e,
           date: undefined,
           sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
         };}),
         properties: {
-          ...user.properties,
+          ...properties,
           messagesizeextended: undefined,
           storagequotalimit: undefined,
           prohibitreceivequota: undefined,
           prohibitsendquota: undefined,
         },
         syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
+        forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
         roles: undefined,
         ldapID: undefined,
       }),
@@ -481,8 +515,8 @@ class UserDetails extends PureComponent {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
-      detaching, adding, editing, dump, rawData, syncPolicy, domainDetails } = this.state;
-    const { ID, username, properties, roles, aliases, fetchmail, ldapID } = user; //eslint-disable-line
+      detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
+    const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
     return (
       <ViewWrapper
         topbarTitle={t('Users')}
@@ -582,6 +616,9 @@ class UserDetails extends PureComponent {
           />}
           {tab === 4 && <Smtp
             aliases={aliases}
+            forward={forward || {}}
+            forwardError={forwardError}
+            handleForwardInput={this.handleForwardInput}
             handleAliasEdit={this.handleAliasEdit}
             handleAddAlias={this.handleAddAlias}
             handleRemoveAlias={this.handleRemoveAlias}
@@ -620,7 +657,7 @@ class UserDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
-              disabled={!writable}
+              disabled={!writable || forwardError}
             >
               {t('Save')}
             </Button>
