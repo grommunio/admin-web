@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
 import React, { Component } from "react";
-import "./App.css";
 import { withStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import Loadable from "react-loadable";
@@ -71,7 +70,7 @@ const MainView = Loadable({
   loader: () => import("./components/LoadableMainView"),
   loading: Loader,
   timeout: 20000,
-  delay: 300,
+  delay: 100,
 });
 
 class App extends Component {
