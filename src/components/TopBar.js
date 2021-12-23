@@ -184,6 +184,7 @@ class TopBar extends PureComponent {
               src={settings.language === 'en-US' ? german : english}
               alt=""
               width={35}
+              height={44}
               className={classes.flag}
               onClick={this.handleLangChange}
             />

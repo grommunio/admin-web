@@ -132,7 +132,7 @@ class Login extends Component {
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
           <div className={classes.logoContainer}>
-            <img src={logo} width="300" alt="grommunio"/>
+            <img src={logo} width="300" height={68} alt="grommunio"/>
           </div>
           <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>

@@ -174,6 +174,7 @@ class NavigationLinks extends PureComponent {
           <img
             src={logo}
             width="140"
+            height="32"
             alt="grommunio"
             onClick={this.handleNavigation('')}
             className={classes.logo}

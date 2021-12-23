@@ -32,7 +32,7 @@ class Feedback extends PureComponent {
             variant="filled"
           >
             {(snackbar || '') === "The server encountered an error while processing the request." && config.devMode ?
-              <img src={PANIK} alt="PANIK" height="80"/>:
+              <img src={PANIK} alt="PANIK" height="80" width="78"/>:
               (snackbar || '')}
             
           </Alert>

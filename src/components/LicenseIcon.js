@@ -24,6 +24,7 @@ function LicenseIcon({ classes, activated, handleNavigation }) {
         className={classes.licenseIcon}
         src={activated ? activatedLicense : notActivatedLicense}
         width={32}
+        height={25}
         onClick={handleNavigation('license')}
       />
     </div>
