@@ -82,7 +82,7 @@ class AddOrg extends PureComponent {
   render() {
     const { classes, t, open, onClose, Domains } = this.props;
     const { name, description, domains, autocompleteInput, loading } = this.state;
-    const nameAcceptable = name.match("^[a-zA-Z0-9]+$");
+    const nameAcceptable = name.length < 33;
 
     return (
       <Dialog

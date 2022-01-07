@@ -102,7 +102,7 @@ class OrgDetails extends PureComponent {
     const { org, snackbar, autocompleteInput } = this.state;
     const { name, description, domains } = org;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const nameAcceptable = name && name.match("^[a-zA-Z0-9]+$");
+    const nameAcceptable = name && name.length < 33;
 
     return (
       <ViewWrapper
