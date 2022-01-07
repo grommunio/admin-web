@@ -502,11 +502,13 @@ class UserDetails extends PureComponent {
 
   handleChatUser = e => {
     const { checked } = e.target;
+    const { user } = this.state;
     this.setState({
       user: {
-        ...this.state.user,
+        ...user,
         chat: checked,
         chatAdmin: false,
+        privChat: checked ? user.privChat : false,
       },
     });
   }
