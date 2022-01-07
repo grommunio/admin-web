@@ -82,6 +82,7 @@ class AddOrg extends PureComponent {
   render() {
     const { classes, t, open, onClose, Domains } = this.props;
     const { name, description, domains, autocompleteInput, loading } = this.state;
+    const nameAcceptable = name.match("^[a-zA-Z0-9]+$");
 
     return (
       <Dialog
@@ -103,6 +104,7 @@ class AddOrg extends PureComponent {
               onChange={this.handleInput('name')}
               autoFocus
               required
+              error={name && !nameAcceptable}
             />
             <TextField 
               className={classes.input} 
@@ -148,7 +150,7 @@ class AddOrg extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={loading || !name}
+            disabled={loading || !nameAcceptable}
           >
             {loading ? <CircularProgress size={24}/> : t('Add')}
           </Button>

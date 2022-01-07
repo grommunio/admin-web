@@ -102,6 +102,7 @@ class OrgDetails extends PureComponent {
     const { org, snackbar, autocompleteInput } = this.state;
     const { name, description, domains } = org;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+    const nameAcceptable = name && name.match("^[a-zA-Z0-9]+$");
 
     return (
       <ViewWrapper
@@ -127,6 +128,7 @@ class OrgDetails extends PureComponent {
               value={name || ''}
               autoFocus
               required
+              error={!nameAcceptable}
             />
             <TextField 
               className={classes.input} 
@@ -171,7 +173,7 @@ class OrgDetails extends PureComponent {
             variant="contained"
             color="primary"
             onClick={this.handleEdit}
-            disabled={!writable}
+            disabled={!writable || !nameAcceptable}
           >
             {t('Save')}
           </Button>
