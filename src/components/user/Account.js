@@ -146,7 +146,8 @@ class Account extends PureComponent {
       handleIntPropertyChange, handleCheckbox, handleUnitChange,
       handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { username, status, properties, smtp, pop3_imap, changePassword, ldapID, chat, chatAdmin } = user; //eslint-disable-line
+    const { username, status, properties, smtp, pop3_imap, changePassword, //eslint-disable-line
+      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive } = user;
     const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
     return (
@@ -331,6 +332,35 @@ class Account extends PureComponent {
           onChange={handlePropertyChange('creationtime')}
           disabled
         />
+        {status !== 4 && <Tooltip
+          placement="top-start"
+          title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
+        >
+          <Grid container className={classes.input}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={handleChatUser}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!domain.chat}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chatAdmin || false}
+                  onChange={handleCheckbox('chatAdmin')}
+                  color="primary"
+                />
+              }
+              disabled={!chat || !domain.chat}
+              label={t('grommunio-chat admin permissions')}
+            />
+          </Grid>
+        </Tooltip>}
         {status !== 4 && <Grid container className={classes.input}>
           <FormControlLabel
             control={
@@ -363,35 +393,49 @@ class Account extends PureComponent {
             label={t('Allow POP3/IMAP logins')}
           />
         </Grid>}
-        {status !== 4 && <Tooltip
-          placement="top-start"
-          title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
-        >
-          <Grid container className={classes.input}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chat || false}
-                  onChange={handleChatUser}
-                  color="primary"
-                />
-              }
-              label={t('Create grommunio-chat User')}
-              disabled={!domain.chat}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chatAdmin || false}
-                  onChange={handleCheckbox('chatAdmin')}
-                  color="primary"
-                />
-              }
-              disabled={!chat || !domain.chat}
-              label={t('grommunio-chat admin permissions')}
-            />
-          </Grid>
-        </Tooltip>}
+        {status !== 4 && <Grid container className={classes.input}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privChat || false }
+                onChange={handleCheckbox('privChat')}
+                color="primary"
+              />
+            }
+            disabled={!chat}
+            label={t('Allow Chat')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privVideo || false }
+                onChange={handleCheckbox('privVideo')}
+                color="primary"
+              />
+            }
+            label={t('Allow Video')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privFiles || false }
+                onChange={handleCheckbox('privFiles')}
+                color="primary"
+              />
+            }
+            label={t('Allow Files')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privArchive || false }
+                onChange={handleCheckbox('privArchive')}
+                color="primary"
+              />
+            }
+            label={t('Allow Archive')}
+          />
+        </Grid>}
       </FormControl>
     );
   }
