@@ -183,14 +183,14 @@ class AddMList extends PureComponent {
             </TextField>
             {listType === 0 && <TextField 
               className={classes.input} 
-              label={t("Recipients") + " (separated by ',')"} 
+              label={t("Recipients") + " (separated by comma (,)"} 
               fullWidth 
               value={associations || ''}
               onChange={this.handleInput('associations')}
             />}
             {listPrivilege === 3 && <TextField 
               className={classes.input} 
-              label={t("Senders") + " (separated by ',')"} 
+              label={t("Senders") + " (separated by comma (,)"} 
               fullWidth 
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}
