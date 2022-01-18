@@ -217,7 +217,7 @@ export function users(domainID, params) {
     return await get(buildQuery(
       '/domains/' + domainID + '/users', {
         ...params,
-        properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended',
+        properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex',
         addressType: 0,
       }));
   };

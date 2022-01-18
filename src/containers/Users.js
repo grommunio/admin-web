@@ -71,6 +71,8 @@ class Users extends Component {
 
   columns = [
     { label: 'Display name', value: 'displayname' },
+    { label: 'Mode', value: 'status' },
+    { label: 'Type', value: 'type' },
     { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ]
@@ -210,6 +212,20 @@ class Users extends Component {
     </div>;
   }
 
+  getStatus(status) {
+    return status === 4 ? 'Shared' : 'Normal';
+  }
+
+  getType(type) {
+    switch(type) {
+      case 0: return "User";
+      case 1: return "Mail list";
+      case 7: return "Room";
+      case 8: return "Equipment";
+      default: return "Unknown";
+    }
+  }
+
   render() {
     const { classes, t, users, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -334,6 +350,8 @@ class Users extends Component {
                   <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{this.getStatus(obj.status)}</TableCell>
+                    <TableCell>{this.getType(properties.displaytypeex)}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
