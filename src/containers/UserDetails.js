@@ -598,6 +598,7 @@ class UserDetails extends PureComponent {
             user={user}
             sizeUnits={sizeUnits}
             langs={langs}
+            handleInput={this.handleInput}
             handleStatusInput={this.handleStatusInput}
             handlePropertyChange={this.handlePropertyChange}
             handleIntPropertyChange={this.handleIntPropertyChange}
