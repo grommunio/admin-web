@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
-  deleteUserStore } from '../actions/users';
+  deleteUserStore, getStoreLangs} from '../actions/users';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@mui/icons-material/Sync';
 import Detach from '@mui/icons-material/SyncDisabled';
@@ -88,6 +88,7 @@ class UserDetails extends PureComponent {
     changingPw: false,
     snackbar: '',
     tab: 0,
+    langs: [],
     sizeUnits: {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
@@ -100,18 +101,20 @@ class UserDetails extends PureComponent {
   };
 
   async componentDidMount() {
-    const { fetch, fetchRoles, fetchDomainDetails, domain } = this.props;
+    const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs } = this.props;
     const splits = window.location.pathname.split('/');
     const user = await fetch(splits[1], splits[3])
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
     user.syncPolicy = user.syncPolicy || {};
     this.setState(this.getStateOverwrite(user, defaultPolicy));
-    
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    console.log(langs);
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const domainDetails = await fetchDomainDetails(domain.ID);
-    this.setState({ domainDetails });
+    this.setState({ domainDetails, langs: langs || [] });
   }
 
   getStateOverwrite(user, defaultPolicy) {
@@ -516,7 +519,7 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
+    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
       detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
     return (
@@ -594,6 +597,7 @@ class UserDetails extends PureComponent {
             domain={domainDetails.ID ? domainDetails : domain}
             user={user}
             sizeUnits={sizeUnits}
+            langs={langs}
             handleStatusInput={this.handleStatusInput}
             handlePropertyChange={this.handlePropertyChange}
             handleIntPropertyChange={this.handleIntPropertyChange}
@@ -713,6 +717,7 @@ UserDetails.propTypes = {
   editStore: PropTypes.func.isRequired,
   deleteStoreProp: PropTypes.func.isRequired,
   fetchDomainDetails: PropTypes.func.isRequired,
+  storeLangs: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
 };
 
@@ -739,6 +744,7 @@ const mapDispatchToProps = dispatch => {
     editUserRoles: async (domainID, userID, roles) => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
     },
+    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
     sync: async (domainID, userID) =>
       await dispatch(syncLdapData(domainID, userID))
         .then(user => Promise.resolve(user))

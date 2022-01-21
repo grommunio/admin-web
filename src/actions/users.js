@@ -16,7 +16,8 @@ import {
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
   userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser, usersPlain,
-  userCount } from '../api';
+  userCount, 
+  storeLangs} from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -279,6 +280,17 @@ export function deleteOrphanedUsers(params) {
     try {
       await dispatch(deleteOrphans(params));
       await dispatch({ type: ORPHANS_DELETED });
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function getStoreLangs() {
+  return async dispatch => {
+    try {
+      const langs = await dispatch(storeLangs());
+      return Promise.resolve(langs.data);
     } catch(err) {
       return Promise.reject(err.message);
     }

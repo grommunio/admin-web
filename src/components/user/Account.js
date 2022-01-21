@@ -143,7 +143,7 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
       handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, //eslint-disable-line
@@ -213,15 +213,14 @@ class Account extends PureComponent {
           className={classes.input}
           label={t("Language")}
           fullWidth
-          value={language || 'english'}
+          value={language || 'en'}
           onChange={handlePropertyChange('language')}
         >
-          <MenuItem value={'english'}>
-            {t('English')}
-          </MenuItem>
-          <MenuItem value={'german'}>
-            {t('Deutsch')}
-          </MenuItem>
+          {langs.map((lang) => (
+            <MenuItem key={lang.code} value={lang.code}>
+              {lang.code + ": " + lang.name}
+            </MenuItem>
+          ))}
         </TextField>
         <div className={classes.quota}>
           <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
@@ -457,6 +456,7 @@ Account.propTypes = {
   handleQuotaDelete: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
   rawData: PropTypes.object,
+  langs: PropTypes.array,
 };
 
 export default withTranslation()(withStyles(styles)(Account));

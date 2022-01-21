@@ -913,3 +913,9 @@ export function defaultDomainSyncPolicy(domainID) {
   };
 }
 
+export function storeLangs() {
+  return async () => {
+    return await get('/defaults/storeLangs');
+  };
+}
+
