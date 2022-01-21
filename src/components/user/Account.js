@@ -143,12 +143,12 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handleInput,
       handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { username, status, properties, smtp, pop3_imap, changePassword, //eslint-disable-line
+    const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive } = user;
-    const { language, creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
+    const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
     return (
       <FormControl className={classes.form}>
@@ -213,12 +213,12 @@ class Account extends PureComponent {
           className={classes.input}
           label={t("Language")}
           fullWidth
-          value={language || 'en'}
-          onChange={handlePropertyChange('language')}
+          value={lang || 'en_US'}
+          onChange={handleInput('lang')}
         >
-          {langs.map((lang) => (
-            <MenuItem key={lang.code} value={lang.code}>
-              {lang.code + ": " + lang.name}
+          {langs.map((l) => (
+            <MenuItem key={l.code} value={l.code}>
+              {l.code + ": " + l.name}
             </MenuItem>
           ))}
         </TextField>
@@ -447,6 +447,7 @@ Account.propTypes = {
   domain: PropTypes.object,
   user: PropTypes.object.isRequired,
   sizeUnits: PropTypes.object.isRequired,
+  handleInput: PropTypes.func.isRequired,
   handleStatusInput: PropTypes.func.isRequired,
   handlePropertyChange: PropTypes.func.isRequired,
   handleIntPropertyChange: PropTypes.func.isRequired,
