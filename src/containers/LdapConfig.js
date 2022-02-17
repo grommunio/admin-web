@@ -137,7 +137,7 @@ class LdapConfig extends PureComponent {
     templates: 'none',
     attributes: [],
     searchAttributes: [],
-    authBackendSelection: 'always_mysql',
+    authBackendSelection: 'externid',
     aliases: '',
 
     deleting: false,
@@ -522,13 +522,13 @@ class LdapConfig extends PureComponent {
                 className={classes.radioGroup}
                 color="primary"
               >
-                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label={t("Only MySQL")} />
-                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label={t("Only LDAP")} />
                 <FormControlLabel
                   value="externid"
                   control={<Radio color="primary"/>}
                   label={t("Automatic")}
                 />
+                <FormControlLabel value="always_mysql" control={<Radio color="primary"/>} label={t("Only MySQL")} />
+                <FormControlLabel value="always_ldap" control={<Radio color="primary"/>} label={t("Only LDAP")} />
               </RadioGroup>
             </FormControl>
           </Paper>
