@@ -22,6 +22,8 @@ import { withTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
 import { HelpOutline } from "@mui/icons-material";
+import { fetchAboutData } from "../actions/about";
+import About from "../components/About";
 
 const styles = (theme) => ({
   root: {
@@ -120,13 +122,18 @@ const styles = (theme) => ({
   subtitle: {
     margin: theme.spacing(0, 2, 2, 2),
   },
+  aboutContainer: {
+    margin: 17,
+  },
 });
 
 class Dashboard extends Component {
   componentDidMount() {
-    this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
-    this.props.fetchServices().catch((msg) => this.setState({ snackbar: msg }));
-    this.props.fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
+    const { fetch, fetchServices, fetchAntispam, fetchAbout } = this.props;
+    fetch().catch((msg) => this.setState({ snackbar: msg }));
+    fetchServices().catch((msg) => this.setState({ snackbar: msg }));
+    fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
+    fetchAbout().catch((msg) => this.setState({ snackbar: msg }));
     this.fetchDashboard();
   }
 
@@ -233,6 +240,9 @@ class Dashboard extends Component {
             <LoadChart load={load} />
           </div>
         </div>
+        <div className={classes.aboutContainer}>
+          <About />
+        </div>
         <Feedback
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}
@@ -248,6 +258,7 @@ Dashboard.propTypes = {
   fetch: PropTypes.func.isRequired,
   fetchServices: PropTypes.func.isRequired,
   fetchAntispam: PropTypes.func.isRequired,
+  fetchAbout: PropTypes.func.isRequired,
   cpuPercent: PropTypes.array.isRequired,
   disks: PropTypes.array.isRequired,
   memory: PropTypes.array.isRequired,
@@ -278,6 +289,8 @@ const mapDispatchToProps = (dispatch) => {
       await dispatch(fetchAntispamData()).catch((error) =>
         Promise.reject(error)
       ),
+    fetchAbout: async () => await dispatch(fetchAboutData())
+      .catch(err => Promise.reject(err)),
   };
 };
 

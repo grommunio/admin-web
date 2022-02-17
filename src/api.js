@@ -877,19 +877,13 @@ export function taskDetails(id) {
 }
 
 /*
-  BASE SUTUP
+  ABOUT
 */
 
-export async function baseSetup() {
-  try {
-    return await get('/baseSetup');
-  } catch(err) { console.error(err); }
-}
-
-export async function editBaseSetup(setup) {
-  try {
-    return await patch('/baseSetup', setup);
-  } catch(err) { console.error(err); }
+export function about() {
+  return async () => {
+    return await get('/about');
+  };
 }
 
 /*

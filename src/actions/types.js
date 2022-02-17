@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
+export const ABOUT_DATA_RECEIVED = 'ABOUT_DATA_RECEIVED';
+
 export const ANTISPAM_DATA_FETCH = 'ANTISPAM_DATA_FETCH';
 export const ANTISPAM_DATA_RECEIVED = 'ANTISPAM_DATA_RECEIVED';
 export const ANTISPAM_DATA_ERROR = 'ANTISPAM_DATA_ERROR';
