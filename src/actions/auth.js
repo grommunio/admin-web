@@ -36,7 +36,7 @@ export function authLogin(user, pass) {
       }
     } catch(err) {
       clearStorage();
-      console.log(err.message);
+      console.err(err.message);
       await dispatch(authError(err.message));
       return Promise.reject(err);
     }

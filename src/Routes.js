@@ -51,6 +51,7 @@ const AsyncRoleDetails = makeLoadableComponent(() => import("./containers/RoleDe
 const AsyncLogs = makeLoadableComponent(() => import("./containers/Logs"));
 const AsyncMailQ = makeLoadableComponent(() => import("./containers/MailQ"));
 const AsyncTaskQ = makeLoadableComponent(() => import("./containers/TaskQ"));
+const AsyncTaskDetails = makeLoadableComponent(() => import("./containers/TaskDetails"));
 const AsyncSync = makeLoadableComponent(() => import("./containers/Sync"));
 const AsyncStatus = makeLoadableComponent(() => import("./containers/Status"));
 const AsyncLicense = makeLoadableComponent(() => import("./containers/License"));
@@ -181,6 +182,12 @@ const Routes = ({ childProps, domains }) => (
       path="/taskq"
       exact
       component={AsyncTaskQ}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/taskq/:taskID*"
+      exact
+      component={AsyncTaskDetails}
       props={childProps}
     />
     {domains.map(domain =>

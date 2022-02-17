@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
+import { withRouter } from 'react-router';
 
 const styles = {
   
@@ -18,18 +19,20 @@ class DeleteFolder extends PureComponent {
     loading: false,
     clear: false,
     taskMessage: '',
+    taskID: null,
   }
 
   handleDelete = () => {
     const { id, onSuccess, onError, domainID } = this.props;
     const { clear } = this.state;
     this.setState({ loading: true });
-    this.props.delete(domainID, id, { clear })
+    this.props.delete(domainID, id, { clear, timeout: 0 })
       .then(response => {
         if(response?.taskID) {
           this.setState({
             taskMessage: response.message || 'Task created',
             loading: false,
+            taskID: response.taskID,
           });
         } else {
           onSuccess();
@@ -56,9 +59,18 @@ class DeleteFolder extends PureComponent {
     }
   }
 
+  handleViewTask = () => {
+    this.props.history.push('/taskq/' + this.state.taskID);
+  }
+
+  handleClose = () => {
+    this.setState({ taskMessage: '', taskID: null });
+    this.props.onClose();
+  }
+
   render() {
     const { t, open, item, onClose } = this.props;
-    const { loading, clear, taskMessage } = this.state;
+    const { loading, clear, taskMessage, taskID } = this.state;
 
     return (
       <Dialog
@@ -76,7 +88,7 @@ class DeleteFolder extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onClose}
+            onClick={this.handleClose}
             color="secondary"
           >
             {t(taskMessage ? 'Close' : 'Cancel')}
@@ -88,6 +100,10 @@ class DeleteFolder extends PureComponent {
           >
             {loading ? <CircularProgress size={24}/> : t('Confirm')}
           </Button>}
+          {taskMessage && taskID > 0 && <Button variant="contained" onClick={this.handleViewTask}>
+            {t('View task')}
+          </Button>
+          }
         </DialogActions>
       </Dialog>
     );
@@ -105,6 +121,7 @@ DeleteFolder.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DeleteFolder));
+export default withRouter(withTranslation()(withStyles(styles)(DeleteFolder)));

@@ -1,4 +1,4 @@
-import { taskq, startTaskq, stopTaskq, taskqStatus } from '../api';
+import { taskq, startTaskq, stopTaskq, taskqStatus, taskDetails } from '../api';
 import { TASK_DATA_RECEIVED, TASK_STATUS_RECEIVED } from './types';
 
 export function fetchTaskqData(params) {
@@ -6,6 +6,18 @@ export function fetchTaskqData(params) {
     try {
       const data = await dispatch(taskq(params));
       await dispatch({ type: TASK_DATA_RECEIVED, data });
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function fetchTaskDetails(id) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(taskDetails(id));
+      return Promise.resolve(data);
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

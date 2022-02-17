@@ -870,6 +870,12 @@ export function taskqStatus(params) {
   };
 }
 
+export function taskDetails(id) {
+  return async () => {
+    return await get('/tasq/tasks/' + id);
+  };
+}
+
 /*
   BASE SUTUP
 */

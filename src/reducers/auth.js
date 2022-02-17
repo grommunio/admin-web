@@ -35,7 +35,7 @@ function authReducer(state = defaultState, action) {
       return {
         ...state,
         authenticated: false,
-        error: action.error,
+        error: action.error || true,
       };
     }
 

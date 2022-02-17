@@ -67,6 +67,7 @@ class TasQ extends Component {
   columns = [
     { label: "Command", value: "command" },
     { label: "State ", value: "state" }, //The whitespace is neccessary because of a country's state
+    { label: "Message", value: "message" },
     { label: "Created", value: "created" },
     { label: "Updated", value: "updated" },
   ];
@@ -225,9 +226,10 @@ class TasQ extends Component {
             </TableHead>
             <TableBody>
               {taskq.Tasks.map((obj, idx) => 
-                <TableRow key={idx}>
+                <TableRow key={idx} hover onClick={this.handleNavigation('taskq/' + obj.ID)}>
                   <TableCell>{obj.command}</TableCell>
                   <TableCell>{t(this.getTaskState(obj.state))}</TableCell>
+                  <TableCell>{obj.message}</TableCell>
                   <TableCell>{obj.created ? setDateTimeString(obj.created) : ''}</TableCell>
                   <TableCell>{obj.updated ? setDateTimeString(obj.updated) : ''}</TableCell>
                 </TableRow>
