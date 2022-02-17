@@ -139,7 +139,7 @@ class Login extends Component {
             <InputBase
               fullWidth
               autoFocus
-              error={auth.error}
+              error={!!auth.error}
               className={classes.input}
               placeholder={t("Username")}
               value={user}
@@ -155,7 +155,7 @@ class Login extends Component {
               fullWidth
               type="password"
               className={classes.input}
-              error={auth.error}
+              error={!!auth.error}
               placeholder={t("Password")}
               value={pass}
               onChange={this.handleTextinput('pass')}
@@ -165,7 +165,7 @@ class Login extends Component {
             />
           </Paper>
           {auth.error && <MuiAlert elevation={6} variant="filled" severity="error" className={classes.errorMessage}>
-            {t("Failed to login. Incorrect password or username")}
+            {auth.error || t("Failed to login. Incorrect password or username")}
           </MuiAlert>}
           <Paper className={classes.inputContainer}>
             <Button

@@ -36,8 +36,8 @@ export function authLogin(user, pass) {
       }
     } catch(err) {
       clearStorage();
-      console.error(err);
-      await dispatch(authError());
+      console.log(err.message);
+      await dispatch(authError(err.message));
       return Promise.reject(err);
     }
   };
@@ -93,9 +93,10 @@ export function authAuthenticated(authenticated = true, capabilities) {
   };
 }
 
-function authError() {
+function authError(error) {
   return {
     type: AUTH_ERROR,
+    error,
   };
 }
 

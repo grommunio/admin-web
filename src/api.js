@@ -14,6 +14,21 @@ async function handleErrors(response) {
   return Promise.reject(new Error(resp));
 }
 
+async function handleLoginErrors(response) {
+  if (response.ok) {
+    return await response.json();
+  }
+  let message = '';
+  const status = response.status;
+  if(status === 502) {
+    return Promise.reject(new Error("Could not connect to backend"));
+  }
+  await response.json().then(json => {
+    message = json.error;
+  });
+  return Promise.reject(new Error(message));
+}
+
 async function get(path) {
   return await fetch(baseUrl + path)
     .then(handleErrors);
@@ -55,16 +70,6 @@ async function yeet(path) {
   }).then(handleErrors);
 }
 
-/*
-async function upload(path, data) {
-  return fetch((baseUrl + path), {
-    method: 'POST',
-    body: data,
-  }).then(handleErrors)
-    .then(response => response.json());
-}
-*/
-
 async function uploadPut(path, data) {
   return fetch((baseUrl + path), {
     method: 'PUT',
@@ -79,7 +84,7 @@ async function loginPost(path, data) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-  }).then(handleErrors);
+  }).then(handleLoginErrors);
 }
 
 async function renew() {

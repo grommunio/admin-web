@@ -110,7 +110,6 @@ class UserDetails extends PureComponent {
     this.setState(this.getStateOverwrite(user, defaultPolicy));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    console.log(langs);
     fetchRoles()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const domainDetails = await fetchDomainDetails(domain.ID);

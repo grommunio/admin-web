@@ -72,7 +72,6 @@ class Delegates extends PureComponent {
   handleSave = () => {
     const { setUserDelegates, setPermittedUserData, userID, domainID } = this.props;
     const { delegates, permittedUsers, dEdited, puEdited } = this.state;
-    console.log(delegates);
     if(dEdited) setUserDelegates(domainID, userID, delegates)
       .then(() => this.setState({
         snackbar: 'Success!',
