@@ -165,7 +165,7 @@ class License extends PureComponent {
                 {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
                   <ListItemButton onClick={this.handleExpansion(ID, idx)}>
                     <ListItemText
-                      primary={`${domainname} (${counts[domainname] || '<count not available>'})`}
+                      primary={`${domainname} (${counts[domainname] || 0})`}
                     />
                     {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
                   </ListItemButton>
