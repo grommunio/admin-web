@@ -231,14 +231,6 @@ class DomainListDetails extends PureComponent {
                 autoFocus
                 disabled
               />
-              {writable && <Button
-                variant="contained"
-                color="primary"
-                onClick={() => this.setState({ changingPw: true })}
-                size="small"
-              >
-                {t('Change password')}
-              </Button>}
             </Grid>
             <TextField
               select
