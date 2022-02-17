@@ -26,7 +26,7 @@ class DeleteFolder extends PureComponent {
     const { id, onSuccess, onError, domainID } = this.props;
     const { clear } = this.state;
     this.setState({ loading: true });
-    this.props.delete(domainID, id, { clear, timeout: 0 })
+    this.props.delete(domainID, id, { clear })
       .then(response => {
         if(response?.taskID) {
           this.setState({

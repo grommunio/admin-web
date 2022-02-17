@@ -103,7 +103,8 @@ export function syncLdapData(domainID, userID) {
 export function syncLdapUsers(params, domainID) {
   return async dispatch => {
     try {
-      await dispatch(syncAll(params, domainID));
+      const resp = await dispatch(syncAll(params, domainID));
+      if(resp?.taskID) return resp;
     } catch (err) {
       return Promise.reject(err.message);
     }

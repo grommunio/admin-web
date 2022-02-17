@@ -21,6 +21,7 @@ import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
+import TaskCreated from '../components/Dialogs/TaskCreated';
 
 const styles = theme => ({
   tablePaper: {
@@ -67,6 +68,8 @@ class Users extends Component {
     orderBy: 'username',
     offset: 50,
     match: '',
+    taskMessage: '',
+    taskID: null,
   }
 
   columns = [
@@ -181,13 +184,26 @@ class Users extends Component {
   handleUserSync = importUsers => () => {
     const { sync, domain } = this.props;
     sync({ import: importUsers }, domain.ID)
-      .then(() => {
-        const { order, orderBy, match } = this.state;
-        this.setState({ snackbar: 'Success!' });
-        this.fetchUsers({ match: match || undefined, sort: orderBy + ',' + order });
+      .then(response => {
+        if(response?.taskID) {
+          this.setState({
+            taskMessage: response.message || 'Task created',
+            loading: false,
+            taskID: response.taskID,
+          });
+        } else {
+          const { order, orderBy, match } = this.state;
+          this.setState({ snackbar: 'Success!' });
+          this.fetchUsers({ match: match || undefined, sort: orderBy + ',' + order });
+        }
       })
       .catch(msg => this.setState({ snackbar: msg }));
   }
+
+  handleTaskClose = () => this.setState({
+    taskMessage: "",
+    taskID: null,
+  })
 
   checkUsers = () => {
     this.props.check({})
@@ -229,7 +245,8 @@ class Users extends Component {
   render() {
     const { classes, t, users, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
+    const { snackbar, adding, deleting, order, orderBy, match, checking,
+      taskMessage, taskID } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -387,6 +404,11 @@ class Users extends Component {
           open={checking}
           onClose={this.handleCheckClose}
           onError={this.handleDeleteError}
+        />
+        <TaskCreated
+          message={taskMessage}
+          taskID={taskID}
+          onClose={this.handleTaskClose}
         />
       </TableViewContainer>
     );

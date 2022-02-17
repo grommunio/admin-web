@@ -23,6 +23,7 @@ import Feedback from '../components/Feedback';
 import { Autocomplete } from '@mui/lab';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import TaskCreated from '../components/Dialogs/TaskCreated';
 
 const styles = theme => ({
   root: {
@@ -140,6 +141,8 @@ class LdapConfig extends PureComponent {
     aliases: '',
 
     deleting: false,
+    taskMessage: '',
+    taskID: null,
     force: false,
     snackbar: '',
   }
@@ -320,15 +323,30 @@ class LdapConfig extends PureComponent {
   handleDeleteError = error => this.setState({ snackbar: error });
 
   handleSync = importUser => () => this.props.sync({ import: importUser })
-    .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
+    .then(response => {
+      if(response?.taskID) {
+        this.setState({
+          taskMessage: response.message || 'Task created',
+          loading: false,
+          taskID: response.taskID,
+        });
+      } else {
+        this.setState({ snackbar: 'Success! ' + (response || '') });
+      }
+    })
     .catch(snackbar => this.setState({ snackbar }));
+
+  handleTaskClose = () => this.setState({
+    taskMessage: "",
+    taskID: null,
+  })
 
   render() {
     const { classes, t } = this.props;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
-      authBackendSelection, aliases } = this.state;
+      authBackendSelection, aliases, taskMessage, taskID } = this.state;
     return (
       <div className={classes.root}>
         <TopBar />
@@ -697,6 +715,11 @@ class LdapConfig extends PureComponent {
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
+        />
+        <TaskCreated
+          message={taskMessage}
+          taskID={taskID}
+          onClose={this.handleTaskClose}
         />
         <Feedback
           snackbar={snackbar}
