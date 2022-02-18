@@ -84,15 +84,16 @@ class DomainList extends Component {
       document.getElementById("scrollDiv").offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if (!domains.loading)
+      if (!domains.loading) { 
         this.fetchDomains({
           sort: orderBy + "," + order,
           offset,
           match: match || undefined,
         });
-      this.setState({
-        offset: offset + 50,
-      });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   };
 

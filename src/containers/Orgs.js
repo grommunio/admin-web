@@ -78,15 +78,16 @@ class Orgs extends Component {
       document.getElementById("scrollDiv").offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if (!orgs.loading)
+      if (!orgs.loading) {
         this.fetchorgs({
           sort: orderBy + "," + order,
           offset,
           match: match || undefined,
         });
-      this.setState({
-        offset: offset + 50,
-      });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   };
 

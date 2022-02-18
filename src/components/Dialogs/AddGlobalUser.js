@@ -214,7 +214,7 @@ class AddGlobalUser extends PureComponent {
     const { username, loading, properties, password, repeatPw, sizeUnits,
       usernameError, domain, autocompleteInput, status } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
-    const addDisabled = usernameError || !username || loading ||
+    const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || password.length < 6) && status !== 4);
     
     return (

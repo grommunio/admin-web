@@ -65,15 +65,16 @@ class Roles extends PureComponent {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { order, offset, match } = this.state;
-      if(!roles.loading) fetch({
-        sort: 'name,' + order,
-        offset,
-        match: match || undefined,
-      }).then(() =>
+      if(!roles.loading) {
+        fetch({
+          sort: 'name,' + order,
+          offset,
+          match: match || undefined,
+        });
         this.setState({
           offset: offset + 50,
-        })
-      );
+        });
+      }
     }
   }
 

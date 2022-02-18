@@ -79,14 +79,16 @@ class MLists extends Component {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if(!mLists.loading) this.fetchMLists({
-        sort: orderBy + ',' + order,
-        offset,
-        match: match || undefined,
-      });
-      this.setState({
-        offset: offset + 50,
-      });
+      if(!mLists.loading) {
+        this.fetchMLists({
+          sort: orderBy + ',' + order,
+          offset,
+          match: match || undefined,
+        });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   }
 

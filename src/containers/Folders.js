@@ -65,10 +65,12 @@ class Folders extends Component {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { offset } = this.state;
-      if(!folders.loading) this.fetchFolders({ offset });
-      this.setState({
-        offset: offset + 50,
-      });
+      if(!folders.loading) {
+        this.fetchFolders({ offset });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   }
 

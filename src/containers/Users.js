@@ -88,14 +88,16 @@ class Users extends Component {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if(!users.loading) this.fetchUsers({
-        sort: orderBy + ',' + order,
-        offset,
-        match: match || undefined,
-      });
-      this.setState({
-        offset: offset + 50,
-      });
+      if(!users.loading) {
+        this.fetchUsers({
+          sort: orderBy + ',' + order,
+          offset,
+          match: match || undefined,
+        });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   }
 
@@ -389,7 +391,7 @@ class Users extends Component {
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
-          domain={this.props.domain}
+          domain={domain}
           onClose={this.handleAddingClose}
         />
         <DeleteUser
@@ -397,7 +399,7 @@ class Users extends Component {
           onSuccess={this.handleDeleteSuccess}
           onClose={this.handleDeleteClose}
           onError={this.handleDeleteError}
-          domainID={this.props.domain.ID}
+          domainID={domain.ID}
           user={deleting}
         />
         <CheckLdapDialog

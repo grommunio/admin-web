@@ -89,14 +89,16 @@ class Classes extends Component {
       <= document.getElementById('scrollDiv').offsetHeight + 20
     ) {
       const { orderBy, order, offset, match } = this.state;
-      if(!_classes.loading) this.fetchClasses({
-        sort: orderBy + ',' + order,
-        offset,
-        match: match || undefined,
-      });
-      this.setState({
-        offset: offset + 50,
-      });
+      if(!_classes.loading) {
+        this.fetchClasses({
+          sort: orderBy + ',' + order,
+          offset,
+          match: match || undefined,
+        });
+        this.setState({
+          offset: offset + 50,
+        });
+      }
     }
   }
 
