@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -53,7 +53,7 @@ const styles = theme => ({
   },
 });
 
-class AntispamStatistics extends Component {
+class AntispamStatistics extends PureComponent {
 
   formatBytes = (bytes) => {
     if (bytes > 10000) {

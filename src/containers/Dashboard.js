@@ -122,9 +122,6 @@ const styles = (theme) => ({
   subtitle: {
     margin: theme.spacing(0, 2, 2, 2),
   },
-  aboutContainer: {
-    margin: 17,
-  },
 });
 
 class Dashboard extends Component {
@@ -240,9 +237,10 @@ class Dashboard extends Component {
             <LoadChart load={load} />
           </div>
         </div>
-        <div className={classes.aboutContainer}>
-          <About />
-        </div>
+        <Typography variant="h2" className={classes.pageTitle}>
+          {t("Versions")}
+        </Typography>
+        <About />
         <Feedback
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}
