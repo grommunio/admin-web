@@ -17,7 +17,7 @@ export function fetchOrgsData(params) {
       await dispatch({ type: ORGS_DATA_RECEIVED, data: orgData });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.messag);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -29,7 +29,7 @@ export function fetchOrgsDetails(id) {
       return Promise.resolve(orgData);
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.messag);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -41,7 +41,7 @@ export function addOrgData(org) {
       await dispatch({ type: ORG_DATA_ADD, data: resp });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.messag);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -52,7 +52,7 @@ export function editOrgData(org) {
       await dispatch(editOrg(org));
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.messag);
+      return Promise.reject(error.message);
     }
   };
 }
@@ -64,7 +64,7 @@ export function deleteOrgData(id) {
       await dispatch({ type: ORG_DATA_DELETE, id });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.messag);
+      return Promise.reject(error.message);
     }
   };
 }

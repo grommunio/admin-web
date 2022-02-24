@@ -575,6 +575,40 @@ export function deleteOrg(id) {
 }
 
 /*
+  SERVERS
+*/
+
+export function servers(params) {
+  return async () => {
+    return await get(buildQuery('/system/servers', params));
+  };
+}
+
+export function serverDetails(id) {
+  return async () => {
+    return await get('/system/servers/' + id);
+  };
+}
+
+export function addServer(server) {
+  return async () => {
+    return await post('/system/servers', server);
+  };
+}
+
+export function editServer(server) {
+  return async () => {
+    return await patch('/system/servers/' + server.ID, { ...server, ID: undefined });
+  };
+}
+
+export function deleteServer(id) {
+  return async () => {
+    return await yeet('/system/servers/' + id);
+  };
+}
+
+/*
   LOGS
 */
 

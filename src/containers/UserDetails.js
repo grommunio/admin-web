@@ -727,7 +727,8 @@ const mapDispatchToProps = dispatch => {
       .then(user => user)
       .catch(msg => Promise.reject(msg)),
     fetchRoles: async () => {
-      await dispatch(fetchRolesData({ sort: 'name,asc' })).catch(msg => Promise.reject(msg));
+      await dispatch(fetchRolesData({ sort: 'name,asc', level: 0, limit: 100000 }))
+        .catch(msg => Promise.reject(msg));
     },
     fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
       .then(domain => domain)

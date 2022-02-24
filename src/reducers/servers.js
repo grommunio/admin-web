@@ -3,56 +3,56 @@
 
 import {
   AUTH_AUTHENTICATED,
-  ORGS_DATA_ERROR,
-  ORGS_DATA_FETCH,
-  ORGS_DATA_RECEIVED,
-  ORG_DATA_ADD,
-  ORG_DATA_DELETE,
+  SERVERS_DATA_ADD,
+  SERVERS_DATA_DELETE,
+  SERVERS_DATA_ERROR,
+  SERVERS_DATA_FETCH,
+  SERVERS_DATA_RECEIVED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
 const defaultState = {
   loading: false,
   error: null,
-  Orgs: [],
+  Servers: [],
   count: 0,
 };
 
-function orgsReducer(state = defaultState, action) {
+function serversReducer(state = defaultState, action) {
   switch (action.type) {
-    case ORGS_DATA_FETCH:
+    case SERVERS_DATA_FETCH:
       return {
         ...state,
         loading: true,
       };
 
-    case ORGS_DATA_RECEIVED:
+    case SERVERS_DATA_RECEIVED:
       return {
         ...state,
         loading: false,
         error: null,
-        Orgs: action.data.data,
+        Servers: action.data.data,
         count: action.data.count,
       };
     
-    case ORGS_DATA_ERROR:
+    case SERVERS_DATA_ERROR:
       return {
         ...state,
         loading: false,
         error: action.error,
       };
 
-    case ORG_DATA_ADD:
+    case SERVERS_DATA_ADD:
       return {
         ...state,
-        Orgs: addItem(state.Orgs, action.data),
+        Servers: addItem(state.Servers, action.data),
         count: state.count + 1,
       };
 
-    case ORG_DATA_DELETE:
+    case SERVERS_DATA_DELETE:
       return {
         ...state,
-        Orgs: state.Orgs.filter(o => o.ID !== action.id),
+        Servers: state.Servers.filter(s => s.ID !== action.id),
         count: state.count - 1,
       };
 
@@ -68,4 +68,4 @@ function orgsReducer(state = defaultState, action) {
   }
 }
 
-export default orgsReducer;
+export default serversReducer;

@@ -245,6 +245,7 @@
   "showingRoles": "{{count}} Rolle(n) gezeigt",
   "showingUser": "{{count}} Benutzer gezeigt",
   "showingTaskq": "{{count}} Task(s) gezeigt",
+  "showingServers": "{{count}} Server gezeigt",
   "Active users": "Aktive Benutzer",
   "Filter more precisely": "Filtern Sie präziser",
   "No options": "Keine Optionen",

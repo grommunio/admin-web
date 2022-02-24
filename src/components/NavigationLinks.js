@@ -30,7 +30,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
@@ -373,6 +373,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Storage className={classes.icon}/>
                 <ListItemText primary={t('Configuration DB')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('servers')}
+              className={classes.li}
+              selected={location.pathname.startsWith('/servers')}
+            >
+              <Grid container alignItems="center">
+                <Dns className={classes.icon}/>
+                <ListItemText primary={t('Servers')} />
               </Grid>
             </ListItem>
             <Typography variant="inherit" className={classes.subheader}>{t('Monitoring')}</Typography>

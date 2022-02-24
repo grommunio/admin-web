@@ -26,6 +26,7 @@ import orgsReducer from './reducers/orgs';
 import usersReducer from './reducers/users';
 import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
+import serversReducer from './reducers/servers';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
 import syncReducer from './reducers/sync';
@@ -52,6 +53,7 @@ export const store = createStore(
     orgs: orgsReducer,
     profile: profileReducer,
     roles: rolesReducer,
+    servers: serversReducer,
     services: servicesReducer,
     settings: settingsReducer,
     status: statusReducer,

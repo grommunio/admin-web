@@ -65,6 +65,10 @@ const styles = theme => ({
 
 class Account extends PureComponent {
 
+  state = {
+    autocompleteInput: '',
+  }
+
   types = [
     { name: 'User', ID: 0 },
     { name: 'Mail list', ID: 1 },
@@ -150,6 +154,7 @@ class Account extends PureComponent {
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive } = user;
     const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
+
     return (
       <FormControl className={classes.form}>
         <Grid container className={classes.input}>

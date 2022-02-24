@@ -186,7 +186,7 @@ export function addUserData(domainID, user) {
       return Promise.resolve(resp);
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
-      console.error('Failed to add user', err);
+      console.error('Failed to add user', err.message);
       return Promise.reject(err.message);
     }
   };
