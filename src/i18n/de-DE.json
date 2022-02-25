@@ -37,7 +37,7 @@
     "Used space": "Belegter Speicher",
     "User number": "Benutzer Anzahl",
     "Domain number": "Domain Anzahl",
-    "Mail addresses": "Mail Adressen",
+    "Mail addresses": "Mail-Adressen",
     "Domain": "Domain",
     "Domains": "Domains",
     "Domain type": "Domaintyp",
@@ -93,8 +93,8 @@
     "Creation time": "Erstellungszeit",
     "Create day": "Erstellungstag",
     "End day": "Endtag",
-    "Login": "Einloggen",
-    "Failed to login. Incorrect password or username": "Login fehlgeschlagen, falsches Passwort oder Benutzername",
+    "Login": "Anmelden",
+    "Failed to login. Incorrect password or username": "Anmeldung fehlgeschlagen. Falsches Passwort oder falscher Benutzername",
     "Password": "Passwort",
     "Change password": "Passwort ändern",
     "Repeat password": "Passwort wiederholen",
@@ -317,7 +317,7 @@
     "livestatus_sub": "Eine verständliche Übersicht über alle verarbeiteten Anfragen aller Knoten",
     "sync_sub": "Auflistung aller Mobilgeräte mit momentaner Aktivität",
     "users_sub": "Diese Benutzerübersicht zeigt die vollständige Liste alle konfigurierten und akzeptierten Benutzer dieser Domain",
-    "mailfilter_sub": "E-Mail Filter Statistiken bieten einen Überblick über das Verarbeitungsvolumen von E-Mails",
+    "mailfilter_sub": "E-Mail-Filter -Statistiken bieten einen Überblick über das Verarbeitungsvolumen von E-Mails",
     "performance_sub": "Performance Übersicht liefert Informationen über die Gesundheit des Systems und den aktuellen Status der Services als auch verfügbare Resourcen",
     "RemoteWipeExplanation": "Abhängig vom Gerät, wird nicht nur der Account entfernt. Stattdessen können auch alle Ihre Daten inklusive Fotos, Dokumente, installierte Apps usw. gelöscht, und das Gerät zurück auf Werkeinstellungen zurückgesetzt werden. Gehen Sie sorgfältig vor."
 }
