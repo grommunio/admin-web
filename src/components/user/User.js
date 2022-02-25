@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-2021 grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
 import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Typography } from '@mui/material';
