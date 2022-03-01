@@ -91,7 +91,8 @@ const styles = theme => ({
 class TopBar extends PureComponent {
 
   state = {
-    anchorEl: null,
+    menuAnchorEl: null,
+    langsAnchorEl: null,
   }
 
   links = [
@@ -112,12 +113,12 @@ class TopBar extends PureComponent {
     setDrawerExpansion();
   }
 
-  handleMenuOpen = e => this.setState({
-    anchorEl: e.currentTarget,
+  handleMenuOpen = menu => e => this.setState({
+    [menu]: e.currentTarget,
   });
 
-  handleMenuClose = () => this.setState({
-    anchorEl: null,
+  handleMenuClose = menu => () => this.setState({
+    [menu]: null,
   });
 
   handleNavigation = path => event => {
@@ -142,7 +143,7 @@ class TopBar extends PureComponent {
 
   render() {
     const { classes, t, profile, title, onAdd, fetching, settings, license } = this.props;
-    const { anchorEl } = this.state;
+    const { menuAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
   
     return (
@@ -172,7 +173,7 @@ class TopBar extends PureComponent {
           )}
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
-            <Box className={classes.profileButton} onClick={this.handleMenuOpen}>
+            <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
             </Box>
@@ -190,10 +191,10 @@ class TopBar extends PureComponent {
             />
             <Menu
               id="simple-menu"
-              anchorEl={anchorEl}
+              anchorEl={menuAnchorEl}
               keepMounted
-              open={Boolean(anchorEl)}
-              onClose={this.handleMenuClose}
+              open={Boolean(menuAnchorEl)}
+              onClose={this.handleMenuClose('menuAnchorEl')}
             >
               <MenuItem onClick={this.handleNavigation('settings')}>
                 {t('Settings')}

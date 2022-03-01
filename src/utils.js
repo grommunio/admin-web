@@ -170,3 +170,39 @@ export async function copyToClipboard(text) {
     .then(() => true)
     .catch(() => false);
 }
+
+export function getLangs() {
+  return [
+    { key: 'en-US', value: 'English' },
+    { key: 'de-DE', value: 'German' },
+    { key: 'ar-DZ', value: 'Arabic (Algeria)' },
+    { key: 'ar-SA', value: 'Arabic (Saudi Arabia)' },
+    { key: 'ca-CA', value: 'Catalan' },
+    { key: 'zh-CN', value: 'Chinese (Simplified)' },
+    { key: 'zh-TW', value: 'Chinese (Taiwan)' },
+    { key: 'hr-HR', value: 'Croatian' },
+    { key: 'cs-CS', value: 'Czech' },
+    { key: 'da-DA', value: 'Danish' },
+    { key: 'nl-NL', value: 'Dutch' },
+    { key: 'et-ET', value: 'Estonian' },
+    { key: 'de-CH', value: 'German (Switzerland)' },
+    { key: 'fi-FI', value: 'Finnish' },
+    { key: 'fr-FR', value: 'French' },
+    { key: 'he-HE', value: 'Hebrew' },
+    { key: 'hu-HU', value: 'Hungarian' },
+    { key: 'is-IS', value: 'Icelandic' },
+    { key: 'it-IT', value: 'Italian' },
+    { key: 'ja-JA', value: 'Japanese' },
+    { key: 'ko-KO', value: 'Korean' },
+    { key: 'nb-NB', value: 'Norwegian (Bokmål)'},
+    { key: 'fa-IR', value: 'Persian' },
+    { key: 'pl-PL', value: 'Polish' },
+    { key: 'pt-BR', value: 'Portuguese (Brazil)' },
+    { key: 'pt-PT', value: 'Portuguese (Portugal)' },
+    { key: 'ru-RU', value: 'Russian' },
+    { key: 'sl-SL', value: 'Slovenian' },
+    { key: 'es-ES', value: 'Spanish' },
+    { key: 'tr-TR', value: 'Turkish' },
+    { key: 'ua-UA', value: 'Ukrainian' },
+  ];
+}
