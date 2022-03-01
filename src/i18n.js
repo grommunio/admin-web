@@ -14,7 +14,7 @@ import en from './i18n/en-US.json';
 import es from './i18n/es-ES.json';
 import et from './i18n/et-ET.json';
 import fa from './i18n/fa-IR.json';
-import fi from './i18n/fi-Fi.json';
+import fi from './i18n/fi-FI.json';
 import fr from './i18n/fr-FR.json';
 import he from './i18n/he-HE.json';
 import hr from './i18n/hr-HR.json';
