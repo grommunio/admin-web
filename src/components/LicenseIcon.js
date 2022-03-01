@@ -12,7 +12,7 @@ const styles = {
   },
   licenseIcon: {
     cursor: 'pointer',
-    marginRight: 20,
+    marginRight: 8,
   },
 };
 

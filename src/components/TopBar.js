@@ -21,16 +21,16 @@ import Chat from '@mui/icons-material/Chat';
 import Files from '@mui/icons-material/Description';
 import Archive from '@mui/icons-material/Archive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Language from '@mui/icons-material/Language';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
-import german from '../res/germany.svg';
-import english from '../res/united-states.svg';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { fetchLicenseData } from '../actions/license';
 import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
+import { getLangs } from '../utils';
 
 const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
@@ -133,17 +133,19 @@ class TopBar extends PureComponent {
     authLogout();
   }
 
-  handleLangChange = () => {
-    const { changeSettings, settings } = this.props;
-    const lang = settings.language === 'en-US' ? 'de-DE' : 'en-US';
+  handleLangChange = lang => () => {
+    const { changeSettings } = this.props;
     i18n.changeLanguage(lang);
     changeSettings('language', lang);
     window.localStorage.setItem('lang', lang);
+    this.setState({
+      langsAnchorEl: null,
+    });
   }
 
   render() {
     const { classes, t, profile, title, onAdd, fetching, settings, license } = this.props;
-    const { menuAnchorEl } = this.state;
+    const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
   
     return (
@@ -181,14 +183,27 @@ class TopBar extends PureComponent {
               activated={license.product && license.product !== "Community"}
               handleNavigation={this.handleNavigation}
             />}
-            <img
-              src={settings.language === 'en-US' ? german : english}
-              alt=""
-              width={35}
-              height={44}
-              className={classes.flag}
-              onClick={this.handleLangChange}
-            />
+            <IconButton onClick={this.handleMenuOpen('langsAnchorEl')}>
+              <Language />
+            </IconButton>
+            <Menu
+              id="lang-menu"
+              anchorEl={langsAnchorEl}
+              keepMounted
+              open={Boolean(langsAnchorEl)}
+              onClose={this.handleMenuClose('langsAnchorEl')}
+            >
+              {getLangs().map(({key, value}) =>
+                <MenuItem
+                  selected={settings.language === key}
+                  value={key}
+                  key={key}
+                  onClick={this.handleLangChange(key)}
+                >
+                  {value}
+                </MenuItem>  
+              )}
+            </Menu>
             <Menu
               id="simple-menu"
               anchorEl={menuAnchorEl}
