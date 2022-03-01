@@ -608,6 +608,18 @@ export function deleteServer(id) {
   };
 }
 
+export function serversPolicy() {
+  return async () => {
+    return await get('/system/dbconf/grommunio-admin/multi-server/');
+  };
+}
+
+export function editServerPolicy(data) {
+  return async () => {
+    return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
+  };
+}
+
 /*
   LOGS
 */

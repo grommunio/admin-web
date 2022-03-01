@@ -8,6 +8,7 @@ import {
   SERVERS_DATA_ERROR,
   SERVERS_DATA_FETCH,
   SERVERS_DATA_RECEIVED,
+  SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -15,6 +16,7 @@ const defaultState = {
   loading: false,
   error: null,
   Servers: [],
+  policy: "round-robin",
   count: 0,
 };
 
@@ -54,6 +56,12 @@ function serversReducer(state = defaultState, action) {
         ...state,
         Servers: state.Servers.filter(s => s.ID !== action.id),
         count: state.count - 1,
+      };
+
+    case SERVERS_POLICY_RECEIVED:
+      return {
+        ...state,
+        policy: action.data.data?.policy || 'round-robin',
       };
 
     case AUTH_AUTHENTICATED:

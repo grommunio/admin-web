@@ -7,8 +7,9 @@ import {
   SERVERS_DATA_ERROR,
   SERVERS_DATA_FETCH,
   SERVERS_DATA_RECEIVED,
+  SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
-import { servers, serverDetails, addServer, editServer, deleteServer } from '../api';
+import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy } from '../api';
 
 export function fetchServersData(params) {
   return async dispatch => {
@@ -66,6 +67,30 @@ export function deleteServerData(id) {
     try {
       await dispatch(deleteServer(id));
       await dispatch({ type: SERVERS_DATA_DELETE, id });
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function fetchServerPolicy() {
+  return async dispatch => {
+    try {
+      const serversData = await dispatch(serversPolicy());
+      await dispatch({ type: SERVERS_POLICY_RECEIVED, data: serversData });
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function patchServerPolicy(data) {
+  return async dispatch => {
+    try {
+      await dispatch(editServerPolicy(data));
+      await dispatch({ type: SERVERS_POLICY_RECEIVED, data: data });
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

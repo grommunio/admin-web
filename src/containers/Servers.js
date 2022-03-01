@@ -7,7 +7,7 @@ import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@mui/material';
+  TextField, InputAdornment, MenuItem } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
@@ -18,7 +18,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddServer from '../components/Dialogs/AddServer';
-import { deleteServerData, fetchServersData } from '../actions/servers';
+import { deleteServerData, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
 
 const styles = theme => ({
   buttonGrid: {
@@ -37,12 +37,20 @@ const styles = theme => ({
   count: {
     marginLeft: 16,
   },
+  policy: {
+    margin: theme.spacing(1, 2),
+    width: 160,
+  },
 });
 
 class Servers extends PureComponent {
 
   componentDidMount() {
     this.props.fetch({ sort: 'hostname,asc' })
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+    this.props.fetchPolicy()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
@@ -149,6 +157,14 @@ class Servers extends PureComponent {
       });
   }, 200)
 
+  handlePolicyChange = e => {
+    this.props.setPolicy({ data: { policy: e.target.value }})
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(msg => {
+        this.setState({ snackbar: msg || 'Unknown error' });
+      });
+  }
+
   render() {
     const { classes, t, servers } = this.props;
     const { adding, snackbar, deleting, order, match, orderBy } = this.state;
@@ -198,6 +214,21 @@ class Servers extends PureComponent {
             />
           </div>
         </Grid>
+        <div>
+          <TextField
+            value={servers.policy || 'round-robin'}
+            onChange={this.handlePolicyChange}
+            select
+            label="Selection policy"
+            className={classes.policy}
+          >
+            <MenuItem value={"round-robin"}>round-robin</MenuItem>
+            <MenuItem value={"balanced"}>balanced</MenuItem>
+            <MenuItem value={"first"}>first</MenuItem>
+            <MenuItem value={"last"}>last</MenuItem>
+            <MenuItem value={"random"}>random</MenuItem>
+          </TextField>
+        </div>
         <Typography className={classes.count} color="textPrimary">
           {t("showingServers", { count: servers.Servers.length })}
         </Typography>
@@ -265,7 +296,9 @@ Servers.propTypes = {
   history: PropTypes.object.isRequired,
   servers: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchPolicy: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  setPolicy: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -276,12 +309,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async params => {
-      await dispatch(fetchServersData(params)).catch(msg => Promise.reject(msg));
-    },
-    delete: async id => {
-      await dispatch(deleteServerData(id)).catch(msg => Promise.reject(msg));
-    },
+    fetch: async params => 
+      await dispatch(fetchServersData(params)).catch(msg => Promise.reject(msg)),
+    fetchPolicy: async () =>
+      await dispatch(fetchServerPolicy()).catch(msg => Promise.reject(msg)),
+    delete: async id =>
+      await dispatch(deleteServerData(id)).catch(msg => Promise.reject(msg)),
+    setPolicy: async data => 
+      await dispatch(patchServerPolicy(data)).catch(msg => Promise.reject(msg)),
   };
 };
 
