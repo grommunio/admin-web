@@ -137,7 +137,8 @@ i18n
     resources,
     lng: 'en-US',
     fallbackLng: 'en-US',
-    debug: false, 
+    debug: false,
+    returnEmptyString: false,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
