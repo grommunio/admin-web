@@ -87,20 +87,24 @@ Result will be created in `/dist`
 # Server-side configuration
 
 In order to get the correct configuration for production, create a `config.json` in
-`/usr/share/grommunio-admin-web/config.json` 
+`/usr/share/grommunio-admin-web/config.json`.
+Attributes which are manually set in `config.json` will overwrite the default values,
+otherwise the defaults are used.
 
-Following props are available:
+Following attributes are available:
 
-* `devMode:boolean` For development, enables redux logger
+* `devMode:boolean` For development, enables redux logger (default: `false`)
 
-* `mailWebAddress:String` Url of production mail server
+* `loadAntispamData:boolean` Whether or not to load antispam data in the dashboard (default: `true`)
 
-* `chatWebAddress:String` Url of production chat server
+* `mailWebAddress:String` Url of production mail server (default: `''`)
 
-* `videoWebAddress:String` Url of production video server
+* `chatWebAddress:String` Url of production chat server (default: `''`)
 
-* `fileWebAddress:String` Url of production file server
+* `videoWebAddress:String` Url of production video server (default: `''`)
 
-* `archiveWebAddress:String` Url of production archive server
+* `fileWebAddress:String` Url of production file server (default: `''`)
+
+* `archiveWebAddress:String` Url of production archive server (default: `''`)
 
 * `searchAttributes:Array<String>` Array of strings, possible LDAP Search attributes

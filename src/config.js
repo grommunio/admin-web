@@ -6,6 +6,7 @@ import { createLogger } from 'redux-logger';
 
 export var config = {
   devMode: false,
+  loadAntispamData: true,
   mailWebAddress: '',
   chatWebAddress: '',
   videoWebAddress: '',

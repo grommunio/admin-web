@@ -24,6 +24,7 @@ import Feedback from "../components/Feedback";
 import { HelpOutline } from "@mui/icons-material";
 import { fetchAboutData } from "../actions/about";
 import About from "../components/About";
+import { config } from '../config';
 
 const styles = (theme) => ({
   root: {
@@ -129,7 +130,7 @@ class Dashboard extends Component {
     const { fetch, fetchServices, fetchAntispam, fetchAbout } = this.props;
     fetch().catch((msg) => this.setState({ snackbar: msg }));
     fetchServices().catch((msg) => this.setState({ snackbar: msg }));
-    fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
+    if(config?.loadAntispamData) fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
     fetchAbout().catch((msg) => this.setState({ snackbar: msg }));
     this.fetchDashboard();
   }
@@ -168,7 +169,7 @@ class Dashboard extends Component {
       <div className={classes.root}>
         <TopBar />
         <div className={classes.toolbar} />
-        <Typography variant="h2" className={classes.pageTitle}>
+        {config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
           {t("Mail filter statistics")}
           <IconButton
             size="small"
@@ -177,14 +178,14 @@ class Dashboard extends Component {
           >
             <HelpOutline fontSize="small"/>
           </IconButton>
-        </Typography>
-        <Typography variant="caption" className={classes.subtitle}>
+        </Typography>}
+        {config?.loadAntispamData && <Typography variant="caption" className={classes.subtitle}>
           {t("mailfilter_sub")}
-        </Typography>
+        </Typography>}
         <div className={classes.dashboardLayout}>
-          <div className={classes.antispam}>
+          {config?.loadAntispamData && <div className={classes.antispam}>
             <AntispamStatistics data={statistics}/>
-          </div>
+          </div>}
           <div className={classes.services}>
             <ServicesChart/>
           </div>
