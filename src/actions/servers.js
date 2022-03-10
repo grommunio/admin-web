@@ -16,7 +16,7 @@ export function fetchServersData(params) {
     await dispatch({ type: SERVERS_DATA_FETCH });
     try {
       const serversData = await dispatch(servers(params));
-      await dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData });
+      await dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });
     } catch(error) {
       console.error(error);
       await dispatch({ type: SERVERS_DATA_ERROR });

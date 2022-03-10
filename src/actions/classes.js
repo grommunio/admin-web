@@ -17,7 +17,11 @@ export function fetchClassesData(domainID, params, select) {
     await dispatch({ type: CLASSES_DATA_FETCH });
     try {
       const response = await dispatch(classes(domainID, params));
-      await dispatch({ type: select ? CLASSES_SELECT_RECEIVED : CLASSES_DATA_RECEIVED, data: response });
+      await dispatch({
+        type: select ? CLASSES_SELECT_RECEIVED : CLASSES_DATA_RECEIVED,
+        data: response,
+        offset: params?.offset,
+      });
     } catch(error) {
       await dispatch({ type: CLASSES_DATA_ERROR, error});
       return Promise.reject(error.message);

@@ -3,14 +3,10 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import debounce from 'debounce';
-import { withTranslation } from 'react-i18next';
 import { Paper, Typography, Button, Grid,
   CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton } from '@mui/material';
 import Search from '@mui/icons-material/Search';
-import { connect } from 'react-redux';
 import { fetchMListsData, deleteMListData } from '../actions/mlists';
 import { Delete } from '@mui/icons-material';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
@@ -18,6 +14,8 @@ import AddMList from '../components/Dialogs/AddMList';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
+import withStyledReduxTable from '../components/withTable';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = theme => ({
   tablePaper: {
@@ -51,14 +49,7 @@ const styles = theme => ({
 class MLists extends Component {
 
   state = {
-    snackbar: null,
-    adding: false,
-    deleting: false,
     checking: false,
-    order: 'asc',
-    orderBy: 'listname',
-    offset: 50,
-    match: '',
   }
 
   columns = [
@@ -71,102 +62,19 @@ class MLists extends Component {
 
   listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing']
 
-  handleScroll = () => {
-    const { mLists } = this.props;
-    if((mLists.MLists.length >= mLists.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if(!mLists.loading) {
-        this.fetchMLists({
-          sort: orderBy + ',' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.fetchMLists({ sort: 'listname,asc' });
-  }
-
-  fetchMLists(params) {
-    const { fetch, domain } = this.props;
-    fetch(domain.ID, params)
-      .catch(msg => this.setState({ snackbar: msg }));
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleDelete = mList => event => {
-    event.stopPropagation();
-    this.setState({ deleting: mList });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleEdit = mList => () => {
-    const { history, domain } = this.props;
-    history.push('/' + domain.ID + '/mailLists/' + mList.ID, { ...mList });
-  }
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleRequestSort = orderBy => () => {
-    const { fetch, domain } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
-    
-    fetch(domain.ID, {
-      sort: orderBy + ',' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy,
-      offset: 0,
-    });
-  }
-
-  debouceFetch = debounce(value => {
-    const { order, orderBy } = this.state;
-    this.fetchMLists({ match: value || undefined, sort: orderBy + ',' + order });
-  }, 200)
-
   handleCheckClose = () => this.setState({ checking: false });
 
-  handleMatch = (e) => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
+  handleScroll = () => {
+    const { MLists, count, loading } = this.props.mLists;
+    this.props.handleScroll(MLists, count, loading);
   };
 
   render() {
-    const { classes, t, mLists, domain } = this.props;
-    const { snackbar, match, orderBy, order, adding, deleting } = this.state;
+    const { classes, t, mLists, domain, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
 
     return (
@@ -176,13 +84,13 @@ class MLists extends Component {
         subtitle={t('mlists_sub')}
         href="https://docs.grommunio.com/admin/administration.html#mail-lists"
         snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             className={classes.newButton}
             disabled={!writable}
           >
@@ -191,7 +99,7 @@ class MLists extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -219,7 +127,7 @@ class MLists extends Component {
                       active={orderBy === column.value}
                       align="left" 
                       direction={orderBy === column.value ? order : 'asc'}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                     >
                       {t(column.label)}
                     </TableSortLabel>
@@ -230,12 +138,12 @@ class MLists extends Component {
             </TableHead>
             <TableBody>
               {mLists.MLists.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/mailLists/' + obj.ID)}>
                   <TableCell>{obj.listname}</TableCell>
                   <TableCell>{this.listTypes[obj.listType]}</TableCell>
                   <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -249,17 +157,17 @@ class MLists extends Component {
         </Paper>
         <AddMList
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
           domain={domain}
-          onClose={this.handleAddingClose}
+          onClose={handleAddingClose}
         />
         <DomainDataDelete
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.listname}
           id={deleting.ID}
           domainID={domain.ID}
@@ -271,13 +179,10 @@ class MLists extends Component {
 
 MLists.contextType = CapabilityContext;
 MLists.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   mLists: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -286,7 +191,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domainID, params) => {
+    fetchTableData: async (domainID, params) => {
       await dispatch(fetchMListsData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
@@ -295,5 +200,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(MLists)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(MLists, { orderBy: 'listname'});

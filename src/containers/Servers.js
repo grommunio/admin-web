@@ -3,22 +3,20 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
   TextField, InputAdornment, MenuItem } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { debounce } from 'debounce';
 import { HelpOutline } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddServer from '../components/Dialogs/AddServer';
 import { deleteServerData, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
+import withStyledReduxTable from '../components/withTable';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = theme => ({
   buttonGrid: {
@@ -45,117 +43,21 @@ const styles = theme => ({
 
 class Servers extends PureComponent {
 
+  state = {
+    snackbar: '',
+  }
+
   componentDidMount() {
-    this.props.fetch({ sort: 'hostname,asc' })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
     this.props.fetchPolicy()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
   }
 
-  state = {
-    snackbar: '',
-    adding: false,
-    deleting: false,
-    order: 'asc',
-    orderBy: 'hostname',
-    match: '',
-    offset: 50,
-  }
-
   columns = [
     { label: "Hostname", value: "hostname" },
     { label: "External name", value: "extname" },
   ];
-
-  handleScroll = () => {
-    const { servers, fetch } = this.props;
-    if((servers.Servers.length >= servers.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { order, offset, match } = this.state;
-      if(!servers.loading) {
-        fetch({
-          sort: 'hostname,' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  handleRequestSort = orderBy => () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
-    
-    fetch({
-      sort: orderBy + ',' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy,
-      offset: 0,
-    });
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleEdit = server => event => {
-    this.props.history.push('/servers/' + server.ID);
-    event.stopPropagation();
-  }
-
-  handleDelete = server => event => {
-    event.stopPropagation();
-    this.setState({ deleting: server });
-  }
-
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleMatch = e => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  }
-
-  debouceFetch = debounce(value => {
-    const { fetch }= this.props;
-    const { order } = this.state;
-    fetch({ match: value || undefined, sort: 'hostname,' + order })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
-  }, 200)
 
   handlePolicyChange = e => {
     this.props.setPolicy({ data: { policy: e.target.value }})
@@ -165,9 +67,24 @@ class Servers extends PureComponent {
       });
   }
 
+  handleSnackbarClose = () => {
+    this.props.clearSnackbar();
+    this.setState({
+      snackbar: '',
+    });
+  }
+
+  handleScroll = () => {
+    const { Servers, count, loading } = this.props.servers;
+    this.props.handleScroll(Servers, count, loading);
+  };
+
   render() {
-    const { classes, t, servers } = this.props;
-    const { adding, snackbar, deleting, order, match, orderBy } = this.state;
+    const { classes, t, servers, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, adding, snackbar, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -184,14 +101,14 @@ class Servers extends PureComponent {
           </IconButton>
         </span>
         }
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        snackbar={snackbar || this.state.snackbar}
+        onSnackbarClose={this.handleSnackbarClose}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => this.setState({ adding: true })}
+            onClick={handleAdd}
             disabled={!writable}
           >
             {t("New server")}
@@ -199,7 +116,7 @@ class Servers extends PureComponent {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -242,7 +159,7 @@ class Servers extends PureComponent {
                       active={orderBy === column.value}
                       align="left"
                       direction={orderBy === column.value ? order : "asc"}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                     >
                       {t(column.label)}
                     </TableSortLabel>
@@ -253,11 +170,11 @@ class Servers extends PureComponent {
             </TableHead>
             <TableBody>
               {servers.Servers.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit('/servers/' + obj.ID)}>
                   <TableCell>{obj.hostname}</TableCell>
                   <TableCell>{obj.extname}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -271,16 +188,16 @@ class Servers extends PureComponent {
         </Paper>
         <AddServer
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
+          onClose={handleAddingClose}
         />
         <GeneralDelete
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.hostname}
           id={deleting.ID}
         />
@@ -291,14 +208,11 @@ class Servers extends PureComponent {
 
 Servers.contextType = CapabilityContext;
 Servers.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   servers: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   fetchPolicy: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   setPolicy: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -309,7 +223,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async params => 
+    fetchTableData: async params => 
       await dispatch(fetchServersData(params)).catch(msg => Promise.reject(msg)),
     fetchPolicy: async () =>
       await dispatch(fetchServerPolicy()).catch(msg => Promise.reject(msg)),
@@ -320,5 +234,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Servers)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Servers, { orderBy: 'hostname'});

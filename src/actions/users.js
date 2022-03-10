@@ -24,7 +24,7 @@ export function fetchUsersData(domainID, params) {
     await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(users(domainID, params));
-      if(!params.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
+      if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
       else await dispatch({ type: USERS_NEXT_SET, data });
       return data;
     } catch(err) {
@@ -104,7 +104,8 @@ export function fetchAllUsers(params) {
     await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(allUsers(params));
-      await dispatch({type: USERS_DATA_RECEIVED, data});
+      if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
+      else await dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
       await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
