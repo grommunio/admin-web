@@ -28,15 +28,15 @@ export function authLogin(user, pass) {
           await dispatch(authAuthenticated(true, profileData.capabilities));
         } else {
           clearStorage();
-          await dispatch(authError());
+          await dispatch(authError("No profile data received"));
         }
       } else {
         clearStorage();
-        await dispatch(authError());
+        await dispatch(authError("No token received"));
       }
     } catch(err) {
       clearStorage();
-      console.err(err.message);
+      console.error(err.message);
       await dispatch(authError(err.message));
       return Promise.reject(err);
     }
@@ -63,11 +63,11 @@ export function authLoginWithToken(token) {
         await dispatch(authAuthenticated(true, profileData.capabilities));
       } else {
         clearStorage();
-        await dispatch(authError());
+        await dispatch(authError("No profile data received"));
       }
     } catch(err) {
       clearStorage();
-      await dispatch(authError());
+      await dispatch(authError("No token received"));
       return Promise.reject(err);
     }
   };

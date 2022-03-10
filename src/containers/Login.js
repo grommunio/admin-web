@@ -127,7 +127,7 @@ class Login extends Component {
   render() {
     const { classes, t, auth } = this.props;
     const { user, pass, loading } = this.state;
-
+    console.log(auth.error);
     return (
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
