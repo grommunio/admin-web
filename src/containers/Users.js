@@ -3,16 +3,12 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import debounce from 'debounce';
-import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
   CircularProgress, TextField, InputAdornment, Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import AddUser from '../components/Dialogs/AddUser';
@@ -22,6 +18,8 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
+import withStyledReduxTable from '../components/withTable';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = theme => ({
   tablePaper: {
@@ -60,17 +58,16 @@ const styles = theme => ({
 class Users extends Component {
 
   state = {
-    snackbar: null,
-    adding: false,
-    deleting: false,
+    snackbar: '',
     checking: false,
-    order: 'asc',
-    orderBy: 'username',
-    offset: 50,
-    match: '',
     taskMessage: '',
     taskID: null,
   }
+
+  handleScroll = () => {
+    const { Users, count, loading } = this.props.users;
+    this.props.handleScroll(Users, count, loading);
+  };
 
   columns = [
     { label: 'Display name', value: 'displayname' },
@@ -80,83 +77,10 @@ class Users extends Component {
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ]
 
-  handleScroll = () => {
-    const { users } = this.props;
-    if((users.Users.length >= users.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if(!users.loading) {
-        this.fetchUsers({
-          sort: orderBy + ',' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.fetchUsers({ sort: 'username,asc' });
-  }
-
-  fetchUsers(params) {
-    const { fetch, domain } = this.props;
-    fetch(domain.ID, params)
-      .catch(msg => this.setState({ snackbar: msg }));
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleDelete = user => event => {
-    event.stopPropagation();
-    this.setState({ deleting: user });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleEdit = user => () => {
-    this.props.history.push('/' + this.props.domain.ID + '/users/' + user.ID, { ...user });
-  }
-
   handleNavigation = path => event => {
     const { history } = this.props;
     event.preventDefault();
     history.push(`/${path}`);
-  }
-
-  handleRequestSort = orderBy => () => {
-    const { fetch, domain } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
-    
-    fetch(domain.ID, {
-      sort: orderBy + ',' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy,
-      offset: 0,
-    });
   }
 
   getMaxSizeFormatting(size) {
@@ -171,17 +95,6 @@ class Users extends Component {
       return size + ' KiB';
     }
   }
-
-  handleMatch = e => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  }
-
-  debouceFetch = debounce(value => {
-    const { order, orderBy } = this.state;
-    this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
-  }, 200)
 
   handleUserSync = importUsers => () => {
     const { sync, domain } = this.props;
@@ -244,25 +157,33 @@ class Users extends Component {
     }
   }
 
+  handleSnackbarClose = () => {
+    this.setState({ snackbar: '' });
+    this.props.clearSnackbar();
+  }
+
   render() {
-    const { classes, t, users, domain } = this.props;
+    const { classes, t, users, domain, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, adding, deleting, order, orderBy, match, checking,
-      taskMessage, taskID } = this.state;
+    const { checking, taskMessage, taskID } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
         headline={t("Users")}
         subtitle={t('users_sub')}
         href="https://docs.grommunio.com/admin/administration.html#users"
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        snackbar={snackbar || this.state.snackbar}
+        onSnackbarClose={this.handleSnackbarClose}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             className={classes.newButton}
             disabled={!writable}
           >
@@ -318,7 +239,7 @@ class Users extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -345,7 +266,7 @@ class Users extends Component {
                     active={orderBy === 'username'}
                     align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={this.handleRequestSort('username')}
+                    onClick={handleRequestSort('username')}
                     color="primary"
                     sx={{
                       color: 'text.primary',
@@ -366,7 +287,7 @@ class Users extends Component {
               {users.Users.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
-                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{this.getStatus(obj.status)}</TableCell>
@@ -374,7 +295,7 @@ class Users extends Component {
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="large">
                         <Delete color="error"/>
                       </IconButton>}
                     </TableCell>
@@ -389,23 +310,23 @@ class Users extends Component {
         </Paper>
         <AddUser
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
           domain={domain}
-          onClose={this.handleAddingClose}
+          onClose={handleAddingClose}
         />
         <DeleteUser
           open={!!deleting}
-          onSuccess={this.handleDeleteSuccess}
-          onClose={this.handleDeleteClose}
-          onError={this.handleDeleteError}
+          onSuccess={handleDeleteSuccess}
+          onClose={handleDeleteClose}
+          onError={handleDeleteError}
           domainID={domain.ID}
           user={deleting}
         />
         <CheckLdapDialog
           open={checking}
           onClose={this.handleCheckClose}
-          onError={this.handleDeleteError}
+          onError={handleDeleteError}
         />
         <TaskCreated
           message={taskMessage}
@@ -419,15 +340,12 @@ class Users extends Component {
 
 Users.contextType = CapabilityContext;
 Users.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   check: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -436,7 +354,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domainID, params) => {
+    fetchTableData: async (domainID, params) => {
       await dispatch(fetchUsersData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
@@ -449,5 +367,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Users)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Users, { orderBy: 'username'});

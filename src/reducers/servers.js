@@ -10,7 +10,7 @@ import {
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -33,7 +33,7 @@ function serversReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Servers: action.data.data,
+        Servers: action.offset ? append(state.Servers, action.data.data) : action.data.data,
         count: action.data.count,
       };
     

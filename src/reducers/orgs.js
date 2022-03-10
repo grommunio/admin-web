@@ -9,7 +9,7 @@ import {
   ORG_DATA_ADD,
   ORG_DATA_DELETE,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -31,7 +31,7 @@ function orgsReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Orgs: action.data.data,
+        Orgs: action.offset ? append(state.Orgs, action.data.data) : action.data.data,
         count: action.data.count,
       };
     

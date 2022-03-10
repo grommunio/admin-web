@@ -11,7 +11,7 @@ import {
   CLASSES_SELECT_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -35,7 +35,7 @@ function classesReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        Classes: action.data.data,
+        Classes: action.offset ? append(state.Classes, action.data.data) : action.data.data,
         count: action.data.count,
       };
 

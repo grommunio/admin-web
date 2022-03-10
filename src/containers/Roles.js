@@ -3,22 +3,20 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
   TextField, InputAdornment } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { debounce } from 'debounce';
 import { HelpOutline } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
+import withStyledReduxTable from '../components/withTable';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = theme => ({
   buttonGrid: {
@@ -41,119 +39,17 @@ const styles = theme => ({
 
 class Roles extends PureComponent {
 
-  componentDidMount() {
-    this.props.fetch({ sort: 'name,asc' })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
-  }
-
-  state = {
-    snackbar: '',
-    adding: false,
-    deleting: false,
-    order: 'asc',
-    match: '',
-    offset: 50,
-  }
-
   handleScroll = () => {
-    const { roles, fetch } = this.props;
-    if((roles.Roles.length >= roles.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { order, offset, match } = this.state;
-      if(!roles.loading) {
-        fetch({
-          sort: 'name,' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  handleInput = field => event => {
-    this.setState({
-      newData: {
-        ...this.state.newData,
-        [field]: event.target.value,
-      },
-    });
-  }
-
-  handleRequestSort = () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, match } = this.state;
-    const order = stateOrder === "asc" ? "desc" : "asc";
-    
-    fetch({
-      sort: 'name,' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      offset: 0,
-    });
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleEdit = role => event => {
-    this.props.history.push('/roles/' + role.ID, { ...role });
-    event.stopPropagation();
-  }
-
-  handleDelete = role => event => {
-    event.stopPropagation();
-    this.setState({ deleting: role });
-  }
-
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleMatch = e => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  }
-
-  debouceFetch = debounce(value => {
-    const { fetch }= this.props;
-    const { order } = this.state;
-    fetch({ match: value || undefined, sort: 'name,' + order })
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
-      });
-  }, 200)
+    const { Roles, count, loading } = this.props.roles;
+    this.props.handleScroll(Roles, count, loading);
+  };
 
   render() {
-    const { classes, t, roles } = this.props;
-    const { adding, snackbar, deleting, order, match } = this.state;
+    const { classes, t, roles, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, match, adding, snackbar, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -172,13 +68,13 @@ class Roles extends PureComponent {
         }
         subtitle={t('roles_sub')}
         snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => this.setState({ adding: true })}
+            onClick={handleAdd}
             disabled={!writable}
           >
             {t("New role")}
@@ -186,7 +82,7 @@ class Roles extends PureComponent {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -213,7 +109,7 @@ class Roles extends PureComponent {
                     active
                     align="left" 
                     direction={order}
-                    onClick={this.handleRequestSort}
+                    onClick={handleRequestSort('name')}
                   >
                     {t('Name')}
                   </TableSortLabel>
@@ -225,12 +121,12 @@ class Roles extends PureComponent {
             </TableHead>
             <TableBody>
               {roles.Roles.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit('/roles/' + obj.ID)}>
                   <TableCell>{obj.name}</TableCell>
                   <TableCell>{obj.description}</TableCell>
                   <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -244,16 +140,16 @@ class Roles extends PureComponent {
         </Paper>
         <AddRoles
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
+          onClose={handleAddingClose}
         />
         <GeneralDelete
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.name}
           id={deleting.ID}
         />
@@ -264,12 +160,9 @@ class Roles extends PureComponent {
 
 Roles.contextType = CapabilityContext;
 Roles.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   roles: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -280,7 +173,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async params => {
+    fetchTableData: async params => {
       await dispatch(fetchRolesData(params)).catch(msg => Promise.reject(msg));
     },
     delete: async id => {
@@ -289,5 +182,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Roles)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Roles);

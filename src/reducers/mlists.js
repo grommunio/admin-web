@@ -9,7 +9,7 @@ import {
   MLIST_DATA_ADD,
   MLIST_DATA_DELETE,
 } from '../actions/types';
-import { addItem } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
@@ -31,7 +31,7 @@ function mlistsReducer(state = defaultState, action) {
         ...state,
         loading: false,
         error: null,
-        MLists: action.data.data,
+        MLists: action.offset ? append(state.MLists, action.data.data) : action.data.data,
         count: action.data.count,
       };
     

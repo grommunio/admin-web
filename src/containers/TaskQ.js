@@ -3,8 +3,6 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@mui/styles";
-import { withTranslation } from "react-i18next";
 import {
   Paper,
   Table,
@@ -22,13 +20,13 @@ import {
   Chip,
 } from "@mui/material";
 import Search from "@mui/icons-material/Search";
-import { connect } from "react-redux";
-import debounce from "debounce";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 import { fetchTaskqData, fetchTaskqStatus, startTaskqServer, stopTaskqServer } from "../actions/taskq";
 import { setDateTimeString } from "../utils";
+import withStyledReduxTable from "../components/withTable";
+import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 
 const styles = (theme) => ({
   circularProgress: {
@@ -58,10 +56,6 @@ const styles = (theme) => ({
 class TasQ extends Component {
   state = {
     snackbar: '',
-    orderBy: 'created',
-    order: "desc",
-    match: "",
-    offset: 50,
   };
 
   columns = [
@@ -73,52 +67,8 @@ class TasQ extends Component {
   ];
 
   componentDidMount() {
-    this.fetchtaskq({ sort: 'created,desc' });
+    this.props.status().catch((msg) => this.setState({ snackbar: msg }));
   }
-
-  fetchtaskq(params) {
-    const { fetch, status } = this.props;
-    fetch(params).catch((msg) => this.setState({ snackbar: msg }));
-    status(params).catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  handleRequestSort = (orderBy) => () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order =
-      stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
-
-    fetch({
-      sort: orderBy + "," + order,
-      match: match || undefined,
-    }).catch((msg) => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy: orderBy,
-      offset: 0,
-    });
-  };
-
-  handleNavigation = (path) => (event) => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  };
-
-  handleMatch = (e) => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  };
-
-  debouceFetch = debounce((value) => {
-    const { order, orderBy } = this.state;
-    this.fetchtaskq({
-      match: value || undefined,
-      sort: orderBy + "," + order,
-    });
-  }, 200);
 
   handleStart = () => {
     this.props.start()
@@ -142,14 +92,17 @@ class TasQ extends Component {
     }
   }
 
+  handleSnackbarClose = () => {
+    this.setState({
+      snackbar: '',
+    });
+    this.props.clearSnackbar();
+  }
+
   render() {
-    const { classes, t, taskq } = this.props;
-    const {
-      snackbar,
-      order,
-      orderBy,
-      match,
-    } = this.state;
+    const { classes, t, taskq, tableState, handleMatch, handleRequestSort,
+      handleEdit } = this.props;
+    const { order, orderBy, match, snackbar } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -157,8 +110,8 @@ class TasQ extends Component {
         headline={t("Task queue")}
         href="https://docs.grommunio.com/admin/administration.html#taskq"
         // subtitle={t("taskq_sub")}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        snackbar={snackbar || this.state.snackbar}
+        onSnackbarClose={this.handleSnackbarClose}
       >
         <Grid container alignItems="flex-end" className={classes.chipGrid}>
           <Chip
@@ -189,7 +142,7 @@ class TasQ extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search tasks")}
               variant={"outlined"}
               InputProps={{
@@ -216,7 +169,7 @@ class TasQ extends Component {
                       active={orderBy === column.value}
                       align="left"
                       direction={orderBy === column.value ? order : "asc"}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                     >
                       {t(column.label)}
                     </TableSortLabel>
@@ -226,7 +179,7 @@ class TasQ extends Component {
             </TableHead>
             <TableBody>
               {taskq.Tasks.map((obj, idx) => 
-                <TableRow key={idx} hover onClick={this.handleNavigation('taskq/' + obj.ID)}>
+                <TableRow key={idx} hover onClick={handleEdit('/taskq/' + obj.ID)}>
                   <TableCell>{obj.command}</TableCell>
                   <TableCell>{t(this.getTaskState(obj.state))}</TableCell>
                   <TableCell>{obj.message}</TableCell>
@@ -252,14 +205,11 @@ class TasQ extends Component {
 
 TasQ.contextType = CapabilityContext;
 TasQ.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   taskq: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   status: PropTypes.func.isRequired,
   start: PropTypes.func.isRequired,
   stop: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = (state) => {
@@ -268,7 +218,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetch: async (params) => await dispatch(fetchTaskqData(params))
+    fetchTableData: async (params) => await dispatch(fetchTaskqData({ limit: 200, ...params }))
       .catch((error) => Promise.reject(error)),
     status: async (params) => await dispatch(fetchTaskqStatus(params))
       .catch((error) => Promise.reject(error)),
@@ -279,7 +229,5 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(styles)(TasQ)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(TasQ, { orderBy: 'created', order: 'desc' });

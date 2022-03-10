@@ -104,7 +104,7 @@ class AddOrg extends PureComponent {
               onChange={this.handleInput('name')}
               autoFocus
               required
-              error={name && !nameAcceptable}
+              error={Boolean(name && !nameAcceptable)}
             />
             <TextField 
               className={classes.input} 

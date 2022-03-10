@@ -3,16 +3,12 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import debounce from 'debounce';
-import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
   CircularProgress, TextField, InputAdornment } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
 import { deleteUserData, checkLdapUsers, fetchAllUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import DeleteUser from '../components/Dialogs/DeleteUser';
@@ -21,6 +17,8 @@ import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import withStyledReduxTable from '../components/withTable';
 
 const styles = theme => ({
   tablePaper: {
@@ -59,14 +57,7 @@ const styles = theme => ({
 class GlobalUsers extends Component {
 
   state = {
-    snackbar: null,
-    adding: false,
-    deleting: false,
     checking: false,
-    order: 'asc',
-    orderBy: 'username',
-    offset: 50,
-    match: '',
   }
 
   columns = [
@@ -74,94 +65,9 @@ class GlobalUsers extends Component {
   ]
 
   handleScroll = () => {
-    const { users } = this.props;
-    if((users.Users.length >= users.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if(!users.loading) {
-        this.fetchUsers({
-          sort: orderBy + ',' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.fetchUsers({ sort: 'username,asc', level: 1 });
-  }
-
-  fetchUsers(params) {
-    const { fetch } = this.props;
-    fetch(params)
-      .catch(msg => this.setState({ snackbar: msg }));
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleDelete = user => event => {
-    event.stopPropagation();
-    this.setState({ deleting: user });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleEdit = user => () => {
-    this.props.history.push('/' + user.domainID + '/users/' + user.ID, { ...user });
-  }
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleRequestSort = orderBy => () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
-    
-    fetch({
-      sort: orderBy + ',' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy,
-      offset: 0,
-    });
-  }
-
-  handleMatch = e => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  }
-
-  debouceFetch = debounce(value => {
-    const { order, orderBy } = this.state;
-    this.fetchUsers({ match: value || undefined, sort: orderBy + ',' + order });
-  }, 200)
+    const { Users, count, loading } = this.props.users;
+    this.props.handleScroll(Users, count, loading);
+  };
 
   handleCheckClose = () => this.setState({ checking: false });
 
@@ -181,9 +87,13 @@ class GlobalUsers extends Component {
   }
 
   render() {
-    const { classes, t, users } = this.props;
+    const { classes, t, users, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { snackbar, adding, deleting, order, orderBy, match, checking } = this.state;
+    const { checking } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -191,13 +101,13 @@ class GlobalUsers extends Component {
         subtitle={t("globalusers_sub")}
         href="https://docs.grommunio.com/admin/administration.html#users"
         snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       > 
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             className={classes.newButton}
             disabled={!writable}
           >
@@ -206,7 +116,7 @@ class GlobalUsers extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -233,7 +143,7 @@ class GlobalUsers extends Component {
                     active={orderBy === 'username'}
                     align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={this.handleRequestSort('username')}
+                    onClick={handleRequestSort('username')}
                   >
                     {t('Username')}
                   </TableSortLabel>
@@ -249,11 +159,11 @@ class GlobalUsers extends Component {
             <TableBody>
               {users.Users.map((obj, idx) => {
                 return (
-                  <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell align="right">
-                      {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="large">
                         <Delete color="error"/>
                       </IconButton>}
                     </TableCell>
@@ -268,22 +178,22 @@ class GlobalUsers extends Component {
         </Paper>
         <AddGlobalUser
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
+          onClose={handleAddingClose}
         />
         <DeleteUser
           open={!!deleting}
-          onSuccess={this.handleDeleteSuccess}
-          onClose={this.handleDeleteClose}
-          onError={this.handleDeleteError}
+          onSuccess={handleDeleteSuccess}
+          onClose={handleDeleteClose}
+          onError={handleDeleteError}
           user={deleting}
           domainID={deleting.domainID || -1}
         />
         <CheckLdapDialog
           open={checking}
           onClose={this.handleCheckClose}
-          onError={this.handleDeleteError}
+          onError={handleDeleteError}
         />
       </TableViewContainer>
     );
@@ -292,14 +202,11 @@ class GlobalUsers extends Component {
 
 GlobalUsers.contextType = CapabilityContext;
 GlobalUsers.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   check: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -308,7 +215,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async params => {
+    fetchTableData: async params => {
       await dispatch(fetchAllUsers(params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
@@ -321,5 +228,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GlobalUsers)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(GlobalUsers, { orderBy: 'username'});

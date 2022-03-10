@@ -3,8 +3,6 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@mui/styles";
-import { withTranslation } from "react-i18next";
 import {
   Paper,
   Table,
@@ -25,14 +23,14 @@ import {
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
 import Search from "@mui/icons-material/Search";
-import { connect } from "react-redux";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
 import AddDomain from "../components/Dialogs/AddDomain";
-import debounce from "debounce";
 import DeleteDomain from "../components/Dialogs/DeleteDomain";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
+import withStyledReduxTable from "../components/withTable";
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = (theme) => ({
   circularProgress: {
@@ -53,16 +51,9 @@ const styles = (theme) => ({
   },
 });
 
-class DomainList extends Component {
+class Domains extends Component {
   state = {
-    snackbar: '',
     showDeleted: false,
-    adding: false,
-    deleting: false,
-    orderBy: "domainname",
-    order: "asc",
-    match: "",
-    offset: 50,
   };
 
   columns = [
@@ -74,116 +65,22 @@ class DomainList extends Component {
   ];
 
   handleScroll = () => {
-    const { domains } = this.props;
-    if (domains.Domains.length >= domains.count) return;
-    if (
-      Math.floor(
-        document.getElementById("scrollDiv").scrollHeight -
-          document.getElementById("scrollDiv").scrollTop
-      ) <=
-      document.getElementById("scrollDiv").offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if (!domains.loading) { 
-        this.fetchDomains({
-          sort: orderBy + "," + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
+    const { Domains, count, loading } = this.props.domains;
+    this.props.handleScroll(Domains, count, loading);
   };
-
-  componentDidMount() {
-    this.fetchDomains({ sort: "domainname,asc" });
-  }
-
-  fetchDomains(params) {
-    this.props.fetch(params).catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  handleRequestSort = (orderBy) => () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order =
-      stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
-
-    fetch({
-      sort: orderBy + "," + order,
-      match: match || undefined,
-    }).catch((msg) => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy: orderBy,
-      offset: 0,
-    });
-  };
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
-
-  handleAddingError = (error) => this.setState({ snackbar: error });
-
-  handleEdit = (domain) => (event) => {
-    this.props.history.push("/domains/" + domain.ID, { ...domain });
-    event.stopPropagation();
-  };
-
-  handleDelete = (domain) => (event) => {
-    event.stopPropagation();
-    this.setState({ deleting: domain });
-  };
-
-  handleDeleteSuccess = () =>
-    this.setState({ deleting: false, snackbar: "Success!" });
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = (error) => this.setState({ snackbar: error });
 
   handleCheckbox = (field) => (event) =>
     this.setState({
       [field]: event.target.checked,
     });
 
-  handleNavigation = (path) => (event) => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  };
-
-  handleMatch = (e) => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  };
-
-  debouceFetch = debounce((value) => {
-    const { order, orderBy } = this.state;
-    this.fetchDomains({
-      match: value || undefined,
-      sort: orderBy + "," + order,
-    });
-  }, 200);
-
   render() {
-    const { classes, t, domains } = this.props;
-    const {
-      showDeleted,
-      snackbar,
-      adding,
-      deleting,
-      order,
-      orderBy,
-      match,
-    } = this.state;
+    const { classes, t, domains, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { showDeleted } = this.state;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
@@ -194,13 +91,13 @@ class DomainList extends Component {
         subtitle={t('domains_sub')}
         snackbar={snackbar}
         href="https://docs.grommunio.com/admin/administration.html#domains"
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             disabled={!writable}
           >
             {t("New domain")}
@@ -217,7 +114,7 @@ class DomainList extends Component {
             />
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant={"outlined"}
               InputProps={{
@@ -244,7 +141,7 @@ class DomainList extends Component {
                       active={orderBy === column.value}
                       align="left"
                       direction={orderBy === column.value ? order : "asc"}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                       disabled={column.value === 'activeUsers'}
                     >
                       {t(column.label)}
@@ -256,7 +153,7 @@ class DomainList extends Component {
             </TableHead>
             <TableBody>
               {filteredDomains.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit("/domains/" + obj.ID)}>
                   <TableCell>
                     {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
                     {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
@@ -266,7 +163,7 @@ class DomainList extends Component {
                   <TableCell>{obj.activeUsers}</TableCell>
                   <TableCell>{obj.maxUser}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error" />
                     </IconButton>}
                   </TableCell>
@@ -285,16 +182,16 @@ class DomainList extends Component {
         </Paper>
         <AddDomain
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
+          onClose={handleAddingClose}
         />
         <DeleteDomain
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.domainname}
           id={deleting.ID}
         />
@@ -303,14 +200,11 @@ class DomainList extends Component {
   }
 }
 
-DomainList.contextType = CapabilityContext;
-DomainList.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+Domains.contextType = CapabilityContext;
+Domains.propTypes = {
   domains: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = (state) => {
@@ -319,7 +213,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetch: async (params) => {
+    fetchTableData: async (params) => {
       await dispatch(fetchDomainData(params)).catch((error) =>
         Promise.reject(error)
       );
@@ -332,7 +226,5 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(styles)(DomainList)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Domains, { orderBy: 'domainname'});

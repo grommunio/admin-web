@@ -3,8 +3,6 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@mui/styles";
-import { withTranslation } from "react-i18next";
 import {
   Paper,
   Table,
@@ -23,14 +21,14 @@ import {
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
 import Search from "@mui/icons-material/Search";
-import { connect } from "react-redux";
-import debounce from "debounce";
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
+import withStyledReduxTable from "../components/withTable";
+import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 
 const styles = (theme) => ({
   circularProgress: {
@@ -52,15 +50,6 @@ const styles = (theme) => ({
 });
 
 class Orgs extends Component {
-  state = {
-    snackbar: '',
-    adding: false,
-    deleting: false,
-    orderBy: "name",
-    order: "asc",
-    match: "",
-    offset: 50,
-  };
 
   columns = [
     { label: "Name", value: "name" },
@@ -68,115 +57,16 @@ class Orgs extends Component {
   ];
 
   handleScroll = () => {
-    const { orgs } = this.props;
-    if (orgs.Orgs.length >= orgs.count) return;
-    if (
-      Math.floor(
-        document.getElementById("scrollDiv").scrollHeight -
-          document.getElementById("scrollDiv").scrollTop
-      ) <=
-      document.getElementById("scrollDiv").offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if (!orgs.loading) {
-        this.fetchorgs({
-          sort: orderBy + "," + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
+    const { Orgs, count, loading } = this.props.orgs;
+    this.props.handleScroll(Orgs, count, loading);
   };
-
-  componentDidMount() {
-    this.fetchorgs({ sort: "name,asc" });
-  }
-
-  fetchorgs(params) {
-    this.props.fetch(params).catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  handleRequestSort = (orderBy) => () => {
-    const { fetch } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order =
-      stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
-
-    fetch({
-      sort: orderBy + "," + order,
-      match: match || undefined,
-    }).catch((msg) => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy: orderBy,
-      offset: 0,
-    });
-  };
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
-
-  handleAddingError = (error) => this.setState({ snackbar: error });
-
-  handleEdit = (org) => (event) => {
-    this.props.history.push("/orgs/" + org.ID, { ...org });
-    event.stopPropagation();
-  };
-
-  handleDelete = (org) => (event) => {
-    event.stopPropagation();
-    this.setState({ deleting: org });
-  };
-
-  handleDeleteSuccess = () =>
-    this.setState({ deleting: false, snackbar: "Success!" });
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteError = (error) => this.setState({ snackbar: error });
-
-  handleCheckbox = (field) => (event) =>
-    this.setState({
-      [field]: event.target.checked,
-    });
-
-  handleNavigation = (path) => (event) => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  };
-
-  handleMatch = (e) => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  };
-
-  debouceFetch = debounce((value) => {
-    const { order, orderBy } = this.state;
-    this.fetchorgs({
-      match: value || undefined,
-      sort: orderBy + "," + order,
-    });
-  }, 200);
 
   render() {
-    const { classes, t, orgs } = this.props;
-    const {
-      snackbar,
-      adding,
-      deleting,
-      order,
-      orderBy,
-      match,
-    } = this.state;
+    const { classes, t, orgs, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -186,13 +76,13 @@ class Orgs extends Component {
         href="https://docs.grommunio.com/admin/administration.html#organizations"
         subtitle={t("orgs_sub")}
         snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             disabled={!writable}
           >
             {t("New organization")}
@@ -200,7 +90,7 @@ class Orgs extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search organizations")}
               variant={"outlined"}
               InputProps={{
@@ -227,7 +117,7 @@ class Orgs extends Component {
                       active={orderBy === column.value}
                       align="left"
                       direction={orderBy === column.value ? order : "asc"}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                     >
                       {t(column.label)}
                     </TableSortLabel>
@@ -238,11 +128,11 @@ class Orgs extends Component {
             </TableHead>
             <TableBody>
               {orgs.Orgs.map((obj, idx) => 
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit('/orgs/' + obj.ID)}>
                   <TableCell>{obj.name}</TableCell>
                   <TableCell>{obj.description}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error" />
                     </IconButton>}
                   </TableCell>
@@ -261,16 +151,16 @@ class Orgs extends Component {
         </Paper>
         <AddOrg
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
+          onClose={handleAddingClose}
         />
         <GeneralDelete
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.name}
           id={deleting.ID}
         />
@@ -281,12 +171,9 @@ class Orgs extends Component {
 
 Orgs.contextType = CapabilityContext;
 Orgs.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   orgs: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = (state) => {
@@ -295,7 +182,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetch: async (params) => {
+    fetchTableData: async (params) => {
       await dispatch(fetchOrgsData(params)).catch((error) =>
         Promise.reject(error)
       );
@@ -308,7 +195,5 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(styles)(Orgs)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Orgs);

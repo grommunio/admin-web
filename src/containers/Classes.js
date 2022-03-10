@@ -3,15 +3,11 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import debounce from 'debounce';
-import { withTranslation } from 'react-i18next';
 import { Paper, Typography, Button, Grid,
   CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton, Tabs, Tab, FormControl, InputLabel, Select,
   Input, MenuItem } from '@mui/material';
 import Search from '@mui/icons-material/Search';
-import { connect } from 'react-redux';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
 import { Delete } from '@mui/icons-material';
 import AddClass from '../components/Dialogs/AddClass';
@@ -20,6 +16,8 @@ import Tree from 'react-d3-tree';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import withStyledReduxTable from '../components/withTable';
 
 const styles = theme => ({
   tablePaper: {
@@ -66,14 +64,8 @@ class Classes extends Component {
   state = {
     tab: 0,
     root: -1,
-    snackbar: null,
-    adding: false,
-    deleting: false,
+    snackbar: '',
     checking: false,
-    order: 'asc',
-    orderBy: 'classname',
-    offset: 50,
-    match: '',
   }
 
   columns = [
@@ -82,25 +74,9 @@ class Classes extends Component {
   ]
 
   handleScroll = () => {
-    const { _classes } = this.props;
-    if((_classes.Classes.length >= _classes.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { orderBy, order, offset, match } = this.state;
-      if(!_classes.loading) {
-        this.fetchClasses({
-          sort: orderBy + ',' + order,
-          offset,
-          match: match || undefined,
-        });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
+    const { Classes, count, loading } = this.props._classes;
+    this.props.handleScroll(Classes, count, loading);
+  };
 
   handleTab = (e, tab) => this.setState({ tab });
 
@@ -111,86 +87,13 @@ class Classes extends Component {
   }
 
   componentDidMount() {
-    this.fetchClasses({ sort: 'classname,asc' });
-  }
-
-  fetchClasses(params) {
-    const { fetch, fetchTrees, domain } = this.props;
-    fetch(domain.ID, params)
-      .catch(msg => this.setState({ snackbar: msg }));
+    const { domain, fetchTrees } = this.props;
+    // Table view is fetched in tableHOC
     fetchTrees(domain.ID, {})
       .catch(msg => this.setState({ snackbar: msg }));
   }
 
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => this.setState({ snackbar: 'Success!', adding: false });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleDelete = _class => event => {
-    event.stopPropagation();
-    this.setState({ deleting: _class });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleEdit = _class => () => {
-    const { history, domain } = this.props;
-    history.push('/' + domain.ID + '/classes/' + _class.ID, { ..._class });
-  }
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleRequestSort = orderBy => () => {
-    const { fetch, domain } = this.props;
-    const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
-    const order = (stateOrderBy === orderBy && stateOrder === "asc") ? "desc" : "asc";
-    
-    fetch(domain.ID, {
-      sort: orderBy + ',' + order,
-      match: match || undefined,
-    }).catch(msg => this.setState({ snackbar: msg }));
-
-    this.setState({
-      order: order,
-      orderBy,
-      offset: 0,
-    });
-  }
-
-  debouceFetch = debounce(value => {
-    const { order, orderBy } = this.state;
-    this.fetchClasses({ match: value || undefined, sort: orderBy + ',' + order });
-  }, 200)
-
   handleCheckClose = () => this.setState({ checking: false });
-
-  handleMatch = (e) => {
-    const { value } = e.target;
-    this.debouceFetch(value);
-    this.setState({ match: value });
-  };
-
-  debouceFetch = debounce((value) => {
-    const { order, orderBy } = this.state;
-    this.fetchClasses({
-      match: value || undefined,
-      sort: orderBy + "," + order,
-    });
-  }, 200);
 
   renderNode = ({ nodeDatum, toggleNode }) => (
     <g onClick={this.handleNodeClicked(nodeDatum.ID)}>
@@ -214,10 +117,19 @@ class Classes extends Component {
     history.push('/' + domain.ID + '/classes/' + id);
   }
 
+  handleSnackbarClose = () => {
+    this.setState({ snackbar: '' });
+    this.props.clearSnackbar();
+  }
+
   render() {
-    const { classes, t, _classes, domain } = this.props;
+    const { classes, t, _classes, domain, tableState, handleMatch, handleRequestSort,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, match, orderBy, order, adding, deleting, tab, root } = this.state;
+    const { tab, root } = this.state;
 
     return (
       <TableViewContainer
@@ -225,15 +137,15 @@ class Classes extends Component {
         headline={t("Groups")}
         subtitle={t("groups_sub")}
         href="https://docs.grommunio.com/admin/administration.html#groups"
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        snackbar={snackbar || this.state.snackbar}
+        onSnackbarClose={this.handleSnackbarClose}
         baseRef={tc => (this.treeContainer = tc)}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             className={classes.newButton}
             disabled={!writable}
           >
@@ -242,7 +154,7 @@ class Classes extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -280,7 +192,7 @@ class Classes extends Component {
                       active={orderBy === column.value}
                       align="left" 
                       direction={orderBy === column.value ? order : 'asc'}
-                      onClick={this.handleRequestSort(column.value)}
+                      onClick={handleRequestSort(column.value)}
                     >
                       {t(column.label)}
                     </TableSortLabel>
@@ -291,11 +203,11 @@ class Classes extends Component {
             </TableHead>
             <TableBody>
               {_classes.Classes.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={this.handleEdit(obj)}>
+                <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/classes/' + obj.ID)}>
                   <TableCell>{obj.classname}</TableCell>
                   <TableCell>{obj.listname}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -351,17 +263,17 @@ class Classes extends Component {
         }
         <AddClass
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
           domain={domain}
-          onClose={this.handleAddingClose}
+          onClose={handleAddingClose}
         />
         <DomainDataDelete
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.name}
           id={deleting.ID}
           domainID={domain.ID}
@@ -373,14 +285,11 @@ class Classes extends Component {
 
 Classes.contextType = CapabilityContext;
 Classes.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   _classes: PropTypes.object.isRequired,
   fetchTrees: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -389,7 +298,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domainID, params) => {
+    fetchTableData: async (domainID, params) => {
       await dispatch(fetchClassesData(domainID, params)).catch(error => Promise.reject(error));
     },
     fetchTrees: async (domainID, params) => {
@@ -401,5 +310,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Classes)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Classes, { orderBy: 'classname' });

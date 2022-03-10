@@ -17,7 +17,7 @@ export function fetchRolesData(params) {
     await dispatch({ type: ROLES_DATA_FETCH });
     try {
       const response = await dispatch(roles(params));
-      if(!params.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
+      if(!params?.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
       else await dispatch({ type: ROLES_NEXT_SET, data: response });
     } catch(error) {
       await dispatch({ type: ROLES_DATA_ERROR, error});

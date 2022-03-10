@@ -15,7 +15,7 @@ export function fetchMListsData(domainID, params) {
     await dispatch({ type: MLISTS_DATA_FETCH });
     try {
       const response = await dispatch(mlists(domainID, params));
-      await dispatch({ type: MLISTS_DATA_RECEIVED, data: response });
+      await dispatch({ type: MLISTS_DATA_RECEIVED, data: response, offset: params?.offset });
     } catch(error) {
       await dispatch({ type: MLISTS_DATA_ERROR, error});
       return Promise.reject(error.message);

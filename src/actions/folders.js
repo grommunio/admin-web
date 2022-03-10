@@ -18,7 +18,7 @@ export function fetchFolderData(domainID, params) {
     await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
       const response = await dispatch(folders(domainID, params));
-      if(!params.offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
+      if(!params?.offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
       else await dispatch({ type: FOLDERS_NEXT_SET, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
