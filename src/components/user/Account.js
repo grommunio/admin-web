@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
-  Select, TextField, Typography, Tooltip } from '@mui/material';
+  Select, TextField, Typography, Tooltip, Autocomplete } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import { red, yellow } from '@mui/material/colors';
 import Delete from '@mui/icons-material/Delete';
 import { DOMAIN_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   form: {
@@ -148,10 +149,11 @@ class Account extends PureComponent {
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handleInput,
-      handlePasswordChange, handleQuotaDelete, handleChatUser } = this.props;
+      handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
+      servers } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
-      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive } = user;
+      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
     const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota } = properties;
 
@@ -213,6 +215,25 @@ class Account extends PureComponent {
             </MenuItem>
           ))}
         </TextField>
+        <Autocomplete
+          value={homeserver || ''}
+          noOptionsText={t('No options')}
+          getOptionLabel={s => s.hostname || ''}
+          renderOption={(props, option) => (
+            <li {...props} key={option.ID}>
+              {option.hostname || ''}
+            </li>
+          )}
+          onChange={handleServer}
+          className={classes.input} 
+          options={servers}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={t("Homeserver")}
+            />
+          )}
+        />
         <TextField
           select
           className={classes.input}
@@ -461,8 +482,17 @@ Account.propTypes = {
   handlePasswordChange: PropTypes.func.isRequired,
   handleQuotaDelete: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
+  handleServer: PropTypes.func.isRequired,
   rawData: PropTypes.object,
   langs: PropTypes.array,
+  servers: PropTypes.array.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(Account));
+const mapStateToProps = state => {
+  return {
+    servers: state.servers.Servers,
+  };
+};
+
+export default connect(mapStateToProps)(
+  withTranslation()(withStyles(styles)(Account)));

@@ -32,6 +32,7 @@ import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { Autocomplete } from '@mui/lab';
 import ViewWrapper from '../components/ViewWrapper';
+import { fetchServersData } from '../actions/servers';
 
 const styles = theme => ({
   paper: {
@@ -65,6 +66,7 @@ class DomainListDetails extends PureComponent {
     address: '',
     adminName: '',
     tel: '',
+    homeserver: '',
     syncPolicy: {},
     defaultPolicy: {},
     changingPw: false,
@@ -81,9 +83,13 @@ class DomainListDetails extends PureComponent {
   ]
 
   async componentDidMount() {
-    const { fetch, fetchOrgs, capabilities } = this.props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) await fetchOrgs()
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const { fetch, fetchOrgs, fetchServers, capabilities } = this.props;
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) {
+      await fetchOrgs()
+        .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      await fetchServers()
+        .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    }
     const domain = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const defaultPolicy = domain.defaultPolicy;
@@ -111,7 +117,7 @@ class DomainListDetails extends PureComponent {
   });
 
   handleEdit = () => {
-    const { ID, domainname, domainStatus, orgID, chat,
+    const { ID, domainname, domainStatus, orgID, chat, homeserver,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = this.state;
     this.props.edit({
       ID,
@@ -123,6 +129,7 @@ class DomainListDetails extends PureComponent {
       address,
       adminName,
       tel,
+      homeserver: homeserver?.ID || null,
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
       chat,
     })
@@ -196,12 +203,18 @@ class DomainListDetails extends PureComponent {
     });
   }
 
+  handleServer =(e, newVal) => {
+    this.setState({
+      homeserver: newVal || '',
+    });
+  }
+
   render() {
-    const { classes, t, orgs, capabilities } = this.props;
+    const { classes, t, orgs, capabilities, servers } = this.props;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
-      chat, autocompleteInput } = this.state;
+      chat, autocompleteInput, homeserver } = this.state;
     
     return (
       <ViewWrapper
@@ -247,8 +260,6 @@ class DomainListDetails extends PureComponent {
               ))}
             </TextField>
             {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
-              // inputValue={autocompleteInput} <- This breaks the textfield value,
-              //    but somehow works without it
               value={orgID}
               filterOptions={getAutocompleteOptions('name')}
               noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
@@ -304,6 +315,25 @@ class DomainListDetails extends PureComponent {
               fullWidth 
               value={tel || ''}
               onChange={this.handleInput('tel')}
+            />
+            <Autocomplete
+              value={homeserver}
+              noOptionsText={t('No options')}
+              getOptionLabel={s => s.hostname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.hostname || ''}
+                </li>
+              )}
+              onChange={this.handleServer}
+              className={classes.input} 
+              options={servers}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Homeserver")}
+                />
+              )}
             />
             <FormControlLabel
               control={
@@ -392,15 +422,18 @@ DomainListDetails.propTypes = {
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchOrgs: PropTypes.func.isRequired,
+  fetchServers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   orgs: PropTypes.array.isRequired,
   capabilities: PropTypes.array.isRequired,
+  servers: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     orgs: state.orgs.Orgs,
     capabilities: state.auth.capabilities,
+    servers: state.servers.Servers,
   };
 };
 
@@ -413,6 +446,8 @@ const mapDispatchToProps = dispatch => {
       .then(domain => domain)
       .catch(message => Promise.reject(message)),
     fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
+    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
       .catch(message => Promise.reject(message)),
   };
 };

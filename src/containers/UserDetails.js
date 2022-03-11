@@ -41,6 +41,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
 import { debounce } from 'debounce';
 import { checkFormat } from '../api';
+import { fetchServersData } from '../actions/servers';
 
 const styles = theme => ({
   paper: {
@@ -101,7 +102,7 @@ class UserDetails extends PureComponent {
   };
 
   async componentDidMount() {
-    const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs } = this.props;
+    const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs, fetchServers } = this.props;
     const splits = window.location.pathname.split('/');
     const user = await fetch(splits[1], splits[3])
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -111,6 +112,8 @@ class UserDetails extends PureComponent {
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     fetchRoles()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    fetchServers()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const domainDetails = await fetchDomainDetails(domain.ID);
     this.setState({ domainDetails, langs: langs || [] });
@@ -253,7 +256,7 @@ class UserDetails extends PureComponent {
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
-    const { aliases, fetchmail, forward, properties } = user;
+    const { aliases, fetchmail, forward, properties, homeserver } = user;
     const storePayload = {
       messagesizeextended: undefined,
       storagequotalimit: properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
@@ -266,6 +269,7 @@ class UserDetails extends PureComponent {
       edit(domain.ID, {
         ...user,
         domainID: undefined,
+        homeserver: homeserver?.ID || null,
         aliases: aliases.filter(alias => alias !== ''),
         fetchmail: fetchmail.map(e => { return {
           ...e,
@@ -515,6 +519,15 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleServer =(e, newVal) => {
+    this.setState({
+      user: {
+        ...this.state.user,
+        homeserver: newVal || '',
+      },
+    });
+  }
+
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -607,6 +620,7 @@ class UserDetails extends PureComponent {
             rawData={rawData}
             handleQuotaDelete={this.handleQuotaDelete}
             handleChatUser={this.handleChatUser}
+            handleServer={this.handleServer}
           />}
           {tab === 1 && <User
             user={user}
@@ -719,6 +733,7 @@ UserDetails.propTypes = {
   fetchDomainDetails: PropTypes.func.isRequired,
   storeLangs: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
+  fetchServers: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -730,6 +745,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchRolesData({ sort: 'name,asc', level: 0, limit: 100000 }))
         .catch(msg => Promise.reject(msg));
     },
+    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
     fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
       .then(domain => domain)
       .catch(msg => Promise.reject(msg)),

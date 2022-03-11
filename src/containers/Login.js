@@ -127,7 +127,6 @@ class Login extends Component {
   render() {
     const { classes, t, auth } = this.props;
     const { user, pass, loading } = this.state;
-    console.log(auth.error);
     return (
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
@@ -177,7 +176,7 @@ class Login extends Component {
               disabled={!user || !pass}
             >
               {loading ? <CircularProgress size={24}  color="inherit" className={classes.loader}/> :
-                <Typography>{('Login')}</Typography>}
+                <Typography>{t('Login')}</Typography>}
             </Button>
           </Paper>
         </Paper>

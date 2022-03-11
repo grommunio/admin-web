@@ -17,6 +17,7 @@ import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
+import { fetchServersData } from '../../actions/servers';
 
 const styles = theme => ({
   form: {
@@ -54,6 +55,7 @@ class AddGlobalUser extends PureComponent {
     },
     usernameError: false,
     domain: '',
+    homeserver: '',
     autocompleteInput: '',
   }
 
@@ -67,6 +69,12 @@ class AddGlobalUser extends PureComponent {
     { name: 'Normal', ID: 0 },
     { name: 'Shared', ID: 4 },
   ]
+
+  handleEnter = () => {
+    const { fetchDomains, fetchServers } = this.props;
+    fetchDomains().catch(error => this.props.onError(error));
+    fetchServers().catch(error => this.props.onError(error));
+  }
 
   handleInput = field => event => {
     this.setState({
@@ -109,12 +117,13 @@ class AddGlobalUser extends PureComponent {
 
   handleAdd = () => {
     const { add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, domain, status } = this.state;
+    const { username, password, properties, sizeUnits, domain, status, homeserver } = this.state;
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
       password: status === 4 ? undefined : password,
       status,
+      homeserver: homeserver?.ID || null,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -150,12 +159,13 @@ class AddGlobalUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, domain, status } = this.state;
+    const { username, password, subType, properties, sizeUnits, domain, status, homeserver } = this.state;
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
       password: status === 4 ? undefined : password,
       subType,
+      homeserver: homeserver?.ID || null,
       status,
       properties: {
         ...properties,
@@ -209,10 +219,16 @@ class AddGlobalUser extends PureComponent {
     });
   }
 
+  handleServer = (e, newVal) => {
+    this.setState({
+      homeserver: newVal || '',
+    });
+  }
+
   render() {
-    const { classes, t, open, onClose, fetchDomains, Domains } = this.props;
+    const { classes, t, open, onClose, Domains, servers } = this.props;
     const { username, loading, properties, password, repeatPw, sizeUnits,
-      usernameError, domain, autocompleteInput, status } = this.state;
+      usernameError, domain, autocompleteInput, status, homeserver } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || password.length < 6) && status !== 4);
@@ -224,7 +240,7 @@ class AddGlobalUser extends PureComponent {
         maxWidth="sm"
         fullWidth
         TransitionProps={{
-          onEnter: fetchDomains,
+          onEnter: this.handleEnter,
         }}
       >
         <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
@@ -387,6 +403,25 @@ class AddGlobalUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
+            <Autocomplete
+              value={homeserver}
+              noOptionsText={t('No options')}
+              getOptionLabel={s => s.hostname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.hostname || ''}
+                </li>
+              )}
+              onChange={this.handleServer}
+              className={classes.input} 
+              options={servers}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Homeserver")}
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -429,21 +464,27 @@ AddGlobalUser.propTypes = {
   open: PropTypes.bool.isRequired,
   Domains: PropTypes.array.isRequired,
   fetchDomains: PropTypes.func.isRequired,
+  servers: PropTypes.array.isRequired,
+  fetchServers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     Domains: state.domains.Domains,
+    servers: state.servers.Servers,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDomains: async () => dispatch(fetchDomainData({ sort: 'domainname,asc' })),
+    fetchDomains: async () => dispatch(fetchDomainData({ sort: 'domainname,asc' }))
+      .catch(message => Promise.reject(message)),
     add: async (domainID, user) => 
       await dispatch(addUserData(domainID, user))
         .then(user => Promise.resolve(user))
         .catch(msg => Promise.reject(msg)),
+    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
   };
 };
 

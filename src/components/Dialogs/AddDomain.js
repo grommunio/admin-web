@@ -16,6 +16,7 @@ import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
+import { fetchServersData } from '../../actions/servers';
 
 const styles = theme => ({
   form: {
@@ -41,6 +42,7 @@ class AddDomain extends PureComponent {
     adminName: '',
     tel: '',
     orgID: '',
+    homeserver: '',
     createRole: false,
     loading: false,
     domainError: false,
@@ -54,7 +56,9 @@ class AddDomain extends PureComponent {
   ]
 
   handleEnter = () => {
-    this.props.fetch().catch(error => this.props.onError(error));
+    const { fetch, fetchServers } = this.props;
+    fetch().catch(error => this.props.onError(error));
+    fetchServers().catch(error => this.props.onError(error));
   }
 
   handleInput = field => event => {
@@ -86,7 +90,7 @@ class AddDomain extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domainname, domainStatus, maxUser, orgID,
+    const { domainname, domainStatus, maxUser, orgID, homeserver,
       title, address, adminName, tel, createRole, chat } = this.state;
     this.setState({ loading: true });
     this.props.add({
@@ -99,6 +103,7 @@ class AddDomain extends PureComponent {
       tel,
       orgID: orgID.ID,
       chat,
+      homeserver: homeserver?.ID || null,
     }, { createRole })
       .then(() => {
         this.setState({
@@ -113,6 +118,7 @@ class AddDomain extends PureComponent {
           createRole: false,
           chat: false,
           autocompleteInput: '',
+          homeserver: '',
         });
         this.props.onSuccess();
       })
@@ -130,8 +136,8 @@ class AddDomain extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose, orgs } = this.props;
-    const { domainname, domainStatus, orgID, domainError, chat,
+    const { classes, t, open, onClose, orgs, servers } = this.props;
+    const { domainname, domainStatus, orgID, domainError, chat, homeserver,
       maxUser, title, address, adminName, tel, loading, createRole, autocompleteInput } = this.state;
 
     return (
@@ -229,6 +235,25 @@ class AddDomain extends PureComponent {
               value={tel || ''}
               onChange={this.handleInput('tel')}
             />
+            <Autocomplete
+              value={homeserver}
+              noOptionsText={t('No options')}
+              getOptionLabel={s => s.hostname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.hostname || ''}
+                </li>
+              )}
+              onChange={this.handleAutocomplete('homeserver')}
+              className={classes.input} 
+              options={servers}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Homeserver")}
+                />
+              )}
+            />
             <FormControlLabel
               control={
                 <Checkbox
@@ -281,12 +306,15 @@ AddDomain.propTypes = {
   onError: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchServers: PropTypes.func.isRequired,
   orgs: PropTypes.array.isRequired,
+  servers: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     orgs: state.orgs.Orgs,
+    servers: state.servers.Servers,
   };
 };
 
@@ -296,6 +324,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addDomainData(domain, params)).catch(message => Promise.reject(message));
     },
     fetch: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
+    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
       .catch(message => Promise.reject(message)),
   };
 };

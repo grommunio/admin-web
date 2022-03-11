@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Select,
+  MenuItem, Button, DialogActions, CircularProgress, Select, Autocomplete,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import { addUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
+import { fetchServersData } from '../../actions/servers';
 
 const styles = theme => ({
   form: {
@@ -41,6 +42,7 @@ class AddUser extends PureComponent {
     loading: false,
     password: '',
     repeatPw: '',
+    homeserver: '',
     sizeUnits: {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
@@ -59,6 +61,11 @@ class AddUser extends PureComponent {
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
   ]
+
+  handleEnter = () => {
+    const { fetchServers } = this.props;
+    fetchServers().catch(error => this.props.onError(error));
+  }
 
   handleInput = field => event => {
     this.setState({
@@ -101,12 +108,13 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, status } = this.state;
+    const { username, password, properties, sizeUnits, status, homeserver } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
       password: status === 4 ? undefined : password,
       status,
+      homeserver: homeserver?.ID || null,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -129,6 +137,7 @@ class AddUser extends PureComponent {
           password: '',
           repeatPw: '',
           usernameError: false,
+          homeserver: '',
         });
         onSuccess();
       })
@@ -140,13 +149,14 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, status } = this.state;
+    const { username, password, subType, properties, sizeUnits, status, homeserver } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       username,
       password: status === 4 ? undefined : password,
       status,
       subType,
+      homeserver: homeserver?.ID || null,
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -190,9 +200,17 @@ class AddUser extends PureComponent {
     },
   });
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+      autocompleteInput: newVal?.name || '',
+    });
+  }
+
   render() {
-    const { classes, t, domain, open, onClose } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError, status } = this.state;
+    const { classes, t, domain, open, onClose, servers } = this.props;
+    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError,
+      status, homeserver } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || password.length < 6) && status !== 4);
@@ -202,6 +220,9 @@ class AddUser extends PureComponent {
         open={open}
         maxWidth="sm"
         fullWidth
+        TransitionProps={{
+          onEnter: this.handleEnter,
+        }}
       >
         <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
         <DialogContent>
@@ -340,6 +361,25 @@ class AddUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
+            <Autocomplete
+              value={homeserver}
+              noOptionsText={t('No options')}
+              getOptionLabel={s => s.hostname || ''}
+              renderOption={(props, option) => (
+                <li {...props} key={option.ID}>
+                  {option.hostname || ''}
+                </li>
+              )}
+              onChange={this.handleAutocomplete('homeserver')}
+              className={classes.input} 
+              options={servers}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("Homeserver")}
+                />
+              )}
+            />
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -381,6 +421,14 @@ AddUser.propTypes = {
   onClose: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  servers: PropTypes.array.isRequired,
+  fetchServers: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    servers: state.servers.Servers,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -389,8 +437,10 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addUserData(domainID, user))
         .then(user => Promise.resolve(user))
         .catch(msg => Promise.reject(msg)),
+    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddUser))));
