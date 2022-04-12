@@ -12,7 +12,7 @@ import { FormControl, Grid,
   TableSortLabel,
   Tooltip,
   Typography } from '@mui/material';
-import { CleaningServices, DoNotDisturbOn } from '@mui/icons-material';
+import { CleaningServices, DoNotDisturbOn, Sync as SyncIcon, Delete } from '@mui/icons-material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ import { parseUnixtime } from '../../utils';
 import { fetchUserSync } from '../../actions/users';
 import { connect } from 'react-redux';
 import PasswordSafetyDialog from '../Dialogs/PasswordSafetyDialog';
-import { cancelRemoteWipe, engageRemoteWipe } from '../../actions/sync';
+import { cancelRemoteWipe, engageRemoteDelete, engageRemoteWipe, engageResync } from '../../actions/sync';
 import Feedback from '../Feedback';
 
 const styles = theme => ({
@@ -55,7 +55,7 @@ class Sync extends PureComponent {
     order: 'asc',
     orderBy: 'pid',
     type: 'int',
-    wiping: '',
+    wipingID: '',
   };
 
   columns = [
@@ -85,7 +85,7 @@ class Sync extends PureComponent {
     this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
-  handleRemoteWipeDialog = deviceID => () => this.setState({ wiping: deviceID });
+  handlePasswordDialog = (wipingID) => () => this.setState({ wipingID });
 
   getWipeStatus(status) {
     switch(status) {
@@ -100,10 +100,10 @@ class Sync extends PureComponent {
 
   handleRemoteWipeConfirm = password => {
     const { wipeItOffTheFaceOfEarth, domainID, userID } = this.props;
-    const { wiping } = this.state;
+    const { wipingID } = this.state;
 
-    wipeItOffTheFaceOfEarth(domainID, userID, wiping, password)
-      .then(() => this.updateWipeStatus(2, wiping))
+    wipeItOffTheFaceOfEarth(domainID, userID, wipingID, password)
+      .then(() => this.updateWipeStatus(2, wipingID))
       .catch(snackbar => this.setState({ snackbar }));
   }
   
@@ -122,14 +122,30 @@ class Sync extends PureComponent {
     this.setState({
       snackbar: "Success!",
       sortedDevices: copy,
-      wiping: '',
+      wipingID: '',
     });
     return true;
   }
 
+  handleResync = deviceID => () => {
+    const { resync, domainID, userID } = this.props;
+
+    resync(domainID, userID, deviceID)
+      .then(message => this.setState({ snackbar: message || 'Success!' }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
+  handleRemoteDelete = deviceID => () => {
+    const { deleteDevice, domainID, userID } = this.props;
+
+    deleteDevice(domainID, userID, deviceID)
+      .then(message => this.setState({ snackbar: message || 'Success!' }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
   render() {
     const { classes, t, sync } = this.props;
-    const { sortedDevices, order, orderBy, wiping, snackbar } = this.state;
+    const { sortedDevices, order, orderBy, wipingID, snackbar } = this.state;
 
     return (
       <FormControl className={classes.form}>
@@ -175,19 +191,29 @@ class Sync extends PureComponent {
                     </IconButton>
                   </Tooltip>}
                   {obj.wipeStatus < 2 && <Tooltip title="Remote wipe" placement="top">
-                    <IconButton onClick={this.handleRemoteWipeDialog(obj.deviceid)}>
+                    <IconButton onClick={this.handlePasswordDialog(obj.deviceid)}>
                       <CleaningServices color="error" />
                     </IconButton>
                   </Tooltip>}
+                  <Tooltip title="Resync" placement='top'>
+                    <IconButton onClick={this.handleResync(obj.deviceid)}>
+                      <SyncIcon color="primary"/>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete device" placement='top'>
+                    <IconButton onClick={this.handleRemoteDelete(obj.deviceid)}>
+                      <Delete color="error"/>
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
         <PasswordSafetyDialog
-          open={Boolean(wiping)}
-          deviceID={wiping}
-          onClose={this.handleRemoteWipeDialog('')}
+          open={Boolean(wipingID)}
+          deviceID={wipingID}
+          onClose={this.handlePasswordDialog('')}
           onConfirm={this.handleRemoteWipeConfirm}
         />
         <Feedback
@@ -207,6 +233,8 @@ Sync.propTypes = {
   domainID: PropTypes.number,
   userID: PropTypes.number,
   wipeItOffTheFaceOfEarth: PropTypes.func.isRequired,
+  resync: PropTypes.func.isRequired,
+  deleteDevice: PropTypes.func.isRequired,
   panicStopWiping: PropTypes.func.isRequired,
 };
 
@@ -222,6 +250,14 @@ const mapDispatchToProps = dispatch => {
       .catch(err => console.error(err)),
     wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, password) =>
       await dispatch(engageRemoteWipe(domainID, userID, deviceID, password))
+        .catch(err => Promise.reject(err)),
+    resync: async (domainID, userID, deviceID) =>
+      await dispatch(engageResync(domainID, userID, deviceID))
+        .then(resp => resp)
+        .catch(err => Promise.reject(err)),
+    deleteDevice: async (domainID, userID, deviceID) =>
+      await dispatch(engageRemoteDelete(domainID, userID, deviceID))
+        .then(resp => resp)
         .catch(err => Promise.reject(err)),
     panicStopWiping: async (domainID, userID, deviceID) =>
       await dispatch(cancelRemoteWipe(domainID, userID, deviceID))

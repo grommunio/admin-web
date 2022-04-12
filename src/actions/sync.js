@@ -4,7 +4,7 @@
 import {
   SYNC_DATA_RECEIVED,
 } from './types';
-import { grommunioSync, remoteWipeCancel, remoteWipeEngage } from '../api';
+import { grommunioSync, remoteDeleteEngage, remoteResyncEngage, remoteWipeCancel, remoteWipeEngage } from '../api';
 import { getTimeDiff } from '../utils';
 import store from '../store';
 
@@ -46,6 +46,30 @@ export function cancelRemoteWipe(domainID, userID, deviceID) {
     try {
       await dispatch(remoteWipeCancel(domainID, userID, deviceID));
       return Promise.resolve();
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function engageResync(domainID, userID, deviceID) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(remoteResyncEngage(domainID, userID, deviceID));
+      return resp.message;
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+export function engageRemoteDelete(domainID, userID, deviceID) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(remoteDeleteEngage(domainID, userID, deviceID));
+      return resp.message;
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);
