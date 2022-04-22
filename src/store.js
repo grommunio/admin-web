@@ -35,6 +35,7 @@ import antispamReducer from './reducers/antispam';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+// Create redux store
 export const store = createStore(
   combineReducers({
     about: aboutReducer,

@@ -2,9 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 /* eslint-disable react/prop-types */
 import React from "react";
-
 import { Route, Redirect } from "react-router-dom";
 
+/**
+ * Default route, which the user is redirected to, if the url does not match any specified route
+ * 
+ * @param {Object} props
+ */
 const DefaultRedirect = () => (
   <Route
     path="*"

@@ -66,6 +66,7 @@ const styles = {
   },
 };
 
+// Create async component with react-loadable
 const MainView = Loadable({
   loader: () => import("./components/LoadableMainView"),
   loading: Loader,
@@ -73,10 +74,12 @@ const MainView = Loadable({
   delay: 100,
 });
 
+// Root class
 class App extends Component {
 
   constructor(props) {
     super(props);
+    // Get the selected language from local store and apply with i18-next
     const { changeSettings } = props;
     const lang = localStorage.getItem("lang");
     if (lang) {
@@ -102,10 +105,7 @@ class App extends Component {
 
     return (
       <div className={darkMode === "true" ? classes.darkRoot : classes.root}>
-
-        <div
-          className={darkMode === "true" ? classes.darkLayer : classes.layer}
-        />
+        <div className={darkMode === "true" ? classes.darkLayer : classes.layer}/>
         <CapabilityContext.Provider value={capabilities}>
           <MainView
             classes={classes}

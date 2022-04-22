@@ -15,6 +15,11 @@ import DefaultRedirect from "./components/DefaultRedirect";
 import NotFound from "./containers/NotFound";
 import { ORG_ADMIN } from "./constants";
 
+/**
+ * Creates an async component from an async import
+ * 
+ * @param {Function} loader Callback function, that imports a container.
+ */
 function makeLoadableComponent(loader) {
   return Loadable({
     loader,
@@ -24,6 +29,7 @@ function makeLoadableComponent(loader) {
   });
 }
 
+// Create async components
 const AsyncDomainMenu = makeLoadableComponent(() => import("./containers/DomainMenu"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
 const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
@@ -43,6 +49,12 @@ const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncTaskQ = makeLoadableComponent(() => import("./containers/TaskQ"));
 
+
+/**
+ * react-router routes
+ * 
+ * @param {Object} props
+ */
 const Routes = ({ childProps, domains, capabilities }) => (
   <Switch>
     <AuthenticatedRoute

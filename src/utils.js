@@ -4,6 +4,12 @@
 import moment from "moment";
 import store from './store';
 
+/**
+ * Creates a timeout of `delay` milliseconds
+ * 
+ * @param {Number} delay delay in milliseconds (default: 100)
+ * @returns {Promise} Promise to be resolved after `delay` milliseconds
+ */
 export function later(delay) {
   if (!delay) {
     delay = 100;
@@ -14,6 +20,12 @@ export function later(delay) {
   });
 }
 
+/**
+ * Parses URL parameters and returns them as object
+ * 
+ * @param {String} s delay in milliseconds (default: 100)
+ * @returns {Object} key-value pairs of url parameters
+ */
 export function parseParams(s) {
   if (!s) {
     return {};
@@ -32,16 +44,34 @@ export function parseParams(s) {
   return data;
 }
 
+/**
+ * Pushes an item into an array
+ * 
+ * @param {Array} arr array to push into
+ * @param {any} item element to push into array
+ * @returns {Array} `[...arr, item]`
+ */
 export function addItem(arr, item) {
   const copy = [...arr];
   copy.push(item);
   return copy;
 }
 
+
+/**
+ * Returns the string after the last '/' in the current URL
+ * 
+ * @returns {String} The string after the last `/` in the current URL
+ */
 export function getStringAfterLastSlash() {
   return /[^/]*$/.exec(window.location.href)[0];
 }
 
+/**
+ * Returns the current domain-id in the URL
+ * 
+ * @returns {number} the current domain-id in the URL
+ */
 export function getDomainFromUrl() {
   const first = window.location.pathname;
   first.indexOf(1);
@@ -49,16 +79,35 @@ export function getDomainFromUrl() {
   return parseInt(first.split("/")[1]);
 }
 
+/**
+ * Formates a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
+ * 
+ * @param {Date} date date to be formatted into common format
+ * @returns {String} formatted date
+ */
 export function setDateTimeString(date) {
   return moment(date, "YYYY-MM-DD hh:mm")
     .locale(store.getState().settings.language.slice(0, 2)).format('lll');
 }
 
+/**
+ * Formates a date of format `YYYY-MM-DD` into the date format of the selected language (in settings)
+ * 
+ * @param {Date} date date to be formatted into common format
+ * @returns {String} formatted date
+ */
 export function setDateString(date) {
   return moment(date, "YYYY-MM-DD")
     .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }
 
+
+/**
+ * Formates a unixtime into a readable format
+ * 
+ * @param {number} time unixtime to be formatted
+ * @returns {String} formatted unixtime (date)
+ */
 export function parseUnixtime(time) {
   const parsedTime = moment.unix(time);
   return store.getState().settings.language === 'de-DE' ?
@@ -66,11 +115,23 @@ export function parseUnixtime(time) {
     parsedTime.format('MM-DD-YYYY h:mm:ss a');
 }
 
+/**
+ * Calculates the time difference in milliseconds between `time` and `now()`
+ * 
+ * @param {number} time unixtime to compare current time to
+ * @returns {number} time difference in milliseconds
+ */
 export function getTimeDiff(time) {
   if(!time) return 0;
   return moment().unix() - time;
 }
 
+/**
+ * Formates a timedifference in milliseconds into a readable format
+ * 
+ * @param {number} diff unix time difference
+ * @returns {String} formatted time difference
+ */
 export function getTimePast(diff) {
   if(diff === null || diff === undefined) return "Unknown";
   
@@ -80,12 +141,25 @@ export function getTimePast(diff) {
   return `${minutes > 9 ? minutes : '0' + minutes}:${seconds > 9 ? seconds : '0' + seconds}`;
 }
 
+/**
+ * Concatenates 2 arrays
+ * 
+ * @param {Array} arr first array
+ * @param {Array} newArr second array
+ * @returns {String} concatenation of `arr` and `newArr`
+ */
 export function append(arr, newArr) {
   let copy = [...arr];
   copy = copy.concat(newArr);
   return copy;
 }
 
+/**
+ * Creates a deep copy of an object
+ * 
+ * @param {Object} obj the object to copy
+ * @returns {Object} A deep copy of `obj`
+ */
 export function cloneObject(obj) {
   var clone = {};
   for(var i in obj) {
@@ -97,6 +171,12 @@ export function cloneObject(obj) {
   return clone;
 }
 
+/**
+ * Converts MDM command code to command name
+ * 
+ * @param {number} command command to parse
+ * @returns {String} Command name
+ */
 export function getStringFromCommand(command) {
   switch (command) {
     case 0: return 'Sync';
@@ -132,6 +212,13 @@ export function getStringFromCommand(command) {
   }
 }
 
+/**
+ * Compares 2 sync policies and returns the different key-value pairs
+ * 
+ * @param {Object} defaultPolicy The default policy to compare to
+ * @param {Object} syncPolicy the current policy of a domain or user
+ * @returns {Object} Difference between the two policies
+ */
 export function getPolicyDiff(defaultPolicy, syncPolicy) {
   const formattedPolicy = {
     ...syncPolicy,
@@ -154,10 +241,28 @@ export function getPolicyDiff(defaultPolicy, syncPolicy) {
   return result;
 }
 
+/**
+ * Capitalizes first letter of string
+ * 
+ * @param {String} string string to change
+ * @returns {String} Changed string
+ */
 export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+ * Important function for efficiency.
+ * The more elements are available for an autocomplete, the more list elements react has to render.
+ * This can get very laggy and slow.
+ * To prevent that, the necessary input length, before suggestions are shown is calculated
+ * in this function (`magnitude`).
+ * 
+ * @param {String} filterAttribute attribute of an object (within an array of objects) to compare the input value to
+ * @param {Array} options array of objects/options for the autocomplete (internal)
+ * @param {Object} state state of the input (internal)
+ * @returns {Array} Autocomplete options to be displayed
+ */
 export const getAutocompleteOptions = filterAttribute => (options, state) => {
   const magnitude = Math.round(Math.log10(options.length) - 2);
 
@@ -165,12 +270,22 @@ export const getAutocompleteOptions = filterAttribute => (options, state) => {
     : options.filter(o => o[filterAttribute]?.includes(state.inputValue));
 };
 
+/**
+ * Copies a text into the clipboard
+ * 
+ * @param {String} text string to copy
+ */
 export async function copyToClipboard(text) {
   return navigator.clipboard.writeText(text)
     .then(() => true)
     .catch(() => false);
 }
 
+/**
+ * Returns the available languages
+ * 
+ * @returns {Array} array of language objects
+ */
 export function getLangs() {
   return [
     { key: 'en-US', value: 'English' },

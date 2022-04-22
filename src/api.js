@@ -3,6 +3,13 @@
 
 const baseUrl = '//' + window.location.host + '/api/v1';
 
+/**
+ * Handles fetch api errors
+ * 
+ * @param {Response} response response from fetch api
+ * @returns {Object} response json body
+ * @throws {Error} response error message
+ */
 async function handleErrors(response) {
   if (response.ok) {
     return await response.json();
@@ -14,6 +21,13 @@ async function handleErrors(response) {
   return Promise.reject(new Error(resp));
 }
 
+/**
+ * Handles fetch api errors (auth only)
+ * 
+ * @param {Response} response response from fetch api
+ * @returns {Object} response json body
+ * @throws {Error} response error message
+ */
 async function handleLoginErrors(response) {
   if (response.ok) {
     return await response.json();
@@ -29,11 +43,24 @@ async function handleLoginErrors(response) {
   return Promise.reject(new Error(message));
 }
 
+/**
+ * Sends GET request to rest api
+ * 
+ * @param {String} path path to call
+ * @returns {Promise}
+ */
 async function get(path) {
   return await fetch(baseUrl + path)
     .then(handleErrors);
 }
 
+/**
+ * Sends PATCH request to rest api
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function patch(path, data) {
   return fetch((baseUrl + path), {
     method: 'PATCH',
@@ -44,6 +71,13 @@ async function patch(path, data) {
   }).then(handleErrors);
 }
 
+/**
+ * Sends POST request to rest api
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function post(path, data) {
   return await fetch((baseUrl + path), {
     method: 'POST',
@@ -54,6 +88,13 @@ async function post(path, data) {
   }).then(handleErrors);
 }
 
+/**
+ * Sends PUT request to rest api
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function put(path, data) {
   return await fetch((baseUrl + path), {
     method: 'PUT',
@@ -64,12 +105,25 @@ async function put(path, data) {
   }).then(handleErrors);
 }
 
+/**
+ * Sends DELETE request to rest api
+ * 
+ * @param {String} path path to call
+ * @returns {Promise}
+ */
 async function yeet(path) {
   return await fetch((baseUrl + path), {
     method: 'DELETE',
   }).then(handleErrors);
 }
 
+/**
+ * Sends PUT request to rest api (for fileuploads only)
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function uploadPut(path, data) {
   return fetch((baseUrl + path), {
     method: 'PUT',
@@ -77,6 +131,13 @@ async function uploadPut(path, data) {
   }).then(handleErrors);
 }
 
+/**
+ * Sends POST request to rest api (for authentication only)
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function loginPost(path, data) {
   return await fetch((baseUrl + path), {
     method: 'POST',
@@ -87,6 +148,13 @@ async function loginPost(path, data) {
   }).then(handleLoginErrors);
 }
 
+/**
+ * Sends POST request to rest api to renew a JWT
+ * 
+ * @param {String} path path to call
+ * @param {Object} data data to send in request body
+ * @returns {Promise}
+ */
 async function renew() {
   return await fetch((baseUrl + '/login'), {
     method: 'POST',
@@ -96,12 +164,25 @@ async function renew() {
   }).then(handleErrors);
 }
 
+/**
+ * Converts an object to an array
+ * 
+ * @param {Object} obj object to transform
+ * @returns {Array} created array
+ */
 function toArray(obj) {
   const arr = [];
   Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
   return arr;
 }
 
+/**
+ * Builds query from endpoint and params
+ * 
+ * @param {String} endpoint endpoint path/url
+ * @param {Object} params parameters to convert to `key=value,` strings
+ * @returns {String} created query string
+ */
 function buildQuery(endpoint, params) {
   let query = endpoint;
   const paramsArray = toArray(params || {});
@@ -110,6 +191,12 @@ function buildQuery(endpoint, params) {
   paramsArray.forEach(param => query += ![undefined].includes(param.val) ? `${param.name}=${param.val}&` : '');
   return query.slice(0, -1);
 }
+
+/*
+  #################
+      ENDPOINTS
+  #################
+*/
 
 /*
   LOGIN

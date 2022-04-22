@@ -2,9 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 /* eslint-disable react/prop-types */
 import React from "react";
-
 import { Route, Redirect } from "react-router-dom";
 
+/**
+ * react-router <Route> which can only be accessed if authenticated,
+ * otherwise redirected to /login
+ * 
+ * @param {Object} props
+ */
 const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }) => (
   <Route
     {...rest}

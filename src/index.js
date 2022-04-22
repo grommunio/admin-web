@@ -17,6 +17,7 @@ import './config';
 //import * as serviceWorker from './serviceWorker';
 //import { serviceWorkerNewContent } from './actions/common';
 
+// Root function
 function main() {
   const loader = async () => {
     return import('./App');

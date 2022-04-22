@@ -14,6 +14,11 @@ import Loadable from 'react-loadable';
 import Loader from './components/Loading';
 import DefaultRedirect from "./components/DefaultRedirect";
 
+/**
+ * Creates an async component from an async import
+ * 
+ * @param {Function} loader Callback function, that imports a container.
+ */
 function makeLoadableComponent(loader) {
   return Loadable({
     loader,
@@ -23,6 +28,7 @@ function makeLoadableComponent(loader) {
   });
 }
 
+// Create async components
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
@@ -58,6 +64,11 @@ const AsyncServers = makeLoadableComponent(() => import("./containers/Servers"))
 const AsyncServerDetails = makeLoadableComponent(() => import("./containers/ServerDetails"));
 const AsyncLicense = makeLoadableComponent(() => import("./containers/License"));
 
+/**
+ * react-router routes
+ * 
+ * @param {Object} props
+ */
 const Routes = ({ childProps, domains }) => (
   <Switch>
     <AuthenticatedRoute

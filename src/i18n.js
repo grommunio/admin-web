@@ -35,6 +35,7 @@ import ua from './i18n/ua-UA.json';
 import zhCN from './i18n/zh-CN.json';
 import zhTW from './i18n/zh-TW.json';
 
+// Define available languages
 const resources = {
   "ar-DZ": {
     translation: arDZ,
@@ -131,6 +132,7 @@ const resources = {
   },
 };
 
+// Init i18n
 i18n
   .use(initReactI18next)
   .init({
