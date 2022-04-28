@@ -30,7 +30,7 @@ import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 
 const styles = theme => ({
@@ -168,6 +168,7 @@ class NavigationLinks extends PureComponent {
     const { classes, t, expandedDomain, location, domains, capabilities } = this.props;
     const { filter, tab } = this.state;
     const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
+    const pathname = location.pathname;
     return(
       <React.Fragment>
         <div className={classes.drawerHeader}>
@@ -224,7 +225,7 @@ class NavigationLinks extends PureComponent {
                     onClick={this.handleDrawer(ID)}
                     button
                     className={classes.li}
-                    selected={expandedDomain === ID && location.pathname === '/' + ID}
+                    selected={expandedDomain === ID && pathname === '/' + ID}
                   >
                     <Grid container alignItems="center">
                       <Domains className={classes.icon} />
@@ -238,7 +239,7 @@ class NavigationLinks extends PureComponent {
                         button
                         onClick={this.handleNavigation(ID + '/users')}
                         selected={expandedDomain === ID &&
-                          location.pathname.startsWith('/' + ID + '/users')}
+                          pathname.startsWith('/' + ID + '/users')}
                       >
                         <Grid container alignItems="center">
                           <People className={classes.nestedIcon}/>
@@ -250,7 +251,7 @@ class NavigationLinks extends PureComponent {
                         button
                         onClick={this.handleNavigation(ID + '/folders')}
                         selected={expandedDomain === ID &&
-                          location.pathname.startsWith('/' + ID + '/folders')}
+                          pathname.startsWith('/' + ID + '/folders')}
                       >
                         <Grid container alignItems="center">
                           <Folder className={classes.nestedIcon}/>
@@ -261,7 +262,7 @@ class NavigationLinks extends PureComponent {
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/classes')}
-                        selected={location.pathname.startsWith('/' + ID + '/classes')}
+                        selected={pathname.startsWith('/' + ID + '/classes')}
                       >
                         <Grid container alignItems="center">
                           <Classes className={classes.nestedIcon}/>
@@ -272,7 +273,7 @@ class NavigationLinks extends PureComponent {
                         className={classes.li}
                         button
                         onClick={this.handleNavigation(ID + '/mailLists')}
-                        selected={location.pathname.startsWith('/' + ID + '/mailLists')}
+                        selected={pathname.startsWith('/' + ID + '/mailLists')}
                       >
                         <Grid container alignItems="center">
                           <MLists className={classes.nestedIcon}/>
@@ -287,7 +288,7 @@ class NavigationLinks extends PureComponent {
             button
             onClick={this.handleNavigation('taskq')}
             className={classes.li}
-            selected={location.pathname.startsWith('/taskq')}
+            selected={pathname.startsWith('/taskq')}
           >
             <Grid container alignItems="center">
               <TaskAlt className={classes.icon}/>
@@ -300,7 +301,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('')}
               className={classes.li}
-              selected={location.pathname === '/'}
+              selected={pathname === '/'}
             >
               <Grid container alignItems="center">
                 <Dashboard className={classes.icon} />
@@ -312,7 +313,7 @@ class NavigationLinks extends PureComponent {
               className={classes.li}
               button
               onClick={this.handleNavigation('orgs')}
-              selected={location.pathname.startsWith('/orgs')}
+              selected={pathname.startsWith('/orgs')}
             >
               <Grid container alignItems="center">
                 <Orgs className={classes.icon}/>
@@ -323,7 +324,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('domains')}
               className={classes.li}
-              selected={location.pathname.startsWith('/domains')}
+              selected={pathname.startsWith('/domains')}
             >
               <Grid container alignItems="center">
                 <Domains className={classes.icon}/>
@@ -334,7 +335,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('users')}
               className={classes.li}
-              selected={location.pathname.startsWith('/users')}
+              selected={pathname.startsWith('/users')}
             >
               <Grid container alignItems="center">
                 <People className={classes.icon}/>
@@ -345,11 +346,22 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('roles')}
               className={classes.li}
-              selected={location.pathname === '/roles'}
+              selected={pathname === '/roles'}
             >
               <Grid container alignItems="center">
                 <Roles className={classes.icon}/>
                 <ListItemText primary={t('Roles')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('defaults')}
+              className={classes.li}
+              selected={pathname === '/defaults'}
+            >
+              <Grid container alignItems="center">
+                <BackupTable className={classes.icon}/>
+                <ListItemText primary={t('Defaults')} />
               </Grid>
             </ListItem>
             <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
@@ -357,7 +369,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('directory')}
               className={classes.li}
-              selected={location.pathname === '/directory'}
+              selected={pathname === '/directory'}
             >
               <Grid container alignItems="center">
                 <Ldap className={classes.icon}/>
@@ -368,7 +380,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('dbconf')}
               className={classes.li}
-              selected={location.pathname.startsWith('/dbconf')}
+              selected={pathname.startsWith('/dbconf')}
             >
               <Grid container alignItems="center">
                 <Storage className={classes.icon}/>
@@ -379,7 +391,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('servers')}
               className={classes.li}
-              selected={location.pathname.startsWith('/servers')}
+              selected={pathname.startsWith('/servers')}
             >
               <Grid container alignItems="center">
                 <Dns className={classes.icon}/>
@@ -391,7 +403,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('logs')}
               className={classes.li}
-              selected={location.pathname.startsWith('/logs')}
+              selected={pathname.startsWith('/logs')}
             >
               <Grid container alignItems="center">
                 <Logs className={classes.icon}/>
@@ -402,7 +414,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('mailq')}
               className={classes.li}
-              selected={location.pathname.startsWith('/mailq')}
+              selected={pathname.startsWith('/mailq')}
             >
               <Grid container alignItems="center">
                 <QueryBuilder className={classes.icon}/>
@@ -413,7 +425,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('taskq')}
               className={classes.li}
-              selected={location.pathname.startsWith('/taskq')}
+              selected={pathname.startsWith('/taskq')}
             >
               <Grid container alignItems="center">
                 <TaskAlt className={classes.icon}/>
@@ -424,7 +436,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('sync')}
               className={classes.li}
-              selected={location.pathname.startsWith('/sync')}
+              selected={pathname.startsWith('/sync')}
             >
               <Grid container alignItems="center">
                 <Sync className={classes.icon}/>
@@ -435,7 +447,7 @@ class NavigationLinks extends PureComponent {
               button
               onClick={this.handleNavigation('status')}
               className={classes.li}
-              selected={location.pathname.startsWith('/status')}
+              selected={pathname.startsWith('/status')}
             >
               <Grid container alignItems="center">
                 <TableChart className={classes.icon}/>
