@@ -143,6 +143,7 @@ class Defaults extends PureComponent {
     const { createParams, sizeUnits } = this.state;
     // eslint-disable-next-line camelcase
     const { maxUser, smtp, changePassword, pop3_imap, lang,
+      privChat, privVideo, privFiles, privArchive,
       storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
 
     const quotas = {
@@ -157,11 +158,9 @@ class Defaults extends PureComponent {
       },
       user: {
         ...quotas,
-        smtp,
-        changePassword,
-        lang,
         // eslint-disable-next-line camelcase
-        pop3_imap,
+        smtp, changePassword, lang, pop3_imap,
+        privChat, privVideo, privFiles, privArchive,
       },
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -192,7 +191,7 @@ class Defaults extends PureComponent {
     const { classes, t } = this.props;
     const { createParams, sizeUnits, snackbar, langs } = this.state;
     const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
-      lang,
+      lang, privChat, privArchive, privFiles, privVideo,
       // eslint-disable-next-line camelcase
       smtp, changePassword, pop3_imap } = createParams;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
@@ -359,6 +358,48 @@ class Defaults extends PureComponent {
                   />
                 }
                 label={t('Allow POP3/IMAP logins')}
+              />
+            </Grid>
+            <Grid container className={classes.input}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privChat || false }
+                    onChange={this.handleCheckbox('privChat')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Chat')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privVideo || false }
+                    onChange={this.handleCheckbox('privVideo')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Video')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privFiles || false }
+                    onChange={this.handleCheckbox('privFiles')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Files')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privArchive || false }
+                    onChange={this.handleCheckbox('privArchive')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Archive')}
               />
             </Grid>
           </FormControl>

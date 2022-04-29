@@ -141,9 +141,11 @@ class AddGlobalUser extends PureComponent {
     const { add, onError, onSuccess, createParams } = this.props;
     const { username, password, properties, domain, status, homeserver } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang } = createParams.user;
+    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
-    const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
@@ -185,9 +187,11 @@ class AddGlobalUser extends PureComponent {
     const { history, add, onError, createParams } = this.props;
     const { username, password, subType, properties, domain, status, homeserver } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang } = createParams.user;
+    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
-    const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
