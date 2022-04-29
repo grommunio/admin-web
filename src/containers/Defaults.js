@@ -18,6 +18,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import { connect } from 'react-redux';
+import { getStoreLangs } from '../actions/users';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
@@ -35,7 +36,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    marginBottom: theme.spacing(3),
+    margin: theme.spacing(0, 0, 3, 1),
   },
   subheader: {
     marginBottom: 8,
@@ -76,11 +77,12 @@ class Defaults extends PureComponent {
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     },
+    langs: [],
     unsaved: false,
   }
 
-  componentDidMount() {
-    const { fetch } = this.props;
+  async componentDidMount() {
+    const { fetch, storeLangs } = this.props;
     fetch()
       .then(() => {
         const { createParams } = this.props;
@@ -88,6 +90,9 @@ class Defaults extends PureComponent {
         this.setState(this.getStateOverwrite(createParams));
       })
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    if(langs) this.setState({ langs });
   }
 
   getStateOverwrite(createParams) {
@@ -137,7 +142,7 @@ class Defaults extends PureComponent {
     const { edit } = this.props;
     const { createParams, sizeUnits } = this.state;
     // eslint-disable-next-line camelcase
-    const { maxUser, smtp, changePassword, pop3_imap,
+    const { maxUser, smtp, changePassword, pop3_imap, lang,
       storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
 
     const quotas = {
@@ -147,7 +152,6 @@ class Defaults extends PureComponent {
       prohibitsendquota: prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
     };
     edit({
-      //TODO: Format properly
       domain: {
         maxUser: parseInt(maxUser) || '',
       },
@@ -155,6 +159,7 @@ class Defaults extends PureComponent {
         ...quotas,
         smtp,
         changePassword,
+        lang,
         // eslint-disable-next-line camelcase
         pop3_imap,
       },
@@ -185,8 +190,9 @@ class Defaults extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { createParams, sizeUnits, snackbar } = this.state;
+    const { createParams, sizeUnits, snackbar, langs } = this.state;
     const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
+      lang,
       // eslint-disable-next-line camelcase
       smtp, changePassword, pop3_imap } = createParams;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
@@ -229,13 +235,27 @@ class Defaults extends PureComponent {
             >
               {t('User create parameters')}
             </Typography>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Language")}
+              fullWidth
+              value={lang || ''}
+              onChange={this.handleInput('lang')}
+            >
+              {langs.map((l) => (
+                <MenuItem key={l.code} value={l.code}>
+                  {l.code + ": " + l.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <Grid container style={{ marginTop: 8 }}>
               <TextField 
                 className={classes.flexInput}
                 label={
                   <div className={classes.labelContainer}>
-                    {t("Receive quota limit")}
-                    <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
+                    {t("Send quota limit")}
+                    <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
                   </div>
                 }
                 value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
@@ -246,6 +266,32 @@ class Defaults extends PureComponent {
                       <Select
                         onChange={this.handleUnitChange('prohibitsendquota')}
                         value={sizeUnits.prohibitsendquota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
+                }}
+              />
+              <TextField 
+                className={classes.flexInput}
+                label={
+                  <div className={classes.labelContainer}>
+                    {t("Receive quota limit")}
+                    <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
+                  </div>
+                }
+                value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
+                onChange={this.handleInput('prohibitreceivequota')}
+                InputProps={{
+                  endAdornment:
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={this.handleUnitChange('prohibitreceivequota')}
+                        value={sizeUnits.prohibitreceivequota}
                         className={classes.select}
                         variant="standard"
                       >
@@ -272,32 +318,6 @@ class Defaults extends PureComponent {
                       <Select
                         onChange={this.handleUnitChange('storagequotalimit')}
                         value={sizeUnits.storagequotalimit}
-                        className={classes.select}
-                        variant="standard"
-                      >
-                        <MenuItem value={1}>MB</MenuItem>
-                        <MenuItem value={2}>GB</MenuItem>
-                        <MenuItem value={3}>TB</MenuItem>
-                      </Select>
-                    </FormControl>,
-                }}
-              />
-              <TextField 
-                className={classes.flexInput}
-                label={
-                  <div className={classes.labelContainer}>
-                    {t("Send quota limit")}
-                    <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
-                  </div>
-                }
-                value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
-                onChange={this.handleInput('prohibitreceivequota')}
-                InputProps={{
-                  endAdornment:
-                    <FormControl className={classes.adornment}>
-                      <Select
-                        onChange={this.handleUnitChange('prohibitreceivequota')}
-                        value={sizeUnits.prohibitreceivequota}
                         className={classes.select}
                         variant="standard"
                       >
@@ -366,6 +386,7 @@ Defaults.propTypes = {
   history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
+  storeLangs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -380,6 +401,7 @@ const mapDispatchToProps = dispatch => {
       .catch(message => Promise.reject(message)),
     fetch: async () => await dispatch(fetchCreateParamsData())
       .catch(message => Promise.reject(message)),
+    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
   };
 };
 

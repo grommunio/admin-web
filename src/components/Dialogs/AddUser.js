@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { addUserData } from '../../actions/users';
+import { addUserData, getStoreLangs } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
@@ -44,11 +44,13 @@ class AddUser extends PureComponent {
     password: '',
     repeatPw: '',
     homeserver: '',
+    lang: '',
     sizeUnits: {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     },
+    langs: [],
     usernameError: false,
   }
 
@@ -63,8 +65,8 @@ class AddUser extends PureComponent {
     { name: 'Equipment', ID: 8 },
   ]
 
-  handleEnter = () => {
-    const { fetchServers, fetchDefaults, domain } = this.props;
+  handleEnter = async () => {
+    const { fetchServers, fetchDefaults, domain, storeLangs } = this.props;
     fetchServers().catch(error => this.props.onError(error));
     fetchDefaults(null, {domainID: domain.ID})
       .then(() => {
@@ -73,6 +75,9 @@ class AddUser extends PureComponent {
         this.setState(this.getStateOverwrite(createParams));
       })
       .catch(error => this.props.onError(error));
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    if(langs) this.setState({ langs });
   }
 
   getStateOverwrite(createParams) {
@@ -106,6 +111,7 @@ class AddUser extends PureComponent {
         prohibitreceivequota: user.prohibitreceivequota,
         prohibitsendquota: user.prohibitsendquota,
       },
+      lang: user.lang,
     };
   }
 
@@ -152,7 +158,7 @@ class AddUser extends PureComponent {
     const { domain, add, onError, onSuccess, createParams } = this.props;
     const { username, password, properties, sizeUnits, status, homeserver } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword } = createParams.user;
+    const { smtp, pop3_imap, changePassword, lang } = createParams.user;
     // eslint-disable-next-line camelcase
     const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
     this.setState({ loading: true });
@@ -170,6 +176,7 @@ class AddUser extends PureComponent {
         prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
       ...checkboxes,
+      lang,
     })
       .then(() => {
         this.setState({
@@ -185,6 +192,7 @@ class AddUser extends PureComponent {
           repeatPw: '',
           usernameError: false,
           homeserver: '',
+          lang: '',
         });
         onSuccess();
       })
@@ -195,8 +203,12 @@ class AddUser extends PureComponent {
   }
 
   handleAddAndEdit = () => {
-    const { domain, history, add, onError } = this.props;
+    const { domain, history, add, onError, createParams } = this.props;
     const { username, password, subType, properties, sizeUnits, status, homeserver } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword, lang } = createParams.user;
+    // eslint-disable-next-line camelcase
+    const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -212,6 +224,8 @@ class AddUser extends PureComponent {
           Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
         prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
+      lang,
     })
       .then(user => {
         history.push('/' + domain.ID + '/users/' + user.ID);
@@ -257,7 +271,7 @@ class AddUser extends PureComponent {
   render() {
     const { classes, t, domain, open, onClose, servers } = this.props;
     const { username, loading, properties, password, repeatPw, sizeUnits, usernameError,
-      status, homeserver } = this.state;
+      status, homeserver, lang, langs } = this.state;
     const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || password.length < 6) && status !== 4);
@@ -331,6 +345,19 @@ class AddUser extends PureComponent {
               onChange={this.handlePropertyChange('displayname')}
               className={classes.input}
             />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Language")}
+              fullWidth
+              value={lang || 'en_US'}
+            >
+              {langs.map((l) => (
+                <MenuItem key={l.code} value={l.code}>
+                  {l.code + ": " + l.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField 
               className={classes.input} 
               label={t("Send quota limit")}
@@ -472,6 +499,7 @@ AddUser.propTypes = {
   fetchServers: PropTypes.func.isRequired,
   fetchDefaults: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
+  storeLangs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -491,6 +519,7 @@ const mapDispatchToProps = dispatch => {
       .catch(message => Promise.reject(message)),
     fetchDefaults: async (domainId, params) => await dispatch(fetchCreateParamsData(domainId, params))
       .catch(message => Promise.reject(message)),
+    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
   };
 };
 
