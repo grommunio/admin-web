@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Select, Autocomplete,
+  MenuItem, Button, DialogActions, CircularProgress, Autocomplete,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -45,11 +45,6 @@ class AddUser extends PureComponent {
     repeatPw: '',
     homeserver: '',
     lang: '',
-    sizeUnits: {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
-    },
     langs: [],
     usernameError: false,
   }
@@ -82,31 +77,10 @@ class AddUser extends PureComponent {
 
   getStateOverwrite(createParams) {
     if(!createParams) return {};
-    const user = {
-      ...createParams.user,
-    };
-    let sizeUnits = {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
-    };
-    for(let quotaLimit in sizeUnits) {
-      if(user[quotaLimit] === undefined) continue;
-      user[quotaLimit] = user[quotaLimit] / 1024;
-      for(let i = 2; i >= 0; i--) {
-        if(user[quotaLimit] === 0) break;
-        let r = user[quotaLimit] % 1024 ** i;
-        if(r === 0) {
-          sizeUnits[quotaLimit] = i + 1;
-          user[quotaLimit] = user[quotaLimit] / 1024 ** i;
-          break;
-        }
-      }
-      user[quotaLimit] = Math.ceil(user[quotaLimit]);
-    }
+    const user = createParams.user;
     return {
-      sizeUnits,
       properties: {
+        ...this.state.properties,
         storagequotalimit: user.storagequotalimit,
         prohibitreceivequota: user.prohibitreceivequota,
         prohibitsendquota: user.prohibitsendquota,
@@ -156,7 +130,7 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, sizeUnits, status, homeserver } = this.state;
+    const { username, password, properties, status, homeserver } = this.state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword, lang } = createParams.user;
     // eslint-disable-next-line camelcase
@@ -170,10 +144,6 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
       ...checkboxes,
       lang,
@@ -183,10 +153,8 @@ class AddUser extends PureComponent {
           username: '',
           properties: {
             displayname: '',
-            storagequotalimit: '',
             displaytypeex: 0,
           },
-          sizeUnit: 1,
           loading: false,
           password: '',
           repeatPw: '',
@@ -204,7 +172,7 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, sizeUnits, status, homeserver } = this.state;
+    const { username, password, subType, properties, status, homeserver } = this.state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword, lang } = createParams.user;
     // eslint-disable-next-line camelcase
@@ -219,10 +187,6 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
       ...checkboxes,
       lang,
@@ -254,13 +218,6 @@ class AddUser extends PureComponent {
     });
   }
 
-  handleUnitChange = unit => event => this.setState({
-    sizeUnits: {
-      ...this.state.sizeUnits,
-      [unit]: event.target.value,
-    },
-  });
-
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal || '',
@@ -270,9 +227,9 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, domain, open, onClose, servers } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError,
+    const { username, loading, properties, password, repeatPw, usernameError,
       status, homeserver, lang, langs } = this.state;
-    const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
+    const { displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || password.length < 6) && status !== 4);
     return (
@@ -358,69 +315,6 @@ class AddUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Send quota limit")}
-              value={prohibitsendquota || ''}
-              onChange={this.handleIntPropertyChange('prohibitsendquota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitsendquota')}
-                      value={sizeUnits.prohibitsendquota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Receive quota limit")}
-              value={prohibitreceivequota || ''}
-              onChange={this.handleIntPropertyChange('prohibitreceivequota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitreceivequota')}
-                      value={sizeUnits.prohibitreceivequota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Storage quota limit")}
-              value={storagequotalimit || ''}
-              onChange={this.handleIntPropertyChange('storagequotalimit')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('storagequotalimit')}
-                      value={sizeUnits.storagequotalimit}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
             <TextField
               select
               className={classes.input}
