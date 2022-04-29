@@ -18,6 +18,7 @@ import { checkFormat } from '../../api';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 import { fetchServersData } from '../../actions/servers';
+import { fetchCreateParamsData } from '../../actions/defaults';
 
 const styles = theme => ({
   form: {
@@ -71,9 +72,48 @@ class AddGlobalUser extends PureComponent {
   ]
 
   handleEnter = () => {
-    const { fetchDomains, fetchServers } = this.props;
+    const { fetchDomains, fetchServers, fetchDefaults } = this.props;
     fetchDomains().catch(error => this.props.onError(error));
     fetchServers().catch(error => this.props.onError(error));
+    fetchDefaults()
+      .then(() => {
+        const { createParams } = this.props;
+        // Update mask
+        this.setState(this.getStateOverwrite(createParams));
+      })
+      .catch(error => this.props.onError(error));
+  }
+
+  getStateOverwrite(createParams) {
+    if(!createParams) return {};
+    const user = {
+      ...createParams.user,
+    };
+    let sizeUnits = {
+      storagequotalimit: 1,
+      prohibitreceivequota: 1,
+      prohibitsendquota: 1,
+    };
+    for(let quotaLimit in sizeUnits) {
+      if(user[quotaLimit] === undefined) continue;
+      user[quotaLimit] = user[quotaLimit] / 1024;
+      for(let i = 2; i >= 0; i--) {
+        if(user[quotaLimit] === 0) break;
+        let r = user[quotaLimit] % 1024 ** i;
+        if(r === 0) {
+          sizeUnits[quotaLimit] = i + 1;
+          user[quotaLimit] = user[quotaLimit] / 1024 ** i;
+          break;
+        }
+      }
+      user[quotaLimit] = Math.ceil(user[quotaLimit]);
+    }
+    return {
+      sizeUnits,
+      properties: {
+        ...user,
+      },
+    };
   }
 
   handleInput = field => event => {
@@ -466,12 +506,15 @@ AddGlobalUser.propTypes = {
   fetchDomains: PropTypes.func.isRequired,
   servers: PropTypes.array.isRequired,
   fetchServers: PropTypes.func.isRequired,
+  fetchDefaults: PropTypes.func.isRequired,
+  createParams: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     Domains: state.domains.Domains,
     servers: state.servers.Servers,
+    createParams: state.defaults.CreateParams,
   };
 };
 
@@ -484,6 +527,8 @@ const mapDispatchToProps = dispatch => {
         .then(user => Promise.resolve(user))
         .catch(msg => Promise.reject(msg)),
     fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
+    fetchDefaults: async () => await dispatch(fetchCreateParamsData())
       .catch(message => Promise.reject(message)),
   };
 };
