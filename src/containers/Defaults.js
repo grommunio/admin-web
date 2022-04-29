@@ -14,6 +14,8 @@ import {
   Button,
   Select,
   MenuItem,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
@@ -54,6 +56,9 @@ const styles = theme => ({
   flexInput: {
     margin: theme.spacing(1, 1, 1, 1),
     flex: 1,
+  },
+  checkboxes: {
+    margin: theme.spacing(0, 0, 2, 1),
   },
 });
 
@@ -131,7 +136,9 @@ class Defaults extends PureComponent {
   handleEdit = () => {
     const { edit } = this.props;
     const { createParams, sizeUnits } = this.state;
-    const { maxUser, storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
+    // eslint-disable-next-line camelcase
+    const { maxUser, smtp, changePassword, pop3_imap,
+      storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
 
     const quotas = {
       storagequotalimit: storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
@@ -146,6 +153,10 @@ class Defaults extends PureComponent {
       },
       user: {
         ...quotas,
+        smtp,
+        changePassword,
+        // eslint-disable-next-line camelcase
+        pop3_imap,
       },
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -165,10 +176,19 @@ class Defaults extends PureComponent {
     },
   });
 
+  handleCheckbox = field => e => this.setState({
+    createParams: {
+      ...this.state.createParams,
+      [field]: e.target.checked,
+    },
+  });
+
   render() {
     const { classes, t } = this.props;
     const { createParams, sizeUnits, snackbar } = this.state;
-    const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit } = createParams;
+    const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
+      // eslint-disable-next-line camelcase
+      smtp, changePassword, pop3_imap } = createParams;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -287,6 +307,38 @@ class Defaults extends PureComponent {
                       </Select>
                     </FormControl>,
                 }}
+              />
+            </Grid>
+            <Grid container className={classes.checkboxes}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={smtp || false }
+                    onChange={this.handleCheckbox('smtp')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={changePassword || false }
+                    onChange={this.handleCheckbox('changePassword')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow password changes')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                checked={pop3_imap || false /*eslint-disable-line*/}
+                    onChange={this.handleCheckbox('pop3_imap')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow POP3/IMAP logins')}
               />
             </Grid>
           </FormControl>

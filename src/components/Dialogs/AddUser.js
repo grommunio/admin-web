@@ -102,7 +102,9 @@ class AddUser extends PureComponent {
     return {
       sizeUnits,
       properties: {
-        ...user,
+        storagequotalimit: user.storagequotalimit,
+        prohibitreceivequota: user.prohibitreceivequota,
+        prohibitsendquota: user.prohibitsendquota,
       },
     };
   }
@@ -147,8 +149,12 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domain, add, onError, onSuccess } = this.props;
+    const { domain, add, onError, onSuccess, createParams } = this.props;
     const { username, password, properties, sizeUnits, status, homeserver } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword } = createParams.user;
+    // eslint-disable-next-line camelcase
+    const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -163,6 +169,7 @@ class AddUser extends PureComponent {
           Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
         prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
     })
       .then(() => {
         this.setState({

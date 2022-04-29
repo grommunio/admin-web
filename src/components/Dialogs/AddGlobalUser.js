@@ -111,7 +111,9 @@ class AddGlobalUser extends PureComponent {
     return {
       sizeUnits,
       properties: {
-        ...user,
+        storagequotalimit: user.storagequotalimit,
+        prohibitreceivequota: user.prohibitreceivequota,
+        prohibitsendquota: user.prohibitsendquota,
       },
     };
   }
@@ -156,8 +158,12 @@ class AddGlobalUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { add, onError, onSuccess } = this.props;
+    const { add, onError, onSuccess, createParams } = this.props;
     const { username, password, properties, sizeUnits, domain, status, homeserver } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword } = createParams.user;
+    // eslint-disable-next-line camelcase
+    const checkboxes = status !== 4 ? { smtp, pop3_imap, changePassword } : {};
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
@@ -172,6 +178,7 @@ class AddGlobalUser extends PureComponent {
           Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
         prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
     })
       .then(() => {
         this.setState({
