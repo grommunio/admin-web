@@ -63,7 +63,7 @@ class AddUser extends PureComponent {
   handleEnter = async () => {
     const { fetchServers, fetchDefaults, domain, storeLangs } = this.props;
     fetchServers().catch(error => this.props.onError(error));
-    fetchDefaults(null, {domainID: domain.ID})
+    fetchDefaults(null, {domain: domain.ID})
       .then(() => {
         const { createParams } = this.props;
         // Update mask

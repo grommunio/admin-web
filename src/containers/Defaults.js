@@ -36,7 +36,7 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(0, 0, 3, 1),
+    margin: theme.spacing(0, 0, 3, 0),
   },
   subheader: {
     marginBottom: 8,
@@ -55,7 +55,7 @@ const styles = theme => ({
     margin: theme.spacing(2, 0, 0, 0),
   },
   flexInput: {
-    margin: theme.spacing(1, 1, 1, 1),
+    margin: theme.spacing(1, 2, 1, 0),
     flex: 1,
   },
   checkboxes: {
@@ -303,6 +303,7 @@ class Defaults extends PureComponent {
               />
               <TextField 
                 className={classes.flexInput}
+                style={{ marginRight: 0 }}
                 label={
                   <div className={classes.labelContainer}>
                     {t("Storage quota limit")}
