@@ -68,7 +68,6 @@ class AddUser extends PureComponent {
     const domainDetails = await fetchDomainDetails(domain.ID);
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    this.setState({  });
     fetchDefaults(null, {domain: domain.ID})
       .then(() => {
         const { createParams } = this.props;
