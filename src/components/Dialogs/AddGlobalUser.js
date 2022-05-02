@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress,
+  MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -140,9 +140,9 @@ class AddGlobalUser extends PureComponent {
 
   handleAdd = () => {
     const { add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, domain, status, homeserver, chatAvailable } = this.state;
+    const { username, password, properties, domain, status, homeserver, chat } = this.state;
     // eslint-disable-next-line camelcase
-    const { chat, smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword, lang,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -161,7 +161,7 @@ class AddGlobalUser extends PureComponent {
       ...checkboxes,
       lang,
       // Chat user only available for normal users, if domain has a chat team
-      chat: status !== 4 && chatAvailable ? chat : false,
+      chat,
     })
       .then(() => {
         this.setState({
@@ -189,9 +189,9 @@ class AddGlobalUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, domain, status, homeserver, chatAvailable } = this.state;
+    const { username, password, subType, properties, domain, status, homeserver, chat } = this.state;
     // eslint-disable-next-line camelcase
-    const { chat, smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword, lang,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -210,8 +210,7 @@ class AddGlobalUser extends PureComponent {
       },
       ...checkboxes,
       lang,
-      // Chat user only available for normal users, if domain has a chat team
-      chat: status !== 4 && chatAvailable ? chat : false,
+      chat,
     })
       .then(user => {
         history.push('/' + domain?.ID + '/users/' + user.ID);
@@ -241,13 +240,14 @@ class AddGlobalUser extends PureComponent {
   }
 
   handleAutocomplete = async (e, domain) => {
-    const { username } = this.state;
+    const { username, chat } = this.state;
     const domainDetails = await this.props.fetchDomainDetails(domain.ID);
     if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
     this.setState({
       domain,
       chatAvailable: domainDetails.chat || false,
       autocompleteInput: domain?.domainname || '',
+      chat: chat && domainDetails.chat,
     });
   }
 
@@ -261,7 +261,7 @@ class AddGlobalUser extends PureComponent {
     const { classes, t, open, onClose, Domains, servers } = this.props;
     const { username, loading, properties, password, repeatPw,
       usernameError, domain, autocompleteInput, status, homeserver,
-      lang, langs } = this.state;
+      lang, langs, chat, chatAvailable } = this.state;
     const { displayname, displaytypeex } = properties;
     const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || password.length < 6) && status !== 4);
@@ -404,6 +404,17 @@ class AddGlobalUser extends PureComponent {
                   label={t("Homeserver")}
                 />
               )}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!chatAvailable}
             />
           </FormControl>
         </DialogContent>

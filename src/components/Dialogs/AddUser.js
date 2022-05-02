@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Autocomplete,
+  MenuItem, Button, DialogActions, CircularProgress, Autocomplete, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -65,20 +65,24 @@ class AddUser extends PureComponent {
   handleEnter = async () => {
     const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = this.props;
     fetchServers().catch(error => this.props.onError(error));
+    const domainDetails = await fetchDomainDetails(domain.ID);
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    this.setState({  });
     fetchDefaults(null, {domain: domain.ID})
       .then(() => {
         const { createParams } = this.props;
         // Update mask
-        this.setState(this.getStateOverwrite(createParams));
+        this.setState({
+          chatAvailable: domainDetails.chat || false,
+          langs: langs || [],
+          ...this.getStateOverwrite(createParams, domainDetails.chat),
+        });
       })
       .catch(error => this.props.onError(error));
-    const langs = await storeLangs()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const domainDetails = await fetchDomainDetails(domain.ID);
-    this.setState({ chatAvailable: domainDetails.chat || false, langs: langs || [] });
   }
 
-  getStateOverwrite(createParams) {
+  getStateOverwrite(createParams, chatAvailable) {
     if(!createParams) return {};
     const user = createParams.user;
     return {
@@ -88,7 +92,8 @@ class AddUser extends PureComponent {
         prohibitreceivequota: user.prohibitreceivequota,
         prohibitsendquota: user.prohibitsendquota,
       },
-      lang: user.lang,
+      lang: user.lang || [],
+      chat: chatAvailable ? (createParams.domain.chat || false) : false,
     };
   }
 
@@ -133,9 +138,9 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, status, homeserver, chatAvailable } = this.state;
+    const { username, password, properties, status, homeserver, chat } = this.state;
     // eslint-disable-next-line camelcase
-    const { chat, smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword, lang,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -153,8 +158,7 @@ class AddUser extends PureComponent {
       },
       ...checkboxes,
       lang,
-      // Chat user only available for normal users, if domain has a chat team
-      chat: status !== 4 && chatAvailable ? chat : false,
+      chat,
     })
       .then(() => {
         this.setState({
@@ -180,9 +184,9 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, status, homeserver, chatAvailable } = this.state;
+    const { username, password, subType, properties, status, homeserver, chat } = this.state;
     // eslint-disable-next-line camelcase
-    const { chat, smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword, lang,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -201,8 +205,7 @@ class AddUser extends PureComponent {
       },
       ...checkboxes,
       lang,
-      // Chat user only available for normal users, if domain has a chat team
-      chat: status !== 4 && chatAvailable ? chat : false,
+      chat,
     })
       .then(user => {
         history.push('/' + domain.ID + '/users/' + user.ID);
@@ -241,7 +244,7 @@ class AddUser extends PureComponent {
   render() {
     const { classes, t, domain, open, onClose, servers } = this.props;
     const { username, loading, properties, password, repeatPw, usernameError,
-      status, homeserver, lang, langs } = this.state;
+      status, homeserver, lang, langs, chat, chatAvailable } = this.state;
     const { displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || password.length < 6) && status !== 4);
@@ -360,6 +363,17 @@ class AddUser extends PureComponent {
                   label={t("Homeserver")}
                 />
               )}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!chatAvailable}
             />
           </FormControl>
         </DialogContent>
