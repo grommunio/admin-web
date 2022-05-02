@@ -5,16 +5,18 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Select, Autocomplete,
+  MenuItem, Button, DialogActions, CircularProgress, Autocomplete, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { addUserData } from '../../actions/users';
+import { addUserData, getStoreLangs } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
+import { fetchCreateParamsData } from '../../actions/defaults';
+import { fetchDomainDetails } from '../../actions/domains';
 
 const styles = theme => ({
   form: {
@@ -43,12 +45,10 @@ class AddUser extends PureComponent {
     password: '',
     repeatPw: '',
     homeserver: '',
-    sizeUnits: {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
-    },
+    lang: '',
+    langs: [],
     usernameError: false,
+    chatAvailable: false,
   }
 
   statuses = [
@@ -62,9 +62,38 @@ class AddUser extends PureComponent {
     { name: 'Equipment', ID: 8 },
   ]
 
-  handleEnter = () => {
-    const { fetchServers } = this.props;
+  handleEnter = async () => {
+    const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = this.props;
     fetchServers().catch(error => this.props.onError(error));
+    const domainDetails = await fetchDomainDetails(domain.ID);
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    fetchDefaults(null, {domain: domain.ID})
+      .then(() => {
+        const { createParams } = this.props;
+        // Update mask
+        this.setState({
+          chatAvailable: domainDetails.chat || false,
+          langs: langs || [],
+          ...this.getStateOverwrite(createParams, domainDetails.chat),
+        });
+      })
+      .catch(error => this.props.onError(error));
+  }
+
+  getStateOverwrite(createParams, chatAvailable) {
+    if(!createParams) return {};
+    const user = createParams.user;
+    return {
+      properties: {
+        ...this.state.properties,
+        storagequotalimit: user.storagequotalimit,
+        prohibitreceivequota: user.prohibitreceivequota,
+        prohibitsendquota: user.prohibitsendquota,
+      },
+      lang: user.lang || [],
+      chat: chatAvailable ? (createParams.domain.chat || false) : false,
+    };
   }
 
   handleInput = field => event => {
@@ -107,8 +136,15 @@ class AddUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { domain, add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, status, homeserver } = this.state;
+    const { domain, add, onError, onSuccess, createParams } = this.props;
+    const { username, password, properties, status, homeserver, chat } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
+    // eslint-disable-next-line camelcase
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -118,26 +154,24 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
+      lang,
+      chat,
     })
       .then(() => {
         this.setState({
           username: '',
           properties: {
             displayname: '',
-            storagequotalimit: '',
             displaytypeex: 0,
           },
-          sizeUnit: 1,
           loading: false,
           password: '',
           repeatPw: '',
           usernameError: false,
           homeserver: '',
+          lang: '',
         });
         onSuccess();
       })
@@ -148,8 +182,15 @@ class AddUser extends PureComponent {
   }
 
   handleAddAndEdit = () => {
-    const { domain, history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, status, homeserver } = this.state;
+    const { domain, history, add, onError, createParams } = this.props;
+    const { username, password, subType, properties, status, homeserver, chat } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
+    // eslint-disable-next-line camelcase
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain.ID, {
       username,
@@ -160,11 +201,10 @@ class AddUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
+      lang,
+      chat,
     })
       .then(user => {
         history.push('/' + domain.ID + '/users/' + user.ID);
@@ -193,13 +233,6 @@ class AddUser extends PureComponent {
     });
   }
 
-  handleUnitChange = unit => event => this.setState({
-    sizeUnits: {
-      ...this.state.sizeUnits,
-      [unit]: event.target.value,
-    },
-  });
-
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal || '',
@@ -209,9 +242,9 @@ class AddUser extends PureComponent {
 
   render() {
     const { classes, t, domain, open, onClose, servers } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits, usernameError,
-      status, homeserver } = this.state;
-    const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
+    const { username, loading, properties, password, repeatPw, usernameError,
+      status, homeserver, lang, langs, chat, chatAvailable } = this.state;
+    const { displayname, displaytypeex } = properties;
     const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || password.length < 6) && status !== 4);
     return (
@@ -284,69 +317,19 @@ class AddUser extends PureComponent {
               onChange={this.handlePropertyChange('displayname')}
               className={classes.input}
             />
-            <TextField 
-              className={classes.input} 
-              label={t("Send quota limit")}
-              value={prohibitsendquota || ''}
-              onChange={this.handleIntPropertyChange('prohibitsendquota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitsendquota')}
-                      value={sizeUnits.prohibitsendquota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Receive quota limit")}
-              value={prohibitreceivequota || ''}
-              onChange={this.handleIntPropertyChange('prohibitreceivequota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitreceivequota')}
-                      value={sizeUnits.prohibitreceivequota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Storage quota limit")}
-              value={storagequotalimit || ''}
-              onChange={this.handleIntPropertyChange('storagequotalimit')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('storagequotalimit')}
-                      value={sizeUnits.storagequotalimit}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Language")}
+              fullWidth
+              value={lang || 'en_US'}
+            >
+              {langs.map((l) => (
+                <MenuItem key={l.code} value={l.code}>
+                  {l.code + ": " + l.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               select
               className={classes.input}
@@ -379,6 +362,17 @@ class AddUser extends PureComponent {
                   label={t("Homeserver")}
                 />
               )}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!chatAvailable}
             />
           </FormControl>
         </DialogContent>
@@ -423,11 +417,16 @@ AddUser.propTypes = {
   open: PropTypes.bool.isRequired,
   servers: PropTypes.array.isRequired,
   fetchServers: PropTypes.func.isRequired,
+  fetchDefaults: PropTypes.func.isRequired,
+  fetchDomainDetails: PropTypes.func.isRequired,
+  createParams: PropTypes.object.isRequired,
+  storeLangs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     servers: state.servers.Servers,
+    createParams: state.defaults.CreateParams,
   };
 };
 
@@ -439,6 +438,12 @@ const mapDispatchToProps = dispatch => {
         .catch(msg => Promise.reject(msg)),
     fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
       .catch(message => Promise.reject(message)),
+    fetchDefaults: async (domainId, params) => await dispatch(fetchCreateParamsData(domainId, params))
+      .catch(message => Promise.reject(message)),
+    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
+    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(msg => Promise.reject(msg)),
   };
 };
 

@@ -321,3 +321,49 @@ export function getLangs() {
     { key: 'ua-UA', value: 'Ukrainian' },
   ];
 }
+
+/**
+ * Returns a formatted default create parameters object
+ * 
+ * @param {Object} createParams raw create parameters
+ * @returns {Array} array of language objects
+ */
+export function formatCreateParams(createParams) {
+  if(!createParams) return {};
+  const user = createParams.user;
+  const domain = createParams.domain;
+  let sizeUnits = {
+    storagequotalimit: 1,
+    prohibitreceivequota: 1,
+    prohibitsendquota: 1,
+  };
+  if(user.chat) {
+    user.chatUser = user.chat;
+    delete user.chat;
+  }
+  if(domain.chat) {
+    domain.chatTeam = domain.chat;
+    delete domain.chat;
+  }
+  for(let quotaLimit in sizeUnits) {
+    if(user[quotaLimit] === undefined) continue;
+    user[quotaLimit] = user[quotaLimit] / 1024;
+    for(let i = 2; i >= 0; i--) {
+      if(user[quotaLimit] === 0) break;
+      let r = user[quotaLimit] % 1024 ** i;
+      if(r === 0) {
+        sizeUnits[quotaLimit] = i + 1;
+        user[quotaLimit] = user[quotaLimit] / 1024 ** i;
+        break;
+      }
+    }
+    user[quotaLimit] = Math.ceil(user[quotaLimit]);
+  }
+  return {
+    sizeUnits,
+    createParams: {
+      ...user,
+      ...domain,
+    },
+  };
+}

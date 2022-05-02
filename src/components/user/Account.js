@@ -148,7 +148,7 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handleInput,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
       handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
       servers } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -240,7 +240,7 @@ class Account extends PureComponent {
           label={t("Language")}
           fullWidth
           value={lang || 'en_US'}
-          onChange={handleInput('lang')}
+          disabled
         >
           {langs.map((l) => (
             <MenuItem key={l.code} value={l.code}>

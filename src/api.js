@@ -1021,6 +1021,20 @@ export function taskDetails(id) {
   };
 }
 
+export function createParams(domainID, params) {
+  const path = '/defaults/createParams' + (domainID ? '/' + domainID : '');
+  return async () => {
+    return await get(buildQuery(path, params));
+  };
+}
+
+export function editCreateParams(data, domainID, params) {
+  const path = '/defaults/createParams' + (domainID ? '/' + domainID : '');
+  return async () => {
+    return await put(buildQuery(path, params), data);
+  };
+}
+
 /*
   ABOUT
 */

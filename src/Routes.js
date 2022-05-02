@@ -31,6 +31,7 @@ function makeLoadableComponent(loader) {
 // Create async components
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
+const AsyncDefaults = makeLoadableComponent(() => import("./containers/Defaults"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
 const AsyncGlobalUsersList = makeLoadableComponent(() => import("./containers/GlobalUsers"));
@@ -117,6 +118,12 @@ const Routes = ({ childProps, domains }) => (
       path="/roles"
       exact
       component={AsyncRoles}
+      props={childProps}
+    />
+    <AuthenticatedRoute
+      path="/defaults"
+      exact
+      component={AsyncDefaults}
       props={childProps}
     />
     <AuthenticatedRoute

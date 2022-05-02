@@ -12,6 +12,7 @@ import aboutReducer from './reducers/about';
 import classesReducer from './reducers/classes';
 import dashboardReducer from './reducers/dashboard';
 import dbconfReducer from './reducers/dbconf';
+import defaultsReducer from './reducers/defaults';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
 import foldersReducer from './reducers/folders';
@@ -44,6 +45,7 @@ export const store = createStore(
     _classes: classesReducer,
     dashboard: dashboardReducer,
     dbconf: dbconfReducer,
+    defaults: defaultsReducer,
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,

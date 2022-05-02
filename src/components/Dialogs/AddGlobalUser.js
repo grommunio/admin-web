@@ -5,19 +5,20 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Select,
+  MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { fetchDomainData } from '../../actions/domains';
-import { addUserData } from '../../actions/users';
+import { fetchDomainData, fetchDomainDetails } from '../../actions/domains';
+import { addUserData, getStoreLangs } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 import { fetchServersData } from '../../actions/servers';
+import { fetchCreateParamsData } from '../../actions/defaults';
 
 const styles = theme => ({
   form: {
@@ -48,15 +49,13 @@ class AddGlobalUser extends PureComponent {
     loading: false,
     password: '',
     repeatPw: '',
-    sizeUnits: {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
-    },
     usernameError: false,
     domain: '',
     homeserver: '',
+    lang: '',
     autocompleteInput: '',
+    langs: [],
+    chatAvailable: false,
   }
 
   types = [
@@ -70,10 +69,34 @@ class AddGlobalUser extends PureComponent {
     { name: 'Shared', ID: 4 },
   ]
 
-  handleEnter = () => {
-    const { fetchDomains, fetchServers } = this.props;
+  handleEnter = async () => {
+    const { fetchDomains, fetchServers, fetchDefaults, storeLangs } = this.props;
     fetchDomains().catch(error => this.props.onError(error));
     fetchServers().catch(error => this.props.onError(error));
+    fetchDefaults()
+      .then(() => {
+        const { createParams } = this.props;
+        // Update mask
+        this.setState(this.getStateOverwrite(createParams));
+      })
+      .catch(error => this.props.onError(error));
+    const langs = await storeLangs()
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    if(langs) this.setState({ langs });
+  }
+
+  getStateOverwrite(createParams) {
+    if(!createParams) return {};
+    const user = createParams.user;
+    return {
+      properties: {
+        ...this.state.properties,
+        storagequotalimit: user.storagequotalimit,
+        prohibitreceivequota: user.prohibitreceivequota,
+        prohibitsendquota: user.prohibitsendquota,
+      },
+      lang: user.lang,
+    };
   }
 
   handleInput = field => event => {
@@ -116,8 +139,15 @@ class AddGlobalUser extends PureComponent {
   }
 
   handleAdd = () => {
-    const { add, onError, onSuccess } = this.props;
-    const { username, password, properties, sizeUnits, domain, status, homeserver } = this.state;
+    const { add, onError, onSuccess, createParams } = this.props;
+    const { username, password, properties, domain, status, homeserver, chat } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
+    // eslint-disable-next-line camelcase
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
@@ -127,11 +157,11 @@ class AddGlobalUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
+      lang,
+      // Chat user only available for normal users, if domain has a chat team
+      chat,
     })
       .then(() => {
         this.setState({
@@ -141,13 +171,13 @@ class AddGlobalUser extends PureComponent {
             storagequotalimit: '',
             displaytypeex: 0,
           },
-          sizeUnit: 1,
           status: 0,
           loading: false,
           password: '',
           repeatPw: '',
           usernameError: false,
           autocompleteInput: '',
+          lang: '',
         });
         onSuccess();
       })
@@ -158,8 +188,15 @@ class AddGlobalUser extends PureComponent {
   }
 
   handleAddAndEdit = () => {
-    const { history, add, onError } = this.props;
-    const { username, password, subType, properties, sizeUnits, domain, status, homeserver } = this.state;
+    const { history, add, onError, createParams } = this.props;
+    const { username, password, subType, properties, domain, status, homeserver, chat } = this.state;
+    // eslint-disable-next-line camelcase
+    const { smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const checkboxes = status !== 4 ?
+    // eslint-disable-next-line camelcase
+      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
+      : {};
     this.setState({ loading: true });
     add(domain?.ID || -1, {
       username,
@@ -170,11 +207,10 @@ class AddGlobalUser extends PureComponent {
       properties: {
         ...properties,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-        storagequotalimit: properties.storagequotalimit * Math.pow(2, 10 * sizeUnits.storagequotalimit) || undefined,
-        prohibitreceivequota: properties.prohibitreceivequota *
-          Math.pow(2, 10 * sizeUnits.prohibitreceivequota) || undefined,
-        prohibitsendquota: properties.prohibitsendquota * Math.pow(2, 10 * sizeUnits.prohibitsendquota) || undefined,
       },
+      ...checkboxes,
+      lang,
+      chat,
     })
       .then(user => {
         history.push('/' + domain?.ID + '/users/' + user.ID);
@@ -203,19 +239,15 @@ class AddGlobalUser extends PureComponent {
     });
   }
 
-  handleUnitChange = unit => event => this.setState({
-    sizeUnits: {
-      ...this.state.sizeUnits,
-      [unit]: event.target.value,
-    },
-  });
-
-  handleAutocomplete = (e, domain) => {
-    const { username } = this.state;
+  handleAutocomplete = async (e, domain) => {
+    const { username, chat } = this.state;
+    const domainDetails = await this.props.fetchDomainDetails(domain.ID);
     if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
     this.setState({
       domain,
+      chatAvailable: domainDetails.chat || false,
       autocompleteInput: domain?.domainname || '',
+      chat: chat && domainDetails.chat,
     });
   }
 
@@ -227,9 +259,10 @@ class AddGlobalUser extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, Domains, servers } = this.props;
-    const { username, loading, properties, password, repeatPw, sizeUnits,
-      usernameError, domain, autocompleteInput, status, homeserver } = this.state;
-    const { prohibitreceivequota, prohibitsendquota, storagequotalimit, displayname, displaytypeex } = properties;
+    const { username, loading, properties, password, repeatPw,
+      usernameError, domain, autocompleteInput, status, homeserver,
+      lang, langs, chat, chatAvailable } = this.state;
+    const { displayname, displaytypeex } = properties;
     const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || password.length < 6) && status !== 4);
     
@@ -326,69 +359,19 @@ class AddGlobalUser extends PureComponent {
               onChange={this.handlePropertyChange('displayname')}
               className={classes.input}
             />
-            <TextField 
-              className={classes.input} 
-              label={t("Send quota limit")}
-              value={prohibitsendquota || ''}
-              onChange={this.handleIntPropertyChange('prohibitsendquota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitsendquota')}
-                      value={sizeUnits.prohibitsendquota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Receive quota limit")}
-              value={prohibitreceivequota || ''}
-              onChange={this.handleIntPropertyChange('prohibitreceivequota')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('prohibitreceivequota')}
-                      value={sizeUnits.prohibitreceivequota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Storage quota limit")}
-              value={storagequotalimit || ''}
-              onChange={this.handleIntPropertyChange('storagequotalimit')}
-              InputProps={{
-                endAdornment:
-                  <FormControl>
-                    <Select
-                      onChange={this.handleUnitChange('storagequotalimit')}
-                      value={sizeUnits.storagequotalimit}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
-              }}
-            />
+            <TextField
+              select
+              className={classes.input}
+              label={t("Language")}
+              fullWidth
+              value={lang || 'en_US'}
+            >
+              {langs.map((l) => (
+                <MenuItem key={l.code} value={l.code}>
+                  {l.code + ": " + l.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               select
               className={classes.input}
@@ -421,6 +404,17 @@ class AddGlobalUser extends PureComponent {
                   label={t("Homeserver")}
                 />
               )}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={this.handleCheckbox('chat')}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!chatAvailable}
             />
           </FormControl>
         </DialogContent>
@@ -466,18 +460,23 @@ AddGlobalUser.propTypes = {
   fetchDomains: PropTypes.func.isRequired,
   servers: PropTypes.array.isRequired,
   fetchServers: PropTypes.func.isRequired,
+  fetchDefaults: PropTypes.func.isRequired,
+  fetchDomainDetails: PropTypes.func.isRequired,
+  createParams: PropTypes.object.isRequired,
+  storeLangs: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     Domains: state.domains.Domains,
     servers: state.servers.Servers,
+    createParams: state.defaults.CreateParams,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDomains: async () => dispatch(fetchDomainData({ sort: 'domainname,asc' }))
+    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' }))
       .catch(message => Promise.reject(message)),
     add: async (domainID, user) => 
       await dispatch(addUserData(domainID, user))
@@ -485,6 +484,12 @@ const mapDispatchToProps = dispatch => {
         .catch(msg => Promise.reject(msg)),
     fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
       .catch(message => Promise.reject(message)),
+    fetchDefaults: async () => await dispatch(fetchCreateParamsData())
+      .catch(message => Promise.reject(message)),
+    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(msg => Promise.reject(msg)),
+    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
   };
 };
 

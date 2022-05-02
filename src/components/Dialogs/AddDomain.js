@@ -17,6 +17,7 @@ import { checkFormat } from '../../api';
 import { Autocomplete } from '@mui/lab';
 import { getAutocompleteOptions } from '../../utils';
 import { fetchServersData } from '../../actions/servers';
+import { fetchCreateParamsData } from '../../actions/defaults';
 
 const styles = theme => ({
   form: {
@@ -56,9 +57,18 @@ class AddDomain extends PureComponent {
   ]
 
   handleEnter = () => {
-    const { fetch, fetchServers } = this.props;
+    const { fetch, fetchServers, fetchDefaults } = this.props;
     fetch().catch(error => this.props.onError(error));
     fetchServers().catch(error => this.props.onError(error));
+    fetchDefaults()
+      .then(() => {
+        const { createParams } = this.props;
+        // Update mask
+        this.setState({
+          ...(createParams.domain || {}),
+        });
+      })
+      .catch(error => this.props.onError(error));
   }
 
   handleInput = field => event => {
@@ -307,14 +317,17 @@ AddDomain.propTypes = {
   add: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchServers: PropTypes.func.isRequired,
+  fetchDefaults: PropTypes.func.isRequired,
   orgs: PropTypes.array.isRequired,
   servers: PropTypes.array.isRequired,
+  createParams: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
     orgs: state.orgs.Orgs,
     servers: state.servers.Servers,
+    createParams: state.defaults.CreateParams,
   };
 };
 
@@ -326,6 +339,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
       .catch(message => Promise.reject(message)),
     fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(message => Promise.reject(message)),
+    fetchDefaults: async () => await dispatch(fetchCreateParamsData())
       .catch(message => Promise.reject(message)),
   };
 };
