@@ -16,6 +16,7 @@ import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
+import { fetchDomainDetails } from '../../actions/domains';
 
 const styles = theme => ({
   form: {
@@ -47,6 +48,7 @@ class AddUser extends PureComponent {
     lang: '',
     langs: [],
     usernameError: false,
+    chatAvailable: false,
   }
 
   statuses = [
@@ -61,7 +63,7 @@ class AddUser extends PureComponent {
   ]
 
   handleEnter = async () => {
-    const { fetchServers, fetchDefaults, domain, storeLangs } = this.props;
+    const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = this.props;
     fetchServers().catch(error => this.props.onError(error));
     fetchDefaults(null, {domain: domain.ID})
       .then(() => {
@@ -72,7 +74,8 @@ class AddUser extends PureComponent {
       .catch(error => this.props.onError(error));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    if(langs) this.setState({ langs });
+    const domainDetails = await fetchDomainDetails(domain.ID);
+    this.setState({ chatAvailable: domainDetails.chat || false, langs: langs || [] });
   }
 
   getStateOverwrite(createParams) {
@@ -130,9 +133,10 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, status, homeserver } = this.state;
+    const { username, password, properties, status, homeserver, chatAvailable } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const { chat, smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
@@ -149,6 +153,8 @@ class AddUser extends PureComponent {
       },
       ...checkboxes,
       lang,
+      // Chat user only available for normal users, if domain has a chat team
+      chat: status !== 4 && chatAvailable ? chat : false,
     })
       .then(() => {
         this.setState({
@@ -174,9 +180,10 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, status, homeserver } = this.state;
+    const { username, password, subType, properties, status, homeserver, chatAvailable } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const { chat, smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
@@ -194,6 +201,8 @@ class AddUser extends PureComponent {
       },
       ...checkboxes,
       lang,
+      // Chat user only available for normal users, if domain has a chat team
+      chat: status !== 4 && chatAvailable ? chat : false,
     })
       .then(user => {
         history.push('/' + domain.ID + '/users/' + user.ID);
@@ -396,6 +405,7 @@ AddUser.propTypes = {
   servers: PropTypes.array.isRequired,
   fetchServers: PropTypes.func.isRequired,
   fetchDefaults: PropTypes.func.isRequired,
+  fetchDomainDetails: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
   storeLangs: PropTypes.func.isRequired,
 };
@@ -418,6 +428,9 @@ const mapDispatchToProps = dispatch => {
     fetchDefaults: async (domainId, params) => await dispatch(fetchCreateParamsData(domainId, params))
       .catch(message => Promise.reject(message)),
     storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
+    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(msg => Promise.reject(msg)),
   };
 };
 

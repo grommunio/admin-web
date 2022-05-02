@@ -24,6 +24,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editCreateParamsData, fetchCreateParamsData } from '../actions/defaults';
 import { red, yellow } from '@mui/material/colors';
+import { formatCreateParams } from '../utils';
 
 const styles = theme => ({
   paper: {
@@ -39,7 +40,7 @@ const styles = theme => ({
     margin: theme.spacing(0, 0, 3, 0),
   },
   subheader: {
-    marginBottom: 8,
+    marginBottom: 16,
   },
   select: {
     minWidth: 60,
@@ -59,7 +60,7 @@ const styles = theme => ({
     flex: 1,
   },
   checkboxes: {
-    margin: theme.spacing(0, 0, 2, 1),
+    margin: theme.spacing(1, 0, 0, 0),
   },
 });
 
@@ -87,45 +88,12 @@ class Defaults extends PureComponent {
       .then(() => {
         const { createParams } = this.props;
         // Update mask
-        this.setState(this.getStateOverwrite(createParams));
+        this.setState(formatCreateParams(createParams));
       })
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     if(langs) this.setState({ langs });
-  }
-
-  getStateOverwrite(createParams) {
-    if(!createParams) return {};
-    const user = {
-      ...createParams.user,
-    };
-    let sizeUnits = {
-      storagequotalimit: 1,
-      prohibitreceivequota: 1,
-      prohibitsendquota: 1,
-    };
-    for(let quotaLimit in sizeUnits) {
-      if(user[quotaLimit] === undefined) continue;
-      user[quotaLimit] = user[quotaLimit] / 1024;
-      for(let i = 2; i >= 0; i--) {
-        if(user[quotaLimit] === 0) break;
-        let r = user[quotaLimit] % 1024 ** i;
-        if(r === 0) {
-          sizeUnits[quotaLimit] = i + 1;
-          user[quotaLimit] = user[quotaLimit] / 1024 ** i;
-          break;
-        }
-      }
-      user[quotaLimit] = Math.ceil(user[quotaLimit]);
-    }
-    return {
-      sizeUnits,
-      createParams: {
-        ...user,
-        ...createParams.domain,
-      },
-    };
   }
 
   handleInput = field => event => {
@@ -144,7 +112,8 @@ class Defaults extends PureComponent {
     // eslint-disable-next-line camelcase
     const { maxUser, smtp, changePassword, pop3_imap, lang,
       privChat, privVideo, privFiles, privArchive,
-      storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
+      storagequotalimit, prohibitreceivequota, prohibitsendquota,
+      chatUser, chatTeam } = createParams;
 
     const quotas = {
       storagequotalimit: storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
@@ -155,12 +124,14 @@ class Defaults extends PureComponent {
     edit({
       domain: {
         maxUser: parseInt(maxUser) || '',
+        chat: chatTeam,
       },
       user: {
         ...quotas,
         // eslint-disable-next-line camelcase
         smtp, changePassword, lang, pop3_imap,
         privChat, privVideo, privFiles, privArchive,
+        chat: chatUser,
       },
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -193,7 +164,7 @@ class Defaults extends PureComponent {
     const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
       lang, privChat, privArchive, privFiles, privVideo,
       // eslint-disable-next-line camelcase
-      smtp, changePassword, pop3_imap } = createParams;
+      smtp, changePassword, pop3_imap, chatTeam, chatUser } = createParams;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -220,13 +191,25 @@ class Defaults extends PureComponent {
               {t('Domain create parameters')}
             </Typography>
             <TextField 
-              className={classes.input} 
+              style={{ marginBottom: 16 }}
               label={t("Max users")}
               onChange={this.handleInput('maxUser')}
               fullWidth 
               value={maxUser || ''}
               autoFocus
             />
+            <Grid container className={classes.input}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={chatTeam || false }
+                    onChange={this.handleCheckbox('chatTeam')}
+                    color="primary"
+                  />
+                }
+                label={t('Create chat team')}
+              />
+            </Grid>
             <Typography
               color="primary"
               variant="h6"
@@ -361,7 +344,7 @@ class Defaults extends PureComponent {
                 label={t('Allow POP3/IMAP logins')}
               />
             </Grid>
-            <Grid container className={classes.input}>
+            <Grid container className={classes.checkboxes}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -401,6 +384,18 @@ class Defaults extends PureComponent {
                   />
                 }
                 label={t('Allow Archive')}
+              />
+            </Grid>
+            <Grid container className={classes.checkboxes}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={chatUser || false }
+                    onChange={this.handleCheckbox('chatUser')}
+                    color="primary"
+                  />
+                }
+                label={t('Create chat user')}
               />
             </Grid>
           </FormControl>

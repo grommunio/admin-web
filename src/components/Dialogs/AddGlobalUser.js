@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { fetchDomainData } from '../../actions/domains';
+import { fetchDomainData, fetchDomainDetails } from '../../actions/domains';
 import { addUserData, getStoreLangs } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
@@ -55,6 +55,7 @@ class AddGlobalUser extends PureComponent {
     lang: '',
     autocompleteInput: '',
     langs: [],
+    chatAvailable: false,
   }
 
   types = [
@@ -139,9 +140,10 @@ class AddGlobalUser extends PureComponent {
 
   handleAdd = () => {
     const { add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, domain, status, homeserver } = this.state;
+    const { username, password, properties, domain, status, homeserver, chatAvailable } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const { chat, smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
@@ -158,6 +160,8 @@ class AddGlobalUser extends PureComponent {
       },
       ...checkboxes,
       lang,
+      // Chat user only available for normal users, if domain has a chat team
+      chat: status !== 4 && chatAvailable ? chat : false,
     })
       .then(() => {
         this.setState({
@@ -185,9 +189,10 @@ class AddGlobalUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, domain, status, homeserver } = this.state;
+    const { username, password, subType, properties, domain, status, homeserver, chatAvailable } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang, privChat, privVideo, privFiles, privArchive } = createParams.user;
+    const { chat, smtp, pop3_imap, changePassword, lang,
+      privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
@@ -205,6 +210,8 @@ class AddGlobalUser extends PureComponent {
       },
       ...checkboxes,
       lang,
+      // Chat user only available for normal users, if domain has a chat team
+      chat: status !== 4 && chatAvailable ? chat : false,
     })
       .then(user => {
         history.push('/' + domain?.ID + '/users/' + user.ID);
@@ -233,11 +240,13 @@ class AddGlobalUser extends PureComponent {
     });
   }
 
-  handleAutocomplete = (e, domain) => {
+  handleAutocomplete = async (e, domain) => {
     const { username } = this.state;
+    const domainDetails = await this.props.fetchDomainDetails(domain.ID);
     if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
     this.setState({
       domain,
+      chatAvailable: domainDetails.chat || false,
       autocompleteInput: domain?.domainname || '',
     });
   }
@@ -441,6 +450,7 @@ AddGlobalUser.propTypes = {
   servers: PropTypes.array.isRequired,
   fetchServers: PropTypes.func.isRequired,
   fetchDefaults: PropTypes.func.isRequired,
+  fetchDomainDetails: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
   storeLangs: PropTypes.func.isRequired,
 };
@@ -455,7 +465,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDomains: async () => dispatch(fetchDomainData({ sort: 'domainname,asc' }))
+    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' }))
       .catch(message => Promise.reject(message)),
     add: async (domainID, user) => 
       await dispatch(addUserData(domainID, user))
@@ -465,6 +475,9 @@ const mapDispatchToProps = dispatch => {
       .catch(message => Promise.reject(message)),
     fetchDefaults: async () => await dispatch(fetchCreateParamsData())
       .catch(message => Promise.reject(message)),
+    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
+      .then(domain => domain)
+      .catch(msg => Promise.reject(msg)),
     storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
   };
 };

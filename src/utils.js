@@ -330,14 +330,21 @@ export function getLangs() {
  */
 export function formatCreateParams(createParams) {
   if(!createParams) return {};
-  const user = {
-    ...createParams.user,
-  };
+  const user = createParams.user;
+  const domain = createParams.domain;
   let sizeUnits = {
     storagequotalimit: 1,
     prohibitreceivequota: 1,
     prohibitsendquota: 1,
   };
+  if(user.chat) {
+    user.chatUser = user.chat;
+    delete user.chat;
+  }
+  if(domain.chat) {
+    domain.chatTeam = domain.chat;
+    delete domain.chat;
+  }
   for(let quotaLimit in sizeUnits) {
     if(user[quotaLimit] === undefined) continue;
     user[quotaLimit] = user[quotaLimit] / 1024;
@@ -356,7 +363,7 @@ export function formatCreateParams(createParams) {
     sizeUnits,
     createParams: {
       ...user,
-      ...createParams.domain,
+      ...domain,
     },
   };
 }
