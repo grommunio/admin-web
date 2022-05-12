@@ -91,7 +91,7 @@ class AddUser extends PureComponent {
         prohibitreceivequota: user.prohibitreceivequota,
         prohibitsendquota: user.prohibitsendquota,
       },
-      lang: user.lang || [],
+      lang: user.lang || '',
       chat: chatAvailable ? (createParams.domain.chat || false) : false,
     };
   }
@@ -137,9 +137,9 @@ class AddUser extends PureComponent {
 
   handleAdd = () => {
     const { domain, add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, status, homeserver, chat } = this.state;
+    const { username, password, properties, status, homeserver, chat, lang } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -183,9 +183,9 @@ class AddUser extends PureComponent {
 
   handleAddAndEdit = () => {
     const { domain, history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, status, homeserver, chat } = this.state;
+    const { username, password, subType, properties, status, homeserver, chat, lang } = this.state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword, lang,
+    const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
     const checkboxes = status !== 4 ?
     // eslint-disable-next-line camelcase
@@ -323,6 +323,7 @@ class AddUser extends PureComponent {
               label={t("Language")}
               fullWidth
               value={lang || 'en_US'}
+              onChange={this.handleInput('lang')}
             >
               {langs.map((l) => (
                 <MenuItem key={l.code} value={l.code}>
