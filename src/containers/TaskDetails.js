@@ -11,12 +11,14 @@ import {
   Grid,
   Button,
   Divider,
+  Tooltip,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { getStringAfterLastSlash, setDateTimeString } from '../utils';
 import Feedback from '../components/Feedback';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchTaskDetails } from '../actions/taskq';
+import { green, red } from '@mui/material/colors';
 
 const styles = theme => ({
   paper: {
@@ -37,7 +39,7 @@ const styles = theme => ({
   description: {
     display: 'inline-block',
     fontWeight: 500,
-    width: 240,
+    minWidth: 240,
   },
   data: {
     padding: '8px 0',
@@ -48,8 +50,23 @@ const styles = theme => ({
   param: {
     padding: '8px 16px',
   },
+  resultParam: {
+    padding: '4px 8px 4px 0px',
+  },
+  resultKey: {
+    display: 'inline-block',
+    fontWeight: 500,
+    minWidth: 120,
+  },
   container: {
     margin: theme.spacing(0, 2, 2, 2),
+  },
+  resultObj: {
+    margin: theme.spacing(3, 0),
+  },
+  flexRow: {
+    padding: '8px 16px',
+    display: 'flex',
   },
 });
 
@@ -133,12 +150,35 @@ class TaskDetails extends PureComponent {
             <Typography variant="h6" className={classes.params}>
               {t('Params')}
             </Typography>
-            {Object.entries(params).map(([key, value]) =>
-              <Typography className={classes.param} key={key}>
-                <span className={classes.description}>{key}:</span>
-                {value.toString() || t('Unknown')}
-              </Typography>
-            )}
+            {Object.entries(params).map(([param, value], key) => {
+              const displayValue = JSON.stringify(value);
+              return param !== 'result' ? <Typography className={classes.param} key={key}>
+                <span className={classes.description}>{param}:</span>
+                {displayValue || t('Unknown')}
+              </Typography> :
+                <div className={classes.flexRow} key={key}>
+                  <div className={classes.description}>{param}</div>
+                  <div>
+                    {(value || []).map(({username, code, message}, idx) =>
+                      <Tooltip key={idx} placement='right' title={message || ''}>
+                        <Typography className={classes.resultParam}>
+                          <span
+                            style={{
+                              marginRight: 8,
+                              backgroundColor: code - 300 < 0 /* code 2xx */ ? green['500'] : red['500'],
+                              borderRadius: 4,
+                              padding: '2px 4px',
+                            }}
+                          >
+                            {code}
+                          </span>
+                          {username}
+                        </Typography>
+                      </Tooltip>
+                    )}
+                  </div>
+                </div>;
+            })}
           </Grid>
           <Button
             color="secondary"
