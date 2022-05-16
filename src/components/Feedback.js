@@ -13,6 +13,7 @@ class Feedback extends PureComponent {
   
   render() {
     const { snackbar, onClose } = this.props;
+    const msg = snackbar.toString();
     return (
       <Portal>
         <Snackbar
@@ -22,18 +23,18 @@ class Feedback extends PureComponent {
           }}
           open={!!snackbar}
           onClose={onClose}
-          autoHideDuration={(snackbar || '').includes('Success!') ? 2000 : 6000}
+          autoHideDuration={(msg || '').includes('Success!') ? 2000 : 6000}
           transitionDuration={{ in: 0, appear: 250, enter: 250, exit: 0 }}
         >
           <Alert
             onClose={onClose}
-            severity={(snackbar || '').toLowerCase().includes('success') ? "success" : "error"}
+            severity={(msg || '').toLowerCase().includes('success') ? "success" : "error"}
             elevation={6}
             variant="filled"
           >
-            {(snackbar || '') === "The server encountered an error while processing the request." && config.devMode ?
+            {(msg || '') === "The server encountered an error while processing the request." && config.devMode ?
               <img src={PANIK} alt="PANIK" height="80" width="78"/>:
-              (snackbar || '')}
+              (msg || '')}
             
           </Alert>
         </Snackbar>
