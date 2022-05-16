@@ -13,7 +13,7 @@ class Feedback extends PureComponent {
   
   render() {
     const { snackbar, onClose } = this.props;
-    const msg = snackbar.toString();
+    const msg = (snackbar || '').toString();
     return (
       <Portal>
         <Snackbar
