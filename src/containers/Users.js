@@ -97,7 +97,7 @@ class Users extends Component {
   }
 
   handleUserSync = importUsers => () => {
-    const { sync, domain } = this.props;
+    const { sync, domain, fetchTableData } = this.props;
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {
@@ -107,9 +107,11 @@ class Users extends Component {
             taskID: response.taskID,
           });
         } else {
-          const { order, orderBy, match } = this.state;
+          const { tableState } = this.props;
+          const { order, orderBy, match } = tableState;
           this.setState({ snackbar: 'Success!' });
-          this.fetchUsers({ match: match || undefined, sort: orderBy + ',' + order });
+          fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+            .catch(msg => this.setState({ snackbar: msg }));
         }
       })
       .catch(msg => this.setState({ snackbar: msg }));
