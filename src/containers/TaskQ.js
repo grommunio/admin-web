@@ -60,7 +60,7 @@ class TasQ extends Component {
 
   columns = [
     { label: "Command", value: "command" },
-    { label: "State ", value: "state" }, //The whitespace is neccessary because of a country's state
+    { label: "State ", value: "state" }, //The whitespace is necessary because of a country's state
     { label: "Message", value: "message" },
     { label: "Created", value: "created" },
     { label: "Updated", value: "updated" },

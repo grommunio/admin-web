@@ -80,7 +80,7 @@ export function getDomainFromUrl() {
 }
 
 /**
- * Formates a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
+ * Formats a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
  * 
  * @param {Date} date date to be formatted into common format
  * @returns {String} formatted date
@@ -91,7 +91,7 @@ export function setDateTimeString(date) {
 }
 
 /**
- * Formates a date of format `YYYY-MM-DD` into the date format of the selected language (in settings)
+ * Formats a date of format `YYYY-MM-DD` into the date format of the selected language (in settings)
  * 
  * @param {Date} date date to be formatted into common format
  * @returns {String} formatted date
@@ -103,7 +103,7 @@ export function setDateString(date) {
 
 
 /**
- * Formates a unixtime into a readable format
+ * Formats a unixtime into a readable format
  * 
  * @param {number} time unixtime to be formatted
  * @returns {String} formatted unixtime (date)
@@ -127,7 +127,7 @@ export function getTimeDiff(time) {
 }
 
 /**
- * Formates a timedifference in milliseconds into a readable format
+ * Formats a timedifference in milliseconds into a readable format
  * 
  * @param {number} diff unix time difference
  * @returns {String} formatted time difference

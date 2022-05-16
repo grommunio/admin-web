@@ -207,7 +207,7 @@ class UserDetails extends PureComponent {
     const { user } = this.state;
     const { value } = event.target;
     const { edit, domain } = this.props;
-    // Immidiately write user status to DB
+    // Immediately write user status to DB
     await edit(domain.ID, {
       ID: user.ID,
       status: value,

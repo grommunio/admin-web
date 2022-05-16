@@ -41,7 +41,7 @@ test: vendor ; $(info running jest tests ...) @
 .PHONY: vendor
 vendor: .yarninstall
 
-.yarninstall: package.json ; $(info getting depdencies with yarn ...) @
+.yarninstall: package.json ; $(info getting dependencies with yarn ...) @
 	@$(YARN) install
 	@touch $@
 

@@ -1,7 +1,7 @@
 # Set up for development
  
 This webapp uses [yarn](https://yarnpkg.com/) and [caddy](https://caddyserver.com/) for development.
-You need 2 seperate terminals to run this app. One to run `yarn` and one to setup a `caddy` reverse proxy to access the backend server.
+You need 2 separate terminals to run this app. One to run `yarn` and one to setup a `caddy` reverse proxy to access the backend server.
 To build for production, this webapp uses a `Makefile` with [GNU Make](https://www.gnu.org/software/make/)
 
 ## yarn
@@ -42,7 +42,7 @@ Copy this file to `./Caddyfile`.
 cp Caddyfile.example Caddyfile
 ```
 
-Using a grommunio-VM, with `grommunio-admin-api.service` runnning, the configuration should work out of the box.
+Using a grommunio-VM, with `grommunio-admin-api.service` running, the configuration should work out of the box.
 
 The Caddyfile includes these necessary lines
 ```

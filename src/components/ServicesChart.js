@@ -117,7 +117,6 @@ class ServicesChart extends PureComponent {
     starting: false,
     restarting: false,
     stoping: false,
-    enableing: false,
     service: null,
     action: '',
   };

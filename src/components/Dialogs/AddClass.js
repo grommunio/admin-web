@@ -204,7 +204,6 @@ class AddClass extends PureComponent {
                   {option.classname || ''}
                 </li>
               )}
-              rende
               options={_classes}
               multiple
               renderInput={(params) => (
