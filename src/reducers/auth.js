@@ -12,6 +12,7 @@ const defaultState = {
   authenticated: false,     
   authenticating: true,
   capabilities: [],
+  csrf: '',
 };
 
 function authReducer(state = defaultState, action) {
@@ -29,6 +30,7 @@ function authReducer(state = defaultState, action) {
         authenticated: action.authenticated,
         capabilities: action.capabilities || [],
         error: false,
+        csrf: action.authenticated ? action.csrf : '',
       };
     
     case AUTH_ERROR: {

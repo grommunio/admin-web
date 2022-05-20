@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
+import store from './store';
 
 const baseUrl = '//' + window.location.host + '/api/v1';
 
@@ -62,11 +63,13 @@ async function get(path) {
  * @returns {Promise}
  */
 async function patch(path, data) {
+  const csrf = store.getState().auth.csrf;
   return fetch((baseUrl + path), {
     method: 'PATCH',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': csrf,
     },
   }).then(handleErrors);
 }
@@ -79,11 +82,13 @@ async function patch(path, data) {
  * @returns {Promise}
  */
 async function post(path, data) {
+  const csrf = store.getState().auth.csrf;
   return await fetch((baseUrl + path), {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': csrf,
     },
   }).then(handleErrors);
 }
@@ -96,11 +101,13 @@ async function post(path, data) {
  * @returns {Promise}
  */
 async function put(path, data) {
+  const csrf = store.getState().auth.csrf;
   return await fetch((baseUrl + path), {
     method: 'PUT',
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': csrf,
     },
   }).then(handleErrors);
 }
@@ -112,8 +119,12 @@ async function put(path, data) {
  * @returns {Promise}
  */
 async function yeet(path) {
+  const csrf = store.getState().auth.csrf;
   return await fetch((baseUrl + path), {
     method: 'DELETE',
+    headers: {
+      'X-CSRF-TOKEN': csrf,
+    },
   }).then(handleErrors);
 }
 
@@ -125,9 +136,13 @@ async function yeet(path) {
  * @returns {Promise}
  */
 async function uploadPut(path, data) {
+  const csrf = store.getState().auth.csrf;
   return fetch((baseUrl + path), {
     method: 'PUT',
     body: data,
+    headers: {
+      'X-CSRF-TOKEN': csrf,
+    },
   }).then(handleErrors);
 }
 

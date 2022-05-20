@@ -14,7 +14,7 @@ import { login, renewToken, profile, drawerDomains } from '../api';
 export function authLogin(user, pass) {
   return async dispatch => {
     try {
-      const { grommunioAuthJwt: token } = await dispatch(login(user, pass));
+      const { grommunioAuthJwt: token, csrf } = await dispatch(login(user, pass));
       if(token) {
         document.cookie = "grommunioAuthJwt=" + token + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
@@ -25,7 +25,7 @@ export function authLogin(user, pass) {
           await dispatch({ type: DRAWER_DOMAINS_FETCH });
           const domains = await dispatch(drawerDomains());
           await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-          await dispatch(authAuthenticated(true, profileData.capabilities));
+          await dispatch(authAuthenticated(true, profileData.capabilities, csrf));
         } else {
           clearStorage();
           await dispatch(authError("No profile data received"));
@@ -48,7 +48,7 @@ export function authLoginWithToken(token) {
     document.cookie = "grommunioAuthJwt=" + token + ';path=/'
       + (window.location.protocol === 'https:' ? ';secure' : '');
     try {
-      const { grommunioAuthJwt: newToken } = await dispatch(renewToken());
+      const { grommunioAuthJwt: newToken, csrf } = await dispatch(renewToken());
       if(newToken) {
         document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
@@ -60,7 +60,7 @@ export function authLoginWithToken(token) {
         await dispatch({ type: DRAWER_DOMAINS_FETCH });
         const domains = await dispatch(drawerDomains());
         await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-        await dispatch(authAuthenticated(true, profileData.capabilities));
+        await dispatch(authAuthenticated(true, profileData.capabilities, csrf));
       } else {
         clearStorage();
         await dispatch(authError("No profile data received"));
@@ -85,11 +85,12 @@ export function authAuthenticating(authenticating = true) {
   };
 }
 
-export function authAuthenticated(authenticated = true, capabilities) {
+export function authAuthenticated(authenticated = true, capabilities=[], csrf='') {
   return {
     type: AUTH_AUTHENTICATED,
     authenticated,
     capabilities,
+    csrf,
   };
 }
 
