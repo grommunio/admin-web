@@ -160,8 +160,8 @@ class DomainMenu extends PureComponent {
   handleDeleteError = (error) => this.setState({ snackbar: error });
 
   handleDeleteSuccess = () => {
-    const { domain, history } = this.props;
-    history.push('/' + domain.ID);
+    const { history } = this.props;
+    history.push('/');
   };
 
   handleEdit = () => {
