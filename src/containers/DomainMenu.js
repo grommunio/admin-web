@@ -168,7 +168,7 @@ class DomainMenu extends PureComponent {
     const { edit, domain } = this.props;
     const { createParams, sizeUnits } = this.state;
     // eslint-disable-next-line camelcase
-    const { maxUser, smtp, changePassword, pop3_imap, lang,
+    const { smtp, changePassword, pop3_imap, lang,
       privChat, privVideo, privFiles, privArchive,
       storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
 
@@ -179,9 +179,6 @@ class DomainMenu extends PureComponent {
       prohibitsendquota: prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
     };
     edit({
-      domain: {
-        maxUser: parseInt(maxUser) || '',
-      },
       user: {
         ...quotas,
         // eslint-disable-next-line camelcase
@@ -196,7 +193,7 @@ class DomainMenu extends PureComponent {
   render() {
     const { classes, domain, t, capabilities } = this.props;
     const { snackbar, deleting, sizeUnits, langs, createParams } = this.state;
-    const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
+    const { prohibitsendquota, prohibitreceivequota, storagequotalimit,
       lang, privChat, privArchive, privFiles, privVideo,
       // eslint-disable-next-line camelcase
       smtp, changePassword, pop3_imap } = createParams;
@@ -257,21 +254,6 @@ class DomainMenu extends PureComponent {
           </Grid>
           <div className={classes.defaultsContainer}>
             <FormControl className={classes.form}>
-              <Typography
-                color="primary"
-                variant="h6"
-                className={classes.subheader}
-              >
-                {t('Default domain parameters')}
-              </Typography>
-              <TextField
-                className={classes.input} 
-                label={t("Max users")}
-                onChange={this.handleInput('maxUser')}
-                fullWidth 
-                value={maxUser || ''}
-                autoFocus
-              />
               <Typography
                 color="primary"
                 variant="h6"
