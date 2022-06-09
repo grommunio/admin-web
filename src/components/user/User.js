@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import world from '../../res/world.json';
+import { Warning } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -26,9 +27,6 @@ const styles = theme => ({
   gridItem: {
     display: 'flex',
   },
-  headline: {
-    margin: theme.spacing(0, 0, 2, 0),
-  },
   flexTextfield: {
     flex: 1,
     marginRight: 8,
@@ -47,19 +45,28 @@ const styles = theme => ({
     flex: 1,
     marginLeft: 8,
   },
+  flexRow: {
+    display: 'flex',
+    margin: theme.spacing(0, 0, 2, 0),
+  },
 });
 
 class User extends PureComponent {
 
   render() {
     const { classes, t, user, handlePropertyChange } = this.props;
-    const { properties } = user;
+    const { properties, ldapID } = user;
     const { title, displayname, nickname, primarytelephonenumber, streetaddress,
       departmentname, companyname, officelocation, givenname, surname, initials,
       assistant, country, locality, stateorprovince, postalcode } = properties;
     return (
       <FormControl className={classes.form}>
-        <Typography variant="h6" className={classes.headline}>{t('Name')}</Typography>
+        <div className={classes.flexRow}>
+          <Typography variant="h6">{t('Name')}</Typography>
+          {ldapID && <Tooltip title="Warning: Changes will be overwritten with next LDAP sync">
+            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+          </Tooltip>}
+        </div>
         <Grid container>
           <Grid item xs={12} className={classes.gridItem}>
             <div className={classes.grid}>
@@ -68,12 +75,14 @@ class User extends PureComponent {
                 label={t("First name")}
                 value={givenname || ''}
                 onChange={handlePropertyChange('givenname')}
+                variant={ldapID ? "filled" : 'outlined'}
               />
               <TextField 
                 //className={classes.flexTextfield}
                 label={t("Initials")}
                 value={initials || ''}
                 onChange={handlePropertyChange('initials')}
+                variant={ldapID ? "filled" : 'outlined'}
               />
             </div>
             <TextField 
@@ -82,6 +91,7 @@ class User extends PureComponent {
               fullWidth 
               value={surname || ''}
               onChange={handlePropertyChange('surname')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -91,6 +101,7 @@ class User extends PureComponent {
               fullWidth
               value={displayname || ''}
               onChange={handlePropertyChange('displayname')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.propertyInput} 
@@ -98,6 +109,7 @@ class User extends PureComponent {
               fullWidth 
               value={nickname || ''}
               onChange={handlePropertyChange('nickname')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
         </Grid>
@@ -111,6 +123,7 @@ class User extends PureComponent {
               onChange={handlePropertyChange('streetaddress')}
               multiline
               rows={3}
+              variant={ldapID ? "filled" : 'outlined'}
               inputProps={{
                 style: {
                   height: 95,
@@ -125,6 +138,7 @@ class User extends PureComponent {
               fullWidth
               value={title || ''}
               onChange={handlePropertyChange('title')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.input}
@@ -132,6 +146,7 @@ class User extends PureComponent {
               fullWidth
               value={companyname || ''}
               onChange={handlePropertyChange('companyname')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
         </Grid>
@@ -143,6 +158,7 @@ class User extends PureComponent {
               fullWidth
               value={locality || ''}
               onChange={handlePropertyChange('locality')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.propertyInput}
@@ -150,6 +166,7 @@ class User extends PureComponent {
               fullWidth
               value={departmentname || ''}
               onChange={handlePropertyChange('departmentname')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -159,6 +176,7 @@ class User extends PureComponent {
               fullWidth
               value={stateorprovince || ''}
               onChange={handlePropertyChange('stateorprovince')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.propertyInput}
@@ -166,6 +184,7 @@ class User extends PureComponent {
               fullWidth
               value={officelocation || ''}
               onChange={handlePropertyChange('officelocation')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -175,6 +194,7 @@ class User extends PureComponent {
               fullWidth
               value={postalcode || ''}
               onChange={handlePropertyChange('postalcode')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.propertyInput}
@@ -182,6 +202,7 @@ class User extends PureComponent {
               fullWidth
               value={assistant || ''}
               onChange={handlePropertyChange('assistant')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -205,6 +226,7 @@ class User extends PureComponent {
               fullWidth 
               value={primarytelephonenumber || ''}
               onChange={handlePropertyChange('primarytelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
         </Grid>

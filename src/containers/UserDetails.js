@@ -635,6 +635,7 @@ class UserDetails extends PureComponent {
             handleAutocomplete={this.handleAutocomplete}
           />}
           {tab === 4 && <Smtp
+            user={user}
             aliases={aliases}
             forward={forward || {}}
             forwardError={forwardError}

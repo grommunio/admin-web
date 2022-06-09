@@ -4,11 +4,11 @@
 import React, { PureComponent } from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
   MenuItem,
-  TextField, Typography } from '@mui/material';
+  TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import { Delete } from '@mui/icons-material';
+import { Delete, Warning } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -31,16 +31,25 @@ const styles = theme => ({
   bottom: {
     margin: theme.spacing(2, 0, 4, 0),
   },
+  flexRow: {
+    display: 'flex',
+    margin: theme.spacing(0, 0, 2, 0),
+  },
 });
 
 class Smtp extends PureComponent {
 
   render() {
-    const { classes, t, aliases, forward, forwardError, handleForwardInput, handleAliasEdit, handleRemoveAlias,
+    const { classes, t, user, aliases, forward, forwardError, handleForwardInput, handleAliasEdit, handleRemoveAlias,
       handleAddAlias } = this.props;
     return (
       <FormControl className={classes.form}>
-        <Typography variant="h6" className={classes.headline}>{t('E-Mail Addresses')}</Typography>
+        <div className={classes.flexRow}>
+          <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
+          {user?.ldapID && <Tooltip title="Warning: Changes will be overwritten with next LDAP sync">
+            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+          </Tooltip>}
+        </div>
         <List className={classes.list}>
           {(aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
             <TextField
@@ -88,6 +97,7 @@ Smtp.propTypes = {
   t: PropTypes.func.isRequired,
   aliases: PropTypes.array.isRequired,
   forward: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
   handleAliasEdit: PropTypes.func.isRequired,
   handleAddAlias: PropTypes.func.isRequired,
   handleRemoveAlias: PropTypes.func.isRequired,

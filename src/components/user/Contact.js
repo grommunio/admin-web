@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Divider, FormControl, Grid, TextField, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
+import { Warning } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -24,18 +25,27 @@ const styles = theme => ({
   divider: {
     margin: theme.spacing(2, 0, 2, 0),
   },
+  flexRow: {
+    display: 'flex',
+    margin: theme.spacing(0, 0, 2, 0),
+  },
 });
 
 class Contact extends PureComponent {
 
   render() {
     const { classes, t, user, handlePropertyChange } = this.props;
-    const { properties } = user;
+    const { properties, ldapID } = user;
     const { mobiletelephonenumber, comment, hometelephonenumber, home2telephonenumber, businesstelephonenumber,
       business2telephonenumber, pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
     return (
       <FormControl className={classes.form}>
-        <Typography variant="h6" className={classes.headline}>{t('Telephone')}</Typography>
+        <div className={classes.flexRow}>
+          <Typography variant="h6">{t('Telephone')}</Typography>
+          {ldapID && <Tooltip title="Warning: Changes will be overwritten with next LDAP sync">
+            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+          </Tooltip>}
+        </div>
         <Grid container>
           <Grid item xs={12} className={classes.gridItem}>
             <TextField 
@@ -44,6 +54,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={businesstelephonenumber || ''}
               onChange={handlePropertyChange('businesstelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.input} 
@@ -51,6 +62,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={hometelephonenumber || ''}
               onChange={handlePropertyChange('hometelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -60,6 +72,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={business2telephonenumber || ''}
               onChange={handlePropertyChange('business2telephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.input} 
@@ -67,6 +80,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={home2telephonenumber || ''}
               onChange={handlePropertyChange('home2telephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -76,6 +90,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={primaryfaxnumber || ''}
               onChange={handlePropertyChange('primaryfaxnumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField
               className={classes.input} 
@@ -83,6 +98,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={mobiletelephonenumber || ''}
               onChange={handlePropertyChange('mobiletelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -92,6 +108,7 @@ class Contact extends PureComponent {
               fullWidth 
               value={assistanttelephonenumber || ''}
               onChange={handlePropertyChange('assistanttelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
             <TextField 
               className={classes.input} 
@@ -99,19 +116,25 @@ class Contact extends PureComponent {
               fullWidth 
               value={pagertelephonenumber || ''}
               onChange={handlePropertyChange('pagertelephonenumber')}
+              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
         </Grid>
         <Divider className={classes.divider}/>
-        <Typography variant="h6" className={classes.headline}>{t('Annotation')}</Typography>
+        <div className={classes.flexRow}>
+          <Typography variant="h6">{t('Annotation')}</Typography>
+          {ldapID && <Tooltip title="Warning: Changes will be overwritten with next LDAP sync">
+            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+          </Tooltip>}
+        </div>
         <TextField 
           className={classes.input}
           fullWidth
           value={comment || ''}
           onChange={handlePropertyChange('comment')}
           multiline
-          variant="outlined"
           rows={4}
+          variant={ldapID ? "filled" : 'outlined'}
         />
       </FormControl>
     );
