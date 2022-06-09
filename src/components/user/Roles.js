@@ -8,6 +8,8 @@ import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { Autocomplete } from '@mui/lab';
+import { CapabilityContext } from '../../CapabilityContext';
+import { SYSTEM_ADMIN_WRITE } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -32,6 +34,7 @@ class RolesTab extends PureComponent {
         <FormControl className={classes.input}>
           <Autocomplete
             multiple
+            disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
             options={Roles || []}
             value={roles || []}
             onChange={handleAutocomplete('roles')}
@@ -58,6 +61,7 @@ class RolesTab extends PureComponent {
   }
 }
 
+RolesTab.contextType = CapabilityContext;
 RolesTab.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

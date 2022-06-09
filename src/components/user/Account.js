@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
 import blue from '../../colors/blue';
 import { red, yellow } from '@mui/material/colors';
 import Delete from '@mui/icons-material/Delete';
-import { DOMAIN_ADMIN_WRITE } from '../../constants';
+import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 import { connect } from 'react-redux';
 
@@ -215,7 +215,7 @@ class Account extends PureComponent {
             </MenuItem>
           ))}
         </TextField>
-        <Autocomplete
+        {this.context.includes(SYSTEM_ADMIN_READ) && <Autocomplete
           value={homeserver || ''}
           noOptionsText={t('No options')}
           getOptionLabel={s => s.hostname || ''}
@@ -224,6 +224,7 @@ class Account extends PureComponent {
               {option.hostname || ''}
             </li>
           )}
+          disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
           onChange={handleServer}
           className={classes.input} 
           options={servers}
@@ -233,7 +234,7 @@ class Account extends PureComponent {
               label={t("Homeserver")}
             />
           )}
-        />
+        />}
         <TextField
           select
           className={classes.input}

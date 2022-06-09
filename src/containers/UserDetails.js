@@ -36,7 +36,7 @@ import { getPolicyDiff } from '../utils';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
 import { debounce } from 'debounce';
@@ -111,10 +111,13 @@ class UserDetails extends PureComponent {
     this.setState(this.getStateOverwrite(user, defaultPolicy));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    fetchRoles()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    fetchServers()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    // If Sys admin read-only permissions
+    if(this.context.includes(SYSTEM_ADMIN_READ)) {
+      fetchRoles()
+        .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+      fetchServers()
+        .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    }
     const domainDetails = await fetchDomainDetails(domain.ID);
     this.setState({ domainDetails, langs: langs || [] });
   }
@@ -531,6 +534,7 @@ class UserDetails extends PureComponent {
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
+    const sysAdminReadPermissions = this.context.includes(SYSTEM_ADMIN_READ);
     const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
       detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
@@ -597,7 +601,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Account")} />
               <Tab label={t("User")} disabled={!ID}/>
               <Tab label={t("Contact")} disabled={!ID}/>
-              <Tab label={t("Roles")} disabled={!ID}/>
+              <Tab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions}/>
               <Tab label={t("SMTP")} disabled={!ID}/>
               <Tab label={t("Permissions")} disabled={!ID}/>
               <Tab label={t("FetchMail")} disabled={!ID}/>
@@ -630,7 +634,7 @@ class UserDetails extends PureComponent {
             user={user}
             handlePropertyChange={this.handlePropertyChange}
           />}
-          {tab === 3 && <Roles
+          {tab === 3 && sysAdminReadPermissions && <Roles
             roles={roles}
             handleAutocomplete={this.handleAutocomplete}
           />}
