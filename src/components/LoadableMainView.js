@@ -5,8 +5,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Drawer from './Drawer';
 import AdminRoutes from '../Routes';
-import DomainRoutes from '../DomainRoutes';
-import { SYSTEM_ADMIN_READ } from '../constants';
 
 export default function LoadableMainView(props) {
   const { classes, authenticated, capabilities, domains, routesProps } = props;
@@ -14,9 +12,7 @@ export default function LoadableMainView(props) {
     <div className={classes.mainView}>
       {authenticated &&
         <Drawer domains={domains}/>}
-      {capabilities.includes(SYSTEM_ADMIN_READ) ?
-        <AdminRoutes domains={domains} childProps={routesProps}/> :
-        <DomainRoutes domains={domains} childProps={routesProps} capabilities={capabilities}/>}
+      <AdminRoutes domains={domains} childProps={routesProps} capabilities={capabilities}/>
     </div>
   );
 }

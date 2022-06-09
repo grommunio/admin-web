@@ -13,6 +13,7 @@ import NotFound from "./containers/NotFound";
 import Loadable from 'react-loadable';
 import Loader from './components/Loading';
 import DefaultRedirect from "./components/DefaultRedirect";
+import { ORG_ADMIN, SYSTEM_ADMIN_READ } from "./constants";
 
 /**
  * Creates an async component from an async import
@@ -31,6 +32,7 @@ function makeLoadableComponent(loader) {
 // Create async components
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
 const AsyncMenu = makeLoadableComponent(() => import("./containers/Dashboard"));
+const AsyncDomainAdminMenu = makeLoadableComponent(() => import("./containers/Menu"));
 const AsyncDefaults = makeLoadableComponent(() => import("./containers/Defaults"));
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
@@ -70,12 +72,12 @@ const AsyncLicense = makeLoadableComponent(() => import("./containers/License"))
  * 
  * @param {Object} props
  */
-const Routes = ({ childProps, domains }) => (
+const Routes = ({ childProps, domains, capabilities }) => (
   <Switch>
     <AuthenticatedRoute
       path="/"
       exact
-      component={AsyncMenu}
+      component={capabilities.includes(SYSTEM_ADMIN_READ) ? AsyncMenu : AsyncDomainAdminMenu}
       props={childProps}
     />
     <UnauthenticatedRoute
@@ -84,24 +86,24 @@ const Routes = ({ childProps, domains }) => (
       component={AsyncLogin}
       props={childProps}
     />
-    <AuthenticatedRoute
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/domains"
       exact
       component={AsyncDomainList}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(ORG_ADMIN) &&<AuthenticatedRoute
       path="/domains/:domainID*"
       exact
       component={AsyncDomainListDetails}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/users"
       exact
       component={AsyncGlobalUsersList}
       props={childProps}
-    />
+    />}
     <AuthenticatedRoute
       path="/changePassword"
       exact
@@ -114,102 +116,102 @@ const Routes = ({ childProps, domains }) => (
       component={AsyncSettings}
       props={childProps}
     />
-    <AuthenticatedRoute
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/roles"
       exact
       component={AsyncRoles}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/defaults"
       exact
       component={AsyncDefaults}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/directory"
       exact
       component={AsyncLdapConfig}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/logs"
       exact
       component={AsyncLogs}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/mailq"
       exact
       component={AsyncMailQ}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/sync"
       exact
       component={AsyncSync}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/license"
       exact
       component={AsyncLicense}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/status"
       exact
       component={AsyncStatus}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/dbconf"
       exact
       component={AsyncDBConf}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/dbconf/:serviceName"
       exact
       component={AsyncDBService}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/dbconf/:serviceName/:fileName"
       exact
       component={AsyncDBFile}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/roles/:roleID"
       exact
       component={AsyncRoleDetails}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/orgs"
       exact
       component={AsyncOrgs}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/orgs/:orgID*"
       exact
       component={AsyncOrgDetails}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/servers"
       exact
       component={AsyncServers}
       props={childProps}
-    />
-    <AuthenticatedRoute
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
       path="/servers/:serverID*"
       exact
       component={AsyncServerDetails}
       props={childProps}
-    />
+    />}
     <AuthenticatedRoute
       path="/taskq"
       exact
@@ -334,6 +336,7 @@ const Routes = ({ childProps, domains }) => (
 Routes.propTypes = {
   childProps: PropTypes.object,
   domains: PropTypes.array.isRequired,
+  capabilities: PropTypes.array.isRequired,
 };
 
 export default Routes;
