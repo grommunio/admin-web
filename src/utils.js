@@ -264,10 +264,11 @@ export function capitalizeFirstLetter(string) {
  * @returns {Array} Autocomplete options to be displayed
  */
 export const getAutocompleteOptions = filterAttribute => (options, state) => {
+  const { inputValue } = state;
   const magnitude = Math.round(Math.log10(options.length) - 2);
 
-  return state.inputValue.length < magnitude ? []
-    : options.filter(o => o[filterAttribute]?.includes(state.inputValue));
+  return inputValue.length < magnitude ? []
+    : options.filter(o => o[filterAttribute]?.includes(inputValue.toLowerCase()));
 };
 
 /**
