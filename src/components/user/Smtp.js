@@ -46,7 +46,7 @@ class Smtp extends PureComponent {
       <FormControl className={classes.form}>
         <div className={classes.flexRow}>
           <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
-          {user?.ldapID && <Tooltip title="Warning: Changes will be overwritten with next LDAP sync">
+          {user?.ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
             <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
           </Tooltip>}
         </div>
