@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import { addClassData, fetchClassesData } from '../../actions/classes';
 import { Autocomplete } from '@mui/lab';
 import { Delete } from '@mui/icons-material';
-import { getAutocompleteOptions } from '../../utils';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -190,29 +190,16 @@ class AddClass extends PureComponent {
               autoFocus
               required
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={parentClasses || []}
+              filterAttribute={'classname'}
               inputValue={autocompleteInput}
-              filterOptions={getAutocompleteOptions('classname')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
               onChange={this.handleAuto('parentClasses')}
               className={classes.input} 
-              getOptionLabel={(_class) => _class?.classname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.classname || ''}
-                </li>
-              )}
               options={_classes}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t("Parent groups")}
               multiple
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Parent groups")}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
             />
             <TextField 
               className={classes.input} 

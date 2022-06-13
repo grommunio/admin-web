@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { FormControl, TextField, Typography } from '@mui/material';
+import { FormControl, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Autocomplete } from '@mui/lab';
 import { CapabilityContext } from '../../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../../constants';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -32,27 +32,21 @@ class RolesTab extends PureComponent {
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
         <FormControl className={classes.input}>
-          <Autocomplete
+          <MagnitudeAutocomplete
             multiple
             disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
-            options={Roles || []}
             value={roles || []}
-            onChange={handleAutocomplete('roles')}
+            filterAttribute={'name'}
             getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
+            onChange={handleAutocomplete('roles')}
+            className={classes.input} 
+            options={Roles || []}
+            label={t('Roles')}
+            placeholder={t("Search roles") + "..."}
             renderOption={(props, option) => (
               <li {...props} key={option.ID}>
                 {option.name || option || ''}
               </li>
-            )}
-            filterOptions={(options, state) =>
-              options.filter(o => o.name.toLowerCase().includes(state.inputValue.toLowerCase()))}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t("Roles")}
-                placeholder={t("Search roles...")}
-                className={classes.input} 
-              />
             )}
           />
         </FormControl>

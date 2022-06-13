@@ -15,10 +15,9 @@ import { addUserData, getStoreLangs } from '../../actions/users';
 import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
-import { Autocomplete } from '@mui/lab';
-import { getAutocompleteOptions } from '../../utils';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -241,6 +240,7 @@ class AddGlobalUser extends PureComponent {
 
   handleAutocomplete = async (e, domain) => {
     const { username, chat } = this.state;
+    if(!domain) return;
     const domainDetails = await this.props.fetchDomainDetails(domain.ID);
     if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
     this.setState({
@@ -279,25 +279,17 @@ class AddGlobalUser extends PureComponent {
         <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
         <DialogContent>
           <FormControl className={classes.form}>
-            <Autocomplete
-              options={Domains || []}
+            <MagnitudeAutocomplete
               value={domain}
+              filterAttribute={'domainname'}
               inputValue={autocompleteInput}
-              filterOptions={getAutocompleteOptions('domainname')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
               onChange={this.handleAutocomplete}
-              getOptionLabel={(domain) => domain.domainname || ''}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Domain"
-                  placeholder="Search domains..."
-                  autoFocus
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
-              className={classes.input}
+              className={classes.input} 
+              options={Domains}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Domain')}
+              placeholder={t("Search domains")  + "..."}
+              autoFocus
               autoSelect
             />
             <TextField
@@ -387,24 +379,13 @@ class AddGlobalUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={homeserver}
-              noOptionsText={t('No options')}
-              getOptionLabel={s => s.hostname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.hostname || ''}
-                </li>
-              )}
+              filterAttribute={'hostname'}
               onChange={this.handleServer}
               className={classes.input} 
               options={servers}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Homeserver")}
-                />
-              )}
+              label={t('Homeserver')}
             />
             <FormControlLabel
               control={

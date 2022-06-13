@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Button, FormControl, Grid, TextField, Typography } from '@mui/material';
+import { Button, FormControl, Grid, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { Autocomplete } from '@mui/lab';
 import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
   setPermittedUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
-import { getAutocompleteOptions } from '../../utils';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -97,55 +96,31 @@ class Delegates extends PureComponent {
         <FormControl className={classes.form}>
           <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
           <FormControl className={classes.input}>
-            <Autocomplete
+            <MagnitudeAutocomplete
               multiple
-              options={Users.filter(u => u.ID !== userID) || []}
-              inputValue={delegatesACInput}
-              filterOptions={getAutocompleteOptions('username')}
-              noOptionsText={delegatesACInput.length < Math.round(Math.log10(Users.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
               value={delegates || []}
+              filterAttribute={'username'}
+              inputValue={delegatesACInput}
               onChange={this.handleAutocomplete('delegates')}
-              getOptionLabel={(delegate) => delegate.username || delegate || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.username || ''}
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Delegates")}
-                  placeholder="Search users..."
-                  className={classes.input}
-                  onChange={this.handleInput('delegatesACInput')}
-                />
-              )}
-            />
-            <Autocomplete
-              multiple
+              className={classes.input} 
               options={Users.filter(u => u.ID !== userID) || []}
-              inputValue={pUACInput}
-              filterOptions={getAutocompleteOptions('username')}
-              noOptionsText={pUACInput.length < Math.round(Math.log10(Users.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
+              onInputChange={this.handleInput('delegatesACInput')}
+              label={t('Delegates')}
+              placeholder={t("Search users") + "..."}
+              getOptionLabel={(delegate) => delegate.username || delegate || ''}
+            />
+            <MagnitudeAutocomplete
+              multiple
               value={permittedUsers || []}
+              filterAttribute={'username'}
+              inputValue={pUACInput}
               onChange={this.handleAutocomplete('permittedUsers')}
+              className={classes.input} 
+              options={Users.filter(u => u.ID !== userID) || []}
+              onInputChange={this.handleInput('pUACInput')}
+              label={t('Full permission users')}
+              placeholder={t("Search users") + "..."}
               getOptionLabel={(option) => option.username || option || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.username || ''}
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Full permission users")}
-                  placeholder="Search users..."
-                  className={classes.input}
-                  onChange={this.handleInput('pUACInput')}
-                />
-              )}
             />
           </FormControl>
         </FormControl>

@@ -12,8 +12,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addMListData } from '../../actions/mlists';
 import { fetchClassesData } from '../../actions/classes';
-import { Autocomplete } from '@mui/lab';
-import { getAutocompleteOptions } from '../../utils';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -195,24 +194,15 @@ class AddMList extends PureComponent {
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}
             />}
-            {listType === 3 && <Autocomplete
+            {listType === 3 && <MagnitudeAutocomplete
               value={_class}
+              filterAttribute={'classname'}
               inputValue={autocompleteInput}
-              filterOptions={getAutocompleteOptions('classname')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={_class => _class.classname || ''}
-              renderOption={(_class) => _class?.classname || ''}
               onChange={this.handleAutocomplete('class')}
               className={classes.input} 
               options={_classes}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Group")}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Group')}
             />}
           </FormControl>
         </DialogContent>

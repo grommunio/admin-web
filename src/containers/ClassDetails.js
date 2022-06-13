@@ -31,6 +31,7 @@ import { Autocomplete } from '@mui/lab';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -291,28 +292,18 @@ class ClassDetails extends PureComponent {
               autoFocus
               required
             />
-            <Autocomplete
-              multiple
+            <MagnitudeAutocomplete
+              value={parentClasses || []}
+              filterAttribute={'classname'}
+              inputValue={autocompleteInput}
+              onChange={this.handleAutocomplete('parentClasses')}
               className={classes.input} 
               options={_classes || []}
-              inputValue={autocompleteInput}
-              value={parentClasses || []}
-              onChange={this.handleAutocomplete('parentClasses')}
-              //getOptionLabel={(classID) => _classes.find(r => r.ID === classID)?.classname || ''}
-              getOptionLabel={(_class) => _class.classname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.classname}
-                </li>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Parent groups")}
-                  placeholder={t("Search groups...")}
-                  onChange={this.handleAutocompleteInput}
-                />
-              )}
+              onInputChange={this.handleAutocompleteInput}
+              label={t("Parent groups")}
+              placeholder={t("Search groups") + "..."}
+              multiple
+              autoSelect
             />
             <TextField 
               className={classes.input} 

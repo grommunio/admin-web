@@ -12,15 +12,15 @@ import {
   TextField,
   FormControl,
   Button,
-  Autocomplete,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
+import { getStringAfterLastSlash } from '../utils';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainData } from '../actions/domains';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -140,26 +140,18 @@ class OrgDetails extends PureComponent {
               rows={4}
               variant="outlined"
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               multiple
-              options={Domains || []}
-              filterOptions={getAutocompleteOptions('domainname')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
               value={domains || []}
+              filterAttribute={'domainname'}
               onChange={this.handleAutocomplete('domains')}
-              getOptionLabel={(user) => user.domainname || ''}
+              inputValue={autocompleteInput}
+              onInputChange={this.handleACInput}
+              className={classes.input} 
+              options={Domains || []}
+              label={t('Domains')}
+              placeholder={t("Search domains") + "..."}
               autoSelect
-              autoHighlight
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Domains"
-                  placeholder="Search domains..."
-                  className={classes.input}
-                  onChange={this.handleACInput}
-                />
-              )}
             />
           </FormControl>
           <Button

@@ -5,7 +5,7 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Autocomplete, FormControlLabel, Checkbox,
+  MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -17,6 +17,7 @@ import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import { fetchDomainDetails } from '../../actions/domains';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -345,24 +346,13 @@ class AddUser extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={homeserver}
-              noOptionsText={t('No options')}
-              getOptionLabel={s => s.hostname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.hostname || ''}
-                </li>
-              )}
+              filterAttribute={'hostname'}
               onChange={this.handleAutocomplete('homeserver')}
               className={classes.input} 
               options={servers}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Homeserver")}
-                />
-              )}
+              label={t('Homeserver')}
             />
             <FormControlLabel
               control={

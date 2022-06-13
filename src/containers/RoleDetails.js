@@ -20,13 +20,13 @@ import { connect } from 'react-redux';
 import Add from '@mui/icons-material/AddCircle';
 import Delete from '@mui/icons-material/Delete';
 import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/roles';
-import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
+import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
-import { Autocomplete } from '@mui/lab';
 import { fetchOrgsData } from '../actions/orgs';
 import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -139,10 +139,10 @@ class RoleDetails extends PureComponent {
     });
   }
 
-  handleSetParams = idx => (e, newVal) => {
+  handleSetParams = (idx, attribute) => (e, newVal) => {
     const copy = [...this.state.role.permissions];
     copy[idx].params = newVal;
-    copy[idx].autocompleteInput = newVal?.domainname || '';
+    copy[idx].autocompleteInput = newVal ? newVal[attribute || "domainname"] : '';
     this.setState({
       role: {
         ...this.state.role,
@@ -225,23 +225,17 @@ class RoleDetails extends PureComponent {
               value={description || ''}
               onChange={this.handleRoleInput('description')}
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               multiple
-              options={Users || []}
+              inputValue={autocompleteInput}
               value={users || []}
+              filterAttribute={'username'}
               onChange={this.handleAutocomplete('users')}
-              filterOptions={getAutocompleteOptions('username')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={(user) => user.username || ''}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Users"
-                  placeholder="Search users..."
-                  className={classes.input}
-                />
-              )}
+              onInputChange={this.handleACInput}
+              className={classes.input} 
+              options={Users || []}
+              label={t('Users')}
+              placeholder={t("Search users") + "..."}
             />
             {(permissions || []).map((permission, idx) =>
               <div key={idx} className={classes.row}>
@@ -259,50 +253,35 @@ class RoleDetails extends PureComponent {
                     </MenuItem>
                   ))}
                 </TextField>
-                {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <Autocomplete
-                  options={domains || []}
+                {permission.permission.includes('DomainAdmin') /*Read and Write*/ && <MagnitudeAutocomplete
                   value={permission.params}
-                  inputValue={permission.autocompleteInput}
-                  filterOptions={getAutocompleteOptions('domainname')}
-                  noOptionsText={
-                    (permission.autocompleteInput || '').length < Math.round(Math.log10(Domains.length) - 2) ?
-                      t('Filter more precisely') + '...' : t('No options')
-                  }
-                  onChange={this.handleSetParams(idx)}
                   getOptionLabel={(domainID) => domainID.domainname ||
-                      (domains || []).find(d => d.ID === domainID)?.domainname || ''} // Because only ID is received
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Params"
-                      placeholder="Search domains..."
-                      onChange={this.handleAutocompleteInput(idx)}
-                      variant="standard"
-                    />
-                  )}
-                  className={classes.rowTextfield}
+                    (domains || []).find(d => d.ID === domainID)?.domainname || ''}
+                  filterAttribute={'domainname'}
+                  onChange={this.handleSetParams(idx, "domainname")}
+                  inputValue={permission.autocompleteInput}
+                  onInputChange={this.handleAutocompleteInput(idx)}
+                  className={classes.rowTextfield} 
+                  options={domains || []}
+                  label={t('Params')}
+                  placeholder={t("Search domains") + "..."}
+                  variant="standard"
                   fullWidth
                   autoSelect
                 />}
-                {permission.permission === ORG_ADMIN && <Autocomplete
-                  options={orgs || []}
-                  filterOptions={getAutocompleteOptions('name')}
-                  noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
-                    t('Filter more precisely') + '...' : t('No options')}
+                {permission.permission === ORG_ADMIN && <MagnitudeAutocomplete
                   value={permission.params}
-                  onChange={this.handleSetParams(idx)}
                   getOptionLabel={(orgID) => orgID.name ||
-                      (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Params"
-                      placeholder="Search organizations..."
-                      onChange={this.handleAutocompleteInput(idx)}
-                      variant="standard"
-                    />
-                  )}
-                  className={classes.rowTextfield}
+                    (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
+                  filterAttribute={'name'}
+                  onChange={this.handleSetParams(idx, "name")}
+                  inputValue={permission.autocompleteInput}
+                  onInputChange={this.handleAutocompleteInput(idx)}
+                  className={classes.rowTextfield} 
+                  options={orgs || []}
+                  label={t('Params')}
+                  placeholder={t("Search organizations") + "..."}
+                  variant="standard"
                   fullWidth
                   autoSelect
                 />}

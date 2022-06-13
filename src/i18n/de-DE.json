@@ -322,5 +322,10 @@
     "RemoteWipeExplanation": "Abhängig vom Gerät, wird nicht nur der Account entfernt. Stattdessen können auch alle Ihre Daten inklusive Fotos, Dokumente, installierte Apps usw. gelöscht, und das Gerät zurück auf Werkeinstellungen zurückgesetzt werden. Gehen Sie sorgfältig vor.",
 
     "Warning": "Achtung",
-    "Changes will be overwritten with next LDAP sync": "Änderungen werden mit dem nächsten LDAP sync überschrieben"
+    "Changes will be overwritten with next LDAP sync": "Änderungen werden mit dem nächsten LDAP sync überschrieben",
+    "Search domains": "Domains suchen",
+    "Seach users": "Benutzer suchen",
+    "Search organizations": "Organisationen suchen",
+    "Search roles": "Rollen suchen",
+    "Search groups": "Gruppen suchen"
 }

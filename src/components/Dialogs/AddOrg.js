@@ -5,13 +5,13 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
-  CircularProgress, Autocomplete,
+  CircularProgress,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOrgData } from '../../actions/orgs';
-import { getAutocompleteOptions } from '../../utils';
 import { fetchDomainData } from '../../actions/domains';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -116,26 +116,18 @@ class AddOrg extends PureComponent {
               rows={4}
               variant="outlined"
             />
-            <Autocomplete
-              multiple
-              options={Domains || []}
-              filterOptions={getAutocompleteOptions('domainname')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Domains.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
+            <MagnitudeAutocomplete
               value={domains || []}
+              filterAttribute={'domainname'}
+              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('domains')}
-              getOptionLabel={(user) => user.domainname || ''}
+              className={classes.input} 
+              options={Domains || []}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Domains')}
+              placeholder={t("Search domains") + "..."}
+              multiple
               autoSelect
-              autoHighlight
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Domains"
-                  placeholder="Search domains..."
-                  className={classes.input}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
             />
           </FormControl>
         </DialogContent>

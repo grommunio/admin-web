@@ -11,8 +11,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
 import { fetchPlainUsersData } from '../../actions/users';
-import { Autocomplete } from '@mui/lab';
-import { getAutocompleteOptions } from '../../utils';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -139,25 +138,17 @@ class AddFolder extends PureComponent {
               variant="outlined"
               onChange={this.handleInput('comment')}
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               multiple
-              inputValue={autocompleteInput}
-              options={Users || []}
-              filterOptions={getAutocompleteOptions('username')}
               value={owners || []}
+              filterAttribute={'username'}
+              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('owners')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={(user) => user.username || ''}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Owners"
-                  placeholder="Search users..."
-                  className={classes.input}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
+              className={classes.input} 
+              options={Users || []}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Owners')}
+              placeholder={t("Search domains")  + "..."}
             />
           </FormControl>
         </DialogContent>

@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
-  Select, TextField, Typography, Tooltip, Autocomplete } from '@mui/material';
+  Select, TextField, Typography, Tooltip } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import Delete from '@mui/icons-material/Delete';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 import { connect } from 'react-redux';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -215,25 +216,14 @@ class Account extends PureComponent {
             </MenuItem>
           ))}
         </TextField>
-        {this.context.includes(SYSTEM_ADMIN_READ) && <Autocomplete
+        {this.context.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
           value={homeserver || ''}
-          noOptionsText={t('No options')}
-          getOptionLabel={s => s.hostname || ''}
-          renderOption={(props, option) => (
-            <li {...props} key={option.ID}>
-              {option.hostname || ''}
-            </li>
-          )}
-          disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
+          filterAttribute={'hostname'}
           onChange={handleServer}
           className={classes.input} 
           options={servers}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={t("Homeserver")}
-            />
-          )}
+          label={t('Homeserver')}
+          disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
         />}
         <TextField
           select

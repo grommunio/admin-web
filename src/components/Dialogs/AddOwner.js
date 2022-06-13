@@ -4,15 +4,14 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
+import { Dialog, DialogTitle, DialogContent, FormControl,
   Button, DialogActions, CircularProgress, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
 import { fetchPlainUsersData } from '../../actions/users';
-import { Autocomplete } from '@mui/lab';
-import { getAutocompleteOptions } from '../../utils';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -87,25 +86,17 @@ class AddOwner extends PureComponent {
         <DialogTitle>{t('addHeadline', { item: 'Owner' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
-            <Autocomplete
+            <MagnitudeAutocomplete
               multiple
-              inputValue={autocompleteInput}
-              filterOptions={getAutocompleteOptions('username')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(Users.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              options={Users || []}
               value={owners || []}
+              filterAttribute={'username'}
+              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('owners')}
-              getOptionLabel={(user) => user.username || ''}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Owners"
-                  placeholder="Search users..."
-                  className={classes.input}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
+              className={classes.input} 
+              options={Users || []}
+              onInputChange={this.handleInput('autocompleteInput')}
+              placeholder={t("Search users") +  "..."}
+              label={t('Owners')}
             />
           </FormControl>
         </DialogContent>

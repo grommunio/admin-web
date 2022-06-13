@@ -16,13 +16,13 @@ import {
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
-import { getAutocompleteOptions, getStringAfterLastSlash } from '../utils';
+import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
-import { Autocomplete } from '@mui/lab';
 import ViewWrapper from '../components/ViewWrapper';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -63,7 +63,7 @@ class MListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState( mList ? {
       ...mList,
-      class: mList.class?.ID || '',
+      class: mList.class || '',
       autocompleteInput: mList.class?.classname || '',
     } : {});
   }
@@ -105,7 +105,7 @@ class MListDetails extends PureComponent {
       listname,
       listType,
       listPrivilege,
-      class: _class || undefined,
+      class: _class?.ID || undefined,
       /* Strip whitespaces and split on ',' */
       associations: Array.isArray(associations) ? associations :
         associations ? associations.replace(/\s/g, "").split(',') : undefined, 
@@ -124,7 +124,7 @@ class MListDetails extends PureComponent {
 
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
-      [field]: newVal?.ID || '',
+      [field]: newVal || '',
       autocompleteInput: newVal?.classname || '',
     });
   }
@@ -206,28 +206,15 @@ class MListDetails extends PureComponent {
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}
             />}
-            {listType === 3 && <Autocomplete
+            {listType === 3 && <MagnitudeAutocomplete
               value={_class}
               inputValue={autocompleteInput}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(_classes.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={(classID) => _classes.find(c => c.ID === classID)?.classname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.classname || ''}
-                </li>
-              )}
               onChange={this.handleAutocomplete('class')}
+              filterAttribute={'classname'}
               className={classes.input} 
               options={_classes}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Group")}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
-              filterOptions={getAutocompleteOptions('classname')}
+              label={t('Group')}
+              onInputChange={this.handleInput('autocompleteInput')}
             />}
           </FormControl>
           <Button

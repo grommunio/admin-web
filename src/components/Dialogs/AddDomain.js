@@ -14,10 +14,9 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
-import { Autocomplete } from '@mui/lab';
-import { getAutocompleteOptions } from '../../utils';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -186,28 +185,15 @@ class AddDomain extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={orgID}
+              filterAttribute={'name'}
               inputValue={autocompleteInput}
-              filterOptions={getAutocompleteOptions('name')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={org => org.name || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.name || ''}
-                </li>
-              )}
               onChange={this.handleAutocomplete('orgID')}
               className={classes.input} 
               options={orgs}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Organization")}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Organization')}
             />
             <TextField 
               className={classes.input} 
@@ -245,24 +231,13 @@ class AddDomain extends PureComponent {
               value={tel || ''}
               onChange={this.handleInput('tel')}
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={homeserver}
-              noOptionsText={t('No options')}
-              getOptionLabel={s => s.hostname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.hostname || ''}
-                </li>
-              )}
+              filterAttribute={'hostname'}
               onChange={this.handleAutocomplete('homeserver')}
               className={classes.input} 
               options={servers}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Homeserver")}
-                />
-              )}
+              label={t('Homeserver')}
             />
             <FormControlLabel
               control={

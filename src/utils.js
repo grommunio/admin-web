@@ -263,12 +263,16 @@ export function capitalizeFirstLetter(string) {
  * @param {Object} state state of the input (internal)
  * @returns {Array} Autocomplete options to be displayed
  */
-export const getAutocompleteOptions = filterAttribute => (options, state) => {
+export const getAutocompleteOptions = (filterAttribute, magnitude) => (options, state) => {
   const { inputValue } = state;
-  const magnitude = Math.round(Math.log10(options.length) - 2);
+  if(magnitude === undefined) magnitude = Math.round(Math.log10(options.length) - 2);
 
   return inputValue.length < magnitude ? []
-    : options.filter(o => o[filterAttribute]?.includes(inputValue.toLowerCase()));
+    : options.filter(o => {
+      let compareValue = o[filterAttribute];
+      if(typeof compareValue === 'string') compareValue = compareValue.toLowerCase();
+      return compareValue?.includes(inputValue.toLowerCase());
+    });
 };
 
 /**

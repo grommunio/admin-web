@@ -25,14 +25,14 @@ import {
 import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import { changeDomainPassword } from '../api';
-import { getStringAfterLastSlash, getPolicyDiff, getAutocompleteOptions } from '../utils';
+import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SlimSyncPolicies from '../components/SlimSyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
-import { Autocomplete } from '@mui/lab';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -94,8 +94,11 @@ class DomainListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const defaultPolicy = domain.defaultPolicy;
     domain.syncPolicy = domain.syncPolicy || {};
+    const domainOrg = this.props.orgs.find(o => o.ID === domain.orgID);
     this.setState({
       ...(domain || {}),
+      autocompleteInput: domainOrg?.name || '',
+      orgID: domainOrg,
       syncPolicy: {
         ...defaultPolicy,
         ...domain.syncPolicy,
@@ -214,7 +217,7 @@ class DomainListDetails extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
-      chat, autocompleteInput, homeserver } = this.state;
+      chat, homeserver, autocompleteInput } = this.state;
     
     return (
       <ViewWrapper
@@ -259,27 +262,15 @@ class DomainListDetails extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            {capabilities.includes(SYSTEM_ADMIN_READ) && <Autocomplete
+            {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
               value={orgID}
-              filterOptions={getAutocompleteOptions('name')}
-              noOptionsText={autocompleteInput.length < Math.round(Math.log10(orgs.length) - 2) ?
-                t('Filter more precisely') + '...' : t('No options')}
-              getOptionLabel={(orgID) => orgs.find(o => o.ID === orgID)?.name || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.name || ''}
-                </li>
-              )}
+              filterAttribute={'name'}
               onChange={this.handleAutocomplete('orgID')}
-              className={classes.input}
+              className={classes.input} 
               options={orgs}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Organization")}
-                  onChange={this.handleInput('autocompleteInput')}
-                />
-              )}
+              inputValue={autocompleteInput}
+              onInputChange={this.handleInput('autocompleteInput')}
+              label={t('Organization')}
             />}
             <TextField 
               className={classes.input} 
@@ -316,24 +307,13 @@ class DomainListDetails extends PureComponent {
               value={tel || ''}
               onChange={this.handleInput('tel')}
             />
-            <Autocomplete
+            <MagnitudeAutocomplete
               value={homeserver}
-              noOptionsText={t('No options')}
-              getOptionLabel={s => s.hostname || ''}
-              renderOption={(props, option) => (
-                <li {...props} key={option.ID}>
-                  {option.hostname || ''}
-                </li>
-              )}
+              filterAttribute={'hostname'}
               onChange={this.handleServer}
               className={classes.input} 
               options={servers}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={t("Homeserver")}
-                />
-              )}
+              label={t('Homeserver')}
             />
             <FormControlLabel
               control={
