@@ -131,7 +131,7 @@ class Sync extends PureComponent {
     const { resync, domainID, userID } = this.props;
 
     resync(domainID, userID, deviceID)
-      .then(message => this.setState({ snackbar: message || 'Success!' }))
+      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
@@ -139,7 +139,7 @@ class Sync extends PureComponent {
     const { deleteDevice, domainID, userID } = this.props;
 
     deleteDevice(domainID, userID, deviceID)
-      .then(message => this.setState({ snackbar: message || 'Success!' }))
+      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 

@@ -28,7 +28,7 @@ class Feedback extends PureComponent {
         >
           <Alert
             onClose={onClose}
-            severity={(msg || '').toLowerCase().includes('success') ? "success" : "error"}
+            severity={(msg || '').includes('Success!') ? "success" : "error"}
             elevation={6}
             variant="filled"
           >
