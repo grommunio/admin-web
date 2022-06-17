@@ -81,7 +81,7 @@ class Folders extends Component {
   fetchFolders(params) {
     const { fetch, domain } = this.props;
     fetch(domain.ID, params)
-      .then(this.handleSort(false))
+      .then(() => this.setState({ sortedFolders: this.props.folders.Folders }))
       .catch(error => this.setState({ snackbar: error }));
   }
 
@@ -200,7 +200,9 @@ class Folders extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedFolders.filter(f => f.displayname.toLowerCase().includes(match.toLowerCase())).map((obj, idx) =>
+              {(match ?
+                sortedFolders.filter(f => f.displayname.toLowerCase().includes(match.toLowerCase())) :
+                sortedFolders).map((obj, idx) =>
                 <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
                   <TableCell>{obj.displayname}</TableCell>
                   <TableCell>{obj.comment}</TableCell>
