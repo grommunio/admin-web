@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
 import AddOwner from '../components/Dialogs/AddOwner';
 import RemoveOwner from '../components/Dialogs/RemoveOwner';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 
@@ -52,6 +52,7 @@ class FolderDetails extends PureComponent {
 
   state = {
     folder: {},
+    readonly: true,
     adding: false,
     deleting: false,
     snackbar: '',
@@ -68,9 +69,16 @@ class FolderDetails extends PureComponent {
   async componentDidMount() {
     const { fetch, fetchOwners } = this.props;
     const splits = window.location.pathname.split('/');
-    const folder = await fetch(splits[1], splits[3]);
-    this.setState({ folder: folder });
-    await fetchOwners(splits[1], folder.folderid);
+    const folderId = splits[3];
+    // If folder is IMP_SUBTREE
+    if(folderId === IPM_SUBTREE_ID) {
+      this.setState({ folder: IPM_SUBTREE_OBJECT, readonly: true });
+      await fetchOwners(splits[1], IPM_SUBTREE_ID);
+    } else {
+      const folder = await fetch(splits[1], folderId);
+      this.setState({ folder: folder, readonly: false });
+      await fetchOwners(splits[1], folder.folderid);
+    }
   }
 
   handleInput = field => event => {
@@ -100,10 +108,13 @@ class FolderDetails extends PureComponent {
     const { fetchOwners, domain } = this.props;
     this.setState({ adding: false });
     fetchOwners(domain.ID, this.state.folder.folderid)
+      .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(error => this.setState({ snackbar: error }));
   }
 
   handleAddingError = error => this.setState({ snackbar: error });
+
+  handleAddingCancel = () => this.setState({ adding: false });
 
   handleDelete = folder => () => {
     this.setState({ deleting: folder });
@@ -115,6 +126,7 @@ class FolderDetails extends PureComponent {
     const { fetchOwners, domain } = this.props;
     this.setState({ deleting: false, snackbar: 'Success!' });
     fetchOwners(domain.ID, this.state.folder.folderid)
+      .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(error => this.setState({ snackbar: error }));
   }
 
@@ -123,7 +135,7 @@ class FolderDetails extends PureComponent {
   render() {
     const { classes, t, domain, owners } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { folder, adding, deleting, snackbar } = this.state;
+    const { folder, adding, deleting, snackbar, readonly } = this.state;
 
     return (
       <ViewWrapper
@@ -148,6 +160,7 @@ class FolderDetails extends PureComponent {
               value={folder.displayname || ''}
               autoFocus
               onChange={this.handleInput('displayname')}
+              disabled={readonly}
             />
             <TextField
               select
@@ -156,6 +169,7 @@ class FolderDetails extends PureComponent {
               fullWidth
               value={folder.container || 'IPF.Note'}
               onChange={this.handleInput('container')}
+              disabled={readonly}
             >
               {this.types.map((type, key) => (
                 <MenuItem key={key} value={type.ID}>
@@ -172,6 +186,7 @@ class FolderDetails extends PureComponent {
               rows={4}
               value={folder.comment || ''}
               onChange={this.handleInput('comment')}
+              disabled={readonly}
             />
           </FormControl>
           <Grid container className={classes.grid}>
@@ -210,7 +225,7 @@ class FolderDetails extends PureComponent {
               color="primary"
               onClick={this.handleEdit}
               style={{ marginRight: 8 }}
-              disabled={!writable}
+              disabled={!writable || readonly}
             >
               {t('Save')}
             </Button>
@@ -220,6 +235,7 @@ class FolderDetails extends PureComponent {
           open={adding}
           onSuccess={this.handleAddingSuccess}
           onError={this.handleAddingError}
+          onCancel={this.handleAddingCancel}
           domain={domain}
           folderID={folder.folderid}
         />}

@@ -74,11 +74,11 @@ class AddOwner extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onSuccess, Users } = this.props;
+    const { classes, t, open, onCancel, Users } = this.props;
     const { owners, loading, autocompleteInput } = this.state;
     return (
       <Dialog
-        onClose={onSuccess}
+        onClose={onCancel}
         open={open}
         maxWidth="sm"
         fullWidth
@@ -102,7 +102,7 @@ class AddOwner extends PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={onSuccess}
+            onClick={onCancel}
             color="secondary"
           >
             {t('Cancel')}
@@ -130,6 +130,7 @@ AddOwner.propTypes = {
   folderID: PropTypes.string.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
 };

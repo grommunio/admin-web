@@ -14,7 +14,7 @@ import Search from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import DeleteFolder from '../components/Dialogs/DeleteFolder';
@@ -200,6 +200,11 @@ class Folders extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
+              <TableRow hover onClick={this.handleRowClicked(IPM_SUBTREE_OBJECT)}>
+                <TableCell>{IPM_SUBTREE_OBJECT.displayname}</TableCell>
+                <TableCell>{IPM_SUBTREE_OBJECT.comment}</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
               {(match ?
                 sortedFolders.filter(f => f.displayname.toLowerCase().includes(match.toLowerCase())) :
                 sortedFolders).map((obj, idx) =>
