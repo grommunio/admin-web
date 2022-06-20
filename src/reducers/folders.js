@@ -60,6 +60,7 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Folders: addItem(state.Folders, action.data),
+        count: state.count + 1,
       };
 
     case FOLDER_DATA_DELETE:

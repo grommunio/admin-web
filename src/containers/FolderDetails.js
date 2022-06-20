@@ -70,7 +70,7 @@ class FolderDetails extends PureComponent {
     const { fetch, fetchOwners } = this.props;
     const splits = window.location.pathname.split('/');
     const folderId = splits[3];
-    // If folder is IMP_SUBTREE
+    // If folder is IPM_SUBTREE
     if(folderId === IPM_SUBTREE_ID) {
       this.setState({ folder: IPM_SUBTREE_OBJECT, readonly: true });
       await fetchOwners(splits[1], IPM_SUBTREE_ID);

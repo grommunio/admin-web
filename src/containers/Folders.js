@@ -3,21 +3,20 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
-import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, TableSortLabel, CircularProgress,
+  Typography, Button, Grid, CircularProgress,
   TextField, InputAdornment } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import Search from '@mui/icons-material/Search';
-import { connect } from 'react-redux';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import DeleteFolder from '../components/Dialogs/DeleteFolder';
+import withStyledReduxTable from '../components/withTable';
+import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 
 const styles = theme => ({
   tablePaper: {
@@ -54,107 +53,36 @@ class Folders extends Component {
     order: 'asc',
     offset: 50,
     match: '',
-    sortedFolders: [],
   }
 
   handleScroll = () => {
-    const { folders } = this.props;
-    if((folders.Folders.length >= folders.count)) return;
-    if (
-      Math.floor(document.getElementById('scrollDiv').scrollHeight - document.getElementById('scrollDiv').scrollTop)
-      <= document.getElementById('scrollDiv').offsetHeight + 20
-    ) {
-      const { offset } = this.state;
-      if(!folders.loading) {
-        this.fetchFolders({ offset });
-        this.setState({
-          offset: offset + 50,
-        });
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.fetchFolders({});
-  }
-
-  fetchFolders(params) {
-    const { fetch, domain } = this.props;
-    fetch(domain.ID, params)
-      .then(() => this.setState({ sortedFolders: this.props.folders.Folders }))
-      .catch(error => this.setState({ snackbar: error }));
-  }
-
-  handleAdd = () => this.setState({ adding: true });
-
-  handleAddingSuccess = () => {
-    this.setState({ adding: false, snackbar: 'Success!' }, this.handleSort(false));
-  }
-
-  handleAddingError = error => this.setState({ snackbar: error });
-
-  handleAddingClose = () => this.setState({ adding: false });
-
-  handleDelete = folder => event => {
-    event.stopPropagation();
-    this.setState({ deleting: folder });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' }, this.handleSort(false));
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
-
-  handleRowClicked = folder => () => {
-    const { history, domain } = this.props;
-    history.push('/' + domain.ID + '/folders/' + folder.folderid, { ...folder });
-  }
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleMatch = e => {
-    const { value } = e.target;
-    this.setState({ match: value });
-  }
-
-  handleSort = switchOrder => () => {
-    const sortedFolders = [...this.props.folders.Folders];
-    const { order: stateOrder } = this.state;
-    const order = stateOrder === 'asc' ? 'desc' : 'asc';
-    if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
-      sortedFolders.sort((a, b) => a.displayname.localeCompare(b.displayname));
-    } else {
-      sortedFolders.sort((a, b) => b.displayname.localeCompare(a.displayname));
-    }
-    this.setState({ sortedFolders, order: switchOrder ? order : stateOrder });
-  }
+    const { Folders, count, loading } = this.props.folders;
+    this.props.handleScroll(Folders, count, loading);
+  };
 
   render() {
-    const { classes, t, folders, domain } = this.props;
+    const { classes, t, folders, domain, tableState, handleMatch,
+      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+      handleDeleteSuccess, handleEdit } = this.props;
+    const { Folders } = folders;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, adding, deleting, order, match } = this.state;
-    const { sortedFolders } = this.state;
+    const { match, snackbar, adding, deleting } = tableState;
 
     return (
       <TableViewContainer
+        handleScroll={this.handleScroll}
         headline={t("Folders")}
         subtitle={t('folders_sub')}
         href="https://docs.grommunio.com/admin/administration.html#folders"
         snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+        onSnackbarClose={clearSnackbar}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAdd}
+            onClick={handleAdd}
             disabled={!writable}
           >
             {t('New folder')}
@@ -162,7 +90,7 @@ class Folders extends Component {
           <div className={classes.actions}>
             <TextField
               value={match}
-              onChange={this.handleMatch}
+              onChange={handleMatch}
               placeholder={t("Search")}
               variant="outlined"
               className={classes.textfield}
@@ -178,42 +106,32 @@ class Folders extends Component {
           </div>
         </Grid>
         <Typography className={classes.count} color="textPrimary">
-          {t("showingFolders", { count: sortedFolders.length })}
+          {t("showingFolders", { count: Folders.length + 1 })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">
             <TableHead>
-              <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active
-                    align="left" 
-                    direction={order}
-                    onClick={this.handleSort(true)}
-                  >
-                    {t('Folder name')}
-                  </TableSortLabel>
-                </TableCell>
+              <TableRow /* TODO: this row can be generated by map()*/>
+                <TableCell>{t('Folder name')}</TableCell>
                 <TableCell>{t('Comment')}</TableCell>
                 <TableCell>{t('Creation time')}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow hover onClick={this.handleRowClicked(IPM_SUBTREE_OBJECT)}>
+              <TableRow hover onClick={handleEdit(IPM_SUBTREE_OBJECT)}>
                 <TableCell>{IPM_SUBTREE_OBJECT.displayname}</TableCell>
-                <TableCell>{IPM_SUBTREE_OBJECT.comment}</TableCell>
+                <TableCell>{t(IPM_SUBTREE_OBJECT.comment)}</TableCell>
+                <TableCell></TableCell>
                 <TableCell></TableCell>
               </TableRow>
-              {(match ?
-                sortedFolders.filter(f => f.displayname.toLowerCase().includes(match.toLowerCase())) :
-                sortedFolders).map((obj, idx) =>
-                <TableRow hover onClick={this.handleRowClicked(obj)} key={idx}>
+              {Folders.map((obj, idx) =>
+                <TableRow hover onClick={handleEdit(obj)} key={idx}>
                   <TableCell>{obj.displayname}</TableCell>
                   <TableCell>{obj.comment}</TableCell>
                   <TableCell>{obj.creationtime}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(obj)} size="large">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
@@ -227,17 +145,17 @@ class Folders extends Component {
         </Paper>
         <AddFolder
           open={adding}
-          onClose={this.handleAddingClose}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
+          onClose={handleAddingClose}
+          onSuccess={handleAddingSuccess}
+          onError={handleAddingError}
           domain={domain}
         />
         <DeleteFolder
           open={!!deleting}
           delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
+          onSuccess={handleDeleteSuccess}
+          onError={handleDeleteError}
+          onClose={handleDeleteClose}
           item={deleting.displayname}
           id={deleting.folderid}
           domainID={domain.ID}
@@ -249,13 +167,10 @@ class Folders extends Component {
 
 Folders.contextType = CapabilityContext;
 Folders.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   folders: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
@@ -264,8 +179,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetch: async (domainID, params) => {
-      await dispatch(fetchFolderData(domainID, params)).catch(msg => Promise.reject(msg));
+    fetchTableData: async (domainID, params) => {
+      await dispatch(fetchFolderData(domainID, { ...params, limit: 50 })).catch(msg => Promise.reject(msg));
     },
     delete: async (domainID, id, params) =>
       await dispatch(deleteFolderData(domainID, id, params))
@@ -273,5 +188,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Folders)));
+export default withStyledReduxTable(
+  mapStateToProps, mapDispatchToProps, styles)(Folders, { orderBy: 'displayname' });
