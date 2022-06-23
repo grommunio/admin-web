@@ -61,10 +61,11 @@ class AddFolder extends PureComponent {
   });
 
   handleAdd = () => {
-    const { add, onSuccess, onError, domain } = this.props;
+    const { add, onSuccess, onError, domain, parentID } = this.props;
     this.setState({ loading: true });
     add(domain.ID, {
       ...this.state,
+      parentID,
       loading: undefined,
       autocompleteInput: undefined,
     })
@@ -184,6 +185,7 @@ AddFolder.propTypes = {
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   fetchUsers: PropTypes.func.isRequired,
+  parentID: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => {

@@ -11,3 +11,4 @@ export const IPM_SUBTREE_OBJECT = {
   container: '',
   creationtime: null,
 };
+export const defaultFetchLimit = 50;
