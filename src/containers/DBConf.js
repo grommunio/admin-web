@@ -14,7 +14,7 @@ import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { Delete } from '@mui/icons-material';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
-import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { defaultFetchLimit, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 
@@ -58,7 +58,7 @@ class DBConf extends Component {
     adding: false,
     deleting: false,
     configuring: false,
-    offset: 50,
+    offset: defaultFetchLimit,
     tab: 0,
   }
 

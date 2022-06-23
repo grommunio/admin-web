@@ -12,12 +12,13 @@ import {
   FOLDERS_NEXT_SET,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
+import { defaultFetchLimit } from '../constants';
 import { addItem, append } from '../utils';
 
 const defaultState = {
   loading: false,
   error: null,
-  count: 0,
+  moreDataAvailable: true,
   Folders: [],
   Owners: [],
 };
@@ -36,7 +37,7 @@ function foldersReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Folders: action.data.data,
-        count: action.data.count,
+        moreDataAvailable: action.data.data.length == defaultFetchLimit,
       };
     
     case FOLDERS_NEXT_SET:
@@ -45,7 +46,7 @@ function foldersReducer(state = defaultState, action) {
         loading: false,
         error: null,
         Folders: append(state.Folders, action.data.data),
-        count: action.data.count,
+        moreDataAvailable: action.data.data.length == defaultFetchLimit,
       };
     
     case FOLDERS_DATA_ERROR: {
@@ -60,14 +61,12 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Folders: addItem(state.Folders, action.data),
-        count: state.count + 1,
       };
 
     case FOLDER_DATA_DELETE:
       return {
         ...state,
         Folders: state.Folders.filter(folder => folder.folderid !== action.id),
-        count: state.count - 1,
       };
 
     case OWNERS_DATA_RECEIVED:

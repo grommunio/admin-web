@@ -8,6 +8,7 @@ import { debounce } from 'debounce';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withStyles } from '@mui/styles';
+import { defaultFetchLimit } from '../constants';
 
 export default function withStyledReduxTable(mapState, mapDispatch, styles) {
   return (wrappedComponent, defaultState) => connect(mapState, mapDispatch)(
@@ -83,7 +84,7 @@ function withTable(WrappedComponent, defaultState={}) {
         const { orderBy, order, offset, match } = this.state;
         if (!loading) { 
           this.setState({
-            offset: offset + 50,
+            offset: offset + defaultFetchLimit,
           }, () => this.fetchData({
             sort: orderBy + "," + order,
             offset: this.state.offset, // state has updated, so get fresh value here
