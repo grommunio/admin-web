@@ -13,21 +13,13 @@ import {
   FormControl,
   MenuItem,
   Button,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Divider,
 } from '@mui/material';
-import Add from '@mui/icons-material/AddCircleOutline';
-import Delete from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
-import AddOwner from '../components/Dialogs/AddOwner';
-import RemoveOwner from '../components/Dialogs/RemoveOwner';
 import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import FolderPermissions from '../components/Dialogs/FolderPermissions';
 
 const styles = theme => ({
   paper: {
@@ -45,6 +37,7 @@ const styles = theme => ({
   grid: {
     display: 'flex',
     alignItems: 'center',
+    marginBottom: 32,
   },
 });
 
@@ -54,7 +47,6 @@ class FolderDetails extends PureComponent {
     folder: {},
     readonly: true,
     adding: false,
-    deleting: false,
     snackbar: '',
   };
 
@@ -104,38 +96,16 @@ class FolderDetails extends PureComponent {
 
   handleAdd = () => this.setState({ adding: true });
 
-  handleAddingSuccess = () => {
-    const { fetchOwners, domain } = this.props;
-    this.setState({ adding: false });
-    fetchOwners(domain.ID, this.state.folder.folderid)
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(error => this.setState({ snackbar: error }));
-  }
+  handlePermissionsSuccess = () => this.setState({ snackbar: "Success!" });
 
-  handleAddingError = error => this.setState({ snackbar: error });
+  handlePermissionsError = error => this.setState({ snackbar: error });
 
-  handleAddingCancel = () => this.setState({ adding: false });
-
-  handleDelete = folder => () => {
-    this.setState({ deleting: folder });
-  }
-
-  handleDeleteClose = () => this.setState({ deleting: false });
-
-  handleDeleteSuccess = () => {
-    const { fetchOwners, domain } = this.props;
-    this.setState({ deleting: false, snackbar: 'Success!' });
-    fetchOwners(domain.ID, this.state.folder.folderid)
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(error => this.setState({ snackbar: error }));
-  }
-
-  handleDeleteError = error => this.setState({ snackbar: error });
+  handlePermissionsCancel = () => this.setState({ adding: false });
 
   render() {
-    const { classes, t, domain, owners } = this.props;
+    const { classes, t, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { folder, adding, deleting, snackbar, readonly } = this.state;
+    const { folder, adding, snackbar, readonly } = this.state;
 
     return (
       <ViewWrapper
@@ -190,28 +160,15 @@ class FolderDetails extends PureComponent {
             />
           </FormControl>
           <Grid container className={classes.grid}>
-            <Typography
-              color="primary"
-              variant="h5"
+            <Button
+              onClick={this.handleAdd}
+              disabled={!writable}
+              size="large"
+              variant='outlined'
             >
-              {t('Owners')}
-            </Typography>
-            <IconButton onClick={this.handleAdd} disabled={!writable} size="large">
-              <Add fontSize="small" color="primary" />
-            </IconButton>
+              {t('Open permissions')}
+            </Button>
           </Grid>
-          <List dense>
-            {owners.map((owner, idx) => <React.Fragment key={idx}>
-              <ListItem>
-                <ListItemText primary={owner.displayName} />
-                <IconButton onClick={this.handleDelete(owner)} disabled={!writable} size="large">
-                  <Delete fontSize="small" color="error"/>
-                </IconButton>
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-            )}
-          </List>
           <Grid container>
             <Button
               color="secondary"
@@ -231,23 +188,13 @@ class FolderDetails extends PureComponent {
             </Button>
           </Grid>
         </Paper>
-        {folder.folderid && <AddOwner
+        {folder.folderid && <FolderPermissions
           open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onCancel={this.handleAddingCancel}
+          onSuccess={this.handlePermissionsSuccess}
+          onError={this.handlePermissionsError}
+          onCancel={this.handlePermissionsCancel}
           domain={domain}
           folderID={folder.folderid}
-        />}
-        {folder.folderid && <RemoveOwner
-          open={!!deleting}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
-          ownerName={deleting.displayName}
-          domainID={domain.ID}
-          folderID={folder.folderid}
-          memberID={deleting.memberID}
         />}
       </ViewWrapper>
     );
@@ -258,7 +205,6 @@ FolderDetails.contextType = CapabilityContext;
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  owners: PropTypes.array.isRequired,
   domain: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
@@ -266,12 +212,6 @@ FolderDetails.propTypes = {
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchOwners: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    owners: state.folders.Owners,
-  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -291,5 +231,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(FolderDetails)));

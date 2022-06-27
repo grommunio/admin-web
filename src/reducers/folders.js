@@ -11,6 +11,7 @@ import {
   OWNER_DATA_ADD,
   FOLDERS_NEXT_SET,
   AUTH_AUTHENTICATED,
+  OWNER_DATA_DELETE,
 } from '../actions/types';
 import { defaultFetchLimit } from '../constants';
 import { addItem, append } from '../utils';
@@ -81,6 +82,12 @@ function foldersReducer(state = defaultState, action) {
       return {
         ...state,
         Owners: addItem(state.Owners, action.data),
+      };
+
+    case OWNER_DATA_DELETE:
+      return {
+        ...state,
+        Owners: state.Owners.filter(owner => owner.memberID !== action.id),
       };
     
     case AUTH_AUTHENTICATED:
