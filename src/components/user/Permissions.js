@@ -78,8 +78,8 @@ class Permissions extends PureComponent {
   handleAddError = message => this.setState({ snackbar: message || 'Unknown error' });
 
   render() {
-    const { classes, t, domainID, userID } = this.props;
-    const { snackbar, adding, permittedUsers } = this.state;
+    const { classes, t } = this.props;
+    const { snackbar, permittedUsers } = this.state;
     return (
       <FormControl className={classes.form}>
         <Grid container alignItems="center"  className={classes.headline}>

@@ -654,6 +654,12 @@ export function deleteOwner(domainID, folderID, memberID) {
   };
 }
 
+export function putFolderPermissions(domainID, folderID, memberID, permissions) {
+  return async () => {
+    return await put('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID, permissions);
+  };
+}
+
 /*
   ORGS
 */
