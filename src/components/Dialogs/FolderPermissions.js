@@ -6,13 +6,14 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl,
   Button, DialogActions, Grid, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
-  ListItem, ListItemText, ListItemButton, Divider, 
+  ListItem, ListItemText, ListItemButton, Divider, MenuItem, InputLabel, Select, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData, setFolderPermissions } from '../../actions/folders';
 import AddOwner from './AddOwner';
 import RemoveOwner from './RemoveOwner';
+import { permissionProfiles } from '../../mapi/rights';
 
 const styles = theme => ({
   form: {
@@ -38,6 +39,13 @@ const styles = theme => ({
     marginBottom: 32,
     display: 'flex',
     justifyContent: 'flex-end',
+  },
+  noOwnersContainer: {
+    display: 'flex',
+    border: '1px solid black',
+    justifyContent: 'center',
+    marginBottom: 8,
+    padding: 8,
   },
 });
 
@@ -119,9 +127,12 @@ class FolderPermissions extends PureComponent {
 
   handleDeleteError = error => this.setState({ snackbar: error });
 
+  handleProfileSelect = e => this.setState({ permissions: e.target.value });
+
   render() {
     const { classes, t, open, onCancel, owners, domain, folderID } = this.props;
     const { permissions, selected, adding, deleting } = this.state;
+
     return (
       <Dialog
         onClose={onCancel}
@@ -134,8 +145,8 @@ class FolderPermissions extends PureComponent {
       >
         <DialogTitle>{t('Permissions')}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
-          <List className={classes.list}>
-            {owners.map(user => <Fragment key={user.memberID}>
+          {owners.length > 0 ? <List className={classes.list}>
+            {owners.map((user, idx) => <Fragment key={idx}>
               <ListItem disablePadding>
                 <ListItemButton
                   selected={user.memberID === selected?.memberID}
@@ -147,7 +158,9 @@ class FolderPermissions extends PureComponent {
               </ListItem> 
               <Divider />
             </Fragment>)}
-          </List>
+          </List> : <div className={classes.noOwnersContainer}>
+            <em>{t('No owners')}</em>
+          </div>}
           <div className={classes.addUserRow}>
             <Button
               onClick={this.handleDelete}
@@ -164,6 +177,21 @@ class FolderPermissions extends PureComponent {
               {t('Add owner')}
             </Button>
           </div>
+          <FormControl fullWidth style={{ marginBottom: 4 }}>
+            <InputLabel>{t('Profile')}</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              value={permissionProfiles.findIndex(profile => profile.value === permissions) === -1 ? "" : permissions}
+              label={t('Profile')}
+              onChange={this.handleProfileSelect}
+            >
+              {permissionProfiles.map((profile, idx) =>
+                <MenuItem key={idx} value={profile.value}>
+                  {profile.name}
+                </MenuItem>
+              )}
+            </Select>
+          </FormControl>
           <Grid container>
             <Grid item xs={6}>
               <FormControl className={classes.form}>
@@ -316,7 +344,7 @@ class FolderPermissions extends PureComponent {
             onClick={this.handleSave}
             variant="contained"
             color="primary"
-            disabled={owners.length === 0}
+            disabled={owners.length === 0 || !selected}
           >
             {t('Save')}
           </Button>
