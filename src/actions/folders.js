@@ -106,7 +106,6 @@ export function addOwnerData(domainID, folderID, ownersData) {
     try {
       for(let i = 0; i < ownersData.length; i++) {
         await dispatch(addOwner(domainID, folderID, { username: ownersData[i].username }));
-        await dispatch({ type: OWNER_DATA_ADD, data: { username: ownersData[i].username } });
       }
       const response = await dispatch(owners(domainID, folderID, { limit: 1000000, level: 0 }));
       await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
@@ -122,6 +121,8 @@ export function setFolderPermissions(domainID, folderID, memberID, permissions) 
   return async dispatch => {
     try {
       await dispatch(putFolderPermissions(domainID, folderID, memberID, permissions));
+      const response = await dispatch(owners(domainID, folderID, { limit: 1000000, level: 0 }));
+      await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
