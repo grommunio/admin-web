@@ -8,9 +8,7 @@ import {
   FOLDER_DATA_ADD,
   FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
-  OWNER_DATA_ADD,
   FOLDERS_NEXT_SET,
-  OWNER_DATA_DELETE,
 } from './types';
 import { folders, folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
   putFolderPermissions, deleteOwner } from '../api';
