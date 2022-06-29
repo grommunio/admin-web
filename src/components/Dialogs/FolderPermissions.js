@@ -163,18 +163,18 @@ class FolderPermissions extends PureComponent {
           </div>}
           <div className={classes.addUserRow}>
             <Button
-              onClick={this.handleDelete}
-              style={{ marginRight: 8 }}
-              color="secondary"
-            >
-              {t('Remove owner')}
-            </Button>
-            <Button
               onClick={this.handleAdd}
               variant="contained"
               color="primary"
+              style={{ marginRight: 8 }}
             >
-              {t('Add owner')}
+              {t('Add')}
+            </Button>
+            <Button
+              onClick={this.handleDelete}
+              color="secondary"
+            >
+              {t('Remove')}
             </Button>
           </div>
           <FormControl fullWidth style={{ marginBottom: 4 }}>
