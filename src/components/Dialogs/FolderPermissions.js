@@ -91,15 +91,15 @@ class FolderPermissions extends PureComponent {
     const intValue = parseInt(value);
     switch (intValue) {
       case 0x10: {
-        mask = (mask ^ intValue) & ~(0x40); // Uncheck other radio buttons
+        mask = mask & ~(0x50) ^ intValue; // Set delete own right bit
         break;
       }
-      case 0x40: {
-        mask = (mask ^ intValue) & ~(0x10);
+      case 0x50: {
+        mask = (mask | 0x50); // Set own and any delete right bits
         break;
       }
       default:
-        mask &= ~(0x50);
+        mask &= ~(0x50); // Remove own and any delete right bits
         break;
     }
     this.setState({ permissions: mask });
@@ -283,7 +283,7 @@ class FolderPermissions extends PureComponent {
                     label="Own"
                   />
                   <FormControlLabel
-                    value={0x40}
+                    value={0x50}
                     control={<Radio size="small" className={classes.radio}/>}
                     label="All"
                   />
