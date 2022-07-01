@@ -87,14 +87,15 @@ class AddGlobalUser extends PureComponent {
   getStateOverwrite(createParams) {
     if(!createParams) return {};
     const user = createParams.user;
+    const { lang, properties } = user || {};
     return {
       properties: {
         ...this.state.properties,
-        storagequotalimit: user.storagequotalimit,
-        prohibitreceivequota: user.prohibitreceivequota,
-        prohibitsendquota: user.prohibitsendquota,
+        storagequotalimit: properties.storagequotalimit,
+        prohibitreceivequota: properties.prohibitreceivequota,
+        prohibitsendquota: properties.prohibitsendquota,
       },
-      lang: user.lang || '',
+      lang: lang || '',
     };
   }
 

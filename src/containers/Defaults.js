@@ -123,11 +123,13 @@ class Defaults extends PureComponent {
     };
     edit({
       domain: {
-        maxUser: parseInt(maxUser) || '',
+        maxUser: parseInt(maxUser) || undefined,
         chat: chatTeam,
       },
       user: {
-        ...quotas,
+        properties: {
+          ...quotas,
+        },
         // eslint-disable-next-line camelcase
         smtp, changePassword, lang, pop3_imap,
         privChat, privVideo, privFiles, privArchive,

@@ -180,7 +180,9 @@ class DomainMenu extends PureComponent {
     };
     edit({
       user: {
-        ...quotas,
+        properties: {
+          ...quotas,
+        },
         // eslint-disable-next-line camelcase
         smtp, changePassword, lang, pop3_imap,
         privChat, privVideo, privFiles, privArchive,

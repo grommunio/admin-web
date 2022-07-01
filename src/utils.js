@@ -335,8 +335,14 @@ export function getLangs() {
  */
 export function formatCreateParams(createParams) {
   if(!createParams) return {};
-  const user = createParams.user;
   const domain = createParams.domain;
+
+  let user = createParams.user;
+  user = {
+    ...user,
+    ...(user.properties || {}),
+  };
+
   let sizeUnits = {
     storagequotalimit: 1,
     prohibitreceivequota: 1,

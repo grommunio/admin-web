@@ -85,14 +85,15 @@ class AddUser extends PureComponent {
   getStateOverwrite(createParams, chatAvailable) {
     if(!createParams) return {};
     const user = createParams.user;
+    const { lang, properties } = user || {};
     return {
       properties: {
         ...this.state.properties,
-        storagequotalimit: user.storagequotalimit,
-        prohibitreceivequota: user.prohibitreceivequota,
-        prohibitsendquota: user.prohibitsendquota,
+        storagequotalimit: properties.storagequotalimit,
+        prohibitreceivequota: properties.prohibitreceivequota,
+        prohibitsendquota: properties.prohibitsendquota,
       },
-      lang: user.lang || '',
+      lang: lang || '',
       chat: chatAvailable ? (createParams.domain.chat || false) : false,
     };
   }
