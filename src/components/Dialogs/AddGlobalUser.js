@@ -90,10 +90,10 @@ class AddGlobalUser extends PureComponent {
     const { lang, properties } = user || {};
     return {
       properties: {
-        ...this.state.properties,
-        storagequotalimit: properties.storagequotalimit,
-        prohibitreceivequota: properties.prohibitreceivequota,
-        prohibitsendquota: properties.prohibitsendquota,
+        ...(properties || {}),
+        storagequotalimit: properties?.storagequotalimit,
+        prohibitreceivequota: properties?.prohibitreceivequota,
+        prohibitsendquota: properties?.prohibitsendquota,
       },
       lang: lang || '',
     };
