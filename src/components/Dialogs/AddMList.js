@@ -55,8 +55,8 @@ class AddMList extends PureComponent {
   ]
 
   handleEnter = () => {
-    const { fetch, _classes, domain, onError } = this.props;
-    if(_classes.length === 0 ) fetch(domain.ID)
+    const { fetch, domain, onError } = this.props;
+    fetch(domain.ID)
       .catch(error => {
         onError(error);
         this.setState({ loading: false });

@@ -113,8 +113,8 @@ class AddClass extends PureComponent {
   }
 
   handleEnter = () => {
-    const { fetch, domain, _classes } = this.props;
-    if(_classes.length === 0) fetch(domain.ID)
+    const { fetch, domain } = this.props;
+    fetch(domain.ID)
       .catch(error => {
         this.props.onError(error);
         this.setState({ loading: false });

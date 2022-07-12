@@ -37,10 +37,7 @@ class AddOrg extends PureComponent {
   }
 
   handleEnter = () => {
-    const { fetch, Domains } = this.props;
-    if(Domains.length === 0) {
-      fetch();
-    }
+    this.props.fetch();
   }
 
   handleInput = field => event => {
