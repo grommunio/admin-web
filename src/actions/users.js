@@ -17,7 +17,9 @@ import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, def
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
   userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser, usersPlain,
   userCount, 
-  storeLangs} from '../api';
+  storeLangs,
+  userSendAs,
+  editUserSendAs} from '../api';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -147,6 +149,17 @@ export function fetchUserDelegates(domainID, userID) {
   };
 }
 
+export function fetchUserSendAs(domainID, userID) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(userSendAs(domainID, userID));
+      return Promise.resolve(data);
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
 export function fetchPermittedUsers(domainID, userID, params) {
   return async dispatch => {
     try {
@@ -162,6 +175,16 @@ export function setUserDelegates(domainID, userID, delegates) {
   return async dispatch => {
     try {
       await dispatch(editUserDelegates(domainID, userID, delegates));
+    } catch(err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function setUserSendAs(domainID, userID, delegates) {
+  return async dispatch => {
+    try {
+      await dispatch(editUserSendAs(domainID, userID, delegates));
     } catch(err) {
       return Promise.reject(err.message);
     }

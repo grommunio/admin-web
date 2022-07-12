@@ -8,7 +8,9 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
-  setPermittedUserData } from '../../actions/users';
+  setPermittedUserData, 
+  fetchUserSendAs, 
+  setUserSendAs} from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
@@ -33,24 +35,32 @@ class Delegates extends PureComponent {
 
   state = {
     delegates: [],
+    sendAsUsers: [],
     permittedUsers: [],
     snackbar: '',
     delegatesACInput: '',
-    pUACInput: '',
+    sendAsACInput: '',
+    puACInput: '',
     dEdited: false,
+    sEdited: false,
     puEdited: false,
   };
 
   async componentDidMount() {
-    const { fetchDelegates, fetchPermittedUsers, fetchUsers, userID, domainID } = this.props;
+    const { fetchDelegates, fetchSendAs, fetchPermittedUsers, fetchUsers, userID, domainID } = this.props;
     fetchUsers(domainID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const delegates = await fetchDelegates(domainID, userID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const sendAsUsers = await fetchSendAs(domainID, userID)
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const permittedUsers = await fetchPermittedUsers(domainID, userID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    if(delegates) this.setState({ delegates: delegates.data });
-    if(permittedUsers) this.setState({ permittedUsers: permittedUsers.data?.map(u => u.username) });
+    this.setState({
+      delegates: delegates?.data || [],
+      permittedUsers: permittedUsers?.data?.map(u => u.username) || [],
+      sendAsUsers: sendAsUsers?.data || [],
+    });
   }
 
   handleInput = field => event => {
@@ -59,23 +69,33 @@ class Delegates extends PureComponent {
     });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
+  handleAutocomplete = (field, editField) => (e, newVal) => {
     this.setState({
       [field]: newVal.map(r => r.username ? r.username : r),
-      [field === 'delegates' ? 'dEdited' : 'puEdited']: true,
+      [editField]: true,
       delegatesACInput: '',
-      pUACInput: '',
+      sendAsACInput: '',
+      puACInput: '',
     });
   }
 
   handleSave = () => {
-    const { setUserDelegates, setPermittedUserData, userID, domainID } = this.props;
-    const { delegates, permittedUsers, dEdited, puEdited } = this.state;
+    const { setUserDelegates, setUserSendAs, setPermittedUserData, userID, domainID } = this.props;
+    const { delegates, permittedUsers, sendAsUsers, dEdited, sEdited, puEdited } = this.state;
     if(dEdited) setUserDelegates(domainID, userID, delegates)
       .then(() => this.setState({
         snackbar: 'Success!',
         delegatesACInput: '',
-        pUACInput: '',
+        puACInput: '',
+        sendAsACInput: '',
+      })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+
+    if(sEdited) setUserSendAs(domainID, userID, sendAsUsers)
+      .then(() => this.setState({
+        snackbar: 'Success!',
+        delegatesACInput: '',
+        puACInput: '',
+        sendAsACInput: '',
       })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     
     if(puEdited) setPermittedUserData(domainID, userID, {
@@ -84,13 +104,14 @@ class Delegates extends PureComponent {
       .then(() => this.setState({
         snackbar: 'Success!',
         delegatesACInput: '',
-        pUACInput: '',
+        puACInput: '',
+        sendAsACInput: '',
       })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
   render() {
     const { classes, t, Users, userID, history, disabled } = this.props;
-    const { delegates, snackbar, delegatesACInput, pUACInput, permittedUsers } = this.state;
+    const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = this.state;
     return (
       <>
         <FormControl className={classes.form}>
@@ -101,7 +122,7 @@ class Delegates extends PureComponent {
               value={delegates || []}
               filterAttribute={'username'}
               inputValue={delegatesACInput}
-              onChange={this.handleAutocomplete('delegates')}
+              onChange={this.handleAutocomplete('delegates', 'dEdited')}
               className={classes.input} 
               options={Users.filter(u => u.ID !== userID) || []}
               onInputChange={this.handleInput('delegatesACInput')}
@@ -111,13 +132,26 @@ class Delegates extends PureComponent {
             />
             <MagnitudeAutocomplete
               multiple
-              value={permittedUsers || []}
+              value={sendAsUsers || []}
               filterAttribute={'username'}
-              inputValue={pUACInput}
-              onChange={this.handleAutocomplete('permittedUsers')}
+              inputValue={sendAsACInput}
+              onChange={this.handleAutocomplete('sendAsUsers', 'sEdited')}
               className={classes.input} 
               options={Users.filter(u => u.ID !== userID) || []}
-              onInputChange={this.handleInput('pUACInput')}
+              onInputChange={this.handleInput('sendAsACInput')}
+              label={t('Send as')}
+              placeholder={t("Search users") + "..."}
+              getOptionLabel={(sendAsUser) => sendAsUser.username || sendAsUser || ''}
+            />
+            <MagnitudeAutocomplete
+              multiple
+              value={permittedUsers || []}
+              filterAttribute={'username'}
+              inputValue={puACInput}
+              onChange={this.handleAutocomplete('permittedUsers', 'puEdited')}
+              className={classes.input} 
+              options={Users.filter(u => u.ID !== userID) || []}
+              onInputChange={this.handleInput('puACInput')}
               label={t('Full permission users')}
               placeholder={t("Search users") + "..."}
               getOptionLabel={(option) => option.username || option || ''}
@@ -155,11 +189,13 @@ Delegates.propTypes = {
   t: PropTypes.func.isRequired,
   fetchDelegates: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
+  fetchSendAs: PropTypes.func.isRequired,
   fetchPermittedUsers: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   domainID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
   setUserDelegates: PropTypes.func.isRequired,
+  setUserSendAs: PropTypes.func.isRequired,
   setPermittedUserData: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
@@ -173,16 +209,21 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchDelegates: async (domainID, userID) => await dispatch(fetchUserDelegates(domainID, userID))
       .catch(err => console.error(err)),
+    fetchSendAs: async (domainID, userID) => await dispatch(fetchUserSendAs(domainID, userID))
+      .catch(err => console.error(err)),
     fetchPermittedUsers: async (domainID, userID) => await dispatch(fetchPermittedUsers(domainID, userID, {}))
       .catch(err => console.error(err)),
     fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))
-        .catch(err => console.error(err)),
-    setPermittedUserData: async (domainID, folderID, permittedUsers) => {
-      await dispatch(setPermittedUserData(domainID, folderID, permittedUsers)).catch(msg => Promise.reject(msg));
-    },
+        .catch(err => Promise.reject(err)),
+    setUserSendAs: async (domainID, userID, sendAsUsers) =>
+      await dispatch(setUserSendAs(domainID, userID, sendAsUsers))
+        .catch(err => Promise.reject(err)),
+    setPermittedUserData: async (domainID, folderID, permittedUsers) => 
+      await dispatch(setPermittedUserData(domainID, folderID, permittedUsers))
+        .catch(msg => Promise.reject(msg)),
   };
 };
 
