@@ -445,6 +445,18 @@ export function editUserDelegates(domainID, userID, delegates) {
   };
 }
 
+export function userSendAs(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID + '/sendas');
+  };
+}
+
+export function editUserSendAs(domainID, userID, delegates) {
+  return async () => {
+    return await put('/domains/' + domainID + '/users/'+ userID + '/sendas', delegates);
+  };
+}
+
 export function permittedUsers(domainID, userID, params) {
   return async () => {
     return await get(buildQuery('/domains/' + domainID + '/users/'+ userID + '/storeAccess', params));
