@@ -12,6 +12,7 @@ import {
 } from './types';
 import { folders, folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
   putFolderPermissions, deleteOwner } from '../api';
+import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchFolderData(domainID, params) {
   return async dispatch => {
@@ -28,17 +29,8 @@ export function fetchFolderData(domainID, params) {
   };
 }
 
-export function fetchFolderDetails(domainID, folderID) {
-  return async dispatch => {
-    try {
-      const folder = await dispatch(folderDetails(domainID, folderID));
-      return Promise.resolve(folder);
-    } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchFolderDetails(...endpointParams) {
+  return defaultDetailsHandler(folderDetails, ...endpointParams);
 }
 
 export function addFolderData(domainID, folder) {
@@ -59,16 +51,8 @@ export function addFolderData(domainID, folder) {
   };
 }
 
-export function editFolderData(domainID, folder) {
-  return async dispatch => {
-    try {
-      await dispatch(editFolder(domainID, folder));
-    } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function editFolderData(...endpointParams) {
+  return defaultPatchHandler(editFolder, ...endpointParams);
 }
 
 export function deleteFolderData(domainID, id, params) {
@@ -85,18 +69,8 @@ export function deleteFolderData(domainID, id, params) {
   };
 }
 
-export function fetchOwnersData(domainID, folderID, params) {
-  return async dispatch => {
-    await dispatch({ type: FOLDERS_DATA_FETCH });
-    try {
-      const response = await dispatch(owners(domainID, folderID, params));
-      await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
-    } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchOwnersData(...endpointParams) {
+  return defaultListHandler(owners, OWNERS_DATA_RECEIVED, FOLDERS_DATA_FETCH, ...endpointParams);
 }
 
 export function addOwnerData(domainID, folderID, ownersData) {

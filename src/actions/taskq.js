@@ -1,60 +1,23 @@
 import { taskq, startTaskq, stopTaskq, taskqStatus, taskDetails } from '../api';
+import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 import { TASK_DATA_RECEIVED, TASK_STATUS_RECEIVED } from './types';
 
-export function fetchTaskqData(params) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(taskq(params));
-      await dispatch({ type: TASK_DATA_RECEIVED, data });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchTaskqData(...endpointParams) {
+  return defaultListHandler(taskq, TASK_DATA_RECEIVED, null, ...endpointParams);
 }
 
-export function fetchTaskDetails(id) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(taskDetails(id));
-      return Promise.resolve(data);
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchTaskDetails(...endpointParams) {
+  return defaultDetailsHandler(taskDetails, ...endpointParams);
 }
 
-export function fetchTaskqStatus(params) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(taskqStatus(params));
-      await dispatch({ type: TASK_STATUS_RECEIVED, data });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchTaskqStatus(...endpointParams) {
+  return defaultListHandler(taskqStatus, TASK_STATUS_RECEIVED, null, ...endpointParams);
 }
 
-export function startTaskqServer(params) {
-  return async dispatch => {
-    try {
-      await dispatch(startTaskq(params));
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function startTaskqServer(...endpointParams) {
+  return defaultPatchHandler(startTaskq, ...endpointParams);
 }
 
-export function stopTaskqServer(params) {
-  return async dispatch => {
-    try {
-      await dispatch(stopTaskq(params));
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function stopTaskqServer(...endpointParams) {
+  return defaultPatchHandler(stopTaskq, ...endpointParams);
 }

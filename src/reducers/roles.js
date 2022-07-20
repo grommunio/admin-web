@@ -73,7 +73,7 @@ function rolesReducer(state = defaultState, action) {
     case ROLE_DATA_DELETE:
       return {
         ...state,
-        Roles: state.Roles.filter(role => role.ID !== action.ID),
+        Roles: state.Roles.filter(role => role.ID !== action.id),
         count: state.count - 1,
       };
 

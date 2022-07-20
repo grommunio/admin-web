@@ -6,11 +6,11 @@ import {
   DOMAIN_DATA_FETCH,
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ADD,
-  DOMAIN_DATA_EDIT,
   DOMAIN_NEXT_SET,
   DOMAIN_DATA_DELETE,
 } from '../actions/types';
 import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy } from '../api';
+import { defaultDeleteHandler, defaultPatchHandler, defaultPostHandler } from './handlers';
 
 export function fetchDomainData(params) {
   return async dispatch => {
@@ -42,41 +42,14 @@ export function fetchDomainDetails(id) {
   };
 }
 
-export function addDomainData(domain, params) {
-  return async dispatch => {
-    try {
-      const domainData = await dispatch(addDomain(domain, params));
-      await dispatch({ type: DOMAIN_DATA_ADD, data: domainData });
-    } catch(error) {
-      await dispatch({ type: DOMAIN_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function addDomainData(...endpointParams) {
+  return defaultPostHandler(addDomain, DOMAIN_DATA_ADD, ...endpointParams);
 }
 
-export function editDomainData(domain) {
-  return async dispatch => {
-    try {
-      const domainData = await dispatch(editDomain(domain));
-      await dispatch({ type: DOMAIN_DATA_EDIT, data: domainData });
-    } catch(error) {
-      await dispatch({ type: DOMAIN_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function editDomainData(...endpointParams) {
+  return defaultPatchHandler(editDomain,  ...endpointParams);
 }
 
 export function deleteDomainData(id, params) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteDomain(id, params));
-      await dispatch({ type: DOMAIN_DATA_DELETE, id, purge: params.purge });
-    } catch(error) {
-      await dispatch({ type: DOMAIN_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultDeleteHandler(deleteDomain, DOMAIN_DATA_DELETE, {id, params});
 }

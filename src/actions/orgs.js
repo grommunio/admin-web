@@ -8,6 +8,8 @@ import {
   ORG_DATA_DELETE,
 } from '../actions/types';
 import { orgs, orgDetails, addOrg, editOrg, deleteOrg } from '../api';
+import { defaultDeleteHandler, defaultDetailsHandler,
+  defaultPatchHandler, defaultPostHandler } from './handlers';
 
 export function fetchOrgsData(params={}) {
   return async dispatch => {
@@ -22,49 +24,18 @@ export function fetchOrgsData(params={}) {
   };
 }
 
-export function fetchOrgsDetails(id) {
-  return async dispatch => {
-    try {
-      const orgData = await dispatch(orgDetails(id));
-      return Promise.resolve(orgData);
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchOrgsDetails(...endpointParams) {
+  return defaultDetailsHandler(orgDetails, ...endpointParams);
 }
 
-export function addOrgData(org) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(addOrg(org));
-      await dispatch({ type: ORG_DATA_ADD, data: resp });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function addOrgData(...endpointParams) {
+  return defaultPostHandler(addOrg,ORG_DATA_ADD, ...endpointParams);
 }
 
-export function editOrgData(org) {
-  return async dispatch => {
-    try {
-      await dispatch(editOrg(org));
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function editOrgData(...endpointParams) {
+  return defaultPatchHandler(editOrg, ...endpointParams);
 }
 
 export function deleteOrgData(id) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteOrg(id));
-      await dispatch({ type: ORG_DATA_DELETE, id });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultDeleteHandler(deleteOrg, ORG_DATA_DELETE, {id});
 }

@@ -10,6 +10,8 @@ import {
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
 import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy } from '../api';
+import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
+  defaultPostHandler } from './handlers';
 
 export function fetchServersData(params) {
   return async dispatch => {
@@ -25,65 +27,24 @@ export function fetchServersData(params) {
   };
 }
 
-export function fetchServerDetails(id) {
-  return async dispatch => {
-    try {
-      const serverData = await dispatch(serverDetails(id));
-      return Promise.resolve(serverData);
-    } catch(error) {
-      console.error(error);
-      await dispatch({ type: SERVERS_DATA_ERROR });
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchServerDetails(...endpointParams) {
+  return defaultDetailsHandler(serverDetails, ...endpointParams);
 }
 
-export function addServerData(org) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(addServer(org));
-      await dispatch({ type: SERVERS_DATA_ADD, data: resp });
-    } catch(error) {
-      console.error(error);
-      await dispatch({ type: SERVERS_DATA_ERROR });
-      return Promise.reject(error.message);
-    }
-  };
+export function addServerData(...endpointParams) {
+  return defaultPostHandler(addServer, SERVERS_DATA_ADD, ...endpointParams);
 }
 
-export function editServerData(org) {
-  return async dispatch => {
-    try {
-      await dispatch(editServer(org));
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function editServerData(...endpointParams) {
+  return defaultPatchHandler(editServer, ...endpointParams);
 }
 
 export function deleteServerData(id) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteServer(id));
-      await dispatch({ type: SERVERS_DATA_DELETE, id });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultDeleteHandler(deleteServer, SERVERS_DATA_DELETE, {id});
 }
 
 export function fetchServerPolicy() {
-  return async dispatch => {
-    try {
-      const serversData = await dispatch(serversPolicy());
-      await dispatch({ type: SERVERS_POLICY_RECEIVED, data: serversData });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultListHandler(serversPolicy, SERVERS_POLICY_RECEIVED);
 }
 
 export function patchServerPolicy(data) {
