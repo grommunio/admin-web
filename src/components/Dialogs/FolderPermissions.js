@@ -187,7 +187,7 @@ class FolderPermissions extends PureComponent {
             >
               {permissionProfiles.map((profile, idx) =>
                 <MenuItem key={idx} value={profile.value}>
-                  {profile.name}
+                  {t(profile.name)}
                 </MenuItem>
               )}
             </Select>
@@ -195,24 +195,24 @@ class FolderPermissions extends PureComponent {
           <Grid container>
             <Grid item xs={6}>
               <FormControl className={classes.form}>
-                <FormLabel>Read</FormLabel>
+                <FormLabel>{t("Read")}</FormLabel>
                 <RadioGroup defaultValue={0} value={permissions & 1} onChange={this.handlePermissions}>
                   <FormControlLabel
                     value={0x0}
                     control={<Radio size="small" className={classes.radio}/>}
-                    label="None"
+                    label={t("None")}
                   />
                   <FormControlLabel
                     value={0x1}
                     control={<Radio size="small" className={classes.radio}/>}
-                    label="Full Details"
+                    label={t("Full details")}
                   />
                 </RadioGroup>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
               <FormControl className={classes.form}>
-                <FormLabel>Write</FormLabel>
+                <FormLabel>{t("Write")}</FormLabel>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -267,7 +267,7 @@ class FolderPermissions extends PureComponent {
           <Grid container style={{ marginTop: 16 }}>
             <Grid item xs={6}>
               <FormControl className={classes.form}>
-                <FormLabel>Delete items</FormLabel>
+                <FormLabel>{t("Delete items")}</FormLabel>
                 <RadioGroup
                   value={(permissions & 0x50) || true /* This is a bit janky */}
                   defaultValue={true}
@@ -276,23 +276,23 @@ class FolderPermissions extends PureComponent {
                   <FormControlLabel
                     value={(permissions & 0x50) === 0} // Has explicit handling
                     control={<Radio size="small" className={classes.radio}/>}
-                    label="None" />
+                    label={t("None")} />
                   <FormControlLabel
                     value={0x10}
                     control={<Radio size="small" className={classes.radio}/>}
-                    label="Own"
+                    label={t("Own")}
                   />
                   <FormControlLabel
                     value={0x50}
                     control={<Radio size="small" className={classes.radio}/>}
-                    label="All"
+                    label={t("All")}
                   />
                 </RadioGroup>
               </FormControl>
             </Grid>
             <Grid item xs={6}>
               <FormControl className={classes.form}>
-                <FormLabel>Other</FormLabel>
+                <FormLabel>{t("Other")}</FormLabel>
                 <FormControlLabel
                   control={
                     <Checkbox
