@@ -9,6 +9,7 @@ import {
 } from './types';
 import { dbconf, commands, uploadFile, serviceFiles, serviceFile, deleteService, deleteFile,
   editFile, renameService } from '../api';
+import { defaultDetailsHandler, defaultPatchHandler } from './handlers';
 
 export function fetchDBConfData(params) {
   return async dispatch => {
@@ -37,50 +38,20 @@ export function uploadServiceFile(service, filename, file) {
   };
 }
 
-export function fetchServiceFiles(service) {
-  return async dispatch => {
-    try {
-      const files = await dispatch(serviceFiles(service));
-      return Promise.resolve(files);
-    } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchServiceFiles(...endpointParams) {
+  return defaultDetailsHandler(serviceFiles, ...endpointParams);
 }
 
-export function fetchServiceFile(service, filename) {
-  return async dispatch => {
-    try {
-      const fileData = await dispatch(serviceFile(service, filename));
-      return Promise.resolve(fileData);
-    } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchServiceFile(...endpointParams) {
+  return defaultDetailsHandler(serviceFile, ...endpointParams);
 }
 
-export function editServiceFile(service, filename, file) {
-  return async dispatch => {
-    try {
-      await dispatch(editFile(service, filename, file));
-    } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
-      return Promise.reject(err.message);
-    }
-  };
+export function editServiceFile(...endpointParams) {
+  return defaultPatchHandler(editFile, ...endpointParams);
 }
 
-export function renameDBService(oldName, newName) {
-  return async dispatch => {
-    try {
-      await dispatch(renameService(oldName, newName));
-    } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
-      return Promise.reject(err.message);
-    }
-  };
+export function renameDBService(...endpointParams) {
+  return defaultPatchHandler(renameService, ...endpointParams);
 }
 
 export function deleteDBService(service) {

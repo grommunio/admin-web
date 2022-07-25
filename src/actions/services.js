@@ -2,34 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  SERVICES_DATA_ERROR,
   SERVICES_DATA_FETCH,
   SERVICES_DATA_RECEIVED,
 } from '../actions/types';
 import { services, postServices } from '../api';
+import { defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchServicesData() {
-  return async dispatch => {
-    await dispatch({ type: SERVICES_DATA_FETCH });
-    try {
-      const response = await dispatch(services());
-      await dispatch({ type: SERVICES_DATA_RECEIVED, data: response });
-    } catch(error) {
-      await dispatch({ type: SERVICES_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultListHandler(services, SERVICES_DATA_RECEIVED, SERVICES_DATA_FETCH);
 }
 
-export function serviceAction(service, action) {
-  return async dispatch => {
-    try {
-      await dispatch(postServices(service, action));
-    } catch(error) {
-      await dispatch({ type: SERVICES_DATA_ERROR, error});
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function serviceAction(...endpointParams) {
+  return defaultPatchHandler(postServices, ...endpointParams);
 }

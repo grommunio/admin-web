@@ -7,17 +7,10 @@ import {
   SELECT_DRAWER_DOMAIN,
 } from '../actions/types';
 import { drawerDomains } from '../api';
+import { defaultListHandler } from './handlers';
 
 export function fetchDrawerDomains() {
-  return async dispatch => {
-    try {
-      const domains = await dispatch(drawerDomains());
-      await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-    } catch (err) {
-      console.error('Failed to fetch domains', err);
-      return Promise.reject(err.message);
-    }
-  };
+  return defaultListHandler(drawerDomains, DRAWER_DOMAINS_REVEICED);
 }
 
 export function setDrawerExpansion() {

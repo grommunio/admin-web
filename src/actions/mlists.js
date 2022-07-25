@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  MLISTS_DATA_ERROR,
   MLISTS_DATA_FETCH,
   MLISTS_DATA_RECEIVED,
   MLIST_DATA_ADD,
   MLIST_DATA_DELETE,
 } from '../actions/types';
 import { mlists, addMlist, editMlist, deleteMlist, mlistDetails } from '../api';
+import { defaultDeleteHandler, defaultDetailsHandler, defaultPatchHandler,
+  defaultPostHandler } from './handlers';
 
 export function fetchMListsData(domainID, params) {
   return async dispatch => {
@@ -17,56 +18,23 @@ export function fetchMListsData(domainID, params) {
       const response = await dispatch(mlists(domainID, params));
       await dispatch({ type: MLISTS_DATA_RECEIVED, data: response, offset: params?.offset });
     } catch(error) {
-      await dispatch({ type: MLISTS_DATA_ERROR, error});
       return Promise.reject(error.message);
     }
   };
 }
 
-export function fetchMListData(domainID, id) {
-  return async dispatch => {
-    await dispatch({ type: MLISTS_DATA_FETCH });
-    try {
-      const response = await dispatch(mlistDetails(domainID, id));
-      return Promise.resolve(response);
-    } catch(error) {
-      await dispatch({ type: MLISTS_DATA_ERROR, error});
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchMListData(...endpointParams) {
+  return defaultDetailsHandler(mlistDetails, ...endpointParams);
 }
 
-export function addMListData(domainID, mlist) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(addMlist(domainID, mlist));
-      await dispatch({ type: MLIST_DATA_ADD, data: resp });
-    } catch(error) {
-      await dispatch({ type: MLISTS_DATA_ERROR, error});
-      return Promise.reject(error.message);
-    }
-  };
+export function addMListData(...endpointParams) {
+  return defaultPostHandler(addMlist, MLIST_DATA_ADD, ...endpointParams);
 }
 
-export function editMListData(domainID, mlist) {
-  return async dispatch => {
-    try {
-      await dispatch(editMlist(domainID, mlist));
-    } catch(error) {
-      await dispatch({ type: MLISTS_DATA_ERROR, error});
-      return Promise.reject(error.message);
-    }
-  };
+export function editMListData(...endpointParams) {
+  return defaultPatchHandler(editMlist, ...endpointParams);
 }
 
 export function deleteMListData(domainID, id) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteMlist(domainID, id));
-      await dispatch({ type: MLIST_DATA_DELETE, id });
-    } catch(error) {
-      await dispatch({ type: MLISTS_DATA_ERROR, error});
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultDeleteHandler(deleteMlist, MLIST_DATA_DELETE, {domainID, id});
 }

@@ -3,28 +3,12 @@
 
 import { LOGS_DATA_FETCH, LOGS_DATA_RECEIVED } from '../actions/types';
 import { logs, log } from '../api';
+import { defaultDetailsHandler, defaultListHandler } from './handlers';
 
-export function fetchLogsData(params) {
-  return async dispatch => {
-    await dispatch({ type: LOGS_DATA_FETCH });
-    try {
-      const response = await dispatch(logs(params));
-      await dispatch({ type: LOGS_DATA_RECEIVED, data: response });
-    } catch(error) {
-      console.error(error);
-      return Promise.resolve(error.message);
-    }
-  };
+export function fetchLogsData(...endpointParams) {
+  return defaultListHandler(logs, LOGS_DATA_RECEIVED, LOGS_DATA_FETCH, ...endpointParams);
 }
 
-export function fetchLogData(filename, params) {
-  return async dispatch => {
-    try {
-      const response = await dispatch(log(filename, params));
-      return Promise.resolve(response);
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function fetchLogData(...endpointParams) {
+  return defaultDetailsHandler(log, ...endpointParams);
 }

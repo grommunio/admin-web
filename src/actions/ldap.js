@@ -2,28 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  LDAP_DATA_ERROR,
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
 } from './types';
 import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap, setAuthmgr, authmgr } from '../api';
+import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchLdapConfig() {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(ldapConfig());
-      return Promise.resolve(resp);
-    } catch (err) {
-      return Promise.reject(err.message);
-    }
-  };
+  return defaultDetailsHandler(ldapConfig);
 }
 
 export function updateLdapConfig(config, params) {
   return async dispatch => {
     try {
       const resp = await dispatch(updateLdap(config, params));
-      return Promise.resolve(resp?.message);
+      return Promise.resolve(resp?.message); // Can't use default hander here
     } catch (err) {
       return Promise.reject(err.message);
     }
@@ -31,21 +24,14 @@ export function updateLdapConfig(config, params) {
 }
 
 export function fetchAuthMgr() {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(authmgr());
-      return Promise.resolve(resp);
-    } catch (err) {
-      return Promise.reject(err.message);
-    }
-  };
+  return defaultDetailsHandler(authmgr);
 }
 
 export function updateAuthMgr(config) {
   return async dispatch => {
     try {
       const resp = await dispatch(setAuthmgr(config));
-      return Promise.resolve(resp?.message);
+      return Promise.resolve(resp?.message); // Can't use default hander here
     } catch (err) {
       return Promise.reject(err.message);
     }
@@ -62,42 +48,17 @@ export function deleteLdapConfig() {
   };
 }
 
-export function fetchLdapData(params) {
-  return async dispatch => {
-    await dispatch({ type: LDAP_DATA_FETCH });
-    try {
-      const resp = await dispatch(searchLdap(params));
-      await dispatch({ type: LDAP_DATA_RECEIVED, data: resp });
-    } catch (err) {
-      await dispatch({ type: LDAP_DATA_ERROR, error: err });
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchLdapData(...endpointParams) {
+  return defaultListHandler(searchLdap, LDAP_DATA_RECEIVED, LDAP_DATA_FETCH, ...endpointParams);
 }
 
-export function importLdapData(params) {
-  return async dispatch => {
-    try {
-      await dispatch(importUser(params));
-      //await dispatch({ type: LDAP_DATA_RECEIVED, data: resp });
-    } catch (err) {
-      await dispatch({ type: LDAP_DATA_ERROR, error: err });
-      return Promise.reject(err.message);
-    }
-  };
+export function importLdapData(...endpointParams) {
+  // Somewhat misleading, but the imported data isn't used in the list
+  return defaultPatchHandler(importUser, ...endpointParams);
 }
 
-export function syncLdapData(domainID, userID) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(sync(domainID, userID));
-      return Promise.resolve(resp);
-      //await dispatch({ type: LDAP_DATA_RECEIVED, data: resp });
-    } catch (err) {
-      await dispatch({ type: LDAP_DATA_ERROR, error: err });
-      return Promise.reject(err.message);
-    }
-  };
+export function syncLdapData(...endpointParams) {
+  return defaultDetailsHandler(sync, ...endpointParams);
 }
 
 export function syncLdapUsers(params, domainID) {

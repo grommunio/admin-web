@@ -6,7 +6,6 @@ import {
   USERS_DATA_RECEIVED,
   USERS_DATA_ERROR,
   USER_DATA_ADD,
-  USER_DATA_EDIT,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
@@ -15,11 +14,13 @@ import {
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
-  userDelegates, editUserDelegates, setPermittedUser, permittedUsers, deletePermittedUser, usersPlain,
+  userDelegates, editUserDelegates, setPermittedUser, permittedUsers, usersPlain,
   userCount, 
   storeLangs,
   userSendAs,
   editUserSendAs} from '../api';
+import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
+  defaultPostHandler } from './handlers';
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
@@ -116,187 +117,64 @@ export function fetchAllUsers(params) {
   };
 }
 
-export function fetchLdapDump(params) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(ldapDump(params));
-      return Promise.resolve(data);
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchLdapDump(...endpointParams) {
+  return defaultDetailsHandler(ldapDump, ...endpointParams);
 }
 
-export function fetchUserSync(domainID, userID) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(userSync(domainID, userID));
-      await dispatch({type: USERS_SYNC_RECEIVED, data});
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchUserSync(...endpointParams) {
+  return defaultListHandler(userSync, USERS_SYNC_RECEIVED, null, ...endpointParams);
 }
 
-export function fetchUserDelegates(domainID, userID) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(userDelegates(domainID, userID));
-      return Promise.resolve(data);
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchUserDelegates(...endpointParams) {
+  return defaultDetailsHandler(userDelegates, ...endpointParams);
 }
 
-export function fetchUserSendAs(domainID, userID) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(userSendAs(domainID, userID));
-      return Promise.resolve(data);
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchUserSendAs(...endpointParams) {
+  return defaultDetailsHandler(userSendAs, ...endpointParams);
 }
 
-export function fetchPermittedUsers(domainID, userID, params) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(permittedUsers(domainID, userID, params));
-      return Promise.resolve(data);
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function fetchPermittedUsers(...endpointParams) {
+  return defaultDetailsHandler(permittedUsers, ...endpointParams);
 }
 
-export function setUserDelegates(domainID, userID, delegates) {
-  return async dispatch => {
-    try {
-      await dispatch(editUserDelegates(domainID, userID, delegates));
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function setUserDelegates(...endpointParams) {
+  return defaultPatchHandler(editUserDelegates, ...endpointParams);
 }
 
-export function setUserSendAs(domainID, userID, delegates) {
-  return async dispatch => {
-    try {
-      await dispatch(editUserSendAs(domainID, userID, delegates));
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function setUserSendAs(...endpointParams) {
+  return defaultPatchHandler(editUserSendAs, ...endpointParams);
 }
 
-export function checkLdapUsers(params) {
-  return async dispatch => {
-    try {
-      const data = await dispatch(checkLdap(params));
-      await dispatch({ type: ORPHANED_USERS_RECEIVED, data });
-    } catch(err) {
-      return Promise.reject(err.message);
-    }
-  };
+export function checkLdapUsers(...endpointParams) {
+  return defaultListHandler(checkLdap, ORPHANED_USERS_RECEIVED, null, ...endpointParams);
 }
 
-export function addUserData(domainID, user) {
-  return async dispatch => {
-    try {
-      let resp = await dispatch(addUser(domainID, user));
-      if(resp) await dispatch({type: USER_DATA_ADD, user: resp});
-      return Promise.resolve(resp);
-    } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
-      console.error('Failed to add user', err.message);
-      return Promise.reject(err.message);
-    }
-  };
+export function addUserData(...endpointParams) {
+  return defaultPostHandler(addUser, USER_DATA_ADD, ...endpointParams);
 }
 
-export function setPermittedUserData(domainID, user, permittedUsers) {
-  return async dispatch => {
-    try {
-      await dispatch(setPermittedUser(domainID, user, permittedUsers));
-    } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to add user'});
-      console.error('Failed to add user', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function setPermittedUserData(...endpointParams) {
+  return defaultPatchHandler(setPermittedUser, ...endpointParams);
 }
 
-export function editUserData(domainID, user) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(editUser(domainID, user));
-      await dispatch({type: USER_DATA_EDIT, user: resp});
-    } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
-      console.error('Failed to edit user', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function editUserData(...endpointParams) {
+  return defaultPatchHandler(editUser, ...endpointParams);
 }
 
-export function editUserStore(domainID, userID, props) {
-  return async dispatch => {
-    try {
-      await dispatch(editStoreProps(domainID, userID, props));
-    } catch(err) {
-      console.error('Failed to edit user', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function editUserStore(...endpointParams) {
+  return defaultPatchHandler(editStoreProps, ...endpointParams);
 }
 
-export function editUserRoles(domainID, userID, roles) {
-  return async dispatch => {
-    try {
-      await dispatch(editUserRole(domainID, userID, roles));
-    } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to edit user'});
-      console.error('Failed to edit user', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function editUserRoles(...endpointParams) {
+  return defaultPatchHandler(editUserRole, ...endpointParams);
 }
 
-export function deleteUserData(domainID, id, deleteFiles) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteUser(domainID, id, deleteFiles));
-      await dispatch({type: USER_DATA_DELETE, id});
-    } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to delete user'});
-      console.error('Failed to edit user', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function deleteUserData(...endpointParams) {
+  return defaultDeleteHandler(deleteUser, USER_DATA_DELETE, ...endpointParams);
 }
 
-export function deleteUserStore(domainID, userID, props) {
-  return async dispatch => {
-    try {
-      await dispatch(deleteStoreProps(domainID, userID, props));
-    } catch(err) {
-      console.error('Failed to delete user storedata', err);
-      return Promise.reject(err.message);
-    }
-  };
-}
-
-export function deletePermittedUserData(domainID, userID, id) {
-  return async dispatch => {
-    try {
-      await dispatch(deletePermittedUser(domainID, userID, id));
-    } catch(err) {
-      console.error('Failed to delete user storedata', err);
-      return Promise.reject(err.message);
-    }
-  };
+export function deleteUserStore(...endpointParams) {
+  return defaultPatchHandler(deleteStoreProps, ...endpointParams);
 }
 
 export function deleteOrphanedUsers(params) {

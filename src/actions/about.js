@@ -5,15 +5,8 @@ import {
   ABOUT_DATA_RECEIVED,
 } from '../actions/types';
 import { about } from '../api';
+import { defaultListHandler } from './handlers';
 
 export function fetchAboutData() {
-  return async dispatch => {
-    try {
-      const data = await dispatch(about());
-      await dispatch({ type: ABOUT_DATA_RECEIVED, data });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+  return defaultListHandler(about, ABOUT_DATA_RECEIVED);
 }

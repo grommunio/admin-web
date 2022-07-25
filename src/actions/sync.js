@@ -7,6 +7,7 @@ import {
 import { grommunioSync, remoteDeleteEngage, remoteResyncEngage, remoteWipeCancel, remoteWipeEngage } from '../api';
 import { getTimeDiff } from '../utils';
 import store from '../store';
+import { defaultDetailsHandler, defaultPatchHandler } from './handlers';
 
 export function fetchSyncData(params) {
   return async dispatch => {
@@ -30,49 +31,18 @@ export function fetchSyncData(params) {
   };
 }
 
-export function engageRemoteWipe(domainID, userID, deviceID, password) {
-  return async dispatch => {
-    try {
-      await dispatch(remoteWipeEngage(domainID, userID, deviceID, password));
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function engageRemoteWipe(...endpointParams) {
+  return defaultPatchHandler(remoteWipeEngage, ...endpointParams);
 }
 
-export function cancelRemoteWipe(domainID, userID, deviceID) {
-  return async dispatch => {
-    try {
-      await dispatch(remoteWipeCancel(domainID, userID, deviceID));
-      return Promise.resolve();
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function cancelRemoteWipe(...endpointParams) {
+  return defaultPatchHandler(remoteWipeCancel, ...endpointParams);
 }
 
-export function engageResync(domainID, userID, deviceID) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(remoteResyncEngage(domainID, userID, deviceID));
-      return resp.message;
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function engageResync(...endpointParams) {
+  return defaultDetailsHandler(remoteResyncEngage, ...endpointParams);
 }
 
-export function engageRemoteDelete(domainID, userID, deviceID) {
-  return async dispatch => {
-    try {
-      const resp = await dispatch(remoteDeleteEngage(domainID, userID, deviceID));
-      return resp.message;
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
-    }
-  };
+export function engageRemoteDelete(...endpointParams) {
+  return defaultDetailsHandler(remoteDeleteEngage, ...endpointParams);
 }
