@@ -143,7 +143,7 @@ class FolderDetails extends PureComponent {
             >
               {this.types.map((type, key) => (
                 <MenuItem key={key} value={type.ID}>
-                  {type.name}
+                  {t(type.name)}
                 </MenuItem>
               ))}
             </TextField>

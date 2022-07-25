@@ -4,7 +4,7 @@ import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
 
 function PathConnection(props) {
-  const { uri, serverZones } = props;
+  const { uri, t, serverZones } = props;
 
   const toArray = obj => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
@@ -12,7 +12,7 @@ function PathConnection(props) {
 
   return (
     <React.Fragment>
-      <Typography variant="h5">Path usage of {uri.slice(5)}</Typography>
+      <Typography variant="h5">{t("Path usage of")} {uri.slice(5)}</Typography>
       <ServerZones serverZones={toArray(serverZones)} />
     </React.Fragment>
   );
@@ -20,6 +20,7 @@ function PathConnection(props) {
 
 PathConnection.propTypes = {
   uri: PropTypes.string.isRequired,
+  t: PropTypes.func.isRequired,
   serverZones: PropTypes.object.isRequired,
 };
 

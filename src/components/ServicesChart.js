@@ -173,13 +173,13 @@ class ServicesChart extends PureComponent {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  {"Service"}
+                  {t("Service")}
                 </TableCell>
                 <TableCell align="center" style={{ width: 124 }}>
-                  {"State | Autostart"}
+                  {t("State | Autostart")}
                 </TableCell>
                 <TableCell align="center" style={{ width: 132 }}>
-                  {"Actions"}
+                  {t("Actions")}
                 </TableCell>
               </TableRow>
             </TableHead>

@@ -67,7 +67,7 @@ class DeleteDomain extends PureComponent {
                 color="primary"
               />
             }
-            label="Delete permanently?"
+            label={t("Delete permanently?")}
           />
           <FormControlLabel
             control={
@@ -79,7 +79,7 @@ class DeleteDomain extends PureComponent {
                 disabled={!purge}
               />
             }
-            label="Delete files?"
+            label={t("Delete files?")}
           />
         </DialogContent>}
         <DialogActions>

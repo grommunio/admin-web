@@ -365,7 +365,7 @@ class Defaults extends PureComponent {
                     color="primary"
                   />
                 }
-                label={t('Allow Video')}
+                label={t('Allow Meet')}
               />
               <FormControlLabel
                 control={

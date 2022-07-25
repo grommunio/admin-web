@@ -554,7 +554,7 @@ class UserDetails extends PureComponent {
             </Typography>
           </Grid>
           {ldapID && <Grid container className={classes.syncButtons}>
-            <Tooltip title="Detach user from LDAP object" placement="top">
+            <Tooltip title={t("Detach user from LDAP object")} placement="top">
               <Button
                 variant="contained"
                 color="secondary"
@@ -562,10 +562,10 @@ class UserDetails extends PureComponent {
                 onClick={this.handleDetachDialog(true)}
                 size="small"
               >
-                <Detach fontSize="small" className={classes.leftIcon} /> Detach
+                <Detach fontSize="small" className={classes.leftIcon} /> {t("Detach")}
               </Button>
             </Tooltip>
-            <Tooltip title="Synchronize data from LDAP" placement="top">
+            <Tooltip title={t("Synchronize data from LDAP")} placement="top">
               <Button
                 size="small"
                 onClick={this.handleSync}
@@ -573,17 +573,17 @@ class UserDetails extends PureComponent {
                 color="primary"
                 style={{ marginRight: 8 }}
               >
-                <Sync fontSize="small" className={classes.leftIcon}/> Sync
+                <Sync fontSize="small" className={classes.leftIcon}/> {t("Sync")}
               </Button>
             </Tooltip>
-            <Tooltip title="Show raw data" placement="top">
+            <Tooltip title={t("Show raw data")} placement="top">
               <Button
                 size="small"
                 onClick={this.handleDump}
                 variant="contained"
                 color="primary"
               >
-                <Dump fontSize="small" className={classes.leftIcon}/> Dump
+                <Dump fontSize="small" className={classes.leftIcon}/> {t("LDAP Dump")}
               </Button>
             </Tooltip>
           </Grid>}

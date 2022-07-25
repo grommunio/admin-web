@@ -121,12 +121,12 @@ class TasQ extends Component {
           />
           <Chip
             className={classes.chip}
-            label={"Queued: " + taskq.queued}
+            label={t("Queued") + ": " + taskq.queued}
             color={"primary"}
           />
           <Chip
             className={classes.chip}
-            label={"Workers: " + taskq.workers}
+            label={t("Workers") + ": " + taskq.workers}
             color={"primary"}
           />
         </Grid>

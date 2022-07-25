@@ -436,7 +436,7 @@ class LdapConfig extends PureComponent {
               <div className={classes.flexRow}>
                 <LdapTextfield
                   flex
-                  label='LDAP Server'
+                  label={t('LDAP Server')}
                   autoFocus
                   placeholder="ldap://[::1]:389/"
                   onChange={this.handleInput('server')}
@@ -451,7 +451,7 @@ class LdapConfig extends PureComponent {
                 />
                 <LdapTextfield
                   flex
-                  label="LDAP Bind DN"
+                  label={t("LDAP Bind DN")}
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc={t("Distinguished Name used for binding")}
@@ -499,7 +499,7 @@ class LdapConfig extends PureComponent {
                 />
               </div>
               <LdapTextfield
-                label='LDAP Base DN'
+                label={t('LDAP Base DN')}
                 onChange={this.handleInput('baseDn')}
                 value={baseDn || ''}
                 desc={t("Base DN to use for searches")}

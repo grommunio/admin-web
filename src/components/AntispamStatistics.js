@@ -64,7 +64,7 @@ class AntispamStatistics extends PureComponent {
   }
 
   render() {
-    const {classes, data} = this.props;
+    const {classes, t, data} = this.props;
 
     return (
       <div className={classes.root}>
@@ -73,7 +73,7 @@ class AntispamStatistics extends PureComponent {
             <MailOutlineIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.scanned}</Typography>
-              <Typography className={classes.label}>Scanned Mails</Typography>
+              <Typography className={classes.label}>{t("Scanned Mails")}</Typography>
             </div>
           </Paper>
         </div>
@@ -82,7 +82,7 @@ class AntispamStatistics extends PureComponent {
             <NotInterestedIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.spamCount}</Typography>
-              <Typography className={classes.label}>Spam Count</Typography>
+              <Typography className={classes.label}>{t("Spam Count")}</Typography>
             </div>
           </Paper>
         </div>
@@ -91,7 +91,7 @@ class AntispamStatistics extends PureComponent {
             <PlaylistAddCheckIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{data.learned}</Typography>
-              <Typography className={classes.label}>Learned</Typography>
+              <Typography className={classes.label}>{t("Learned")}</Typography>
             </div>
           </Paper>
         </div>
@@ -100,7 +100,7 @@ class AntispamStatistics extends PureComponent {
             <StorageIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{this.formatBytes(data.bytesAllocated)}</Typography>
-              <Typography className={classes.label}>Bytes allocated</Typography>
+              <Typography className={classes.label}>{t("Bytes allocated")}</Typography>
             </div>
           </Paper>
         </div>
@@ -111,6 +111,7 @@ class AntispamStatistics extends PureComponent {
 
 AntispamStatistics.propTypes = {
   classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
 };
 

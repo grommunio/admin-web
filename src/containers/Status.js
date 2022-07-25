@@ -109,7 +109,7 @@ class Status extends PureComponent {
     const { connections, serverZones, filterZones } = data;
     return (
       <TableViewContainer
-        headline={t("Live Status")  + (data.hostName ? ' - ' + data.hostName : '')}
+        headline={t("Live status")  + (data.hostName ? ' - ' + data.hostName : '')}
         subtitle={t('livestatus_sub')}
         href="https://docs.grommunio.com/admin/administration.html#live-status"
         snackbar={snackbar}
@@ -143,14 +143,14 @@ class Status extends PureComponent {
           {t("Connections")}
         </Typography>
         <Typography variant="caption" className={classes.subtitle}>
-          Current active connections being processed
+          {t("Current active connections being processed")}
         </Typography>
         <Connections data={connections || {}} />
         <Typography variant="h2" className={classes.pageTitle}>
           {t("Requests")}
         </Typography>
         <Typography variant="caption" className={classes.subtitle}>
-          All processed requests by the services
+          {t("All processed requests by the services")}
         </Typography>
         <Requests data={connections || {}} />
         <div className={classes.logViewer}>
@@ -160,7 +160,7 @@ class Status extends PureComponent {
                 {t("Host details")}
               </Typography>
               <Typography variant="caption">
-                Detailed and summarized overview over all requests
+                {t("Detailed and summarized overview over all requests")}
               </Typography>
             </div>
             <ServerZones serverZones={this.toSortedArray(serverZones || {})} />

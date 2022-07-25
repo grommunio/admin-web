@@ -91,7 +91,7 @@ class SlimSyncPolicies extends PureComponent {
         />
         <div>
           <Typography gutterBottom>
-            {t('Minumim password length')}
+            {t('Minimum password length')}
           </Typography>
           <Slider
             className={classes.slider}
@@ -119,7 +119,7 @@ class SlimSyncPolicies extends PureComponent {
         />
         <div>
           <Typography gutterBottom>
-            {t('Minumim password character sets')}
+            {t('Minimum password character sets')}
           </Typography>
           <Slider
             className={classes.slider}
@@ -135,7 +135,7 @@ class SlimSyncPolicies extends PureComponent {
         </div>
         <div>
           <Typography gutterBottom>
-            {t('Number of failed attempts allowed')}
+            {t('Number of failed login attempts allowed')}
           </Typography>
           <Slider
             className={classes.slider}

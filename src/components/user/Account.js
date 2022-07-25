@@ -212,7 +212,7 @@ class Account extends PureComponent {
         >
           {this.types.map((type, key) => (
             <MenuItem key={key} value={type.ID}>
-              {type.name}
+              {t(type.name)}
             </MenuItem>
           ))}
         </TextField>
@@ -265,7 +265,7 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={('Delete quota')} placement="top">
+                    <Tooltip title={t("Delete quota")} placement="top">
                       <IconButton size="small" onClick={handleQuotaDelete('prohibitsendquota')}>
                         <Delete color="error" fontSize="small" />
                       </IconButton>
@@ -296,7 +296,7 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={('Delete quota')} placement="top">
+                    <Tooltip title={t("Delete quota")} placement="top">
                       <IconButton size="small" onClick={handleQuotaDelete('prohibitreceivequota')}>
                         <Delete color="error" fontSize="small" />
                       </IconButton>
@@ -327,7 +327,7 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={('Delete quota')} placement="top">
+                    <Tooltip title={t("Delete quota")} placement="top">
                       <IconButton size="small" onClick={handleQuotaDelete('storagequotalimit')}>
                         <Delete color="error" fontSize="small" />
                       </IconButton>
@@ -429,7 +429,7 @@ class Account extends PureComponent {
                 color="primary"
               />
             }
-            label={t('Allow Video')}
+            label={t('Allow Meet')}
           />
           <FormControlLabel
             control={

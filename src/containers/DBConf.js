@@ -130,7 +130,7 @@ class DBConf extends Component {
             <TextField
               value={match}
               onChange={this.handleMatch}
-              placeholder={t("search services")}
+              placeholder={t("Search services")}
               variant="outlined"
               className={classes.textfield}
               InputProps={{
@@ -151,8 +151,8 @@ class DBConf extends Component {
             value={tab}
             onChange={this.handleTab}
           >
-            <Tab value={0} label="Services" />
-            <Tab value={1} label="Commands" />
+            <Tab value={0} label={t("Services")} />
+            <Tab value={1} label={t("Commands")} />
           </Tabs>
         </Grid>
         {tab === 0 ? <Paper elevation={1}>

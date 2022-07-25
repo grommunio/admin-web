@@ -185,22 +185,22 @@ class Sync extends PureComponent {
                 <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
                 <TableCell>{this.getWipeStatus(obj.wipeStatus)}</TableCell>
                 <TableCell style={{ display: 'flex' }}>
-                  {obj.wipeStatus >= 2 && <Tooltip title="Cancel remote wipe" placement="top">
+                  {obj.wipeStatus >= 2 && <Tooltip title={t("Cancel remote wipe")} placement="top">
                     <IconButton onClick={this.handleRemoteWipeCancel(obj.deviceid)}>
                       <DoNotDisturbOn color="secondary"/>
                     </IconButton>
                   </Tooltip>}
-                  {obj.wipeStatus < 2 && <Tooltip title="Remote wipe" placement="top">
+                  {obj.wipeStatus < 2 && <Tooltip title={t("Remote wipe")} placement="top">
                     <IconButton onClick={this.handlePasswordDialog(obj.deviceid)}>
                       <CleaningServices color="error" />
                     </IconButton>
                   </Tooltip>}
-                  <Tooltip title="Resync" placement='top'>
+                  <Tooltip title={t("Resync")} placement='top'>
                     <IconButton onClick={this.handleResync(obj.deviceid)}>
                       <SyncIcon color="primary"/>
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete device" placement='top'>
+                  <Tooltip title={t("Delete device")} placement='top'>
                     <IconButton onClick={this.handleRemoteDelete(obj.deviceid)}>
                       <Delete color="error"/>
                     </IconButton>

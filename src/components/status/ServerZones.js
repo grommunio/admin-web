@@ -5,7 +5,7 @@ import StyledTableCell from './StyledTableCell';
 import AlternatingTableRow from '../AlternatingTableRow';
 
 function ServerZones(props) {
-  const { serverZones } = props;
+  const { serverZones, t } = props;
 
   const formatBytes = bytes => {
     let exp = Math.log(bytes) / Math.log(1024) | 0;
@@ -18,23 +18,23 @@ function ServerZones(props) {
     <Table size="small" padding="none" style={{ marginBottom: 16 }}>
       <TableHead>
         <TableRow>
-          <StyledTableCell rowSpan={2} align="center">Zone</StyledTableCell>
-          <StyledTableCell colSpan={3} align="center">Requests</StyledTableCell>
-          <StyledTableCell colSpan={6} align="center">Responses</StyledTableCell>
-          <StyledTableCell colSpan={2} align="center">Traffic</StyledTableCell>
+          <StyledTableCell rowSpan={2} align="center">{t("Zone")}</StyledTableCell>
+          <StyledTableCell colSpan={3} align="center">{t("Requests")}</StyledTableCell>
+          <StyledTableCell colSpan={6} align="center">{t("Responses")}</StyledTableCell>
+          <StyledTableCell colSpan={2} align="center">{t("Traffic")}</StyledTableCell>
         </TableRow>
         <TableRow>
-          <StyledTableCell align="center">Total</StyledTableCell>
-          <StyledTableCell align="center">Req/s</StyledTableCell>
-          <StyledTableCell align="center">Time</StyledTableCell>
+          <StyledTableCell align="center">{t("Total")}</StyledTableCell>
+          <StyledTableCell align="center">{t("Req/s")}</StyledTableCell>
+          <StyledTableCell align="center">{t("Time")}</StyledTableCell>
           <StyledTableCell align="center">1xx</StyledTableCell>
           <StyledTableCell align="center">2xx</StyledTableCell>
           <StyledTableCell align="center">3xx</StyledTableCell>
           <StyledTableCell align="center">4xx</StyledTableCell>
           <StyledTableCell align="center">5xx</StyledTableCell>
-          <StyledTableCell align="center">Total</StyledTableCell>
-          <StyledTableCell align="center">Sent</StyledTableCell>
-          <StyledTableCell align="center">Rcvd</StyledTableCell>
+          <StyledTableCell align="center">{t("Total")}</StyledTableCell>
+          <StyledTableCell align="center">{t("Sent")}</StyledTableCell>
+          <StyledTableCell align="center">{t("Rcvd")}</StyledTableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -69,6 +69,7 @@ function ServerZones(props) {
 
 ServerZones.propTypes = {
   serverZones: PropTypes.array.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 export default ServerZones;

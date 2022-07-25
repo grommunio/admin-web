@@ -136,7 +136,7 @@ class Servers extends PureComponent {
             value={servers.policy || 'round-robin'}
             onChange={this.handlePolicyChange}
             select
-            label="Selection policy"
+            label={t("Selection policy")}
             className={classes.policy}
           >
             <MenuItem value={"round-robin"}>round-robin</MenuItem>

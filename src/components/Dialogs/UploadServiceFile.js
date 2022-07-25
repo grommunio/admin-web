@@ -129,16 +129,16 @@ class UploadServiceFile extends PureComponent {
               onChange={this.handleInput('filename')}
               required
             />
-            <Typography>Data</Typography>
+            <Typography>{t("Data")}</Typography>
             {data.map((pair, idx) => <Grid container key={idx}>
               <TextField
-                label="key"
+                label={t("Key")}
                 value={pair.key}
                 onChange={this.handleDataInput('key', idx)}
                 className={classes.flexTextfield}
               />
               <TextField
-                label="value"
+                label={t("Value")}
                 value={pair.value}
                 onChange={this.handleDataInput('value', idx)}
                 className={classes.flexTextfield}
