@@ -353,7 +353,7 @@ class LdapConfig extends PureComponent {
         <div className={classes.toolbar}></div>
         <form className={classes.base} onSubmit={this.handleSave}>
           <Typography variant="h2" className={classes.pageTitle}>
-            {t("Directory")}
+            {t("LDAP Directory")}
             <Tooltip
               className={classes.tooltip}
               title={t("ldap_settingsHelp")}

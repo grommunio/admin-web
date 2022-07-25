@@ -373,7 +373,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Ldap className={classes.icon}/>
-                <ListItemText primary={t('Directory')} />
+                <ListItemText primary={t('LDAP Directory')} />
               </Grid>
             </ListItem>
             <ListItem
