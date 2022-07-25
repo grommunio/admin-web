@@ -151,7 +151,7 @@ class Logs extends PureComponent {
 
     return (
       <TableViewContainer
-        headline={t("Logs")}
+        headline={t("Logging")}
         subtitle={t("logs_sub")}
         href="https://docs.grommunio.com/admin/administration.html#logs"
         snackbar={snackbar}

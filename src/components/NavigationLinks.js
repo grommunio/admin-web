@@ -407,7 +407,7 @@ class NavigationLinks extends PureComponent {
             >
               <Grid container alignItems="center">
                 <Logs className={classes.icon}/>
-                <ListItemText primary={t('Logs')} />
+                <ListItemText primary={t('Logging')} />
               </Grid>
             </ListItem>
             <ListItem
