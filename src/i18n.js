@@ -11,6 +11,7 @@ import en from './i18n/en-US.json';
 import es from './i18n/es-ES.json';
 import fi from './i18n/fi-FI.json';
 import fr from './i18n/fr-FR.json';
+import gr from './i18n/el-GR.json';
 import hu from './i18n/hu-HU.json';
 import it from './i18n/it-IT.json';
 import ja from './i18n/ja-JP.json';
@@ -38,6 +39,9 @@ const resources = {
   },
   "de-DE": {
     translation: de,
+  },
+  "el-GR": {
+    translation: gr,
   },
   "en-US": {
     translation: en,

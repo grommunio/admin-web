@@ -304,7 +304,7 @@ export function getLangs() {
     { key: 'fr-FR', value: 'fr_FR: Français' },
     { key: 'hu-HU', value: 'hu_HU: Magyar' },
     { key: 'it-IT', value: 'it_IT: Italiano' },
-    { key: 'ja-JA', value: 'ja_JP: 日本語' },
+    { key: 'ja-JP', value: 'ja_JP: 日本語' },
     { key: 'nb-NO', value: 'nb_NO: Norsk (bokmål)'},
     { key: 'nl-NL', value: 'nl_NL: Nederlands' },
     { key: 'pl-PL', value: 'pl_PL: Polski' },
