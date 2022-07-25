@@ -2,10 +2,9 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React from 'react';
-import { Portal, Snackbar } from '@mui/material';
+import { Portal, Snackbar, Alert } from '@mui/material';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import Alert from '@mui/lab/Alert';
 import PANIK from '../res/panik.png';
 import { config } from '../config';
 
