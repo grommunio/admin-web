@@ -128,17 +128,17 @@ class License extends PureComponent {
                 {t('Upload')}
               </Button>
             </Grid>
-            <Typography variant="body2">{t("Don't have a license?")}</Typography>
-            <Button
-              className={classes.buyNow}
-              variant="contained"
-              color="primary"
-              href="https://grommunio.com/product/"
-              target="_blank"
-              size="small"
-            >
-              {t('Buy now')}
-            </Button>
+            {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
+              <Button
+                className={classes.buyNow}
+                variant="contained"
+                color="primary"
+                href="https://grommunio.com/product/"
+                target="_blank"
+                size="small"
+              >
+                {t('Buy now')}
+              </Button></>}
           </Grid>
           <Grid container direction="column" className={classes.licenseContainer}>
             <Typography className={classes.data}>
