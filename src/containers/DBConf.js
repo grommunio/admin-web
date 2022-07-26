@@ -184,19 +184,19 @@ class DBConf extends Component {
             <pre className={classes.pre} key={idx}>
               <code key={idx}>{key}</code>
             </pre>
-          ) : <Typography><i>{t(none)}</i></Typography>}
+          ) : <Typography><i>{t("none")}</i></Typography>}
           <Typography className={classes.title} variant="h6">{t("File")}</Typography>
           {commands.file.length > 0 ? commands.file.map((key, idx) =>
             <pre className={classes.pre} key={idx}>
               <code>{key}</code>
             </pre>
-          ) : <Typography><i>{t(none)}</i></Typography>}
+          ) : <Typography><i>{t("none")}</i></Typography>}
           <Typography className={classes.title} variant="h6">{t("Service")}</Typography>
           {commands.service.length > 0 ? commands.service.map((key, idx) =>
             <pre className={classes.pre} key={idx}>
               <code>{key}</code>
             </pre>
-          ) : <Typography><i>{t(none)}</i></Typography>}
+          ) : <Typography><i>{t("none")}</i></Typography>}
         </Paper>}
         <GeneralDelete
           open={!!deleting}
