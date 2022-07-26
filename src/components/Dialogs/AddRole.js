@@ -160,6 +160,19 @@ class AddRole extends PureComponent {
     this.setState({ permissions: copy });
   }
 
+  checkProperPermissions = () => {
+    const { permissions } = this.state;
+    const every = permissions.every(p => {
+      if(!p.permission) return false;
+      if(["SystemAdmin", "SystemAdminRO", "DomainPurge"].includes(p.permission)) {
+        return true;
+      }
+      if(!p.params) return false;
+      return true;
+    });
+    return every;
+  }
+
   render() {
     const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = this.props;
     const { name, permissions, description, loading, users, autocompleteInput } = this.state;
@@ -275,7 +288,11 @@ class AddRole extends PureComponent {
             onClick={this.handleAdd}
             variant="contained"
             color="primary"
-            disabled={!name || loading || permissions.length === 0 || !permissions[0].permission}
+            disabled={!name
+              || loading
+              || permissions.length === 0
+              || !this.checkProperPermissions()
+            }
           >
             {loading ? <CircularProgress size={24}/> : 'Add'}
           </Button>

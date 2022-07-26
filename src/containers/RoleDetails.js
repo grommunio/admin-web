@@ -73,10 +73,10 @@ class RoleDetails extends PureComponent {
     const { fetch, fetchUser, fetchDomains, fetchPermissions, fetchOrgs } = this.props;
     await fetchDomains().catch(err => this.setState({ snackbar: err }));
     await fetchOrgs().catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    await fetchPermissions().catch(err => this.setState({ snackbar: err }));
+    await fetchUser().catch(err => this.setState({ snackbar: err }));
     const role = await fetch(getStringAfterLastSlash());
     this.setState({ role });
-    fetchUser().catch(err => this.setState({ snackbar: err }));
-    fetchPermissions().catch(err => this.setState({ snackbar: err }));
   }
 
   handleRoleInput = field => event => {
@@ -182,6 +182,19 @@ class RoleDetails extends PureComponent {
         permissions: copy,
       },
     });
+  }
+
+  checkProperPermissions = () => {
+    const { permissions } = this.state.role;
+    const every = permissions.every(p => {
+      if(!p.permission) return false;
+      if(["SystemAdmin", "SystemAdminRO", "DomainPurge"].includes(p.permission)) {
+        return true;
+      }
+      if(!p.params) return false;
+      return true;
+    });
+    return every;
   }
 
   render() {
@@ -307,7 +320,10 @@ class RoleDetails extends PureComponent {
             variant="contained"
             color="primary"
             onClick={this.handleEdit}
-            disabled={!writable}
+            disabled={!writable
+              || !name
+              || permissions.length === 0
+              || !this.checkProperPermissions()}
           >
             {t('Save')}
           </Button>
