@@ -27,6 +27,7 @@
           "unix"
       ],
       "quotes": "off",
-      "semi": "off"
+      "semi": "off",
+      "no-unused-vars": "warn"
   }
 }

@@ -2,12 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
 } from '../actions/types';
 import { dashboard } from '../api';
 import { defaultListHandler } from './handlers';
 
 export function fetchDashboardData() {
-  return defaultListHandler(dashboard, DASHBOARD_DATA_RECEIVED, DASHBOARD_DATA_FETCH);
+  return defaultListHandler(dashboard, DASHBOARD_DATA_RECEIVED);
 }

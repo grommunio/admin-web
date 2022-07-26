@@ -3,100 +3,108 @@
 
 import {
   DASHBOARD_DATA_ERROR,
-  DASHBOARD_DATA_FETCH,
   DASHBOARD_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
 const defaultState = {
+  timer: -1,
   loading: false,
   error: null,
   Dashboard: {
-    disks: [],
-    load: [],
-    cpuPercent: [],
-    memory: [],
-    swap: [],
+    cpuPercent: {
+      idle: [],
+      interrupt: [],
+      io: [],
+      steal: [],
+      system: [],
+      user: [],
+    },
+    cpuPie: {
+      labels: [],
+      values: [],
+    },
+    memory: {
+      used: [],
+      free: [],
+      buffer: [],
+      cache: [],
+      percent: [],
+      total: [],
+      available: [],
+    },
+    memoryPie: {
+      labels: [],
+      values: [],
+    },
     booted: '',
-    swapPercent: 0,
   },
+  disks: [],
+  load: [],
 };
 
-function addUsageData(arr, item) {
-  const copy = [...arr];
-  copy.push(item);
-  if(copy.length > 20) copy.shift(); 
-  return copy;
+function addUsageData(currentState, values) {
+  const state = {...currentState};
+  Object.keys(values).forEach(key => {
+    const usage = state[key];
+    usage.push(values[key]);
+    if(usage.length > 20) usage.shift(); 
+  });
+  return state;
 }
 
-function formatSwap(obj) {
+function getMemoryPieValues(data) {
   return [
-    { name: 'used', value: obj.used, color: 'gradientGreen' },
-    { name: 'free', value: obj.free, color: 'gradientBlue' },
-    //{ name: 'total', value: obj.total },
-  ];
-}
-
-function formatDisks(arr) {
-  const formattedArr = [];
-  for(let i = 0; i < arr.length; i++) {
-    formattedArr.push({
-      ...arr[i],
-      label: `${(arr[i].used / 1000000000).toFixed(1)}/${(arr[i].total / 1000000000).toFixed(1)}GB`,
-    });
-  }
-  return formattedArr;
-}
-
-function formatLoad(arr) {
-  return [
-    { time: '1 Min', value: arr[0] },
-    { time: '5 Mins', value: arr[1] },
-    { time: '15 Mins', value: arr[2] },
+    data.free,
+    data.used,
+    data.buffer,
+    data.cache,
   ];
 }
 
 function dashboardReducer(state = defaultState, action) {
+  const timer = state.timer;
   switch (action.type) {
-    case DASHBOARD_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
 
-    case DASHBOARD_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Dashboard: {
-          ...action.data,
-          cpuPercent: addUsageData(state.Dashboard.cpuPercent, action.data.cpuPercent),
-          memory: addUsageData(state.Dashboard.memory, action.data.memory),
-          swap: formatSwap(action.data.swap),
-          disks: formatDisks(action.data.disks),
-          swapPercent: action.data.swap.percent,
-          load: formatLoad(action.data.load),
+  case DASHBOARD_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Dashboard: {
+        cpuPercent: addUsageData(state.Dashboard.cpuPercent, action.data.cpuPercent),
+        cpuPie: {
+          labels: Object.keys(action.data.cpuPercent),
+          values: Object.values(action.data.cpuPercent),
         },
-      };
-    
-    case DASHBOARD_DATA_ERROR: {
-      return {
-        ...state,
-        error: action.error,
-        loading: false,
-      };
-    }
+        memory: addUsageData(state.Dashboard.memory, action.data.memory),
+        memoryPie: {
+          labels: ["Free", "Used", "Buffer", "Cache"],
+          values: getMemoryPieValues(action.data.memory),
+        },
+      },
+      disks:  action.data.disks || [],
+      load: action.data.load || [],
+      timer: (timer + 1) % 10,
+    };
+  
+  case DASHBOARD_DATA_ERROR: {
+    return {
+      ...state,
+      error: action.error,
+      loading: false,
+    };
+  }
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 
