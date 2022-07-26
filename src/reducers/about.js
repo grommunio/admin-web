@@ -13,20 +13,20 @@ const defaultState = {
 
 function aboutReducer(state = defaultState, action) {
   switch (action.type) {
-    case ABOUT_DATA_RECEIVED:
-      return {
-        ...action.data,
-      };
+  case ABOUT_DATA_RECEIVED:
+    return {
+      ...action.data,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

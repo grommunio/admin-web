@@ -286,7 +286,7 @@ class Sync extends PureComponent {
                       <TableCell className={classes.cell} padding="checkbox">{obj.pid || ''}</TableCell>
                       <TableCell className={classes.cell} padding="checkbox">{obj.ip || ''}</TableCell>
                       <TableCell className={classes.cell}>{obj.user || ''}</TableCell>
-                      <TableCell className={classes.cell}>{getStringFromCommand(obj.command)}</TableCell>
+                      <TableCell className={classes.cell}>{t(getStringFromCommand(obj.command))}</TableCell>
                       <TableCell className={classes.cell}>{timePast}</TableCell>
                       <TableCell className={classes.cell}>{obj.devid || ''}</TableCell>
                       <TableCell className={classes.cell}>{obj.addinfo || ''}</TableCell>

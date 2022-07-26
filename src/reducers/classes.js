@@ -24,65 +24,65 @@ const defaultState = {
 
 function classesReducer(state = defaultState, action) {
   switch (action.type) {
-    case CLASSES_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case CLASSES_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case CLASSES_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Classes: action.offset ? append(state.Classes, action.data.data) : action.data.data,
-        count: action.data.count,
-      };
+  case CLASSES_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Classes: action.offset ? append(state.Classes, action.data.data) : action.data.data,
+      count: action.data.count,
+    };
 
-    case CLASSES_TREE_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Trees: action.data.data,
-      };
+  case CLASSES_TREE_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Trees: action.data.data,
+    };
 
-    case CLASSES_SELECT_RECEIVED:
-      return {
-        ...state,
-        Select: action.data.data,
-      };
+  case CLASSES_SELECT_RECEIVED:
+    return {
+      ...state,
+      Select: action.data.data,
+    };
   
-    case CLASSES_DATA_ERROR: {
-      return {
-        ...state,
-        error: action.error,
-        loading: false,
-      };
-    }
+  case CLASSES_DATA_ERROR: {
+    return {
+      ...state,
+      error: action.error,
+      loading: false,
+    };
+  }
 
-    case CLASSES_DATA_DELETE:
-      return {
-        ...state,
-        Classes: state.Classes.filter(c => c.ID !== action.id),
-        count: state.count - 1,
-      };
+  case CLASSES_DATA_DELETE:
+    return {
+      ...state,
+      Classes: state.Classes.filter(c => c.ID !== action.id),
+      count: state.count - 1,
+    };
 
-    case CLASSES_DATA_ADD:
-      return {
-        ...state,
-        Classes: addItem(state.Classes, action.data),
-      };
+  case CLASSES_DATA_ADD:
+    return {
+      ...state,
+      Classes: addItem(state.Classes, action.data),
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

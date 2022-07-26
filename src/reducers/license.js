@@ -13,21 +13,21 @@ const defaultState = {
 
 function licenseReducer(state = defaultState, action) {
   switch (action.type) {
-    case LICENSE_DATA_RECEIVED:
-      return {
-        ...state,
-        License: action.data,
-      };
+  case LICENSE_DATA_RECEIVED:
+    return {
+      ...state,
+      License: action.data,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

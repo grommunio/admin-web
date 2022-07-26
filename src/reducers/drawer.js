@@ -30,52 +30,52 @@ function editDomain(arr, item) {
 
 function drawerReducer(state = defaultState, action) {
   switch (action.type) {
-    case DRAWER_EXPAND:
-      return {
-        ...state,
-        expanded: !state.expanded,
-      };
+  case DRAWER_EXPAND:
+    return {
+      ...state,
+      expanded: !state.expanded,
+    };
 
-    case DRAWER_DOMAINS_REVEICED:
-      return {
-        ...state,
-        Domains: action.data.data,
-        loading: false,
-      };
+  case DRAWER_DOMAINS_REVEICED:
+    return {
+      ...state,
+      Domains: action.data.data,
+      loading: false,
+    };
 
-    case DOMAIN_DATA_ADD:
-      return {
-        ...state,
-        Domains: addItem(state.Domains, action.data),
-      };
+  case DOMAIN_DATA_ADD:
+    return {
+      ...state,
+      Domains: addItem(state.Domains, action.data),
+    };
 
-    case DOMAIN_DATA_EDIT:
-      return {
-        ...state,
-        Domains: editDomain(state.Domains, action.data),
-      };
+  case DOMAIN_DATA_EDIT:
+    return {
+      ...state,
+      Domains: editDomain(state.Domains, action.data),
+    };
 
-    case DOMAIN_DATA_DELETE:
-      return {
-        ...state,
-        Domains: state.Domains.filter(d => d.ID !== action.id),
-      };
+  case DOMAIN_DATA_DELETE:
+    return {
+      ...state,
+      Domains: state.Domains.filter(d => d.ID !== action.id),
+    };
 
-    case SELECT_DRAWER_DOMAIN:
-      return {
-        ...state,
-        selectedDomain: action.id,
-      };
+  case SELECT_DRAWER_DOMAIN:
+    return {
+      ...state,
+      selectedDomain: action.id,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

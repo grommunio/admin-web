@@ -141,20 +141,20 @@ class ServicesChart extends PureComponent {
       deactivatingChip,
     } = this.props.classes;
     switch (state) {
-      case "active":
-        return activeChip;
-      case "error":
-        return errorChip;
-      case "inactive":
-        return inactiveChip;
-      case "failedChip":
-        return failedChip;
-      case "activatingChip":
-        return activatingChip;
-      case "deactivating":
-        return deactivatingChip;
-      default:
-        return inactiveChip;
+    case "active":
+      return activeChip;
+    case "error":
+      return errorChip;
+    case "inactive":
+      return inactiveChip;
+    case "failedChip":
+      return failedChip;
+    case "activatingChip":
+      return activatingChip;
+    case "deactivating":
+      return deactivatingChip;
+    default:
+      return inactiveChip;
     }
   }
 

@@ -22,42 +22,42 @@ const defaultState = {
 
 function dbconfReducer(state = defaultState, action) {
   switch (action.type) {
-    case DBCONF_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case DBCONF_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case DBCONF_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        services: action.services,
-        commands: action.commands,
-      };
+  case DBCONF_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      services: action.services,
+      commands: action.commands,
+    };
 
       
-    case DBCONF_SERVICE_DELETE:
-      return {
-        ...state,
-        services: state.services.filter(s => s !== action.service),
-      };
+  case DBCONF_SERVICE_DELETE:
+    return {
+      ...state,
+      services: state.services.filter(s => s !== action.service),
+    };
 
-    case DBCONF_SERVICE_ADD:
-      return {
-        ...state,
-        services: addItem(state.services, action.service),
-      };
+  case DBCONF_SERVICE_ADD:
+    return {
+      ...state,
+      services: addItem(state.services, action.service),
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

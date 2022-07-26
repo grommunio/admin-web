@@ -47,82 +47,82 @@ function deleteUser(arr, id) {
 
 function usersReducer(state=defaultState, action) {
   switch(action.type) {
-    case USERS_DATA_RECEIVED: 
-      return {
-        ...state,
-        loading: false,
-        Users: action.data.data,
-        count: action.data.count,
-      };
-    
-    case USERS_NEXT_SET:
-      return {
-        ...state,
-        loading: false,
-        Users: append(state.Users, action.data.data),
-        count: action.data.count,
-      };
+  case USERS_DATA_RECEIVED: 
+    return {
+      ...state,
+      loading: false,
+      Users: action.data.data,
+      count: action.data.count,
+    };
+  
+  case USERS_NEXT_SET:
+    return {
+      ...state,
+      loading: false,
+      Users: append(state.Users, action.data.data),
+      count: action.data.count,
+    };
 
-    case USERS_DATA_FETCH:
-      return {
-        ...state,
-        ready: false,
-        loading: true,
-      };
+  case USERS_DATA_FETCH:
+    return {
+      ...state,
+      ready: false,
+      loading: true,
+    };
 
-    case USERS_DATA_ERROR:
-      return {
-        ...state,
-        ready: false,
-        loading: false,
-        error: action.error,
-      };
+  case USERS_DATA_ERROR:
+    return {
+      ...state,
+      ready: false,
+      loading: false,
+      error: action.error,
+    };
 
-    case USER_DATA_ADD:
-      return {
-        ...state,
-        Users: addUser(state.Users, action.user),
-      };
+  case USER_DATA_ADD:
+    return {
+      ...state,
+      Users: addUser(state.Users, action.user),
+    };
 
-    case USER_DATA_EDIT:
-      return {
-        ...state,
-        Users: editUser(state.Users, action.user),
-      };
+  case USER_DATA_EDIT:
+    return {
+      ...state,
+      Users: editUser(state.Users, action.user),
+    };
 
-    case USER_DATA_DELETE:
-      return {
-        ...state,
-        Users: deleteUser(state.Users, action.id),
-        count: state.count - 1,
-      };
+  case USER_DATA_DELETE:
+    return {
+      ...state,
+      Users: deleteUser(state.Users, action.id),
+      count: state.count - 1,
+    };
 
-    case ORPHANED_USERS_RECEIVED:
-      return {
-        ...state,
-        Orphaned: action.data.orphaned,
-      };
+  case ORPHANED_USERS_RECEIVED:
+    return {
+      ...state,
+      Orphaned: action.data.orphaned,
+    };
 
-    case ORPHANS_DELETED:
-      return {
-        ...state,
-        Orphaned: [],
-      };
+  case ORPHANS_DELETED:
+    return {
+      ...state,
+      Orphaned: [],
+    };
 
-    case USERS_SYNC_RECEIVED:
-      return {
-        ...state,
-        Sync: action.data.data,
-      };
+  case USERS_SYNC_RECEIVED:
+    return {
+      ...state,
+      Sync: action.data.data,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default: return state;
+  default: return state;
 
   }
 }

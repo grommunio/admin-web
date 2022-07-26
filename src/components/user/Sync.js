@@ -89,12 +89,12 @@ class Sync extends PureComponent {
 
   getWipeStatus(status) {
     switch(status) {
-      case 0: return 'Unknown';
-      case 1: return 'OK';
-      case 2: return 'Pending';
-      case 4: return 'Requested';
-      case 8: return 'Wiped';
-      default: return 'Unknown';
+    case 0: return 'Unknown';
+    case 1: return 'OK';
+    case 2: return 'Pending';
+    case 4: return 'Requested';
+    case 8: return 'Wiped';
+    default: return 'Unknown';
     }
   }
 

@@ -12,23 +12,22 @@ const defaultState = {
 
 function statusReducer(state = defaultState, action) {
   switch (action.type) {
+  case VHOST_DATA_RECEIVED:
+    return {
+      ...state,
+      vhosts: action.data.data,
+    };
 
-    case VHOST_DATA_RECEIVED:
-      return {
-        ...state,
-        vhosts: action.data.data,
-      };
-  
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

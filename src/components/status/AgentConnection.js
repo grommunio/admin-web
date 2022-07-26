@@ -16,14 +16,14 @@ function AgentConnection(props) {
 
   const getIcon = server => {
     switch(server) {
-      case 'windows': return <img src={windowsLogo} width="16" height="16" alt=""/>;
-      case 'ios': return <img src={macos} width="16" height="16" alt=""/>;
-      case 'thunderbird': return <img src={thunderbird} width="16" height="16" alt=""/>;
-      case 'linux': return <img src={linux} width="16" height="16" alt=""/>;
-      case 'bsd': return <img src={bsd} width="16" height="16" alt=""/>;
-      case 'android': return <img src={android} width="16" height="16" alt=""/>;
-      case 'unknown': return <HelpOutline fontSize="small"/>;
-      default: return null;
+    case 'windows': return <img src={windowsLogo} width="16" height="16" alt=""/>;
+    case 'ios': return <img src={macos} width="16" height="16" alt=""/>;
+    case 'thunderbird': return <img src={thunderbird} width="16" height="16" alt=""/>;
+    case 'linux': return <img src={linux} width="16" height="16" alt=""/>;
+    case 'bsd': return <img src={bsd} width="16" height="16" alt=""/>;
+    case 'android': return <img src={android} width="16" height="16" alt=""/>;
+    case 'unknown': return <HelpOutline fontSize="small"/>;
+    default: return null;
     }
   };
 

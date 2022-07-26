@@ -16,37 +16,37 @@ const defaultState = {
 
 function membersReducer(state = defaultState, action) {
   switch (action.type) {
-    case MEMBERS_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case MEMBERS_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case MEMBERS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Members: action.data.data,
-      };
+  case MEMBERS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Members: action.data.data,
+    };
     
-    case MEMBERS_DATA_ERROR: {
-      return {
-        ...state,
-        loading: false,
-        error: action.error,
-      };
-    }
+  case MEMBERS_DATA_ERROR: {
+    return {
+      ...state,
+      loading: false,
+      error: action.error,
+    };
+  }
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

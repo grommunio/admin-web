@@ -11,14 +11,14 @@ const defaultState = {
 
 function settingsReducer(state = defaultState, action) {
   switch(action.type) {
-    case CHANGE_SETTINGS:
-      return {
-        ...state,
-        [action.field]: action.value,
-      };
+  case CHANGE_SETTINGS:
+    return {
+      ...state,
+      [action.field]: action.value,
+    };
 
-    default:
-      break;
+  default:
+    break;
   }
   return state;
 }

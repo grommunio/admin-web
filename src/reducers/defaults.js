@@ -18,29 +18,29 @@ const defaultState = {
 
 function defaultsReducer(state = defaultState, action) {
   switch (action.type) {
-    case CREATE_PARAMS_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case CREATE_PARAMS_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case CREATE_PARAMS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        CreateParams: action.data.data,
-      };
+  case CREATE_PARAMS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      CreateParams: action.data.data,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

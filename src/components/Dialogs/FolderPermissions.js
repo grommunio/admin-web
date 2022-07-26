@@ -90,17 +90,17 @@ class FolderPermissions extends PureComponent {
     let mask = this.state.permissions;
     const intValue = parseInt(value);
     switch (intValue) {
-      case 0x10: {
-        mask = mask & ~(0x50) ^ intValue; // Set delete own right bit
-        break;
-      }
-      case 0x50: {
-        mask = (mask | 0x50); // Set own and any delete right bits
-        break;
-      }
-      default:
-        mask &= ~(0x50); // Remove own and any delete right bits
-        break;
+    case 0x10: {
+      mask = mask & ~(0x50) ^ intValue; // Set delete own right bit
+      break;
+    }
+    case 0x50: {
+      mask = (mask | 0x50); // Set own and any delete right bits
+      break;
+    }
+    default:
+      mask &= ~(0x50); // Remove own and any delete right bits
+      break;
     }
     this.setState({ permissions: mask });
   }

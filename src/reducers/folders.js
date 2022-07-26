@@ -26,79 +26,79 @@ const defaultState = {
 
 function foldersReducer(state = defaultState, action) {
   switch (action.type) {
-    case FOLDERS_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case FOLDERS_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case FOLDERS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Folders: action.data.data,
-        moreDataAvailable: action.data.data.length == defaultFetchLimit,
-      };
+  case FOLDERS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Folders: action.data.data,
+      moreDataAvailable: action.data.data.length == defaultFetchLimit,
+    };
     
-    case FOLDERS_NEXT_SET:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Folders: append(state.Folders, action.data.data),
-        moreDataAvailable: action.data.data.length == defaultFetchLimit,
-      };
+  case FOLDERS_NEXT_SET:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Folders: append(state.Folders, action.data.data),
+      moreDataAvailable: action.data.data.length == defaultFetchLimit,
+    };
     
-    case FOLDERS_DATA_ERROR: {
-      return {
-        ...state,
-        error: action.error,
-        loading: false,
-      };
-    }
+  case FOLDERS_DATA_ERROR: {
+    return {
+      ...state,
+      error: action.error,
+      loading: false,
+    };
+  }
 
-    case FOLDER_DATA_ADD:
-      return {
-        ...state,
-        Folders: addItem(state.Folders, action.data),
-      };
+  case FOLDER_DATA_ADD:
+    return {
+      ...state,
+      Folders: addItem(state.Folders, action.data),
+    };
 
-    case FOLDER_DATA_DELETE:
-      return {
-        ...state,
-        Folders: state.Folders.filter(folder => folder.folderid !== action.id),
-      };
+  case FOLDER_DATA_DELETE:
+    return {
+      ...state,
+      Folders: state.Folders.filter(folder => folder.folderid !== action.id),
+    };
 
-    case OWNERS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Owners: action.data.data,
-      };
+  case OWNERS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Owners: action.data.data,
+    };
 
-    case OWNER_DATA_ADD:
-      return {
-        ...state,
-        Owners: addItem(state.Owners, action.data),
-      };
+  case OWNER_DATA_ADD:
+    return {
+      ...state,
+      Owners: addItem(state.Owners, action.data),
+    };
 
-    case OWNER_DATA_DELETE:
-      return {
-        ...state,
-        Owners: state.Owners.filter(owner => owner.memberID !== action.id),
-      };
+  case OWNER_DATA_DELETE:
+    return {
+      ...state,
+      Owners: state.Owners.filter(owner => owner.memberID !== action.id),
+    };
     
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

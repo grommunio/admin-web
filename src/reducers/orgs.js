@@ -20,51 +20,51 @@ const defaultState = {
 
 function orgsReducer(state = defaultState, action) {
   switch (action.type) {
-    case ORGS_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case ORGS_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case ORGS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Orgs: action.offset ? append(state.Orgs, action.data.data) : action.data.data,
-        count: action.data.count,
-      };
+  case ORGS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Orgs: action.offset ? append(state.Orgs, action.data.data) : action.data.data,
+      count: action.data.count,
+    };
     
-    case ORGS_DATA_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.error,
-      };
+  case ORGS_DATA_ERROR:
+    return {
+      ...state,
+      loading: false,
+      error: action.error,
+    };
 
-    case ORG_DATA_ADD:
-      return {
-        ...state,
-        Orgs: addItem(state.Orgs, action.data),
-        count: state.count + 1,
-      };
+  case ORG_DATA_ADD:
+    return {
+      ...state,
+      Orgs: addItem(state.Orgs, action.data),
+      count: state.count + 1,
+    };
 
-    case ORG_DATA_DELETE:
-      return {
-        ...state,
-        Orgs: state.Orgs.filter(o => o.ID !== action.id),
-        count: state.count - 1,
-      };
+  case ORG_DATA_DELETE:
+    return {
+      ...state,
+      Orgs: state.Orgs.filter(o => o.ID !== action.id),
+      count: state.count - 1,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

@@ -14,18 +14,17 @@ const defaultState = {
 
 function domainsReducer(state = defaultState, action) {
   switch (action.type) {
+  case SYNC_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Sync: action.data,
+    };
 
-    case SYNC_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Sync: action.data,
-      };
 
-
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

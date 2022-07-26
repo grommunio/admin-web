@@ -82,13 +82,13 @@ class TasQ extends Component {
 
   getTaskState(state) {
     switch(state) {
-      case 0: return "Queued";
-      case 1: return "Loaded";
-      case 2: return "Running";
-      case 3: return "Completed";
-      case 4: return "Error";
-      case 5: return "Cancelled";
-      default: return "Unknown";
+    case 0: return "Queued";
+    case 1: return "Loaded";
+    case 2: return "Running";
+    case 3: return "Completed";
+    case 4: return "Error";
+    case 5: return "Cancelled";
+    default: return "Unknown";
     }
   }
 

@@ -47,18 +47,6 @@ class DeleteFolder extends PureComponent {
 
   handleCheckbox = e => this.setState({ clear: e.target.checked })
 
-  getStateFromId(id) {
-    switch(id) {
-      case 0: return 'Queued';
-      case 1: return 'Loaded';
-      case 2: return 'Running';
-      case 3: return 'Completed';
-      case 4: return 'Error';
-      case 5: return 'Cancelled';
-      default: return 'Unknown';
-    }
-  }
-
   handleViewTask = () => {
     this.props.history.push('/taskq/' + this.state.taskID);
   }

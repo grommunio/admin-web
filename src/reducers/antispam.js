@@ -20,41 +20,41 @@ const defaultState = {
 
 function antispamReducer(state = defaultState, action) {
   switch (action.type) {
-    case ANTISPAM_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case ANTISPAM_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case ANTISPAM_DATA_RECEIVED:
-      return {
-        ...state,
-        statistics: {
-          scanned: action.data.scanned,
-          learned: action.data.learned,
-          spamCount: action.data.spam_count,
-          hamCount: action.data.ham_count,
-          bytesAllocated: action.data.bytes_allocated,
-        },
-      };
+  case ANTISPAM_DATA_RECEIVED:
+    return {
+      ...state,
+      statistics: {
+        scanned: action.data.scanned,
+        learned: action.data.learned,
+        spamCount: action.data.spam_count,
+        hamCount: action.data.ham_count,
+        bytesAllocated: action.data.bytes_allocated,
+      },
+    };
     
-    case ANTISPAM_DATA_ERROR: {
-      return {
-        ...state,
-        error: action.error,
-        loading: false,
-      };
-    }
+  case ANTISPAM_DATA_ERROR: {
+    return {
+      ...state,
+      error: action.error,
+      loading: false,
+    };
+  }
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

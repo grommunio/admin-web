@@ -18,25 +18,24 @@ const defaultState = {
 
 function taskqReducer(state = defaultState, action) {
   switch (action.type) {
+  case TASK_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Tasks: action.data.data,
+      count: action.data.count,
+    };
 
-    case TASK_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Tasks: action.data.data,
-        count: action.data.count,
-      };
-
-    case TASK_STATUS_RECEIVED:
-      return {
-        ...state,
-        ...action.data,
-      };
+  case TASK_STATUS_RECEIVED:
+    return {
+      ...state,
+      ...action.data,
+    };
 
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

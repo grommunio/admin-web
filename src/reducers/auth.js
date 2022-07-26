@@ -17,32 +17,32 @@ const defaultState = {
 
 function authReducer(state = defaultState, action) {
   switch (action.type) {
-    case AUTH_AUTHENTICATING:
-      return {
-        ...state,
-        authenticating: action.authenticating,
-        error: false,
-      };
+  case AUTH_AUTHENTICATING:
+    return {
+      ...state,
+      authenticating: action.authenticating,
+      error: false,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return {
-        ...state,
-        authenticated: action.authenticated,
-        capabilities: action.capabilities || [],
-        error: false,
-        csrf: action.authenticated ? action.csrf : '',
-      };
+  case AUTH_AUTHENTICATED:
+    return {
+      ...state,
+      authenticated: action.authenticated,
+      capabilities: action.capabilities || [],
+      error: false,
+      csrf: action.authenticated ? action.csrf : '',
+    };
     
-    case AUTH_ERROR: {
-      return {
-        ...state,
-        authenticated: false,
-        error: action.error || true,
-      };
-    }
+  case AUTH_ERROR: {
+    return {
+      ...state,
+      authenticated: false,
+      error: action.error || true,
+    };
+  }
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

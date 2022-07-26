@@ -16,37 +16,37 @@ const defaultState = {
 
 function forwardsReducer(state = defaultState, action) {
   switch (action.type) {
-    case FORWARDS_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case FORWARDS_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case FORWARDS_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Forwards: action.data.data,
-      };
+  case FORWARDS_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Forwards: action.data.data,
+    };
     
-    case FORWARDS_DATA_ERROR: {
-      return {
-        ...state,
-        error: action.error,
-        loading: false,
-      };
-    }
+  case FORWARDS_DATA_ERROR: {
+    return {
+      ...state,
+      error: action.error,
+      loading: false,
+    };
+  }
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 

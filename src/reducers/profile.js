@@ -19,36 +19,36 @@ const defaultState = {
 
 function profileReducer(state = defaultState, action) {
   switch (action.type) {
-    case PROFILE_DATA_FETCH:
-      return {
-        ...state,
-        loading: true,
-      };
+  case PROFILE_DATA_FETCH:
+    return {
+      ...state,
+      loading: true,
+    };
 
-    case PROFILE_DATA_RECEIVED:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        Profile: action.data,
-      };
+  case PROFILE_DATA_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Profile: action.data,
+    };
     
-    case PROFILE_DATA_ERROR:
-      return {
-        ...state,
-        loading: false,
-        error: action.error,
-      };
+  case PROFILE_DATA_ERROR:
+    return {
+      ...state,
+      loading: false,
+      error: action.error,
+    };
 
-    case AUTH_AUTHENTICATED:
-      return action.authenticated ? {
-        ...state,
-      } : {
-        ...defaultState,
-      };
+  case AUTH_AUTHENTICATED:
+    return action.authenticated ? {
+      ...state,
+    } : {
+      ...defaultState,
+    };
 
-    default:
-      return state;
+  default:
+    return state;
   }
 }
 
