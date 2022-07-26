@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, FormControl, TextField, MenuItem, Switch, FormLabel } from '@mui/material';
+import { Paper, FormControl, Switch, FormLabel } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
@@ -18,7 +18,6 @@ const styles = theme => ({
   },
   form: {
     width: '100%',
-    marginTop: theme.spacing(4),
   },
   input: {
     marginBottom: theme.spacing(3),
@@ -55,11 +54,6 @@ class Settings extends Component {
     snackbar: '',
   }
 
-  langs = [
-    { ID: 'en-US', name: 'English' },
-    { ID: 'de-DE', name: 'Deutsch' },
-  ]
-
   handleInput = field => event => {
     this.props.changeSettings(field, event.target.value);
   }
@@ -84,7 +78,7 @@ class Settings extends Component {
   }
 
   render() {
-    const { classes, t, settings } = this.props;
+    const { classes, t } = this.props;
     const { snackbar } = this.state;
     return (
       <TableViewContainer
@@ -96,20 +90,6 @@ class Settings extends Component {
       >
         <Paper className={classes.paper} elevation={1}>
           <FormControl className={classes.form}>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Language")}
-              fullWidth
-              value={settings.language || 'en-US'}
-              onChange={this.handleLangChange}
-            >
-              {this.langs.map((lang, key) => (
-                <MenuItem key={key} value={lang.ID}>
-                  {lang.name}
-                </MenuItem>
-              ))}
-            </TextField>
             <FormControl className={classes.formControl}>
               <FormLabel component="legend">{t('Darkmode')}</FormLabel>
               <Switch
