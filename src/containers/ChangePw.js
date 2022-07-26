@@ -46,7 +46,7 @@ class ChangePw extends Component {
 
   handleSave = () => changePw(this.state.oldPw, this.state.newPw)
     .then(() => this.setState({ snackbar: 'Success!' }))
-    .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));;
+    .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));
 
   render() {
     const { classes, t } = this.props;

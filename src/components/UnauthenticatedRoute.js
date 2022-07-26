@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React from "react";
-
+import { PropTypes } from "prop-types";
 import { Route, Redirect } from "react-router-dom";
 
 import { parseParams } from '../utils';
@@ -30,5 +30,9 @@ const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
     />
   );
 };
+
+UnauthenticatedRoute.propTypes = {
+  props: PropTypes.object,
+}
 
 export default UnauthenticatedRoute;
