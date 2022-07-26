@@ -5,6 +5,7 @@ import React from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -17,13 +18,14 @@ const styles = theme => ({
 });
 
 function MemoryPie(props) {
-  const { classes, memoryPie } = props;
+  const { classes, t, memoryPie } = props;
+  const translatedLabels = memoryPie.labels.map(l => t(l));
 
   return (
     <div className={classes.root}>
       <Chart
         options={{
-          labels: memoryPie.labels,
+          labels: translatedLabels,
           responsive: [{
             breakpoint: 268,
             options: {
@@ -86,8 +88,9 @@ function MemoryPie(props) {
 
 MemoryPie.propTypes = {
   classes: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
   memoryPie: PropTypes.object.isRequired,
 };
 
 
-export default withStyles(styles)(MemoryPie);
+export default withTranslation()(withStyles(styles)(MemoryPie));

@@ -258,7 +258,7 @@ class DomainListDetails extends PureComponent {
             >
               {this.statuses.map((status, key) => (
                 <MenuItem key={key} value={status.ID}>
-                  {status.name}
+                  {t(status.name)}
                 </MenuItem>
               ))}
             </TextField>

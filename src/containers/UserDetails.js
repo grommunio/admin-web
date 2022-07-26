@@ -600,7 +600,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions}/>
               <Tab label={t("SMTP")} disabled={!ID}/>
               <Tab label={t("Permissions")} disabled={!ID}/>
-              <Tab label={t("FetchMail")} disabled={!ID}/>
+              <Tab label={t("Fetchmail")} disabled={!ID}/>
               <Tab label={t("Mobile devices")} disabled={!ID}/>
               <Tab label={t("Sync policy")} disabled={!ID}/>
             </Tabs>

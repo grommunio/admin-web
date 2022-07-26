@@ -5,6 +5,7 @@ import React from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -17,13 +18,14 @@ const styles = theme => ({
 });
 
 function CPUPie(props) {
-  const { classes, cpuPie } = props;
+  const { classes, t, cpuPie } = props;
+  const translatedLabels = cpuPie.labels.map(l => t(l));
 
   return (
     <div className={classes.root}>
       <Chart
         options={{
-          labels: cpuPie.labels,
+          labels: translatedLabels,
           responsive: [{
             breakpoint: 250,
             options: {
@@ -87,7 +89,8 @@ function CPUPie(props) {
 CPUPie.propTypes = {
   classes: PropTypes.object.isRequired,
   cpuPie: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 
-export default withStyles(styles)(CPUPie);
+export default withTranslation()(withStyles(styles)(CPUPie));

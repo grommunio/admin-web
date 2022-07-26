@@ -151,11 +151,11 @@ class Users extends Component {
 
   getType(type) {
     switch(type) {
-      case 0: return "User";
-      case 1: return "Mail list";
-      case 7: return "Room";
-      case 8: return "Equipment";
-      default: return "Unknown";
+    case 0: return "User";
+    case 1: return "Mail list";
+    case 7: return "Room";
+    case 8: return "Equipment";
+    default: return "Unknown";
     }
   }
 
@@ -200,7 +200,7 @@ class Users extends Component {
           >
             {t('Search in LDAP')}
           </Button>
-          <Tooltip placement="top" title="Synchronize imported users for this domain">
+          <Tooltip placement="top" title={t("Synchronize imported users for this domain")}>
             <Button
               variant="contained"
               color="primary"
@@ -213,7 +213,7 @@ class Users extends Component {
           </Tooltip>
           <Tooltip
             placement="top"
-            title="Import new users from LDAP for this domain and synchronize previously imported ones"
+            title={t("Import new users from LDAP for this domain") + " " + t("and synchronize previously imported ones")}
           >
             <Button
               variant="contained"
@@ -227,7 +227,7 @@ class Users extends Component {
           </Tooltip>
           <Tooltip
             placement="top"
-            title="Check status of imported users of this domain"
+            title={t("Check status of imported users of this domain")}
           >
             <Button
               variant="contained"
@@ -292,8 +292,8 @@ class Users extends Component {
                   <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
-                    <TableCell>{this.getStatus(obj.status)}</TableCell>
-                    <TableCell>{this.getType(properties.displaytypeex)}</TableCell>
+                    <TableCell>{t(this.getStatus(obj.status))}</TableCell>
+                    <TableCell>{t(this.getType(properties.displaytypeex))}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">

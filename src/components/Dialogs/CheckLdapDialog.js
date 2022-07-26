@@ -52,7 +52,7 @@ class DeleteUser extends PureComponent {
                 />
               </ListItem>  
             )}
-          </List> : <Typography>All LDAP users are valid</Typography>}
+          </List> : <Typography>{t("All LDAP users are valid")}</Typography>}
         </DialogContent>
         <DialogActions>
           <Button

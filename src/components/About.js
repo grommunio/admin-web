@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import StorageIcon from '@mui/icons-material/Storage';
 import { connect } from 'react-redux';
 import { Dashboard, Outlet, Power } from '@mui/icons-material';
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -62,7 +63,7 @@ class About extends PureComponent {
   }
 
   render() {
-    const { classes, about } = this.props;
+    const { classes, t, about } = this.props;
     const { API, backend, schema } = about;
 
 
@@ -73,7 +74,7 @@ class About extends PureComponent {
             <Dashboard className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{process.env.REACT_APP_BUILD_VERSION}</Typography>
-              <Typography className={classes.label}>Web UI</Typography>
+              <Typography className={classes.label}>{t("Web UI")}</Typography>
             </div>
           </Paper>
         </div>
@@ -82,7 +83,7 @@ class About extends PureComponent {
             <Power className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{API}</Typography>
-              <Typography className={classes.label}>API</Typography>
+              <Typography className={classes.label}>{t("API")}</Typography>
             </div>
           </Paper>
         </div>
@@ -91,7 +92,7 @@ class About extends PureComponent {
             <Outlet className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{backend}</Typography>
-              <Typography className={classes.label}>Backend</Typography>
+              <Typography className={classes.label}>{t("Backend")}</Typography>
             </div>
           </Paper>
         </div>
@@ -100,7 +101,7 @@ class About extends PureComponent {
             <StorageIcon className={classes.icon}/>
             <div className={classes.labeledData}>
               <Typography className={classes.data}>{this.formatBytes(schema)}</Typography>
-              <Typography className={classes.label}>Database</Typography>
+              <Typography className={classes.label}>{t("Database")}</Typography>
             </div>
           </Paper>
         </div>
@@ -119,6 +120,7 @@ const mapStateToProps = state => {
 About.propTypes = {
   classes: PropTypes.object.isRequired,
   about: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(About));
+export default withTranslation()(connect(mapStateToProps)(withStyles(styles)(About)));

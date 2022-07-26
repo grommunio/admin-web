@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Paper, Typography } from '@mui/material';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -22,7 +23,7 @@ const styles = theme => ({
 });
 
 function Load(props) {
-  const { classes, load } = props;
+  const { classes, t, load } = props;
 
   const formatYAxis = (value) => {
     if(value === 0) return '0%';
@@ -34,7 +35,7 @@ function Load(props) {
   return (
     <Paper className={classes.paper}>
       <div className={classes.root}>
-        <Typography className={classes.chartTitle}>Load</Typography>
+        <Typography className={classes.chartTitle}>{t("Load")}</Typography>
         <Chart
           options={{
             responsive: [{
@@ -58,7 +59,7 @@ function Load(props) {
               labels: {
                 rotate: 0,
               },
-              categories: ["1 Min", "5 Mins", "15 Mins"],
+              categories: [t("1 Min"), t("5 Mins"), t("15 Mins")],
             },
             tooltip: {
               y: {
@@ -92,7 +93,8 @@ function Load(props) {
 Load.propTypes = {
   classes: PropTypes.object.isRequired,
   load: PropTypes.array.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 
-export default withStyles(styles)(Load);
+export default withTranslation()(withStyles(styles)(Load));

@@ -100,13 +100,13 @@ class TaskDetails extends PureComponent {
 
   getTaskState(state) {
     switch(state) {
-      case 0: return "Queued";
-      case 1: return "Loaded";
-      case 2: return "Running";
-      case 3: return "Completed";
-      case 4: return "Error";
-      case 5: return "Cancelled";
-      default: return "Unknown";
+    case 0: return "Queued";
+    case 1: return "Loaded";
+    case 2: return "Running";
+    case 3: return "Completed";
+    case 4: return "Error";
+    case 5: return "Cancelled";
+    default: return "Unknown";
     }
   }
 
@@ -132,7 +132,7 @@ class TaskDetails extends PureComponent {
             </Typography>
             <Typography variant="h6" className={classes.data}>
               <span className={classes.description}>{t('State')}:</span>
-              {this.getTaskState(state) || t('Unknown')}
+              {t(this.getTaskState(state)) || t('Unknown')}
             </Typography>
             <Typography variant="h6" className={classes.data}>
               <span className={classes.description}>{t('Message')}:</span>

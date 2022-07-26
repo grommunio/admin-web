@@ -5,6 +5,7 @@ import React from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -17,7 +18,7 @@ const styles = theme => ({
 });
 
 function MemoryLine(props) {
-  const { classes, memory } = props;
+  const { classes, t, memory } = props;
 
   const formatYAxis = (value) => {
     return (value / 1000000000).toFixed(0) + 'GB';
@@ -74,13 +75,13 @@ function MemoryLine(props) {
           colors: ['#546E7A', '#FF9800', '#E91E63'],
         }}
         series={[{
-          name: "Used",
+          name: t("Used"),
           data: memory.used
         },{
-          name: "Cache",
+          name: t("Cache"),
           data: memory.cache
         },{
-          name: "Buffer",
+          name: t("Buffer"),
           data: memory.buffer
         }]}
         type="area"
@@ -93,7 +94,8 @@ function MemoryLine(props) {
 MemoryLine.propTypes = {
   classes: PropTypes.object.isRequired,
   memory: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 
-export default withStyles(styles)(MemoryLine);
+export default withTranslation()(withStyles(styles)(MemoryLine));

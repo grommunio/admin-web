@@ -162,7 +162,7 @@ class AddMList extends PureComponent {
             >
               {this.listTypes.map((status, key) => (
                 <MenuItem key={key} value={status.ID}>
-                  {status.name}
+                  {t(status.name)}
                 </MenuItem>
               ))}
             </TextField>
@@ -176,20 +176,20 @@ class AddMList extends PureComponent {
             >
               {this.listPrivileges.map((status, key) => (
                 <MenuItem key={key} value={status.ID}>
-                  {status.name}
+                  {t(status.name)}
                 </MenuItem>
               ))}
             </TextField>
             {listType === 0 && <TextField 
               className={classes.input} 
-              label={t("Recipients") + " (separated by comma (,)"} 
+              label={t("Recipients") + " (" + t("separated by comma") + " (,))"} 
               fullWidth 
               value={associations || ''}
               onChange={this.handleInput('associations')}
             />}
             {listPrivilege === 3 && <TextField 
-              className={classes.input} 
-              label={t("Senders") + " (separated by comma (,)"} 
+              className={classes.input}
+              label={t("Senders") + " (" + t("separated by comma") + " (,))"}
               fullWidth 
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}

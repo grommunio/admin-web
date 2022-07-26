@@ -207,7 +207,7 @@ class AddFetchmail extends PureComponent {
                     color="primary"
                   />
                 }
-                label="Active"
+                label={t("Active")}
               />
               <FormControlLabel
                 control={
@@ -217,7 +217,7 @@ class AddFetchmail extends PureComponent {
                     color="primary"
                   />
                 }
-                label="Use SSL"
+                label={t("Use SSL")}
               />
               <FormControlLabel
                 control={
@@ -227,7 +227,7 @@ class AddFetchmail extends PureComponent {
                     color="primary"
                   />
                 }
-                label="Fetch all"
+                label={t("Fetch all")}
               />
               <FormControlLabel
                 control={
@@ -237,7 +237,7 @@ class AddFetchmail extends PureComponent {
                     color="primary"
                   />
                 }
-                label="Keep"
+                label={t("Keep")}
               />
               <FormControlLabel
                 control={
@@ -248,7 +248,7 @@ class AddFetchmail extends PureComponent {
                     disabled={!useSSL}
                   />
                 }
-                label="SSL certificate check"
+                label={t("SSL certificate check")}
               />
             </Grid>
           </FormControl>

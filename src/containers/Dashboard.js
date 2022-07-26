@@ -213,7 +213,7 @@ class Dashboard extends Component {
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
                 <Typography className={classes.chartTitle}>
-                  {`CPU: ${totalCpuUsage || 0}%`}
+                  {`${t("CPU")}: ${totalCpuUsage || 0}%`}
                 </Typography>
                 <CPUPie cpuPie={cpuPie} />
               </div>
@@ -226,7 +226,7 @@ class Dashboard extends Component {
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
                 <Typography className={classes.chartTitle}>
-                  {`Memory: ${memory.percent[memory.percent.length - 1] || 0}%`}
+                  {`${t("Memory")}: ${memory.percent[memory.percent.length - 1] || 0}%`}
                 </Typography>
                 <MemoryPie memoryPie={memoryPie}/>
               </div>

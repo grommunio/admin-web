@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -28,10 +29,10 @@ class Disks extends Component {
   };
 
   render() {
-    const { classes, disks } = this.props;
+    const { classes, disks, t } = this.props;
     return (
       <div className={classes.root}>
-        <Typography className={classes.chartTitle}>Disks</Typography>
+        <Typography className={classes.chartTitle}>{t("Disks")}</Typography>
         <Chart
           options={{
             responsive: [{
@@ -115,7 +116,8 @@ Disks.propTypes = {
   classes: PropTypes.object.isRequired,
   disks: PropTypes.array.isRequired,
   timer: PropTypes.number,
+  t: PropTypes.func.isRequired,
 };
 
 
-export default withStyles(styles)(Disks);
+export default withTranslation()(withStyles(styles)(Disks));

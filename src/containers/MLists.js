@@ -140,8 +140,8 @@ class MLists extends Component {
               {mLists.MLists.map((obj, idx) =>
                 <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/mailLists/' + obj.ID)}>
                   <TableCell>{obj.listname}</TableCell>
-                  <TableCell>{this.listTypes[obj.listType]}</TableCell>
-                  <TableCell>{this.listPrivileges[obj.listPrivilege]}</TableCell>
+                  <TableCell>{t(this.listTypes[obj.listType])}</TableCell>
+                  <TableCell>{t(this.listPrivileges[obj.listPrivilege])}</TableCell>
                   <TableCell align="right">
                     {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>

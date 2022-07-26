@@ -7,11 +7,12 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import PANIK from '../res/panik.png';
 import { config } from '../config';
+import { withTranslation } from 'react-i18next';
 
 class Feedback extends PureComponent {
   
   render() {
-    const { snackbar, onClose } = this.props;
+    const { snackbar, t, onClose } = this.props;
     const msg = (snackbar || '').toString();
     return (
       <Portal>
@@ -32,9 +33,8 @@ class Feedback extends PureComponent {
             variant="filled"
           >
             {(msg || '') === "The server encountered an error while processing the request." && config.devMode ?
-              <img src={PANIK} alt="PANIK" height="80" width="78"/>:
-              (msg || '')}
-            
+              <img src={PANIK} alt="PANIK" height="80" width="78"/> :
+              t(msg || '')}
           </Alert>
         </Snackbar>
       </Portal>
@@ -45,6 +45,7 @@ class Feedback extends PureComponent {
 Feedback.propTypes = {
   snackbar: PropTypes.string,
   onClose: PropTypes.func,
+  t: PropTypes.func.isRequired,
 };
 
-export default Feedback;
+export default withTranslation()(Feedback);

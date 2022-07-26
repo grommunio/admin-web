@@ -5,6 +5,7 @@ import React from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
+import { withTranslation } from 'react-i18next';
 
 const styles = theme => ({
   root: {
@@ -17,7 +18,7 @@ const styles = theme => ({
 });
 
 function CPULine(props) {
-  const { classes, cpuPercent } = props;
+  const { classes, t, cpuPercent } = props;
 
   return (
     <div className={classes.root}>
@@ -55,19 +56,19 @@ function CPULine(props) {
           colors: ['#FF9800', '#8e9eab', '#E91E63', '#546E7A', '#2E93fA'],
         }}
         series={[{
-          name: "Interrupt",
+          name: t("Interrupt"),
           data: cpuPercent.interrupt
         },{
-          name: "Steal",
+          name: t("Steal"),
           data: cpuPercent.steal
         },{
-          name: "IO",
+          name: t("IO"),
           data: cpuPercent.io
         },{
-          name: "System",
+          name: t("System"),
           data: cpuPercent.system
         },{
-          name: "User",
+          name: t("User"),
           data: cpuPercent.user
         }]}
         type="area"
@@ -80,7 +81,8 @@ function CPULine(props) {
 CPULine.propTypes = {
   classes: PropTypes.object.isRequired,
   cpuPercent: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
 
-export default withStyles(styles)(CPULine);
+export default withTranslation()(withStyles(styles)(CPULine));
