@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
+import { withTranslation } from 'react-i18next';
 
 function ClientConnection(props) {
-  const { uri, serverZones } = props;
+  const { t, uri, serverZones } = props;
 
   const toSortedArray = obj => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
@@ -17,7 +18,7 @@ function ClientConnection(props) {
   return (
     <React.Fragment>
       <Typography variant="h5">
-        Connections to {uri.endsWith('*') ? 'Any' : uri.endsWith('_') ? 'Other' : uri.slice(14)}
+        {t("Connections to") + " " + uri.endsWith('*') ? 'Any' : uri.endsWith('_') ? 'Other' : uri.slice(14)}
       </Typography>
       <ServerZones serverZones={toSortedArray(serverZones)} />
     </React.Fragment>
@@ -27,6 +28,7 @@ function ClientConnection(props) {
 ClientConnection.propTypes = {
   uri: PropTypes.string.isRequired,
   serverZones: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default ClientConnection;
+export default withTranslation()(ClientConnection);

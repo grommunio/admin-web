@@ -2,16 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
+import { withTranslation } from 'react-i18next';
 
 function UpstreamConnection(props) {
-  const { uri, serverZones } = props;
+  const { t, uri, serverZones } = props;
 
   const toArray = obj => Object.entries(obj)
     .map(([server, values]) => ({ server, values }));
 
   return (
     <React.Fragment>
-      <Typography variant="h5">Upstream traffic to {uri.slice(10)}</Typography>
+      <Typography variant="h5">{t("Upstream traffic to")  + " " + uri.slice(10)}</Typography>
       <ServerZones serverZones={toArray(serverZones)} />
     </React.Fragment>
   );
@@ -20,6 +21,7 @@ function UpstreamConnection(props) {
 UpstreamConnection.propTypes = {
   uri: PropTypes.string.isRequired,
   serverZones: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default UpstreamConnection;
+export default withTranslation()(UpstreamConnection);

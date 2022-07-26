@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
+import { withTranslation } from 'react-i18next';
 
 function PathConnection(props) {
   const { uri, t, serverZones } = props;
@@ -12,7 +13,7 @@ function PathConnection(props) {
 
   return (
     <React.Fragment>
-      <Typography variant="h5">{t("Path usage of")} {uri.slice(5)}</Typography>
+      <Typography variant="h5">{t("Path usage of") + " " + uri.slice(5)}</Typography>
       <ServerZones serverZones={toArray(serverZones)} />
     </React.Fragment>
   );
@@ -24,4 +25,4 @@ PathConnection.propTypes = {
   serverZones: PropTypes.object.isRequired,
 };
 
-export default PathConnection;
+export default withTranslation()(PathConnection);
