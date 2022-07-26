@@ -234,7 +234,7 @@ class ClassDetails extends PureComponent {
     });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
+  handleMagnitueAutocomplete = (field) => (e, newVal) => {
     this.setState({
       _class: {
         ...this.state._class,
@@ -296,7 +296,7 @@ class ClassDetails extends PureComponent {
               value={parentClasses || []}
               filterAttribute={'classname'}
               inputValue={autocompleteInput}
-              onChange={this.handleAutocomplete('parentClasses')}
+              onChange={this.handleMagnitueAutocomplete('parentClasses')}
               className={classes.input} 
               options={_classes || []}
               onInputChange={this.handleAutocompleteInput}

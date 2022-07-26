@@ -454,9 +454,9 @@ class LdapConfig extends PureComponent {
                   onChange={this.handleInput('bindUser')}
                   value={bindUser || ''}
                   desc={t("Distinguished Name used for binding")}
-                  id="username"
-                  name="username"
-                  autoComplete="username"
+                  id="bindDn"
+                  name="bindDn"
+                  autoComplete="bindDn"
                 />
                 <LdapTextfield
                   flex

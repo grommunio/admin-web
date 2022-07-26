@@ -426,10 +426,6 @@ class UserDetails extends PureComponent {
 
   handleFetchmailEditDialog = state => () => this.setState({ editing: state })
 
-  handleSuccess = () => this.setState({ snackbar: 'Success!' });
-
-  handleError = msg => this.setState({ snackbar: msg.message || 'Unknown error' });
-
   addFetchmail = entry => {
     const { user } = this.state;
     const fetchmail = [...user.fetchmail];
