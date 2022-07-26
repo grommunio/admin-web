@@ -121,7 +121,7 @@ class CreateDbconfFile extends PureComponent {
                 {pair.key}
               </Typography>
               <TextField
-                label="value"
+                label={t("Value")}
                 value={pair.value}
                 onChange={this.handleDataInput(idx)}
                 className={classes.flexTextfield}

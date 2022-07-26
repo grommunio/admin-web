@@ -27,7 +27,7 @@ class DetachDialog extends PureComponent {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Are you sure you want to detach this user?</DialogTitle>
+        <DialogTitle>{t("Are you sure you want to detach this user?")}</DialogTitle>
         <DialogActions>
           <Button
             onClick={onClose}

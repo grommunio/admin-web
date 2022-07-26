@@ -194,7 +194,7 @@ class Logs extends PureComponent {
                     color="primary"
                   />
                 }
-                label="Autorefresh"
+                label={t("Autorefresh")}
               />
             </Grid>}
             {log.length > 0 ? <IconButton onClick={this.handleScroll} size="large">

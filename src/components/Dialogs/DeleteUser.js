@@ -58,7 +58,7 @@ class DeleteUser extends PureComponent {
                 color="primary"
               />
             }
-            label="Delete files?"
+            label={t("Delete files?")}
           />
         </DialogContent>
         <DialogActions>

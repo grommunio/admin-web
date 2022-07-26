@@ -222,7 +222,7 @@ class Users extends Component {
               onClick={this.handleUserSync(true)}
               disabled={!writable}
             >
-              {t('Import LDAP users')}
+              {t('Import LDAP Users')}
             </Button>
           </Tooltip>
           <Tooltip

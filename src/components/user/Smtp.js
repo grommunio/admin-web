@@ -55,7 +55,7 @@ class Smtp extends PureComponent {
             <TextField
               className={classes.listTextfield}
               value={alias}
-              label={'Alias ' + (idx + 1)}
+              label={t("Alias") + ' ' + (idx + 1)}
               onChange={handleAliasEdit(idx)}
             />
             <IconButton onClick={handleRemoveAlias(idx)} size="large">

@@ -179,24 +179,24 @@ class DBConf extends Component {
             </TableBody>
           </Table>
         </Paper> : <Paper className={classes.paper}>
-          <Typography variant="h6">Key</Typography>
+          <Typography variant="h6">{t("Key")}</Typography>
           {commands.key.length > 0 ? commands.key.map((key, idx) =>
             <pre className={classes.pre} key={idx}>
               <code key={idx}>{key}</code>
             </pre>
-          ) : <Typography><i>none</i></Typography>}
-          <Typography className={classes.title} variant="h6">File</Typography>
+          ) : <Typography><i>{t(none)}</i></Typography>}
+          <Typography className={classes.title} variant="h6">{t("File")}</Typography>
           {commands.file.length > 0 ? commands.file.map((key, idx) =>
             <pre className={classes.pre} key={idx}>
               <code>{key}</code>
             </pre>
-          ) : <Typography><i>none</i></Typography>}
-          <Typography className={classes.title} variant="h6">Service</Typography>
+          ) : <Typography><i>{t(none)}</i></Typography>}
+          <Typography className={classes.title} variant="h6">{t("Service")}</Typography>
           {commands.service.length > 0 ? commands.service.map((key, idx) =>
             <pre className={classes.pre} key={idx}>
               <code>{key}</code>
             </pre>
-          ) : <Typography><i>none</i></Typography>}
+          ) : <Typography><i>{t(none)}</i></Typography>}
         </Paper>}
         <GeneralDelete
           open={!!deleting}

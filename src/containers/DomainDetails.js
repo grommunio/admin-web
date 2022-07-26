@@ -235,8 +235,8 @@ class DomainListDetails extends PureComponent {
             </Typography>
           </Grid>
           <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
-            <Tab value={0} label={t('Domain')} />
-            <Tab value={1} label={t('Sync policies')} />
+            <Tab value={0} label={t("Domain")} />
+            <Tab value={1} label={t("Sync policy")} />
           </Tabs>
           {tab === 0 && <FormControl className={classes.form}>
             <Grid container className={classes.input}>
