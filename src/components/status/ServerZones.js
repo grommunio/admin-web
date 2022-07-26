@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import StyledTableCell from './StyledTableCell';
 import AlternatingTableRow from '../AlternatingTableRow';
+import { withTranslation } from 'react-i18next';
 
 function ServerZones(props) {
   const { serverZones, t } = props;
@@ -72,4 +73,4 @@ ServerZones.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default ServerZones;
+export default withTranslation()(ServerZones);
