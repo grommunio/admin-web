@@ -5,13 +5,6 @@ import React, { Component } from "react";
 import { withStyles } from "@mui/styles";
 import PropTypes from "prop-types";
 import TopBar from "../components/TopBar";
-import LoadChart from "../components/LoadChart";
-import MemoryChart from "../components/MemoryChart";
-import CPUPieChart from "../components/CPUPieChart";
-import MemoryPieChart from "../components/MemoryPieChart";
-import SwapPieChart from "../components/SwapPieChart";
-import DisksChart from "../components/DisksChart";
-import CPULineChart from "../components/CPULineChart";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
 import { IconButton, Paper, Typography } from "@mui/material";
@@ -25,6 +18,12 @@ import { HelpOutline } from "@mui/icons-material";
 import { fetchAboutData } from "../actions/about";
 import About from "../components/About";
 import { config } from '../config';
+import CPULine from "../components/charts/CPULine";
+import CPUPie from "../components/charts/CPUPie";
+import MemoryLine from "../components/charts/MemoryLine";
+import MemoryPie from "../components/charts/MemoryPie";
+import Load from "../components/charts/Load";
+import Disks from "../components/charts/Disks";
 
 const styles = (theme) => ({
   root: {
@@ -123,6 +122,9 @@ const styles = (theme) => ({
   subtitle: {
     margin: theme.spacing(0, 2, 2, 2),
   },
+  chartTitle: {
+    margin: theme.spacing(1, 0, 0, 2),
+  },
 });
 
 class Dashboard extends Component {
@@ -144,7 +146,7 @@ class Dashboard extends Component {
   fetchDashboard() {
     this.fetchInterval = setInterval(() => {
       this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
-    }, 10000);
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -156,14 +158,17 @@ class Dashboard extends Component {
       classes,
       t,
       cpuPercent,
-      disks,
+      cpuPie,
       memory,
-      swap,
-      swapPercent,
+      memoryPie,
+      disks,
       load,
+      timer,
       statistics,
     } = this.props;
     const { snackbar } = this.state;
+
+    const totalCpuUsage = cpuPie.values.slice(0, 4).reduce((pv, cv) => pv + cv, 0).toFixed(1);
 
     return (
       <div className={classes.root}>
@@ -207,35 +212,38 @@ class Dashboard extends Component {
           <div className={classes.cpu}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
-                <CPUPieChart cpuPercent={cpuPercent} />
+                <Typography className={classes.chartTitle}>
+                  {`CPU: ${totalCpuUsage || 0}%`}
+                </Typography>
+                <CPUPie cpuPie={cpuPie} />
               </div>
               <div className={classes.lineChart}>
-                <CPULineChart cpuPercent={cpuPercent} />
+                <CPULine cpuPercent={cpuPercent}/>
               </div>
             </Paper>
           </div>
           <div className={classes.memory}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
               <div className={classes.donutChart}>
-                <MemoryPieChart memory={memory} />
+                <Typography className={classes.chartTitle}>
+                  {`Memory: ${memory.percent[memory.percent.length - 1] || 0}%`}
+                </Typography>
+                <MemoryPie memoryPie={memoryPie}/>
               </div>
               <div className={classes.lineChart}>
-                <MemoryChart memory={memory} />
+                <MemoryLine memory={memory}/>
               </div>
             </Paper>
           </div>
           <div className={classes.swap}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
-              {!!swapPercent && <div>
-                <SwapPieChart swap={swap} swapPercent={swapPercent} />
-              </div>}
-              <div className={!swapPercent ? classes.fullChart : classes.lineChart}>
-                <DisksChart disks={disks} />
+              <div className={classes.fullChart}>
+                <Disks disks={disks} timer={timer}/>
               </div>
             </Paper>
           </div>
           <div className={classes.disk}>
-            <LoadChart load={load} />
+            <Load load={load}/>
           </div>
         </div>
         <Typography variant="h2" className={classes.pageTitle}>
@@ -258,18 +266,21 @@ Dashboard.propTypes = {
   fetchServices: PropTypes.func.isRequired,
   fetchAntispam: PropTypes.func.isRequired,
   fetchAbout: PropTypes.func.isRequired,
-  cpuPercent: PropTypes.array.isRequired,
+  cpuPercent: PropTypes.object.isRequired,
+  cpuPie: PropTypes.object.isRequired,
   disks: PropTypes.array.isRequired,
-  memory: PropTypes.array.isRequired,
-  swap: PropTypes.array.isRequired,
+  memory: PropTypes.object.isRequired,
+  memoryPie: PropTypes.object.isRequired,
   statistics: PropTypes.object.isRequired,
-  swapPercent: PropTypes.number,
   load: PropTypes.array.isRequired,
+  timer: PropTypes.number,
 };
 
 const mapStateToProps = (state) => {
+  const { load, disks, Dashboard, timer } = state.dashboard;
+  const { cpuPercent, cpuPie, memory, memoryPie } = Dashboard;
   return {
-    ...state.dashboard.Dashboard,
+    cpuPercent, cpuPie, disks, memory, memoryPie, load, timer,
     ...state.antispam,
   };
 };

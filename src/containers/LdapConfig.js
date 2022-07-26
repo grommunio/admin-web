@@ -6,7 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
-  Typography, Switch, Tooltip, TextField, RadioGroup, Radio } from '@mui/material';
+  Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import blue from '../colors/blue';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr } from '../actions/ldap';
@@ -20,7 +20,6 @@ import adminConfig from '../config';
 import LdapTextfield from '../components/LdapTextfield';
 import Help from '@mui/icons-material/HelpOutline';
 import Feedback from '../components/Feedback';
-import { Autocomplete } from '@mui/lab';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';

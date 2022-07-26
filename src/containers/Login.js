@@ -13,6 +13,7 @@ import {
   InputBase,
   Typography,
   CircularProgress,
+  Alert,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Key from '@mui/icons-material/VpnKey';
@@ -21,7 +22,6 @@ import {
   authLogin,
   authLoginWithToken,
 } from '../actions/auth';
-import MuiAlert from '@mui/lab/Alert';
 import logo from '../res/grommunio_logo_default.svg';
 
 const styles = theme => ({
@@ -163,9 +163,9 @@ class Login extends Component {
               autoComplete="currect-password"
             />
           </Paper>
-          {auth.error && <MuiAlert elevation={6} variant="filled" severity="error" className={classes.errorMessage}>
+          {auth.error && <Alert elevation={6} variant="filled" severity="error" className={classes.errorMessage}>
             {auth.error || t("Failed to login. Incorrect password or username")}
-          </MuiAlert>}
+          </Alert>}
           <Paper className={classes.inputContainer}>
             <Button
               className={classes.button}

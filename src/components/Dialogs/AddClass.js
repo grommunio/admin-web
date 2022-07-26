@@ -12,12 +12,12 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
   AccordionDetails,
   Grid,
   Typography,
-  IconButton, 
+  IconButton,
+  Autocomplete
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addClassData, fetchClassesData } from '../../actions/classes';
-import { Autocomplete } from '@mui/lab';
 import { Delete } from '@mui/icons-material';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 

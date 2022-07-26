@@ -22,12 +22,12 @@ import {
   ListItemText,
   Breadcrumbs,
   Link,
+  Autocomplete,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { editClassData, fetchClassDetails, fetchClassesData } from '../actions/classes';
 import { getStringAfterLastSlash } from '../utils';
 import { Delete } from '@mui/icons-material';
-import { Autocomplete } from '@mui/lab';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
