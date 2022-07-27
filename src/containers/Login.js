@@ -14,6 +14,9 @@ import {
   Typography,
   CircularProgress,
   Alert,
+  IconButton,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Key from '@mui/icons-material/VpnKey';
@@ -23,6 +26,10 @@ import {
   authLoginWithToken,
 } from '../actions/auth';
 import logo from '../res/grommunio_logo_default.svg';
+import { Language } from '@mui/icons-material';
+import { getLangs } from '../utils';
+import i18n from 'i18next';
+import { changeSettings } from '../actions/settings';
 
 const styles = theme => ({
   /* || General */
@@ -44,6 +51,7 @@ const styles = theme => ({
     borderRadius: 30,
     zIndex: 1,
     padding: theme.spacing(1, 0),
+    position: 'relative',
   },
   logoContainer: {
     display: 'flex',
@@ -85,7 +93,11 @@ const styles = theme => ({
   },
   loader: {
     color: 'white',
-
+  },
+  lang: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
   },
 });
 
@@ -96,6 +108,7 @@ class Login extends Component {
     user: '',
     pass: '',
     loading: false,
+    langsAnchorEl: null,
   }
   
   componentDidMount() {
@@ -122,14 +135,53 @@ class Login extends Component {
         this.setState({ loading: false });
         console.error(err);
       });
-  }  
+  }
+
+  handleMenuOpen = menu => e => this.setState({
+    [menu]: e.currentTarget,
+  });
+
+  handleMenuClose = menu => () => this.setState({
+    [menu]: null,
+  });
+
+  handleLangChange = lang => () => {
+    const { changeSettings } = this.props;
+    i18n.changeLanguage(lang);
+    changeSettings('language', lang);
+    window.localStorage.setItem('lang', lang);
+    this.setState({
+      langsAnchorEl: null,
+    });
+  }
 
   render() {
-    const { classes, t, auth } = this.props;
-    const { user, pass, loading } = this.state;
+    const { classes, t, auth, settings } = this.props;
+    const { user, pass, loading, langsAnchorEl } = this.state;
     return (
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
+          <IconButton className={classes.lang} onClick={this.handleMenuOpen('langsAnchorEl')}>
+            <Language />
+          </IconButton>
+          <Menu
+            id="lang-menu"
+            anchorEl={langsAnchorEl}
+            keepMounted
+            open={Boolean(langsAnchorEl)}
+            onClose={this.handleMenuClose('langsAnchorEl')}
+          >
+            {getLangs().map(({key, value}) =>
+              <MenuItem
+                selected={settings.language === key}
+                value={key}
+                key={key}
+                onClick={this.handleLangChange(key)}
+              >
+                {value}
+              </MenuItem>  
+            )}
+          </Menu>
           <div className={classes.logoContainer}>
             <img src={logo} width="300" height={68} alt="grommunio"/>
           </div>
@@ -192,12 +244,15 @@ Login.propTypes = {
   auth: PropTypes.object.isRequired,
   authLogin: PropTypes.func.isRequired,
   authLoginWithToken: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
+  changeSettings: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { auth } = state;
+  const { auth, settings } = state;
   return {
     auth,
+    settings,
   };
 };
 
@@ -208,6 +263,9 @@ const mapDispatchToProps = dispatch => {
     },
     authLoginWithToken: async grommunioAuthJwt => {
       await dispatch(authLoginWithToken(grommunioAuthJwt)).catch(msg => Promise.reject(msg));
+    },
+    changeSettings: async (field, value) => {
+      await dispatch(changeSettings(field, value));
     },
   };
 };
