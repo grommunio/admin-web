@@ -114,7 +114,7 @@ class AddFetchmail extends PureComponent {
           <FormControl className={classes.form} autoComplete="off" noValidate>
             <TextField 
               className={classes.input} 
-              label={t("Source server")} 
+              label={t("Source server") + " (host[:port])"} 
               fullWidth 
               value={srcServer || ''}
               onChange={this.handleInput('srcServer')}
