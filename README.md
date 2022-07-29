@@ -87,7 +87,7 @@ Result will be created in `/dist`
 # Server-side configuration
 
 In order to get the correct configuration for production, create a `config.json` in
-`/usr/share/grommunio-admin-web/config.json`.
+`/etc/grommunio-admin-common/config.json`.
 Attributes which are manually set in `config.json` will overwrite the default values,
 otherwise the defaults are used.
 
