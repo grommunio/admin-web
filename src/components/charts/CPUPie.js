@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { useTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -18,6 +19,7 @@ const styles = theme => ({
 });
 
 function CPUPie(props) {
+  const theme = useTheme();
   const { classes, t, cpuPie } = props;
   const translatedLabels = cpuPie.labels.map(l => t(l));
 
@@ -72,6 +74,9 @@ function CPUPie(props) {
           legend: {
             position: 'bottom',
             width: 260,
+            labels: {
+              colors: theme.palette.text.primary,
+            },
           },
           tooltip: {
             enabled: false,

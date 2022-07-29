@@ -39,6 +39,7 @@ const styles = theme => ({
     [theme.breakpoints.up('lg')]: {
       marginLeft: 260,
     },
+    backgroundImage: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
   },
   title: {
     flexGrow: 1,
@@ -80,7 +81,7 @@ const styles = theme => ({
   },
   profileIcon: {
     fontSize: 40,
-    color: mode === 'light' ? '#aaa' : '#444',
+    color: mode === 'light' ? '#aaa' : '#fff',
     marginLeft: 4,
   },
   flag: {
@@ -149,7 +150,7 @@ class TopBar extends PureComponent {
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
   
     return (
-      <AppBar position="fixed" className={classes.root}>
+      <AppBar color='inherit' position="fixed" className={classes.root}>
         <Toolbar className={classes.root}>
           <Hidden lgUp>
             <IconButton color="inherit" onClick={this.handleMenuToggle} size="large">

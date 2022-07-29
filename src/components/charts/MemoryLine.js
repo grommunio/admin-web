@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { useTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -18,6 +19,7 @@ const styles = theme => ({
 });
 
 function MemoryLine(props) {
+  const theme = useTheme();
   const { classes, t, memory } = props;
 
   const formatYAxis = (value) => {
@@ -52,11 +54,14 @@ function MemoryLine(props) {
             categories: [...memory.used.keys()]
           },
           yaxis: {
-            labels: {
-              formatter: formatYAxis,
-            },
             tickAmount: 4,
             max: memory.total[0] || 4000000000,
+            labels: {
+              style: {
+                colors: theme.palette.text.primary,
+                formatter: formatYAxis,
+              },
+            },
           },
           stroke: {
             curve: 'smooth'
@@ -73,6 +78,11 @@ function MemoryLine(props) {
             enabled: false
           },
           colors: ['#546E7A', '#FF9800', '#E91E63'],
+          legend: {
+            labels: {
+              colors: theme.palette.text.primary,
+            },
+          }
         }}
         series={[{
           name: t("Used"),
