@@ -43,7 +43,7 @@ const styles = {
     overflow: "hidden",
     backgroundColor: "#1c2025",
     backgroundImage: `
-      linear-gradient(#1c2025, rgba(28, 32, 37, 0.97)),
+      linear-gradient(#1c2025, rgba(28, 32, 37, 0.80)),
       url(${backgroundDark})`,
     backgroundSize: "cover",
     width: "100%",

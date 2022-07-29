@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Paper, Typography } from '@mui/material';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { useTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -23,6 +24,7 @@ const styles = theme => ({
 });
 
 function Load(props) {
+  const theme = useTheme();
   const { classes, t, load } = props;
 
   const formatYAxis = (value) => {
@@ -55,9 +57,17 @@ function Load(props) {
                 },
               }
             },
+            legend: {
+              labels: {
+                colors: theme.palette.text.primary,
+              },
+            },
             xaxis: {
               labels: {
                 rotate: 0,
+                style: {
+                  colors: theme.palette.text.primary,
+                },
               },
               categories: [t("1 Min"), t("5 Mins"), t("15 Mins")],
             },
@@ -73,7 +83,10 @@ function Load(props) {
             },
             yaxis: {
               labels: {
-                formatter: formatYAxis,
+                style: {
+                  colors: theme.palette.text.primary,
+                  formatter: formatYAxis,
+                },
               },
               tickAmount: 4,
             },

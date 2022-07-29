@@ -170,3 +170,8 @@ pre code {
 ::-webkit-scrollbar-thumb:hover {
   background: #888;
 }
+
+
+.apexcharts-tooltip {
+  color: black;
+}

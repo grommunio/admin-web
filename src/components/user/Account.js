@@ -46,7 +46,7 @@ const styles = theme => ({
   barBackground: {
     width: '100%',
     height: 24,
-    backgroundColor: '#949494',
+    backgroundImage: 'linear-gradient(150deg, #949494, #343434)',
     position: 'relative',
   },
   quotaHeadline: {

@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { useTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -18,6 +19,7 @@ const styles = theme => ({
 });
 
 function MemoryPie(props) {
+  const theme = useTheme();
   const { classes, t, memoryPie } = props;
   const translatedLabels = memoryPie.labels.map(l => t(l));
 
@@ -52,6 +54,9 @@ function MemoryPie(props) {
           legend: {
             position: 'bottom',
             width: 268,
+            labels: {
+              colors: theme.palette.text.primary,
+            },
           },
           tooltip: {
             enabled: false,

@@ -6,6 +6,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { useTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -18,6 +19,7 @@ const styles = theme => ({
 });
 
 function CPULine(props) {
+  const theme = useTheme();
   const { classes, t, cpuPercent } = props;
 
   return (
@@ -43,10 +45,20 @@ function CPULine(props) {
             },
             categories: [...cpuPercent.idle.keys()]
           },
+          legend: {
+            labels: {
+              colors: theme.palette.text.primary,
+            },
+          },
           yaxis: {
             min: 0,
             max: 100,
             tickAmount: 4,
+            labels: {
+              style: {
+                colors: theme.palette.text.primary,
+              },
+            },
           },
           tooltip: {
             x: {

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
+import { withTheme } from '@emotion/react';
 
 const styles = theme => ({
   root: {
@@ -29,7 +30,7 @@ class Disks extends Component {
   };
 
   render() {
-    const { classes, disks, t } = this.props;
+    const { classes, disks, t, theme } = this.props;
     return (
       <div className={classes.root}>
         <Typography className={classes.chartTitle}>{t("Disks")}</Typography>
@@ -64,6 +65,9 @@ class Disks extends Component {
             yaxis: {
               labels: {
                 formatter: this.formatYAxis,
+                style: {
+                  colors: theme.palette.text.primary,
+                },
               },
               tickAmount: 4,
             },
@@ -79,7 +83,7 @@ class Disks extends Component {
                 hideOverlappingLabels: true,
                 trim: true,
                 style: {
-                  colors: [],
+                  colors: theme.palette.text.primary,
                   fontSize: '10px',
                   fontFamily: 'Helvetica, Arial, sans-serif',
                   fontWeight: 400,
@@ -97,6 +101,9 @@ class Disks extends Component {
                 title: {
                   formatter: () => "",
                 }
+              },
+              style: {
+                color: '#000',
               },
             },
             colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
@@ -117,7 +124,8 @@ Disks.propTypes = {
   disks: PropTypes.array.isRequired,
   timer: PropTypes.number,
   t: PropTypes.func.isRequired,
+  theme: PropTypes.object.isRequired,
 };
 
 
-export default withTranslation()(withStyles(styles)(Disks));
+export default withTheme(withTranslation()(withStyles(styles)(Disks)));

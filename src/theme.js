@@ -21,8 +21,18 @@ const theme = createTheme({
         },
       },
     },
+    MuiDialog: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
         elevation1: {
           borderRadius: 8,
           margin: 16,
@@ -89,7 +99,7 @@ const theme = createTheme({
           },
         },
         containedPrimary: {
-          background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+          background: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
         },
         containedSecondary: {
           background: 'linear-gradient(150deg, #FF512F, #DD2476)',
@@ -137,11 +147,19 @@ const theme = createTheme({
   },
   palette: {
     mode: mode,
-    text: {
-      primary: mode === 'light' ? '#000' : '#fff',
-    },
     primary: blue,
     secondary: grey,
+    ...(mode === 'light' ?
+      {
+        text: {
+          primary: mode === 'light' ? '#000' : '#fff',
+        },
+      } :
+      {
+        background: {
+          paper: "#121315",
+        }
+      }),
   },
 });
 
