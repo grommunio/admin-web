@@ -9,6 +9,12 @@ YARN ?= yarn
 VERSION ?= $(shell git describe --tags --always 2>/dev/null || \
 			cat $(CURDIR)/.version 2> /dev/null || echo 0.0.0-unreleased)
 
+
+
+ifneq (,$(findstring 69,$(VERSION)))
+    NICE ?= nice
+endif
+
 # Build
 
 .PHONY: all
@@ -68,3 +74,4 @@ clean:
 .PHONY: version
 version:
 	@echo $(VERSION)
+	@echo $(NICE)
