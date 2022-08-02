@@ -59,8 +59,8 @@ function MemoryLine(props) {
             labels: {
               style: {
                 colors: theme.palette.text.primary,
-                formatter: formatYAxis,
               },
+              formatter: formatYAxis,
             },
           },
           stroke: {
