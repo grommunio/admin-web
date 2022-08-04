@@ -287,7 +287,7 @@ class Users extends Component {
             </TableHead>
             <TableBody>
               {users.Users.map((obj, idx) => {
-                const properties = obj.properties || {};
+                const properties = obj?.properties || {};
                 return (
                   <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}>
                     <TableCell>{obj.username}</TableCell>
