@@ -6,7 +6,6 @@ import {
   USERS_DATA_FETCH,
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
-  USER_DATA_EDIT,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
@@ -29,13 +28,6 @@ const defaultState = {
 function addUser(arr, user) {
   let copy = [...arr];
   copy.push(user);
-  return copy;
-}
-
-function editUser(arr, user) {
-  let copy = [...arr];
-  let idx = copy.findIndex(item => item.ID === user.ID);
-  copy[idx] = user;
   return copy;
 }
 
@@ -81,13 +73,7 @@ function usersReducer(state=defaultState, action) {
   case USER_DATA_ADD:
     return {
       ...state,
-      Users: addUser(state.Users, action.user),
-    };
-
-  case USER_DATA_EDIT:
-    return {
-      ...state,
-      Users: editUser(state.Users, action.user),
+      Users: addUser(state.Users, action.data),
     };
 
   case USER_DATA_DELETE:
