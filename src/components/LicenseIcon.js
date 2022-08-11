@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import notActivatedLicense from '../res/notActivatedLicense.svg';
 import activatedLicense from '../res/activatedLicense.svg';
 import { withStyles } from '@mui/styles';
+import { Box } from '@mui/system';
 
 const styles = {
   root: {
@@ -12,7 +13,16 @@ const styles = {
   },
   licenseIcon: {
     cursor: 'pointer',
-    marginRight: 8,
+  },
+  box: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '12px',
+    borderRadius: 32,
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
   },
 };
 
@@ -20,13 +30,15 @@ function LicenseIcon({ classes, activated, handleNavigation }) {
 
   return (
     <div className={classes.root}>
-      <img
-        className={classes.licenseIcon}
-        src={activated ? activatedLicense : notActivatedLicense}
-        width={32}
-        height={25}
-        onClick={handleNavigation('license')}
-      />
+      <Box className={classes.box}>
+        <img
+          className={classes.licenseIcon}
+          src={activated ? activatedLicense : notActivatedLicense}
+          width={32}
+          height={25}
+          onClick={handleNavigation('license')}
+        />
+      </Box>
     </div>
   );
 }
