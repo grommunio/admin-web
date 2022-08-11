@@ -79,7 +79,12 @@ function MemoryPie(props) {
             },
             dropShadow: {
               enabled: false,
-            }
+            },
+            background: {
+              borderRadius: 6,
+              opacity: 0.8,
+              enabled: theme.palette.mode === 'dark',
+            },
           },
           colors: ['#66DA26', '#546E7A', '#E91E63', '#FF9800'],
         }}
