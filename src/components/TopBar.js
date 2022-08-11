@@ -55,7 +55,7 @@ const styles = theme => ({
     backgroundImage: `linear-gradient(rgba(250,250,250,1) 4%, rgba(120, 120, 120, 0.7), rgba(250,250,250,1) 96%)`,
   },
   iconButton: {
-    color: theme.palette.mode === 'light' ? '#777' : '#fff',
+    color: '#fff',
     cursor: 'pointer',
   },
   add: {
