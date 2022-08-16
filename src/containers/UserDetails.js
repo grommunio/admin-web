@@ -646,6 +646,7 @@ class UserDetails extends PureComponent {
           />}
           {tab === 5 && <Delegates
             domainID={domain.ID}
+            orgID={domain.orgID}
             userID={user.ID}
             disabled={!writable}
           />}
