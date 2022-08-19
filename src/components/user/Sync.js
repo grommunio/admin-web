@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { FormControl, Grid,
+import { Button, FormControl, Grid,
   IconButton,
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { parseUnixtime } from '../../utils';
-import { fetchUserSync } from '../../actions/users';
+import { deleteUserSync, fetchUserSync } from '../../actions/users';
 import { connect } from 'react-redux';
 import PasswordSafetyDialog from '../Dialogs/PasswordSafetyDialog';
 import { cancelRemoteWipe, engageRemoteDelete, engageRemoteWipe, engageResync } from '../../actions/sync';
@@ -37,6 +37,11 @@ const styles = theme => ({
   listTextfield: {
     flex: 1,
   },
+  flexEndContainer: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
 });
 
 class Sync extends PureComponent {
@@ -46,7 +51,7 @@ class Sync extends PureComponent {
     const { orderBy, type } = this.state; 
     fetch(domainID, userID)
       .then(this.handleSort(orderBy, type, false))
-      .catch(err => console.error(err));
+      .catch(snackbar => this.setState({ snackbar }));
   }
 
   state = {
@@ -143,6 +148,13 @@ class Sync extends PureComponent {
       .catch(snackbar => this.setState({ snackbar }));
   }
 
+  handleRemoveSyncStates = () => {
+    const { deleteStates, domainID, userID } = this.props;
+    deleteStates(domainID, userID)
+      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
   render() {
     const { classes, t, sync } = this.props;
     const { sortedDevices, order, orderBy, wipingID, snackbar } = this.state;
@@ -151,6 +163,16 @@ class Sync extends PureComponent {
       <FormControl className={classes.form}>
         <Grid container alignItems="center"  className={classes.headline}>
           <Typography variant="h6">{t('Mobile devices')}</Typography>
+          <div className={classes.flexEndContainer}>
+            <Button
+              variant='contained'
+              //disabled={!sync.length}
+              color="warning"
+              onClick={this.handleRemoveSyncStates}
+            >
+              Delete sync states
+            </Button>
+          </div>
         </Grid>
         <Table size="small">
           <TableHead>
@@ -236,6 +258,7 @@ Sync.propTypes = {
   resync: PropTypes.func.isRequired,
   deleteDevice: PropTypes.func.isRequired,
   panicStopWiping: PropTypes.func.isRequired,
+  deleteStates: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -247,7 +270,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetch: async (domainID, userID) => await dispatch(fetchUserSync(domainID, userID))
-      .catch(err => console.error(err)),
+      .catch(err => Promise.reject(err)),
+    deleteStates: async (domainID, userID) => await dispatch(deleteUserSync(domainID, userID))
+      .catch(err => Promise.reject(err)),
     wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, password) =>
       await dispatch(engageRemoteWipe(domainID, userID, deviceID, password))
         .catch(err => Promise.reject(err)),

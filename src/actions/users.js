@@ -13,7 +13,7 @@ import {
   USERS_SYNC_RECEIVED,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
-  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync,
+  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync, removeUserSync,
   userDelegates, editUserDelegates, setPermittedUser, permittedUsers, usersPlain,
   userCount, 
   storeLangs,
@@ -123,6 +123,10 @@ export function fetchLdapDump(...endpointParams) {
 
 export function fetchUserSync(...endpointParams) {
   return defaultListHandler(userSync, USERS_SYNC_RECEIVED, null, ...endpointParams);
+}
+
+export function deleteUserSync(...endpointParams) {
+  return defaultPatchHandler(removeUserSync, ...endpointParams);
 }
 
 export function fetchUserDelegates(...endpointParams) {
