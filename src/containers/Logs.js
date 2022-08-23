@@ -18,11 +18,12 @@ import {
   Portal,
   Snackbar,
   Alert,
+  Tooltip,
 } from "@mui/material";
 import { connect } from "react-redux";
 import ArrowUp from '@mui/icons-material/ArrowUpward';
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { Refresh } from "@mui/icons-material";
+import { CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard } from "../utils";
 
@@ -197,9 +198,16 @@ class Logs extends PureComponent {
                 label={t("Autorefresh")}
               />
             </Grid>}
-            {log.length > 0 ? <IconButton onClick={this.handleScroll} size="large">
-              <ArrowUp />
-            </IconButton> : filename && <Typography>&lt;no logs&gt;</Typography>}
+            {log.length > 0 ? <>
+              <IconButton onClick={this.handleScroll} size="large">
+                <ArrowUp />
+              </IconButton>
+              <Tooltip placement="top" title={t('Copy all')}>
+                <IconButton onClick={this.handleCopyToClipboard(log.map(l => l.message).join('\n'))} size="large">
+                  <CopyAll />
+                </IconButton>
+              </Tooltip>
+            </>: filename && <Typography>&lt;no logs&gt;</Typography>}
             {log.map((log, idx) =>
               <pre
                 key={idx}
