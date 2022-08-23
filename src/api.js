@@ -409,6 +409,12 @@ export function userSync(domainID, userID) {
   };
 }
 
+export function removeUserSync(domainID, userID) {
+  return async () => {
+    return await yeet('/domains/' + domainID + '/users/'+ userID + '/sync');
+  };
+}
+
 export function remoteWipeEngage(domainID, userID, deviceId, password) {
   return async () => {
     return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', { password });

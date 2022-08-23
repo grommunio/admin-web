@@ -6,14 +6,13 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import Loadable from 'react-loadable';
 import { BrowserRouter as Router } from "react-router-dom";
-import { ThemeProvider } from '@mui/material/styles';
 import { StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
 import { store } from './store';
 import Loading from './components/Loading';
-import theme from './theme';
 import './i18n';
 import './config';
+import ToggleColorMode from './components/ToggleColorMode';
 //import * as serviceWorker from './serviceWorker';
 //import { serviceWorkerNewContent } from './actions/common';
 
@@ -34,11 +33,11 @@ function main() {
   ReactDOM.render(
     <Provider store={store}>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
+        <ToggleColorMode>
           <Router>
             <LoadableApp />
           </Router>
-        </ThemeProvider>
+        </ToggleColorMode>
       </StyledEngineProvider>
     </Provider>,
     document.getElementById('root')

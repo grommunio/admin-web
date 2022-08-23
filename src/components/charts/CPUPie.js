@@ -69,7 +69,12 @@ function CPUPie(props) {
             },
             dropShadow: {
               enabled: false,
-            }
+            },
+            background: {
+              borderRadius: 6,
+              opacity: 0.8,
+              enabled: theme.palette.mode === 'dark',
+            },
           },
           legend: {
             position: 'bottom',

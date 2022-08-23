@@ -9,10 +9,10 @@ import blue from './colors/blue';
 import red from './colors/red';
 
 // Get dark or light mode from localStorage
-const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
+// const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
 
 // Define material-ui theme
-const theme = createTheme({
+const createCustomTheme = mode => createTheme({
   components: {
     MuiFormControlLabel: {
       styleOverrides: {
@@ -163,4 +163,4 @@ const theme = createTheme({
   },
 });
 
-export default theme;
+export default createCustomTheme;

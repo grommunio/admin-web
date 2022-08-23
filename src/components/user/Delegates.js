@@ -10,10 +10,13 @@ import { connect } from 'react-redux';
 import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
   setPermittedUserData, 
   fetchUserSendAs, 
-  setUserSendAs} from '../../actions/users';
+  setUserSendAs,
+  fetchAllUsers} from '../../actions/users';
 import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { CapabilityContext } from '../../CapabilityContext';
+import { SYSTEM_ADMIN_WRITE } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -47,8 +50,10 @@ class Delegates extends PureComponent {
   };
 
   async componentDidMount() {
-    const { fetchDelegates, fetchSendAs, fetchPermittedUsers, fetchUsers, userID, domainID } = this.props;
-    fetchUsers(domainID)
+    const { fetchDelegates, fetchSendAs, fetchPermittedUsers, fetchUsers, fetchOrgUsers, userID, domainID, orgID } = this.props;
+    const sysAdminPermissions = this.context.includes(SYSTEM_ADMIN_WRITE);
+
+    (sysAdminPermissions && orgID ? fetchOrgUsers(orgID) : fetchUsers(domainID))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const delegates = await fetchDelegates(domainID, userID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -184,15 +189,18 @@ class Delegates extends PureComponent {
   }
 }
 
+Delegates.contextType = CapabilityContext;
 Delegates.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   fetchDelegates: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   fetchSendAs: PropTypes.func.isRequired,
+  fetchOrgUsers: PropTypes.func.isRequired,
   fetchPermittedUsers: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   domainID: PropTypes.number.isRequired,
+  orgID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
   setUserDelegates: PropTypes.func.isRequired,
   setUserSendAs: PropTypes.func.isRequired,
@@ -214,6 +222,8 @@ const mapDispatchToProps = dispatch => {
     fetchPermittedUsers: async (domainID, userID) => await dispatch(fetchPermittedUsers(domainID, userID, {}))
       .catch(err => console.error(err)),
     fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID))
+      .catch(err => console.error(err)),
+    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0}))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))

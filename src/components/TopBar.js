@@ -32,8 +32,6 @@ import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
 
-const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
-
 const styles = theme => ({
   root: {
     [theme.breakpoints.up('lg')]: {
@@ -57,7 +55,7 @@ const styles = theme => ({
     backgroundImage: `linear-gradient(rgba(250,250,250,1) 4%, rgba(120, 120, 120, 0.7), rgba(250,250,250,1) 96%)`,
   },
   iconButton: {
-    color: mode === 'light' ? '#777' : '#fff',
+    color: '#fff',
     cursor: 'pointer',
   },
   add: {
@@ -67,25 +65,33 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   profileButton: {
     display: 'flex',
     alignItems: 'center',
     padding: '2px 4px 2px 8px',
-    marginRight: 12,
     borderRadius: 25,
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: mode === 'light' ? '#f3f3f3' : 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
   },
   profileIcon: {
     fontSize: 40,
-    color: mode === 'light' ? '#aaa' : '#fff',
+    color: '#aaa',
     marginLeft: 4,
   },
   flag: {
     cursor: 'pointer',
+  },
+  username: {
+    color: 'white',
+  },
+  langButton: {
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    },
   },
 });
 
@@ -184,8 +190,8 @@ class TopBar extends PureComponent {
               activated={license.product && license.product !== "Community"}
               handleNavigation={this.handleNavigation}
             />}
-            <IconButton onClick={this.handleMenuOpen('langsAnchorEl')}>
-              <Language />
+            <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
+              <Language color="inherit" className={classes.username}/>
             </IconButton>
             <Menu
               id="lang-menu"

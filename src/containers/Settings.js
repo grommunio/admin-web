@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
 import TableViewContainer from '../components/TableViewContainer';
+import ColorModeContext from '../ColorContext';
 
 const styles = theme => ({
   paper: {
@@ -60,7 +61,7 @@ class Settings extends Component {
 
   handleDarkModeChange = event => {
     window.localStorage.setItem('darkMode', event.target.checked);
-    window.location.reload();
+    this.context.toggleColorMode();
   }
 
   handleLangChange = event => {
@@ -105,6 +106,7 @@ class Settings extends Component {
   }
 }
 
+Settings.contextType = ColorModeContext;
 Settings.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
