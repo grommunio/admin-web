@@ -132,6 +132,7 @@ function withTable(WrappedComponent, defaultState={}) {
     handleDeleteError = (error) => this.setState({ snackbar: error });
 
     handleEdit = path => (event) => {
+      if(window.getSelection().toString()) return;
       this.props.history.push(path);
       event.stopPropagation();
     };
