@@ -88,6 +88,10 @@ const styles = theme => ({
   adornment: {
     display: 'contents',
   },
+  flexRow: {
+    display: 'flex',
+    alignItems: 'center',
+  },
   buttonGrid: {
     margin: theme.spacing(2, 0, 0, 0),
   },
@@ -211,10 +215,10 @@ class DomainMenu extends PureComponent {
         <Paper className={classes.paper} elevation={1}>
           <Grid container direction="column" className={classes.container}>
             <Grid item className={classes.firstRow}>
-              <Typography variant="h6">
-                <span className={classes.description}>{t('Domain name')}:</span>
+              <div className={classes.flexRow}>
+                <Typography variant='h6' className={classes.description}>{t('Domain name')}:</Typography>
                 {domain.domainname}
-              </Typography>
+              </div>
               {editable && <div className={classes.editButtonContainer}>
                 <Button
                   onClick={this.handleNav}
@@ -233,26 +237,26 @@ class DomainMenu extends PureComponent {
                 </Button>
               </div>}
             </Grid>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Title')}:</span>
+            <div className={classes.flexRow}>
+              <Typography variant='h6' className={classes.description}>{t('Title')}:</Typography>
               {domain.title}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Address')}:</span>
+            </div>
+            <div className={classes.flexRow}>
+              <Typography variant='h6' className={classes.description}>{t('Address')}:</Typography>
               {domain.address}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Admin')}:</span>
+            </div>
+            <div className={classes.flexRow}>
+              <Typography variant='h6' className={classes.description}>{t('Admin')}:</Typography>
               {domain.adminName}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Users')}:</span>
+            </div>
+            <div className={classes.flexRow}>
+              <Typography variant='h6' className={classes.description}>{t('Users')}:</Typography>
               {`${domain.activeUsers} active, ${domain.inactiveUsers} inactive, ${domain.maxUser} maximum`}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Telephone')}:</span>
+            </div>
+            <div className={classes.flexRow}>
+              <Typography variant='h6' className={classes.description}>{t('Telephone')}:</Typography>
               {domain.tel}
-            </Typography>
+            </div>
           </Grid>
           <div className={classes.defaultsContainer}>
             <FormControl className={classes.form}>
