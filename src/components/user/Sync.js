@@ -167,6 +167,7 @@ class Sync extends PureComponent {
             <Button
               variant='contained'
               //disabled={!sync.length}
+              style={{ display: 'none' }}
               color="warning"
               onClick={this.handleRemoveSyncStates}
             >
