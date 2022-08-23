@@ -27,11 +27,13 @@ import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
-import { Grid, Tabs, Tab, TextField, InputAdornment, Typography } from '@mui/material';
+import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
-import { BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { Add, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
+import Feedback from './Feedback';
+import AddDomain from './Dialogs/AddDomain';
 
 const styles = theme => ({
   drawerHeader: {
@@ -146,6 +148,8 @@ class NavigationLinks extends PureComponent {
     tab: 0,
     filter: '',
     defaultsIn: false,
+    adding: false,
+    snackbar: '',
   }
 
   handleNavigation = path => event => {
@@ -164,9 +168,17 @@ class NavigationLinks extends PureComponent {
     this.setState({ filter: event.target.value });
   }
 
+  handleAdd = () => this.setState({ adding: true });
+
+  handleAddingClose = () => this.setState({ adding: false });
+
+  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+
+  handleAddingError = (error) => this.setState({ snackbar: error });
+
   render() {
     const { classes, t, expandedDomain, location, domains, capabilities } = this.props;
-    const { filter, tab } = this.state;
+    const { filter, tab, adding, snackbar } = this.state;
     const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
     const pathname = location.pathname;
     return(
@@ -217,6 +229,13 @@ class NavigationLinks extends PureComponent {
               />
             </Grid>}
         <List className={classes.list}>
+          {tab === 1 && isSysAdmin && <Button
+            color="primary"
+            onClick={this.handleAdd}
+          >
+            {t("New domain")}
+            <Add />
+          </Button>}
           {(tab === 1 || !isSysAdmin) &&
             domains.map(({ domainname: name, ID, domainStatus }) => {
               return name.includes(filter) ?
@@ -457,6 +476,16 @@ class NavigationLinks extends PureComponent {
           </React.Fragment>
           }
         </List>
+        <AddDomain
+          open={adding}
+          onSuccess={this.handleAddingSuccess}
+          onError={this.handleAddingError}
+          onClose={this.handleAddingClose}
+        />
+        <Feedback
+          snackbar={snackbar}
+          onClose={() => this.setState({ snackbar: "" })}
+        />
         <div className={classes.background} />
       </React.Fragment>
     );
