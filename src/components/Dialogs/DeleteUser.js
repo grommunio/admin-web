@@ -96,7 +96,7 @@ DeleteUser.propTypes = {
 const mapDispatchToProps = dispatch => {
   return {
     delete: async (domainID, id, deleteFiles) => {
-      await dispatch(deleteUserData(domainID, id, deleteFiles))
+      await dispatch(deleteUserData(domainID, id, { deleteFiles }))
         .catch(error => Promise.reject(error));
     },
   };

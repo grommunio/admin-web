@@ -366,9 +366,9 @@ export function editUser(domainID, user) {
   };
 }
 
-export function deleteUser(domainID, id, deleteFiles) {
+export function deleteUser(domainID, id, params) {
   return async () => {
-    return await yeet('/domains/' + domainID + '/users/' + id + '?deleteFiles=' + deleteFiles);
+    return await yeet(buildQuery('/domains/' + domainID + '/users/' + id, params));
   };
 }
 

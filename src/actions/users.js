@@ -173,8 +173,8 @@ export function editUserRoles(...endpointParams) {
   return defaultPatchHandler(editUserRole, ...endpointParams);
 }
 
-export function deleteUserData(...endpointParams) {
-  return defaultDeleteHandler(deleteUser, USER_DATA_DELETE, ...endpointParams);
+export function deleteUserData(domainID, id, params) {
+  return defaultDeleteHandler(deleteUser, USER_DATA_DELETE, { domainID, id, params });
 }
 
 export function deleteUserStore(...endpointParams) {
