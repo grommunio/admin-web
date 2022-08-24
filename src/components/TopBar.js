@@ -8,7 +8,10 @@ import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress
   Box, 
   Menu,
   MenuItem,
-  Tooltip} from '@mui/material';
+  Tooltip,
+  Autocomplete,
+  TextField,
+  InputAdornment} from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -28,9 +31,11 @@ import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { fetchLicenseData } from '../actions/license';
 import LicenseIcon from './LicenseIcon';
-import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
+import { Search } from '@mui/icons-material';
+import { globalSearchOptions } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -93,6 +98,10 @@ const styles = theme => ({
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
     },
   },
+  autoComplete: {
+    maxWidth: 240,
+    marginRight: 8,
+  },
 });
 
 class TopBar extends PureComponent {
@@ -100,6 +109,7 @@ class TopBar extends PureComponent {
   state = {
     menuAnchorEl: null,
     langsAnchorEl: null,
+    search: '',
   }
 
   links = [
@@ -150,10 +160,15 @@ class TopBar extends PureComponent {
     });
   }
 
+  handleAutocomplete = (_, newVal) => {
+    if(newVal?.route) this.props.history.push(newVal.route);
+  }
+
   render() {
     const { classes, t, profile, title, onAdd, fetching, settings, license } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
+    const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
   
     return (
       <AppBar color='inherit' position="fixed" className={classes.root}>
@@ -182,6 +197,39 @@ class TopBar extends PureComponent {
           )}
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
+            {sysAdmRead && <Autocomplete
+              onChange={this.handleAutocomplete}
+              getOptionLabel={o => t(o.label) || ''}
+              className={classes.autoComplete}
+              options={globalSearchOptions}
+              autoHighlight
+              fullWidth
+              autoSelect
+              filterOptions={(options, state) => {
+                const input = state.inputValue.toLowerCase();
+                return options.filter(o => o.tags.some(tag =>
+                  tag.includes(input) || t(tag).includes(input)))
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder={t("Search")}
+                  
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <>
+                        <InputAdornment position="start">
+                          <Search color="secondary" />
+                        </InputAdornment>
+                        {params.InputProps.startAdornment}
+                      </>
+                    ),
+                  }}
+                  color="primary"
+                />
+              )}
+            />}
             <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
