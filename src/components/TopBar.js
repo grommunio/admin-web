@@ -102,6 +102,16 @@ const styles = theme => ({
     maxWidth: 240,
     marginRight: 8,
   },
+  search: {
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'rgba(255, 255, 255, 0.6)',
+      },
+      '&:hover fieldset': {
+        borderColor: 'white',
+      },
+    },
+  },
 });
 
 class TopBar extends PureComponent {
@@ -204,7 +214,6 @@ class TopBar extends PureComponent {
               options={globalSearchOptions}
               autoHighlight
               fullWidth
-              autoSelect
               filterOptions={(options, state) => {
                 const input = state.inputValue.toLowerCase();
                 return options.filter(o => o.tags.some(tag =>
@@ -213,20 +222,20 @@ class TopBar extends PureComponent {
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  className={classes.search}
                   placeholder={t("Search")}
-                  
                   InputProps={{
                     ...params.InputProps,
+                    style: { color: 'white' },
                     startAdornment: (
                       <>
                         <InputAdornment position="start">
-                          <Search color="secondary" />
+                          <Search htmlColor='white' />
                         </InputAdornment>
                         {params.InputProps.startAdornment}
                       </>
                     ),
                   }}
-                  color="primary"
                 />
               )}
             />}
