@@ -140,6 +140,9 @@ const styles = theme => ({
     margin: theme.spacing(2, 0, 0, 1),
     fontWeight: 600,
   },
+  addButton: {
+    margin: '0 8px',
+  },
 });
 
 class NavigationLinks extends PureComponent {
@@ -232,6 +235,7 @@ class NavigationLinks extends PureComponent {
           {tab === 1 && isSysAdmin && <Button
             color="primary"
             onClick={this.handleAdd}
+            className={classes.addButton}
           >
             {t("New domain")}
             <Add />
