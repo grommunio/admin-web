@@ -108,3 +108,37 @@ Following attributes are available:
 * `archiveWebAddress:String` Url of production archive server (default: `''`)
 
 * `searchAttributes:Array<String>` Array of strings, possible LDAP Search attributes
+
+
+# Additional information
+
+## Support
+
+- Support is available through **[grommunio GmbH](https://grommunio.com)** and its partners.
+- grommunio Admin API community is available here: **[grommunio Community](https://community.grommunio.com)**
+
+For direct contact to the maintainers (for example to supply information about a security-related responsible disclosure), you can contact grommunio directly at [dev@grommunio.com](mailto:dev@grommunio.com)
+
+## Contributing
+
+First off, thanks for taking the time to contribute! Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are greatly appreciated.
+
+Please read [our contribution guidelines](doc/CONTRIBUTING.md), and thank you for being involved!
+
+## Security
+
+grommunio Admin API follows good practices of security. grommunio constantly monitors security related issues.
+grommunio Admin API is provided "as is" without any warranty. For professional support options through subscriptions, head over to [grommunio](https://grommunio.com).
+
+_For more information and to report security issues, please refer to our [security documentation](doc/SECURITY.md)._
+
+## Coding style
+
+This repository follows coding style loosely based on PEP8 standard (exception: maximum line width of 127).
+
+## License
+
+This project is licensed under the **GNU Affero General Public License v3**.
+
+See [LICENSE](LICENSE.txt) for more information.
+
