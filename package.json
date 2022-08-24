@@ -33,7 +33,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "translate": "python3 scripts/fillTranslations.py 'src/i18n/'"
   },
   "eslintConfig": {
     "extends": "react-app"
