@@ -76,7 +76,7 @@ export const globalSearchOptions = [
   },
   {
     label: 'Sync',
-    tags: ["syncronization", "states", 'mobiles', "mobile devices", "push connections"],
+    tags: ["synchronization", "states", 'mobiles', "mobile devices", "push connections"],
     route: '/sync'
   },
   {
