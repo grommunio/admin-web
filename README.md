@@ -115,7 +115,7 @@ Following attributes are available:
 ## Support
 
 - Support is available through **[grommunio GmbH](https://grommunio.com)** and its partners.
-- grommunio Admin API community is available here: **[grommunio Community](https://community.grommunio.com)**
+- grommunio Admin web community is available here: **[grommunio Community](https://community.grommunio.com)**
 
 For direct contact to the maintainers (for example to supply information about a security-related responsible disclosure), you can contact grommunio directly at [dev@grommunio.com](mailto:dev@grommunio.com)
 
@@ -127,8 +127,8 @@ Please read [our contribution guidelines](doc/CONTRIBUTING.md), and thank you fo
 
 ## Security
 
-grommunio Admin API follows good practices of security. grommunio constantly monitors security related issues.
-grommunio Admin API is provided "as is" without any warranty. For professional support options through subscriptions, head over to [grommunio](https://grommunio.com).
+grommunio Admin web follows good practices of security. grommunio constantly monitors security related issues.
+grommunio Admin web is provided "as is" without any warranty. For professional support options through subscriptions, head over to [grommunio](https://grommunio.com).
 
 _For more information and to report security issues, please refer to our [security documentation](doc/SECURITY.md)._
 
