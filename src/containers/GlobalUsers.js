@@ -5,9 +5,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress, TextField, InputAdornment } from '@mui/material';
+  CircularProgress } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, checkLdapUsers, fetchAllUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
@@ -19,6 +18,7 @@ import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   tablePaper: {
@@ -114,20 +114,11 @@ class GlobalUsers extends Component {
             {t('New user')}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search users")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

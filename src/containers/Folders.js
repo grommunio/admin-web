@@ -5,10 +5,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   Typography, Button, Grid, CircularProgress,
-  TextField, InputAdornment, Breadcrumbs, Link } from '@mui/material';
+  Breadcrumbs, Link } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import Search from '@mui/icons-material/Search';
 import { fetchFolderData, deleteFolderData } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import { defaultFetchLimit, DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
@@ -18,6 +17,7 @@ import DeleteFolder from '../components/Dialogs/DeleteFolder';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import { Edit } from '@mui/icons-material';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   tablePaper: {
@@ -135,20 +135,11 @@ class Folders extends PureComponent {
             {t('New folder')}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search folders")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

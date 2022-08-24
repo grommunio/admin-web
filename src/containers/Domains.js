@@ -17,12 +17,9 @@ import {
   Grid,
   TableSortLabel,
   CircularProgress,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
-import Search from "@mui/icons-material/Search";
 import { fetchDomainData, deleteDomainData } from "../actions/domains";
 import AddDomain from "../components/Dialogs/AddDomain";
 import DeleteDomain from "../components/Dialogs/DeleteDomain";
@@ -31,6 +28,7 @@ import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import SearchTextfield from "../components/SearchTextfield";
 
 const styles = (theme) => ({
   circularProgress: {
@@ -112,19 +110,10 @@ class Domains extends Component {
                 />
               }
             />
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant={"outlined"}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
+              placeholder={t("Search domains")}
             />
           </div>
         </Grid>

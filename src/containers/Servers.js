@@ -5,8 +5,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment, MenuItem } from '@mui/material';
-import Search from '@mui/icons-material/Search';
+  TextField, MenuItem } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { HelpOutline } from '@mui/icons-material';
@@ -17,6 +16,7 @@ import AddServer from '../components/Dialogs/AddServer';
 import { deleteServerData, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   buttonGrid: {
@@ -114,20 +114,11 @@ class Servers extends PureComponent {
             {t("New server")}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search servers")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

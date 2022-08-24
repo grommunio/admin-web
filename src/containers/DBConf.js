@@ -6,8 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, TextField, InputAdornment, Tabs, Tab, IconButton } from '@mui/material';
-import Search from '@mui/icons-material/Search';
+  Typography, Button, Grid, Tabs, Tab, IconButton } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
@@ -17,6 +16,7 @@ import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 import { defaultFetchLimit, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   paper: {
@@ -127,20 +127,11 @@ class DBConf extends Component {
             {t("Configure grommunio-dbconf")}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={this.handleMatch}
               placeholder={t("Search services")}
-              variant="outlined"
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

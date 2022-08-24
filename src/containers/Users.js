@@ -5,9 +5,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress, TextField, InputAdornment, Tooltip } from '@mui/material';
+  CircularProgress, Tooltip } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import Search from '@mui/icons-material/Search';
 import Delete from '@mui/icons-material/Delete';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
@@ -20,6 +19,7 @@ import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   tablePaper: {
@@ -239,20 +239,11 @@ class Users extends Component {
             </Button>
           </Tooltip>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search users")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

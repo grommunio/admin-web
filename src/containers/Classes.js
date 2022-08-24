@@ -4,10 +4,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Typography, Button, Grid,
-  CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
+  CircularProgress, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton, Tabs, Tab, FormControl, InputLabel, Select,
   Input, MenuItem } from '@mui/material';
-import Search from '@mui/icons-material/Search';
 import { fetchClassesData, deleteClassData, fetchClassesTree } from '../actions/classes';
 import { Delete } from '@mui/icons-material';
 import AddClass from '../components/Dialogs/AddClass';
@@ -18,6 +17,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   tablePaper: {
@@ -152,20 +152,11 @@ class Classes extends Component {
             {t('New group')}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search groups")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

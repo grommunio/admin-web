@@ -4,9 +4,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Typography, Button, Grid,
-  CircularProgress, TextField, InputAdornment, Table, TableHead, TableRow, TableCell,
+  CircularProgress, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton } from '@mui/material';
-import Search from '@mui/icons-material/Search';
 import { fetchMListsData, deleteMListData } from '../actions/mlists';
 import { Delete } from '@mui/icons-material';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
@@ -16,6 +15,7 @@ import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   tablePaper: {
@@ -97,20 +97,11 @@ class MLists extends Component {
             {t('New mail list')}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
+              placeholder={t("Search mail lists")}
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

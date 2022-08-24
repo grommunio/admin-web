@@ -4,9 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
-  Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, InputAdornment } from '@mui/material';
-import Search from '@mui/icons-material/Search';
+  Typography, Button, Grid, TableSortLabel, CircularProgress } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
@@ -17,6 +15,7 @@ import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
+import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   buttonGrid: {
@@ -80,20 +79,10 @@ class Roles extends PureComponent {
             {t("New role")}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
-              placeholder={t("Search")}
-              variant="outlined"
-              className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
+              placeholder={t("Search roles")}
             />
           </div>
         </Grid>

@@ -15,11 +15,8 @@ import {
   Grid,
   TableSortLabel,
   CircularProgress,
-  TextField,
-  InputAdornment,
   Chip,
 } from "@mui/material";
-import Search from "@mui/icons-material/Search";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
@@ -27,6 +24,7 @@ import { fetchTaskqData, fetchTaskqStatus, startTaskqServer, stopTaskqServer } f
 import { setDateTimeString } from "../utils";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
+import SearchTextfield from "../components/SearchTextfield";
 
 const styles = (theme) => ({
   circularProgress: {
@@ -140,19 +138,10 @@ class TasQ extends Component {
             {t("Start server")}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
               placeholder={t("Search tasks")}
-              variant={"outlined"}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

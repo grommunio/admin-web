@@ -15,7 +15,6 @@ import {
   TableSortLabel,
   Tooltip,
   Grid,
-  InputAdornment,
   TextField,
   FormControlLabel,
   Checkbox,
@@ -24,11 +23,12 @@ import {
 } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchSyncData } from "../actions/sync";
-import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined, Search } from "@mui/icons-material";
+import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined } from "@mui/icons-material";
 import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
 import { grey, red } from "@mui/material/colors";
 import TableViewContainer from "../components/TableViewContainer";
+import SearchTextfield from "../components/SearchTextfield";
 
 const styles = (theme) => ({
   actions: {
@@ -234,20 +234,11 @@ class Sync extends PureComponent {
             <MenuItem value={20}>20</MenuItem>
           </TextField>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={this.handleInput('match')}
               placeholder={t("Filter")}
-              variant="outlined"
               className={classes.textfield}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>

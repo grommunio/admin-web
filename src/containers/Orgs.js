@@ -15,12 +15,9 @@ import {
   Grid,
   TableSortLabel,
   CircularProgress,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
-import Search from "@mui/icons-material/Search";
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
@@ -29,6 +26,7 @@ import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
+import SearchTextfield from "../components/SearchTextfield";
 
 const styles = (theme) => ({
   circularProgress: {
@@ -88,19 +86,10 @@ class Orgs extends Component {
             {t("New organization")}
           </Button>
           <div className={classes.actions}>
-            <TextField
+            <SearchTextfield
               value={match}
               onChange={handleMatch}
               placeholder={t("Search organizations")}
-              variant={"outlined"}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search color="secondary" />
-                  </InputAdornment>
-                ),
-              }}
-              color="primary"
             />
           </div>
         </Grid>
