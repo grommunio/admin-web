@@ -10,6 +10,7 @@ import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
+import moment from 'moment';
 
 const styles = theme => ({
   paper: {
@@ -41,6 +42,11 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'center',
     margin: theme.spacing(1),
+  },
+  about: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: theme.spacing(0, 2),
   },
 });
 
@@ -200,6 +206,24 @@ class License extends PureComponent {
             onChange={this.handleUploadConfirm}
           />
         </Paper>
+        <div className={classes.about}>
+          <Typography variant='h2' className={classes.licenseContainer}>About</Typography>
+          <Typography variant="caption">
+            grommunio is Copyright © 2020-{moment().year()}. All rights reserved.
+          </Typography>
+          <Typography variant="caption">
+            grommunio is licensed under the GNU Affero General Public License v3.
+          </Typography>
+          <Typography variant="caption">
+            This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+          </Typography>
+          <Typography variant="caption">
+            This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+          </Typography>
+          <Typography variant="caption">
+            You should have received a copy of the GNU Affero General Public License along with this program. If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.
+          </Typography>
+        </div>
       </TableViewContainer>
     );
   }
