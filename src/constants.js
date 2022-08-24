@@ -90,7 +90,7 @@ export const globalSearchOptions = [
     route: '/settings'
   },
   {
-    label: 'license',
+    label: 'License',
     tags: ["license", "product", "upload"],
     route: '/settings'
   }

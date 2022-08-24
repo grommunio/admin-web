@@ -188,23 +188,25 @@ class TopBar extends PureComponent {
               <Burger />
             </IconButton>
           </Hidden>
-          {this.links.map((link, idx) =>
-            <Tooltip
-              placement="bottom"
-              title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
-            >
-              <span>
-                <IconButton
-                  href={config[link.key]}
-                  disabled={!config[link.key]}
-                  target="_blank"
-                  className={classes.iconButton}
-                  size="large">
-                  <link.icon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
+          <Hidden smDown>
+            {this.links.map((link, idx) =>
+              <Tooltip
+                placement="bottom"
+                title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
+              >
+                <span>
+                  <IconButton
+                    href={config[link.key]}
+                    disabled={!config[link.key]}
+                    target="_blank"
+                    className={classes.iconButton}
+                    size="large">
+                    <link.icon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            )}
+          </Hidden>
           {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
           <div className={classes.flexEndContainer}>
             {sysAdmRead && <Autocomplete
