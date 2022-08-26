@@ -18,4 +18,4 @@ if("de-DE.json" in files):
                     else:
                         fileContent[key] = ""
             with open(i18nDir + file, 'w') as fp:
-                json.dump(fileContent, fp, indent=2, sort_keys=True, ensure_ascii=False)
+                json.dump(fileContent, fp, indent=4, sort_keys=True, ensure_ascii=False)
