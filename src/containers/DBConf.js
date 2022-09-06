@@ -75,8 +75,8 @@ class DBConf extends Component {
     this.setState({ deleting: service });
   }
 
-  handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
+  handleDeleteSuccess = resp => {
+    this.setState({ deleting: false, snackbar: 'Success! ' + (resp?.message || '')});
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
@@ -239,9 +239,9 @@ const mapDispatchToProps = dispatch => {
     fetch: async () => {
       await dispatch(fetchDBConfData({})).catch(msg => Promise.reject(msg));
     },
-    delete: async service => {
-      await dispatch(deleteDBService(service)).catch(msg => Promise.reject(msg));
-    },
+    delete: async service => await dispatch(deleteDBService(service))
+      .then(msg => msg)
+      .catch(msg => Promise.reject(msg)),
   };
 };
 

@@ -22,8 +22,8 @@ class DomainDataDelete extends PureComponent {
     const { id, onSuccess, onError, domainID } = this.props;
     this.setState({ loading: true });
     this.props.delete(domainID, id)
-      .then(() => {
-        if(onSuccess) onSuccess();
+      .then(msg => {
+        if(onSuccess) onSuccess(msg);
         this.setState({ loading: false });
       })
       .catch(error => {

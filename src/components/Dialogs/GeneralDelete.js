@@ -22,8 +22,8 @@ class GeneralDelete extends PureComponent {
     const { id, onSuccess, onError } = this.props;
     this.setState({ loading: true });
     this.props.delete(id)
-      .then(() => {
-        if(onSuccess) onSuccess();
+      .then(msg => {
+        if(onSuccess) onSuccess(msg);
         this.setState({ loading: false });
       })
       .catch(err => {

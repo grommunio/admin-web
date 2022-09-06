@@ -95,7 +95,7 @@ class DBFile extends PureComponent {
   handleEdit = () => {
     const splits = window.location.pathname.split('/');
     this.props.edit(splits[2], splits[3], { data: this.formatData(this.state.data) })
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '')}))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 

@@ -32,7 +32,6 @@ export function uploadServiceFile(service, filename, file) {
       await dispatch(uploadFile(service, filename, file));
       await dispatch({ type: DBCONF_SERVICE_ADD, service });
     } catch(err) {
-      console.error('failed to fetch dbconf data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);
     }
   };
@@ -57,10 +56,10 @@ export function renameDBService(...endpointParams) {
 export function deleteDBService(service) {
   return async dispatch => {
     try {
-      await dispatch(deleteService(service));
+      const resp = await dispatch(deleteService(service));
       await dispatch({ type: DBCONF_SERVICE_DELETE, service });
+      return Promise.resolve(resp);
     } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);
     }
   };
@@ -69,9 +68,9 @@ export function deleteDBService(service) {
 export function deleteDBFile(service, file) {
   return async dispatch => {
     try {
-      await dispatch(deleteFile(service, file));
+      const response = await dispatch(deleteFile(service, file));
+      return response?.message;
     } catch(err) {
-      console.error('failed to fetch groups data', err); // eslint-disable-line no-console
       return Promise.reject(err.message);
     }
   };

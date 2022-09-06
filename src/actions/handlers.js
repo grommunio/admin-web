@@ -43,7 +43,8 @@ export function defaultDetailsHandler(endpoint, ...endpointParams) {
 export function defaultPatchHandler(endpoint, ...endpointParams) {
   return async dispatch => {
     try {
-      await dispatch(endpoint(...endpointParams));
+      const resp = await dispatch(endpoint(...endpointParams));
+      return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

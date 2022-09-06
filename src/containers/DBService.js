@@ -73,9 +73,9 @@ class DBService extends PureComponent {
     this.setState({ deleting: file });
   }
 
-  handleDeleteSuccess = () => {
+  handleDeleteSuccess = msg => {
     const files = [...this.state.files].filter(f => f !== this.state.deleting);
-    this.setState({ deleting: false, snackbar: 'Success!', files });
+    this.setState({ deleting: false, snackbar: 'Success! ' + (msg || ''), files });
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
@@ -186,6 +186,7 @@ const mapDispatchToProps = dispatch => {
       .then(files => files)
       .catch(message => Promise.reject(message)),
     delete: async (service, file) => await dispatch(deleteDBFile(service, file))
+      .then(msg => msg)
       .catch(message => Promise.reject(message)),
     rename: async (service, file) => await dispatch(renameDBService(service, file))
       .catch(message => Promise.reject(message)),
