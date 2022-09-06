@@ -19,4 +19,4 @@ const SearchTextfield = ({ ...childProps }) =>
     color="primary"
   />;
 
-export default withStyles()(SearchTextfield);
+export default withStyles({})(SearchTextfield);
