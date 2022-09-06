@@ -307,7 +307,7 @@ class LdapConfig extends PureComponent {
       put(this.formatData(), { force: force }),
       authMgr({ authBackendSelection }),
     ])
-      .then(msg => this.setState({ snackbar: 'Success! ' + (msg || '') }))
+      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
@@ -330,7 +330,7 @@ class LdapConfig extends PureComponent {
           taskID: response.taskID,
         });
       } else {
-        this.setState({ snackbar: 'Success! ' + (response || '') });
+        this.setState({ snackbar: 'Success! ' + (response?.message || '') });
       }
     })
     .catch(snackbar => this.setState({ snackbar }));

@@ -58,7 +58,7 @@ export function deleteDBService(service) {
     try {
       const resp = await dispatch(deleteService(service));
       await dispatch({ type: DBCONF_SERVICE_DELETE, service });
-      return Promise.resolve(resp);
+      return Promise.resolve(resp?.message);
     } catch(err) {
       return Promise.reject(err.message);
     }

@@ -136,7 +136,7 @@ class Sync extends PureComponent {
     const { resync, domainID, userID } = this.props;
 
     resync(domainID, userID, deviceID)
-      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
+      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
@@ -144,14 +144,14 @@ class Sync extends PureComponent {
     const { deleteDevice, domainID, userID } = this.props;
 
     deleteDevice(domainID, userID, deviceID)
-      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
+      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
   handleRemoveSyncStates = () => {
     const { deleteStates, domainID, userID } = this.props;
     deleteStates(domainID, userID)
-      .then(message => this.setState({ snackbar: 'Success! ' + (message || '') }))
+      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 

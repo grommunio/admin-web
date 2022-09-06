@@ -58,8 +58,9 @@ export function defaultDeleteHandler(endpoint, deleteActionType, endpointParams)
       return Promise.reject("No entity ID received");
     }
     try {
-      await dispatch(endpoint(...Object.values(endpointParams)));
+      const resp = await dispatch(endpoint(...Object.values(endpointParams)));
       await dispatch({ type: deleteActionType, id: endpointParams.id });
+      return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

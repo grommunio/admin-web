@@ -73,9 +73,9 @@ class DBService extends PureComponent {
     this.setState({ deleting: file });
   }
 
-  handleDeleteSuccess = msg => {
+  handleDeleteSuccess = resp => {
     const files = [...this.state.files].filter(f => f !== this.state.deleting);
-    this.setState({ deleting: false, snackbar: 'Success! ' + (msg || ''), files });
+    this.setState({ deleting: false, snackbar: 'Success! ' + (resp?.message || ''), files });
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
