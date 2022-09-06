@@ -144,7 +144,16 @@ class Sync extends PureComponent {
     const { deleteDevice, domainID, userID } = this.props;
 
     deleteDevice(domainID, userID, deviceID)
-      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
+      .then(resp => {
+        const { sortedDevices } = this.state;
+        const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
+        const copy = [...sortedDevices];
+        copy.splice(idx, 1);
+        this.setState({
+          snackbar: 'Success! ' + (resp?.message || ''),
+          sortedDevices: copy,
+        })
+      })
       .catch(snackbar => this.setState({ snackbar }));
   }
 
