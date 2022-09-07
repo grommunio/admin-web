@@ -3,6 +3,7 @@
 
 import {
   DRAWER_EXPAND,
+  DRAWER_OPEN,
   DRAWER_DOMAINS_REVEICED,
   SELECT_DRAWER_DOMAIN,
   DOMAIN_DATA_ADD,
@@ -13,11 +14,11 @@ import {
 import { addItem } from '../utils';
 
 const defaultState = {
-  defaultOpen: false,
   selectedDomain: -1,
-  selected: '',
   Domains: [],
   loading: true,
+  expanded: false,
+  open: false,
 };
 
 function editDomain(arr, item) {
@@ -30,6 +31,12 @@ function editDomain(arr, item) {
 
 function drawerReducer(state = defaultState, action) {
   switch (action.type) {
+  case DRAWER_OPEN:
+    return {
+      ...state,
+      open: !state.open,
+    }
+
   case DRAWER_EXPAND:
     return {
       ...state,

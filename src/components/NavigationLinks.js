@@ -42,7 +42,7 @@ const styles = theme => ({
     padding: theme.spacing(0, 2, 0, 2),
     ...theme.mixins.toolbar,
     justifyContent: 'center',
-    height: 68,
+    height: 64,
   },
   dashboard: {
     '&:hover': {
@@ -148,7 +148,6 @@ const styles = theme => ({
 class NavigationLinks extends PureComponent {
 
   state = {
-    tab: 0,
     filter: '',
     defaultsIn: false,
     adding: false,
@@ -179,9 +178,14 @@ class NavigationLinks extends PureComponent {
 
   handleAddingError = (error) => this.setState({ snackbar: error });
 
+  toggleTab = () => {
+    const { tab, setTab } = this.props;
+    setTab(tab === 0 ? 1 : 0);
+  }
+
   render() {
-    const { classes, t, expandedDomain, location, domains, capabilities } = this.props;
-    const { filter, tab, adding, snackbar } = this.state;
+    const { classes, t, tab, expandedDomain, location, domains, capabilities } = this.props;
+    const { filter, adding, snackbar } = this.state;
     const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
     const pathname = location.pathname;
     return(
@@ -189,7 +193,6 @@ class NavigationLinks extends PureComponent {
         <div className={classes.drawerHeader}>
           <img
             src={logo}
-            width="140"
             height="32"
             alt="grommunio"
             onClick={this.handleNavigation('')}
@@ -197,7 +200,7 @@ class NavigationLinks extends PureComponent {
           />
         </div>
         {isSysAdmin && <Tabs
-          onChange={(event, tab) => this.setState({ tab: tab })}
+          onChange={this.toggleTab}
           value={tab}
           className={classes.tabs}
           indicatorColor="primary"
@@ -505,6 +508,8 @@ NavigationLinks.propTypes = {
   location: PropTypes.object.isRequired,
   expandedDomain: PropTypes.number,
   selectDomain: PropTypes.func.isRequired,
+  tab: PropTypes.number.isRequired,
+  setTab: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

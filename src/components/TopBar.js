@@ -16,7 +16,7 @@ import Add from '@mui/icons-material/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Burger from '@mui/icons-material/Menu';
-import { setDrawerExpansion } from '../actions/drawer';
+import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import Duo from '@mui/icons-material/Duo';
@@ -34,14 +34,35 @@ import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
-import { Search } from '@mui/icons-material';
+import { KeyboardArrowLeft, Search } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 
 const styles = theme => ({
-  root: {
+  appbar: {
+    height: 64,
+  },
+  toolbarExpanded: {
+    height: 64,
     [theme.breakpoints.up('lg')]: {
       marginLeft: 260,
     },
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    backgroundImage: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
+    paddingLeft: 12,
+  },
+  toolbarCollapsed: {
+    height: 64,
+    paddingLeft: 12,
+    [theme.breakpoints.up('lg')]: {
+      marginLeft: 75,
+    },
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     backgroundImage: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
   },
   title: {
@@ -136,8 +157,8 @@ class TopBar extends PureComponent {
   }
 
   handleMenuToggle = () => {
-    const { setDrawerExpansion } = this.props;
-    setDrawerExpansion();
+    const { setDrawerOpen } = this.props;
+    setDrawerOpen();
   }
 
   handleMenuOpen = menu => e => this.setState({
@@ -175,17 +196,22 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, title, onAdd, fetching, settings, license } = this.props;
+    const { classes, t, profile, title, onAdd, fetching, settings, license, drawer, setDrawerExpansion } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
     const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
   
     return (
-      <AppBar color='inherit' position="fixed" className={classes.root}>
-        <Toolbar className={classes.root}>
+      <AppBar color='inherit' position="fixed" className={classes.appbar}>
+        <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
           <Hidden lgUp>
             <IconButton color="inherit" onClick={this.handleMenuToggle} size="large">
               <Burger />
+            </IconButton>
+          </Hidden>
+          <Hidden lgDown>
+            <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
+              {drawer.expanded ? <KeyboardArrowLeft /> : <Burger />}
             </IconButton>
           </Hidden>
           <Hidden smDown>
@@ -241,10 +267,6 @@ class TopBar extends PureComponent {
                 />
               )}
             />}
-            <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
-              <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
-              <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
-            </Box>
             {licenseVisible && <LicenseIcon
               activated={license.product && license.product !== "Community"}
               handleNavigation={this.handleNavigation}
@@ -252,6 +274,10 @@ class TopBar extends PureComponent {
             <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
               <Language color="inherit" className={classes.username}/>
             </IconButton>
+            <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
+              <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
+              <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
+            </Box>
             <Menu
               id="lang-menu"
               anchorEl={langsAnchorEl}
@@ -313,8 +339,10 @@ TopBar.propTypes = {
   profile: PropTypes.object.isRequired,
   title: PropTypes.string,
   setDrawerExpansion: PropTypes.func.isRequired,
+  setDrawerOpen: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   Domains: PropTypes.array.isRequired,
+  drawer: PropTypes.object.isRequired,
   onAdd: PropTypes.func,
   fetching: PropTypes.bool,
   authLogout: PropTypes.func.isRequired,
@@ -325,7 +353,7 @@ TopBar.propTypes = {
 };
 
 const mapStateToProps = state => {
-  const { domains, users, folders, dashboard, services, settings, license } = state;
+  const { drawer, domains, users, folders, dashboard, services, settings, license } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
@@ -333,6 +361,7 @@ const mapStateToProps = state => {
     license: license.License,
     fetching: domains.loading || users.loading || folders.loading
       || dashboard.loading || services.loading ,
+    drawer,
   };
 };
 
@@ -340,6 +369,9 @@ const mapDispatchToProps = dispatch => {
   return {
     setDrawerExpansion: () => {
       dispatch(setDrawerExpansion());
+    },
+    setDrawerOpen: () => {
+      dispatch(setDrawerOpen());
     },
     authLogout: async () => {
       await dispatch(authLogout());

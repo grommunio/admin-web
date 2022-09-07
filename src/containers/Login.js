@@ -183,7 +183,7 @@ class Login extends Component {
             )}
           </Menu>
           <div className={classes.logoContainer}>
-            <img src={logo} width="300" height={68} alt="grommunio"/>
+            <img src={logo} width="300" height={64} alt="grommunio"/>
           </div>
           <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>

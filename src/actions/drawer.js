@@ -3,6 +3,7 @@
 
 import {
   DRAWER_EXPAND,
+  DRAWER_OPEN,
   DRAWER_DOMAINS_REVEICED,
   SELECT_DRAWER_DOMAIN,
 } from '../actions/types';
@@ -16,6 +17,12 @@ export function fetchDrawerDomains() {
 export function setDrawerExpansion() {
   return {
     type: DRAWER_EXPAND,
+  };
+}
+
+export function setDrawerOpen() {
+  return {
+    type: DRAWER_OPEN,
   };
 }
 

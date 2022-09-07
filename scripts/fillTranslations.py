@@ -16,6 +16,9 @@ if("de-DE.json" in files):
                     if key in fileContent:
                         continue
                     else:
-                        fileContent[key] = ""
+                        if file == "en-US.json":
+                            fileContent[key] = key
+                        else:
+                            fileContent[key] = ""
             with open(i18nDir + file, 'w') as fp:
                 json.dump(fileContent, fp, indent=4, sort_keys=True, ensure_ascii=False)

@@ -5,10 +5,11 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
-import { Paper, Typography } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
+import { parseUnixtime } from "../utils";
 
 const styles = (theme) => ({
   logViewer: {
@@ -38,7 +39,18 @@ class MailQ extends PureComponent {
   state = {
     postfixMailq: '',
     gromoxMailq: '',
+    postqueue: [],
     snackbar: '',
+    recipients: [
+      {
+        "address": "to@otherguy.com",
+        "delay_reason": "address resolver failure"
+      },
+      {
+        "address": "to@otherguy.com",
+        "delay_reason": "address resolver failure"
+      }
+    ],
   };
 
   fetchInterval = null;
@@ -70,7 +82,7 @@ class MailQ extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { snackbar, postfixMailq, gromoxMailq } = this.state;
+    const { snackbar, gromoxMailq, postqueue } = this.state;
     return (
       <TableViewContainer
         headline={t("Mail queue")}
@@ -81,12 +93,31 @@ class MailQ extends PureComponent {
       >  
         <div className={classes.logViewer}>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.header}>Postfix {t("mail queue")}</Typography>
-            <pre
-              className={classes.log}
-            >
-              {postfixMailq}
-            </pre>
+            <Typography variant="h6" className={classes.header}>Postqueue {t("mail queue")}</Typography>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>{t("Queue ID")}</TableCell>
+                  <TableCell>{t("Queue name")}</TableCell>
+                  <TableCell>{t("Arrival time")}</TableCell>
+                  <TableCell>{t("Sender")}</TableCell>
+                  <TableCell>{t("Recipients")}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {postqueue.map(entry =>
+                  <TableRow key={entry.queue_id}>
+                    <TableCell>{entry.queue_id}</TableCell>
+                    <TableCell>{entry.queue_name}</TableCell>
+                    <TableCell>{parseUnixtime(entry.arrival_time)}</TableCell>
+                    <TableCell>{entry.sender}</TableCell>
+                    <TableCell>
+                      {(entry.recipients || []).map(r => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </Paper>
           <Paper elevation={1} className={classes.paper}>
             <Typography variant="h6" className={classes.header}>Gromox {t("mail queue")}</Typography>
