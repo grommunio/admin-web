@@ -81,6 +81,7 @@ const styles = theme => ({
     textAlign: 'center',
     verticalAlign: 'middle',
     transition: 'all 200ms linear',
+    color: '#e6e6e6',
     '&:hover': {
       backgroundColor: 'transparent',
       textShadow: '0px 0px 1px white',
@@ -218,7 +219,7 @@ class RetractedNavigationLinks extends PureComponent {
         {isSysAdmin && <div className={classes.flexCenter}>
           <Tooltip title={t('Toggle admin panel')} placement="right" arrow>
             <IconButton onClick={this.toggleTab}>
-              <AdminPanelSettings fontSize='large' className={classes.icon}/>
+              <AdminPanelSettings color="inherit" fontSize='large' className={classes.icon}/>
             </IconButton>
           </Tooltip>
         </div>}

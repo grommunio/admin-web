@@ -71,7 +71,7 @@ const styles = theme => ({
     marginLeft: 4,
   },
   burger: {
-    marginRight: 16,
+    color: 'white',
   },
   divider: {
     height: 40,
@@ -206,12 +206,14 @@ class TopBar extends PureComponent {
         <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
           <Hidden lgUp>
             <IconButton color="inherit" onClick={this.handleMenuToggle} size="large">
-              <Burger />
+              <Burger className={classes.burger}/>
             </IconButton>
           </Hidden>
           <Hidden lgDown>
             <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
-              {drawer.expanded ? <KeyboardArrowLeft /> : <Burger />}
+              {drawer.expanded ?
+                <KeyboardArrowLeft className={classes.burger} /> :
+                <Burger className={classes.burger} />}
             </IconButton>
           </Hidden>
           <Hidden smDown>
