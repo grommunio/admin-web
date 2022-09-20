@@ -149,14 +149,14 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handlePropertyCheckbox,
       handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
       servers } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
     const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
-      prohibitsendquota } = properties;
+      prohibitsendquota, attributehidden } = properties;
 
     return (
       <FormControl className={classes.form}>
@@ -408,6 +408,16 @@ class Account extends PureComponent {
             }
             label={t('Allow POP3/IMAP logins')}
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={attributehidden || false /*eslint-disable-line*/}
+                onChange={handlePropertyCheckbox('attributehidden')}
+                color="primary"
+              />
+            }
+            label={t('Hide from GAL')}
+          />
         </Grid>}
         {status !== 4 && <Grid container className={classes.input}>
           <FormControlLabel
@@ -474,6 +484,7 @@ Account.propTypes = {
   handleQuotaDelete: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
   handleServer: PropTypes.func.isRequired,
+  handlePropertyCheckbox: PropTypes.func.isRequired,
   rawData: PropTypes.object,
   langs: PropTypes.array,
   servers: PropTypes.array.isRequired,

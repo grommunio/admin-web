@@ -379,6 +379,19 @@ class UserDetails extends PureComponent {
     },
   });
 
+  handlePropertyCheckbox = field => e => {
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: e.target.checked,
+        },
+      },
+    });
+  } 
+
   handleUnitChange = unit => event => this.setState({
     sizeUnits: {
       ...this.state.sizeUnits,
@@ -615,6 +628,7 @@ class UserDetails extends PureComponent {
             handlePropertyChange={this.handlePropertyChange}
             handleIntPropertyChange={this.handleIntPropertyChange}
             handleCheckbox={this.handleCheckbox}
+            handlePropertyCheckbox={this.handlePropertyCheckbox}
             handleUnitChange={this.handleUnitChange}
             handlePasswordChange={this.handlePasswordDialogToggle(true)}
             rawData={rawData}
