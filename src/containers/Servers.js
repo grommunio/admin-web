@@ -37,7 +37,6 @@ const styles = theme => ({
   },
   policy: {
     margin: theme.spacing(1, 2),
-    width: 160,
   },
 });
 
@@ -129,12 +128,13 @@ class Servers extends PureComponent {
             select
             label={t("Selection policy")}
             className={classes.policy}
+            helperText={t("Determines the way new users will be distributed across servers")}
           >
-            <MenuItem value={"round-robin"}>round-robin</MenuItem>
-            <MenuItem value={"balanced"}>balanced</MenuItem>
-            <MenuItem value={"first"}>first</MenuItem>
-            <MenuItem value={"last"}>last</MenuItem>
-            <MenuItem value={"random"}>random</MenuItem>
+            <MenuItem value={"round-robin"}>{t("round-robin")}</MenuItem>
+            <MenuItem value={"balanced"}>{t("balanced")}</MenuItem>
+            <MenuItem value={"first"}>{t("first")}</MenuItem>
+            <MenuItem value={"last"}>{t("last")}</MenuItem>
+            <MenuItem value={"random"}>{t("random")}</MenuItem>
           </TextField>
         </div>
         <Typography className={classes.count} color="textPrimary">
