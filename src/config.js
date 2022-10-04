@@ -14,6 +14,7 @@ export var config = {
   videoWebAddress: '',
   fileWebAddress: '',
   archiveWebAddress: '',
+  rspamdWebAddress: '',
   searchAttributes: [
     'assistant',
     'cn',

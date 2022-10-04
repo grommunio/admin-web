@@ -34,7 +34,7 @@ import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
-import { KeyboardArrowLeft, KeyboardArrowRight, Search } from '@mui/icons-material';
+import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 
 const styles = theme => ({
@@ -149,6 +149,7 @@ class TopBar extends PureComponent {
     { key: 'videoWebAddress', title: 'Video', icon: Duo },
     { key: 'fileWebAddress', title: 'Files', icon: Files },
     { key: 'archiveWebAddress', title: 'Archive', icon: Archive },
+    { key: 'rspamdWebAddress', title: 'Rspamd', icon: Filter },
   ]
 
   componentDidMount() {
