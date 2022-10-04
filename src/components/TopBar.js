@@ -34,7 +34,7 @@ import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
-import { KeyboardArrowLeft, Search } from '@mui/icons-material';
+import { KeyboardArrowLeft, KeyboardArrowRight, Search } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 
 const styles = theme => ({
@@ -213,7 +213,7 @@ class TopBar extends PureComponent {
             <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
               {drawer.expanded ?
                 <KeyboardArrowLeft className={classes.burger} /> :
-                <Burger className={classes.burger} />}
+                <KeyboardArrowRight className={classes.burger} />}
             </IconButton>
           </Hidden>
           <Hidden smDown>
