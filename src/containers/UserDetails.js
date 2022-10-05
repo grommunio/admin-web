@@ -260,12 +260,13 @@ class UserDetails extends PureComponent {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
     const { aliases, fetchmail, forward, properties, homeserver } = user;
+    const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
     const storePayload = {
       messagesizeextended: undefined,
-      storagequotalimit: properties.storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
-      prohibitreceivequota: properties.prohibitreceivequota * 2
-        ** (10 * sizeUnits.prohibitreceivequota) || undefined,
-      prohibitsendquota: properties.prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota) || undefined,
+      storagequotalimit: storagequotalimit === null ? undefined : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
+      prohibitreceivequota: prohibitreceivequota === null ? undefined : prohibitreceivequota * 2
+        ** (10 * sizeUnits.prohibitreceivequota),
+      prohibitsendquota: prohibitsendquota === null ? undefined : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
     };
 
     Promise.all([
