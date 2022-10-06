@@ -10,7 +10,7 @@ import {
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
-  USERS_SYNC_RECEIVED,
+  USERS_SYNC_RECEIVED
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync, removeUserSync,
@@ -18,7 +18,10 @@ import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, def
   userCount, 
   storeLangs,
   userSendAs,
-  editUserSendAs} from '../api';
+  editUserSendAs,
+  userOof,
+  putUserOof
+} from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 
@@ -125,6 +128,10 @@ export function fetchUserSync(...endpointParams) {
   return defaultListHandler(userSync, USERS_SYNC_RECEIVED, null, ...endpointParams);
 }
 
+export function fetchUserOof(...endpointParams) {
+  return defaultDetailsHandler(userOof, ...endpointParams);
+}
+
 export function deleteUserSync(...endpointParams) {
   return defaultPatchHandler(removeUserSync, ...endpointParams);
 }
@@ -143,6 +150,10 @@ export function fetchPermittedUsers(...endpointParams) {
 
 export function setUserDelegates(...endpointParams) {
   return defaultPatchHandler(editUserDelegates, ...endpointParams);
+}
+
+export function setUserOof(...endpointParams) {
+  return defaultPatchHandler(putUserOof, ...endpointParams);
 }
 
 export function setUserSendAs(...endpointParams) {

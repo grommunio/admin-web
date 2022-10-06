@@ -42,6 +42,7 @@ import { fetchDomainDetails } from '../actions/domains';
 import { debounce } from 'debounce';
 import { checkFormat } from '../api';
 import { fetchServersData } from '../actions/servers';
+import Oof from '../components/user/Oof';
 
 const styles = theme => ({
   paper: {
@@ -350,7 +351,7 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
-  handleTabChange = (e, tab) => this.setState({ tab });
+  handleTabChange = (_, tab) => this.setState({ tab });
 
   handleAliasEdit = idx => event => {
     const { user } = this.state;
@@ -614,6 +615,7 @@ class UserDetails extends PureComponent {
               <Tab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions}/>
               <Tab label={t("SMTP")} disabled={!ID}/>
               <Tab label={t("Permissions")} disabled={!ID}/>
+              <Tab label={t("OOF")} disabled={!ID}/>
               <Tab label={t("Fetchmail")} disabled={!ID}/>
               <Tab label={t("Mobile devices")} disabled={!ID}/>
               <Tab label={t("Sync policy")} disabled={!ID}/>
@@ -665,24 +667,28 @@ class UserDetails extends PureComponent {
             userID={user.ID}
             disabled={!writable}
           />}
-          {tab === 6 && <FetchMail
+          {tab === 6 && <Oof
+            domainID={domain.ID}
+            userID={user.ID}
+          />}
+          {tab === 7 && <FetchMail
             fetchmail={fetchmail}
             handleAdd={this.handleFetchmailDialog(true)}
             handleEdit={this.handleFetchmailEditDialog}
             handleDelete={this.handleFetchmailDelete}
           />}
-          {tab === 7 && <SyncTab
+          {tab === 8 && <SyncTab
             domainID={domain.ID}
             userID={user.ID}
           />}
-          {tab === 8 && <SlimSyncPolicies
+          {tab === 9 && <SlimSyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}
             handleCheckbox={this.handleSyncCheckboxChange}
             handleSlider={this.handleSlider}
           />}
-          {tab !== 5 && <Grid container className={classes.buttonGrid}>
+          {tab !== 5 && tab !== 6 && <Grid container className={classes.buttonGrid}>
             <Button
               onClick={history.goBack}
               style={{ marginRight: 8 }}

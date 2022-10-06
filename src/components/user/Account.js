@@ -411,7 +411,7 @@ class Account extends PureComponent {
           <FormControlLabel
             control={
               <Checkbox
-                checked={attributehidden || false /*eslint-disable-line*/}
+                checked={!!attributehidden}
                 onChange={handlePropertyCheckbox('attributehidden')}
                 color="primary"
               />

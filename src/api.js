@@ -481,6 +481,18 @@ export function deletePermittedUser(domainID, userID, id) {
   };
 }
 
+export function userOof(domainID, userID) {
+  return async () => {
+    return await get('/domains/' + domainID + '/users/'+ userID + '/oof');
+  };
+}
+
+export function putUserOof(domainID, userID, oofSettings) {
+  return async () => {
+    return await put('/domains/' + domainID + '/users/'+ userID + '/oof', oofSettings);
+  };
+}
+
 /* LDAP */
 
 export function searchLdap(params) {
