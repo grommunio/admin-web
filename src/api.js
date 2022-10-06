@@ -1038,6 +1038,24 @@ export function mailq() {
   };
 }
 
+export function flush(params) {
+  return async () => {
+    return await post(buildQuery('/system/mailq/flush', params));
+  };
+}
+
+export function deleteMailq(params) {
+  return async () => {
+    return await post(buildQuery('/system/mailq/delete', params));
+  };
+}
+
+export function requeueMailq(params) {
+  return async () => {
+    return await post(buildQuery('/system/mailq/requeue', params));
+  };
+}
+
 /*
   TASK-QUEUE
 */

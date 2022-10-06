@@ -5,11 +5,12 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { connect } from "react-redux";
-import { fetchMailQData } from "../actions/mailq";
+import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
 import { parseUnixtime } from "../utils";
+import { Delete, Replay, Water } from "@mui/icons-material";
 
 const styles = (theme) => ({
   logViewer: {
@@ -32,6 +33,9 @@ const styles = (theme) => ({
   header: {
     marginBottom: 8,
   },
+  flexRow: {
+    display: 'flex',
+  }
 });
 
 class MailQ extends PureComponent {
@@ -80,6 +84,27 @@ class MailQ extends PureComponent {
     clearInterval(this.fetchInterval);
   }
 
+  handleFlush = qID => () => {
+    const { flush } = this.props;
+    flush(qID)
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
+  handleDelete = qID => () => {
+    const { deleteQ } = this.props;
+    deleteQ(qID)
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
+  handleRequeue = qID => () => {
+    const { requeue } = this.props;
+    requeue(qID)
+      .then(() => this.setState({ snackbar: 'Success!' }))
+      .catch(snackbar => this.setState({ snackbar }));
+  }
+
   render() {
     const { classes, t } = this.props;
     const { snackbar, gromoxMailq, postqueue } = this.state;
@@ -102,6 +127,7 @@ class MailQ extends PureComponent {
                   <TableCell>{t("Arrival time")}</TableCell>
                   <TableCell>{t("Sender")}</TableCell>
                   <TableCell>{t("Recipients")}</TableCell>
+                  <TableCell padding="checkbox"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -113,6 +139,23 @@ class MailQ extends PureComponent {
                     <TableCell>{entry.sender}</TableCell>
                     <TableCell>
                       {(entry.recipients || []).map(r => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
+                    </TableCell>
+                    <TableCell className={classes.flexRow}>
+                      <Tooltip title={t("Flush mail queue")}>
+                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
+                          <Water color="primary" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={t("Requeue")}>
+                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
+                          <Replay color="warning" style={{ transform: 'rotate(180deg)' }} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={t("Delete")}>
+                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
+                          <Delete color="error" />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 )}
@@ -138,11 +181,20 @@ MailQ.propTypes = {
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  flush: PropTypes.func.isRequired,
+  deleteQ: PropTypes.func.isRequired,
+  requeue: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetch: async () => await dispatch(fetchMailQData())
+      .catch((error) => Promise.reject(error)),
+    flush: async qID => await dispatch(flushMailQData({ queue: qID }))
+      .catch((error) => Promise.reject(error)),
+    deleteQ: async qID => await dispatch(deleteMailQData({ queue: qID }))
+      .catch((error) => Promise.reject(error)),
+    requeue: async qID => await dispatch(requeueMailQData({ queue: qID }))
       .catch((error) => Promise.reject(error)),
   };
 };
