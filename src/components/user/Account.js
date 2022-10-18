@@ -151,7 +151,7 @@ class Account extends PureComponent {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handlePropertyCheckbox,
       handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
-      servers } = this.props;
+      servers, handleInput } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
@@ -169,7 +169,7 @@ class Account extends PureComponent {
             InputProps={{
               endAdornment: <div>@{domain.domainname}</div>,
             }}
-            disabled
+            onChange={handleInput('username')}
           />
           {writable && status !== 4 && ldapID === null && <Button
             variant="contained"
