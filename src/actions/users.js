@@ -69,7 +69,7 @@ export function fetchUserCount(domainID) {
   };
 }
 
-export function fetchUserData(domainID, userID) {
+export function fetchUserData(domainID, userID, ignoreStoreData) {
   return async dispatch => {
     let userData = {};
     try {
@@ -79,27 +79,29 @@ export function fetchUserData(domainID, userID) {
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
-    try {
-      const additionalProps = await dispatch(storeProps(domainID, userID,
-        'messagesizeextended,storagequotalimit,prohibitreceivequota,prohibitsendquota'));
-      if(additionalProps?.data) userData = {
-        ...userData,
-        properties: {
-          ...userData.properties,
-          ...additionalProps.data,
-        },
-      };
-    } catch(err) {
-      // ignore error
-    }
-    try {
-      const defaultPolicy = await dispatch(defaultDomainSyncPolicy(domainID));
-      userData = {
-        ...userData,
-        defaultPolicy: defaultPolicy?.data || {},
-      };
-    } catch(err) {
-      // ignore error
+    if(!ignoreStoreData) {
+      try {
+        const additionalProps = await dispatch(storeProps(domainID, userID,
+          'messagesizeextended,storagequotalimit,prohibitreceivequota,prohibitsendquota'));
+        if(additionalProps?.data) userData = {
+          ...userData,
+          properties: {
+            ...userData.properties,
+            ...additionalProps.data,
+          },
+        };
+      } catch(err) {
+        // ignore error
+      }
+      try {
+        const defaultPolicy = await dispatch(defaultDomainSyncPolicy(domainID));
+        userData = {
+          ...userData,
+          defaultPolicy: defaultPolicy?.data || {},
+        };
+      } catch(err) {
+        // ignore error
+      }
     }
     return Promise.resolve(userData);
   };

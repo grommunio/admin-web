@@ -20,6 +20,7 @@ import TaskCreated from '../components/Dialogs/TaskCreated';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
+import AddContact from '../components/Dialogs/AddContact';
 
 const styles = theme => ({
   tablePaper: {
@@ -62,6 +63,7 @@ class Users extends Component {
     checking: false,
     taskMessage: '',
     taskID: null,
+    addingContact: false,
   }
 
   handleScroll = () => {
@@ -146,7 +148,12 @@ class Users extends Component {
   }
 
   getStatus(status) {
-    return status === 4 ? 'Shared' : 'Normal';
+    switch(status) {
+    case 0: return "Normal";
+    case 4: return "Shared";
+    case 5: return "Contact";
+    default: return "Unknown";
+    }
   }
 
   getType(type) {
@@ -164,6 +171,14 @@ class Users extends Component {
     this.props.clearSnackbar();
   }
 
+  handleAddContact = () => this.setState({ addingContact: true });
+
+  handleContactClose = () => this.setState({ addingContact: false });
+
+  handleContactSuccess = () => this.setState({ addingContact: false });
+
+  handleContactError = (error) => this.setState({ snackbar: error });
+
   render() {
     const { classes, t, users, domain, tableState, handleMatch, handleRequestSort,
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
@@ -171,7 +186,7 @@ class Users extends Component {
       handleDeleteSuccess, handleEdit } = this.props;
     const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { checking, taskMessage, taskID } = this.state;
+    const { addingContact, checking, taskMessage, taskID } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -190,6 +205,15 @@ class Users extends Component {
             disabled={!writable}
           >
             {t('New user')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAddContact}
+            className={classes.newButton}
+            disabled={!writable}
+          >
+            {t('New contact')}
           </Button>
           <Button
             variant="contained"
@@ -280,7 +304,11 @@ class Users extends Component {
               {users.Users.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
-                  <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}>
+                  <TableRow
+                    key={idx}
+                    hover
+                    onClick={handleEdit('/' + domain.ID + (obj.status === 5 ? '/contacts/' : '/users/') +  obj.ID)}
+                  >
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{t(this.getStatus(obj.status))}</TableCell>
@@ -307,6 +335,13 @@ class Users extends Component {
           onError={handleAddingError}
           domain={domain}
           onClose={handleAddingClose}
+        />
+        <AddContact
+          domain={domain}
+          open={addingContact}
+          onSuccess={this.handleContactSuccess}
+          onError={this.handleContactError}
+          onClose={this.handleContactClose}
         />
         <DeleteUser
           open={!!deleting}
