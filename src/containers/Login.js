@@ -17,6 +17,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Key from '@mui/icons-material/VpnKey';
@@ -26,7 +27,7 @@ import {
   authLoginWithToken,
 } from '../actions/auth';
 import logo from '../res/grommunio_logo_default.svg';
-import { Language } from '@mui/icons-material';
+import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
@@ -161,9 +162,11 @@ class Login extends Component {
     return (
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
-          <IconButton className={classes.lang} onClick={this.handleMenuOpen('langsAnchorEl')}>
-            <Language />
-          </IconButton>
+          <Tooltip title="Language">
+            <IconButton className={classes.lang} onClick={this.handleMenuOpen('langsAnchorEl')}>
+              <Translate />
+            </IconButton>
+          </Tooltip>
           <Menu
             id="lang-menu"
             anchorEl={langsAnchorEl}

@@ -24,7 +24,6 @@ import Chat from '@mui/icons-material/Chat';
 import Files from '@mui/icons-material/Description';
 import Archive from '@mui/icons-material/Archive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Language from '@mui/icons-material/Language';
 import { authLogout } from '../actions/auth';
 import { config } from '../config';
 import i18n from 'i18next';
@@ -34,7 +33,7 @@ import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
-import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search } from '@mui/icons-material';
+import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 
 const styles = theme => ({
@@ -274,9 +273,11 @@ class TopBar extends PureComponent {
               activated={license.product && license.product !== "Community"}
               handleNavigation={this.handleNavigation}
             />}
-            <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
-              <Language color="inherit" className={classes.username}/>
-            </IconButton>
+            <Tooltip title="Language">
+              <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
+                <Translate color="inherit" className={classes.username}/>
+              </IconButton>
+            </Tooltip>
             <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
               <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
               <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
