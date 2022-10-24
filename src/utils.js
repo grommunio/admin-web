@@ -369,3 +369,22 @@ export function formatCreateParams(createParams) {
     },
   };
 }
+
+export function getUserStatusString(status) {
+  switch(status) {
+  case 0: return "Normal";
+  case 4: return "Shared";
+  case 5: return "Contact";
+  default: return "Unknown";
+  }
+}
+
+export function getUserTypeString(type) {
+  switch(type) {
+  case 0: return "User";
+  case 1: return "Mail list";
+  case 7: return "Room";
+  case 8: return "Equipment";
+  default: return "Unknown";
+  }
+}

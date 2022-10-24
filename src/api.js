@@ -315,7 +315,11 @@ export async function changeDomainPassword(id, newPw) {
 
 export function allUsers(params) {
   return async () => {
-    return await get(buildQuery('/system/users', { ...params, addressType: 0 }));
+    return await get(buildQuery('/system/users', {
+      ...params,
+      addressType: 0,
+      properties: 'displayname,displaytypeex',
+    }));
   };
 }
 

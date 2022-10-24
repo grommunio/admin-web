@@ -20,6 +20,8 @@ import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
 import AddGlobalContact from '../components/Dialogs/AddGlobalContact';
+import { getUserStatusString, getUserTypeString } from '../utils';
+import { AccountCircle, ContactMail } from '@mui/icons-material';
 
 const styles = theme => ({
   tablePaper: {
@@ -53,6 +55,13 @@ const styles = theme => ({
     height: 20,
     backgroundColor: '#ddd',
   },
+  flexRow: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: 8,
+  },
 });
 
 class GlobalUsers extends Component {
@@ -63,6 +72,9 @@ class GlobalUsers extends Component {
   }
 
   columns = [
+    { label: 'Display name', value: 'displayname' },
+    { label: 'Mode', value: 'status' },
+    { label: 'Type', value: 'type' },
     { label: 'LDAP ID', value: 'ldapID' },
   ]
 
@@ -168,9 +180,21 @@ class GlobalUsers extends Component {
             </TableHead>
             <TableBody>
               {users.Users.map((obj, idx) => {
+                const properties = obj.properties || {};
                 return (
                   <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
-                    <TableCell>{obj.username}</TableCell>
+                    <TableCell>
+                      <div className={classes.flexRow}>
+                        {obj.status === 5 ?
+                          <ContactMail className={classes.icon} fontSize='small'/> :
+                          <AccountCircle className={classes.icon} fontSize='small'/>
+                        }
+                        {obj.username}
+                      </div>
+                    </TableCell>
+                    <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
+                    <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell align="right">
                       {writable && <IconButton onClick={handleDelete(obj)} size="large">

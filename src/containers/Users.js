@@ -21,6 +21,8 @@ import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import AddContact from '../components/Dialogs/AddContact';
+import { getUserStatusString, getUserTypeString } from '../utils';
+import { AccountCircle, ContactMail } from '@mui/icons-material';
 
 const styles = theme => ({
   tablePaper: {
@@ -53,6 +55,13 @@ const styles = theme => ({
     width: '100%',
     height: 20,
     backgroundColor: '#ddd',
+  },
+  flexRow: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: 8,
   },
 });
 
@@ -145,25 +154,6 @@ class Users extends Component {
         justifyContent: 'center',
       }}></div>
     </div>;
-  }
-
-  getStatus(status) {
-    switch(status) {
-    case 0: return "Normal";
-    case 4: return "Shared";
-    case 5: return "Contact";
-    default: return "Unknown";
-    }
-  }
-
-  getType(type) {
-    switch(type) {
-    case 0: return "User";
-    case 1: return "Mail list";
-    case 7: return "Room";
-    case 8: return "Equipment";
-    default: return "Unknown";
-    }
   }
 
   handleSnackbarClose = () => {
@@ -309,10 +299,18 @@ class Users extends Component {
                     hover
                     onClick={handleEdit('/' + domain.ID + (obj.status === 5 ? '/contacts/' : '/users/') +  obj.ID)}
                   >
-                    <TableCell>{obj.username}</TableCell>
+                    <TableCell>
+                      <div className={classes.flexRow}>
+                        {obj.status === 5 ?
+                          <ContactMail className={classes.icon} fontSize='small'/> :
+                          <AccountCircle className={classes.icon} fontSize='small'/>
+                        }
+                        {obj.username}
+                      </div>
+                    </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
-                    <TableCell>{t(this.getStatus(obj.status))}</TableCell>
-                    <TableCell>{t(this.getType(properties.displaytypeex))}</TableCell>
+                    <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
+                    <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                     <TableCell align="right">
