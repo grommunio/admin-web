@@ -19,6 +19,7 @@ import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
+import AddGlobalContact from '../components/Dialogs/AddGlobalContact';
 
 const styles = theme => ({
   tablePaper: {
@@ -58,6 +59,7 @@ class GlobalUsers extends Component {
 
   state = {
     checking: false,
+    addingContact: false,
   }
 
   columns = [
@@ -86,6 +88,14 @@ class GlobalUsers extends Component {
     </div>;
   }
 
+  handleAddContact = () => this.setState({ addingContact: true });
+
+  handleContactClose = () => this.setState({ addingContact: false });
+
+  handleContactSuccess = () => this.setState({ addingContact: false });
+
+  handleContactError = (error) => this.setState({ snackbar: error });
+
   render() {
     const { classes, t, users, tableState, handleMatch, handleRequestSort,
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
@@ -93,7 +103,7 @@ class GlobalUsers extends Component {
       handleDeleteSuccess, handleEdit } = this.props;
     const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { checking } = this.state;
+    const { checking, addingContact } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -112,6 +122,15 @@ class GlobalUsers extends Component {
             disabled={!writable}
           >
             {t('New user')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleAddContact}
+            className={classes.newButton}
+            disabled={!writable}
+          >
+            {t('New contact')}
           </Button>
           <div className={classes.actions}>
             <SearchTextfield
@@ -150,7 +169,7 @@ class GlobalUsers extends Component {
             <TableBody>
               {users.Users.map((obj, idx) => {
                 return (
-                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
+                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
                     <TableCell>{obj.username}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
                     <TableCell align="right">
@@ -172,6 +191,12 @@ class GlobalUsers extends Component {
           onSuccess={handleAddingSuccess}
           onError={handleAddingError}
           onClose={handleAddingClose}
+        />
+        <AddGlobalContact
+          open={addingContact}
+          onSuccess={this.handleContactSuccess}
+          onError={handleDeleteError}
+          onClose={this.handleContactClose}
         />
         <DeleteUser
           open={!!deleting}

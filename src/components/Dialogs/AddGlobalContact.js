@@ -5,18 +5,20 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, TextField,
-  Button, DialogActions, CircularProgress, Grid,
+  Button, DialogActions, CircularProgress, Grid, FormControl,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
 import { withRouter } from 'react-router';
+import { fetchDomainData } from '../../actions/domains';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
     width: '100%',
-    marginTop: theme.spacing(4),
+    margin: theme.spacing(3, 1, 1, 1),
   },
   grid: {
     display: 'flex',
@@ -42,19 +44,33 @@ const styles = theme => ({
 class AddContact extends PureComponent {
 
   state = {
+    username: '',
     properties: {
       displayname: '',
     },
     loading: false,
+    domain: '',
+    autocompleteInput: '',
+  }
+
+  handleEnter = async () => {
+    const { fetchDomains, onError } = this.props;
+    fetchDomains().catch(error => onError(error));
+  }
+
+  handleInput = field => event => {
+    this.setState({
+      [field]: event.target.value,
+    });
   }
 
   handleCheckbox = field => event => this.setState({ [field]: event.target.checked });
 
   handleAdd = () => {
-    const { domain, add, onError, onSuccess } = this.props;
-    const { properties } = this.state;
+    const { add, onError, onSuccess } = this.props;
+    const { domain, properties } = this.state;
     this.setState({ loading: true });
-    add(domain.ID, {
+    add(domain?.ID || -1, {
       status: 5,
       properties: {
         ...properties,
@@ -77,11 +93,11 @@ class AddContact extends PureComponent {
   }
 
   handleAddAndEdit = () => {
-    const { domain, history, add, onError } = this.props;
-    const { properties } = this.state;
+    const { history, add, onError } = this.props;
+    const { domain, properties } = this.state;
 
     this.setState({ loading: true });
-    add(domain.ID, {
+    add(domain?.ID || -1, {
       status: 5,
       properties: {
         ...properties,
@@ -89,7 +105,7 @@ class AddContact extends PureComponent {
       },
     })
       .then(user => {
-        history.push('/' + domain.ID + '/contacts/' + user.ID);
+        history.push('/' + domain?.ID + '/contacts/' + user.ID);
       })
       .catch(error => {
         onError(error);
@@ -106,10 +122,18 @@ class AddContact extends PureComponent {
     });
   }
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+      autocompleteInput: newVal?.domainname || '',
+    });
+  }
+
   render() {
-    const { classes, t, open, onClose } = this.props;
-    const { loading, properties } = this.state;
+    const { classes, t, open, onClose, Domains } = this.props;
+    const { loading, properties, domain, autocompleteInput } = this.state;
     const { smtpaddress, displayname, givenname, initials, surname, nickname } = properties;
+
     return (
       <Dialog
         onClose={onClose}
@@ -123,6 +147,20 @@ class AddContact extends PureComponent {
         <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
         <DialogContent>
           <Grid container>
+            <FormControl className={classes.form}>
+              <MagnitudeAutocomplete
+                value={domain}
+                filterAttribute={'domainname'}
+                inputValue={autocompleteInput}
+                onChange={this.handleAutocomplete('domain')}
+                options={Domains}
+                onInputChange={this.handleInput('autocompleteInput')}
+                label={t('Domain')}
+                placeholder={t("Search domains")  + "..."}
+                autoFocus
+                autoSelect
+              />
+            </FormControl>
             <Grid item xs={12} className={classes.gridItem}>
               <TextField
                 className={classes.propertyInput}
@@ -204,17 +242,25 @@ AddContact.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  fetchDomains: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
+  Domains: PropTypes.array.isRequired,
 };
 
+const mapStateToProps = state => {
+  return {
+    Domains: state.domains.Domains,
+  };
+};
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' }))
+      .catch(message => Promise.reject(message)),
     add: async (domainID, user) => 
       await dispatch(addUserData(domainID, user))
         .then(user => Promise.resolve(user))
@@ -222,5 +268,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddContact))));

@@ -45,7 +45,7 @@ const MagnitudeAutocomplete = props => {
 
 MagnitudeAutocomplete.propTypes = {
   t: PropTypes.func.isRequired,
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   value: PropTypes.any,
   filterAttribute: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
