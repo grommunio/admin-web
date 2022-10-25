@@ -264,10 +264,10 @@ class UserDetails extends PureComponent {
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
     const storePayload = {
       messagesizeextended: undefined,
-      storagequotalimit: storagequotalimit === null ? undefined : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
-      prohibitreceivequota: prohibitreceivequota === null ? undefined : prohibitreceivequota * 2
+      storagequotalimit: [null, undefined, ""].includes(storagequotalimit) ? undefined : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
+      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota) ? undefined : prohibitreceivequota * 2
         ** (10 * sizeUnits.prohibitreceivequota),
-      prohibitsendquota: prohibitsendquota === null ? undefined : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
+      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota) ? undefined : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
     };
 
     Promise.all([
@@ -345,7 +345,7 @@ class UserDetails extends PureComponent {
           ...user,
           properties: {
             ...user.properties,
-            [prop]: '',
+            [prop]: undefined,
           },
         },
       }))

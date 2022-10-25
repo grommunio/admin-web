@@ -251,6 +251,7 @@ class Account extends PureComponent {
               }
               value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
               onChange={handleIntPropertyChange('prohibitsendquota')}
+              helperText={prohibitsendquota === "" ? "Use delete icon to remove quota" : ""}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
@@ -282,6 +283,7 @@ class Account extends PureComponent {
               }
               value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
               onChange={handleIntPropertyChange('prohibitreceivequota')}
+              helperText={prohibitreceivequota === "" ? "Use delete icon to remove quota" : ""}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
@@ -313,6 +315,7 @@ class Account extends PureComponent {
               }
               value={storagequotalimit !== undefined ? storagequotalimit : ''}
               onChange={handleIntPropertyChange('storagequotalimit')}
+              helperText={storagequotalimit === "" ? "Use delete icon to remove quota" : ""}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
