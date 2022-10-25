@@ -97,7 +97,7 @@ class DBConf extends Component {
   handleTab = (e, tab) => this.setState({ tab });
 
   render() {
-    const { classes, t, services, commands } = this.props;
+    const { classes, t, services, commands, history } = this.props;
     const { adding, configuring, snackbar, match, tab, deleting } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
@@ -209,6 +209,7 @@ class DBConf extends Component {
           onClose={this.handleAddingClose}
           onError={this.handleAddingError}
           onSuccess={this.handleAddingSuccess}
+          history={history}
         />
       </TableViewContainer>
     );

@@ -27,7 +27,7 @@ const styles = theme => ({
   },
   flexTextfield: {
     flex: 1,
-    margin: theme.spacing(0, 1, 0, 1),
+    margin: theme.spacing(1, 1, 0, 1),
   },
   gridTypo: {
     minWidth: 120,
@@ -67,18 +67,14 @@ class CreateDbconfFile extends PureComponent {
   }
 
   handleUpload = () => {
-    const { upload } = this.props;
+    const { history, upload } = this.props;
     const { service, data } = this.state;
     this.setState({ loading: true });
+    // Create service
     upload('grommunio-dbconf', service, this.formatData(data))
       .then(() => {
-        this.setState({
-          data: [],
-          filename: '',
-          service: '',
-          loading: false,
-        });
-        this.props.onSuccess();
+        // Create service file
+        history.push('/dbconf/grommunio-dbconf/' + service);
       })
       .catch(error => {
         this.props.onError(error);
@@ -90,6 +86,20 @@ class CreateDbconfFile extends PureComponent {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value || undefined);
     return obj;
+  }
+
+  handleTemplate = e => {
+    const { value } = e.target;
+    if (value === "postfix") {
+      this.setState({
+        service: 'postfix',
+        data: [
+          { key: 'commit_key', value: '#POSTCONF' },
+          { key: 'commit_file', value: '#POSTCONF' },
+          { key: 'commit_service', value: '#RELOAD' },
+        ]
+      })
+    }
   }
 
   render() {
@@ -108,6 +118,15 @@ class CreateDbconfFile extends PureComponent {
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
+              label={t("Template")} 
+              fullWidth
+              onChange={this.handleTemplate}
+              select
+            >
+              <MenuItem value="postfix">postfix</MenuItem>
+            </TextField>
+            <TextField 
+              className={classes.input} 
               label={t("Service name")} 
               fullWidth 
               value={service || ''}
@@ -116,7 +135,7 @@ class CreateDbconfFile extends PureComponent {
               required
             />
             <Typography variant="h6">Data</Typography>
-            {data.map((pair, idx) => <Grid key={idx} container alignItems="flex-end">
+            {data.map((pair, idx) => <Grid key={idx} container alignItems="center">
               <Typography className={classes.gridTypo}>
                 {pair.key}
               </Typography>
@@ -167,6 +186,7 @@ CreateDbconfFile.propTypes = {
   onError: PropTypes.func.isRequired,
   upload: PropTypes.func.isRequired,
   commands: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
