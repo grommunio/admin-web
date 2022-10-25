@@ -260,7 +260,7 @@ class UserDetails extends PureComponent {
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
-    const { aliases, fetchmail, forward, properties, homeserver } = user;
+    const { username, aliases, fetchmail, forward, properties, homeserver } = user;
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
     const storePayload = {
       messagesizeextended: undefined,
@@ -273,6 +273,7 @@ class UserDetails extends PureComponent {
     Promise.all([
       edit(domain.ID, {
         ...user,
+        username: username + "@" + domain.domainname,
         domainID: undefined,
         homeserver: homeserver?.ID || null,
         aliases: aliases.filter(alias => alias !== ''),

@@ -164,7 +164,6 @@ class Account extends PureComponent {
           <TextField
             label={t("Username")}
             value={username || ''}
-            autoFocus
             style={{ flex: 1, marginRight: 8 }}
             InputProps={{
               endAdornment: <div>@{domain.domainname}</div>,
