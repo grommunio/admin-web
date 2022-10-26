@@ -10,7 +10,7 @@ import { connect } from "react-redux";
 import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
 import { parseUnixtime } from "../utils";
-import { Delete, Replay, Water } from "@mui/icons-material";
+import { Delete, Replay, PlayForWork } from "@mui/icons-material";
 
 const styles = (theme) => ({
   logViewer: {
@@ -143,7 +143,7 @@ class MailQ extends PureComponent {
                     <TableCell className={classes.flexRow}>
                       <Tooltip title={t("Flush mail queue")}>
                         <IconButton onClick={this.handleFlush(entry.queue_id)}>
-                          <Water color="primary" />
+                          <PlayForWork color="primary" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title={t("Requeue")}>
