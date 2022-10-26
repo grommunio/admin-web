@@ -48,7 +48,7 @@ const styles = theme => ({
     padding: '16px 0 8px 0',
   },
   param: {
-    padding: '8px 16px',
+    padding: '4px 16px',
   },
   resultParam: {
     padding: '4px 8px 4px 0px',
@@ -65,8 +65,12 @@ const styles = theme => ({
     margin: theme.spacing(3, 0),
   },
   flexRow: {
-    padding: '8px 16px',
+    padding: '4px 0px',
     display: 'flex',
+  },
+  centerRow: {
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -122,40 +126,41 @@ class TaskDetails extends PureComponent {
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container direction="column" className={classes.container}>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Task ID')}:</span>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('Task ID')}:</Typography>
               {ID || t('Unknown')}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Command')}:</span>
+            </div>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('Command')}:</Typography>
               {command || t('Unknown')}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('State')}:</span>
+            </div>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('State')}:</Typography>
               {t(this.getTaskState(state)) || t('Unknown')}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Message')}:</span>
+            </div>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('Message')}:</Typography>
               {message || t('Unknown')}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Created')}:</span>
+            </div>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('Created')}:</Typography>
               {setDateTimeString(created) || t('Unknown')}
-            </Typography>
-            <Typography variant="h6" className={classes.data}>
-              <span className={classes.description}>{t('Updated')}:</span>
+            </div>
+            <div className={classes.centerRow}>
+              <Typography variant='h6' className={classes.description}>{t('Updated')}:</Typography>
               {setDateTimeString(updated) || t('Unknown')}
-            </Typography>
-            <Divider />
+            </div>
+            
+            <Divider style={{ marginTop: 8 }}/>
             <Typography variant="h6" className={classes.params}>
               {t('Params')}
             </Typography>
             {Object.entries(params).map(([param, value], key) => {
               const displayValue = JSON.stringify(value);
-              return param !== 'result' ? <Typography className={classes.param} key={key}>
-                <span className={classes.description}>{param}:</span>
+              return param !== 'result' ? <div className={classes.centerRow}>
+                <Typography className={classes.description}>{param}:</Typography>
                 {displayValue || t('Unknown')}
-              </Typography> :
+              </div> :
                 <div className={classes.flexRow} key={key}>
                   <div className={classes.description}>{param}</div>
                   <div>

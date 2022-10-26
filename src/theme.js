@@ -146,8 +146,8 @@ const createCustomTheme = mode => createTheme({
     },
   },
   palette: {
-    mode: mode,
-    primary: blue,
+    mode: mode, // TODO: Get default from config
+    primary: blue, // TODO: Add more themes, for example #e20074
     secondary: grey,
     ...(mode === 'light' ?
       {
