@@ -5,7 +5,7 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
-import { IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
@@ -35,26 +35,19 @@ const styles = (theme) => ({
   },
   flexRow: {
     display: 'flex',
-  }
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
 });
 
 class MailQ extends PureComponent {
 
   state = {
+    selected: [],
     postfixMailq: '',
     gromoxMailq: '',
     postqueue: [],
     snackbar: '',
-    recipients: [
-      {
-        "address": "to@otherguy.com",
-        "delay_reason": "address resolver failure"
-      },
-      {
-        "address": "to@otherguy.com",
-        "delay_reason": "address resolver failure"
-      }
-    ],
   };
 
   fetchInterval = null;
@@ -84,30 +77,47 @@ class MailQ extends PureComponent {
     clearInterval(this.fetchInterval);
   }
 
-  handleFlush = qID => () => {
+  handleFlush = () => {
     const { flush } = this.props;
-    flush(qID)
-      .then(() => this.setState({ snackbar: 'Success!' }))
+    flush(this.state.selected)
+      .then(() => this.setState({ snackbar: 'Success!', selected: [] }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
-  handleDelete = qID => () => {
+  handleDelete = () => {
+    const { selected, postqueue } = this.state;
     const { deleteQ } = this.props;
-    deleteQ(qID)
-      .then(() => this.setState({ snackbar: 'Success!' }))
+    deleteQ(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
+      .then(() => this.setState({ snackbar: 'Success!', selected: [] }))
       .catch(snackbar => this.setState({ snackbar }));
   }
 
-  handleRequeue = qID => () => {
+  handleRequeue = () => {
+    const { selected, postqueue } = this.state;
     const { requeue } = this.props;
-    requeue(qID)
-      .then(() => this.setState({ snackbar: 'Success!' }))
+    requeue(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
+      .then(() => this.setState({ snackbar: 'Success!', selected: [] }))
       .catch(snackbar => this.setState({ snackbar }));
   }
+
+  handleCheckAll = ({ target: t }) => this.setState({
+    selected: t.checked ? this.state.postqueue.map(entry => entry.queue_id) : [],
+  });
+
+  handleCheckbox = qID => (e) => {
+    const copy = [...this.state.selected];
+    if(e.target.checked) {
+      copy.push(qID);
+    } else {
+      copy.splice(copy.findIndex(el => el === qID), 1);
+    }
+    this.setState({ selected: copy });
+  };
 
   render() {
     const { classes, t } = this.props;
-    const { snackbar, gromoxMailq, postqueue } = this.state;
+    const { selected, snackbar, gromoxMailq, postqueue } = this.state;
+    const actionsDisabled = selected.length === 0;
     return (
       <TableViewContainer
         headline={t("Mail queue")}
@@ -122,43 +132,60 @@ class MailQ extends PureComponent {
             <Table size="small">
               <TableHead>
                 <TableRow>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={postqueue.length > 0 && postqueue.length === selected.length}
+                      onClick={this.handleCheckAll}
+                    />
+                  </TableCell>
                   <TableCell>{t("Queue ID")}</TableCell>
                   <TableCell>{t("Queue name")}</TableCell>
                   <TableCell>{t("Arrival time")}</TableCell>
                   <TableCell>{t("Sender")}</TableCell>
                   <TableCell>{t("Recipients")}</TableCell>
-                  <TableCell padding="checkbox"></TableCell>
+                  <TableCell className={classes.flexRow}>
+                    <Tooltip title={t("Flush mail queue")}>
+                      <IconButton disabled={actionsDisabled} onClick={this.handleFlush}>
+                        <PlayForWork color={actionsDisabled ? "secondary" : "primary"} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t("Requeue")}>
+                      <IconButton disabled={actionsDisabled} onClick={this.handleRequeue}>
+                        <Replay color={actionsDisabled ? "secondary" : "warning"} style={{ transform: 'rotate(180deg)' }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t("Delete")}>
+                      <IconButton disabled={actionsDisabled} onClick={this.handleDelete}>
+                        <Delete color={actionsDisabled ? "secondary" : "error"} />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {postqueue.map(entry =>
-                  <TableRow key={entry.queue_id}>
-                    <TableCell>{entry.queue_id}</TableCell>
-                    <TableCell>{entry.queue_name}</TableCell>
-                    <TableCell>{parseUnixtime(entry.arrival_time)}</TableCell>
-                    <TableCell>{entry.sender}</TableCell>
-                    <TableCell>
-                      {(entry.recipients || []).map(r => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
-                    </TableCell>
-                    <TableCell className={classes.flexRow}>
-                      <Tooltip title={t("Flush mail queue")}>
-                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
-                          <PlayForWork color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={t("Requeue")}>
-                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
-                          <Replay color="warning" style={{ transform: 'rotate(180deg)' }} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={t("Delete")}>
-                        <IconButton onClick={this.handleFlush(entry.queue_id)}>
-                          <Delete color="error" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                )}
+                {postqueue.map(entry => {
+                  const id = entry.queue_id;
+                  const rowSelected = selected.includes(id)
+                  return (
+                    <TableRow key={entry.queue_id}>
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          onClick={this.handleCheckbox(id)}
+                          checked={rowSelected}
+                          value={rowSelected}
+                        />
+                      </TableCell>
+                      <TableCell>{id}</TableCell>
+                      <TableCell>{entry.queue_name}</TableCell>
+                      <TableCell>{parseUnixtime(entry.arrival_time)}</TableCell>
+                      <TableCell>{entry.sender}</TableCell>
+                      <TableCell>
+                        {(entry.recipients || []).map(r => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
+                      </TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Paper>
@@ -190,7 +217,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetch: async () => await dispatch(fetchMailQData())
       .catch((error) => Promise.reject(error)),
-    flush: async qID => await dispatch(flushMailQData({ queue: qID }))
+    flush: async qIDs => await dispatch(flushMailQData(qIDs))
       .catch((error) => Promise.reject(error)),
     deleteQ: async qID => await dispatch(deleteMailQData({ queue: qID }))
       .catch((error) => Promise.reject(error)),
