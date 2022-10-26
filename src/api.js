@@ -269,7 +269,7 @@ export function antispam() {
 
 export function drawerDomains() {
   return async () => {
-    return await get(buildQuery('/domains', { domainType: 0 }));
+    return await get(buildQuery('/domains', { domainType: 0, sort: 'domainname,asc' }));
   };
 }
 
