@@ -11,6 +11,7 @@ import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
 import TableViewContainer from '../components/TableViewContainer';
 import ColorModeContext from '../ColorContext';
+import config from '../config';
 
 const styles = theme => ({
   paper: {
@@ -81,6 +82,8 @@ class Settings extends Component {
   render() {
     const { classes, t } = this.props;
     const { snackbar } = this.state;
+    const darkModeStorage = window.localStorage.getItem("darkMode");
+    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
     return (
       <TableViewContainer
         headline={t("Settings")}
@@ -94,7 +97,7 @@ class Settings extends Component {
             <FormControl className={classes.formControl}>
               <FormLabel component="legend">{t('Darkmode')}</FormLabel>
               <Switch
-                checked={(window.localStorage.getItem('darkMode') === 'true')}
+                checked={(darkMode === 'true')}
                 onChange={this.handleDarkModeChange}
                 color="primary"
               />

@@ -15,6 +15,7 @@ export var config = {
   fileWebAddress: '',
   archiveWebAddress: '',
   rspamdWebAddress: '',
+  defaultDarkMode: false,
   customImages: {
     //localhost: {
     //  logo: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',

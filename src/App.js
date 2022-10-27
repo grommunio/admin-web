@@ -97,7 +97,8 @@ class App extends Component {
   render() {
     const { classes, Domains } = this.props;
     const { loading, authenticating, authenticated, capabilities } = this.props;
-    const darkMode = window.localStorage.getItem("darkMode");
+    const darkModeStorage = window.localStorage.getItem("darkMode");
+    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
     const routesProps = {
       authenticating,
       authenticated,

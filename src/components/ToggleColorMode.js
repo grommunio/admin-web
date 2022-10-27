@@ -6,9 +6,12 @@ import ColorModeContext from '../ColorContext';
 import PropTypes from 'prop-types';
 import createCustomTheme from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
+import config from '../config';
 
 export default function ToggleColorMode({ children }) {
-  const [mode, setMode] = React.useState(window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light');
+  const darkModeStorage = window.localStorage.getItem("darkMode");
+  const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+  const [mode, setMode] = React.useState(darkMode === 'true' ? 'dark' : 'light');
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {

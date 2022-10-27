@@ -95,6 +95,8 @@ Following attributes are available:
 
 * `devMode:boolean` For development, enables redux logger (default: `false`)
 
+* `defaultDarkMode:boolean` If `true`, the app will be set to dark mode, if not explicitely set by the user/browser
+
 * `loadAntispamData:boolean` Whether or not to load antispam data in the dashboard (default: `true`)
 
 * `mailWebAddress:String` Url of production mail server (default: `''`)
