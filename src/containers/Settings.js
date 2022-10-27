@@ -119,6 +119,7 @@ class Settings extends Component {
             >
               <MenuItem value="grommunio">grommunio</MenuItem>
               <MenuItem value="green">green</MenuItem>
+              <MenuItem value="magenta">magenta</MenuItem>
             </TextField>
           </FormControl>
           <Grid container className={classes.buttonGrid}>

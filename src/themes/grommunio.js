@@ -80,8 +80,8 @@ const grommunioTheme = mode => ({
     },
   },
   palette: {
-    mode: mode, // TODO: Get default from config
-    primary: blue, // TODO: Add more themes, for example #e20074
+    mode: mode,
+    primary: blue, 
     secondary: grey,
     ...(mode === 'light' ?
       {

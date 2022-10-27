@@ -4,9 +4,9 @@
 
 import { createTheme } from '@mui/material/styles';
 
-import blue from './colors/blue';
 import grommunioTheme from './themes/grommunio';
 import greenTheme from './themes/green';
+import magentaTheme from './themes/magenta';
 
 // Define material-ui theme
 const createCustomTheme = (mode, colorTheme) => {
@@ -17,7 +17,8 @@ function getThemeFromName(name) {
   switch(name) {
   case 'grommunio': return grommunioTheme;
   case 'green': return greenTheme;
-  default: return blue;
+  case 'magenta': return magentaTheme;
+  default: return grommunioTheme;
   }
 }
 
