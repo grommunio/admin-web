@@ -7,6 +7,7 @@ import { createTheme } from '@mui/material/styles';
 import grommunioTheme from './themes/grommunio';
 import greenTheme from './themes/green';
 import magentaTheme from './themes/magenta';
+import purpleTheme from './themes/purple';
 
 // Define material-ui theme
 const createCustomTheme = (mode, colorTheme) => {
@@ -18,6 +19,7 @@ function getThemeFromName(name) {
   case 'grommunio': return grommunioTheme;
   case 'green': return greenTheme;
   case 'magenta': return magentaTheme;
+  case 'purple': return purpleTheme;
   default: return grommunioTheme;
   }
 }

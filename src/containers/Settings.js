@@ -119,6 +119,7 @@ class Settings extends Component {
             >
               <MenuItem value="grommunio">grommunio</MenuItem>
               <MenuItem value="green">green</MenuItem>
+              <MenuItem value="purple">purple</MenuItem>
               <MenuItem value="magenta">magenta</MenuItem>
             </TextField>
           </FormControl>
