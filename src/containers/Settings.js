@@ -11,7 +11,7 @@ import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
 import TableViewContainer from '../components/TableViewContainer';
 import ColorModeContext from '../ColorContext';
-import config from '../config';
+import { config } from '../config';
 
 const styles = theme => ({
   paper: {

@@ -30,7 +30,7 @@ import { Add, AdminPanelSettings, BackupTable, Dns, QueryBuilder, TableChart, Ta
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
-import config from '../config';
+import { config } from '../config';
 
 const styles = theme => ({
   drawerHeader: {

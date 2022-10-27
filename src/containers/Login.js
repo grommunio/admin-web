@@ -31,7 +31,7 @@ import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import config from '../config';
+import { config } from '../config';
 
 const styles = theme => ({
   /* || General */

@@ -6,7 +6,7 @@ import ColorModeContext from '../ColorContext';
 import PropTypes from 'prop-types';
 import createCustomTheme from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
-import config from '../config';
+import { config } from '../config';
 
 export default function ToggleColorMode({ children }) {
   const darkModeStorage = window.localStorage.getItem("darkMode");

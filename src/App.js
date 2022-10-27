@@ -14,7 +14,7 @@ import backgroundDark from "!file-loader!./res/bootback-dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
-import config from "./config";
+import { config } from "./config";
 
 const styles = {
   root: {
