@@ -8,7 +8,6 @@ import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
   Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import blue from '../colors/blue';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
@@ -43,13 +42,6 @@ const styles = theme => ({
   },
   subtitle: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  homeIcon: {
-    color: blue[500],
-    position: 'relative',
-    top: 4,
-    left: 4,
-    cursor: 'pointer',
   },
   paper: {
     margin: theme.spacing(3, 2, 1, 2),

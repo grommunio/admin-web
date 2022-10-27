@@ -7,7 +7,6 @@ import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Menu
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
-import blue from '../../colors/blue';
 import { red, yellow } from '@mui/material/colors';
 import Delete from '@mui/icons-material/Delete';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
@@ -28,7 +27,7 @@ const styles = theme => ({
     flex: 1,
   },
   quota: {
-    border: `1px solid ${blue['500']}`,
+    border: `1px solid ${theme.palette.primary['500']}`,
     margin: theme.spacing(2, 0, 2, 0),
     padding: theme.spacing(0.5),
     borderRadius: '8px',

@@ -26,7 +26,6 @@ import Classes from '@mui/icons-material/Class';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
-import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
@@ -70,12 +69,6 @@ const styles = theme => ({
       backgroundColor: 'transparent',
       textShadow: '0px 0px 1px white',
       color: 'white',
-    },
-    '&.Mui-selected': {
-      background: `linear-gradient(150deg, ${blue['400']}, #2d323b)`,
-      color: '#fff',
-      '&:hover': {
-      },
     },
   },
   icon: {

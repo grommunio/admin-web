@@ -24,7 +24,6 @@ import Classes from '@mui/icons-material/Class';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
-import blue from '../colors/blue';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
 import { selectDrawerDomain, setDrawerExpansion } from '../actions/drawer';
 import { Add, AdminPanelSettings, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
@@ -69,12 +68,6 @@ const styles = theme => ({
       textShadow: '0px 0px 1px white',
       color: 'white',
     },
-    '&.Mui-selected': {
-      background: `linear-gradient(150deg, ${blue['400']}, #2d323b)`,
-      color: '#fff',
-      '&:hover': {
-      },
-    },
   },
   icon: {
     float: 'left',
@@ -86,12 +79,6 @@ const styles = theme => ({
       backgroundColor: 'transparent',
       textShadow: '0px 0px 1px white',
       color: 'white',
-    },
-    '&.Mui-selected': {
-      background: `linear-gradient(150deg, ${blue['400']}, #2d323b)`,
-      color: '#fff',
-      '&:hover': {
-      },
     },
   },
   nestedIcon: {
@@ -140,12 +127,6 @@ const styles = theme => ({
   flexCenter: {
     display: 'flex',
     justifyContent: 'center',
-    '&.Mui-selected': {
-      background: `linear-gradient(150deg, ${blue['400']}, #2d323b)`,
-      color: '#fff',
-      '&:hover': {
-      },
-    },
   }
 });
 

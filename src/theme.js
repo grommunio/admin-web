@@ -4,163 +4,21 @@
 
 import { createTheme } from '@mui/material/styles';
 
-import grey from './colors/grey';
 import blue from './colors/blue';
-import red from './colors/red';
-
-// Get dark or light mode from localStorage
-// const mode = window.localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
+import grommunioTheme from './themes/grommunio';
+import greenTheme from './themes/green';
 
 // Define material-ui theme
-const createCustomTheme = mode => createTheme({
-  components: {
-    MuiFormControlLabel: {
-      styleOverrides: {
-        root: {
-          color: mode === 'light' ? '#333' : '#fff',
-        },
-      },
-    },
-    MuiDialog: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-        },
-        elevation1: {
-          borderRadius: 8,
-          margin: 16,
-          boxShadow: mode === 'light' ? '0px 3px 3px -2px rgba(0, 0, 0, 0.06),0px 3px 4px 0px rgba(0, 0, 0, 0.042),0px 1px 8px 0px rgba(0, 0, 0, 0.036)' : '0 0 1px 0 rgba(0,0,0,0.70), 0 3px 4px -2px rgba(0,0,0,0.50)',
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        colorPrimary: {
-          backgroundColor: mode === 'light' ? '#fff' : blue[600],
-          color: mode === 'light' ? '#333' : '#fff',
-          boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
-        },
-      },
-    },
-    MuiChip: {
-      styleOverrides: {
-        colorSecondary: {
-          backgroundColor: red['500'],
-          color: '#000',
-        },
-        colorPrimary: {
-          backgroundColor: blue['300'],
-          color: '#000',
-        },
-      },
-    },
-    MuiTableCell: {
-      styleOverrides: {
-        head: {
-          height: '30px',
-          padding: '10px 16px',
-        },
-        body: {
-          height: '40px',
-          border: 'none',
-        },
-      },
-    },
-    MuiTableRow: {
-      styleOverrides: {
-        hover: {
-          '&:hover': {
-            backgroundColor: '#ddd',
-            cursor: 'pointer',
-          },
-        },
-        root: {
-          '&:nth-of-type(even)': {
-            backgroundColor: mode === 'light' ? '#eee' : '#202329',
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        contained: {
-          boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06), 0px 8px 10px 1px rgba(0, 0, 0, 0.042), 0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
-      
-          '&.Mui-disabled': {
-            background: 'linear-gradient(#e0e0e0, #e0e0e0)',
-            color: '#999',
-          },
-        },
-        containedPrimary: {
-          background: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
-        },
-        containedSecondary: {
-          background: 'linear-gradient(150deg, #FF512F, #DD2476)',
-          color: '#fff',
-        },
-      },
-    },
-    MuiGridListTile: {
-      styleOverrides: {
-        tile: {
-          display: 'flex',
-          flex: 1,
-        },
-      },
-    },
-    MuiTooltip: {
-      styleOverrides: {
-        tooltip: {
-          fontSize: 14,
-        },
-      },
-    },
-    MuiTab: {
-      styleOverrides: {
-        root: {
-          color: mode === 'light' ? '#333' : '#ddd',
-        },
-      },
-    },
-  },
-  typography: {
-    h1: {
-      color: mode === 'light' ? '#333' : '#fff',
-      fontSize: '2em',
-      fontWeight: 'bold',
-    },
-    h2: {
-      color: mode === 'light' ? '#333' : '#fff',
-      fontSize: '1.5em',
-      fontWeight: 'bold',
-    },
-    caption: {
-      color: mode === 'light' ? '#000' : '#fff',
-    },
-  },
-  palette: {
-    mode: mode, // TODO: Get default from config
-    primary: blue, // TODO: Add more themes, for example #e20074
-    secondary: grey,
-    ...(mode === 'light' ?
-      {
-        text: {
-          primary: mode === 'light' ? '#000' : '#fff',
-        },
-      } :
-      {
-        background: {
-          paper: "#121315",
-        }
-      }),
-  },
-});
+const createCustomTheme = (mode, colorTheme) => {
+  return createTheme(getThemeFromName(colorTheme)(mode));
+};
+
+function getThemeFromName(name) {
+  switch(name) {
+  case 'grommunio': return grommunioTheme;
+  case 'green': return greenTheme;
+  default: return blue;
+  }
+}
 
 export default createCustomTheme;

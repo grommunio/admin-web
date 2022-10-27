@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
-import { Paper, FormControl, Switch, FormLabel } from '@mui/material';
+import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
@@ -79,11 +79,19 @@ class Settings extends Component {
     history.push(`/${path}`);
   }
 
+  handleThemeSelect = e => {
+    const { value: colorTheme } = e.target;
+    window.localStorage.setItem('colorTheme', colorTheme);
+    this.context.setColorTheme(colorTheme);
+  }
+
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, history } = this.props;
     const { snackbar } = this.state;
     const darkModeStorage = window.localStorage.getItem("darkMode");
     const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+
+    const colorTheme = window.localStorage.getItem("colorTheme") || 'grommunio';
     return (
       <TableViewContainer
         headline={t("Settings")}
@@ -94,7 +102,7 @@ class Settings extends Component {
       >
         <Paper className={classes.paper} elevation={1}>
           <FormControl className={classes.form}>
-            <FormControl className={classes.formControl}>
+            <FormControl className={classes.input}>
               <FormLabel component="legend">{t('Darkmode')}</FormLabel>
               <Switch
                 checked={(darkMode === 'true')}
@@ -102,7 +110,26 @@ class Settings extends Component {
                 color="primary"
               />
             </FormControl>
+            <TextField
+              label={t("Theme")}
+              value={colorTheme}
+              onChange={this.handleThemeSelect}
+              select
+              className={classes.input}
+            >
+              <MenuItem value="grommunio">grommunio</MenuItem>
+              <MenuItem value="green">green</MenuItem>
+            </TextField>
           </FormControl>
+          <Grid container className={classes.buttonGrid}>
+            <Button
+              onClick={history.goBack}
+              style={{ marginRight: 8 }}
+              color="secondary"
+            >
+              {t('Back')}
+            </Button>
+          </Grid>
         </Paper>
       </TableViewContainer>
     );

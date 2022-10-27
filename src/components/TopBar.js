@@ -49,7 +49,6 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundImage: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
     paddingLeft: 12,
   },
   toolbarCollapsed: {
@@ -62,7 +61,6 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    backgroundImage: 'linear-gradient(150deg, rgb(0, 159, 253), rgb(42, 42, 114))',
   },
   title: {
     flexGrow: 1,

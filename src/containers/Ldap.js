@@ -10,7 +10,6 @@ import Import from '@mui/icons-material/ImportContacts';
 import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
   Paper, TextField, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import blue from '../colors/blue';
 import { connect } from 'react-redux';
 import { fetchLdapData } from '../actions/ldap';
 import { debounce } from 'debounce';
@@ -24,7 +23,7 @@ const styles = theme => ({
     margin: theme.spacing(2, 2, 2, 2),
   },
   backIcon: {
-    color: blue[500],
+    color: theme.palette.primary[500],
     position: 'relative',
     top: 4,
     right: 4,

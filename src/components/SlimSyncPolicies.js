@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
   Slider, TextField, Typography } from '@mui/material';
-import blue from '../colors/blue';
 
 const styles = theme => ({
   form: {
@@ -28,7 +27,7 @@ const styles = theme => ({
     marginTop: 8,
   },
   blueCheckbox: {
-    color: blue['500'],
+    color: theme.palette.primary['500'],
   },
 });
 
