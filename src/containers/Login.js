@@ -31,6 +31,7 @@ import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
+import config from '../config';
 
 const styles = theme => ({
   /* || General */
@@ -85,7 +86,7 @@ const styles = theme => ({
     borderRadius: 12,
   },
   background: {
-    backgroundImage: 'url(' + background + ')',
+    backgroundImage: 'url(' + (config.customImages[window.location.hostname]?.background || background) + ')',
     backgroundSize: 'cover',
     width: '100%',
     height: '100%',
@@ -186,7 +187,11 @@ class Login extends Component {
             )}
           </Menu>
           <div className={classes.logoContainer}>
-            <img src={logo} width="300" height={64} alt="grommunio"/>
+            <img
+              src={config.customImages[window.location.hostname]?.logo || logo}
+              height={64}
+              alt="grommunio"
+            />
           </div>
           <Paper className={classes.inputContainer}>
             <AccountCircle className={classes.inputAdornment}/>

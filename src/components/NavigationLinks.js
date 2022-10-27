@@ -28,12 +28,12 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import blue from '../colors/blue';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button } from '@mui/material';
-import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
+import config from '../config';
 
 const styles = theme => ({
   drawerHeader: {
@@ -102,19 +102,6 @@ const styles = theme => ({
     width: 122,
     minWidth: 122,
     color: '#ccc',
-  },
-  background: {
-    position: 'absolute',
-    zIndex: '-1',
-    height: '100%',
-    width: '100%',
-    display: "block",
-    top: '0',
-    left: '0',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    backgroundImage: 'url(' + image + ')',
-    opacity: '0', // deactivated background Image
   },
   logo: {
     cursor: 'pointer',
@@ -192,7 +179,7 @@ class NavigationLinks extends PureComponent {
       <React.Fragment>
         <div className={classes.drawerHeader}>
           <img
-            src={logo}
+            src={config.customImages[window.location.hostname]?.logoLight || logo}
             height="32"
             alt="grommunio"
             onClick={this.handleNavigation('')}
@@ -493,7 +480,6 @@ class NavigationLinks extends PureComponent {
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}
         />
-        <div className={classes.background} />
       </React.Fragment>
     );
   }

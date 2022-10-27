@@ -14,6 +14,7 @@ import backgroundDark from "!file-loader!./res/bootback-dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
+import config from "./config";
 
 const styles = {
   root: {
@@ -23,7 +24,7 @@ const styles = {
     backgroundColor: "#fafafa",
     backgroundImage: `
       linear-gradient(rgba(240,240,240,0.99), rgba(240, 240, 240, 0.8)),
-      url(${background})`,
+      url(${config.customImages[window.location.hostname]?.background || background})`,
     backgroundSize: "cover",
     width: "100%",
     height: "100%",
@@ -44,7 +45,7 @@ const styles = {
     backgroundColor: "#1c2025",
     backgroundImage: `
       linear-gradient(#1c2025, rgba(28, 32, 37, 0.80)),
-      url(${backgroundDark})`,
+      url(${config.customImages[window.location.hostname]?.backgroundDark || backgroundDark})`,
     backgroundSize: "cover",
     width: "100%",
     height: "100%",

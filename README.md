@@ -109,6 +109,37 @@ Following attributes are available:
 
 * `searchAttributes:Array<String>` Array of strings, possible LDAP Search attributes
 
+* `customImages:Object`: This object can be used to white-label the app. That includes logos, icons and background images.
+It is possible to create separate sets of images for different hostnames.
+Each hostname is the key of an object, which has following keys:
+  * `logo`: The logo in the login form
+  * `logoLight`: The logo in the expanded drawer
+  * `icon`: The icon in the collapsed drawer
+  * `background`: The background image in light mode
+  * `backgroundDark`: The background image in dark mode
+  Each of these keys must be an URL to an image file.
+
+  An example `customImages` object looks like this:
+
+  ```
+  "customImages": {
+    "localhost": {
+      "logo": "url.to/logo.png",
+      "logoLight": "url.to/light/logo.png",
+      "icon": "url.to/light/icon.svg",
+      "background": "url.to/background.svg",
+      "backgroundDark": "url.to/dark/background.svg"
+    },
+    "example.com": {
+      "logo": "anotherUrl.to/logo.png",
+      "logoLight": "anotherUrl.to/light/logo.png",
+      "icon": "anotherUrl.to/light/icon.svg"
+    },
+  }
+  ```
+As you can see, it is not necessary to overwrite every image, but the hostnames need to be accurate.
+
+
 
 # Additional information
 

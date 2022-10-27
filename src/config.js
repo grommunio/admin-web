@@ -15,6 +15,15 @@ export var config = {
   fileWebAddress: '',
   archiveWebAddress: '',
   rspamdWebAddress: '',
+  customImages: {
+    //localhost: {
+    //  logo: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
+    //  logoLight: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
+    //  icon: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
+    //  background: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
+    //  backgroundDark: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
+    //},
+  },
   searchAttributes: [
     'assistant',
     'cn',

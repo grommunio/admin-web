@@ -26,12 +26,12 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
 import blue from '../colors/blue';
 import { IconButton, Tooltip, Avatar } from '@mui/material';
-import image from '../res/bootback-dark.svg';
 import { selectDrawerDomain, setDrawerExpansion } from '../actions/drawer';
 import { Add, AdminPanelSettings, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
+import config from '../config';
 
 const styles = theme => ({
   drawerHeader: {
@@ -109,19 +109,6 @@ const styles = theme => ({
     width: 122,
     minWidth: 122,
     color: '#ccc',
-  },
-  background: {
-    position: 'absolute',
-    zIndex: '-1',
-    height: '100%',
-    width: '100%',
-    display: "block",
-    top: '0',
-    left: '0',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    backgroundImage: 'url(' + image + ')',
-    opacity: '0', // deactivated background Image
   },
   logo: {
     cursor: 'pointer',
@@ -209,7 +196,7 @@ class RetractedNavigationLinks extends PureComponent {
       <React.Fragment>
         <div className={classes.drawerHeader}>
           <img
-            src={logo}
+            src={config.customImages[window.location.hostname]?.icon || logo}
             height="32"
             alt="g"
             onClick={this.handleNavigation('')}
@@ -461,7 +448,6 @@ class RetractedNavigationLinks extends PureComponent {
           snackbar={snackbar}
           onClose={() => this.setState({ snackbar: "" })}
         />
-        <div className={classes.background} />
       </React.Fragment>
     );
   }
