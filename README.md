@@ -97,6 +97,8 @@ Following attributes are available:
 
 * `defaultDarkMode:boolean` If `true`, the app will be set to dark mode, if not explicitely set by the user/browser
 
+* `defaultTheme:string` Name of the default theme to use. Available themes: grommunio, green, purple, magenta (default: "grommunio")
+
 * `loadAntispamData:boolean` Whether or not to load antispam data in the dashboard (default: `true`)
 
 * `mailWebAddress:String` Url of production mail server (default: `''`)
