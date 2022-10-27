@@ -642,6 +642,12 @@ export function folders(domainID, params) {
   };
 }
 
+export function folderTree(domainID, params) {
+  return async () => {
+    return await get(buildQuery('/domains/' + domainID + '/folders/tree', params));
+  };
+}
+
 export function folderDetails(domainID, folderID) {
   return async () => {
     return await get('/domains/' + domainID + '/folders/' + folderID);

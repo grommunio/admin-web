@@ -5,10 +5,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
   Typography, Button, Grid, CircularProgress,
-  Breadcrumbs, Link } from '@mui/material';
+  Breadcrumbs, Link, Tabs, Tab } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { fetchFolderData, deleteFolderData } from '../actions/folders';
+import { fetchFolderData, deleteFolderData, fetchFolderTree } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import { defaultFetchLimit, DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -18,6 +18,7 @@ import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import { Edit } from '@mui/icons-material';
 import SearchTextfield from '../components/SearchTextfield';
+import Tree from 'react-d3-tree';
 
 const styles = theme => ({
   tablePaper: {
@@ -41,7 +42,7 @@ const styles = theme => ({
     alignItems: 'flex-end',
   },
   count: {
-    marginLeft: 16,
+    margin: theme.spacing(2, 0, 0, 2),
   },
   breadcumbs: {
     margin: theme.spacing(3, 0, 0, 2),
@@ -49,12 +50,21 @@ const styles = theme => ({
   link: {
     cursor: 'pointer',
   },
+  tabs: {
+    marginLeft: 16,
+  },
+  treeContainer: {
+    height: '100%',
+    display: 'flex',
+  },
 });
 
 class Folders extends PureComponent {
 
   state = {
     offset: 0,
+    tab: 0,
+    root: -1,
     hierarchy: [IPM_SUBTREE_OBJECT],
   }
 
@@ -105,6 +115,35 @@ class Folders extends PureComponent {
     });
   }
 
+  handleTab = (_, tab) => this.setState({ tab });
+
+  componentDidMount = () => {
+    const { fetchTree, domain } = this.props;
+    fetchTree(domain.ID)
+      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+  }
+
+  renderNode = ({ nodeDatum, toggleNode }) => (
+    <g onClick={this.handleNodeClicked(nodeDatum?.folderid)}>
+      <rect width="20" height="20" x="-10" onClick={toggleNode} />
+      <text fill="black" strokeWidth="1" x="20" y="15">
+        {nodeDatum?.name}
+      </text>
+    </g>
+  );
+
+  getOffset() {
+    const container = this.treeContainer;
+    return {
+      x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
+      y: 20,
+    };
+  }
+
+  handleNodeClicked = id => () => {
+    const { domain, history } = this.props;
+    history.push('/' + domain.ID + '/folders/' + id);
+  }
 
   render() {
     const { classes, t, folders, domain, tableState, handleMatch,
@@ -114,7 +153,7 @@ class Folders extends PureComponent {
     const { Folders, moreDataAvailable } = folders;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { match, snackbar, adding, deleting } = tableState;
-    const { hierarchy } = this.state;
+    const { tab, hierarchy } = this.state;
 
     return (
       <TableViewContainer
@@ -124,6 +163,7 @@ class Folders extends PureComponent {
         href="https://docs.grommunio.com/admin/administration.html#folders"
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
+        baseRef={tc => (this.treeContainer = tc)}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button
@@ -143,63 +183,98 @@ class Folders extends PureComponent {
             />
           </div>
         </Grid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingFolders", { count: Folders.length + (hierarchy.length === 1 ? 1 : 0) })}
-        </Typography>
-        <Breadcrumbs aria-label="breadcrumb" className={classes.breadcumbs}>
-          {hierarchy.map((folder, idx) => 
-            <Link
-              key={folder.folderid}
-              underline="hover"
-              color="primary"
-              onClick={this.handleBreadcrumb(folder, idx)}
-              className={classes.link}
-            >
-              {folder.displayname}
-            </Link>
-          )}
-        </Breadcrumbs>
-        <Paper className={classes.tablePaper} elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {['Folder name', 'Comment', 'Creation time', ''].map(headerName =>
-                  <TableCell key={headerName}>{t(headerName)}</TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {hierarchy.length === 1 && <TableRow>
-                <TableCell>{IPM_SUBTREE_OBJECT.displayname}</TableCell>
-                <TableCell>{t(IPM_SUBTREE_OBJECT.comment)}</TableCell>
-                <TableCell></TableCell>
-                <TableCell align="right">
-                  <IconButton onClick={handleEdit('/' + domain.ID + '/folders/' + IPM_SUBTREE_ID)} size="large">
-                    <Edit color="primary"/>
-                  </IconButton>
-                </TableCell>
-              </TableRow>}
-              {Folders.map((obj, idx) =>
-                <TableRow hover onClick={this.handleFetchChildren(obj)} key={idx}>
-                  <TableCell>{obj.displayname}</TableCell>
-                  <TableCell>{obj.comment}</TableCell>
-                  <TableCell>{obj.creationtime}</TableCell>
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          className={classes.tabs}
+          onChange={this.handleTab}
+          value={tab}
+        >
+          <Tab value={0} label={t("List")} />
+          <Tab value={1} label={t("Tree")} />
+        </Tabs>
+        {!tab && <>
+          <Typography className={classes.count} color="textPrimary">
+            {t("showingFolders", { count: Folders.length + (hierarchy.length === 1 ? 1 : 0) })}
+          </Typography>
+          <Breadcrumbs aria-label="breadcrumb" className={classes.breadcumbs}>
+            {hierarchy.map((folder, idx) => 
+              <Link
+                key={folder.folderid}
+                underline="hover"
+                color="primary"
+                onClick={this.handleBreadcrumb(folder, idx)}
+                className={classes.link}
+              >
+                {folder.displayname}
+              </Link>
+            )}
+          </Breadcrumbs>
+          <Paper className={classes.tablePaper} elevation={1}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  {['Folder name', 'Comment', 'Creation time', ''].map(headerName =>
+                    <TableCell key={headerName}>{t(headerName)}</TableCell>
+                  )}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {hierarchy.length === 1 && <TableRow>
+                  <TableCell>{IPM_SUBTREE_OBJECT.displayname}</TableCell>
+                  <TableCell>{t(IPM_SUBTREE_OBJECT.comment)}</TableCell>
+                  <TableCell></TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={handleEdit('/' + domain.ID + '/folders/' + obj.folderid)} size="large">
+                    <IconButton onClick={handleEdit('/' + domain.ID + '/folders/' + IPM_SUBTREE_ID)} size="large">
                       <Edit color="primary"/>
                     </IconButton>
-                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                      <Delete color="error"/>
-                    </IconButton>}
                   </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {(moreDataAvailable) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
+                </TableRow>}
+                {Folders.map((obj, idx) =>
+                  <TableRow hover onClick={this.handleFetchChildren(obj)} key={idx}>
+                    <TableCell>{obj.displayname}</TableCell>
+                    <TableCell>{obj.comment}</TableCell>
+                    <TableCell>{obj.creationtime}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={handleEdit('/' + domain.ID + '/folders/' + obj.folderid)} size="large">
+                        <Edit color="primary"/>
+                      </IconButton>
+                      {writable && <IconButton onClick={handleDelete(obj)} size="large">
+                        <Delete color="error"/>
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            {(moreDataAvailable) && <Grid container justifyContent="center">
+              <CircularProgress color="primary" className={classes.circularProgress}/>
+            </Grid>}
+          </Paper>
+        </>}
+        {tab === 1 && 
+          <div className={classes.treeContainer}>
+            <Paper style={{ flex: 1 }}>
+              <Tree
+                data={folders.Tree}
+                orientation="vertical"
+                renderCustomNodeElement={this.renderNode}
+                depthFactor={50}
+                pathFunc="step"
+                translate={this.getOffset()}
+                scaleExtent={{
+                  min: 0.1,
+                  max: 2,
+                }}
+                separation={{
+                  siblings: 1,
+                  nonSiblings: 2,
+                }}
+                onNodeClick={this.handleNodeClicked}
+                collapsible={false}
+              />
+            </Paper>
+          </div>}
         <AddFolder
           open={adding}
           onClose={handleAddingClose}
@@ -228,6 +303,7 @@ Folders.propTypes = {
   domain: PropTypes.object.isRequired,
   folders: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
+  fetchTree: PropTypes.func.isRequired,
   ...defaultTableProptypes,
 };
 
@@ -240,6 +316,9 @@ const mapDispatchToProps = dispatch => {
     fetchTableData: async (domainID, params) => 
       await dispatch(fetchFolderData(domainID, params))
         .catch(msg => Promise.reject(msg)),
+    fetchTree: async (domainID, params) => {
+      await dispatch(fetchFolderTree(domainID, params)).catch(error => Promise.reject(error));
+    },
     delete: async (domainID, id, params) =>
       await dispatch(deleteFolderData(domainID, id, params))
         .catch(msg => Promise.reject(msg)),

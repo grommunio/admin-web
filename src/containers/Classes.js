@@ -54,8 +54,7 @@ const styles = theme => ({
   },
   treeContainer: {
     display: 'flex',
-    flex: 1,
-    alignItems: 'stretch',
+    height: '100%',
   },
 });
 

@@ -12,6 +12,7 @@ import {
   FOLDERS_NEXT_SET,
   AUTH_AUTHENTICATED,
   OWNER_DATA_DELETE,
+  FOLDERS_TREE_RECEIVED,
 } from '../actions/types';
 import { defaultFetchLimit } from '../constants';
 import { addItem, append } from '../utils';
@@ -21,6 +22,7 @@ const defaultState = {
   error: null,
   moreDataAvailable: true,
   Folders: [],
+  Tree: {},
   Owners: [],
 };
 
@@ -39,6 +41,14 @@ function foldersReducer(state = defaultState, action) {
       error: null,
       Folders: action.data.data,
       moreDataAvailable: action.data.data.length == defaultFetchLimit,
+    };
+
+  case FOLDERS_TREE_RECEIVED:
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      Tree: action.data,
     };
     
   case FOLDERS_NEXT_SET:

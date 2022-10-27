@@ -9,9 +9,10 @@ import {
   FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   FOLDERS_NEXT_SET,
+  FOLDERS_TREE_RECEIVED,
 } from './types';
 import { folders, folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
-  putFolderPermissions, deleteOwner } from '../api';
+  putFolderPermissions, deleteOwner, folderTree } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchFolderData(domainID, params) {
@@ -27,6 +28,10 @@ export function fetchFolderData(domainID, params) {
       return Promise.reject(error.message);
     }
   };
+}
+
+export function fetchFolderTree(...endpointParams) {
+  return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, FOLDERS_DATA_FETCH, ...endpointParams);
 }
 
 export function fetchFolderDetails(...endpointParams) {
