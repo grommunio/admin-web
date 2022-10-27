@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import { addMiddleware } from 'redux-dynamic-middlewares';
-import { createLogger } from 'redux-logger';
-import { SERVER_CONFIG_SET } from './actions/types';
-import store from './store';
+import { SERVER_CONFIG_SET } from "../actions/types";
 
-// Default configuration
-// Merged with config.json from server
-export var config = {
+const defaultState = {
   devMode: false,
   loadAntispamData: true,
   mailWebAddress: '',
@@ -67,27 +62,18 @@ export var config = {
   ],
 };
 
-const setConfig = (newConfig) => {
-  config = {
-    ...config,
-    ...newConfig,
-  };
-  store.dispatch({ type: SERVER_CONFIG_SET, data: config });
-};
+function configReducer(state = defaultState, action) {
+  switch(action.type) {
+  case SERVER_CONFIG_SET:
+    return {
+      ...state,
+      ...action.data,
+    };
 
-// Fetch config.js on server and merge with default config
-fetch('//' + window.location.host + '/config.json')
-  .then(response => response.json())
-  .catch(err => console.error(err))
-  .then(res => {
-    if (res) {
-      setConfig({ ...res });
-      // Enable redux logger if devMode is true
-      if(res.devMode) {
-        addMiddleware(createLogger());
-      }
-    }
-  });
+  default:
+    break;
+  }
+  return state;
+}
 
-
-export default config;
+export default configReducer;

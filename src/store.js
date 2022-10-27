@@ -33,6 +33,7 @@ import settingsReducer from './reducers/settings';
 import syncReducer from './reducers/sync';
 import taskqReducer from './reducers/taskq';
 import antispamReducer from './reducers/antispam';
+import configReducer from './reducers/config';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -43,6 +44,7 @@ export const store = createStore(
     antispam: antispamReducer,
     auth: authReducer,
     _classes: classesReducer,
+    config: configReducer,
     dashboard: dashboardReducer,
     dbconf: dbconfReducer,
     defaults: defaultsReducer,

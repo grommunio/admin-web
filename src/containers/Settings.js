@@ -91,7 +91,7 @@ class Settings extends Component {
     const darkModeStorage = window.localStorage.getItem("darkMode");
     const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
 
-    const colorTheme = window.localStorage.getItem("colorTheme") || 'grommunio';
+    const colorTheme = window.localStorage.getItem("colorTheme") || config.defaultTheme;
     return (
       <TableViewContainer
         headline={t("Settings")}

@@ -1,19 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import ColorModeContext from '../ColorContext';
 import PropTypes from 'prop-types';
 import createCustomTheme from '../theme';
 import { ThemeProvider } from '@mui/material/styles';
-import { config } from '../config';
+import { useSelector } from 'react-redux';
 
+
+// TODO: This needs to be cleaned up.
+// Find way to merge store.config and global config object
 export default function ToggleColorMode({ children }) {
+  const config = useSelector((state) => ({...state}).config);
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
   const [mode, setMode] = React.useState(darkMode === 'true' ? 'dark' : 'light');
 
-  const [colorTheme, setColorTheme] = React.useState(window.localStorage.getItem("colorTheme") || 'grommunio');
+  const [colorTheme, setColorTheme] = React.useState(window.localStorage.getItem("colorTheme") || config.defaultTheme);
 
   const colorMode = React.useMemo(
     () => ({
@@ -21,15 +25,24 @@ export default function ToggleColorMode({ children }) {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
       },
       setColorTheme: colorTheme => {
-        setColorTheme(colorTheme)
+        setColorTheme(colorTheme);
       },
     }),
     [],
   );
 
+  useEffect(() => {
+    const darkModeStorage = window.localStorage.getItem("darkMode");
+    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+    setMode(darkMode === 'true' ? 'dark' : 'light');
+    setColorTheme(window.localStorage.getItem("colorTheme") || config.defaultTheme);
+  }, [config])
+
   const theme = React.useMemo(
-    () => createCustomTheme(mode, colorTheme),
-    [mode, colorTheme],
+    () => {
+      return createCustomTheme(mode, colorTheme);
+    },
+    [config, mode, colorTheme],
   );
 
   return (
