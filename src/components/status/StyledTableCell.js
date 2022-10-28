@@ -4,9 +4,9 @@
 import { TableCell } from '@mui/material';
 import { withStyles } from '@mui/styles';
 
-const StyledTableCell = withStyles(() => ({
+const StyledTableCell = withStyles(theme => ({
   head: {
-    backgroundColor: '#C9E7FF',
+    backgroundColor: theme.palette.primary['100'],
     border: '1px solid white',
     color: 'black',
   },
