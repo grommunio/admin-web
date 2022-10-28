@@ -19,6 +19,7 @@ import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import { Edit } from '@mui/icons-material';
 import SearchTextfield from '../components/SearchTextfield';
 import Tree from 'react-d3-tree';
+import RichObjectTreeView from '../components/RickObjectTreeView';
 
 const styles = theme => ({
   tablePaper: {
@@ -59,6 +60,9 @@ const styles = theme => ({
   },
   treeNodeLabel: {
     stroke: theme.palette.mode === 'dark' ? 'white' : 'black',
+  },
+  richTree: {
+    padding: theme.spacing(1, 3, 1, 1),
   },
 });
 
@@ -215,6 +219,13 @@ class Folders extends PureComponent {
             )}
           </Breadcrumbs>
           <Paper className={classes.tablePaper} elevation={1}>
+            <RichObjectTreeView
+              domainID={domain.ID}
+              className={classes.richTree}
+              data={folders.Tree}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+            />
             <Table size="small">
               <TableHead>
                 <TableRow>
