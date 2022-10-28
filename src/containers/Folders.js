@@ -57,6 +57,9 @@ const styles = theme => ({
     height: '100%',
     display: 'flex',
   },
+  treeNodeLabel: {
+    stroke: theme.palette.mode === 'dark' ? 'white' : 'black',
+  },
 });
 
 class Folders extends PureComponent {
@@ -123,14 +126,15 @@ class Folders extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
-  renderNode = ({ nodeDatum, toggleNode }) => (
-    <g onClick={this.handleNodeClicked(nodeDatum?.folderid)}>
-      <rect width="20" height="20" x="-10" onClick={toggleNode} />
-      <text fill="black" strokeWidth="1" x="20" y="15">
+  renderNode = ({ nodeDatum, toggleNode }) => {
+    const { classes } = this.props;
+    return <g onClick={this.handleNodeClicked(nodeDatum?.folderid)}>
+      <rect className={classes.treeNodeLabel} width="20" height="20" x="-10" onClick={toggleNode} />
+      <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
         {nodeDatum?.name}
       </text>
-    </g>
-  );
+    </g>;
+  }
 
   getOffset() {
     const container = this.treeContainer;
