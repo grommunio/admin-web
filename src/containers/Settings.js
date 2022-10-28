@@ -11,7 +11,6 @@ import { changeSettings } from '../actions/settings';
 import i18n from '../i18n';
 import TableViewContainer from '../components/TableViewContainer';
 import ColorModeContext from '../ColorContext';
-import { config } from '../config';
 
 const styles = theme => ({
   paper: {
@@ -86,12 +85,12 @@ class Settings extends Component {
   }
 
   render() {
-    const { classes, t, history } = this.props;
+    const { classes, t, history, serverConfig } = this.props;
     const { snackbar } = this.state;
     const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
 
-    const colorTheme = window.localStorage.getItem("colorTheme") || config.defaultTheme;
+    const colorTheme = window.localStorage.getItem("colorTheme") || serverConfig.defaultTheme;
     return (
       <TableViewContainer
         headline={t("Settings")}
@@ -145,12 +144,14 @@ Settings.propTypes = {
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
+  serverConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { settings } = state;
+  const { settings, config } = state;
   return {
     settings,
+    serverConfig: config,
   };
 };
 

@@ -14,7 +14,9 @@ import backgroundDark from "!file-loader!./res/bootback-dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
-import { config } from "./config";
+import { getStoreConfig } from "./store";
+
+const config = getStoreConfig();
 
 const styles = {
   root: {
@@ -95,10 +97,10 @@ class App extends Component {
   }
 
   render() {
-    const { classes, Domains } = this.props;
+    const { classes, Domains, serverConfig } = this.props;
     const { loading, authenticating, authenticated, capabilities } = this.props;
     const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
     const routesProps = {
       authenticating,
       authenticated,
@@ -131,6 +133,7 @@ App.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   capabilities: PropTypes.array.isRequired,
   loading: PropTypes.bool,
+  serverConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -143,6 +146,7 @@ const mapStateToProps = (state) => {
     capabilities,
     Domains,
     loading,
+    serverConfig: state.config,
   };
 };
 

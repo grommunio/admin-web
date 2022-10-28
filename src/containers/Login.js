@@ -31,7 +31,9 @@ import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import { config } from '../config';
+import { getStoreConfig } from '../store';
+
+const config = getStoreConfig();
 
 const styles = theme => ({
   /* || General */
@@ -158,7 +160,7 @@ class Login extends Component {
   }
 
   render() {
-    const { classes, t, auth, settings } = this.props;
+    const { classes, t, auth, settings, serverConfig } = this.props;
     const { user, pass, loading, langsAnchorEl } = this.state;
     return (
       <div className={classes.root}>
@@ -188,7 +190,7 @@ class Login extends Component {
           </Menu>
           <div className={classes.logoContainer}>
             <img
-              src={config.customImages[window.location.hostname]?.logo || logo}
+              src={serverConfig.customImages[window.location.hostname]?.logo || logo}
               height={64}
               alt="grommunio"
             />
@@ -254,13 +256,15 @@ Login.propTypes = {
   authLoginWithToken: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
+  serverConfig: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { auth, settings } = state;
+  const { auth, settings, config } = state;
   return {
     auth,
     settings,
+    serverConfig: config,
   };
 };
 

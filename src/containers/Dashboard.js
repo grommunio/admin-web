@@ -17,7 +17,6 @@ import Feedback from "../components/Feedback";
 import { HelpOutline } from "@mui/icons-material";
 import { fetchAboutData } from "../actions/about";
 import About from "../components/About";
-import { config } from '../config';
 import CPULine from "../components/charts/CPULine";
 import CPUPie from "../components/charts/CPUPie";
 import MemoryLine from "../components/charts/MemoryLine";
@@ -129,7 +128,7 @@ const styles = (theme) => ({
 
 class Dashboard extends Component {
   componentDidMount() {
-    const { fetch, fetchServices, fetchAntispam, fetchAbout } = this.props;
+    const { fetch, fetchServices, fetchAntispam, fetchAbout, config } = this.props;
     fetch().catch((msg) => this.setState({ snackbar: msg }));
     fetchServices().catch((msg) => this.setState({ snackbar: msg }));
     if(config?.loadAntispamData) fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
@@ -165,6 +164,7 @@ class Dashboard extends Component {
       load,
       timer,
       statistics,
+      config,
     } = this.props;
     const { snackbar } = this.state;
 
@@ -272,6 +272,7 @@ Dashboard.propTypes = {
   memory: PropTypes.object.isRequired,
   memoryPie: PropTypes.object.isRequired,
   statistics: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
   load: PropTypes.array.isRequired,
   timer: PropTypes.number,
 };
@@ -282,6 +283,7 @@ const mapStateToProps = (state) => {
   return {
     cpuPercent, cpuPie, disks, memory, memoryPie, load, timer,
     ...state.antispam,
+    config: state.config,
   };
 };
 

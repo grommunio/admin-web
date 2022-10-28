@@ -7,33 +7,31 @@ import thunkMiddleware from 'redux-thunk';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 // Keep alphabetically ordered
+import antispamReducer from './reducers/antispam';
 import authReducer from './reducers/auth';
 import aboutReducer from './reducers/about';
 import classesReducer from './reducers/classes';
+import configReducer from './reducers/config';
 import dashboardReducer from './reducers/dashboard';
 import dbconfReducer from './reducers/dbconf';
 import defaultsReducer from './reducers/defaults';
 import domainsReducer from './reducers/domains';
 import drawerReducer from './reducers/drawer';
 import foldersReducer from './reducers/folders';
-//import forwardsReducer from './reducers/forwards';
 import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 import logsReducer from './reducers/logs';
-import statusReducer from './reducers/status';
-//import membersReducer from './reducers/members';
 import mlistsReducer from './reducers/mlists';
 import orgsReducer from './reducers/orgs';
-import usersReducer from './reducers/users';
-import rolesReducer from './reducers/roles';
 import profileReducer from './reducers/profile';
+import rolesReducer from './reducers/roles';
 import serversReducer from './reducers/servers';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
+import statusReducer from './reducers/status';
 import syncReducer from './reducers/sync';
 import taskqReducer from './reducers/taskq';
-import antispamReducer from './reducers/antispam';
-import configReducer from './reducers/config';
+import usersReducer from './reducers/users';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -71,5 +69,9 @@ export const store = createStore(
     dynamicMiddlewares,
   ))
 );
+
+export function getStoreConfig() {
+  return store.getState().config;
+}
 
 export default store;

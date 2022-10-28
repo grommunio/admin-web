@@ -15,7 +15,6 @@ import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import Add from '@mui/icons-material/Add';
 import Delete from '@mui/icons-material/Close';
 import { green, red } from '@mui/material/colors';
-import adminConfig from '../config';
 import LdapTextfield from '../components/LdapTextfield';
 import Help from '@mui/icons-material/HelpOutline';
 import Feedback from '../components/Feedback';
@@ -333,7 +332,7 @@ class LdapConfig extends PureComponent {
   })
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, adminConfig } = this.props;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
@@ -731,6 +730,13 @@ LdapConfig.propTypes = {
   sync: PropTypes.func.isRequired,
   authMgr: PropTypes.func.isRequired,
   fetchAuthMgr: PropTypes.func.isRequired,
+  adminConfig: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    adminConfig: state.config,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -752,5 +758,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(LdapConfig)));

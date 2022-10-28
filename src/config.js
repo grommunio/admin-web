@@ -6,73 +6,8 @@ import { createLogger } from 'redux-logger';
 import { SERVER_CONFIG_SET } from './actions/types';
 import store from './store';
 
-// Default configuration
-// Merged with config.json from server
-export var config = {
-  devMode: false,
-  loadAntispamData: true,
-  mailWebAddress: '',
-  chatWebAddress: '',
-  videoWebAddress: '',
-  fileWebAddress: '',
-  archiveWebAddress: '',
-  rspamdWebAddress: '',
-  defaultDarkMode: false,
-  defaultTheme: 'grommunio',
-  customImages: {
-    //localhost: {
-    //  logo: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  logoLight: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  icon: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  background: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  backgroundDark: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //},
-  },
-  searchAttributes: [
-    'assistant',
-    'cn',
-    'company',
-    'department',
-    'departmentNumber',
-    'description',
-    'displayName',
-    'employeeNumber',
-    'facsimileTelephoneNumber',
-    'gecos',
-    'givenName',
-    'homePhone',
-    'initials',
-    'l',
-    'mail',
-    'mailPrimaryAddress',
-    'mobile',
-    'name',
-    'o',
-    'otherFacsimileTelephoneNumber',
-    'otherHomePhone',
-    'otherTelephone',
-    'pager',
-    'physicalDeliveryOfficeName',
-    'postalAddress',
-    'postalCode',
-    'postOfficeBox',
-    'preferredLanguage',
-    'sn',
-    'st',
-    'streetAddress',
-    'telephoneNumber',
-    'title',
-    'uid',
-    'wWWHomePage',
-  ],
-};
-
 const setConfig = (newConfig) => {
-  config = {
-    ...config,
-    ...newConfig,
-  };
-  store.dispatch({ type: SERVER_CONFIG_SET, data: config });
+  store.dispatch({ type: SERVER_CONFIG_SET, data: newConfig });
 };
 
 // Fetch config.js on server and merge with default config
@@ -88,6 +23,3 @@ fetch('//' + window.location.host + '/config.json')
       }
     }
   });
-
-
-export default config;

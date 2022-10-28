@@ -9,10 +9,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 
 
-// TODO: This needs to be cleaned up.
-// Find way to merge store.config and global config object
 export default function ToggleColorMode({ children }) {
-  const config = useSelector((state) => ({...state}).config);
+  const config = useSelector((state) => ({...state.config}));
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
   const [mode, setMode] = React.useState(darkMode === 'true' ? 'dark' : 'light');
@@ -36,7 +34,7 @@ export default function ToggleColorMode({ children }) {
     const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
     setMode(darkMode === 'true' ? 'dark' : 'light');
     setColorTheme(window.localStorage.getItem("colorTheme") || config.defaultTheme);
-  }, [config])
+  }, [config]);
 
   const theme = React.useMemo(
     () => {

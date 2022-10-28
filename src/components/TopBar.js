@@ -25,7 +25,6 @@ import Files from '@mui/icons-material/Description';
 import Archive from '@mui/icons-material/Archive';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
-import { config } from '../config';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { fetchLicenseData } from '../actions/license';
@@ -35,6 +34,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
+
 
 const styles = theme => ({
   appbar: {
@@ -194,7 +194,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, title, onAdd, fetching, settings, license, drawer, setDrawerExpansion } = this.props;
+    const { classes, t, profile, title, onAdd, fetching, settings, license, drawer, setDrawerExpansion, config } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
     const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
@@ -352,10 +352,11 @@ TopBar.propTypes = {
   changeSettings: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   license: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { drawer, domains, users, folders, dashboard, services, settings, license } = state;
+  const { drawer, domains, users, folders, dashboard, services, settings, license, config } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
@@ -364,6 +365,7 @@ const mapStateToProps = state => {
     fetching: domains.loading || users.loading || folders.loading
       || dashboard.loading || services.loading ,
     drawer,
+    config,
   };
 };
 

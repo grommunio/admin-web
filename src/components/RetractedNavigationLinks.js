@@ -30,7 +30,6 @@ import { Add, AdminPanelSettings, BackupTable, Dns, QueryBuilder, TableChart, Ta
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
-import { config } from '../config';
 
 const styles = theme => ({
   drawerHeader: {
@@ -169,7 +168,7 @@ class RetractedNavigationLinks extends PureComponent {
   }
 
   render() {
-    const { classes, t, expandedDomain, location, domains, capabilities, tab } = this.props;
+    const { classes, t, expandedDomain, location, domains, capabilities, tab, config } = this.props;
     const { filter, adding, snackbar } = this.state;
     const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
     const pathname = location.pathname;
@@ -446,12 +445,15 @@ RetractedNavigationLinks.propTypes = {
   toggleExpansion: PropTypes.func.isRequired,
   tab: PropTypes.number.isRequired,
   setTab: PropTypes.func.isRequired,
+  config:  PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
+  const { auth, drawer, config } = state;
   return {
-    capabilities: state.auth.capabilities,
-    expandedDomain: state.drawer.selectedDomain,
+    capabilities: auth.capabilities,
+    expandedDomain: drawer.selectedDomain,
+    config,
   };
 };
 
