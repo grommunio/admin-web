@@ -41,15 +41,21 @@ function addTreeItem(node, folder, parentID) {
   return node;
 }
 
+function removeFolder(tree, folderid) {
+  cutOffSubtree(tree, folderid);
+  return structuredClone(tree);
+}
+
 function cutOffSubtree(node, folderid) {
-  const idx = node.children?.findIndex(child => child.folderid === folderid);
-  if(idx !== undefined && idx !== -1) {
-    node.children.splice(idx, 1);
+  const children = [...(node.children || [])]
+  for(let i = 0; i < children.length; i++) {
+    if(node.children[i].folderid === folderid) {
+      node.children.splice(i, 1);
+      return true;
+    }
+    if(cutOffSubtree(node.children[i], folderid)) return true;
   }
-  node.children?.forEach(child => {
-    cutOffSubtree(child, folderid);
-  })
-  return node;
+  return false;
 }
 
 function foldersReducer(state = defaultState, action) {
@@ -105,7 +111,7 @@ function foldersReducer(state = defaultState, action) {
     return {
       ...state,
       Folders: state.Folders.filter(folder => folder.folderid !== action.id),
-      Tree: structuredClone(cutOffSubtree(state.Tree, action.id)),
+      Tree: removeFolder(state.Tree, action.id),
     };
 
   case OWNERS_DATA_RECEIVED:
