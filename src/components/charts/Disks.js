@@ -9,15 +9,12 @@ import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
 import { withTheme } from '@emotion/react';
 
-const styles = theme => ({
+const styles = {
   root: {
     flex: 1,
     width: 0,
   },
-  chartTitle: {
-    margin: theme.spacing(1, 0, 0, 2),
-  },
-});
+};
 
 class Disks extends Component {
 
@@ -33,7 +30,7 @@ class Disks extends Component {
     const { classes, disks, t, theme } = this.props;
     return (
       <div className={classes.root}>
-        <Typography className={classes.chartTitle}>{t("Disks")}</Typography>
+        <Typography style={{ margin: '8px 0 0 16px'}}>{t("Disks")}</Typography>
         <Chart
           options={{
             responsive: [{
