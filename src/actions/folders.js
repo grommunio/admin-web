@@ -44,7 +44,7 @@ export function addFolderData(domainID, folder) {
     delete folder.owners;
     try {
       const folderData = await dispatch(addFolder(domainID, folder));
-      await dispatch({ type: FOLDER_DATA_ADD, data: folderData });
+      await dispatch({ type: FOLDER_DATA_ADD, data: folderData, parentID: folder.parentID });
       for(let i = 0; i < owners.length; i++) {
         await dispatch(addOwner(domainID, folderData.folderid, { username: owners[i].username }));
       }
@@ -65,7 +65,7 @@ export function deleteFolderData(domainID, id, params) {
     try {
       const resp = await dispatch(deleteFolder(domainID, id, params));
       if(resp?.taskID) return resp;
-      else await dispatch({ type: FOLDER_DATA_DELETE, id });
+      await dispatch({ type: FOLDER_DATA_DELETE, id });
     } catch(error) {
       await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);

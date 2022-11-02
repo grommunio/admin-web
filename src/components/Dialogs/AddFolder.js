@@ -185,7 +185,7 @@ AddFolder.propTypes = {
   add: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   fetchUsers: PropTypes.func.isRequired,
-  parentID: PropTypes.string.isRequired,
+  parentID: PropTypes.string,
 };
 
 const mapStateToProps = state => {

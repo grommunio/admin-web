@@ -26,6 +26,32 @@ const defaultState = {
   Owners: [],
 };
 
+function addTreeItem(node, folder, parentID) {
+  if(node.folderid === parentID) {
+    if(node.children) {
+      node.children.push({ folderid: folder.folderid, name: folder.displayname });
+    } else {
+      node.children = [{ folderid: folder.folderid, name: folder.displayname }];
+    }
+    return true;
+  }
+  node.children?.forEach(child => {
+    if(addTreeItem(child, folder, parentID) === true) return;
+  });
+  return node;
+}
+
+function cutOffSubtree(node, folderid) {
+  const idx = node.children?.findIndex(child => child.folderid === folderid);
+  if(idx !== undefined && idx !== -1) {
+    node.children.splice(idx, 1);
+  }
+  node.children?.forEach(child => {
+    cutOffSubtree(child, folderid);
+  })
+  return node;
+}
+
 function foldersReducer(state = defaultState, action) {
   switch (action.type) {
   case FOLDERS_DATA_FETCH:
@@ -72,12 +98,14 @@ function foldersReducer(state = defaultState, action) {
     return {
       ...state,
       Folders: addItem(state.Folders, action.data),
+      Tree: addTreeItem(state.Tree, action.data, action.parentID),
     };
 
   case FOLDER_DATA_DELETE:
     return {
       ...state,
       Folders: state.Folders.filter(folder => folder.folderid !== action.id),
+      Tree: structuredClone(cutOffSubtree(state.Tree, action.id)),
     };
 
   case OWNERS_DATA_RECEIVED:

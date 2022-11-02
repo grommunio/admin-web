@@ -4,7 +4,7 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
-import { Delete, Edit } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { IPM_SUBTREE_ID } from '../constants';
 import { withStyles } from '@mui/styles';
@@ -20,7 +20,7 @@ const styles = {
   },
 };
 
-const RichObjectTreeView = ({classes, data, domainID, handleEdit, handleDelete, ...childProps}) => {
+const RichObjectTreeView = ({classes, writable, data, domainID, handleAdd, handleEdit, handleDelete, ...childProps}) => {
 
   const renderTree = ({ folderid, name, children }) => (
     <TreeItem
@@ -28,6 +28,12 @@ const RichObjectTreeView = ({classes, data, domainID, handleEdit, handleDelete, 
       nodeId={folderid || "-1"}
       label={<div className={classes.treeItemLabel}>
         {name}
+        <IconButton
+          size='small'
+          onClick={handleAdd(folderid)}
+        >
+          <AddCircleOutline color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
+        </IconButton>
         <div className={classes.treeItemActionsContainer}>
           <IconButton
             style={{ marginLeft: 8 }}
@@ -36,7 +42,7 @@ const RichObjectTreeView = ({classes, data, domainID, handleEdit, handleDelete, 
           >
             <Edit color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
           </IconButton>
-          {folderid !== IPM_SUBTREE_ID && <IconButton
+          {folderid !== IPM_SUBTREE_ID && writable && <IconButton
             size='small'
             onClick={handleDelete({ folderid, name })}
           >
@@ -69,6 +75,8 @@ RichObjectTreeView.propTypes = {
   data: PropTypes.object.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  handleAdd: PropTypes.func.isRequired,
+  writable: PropTypes.bool,
 }
 
 export default withStyles(styles)(RichObjectTreeView);
