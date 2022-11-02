@@ -25,6 +25,14 @@ const defaultStyles = mode => ({
       },
     },
   },
+  MuiButton: {
+    styleOverrides: {
+      containedSecondary: {
+        background: 'linear-gradient(150deg, #FF512F, #DD2476)',
+        color: '#fff',
+      },
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       head: {
