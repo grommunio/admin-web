@@ -51,7 +51,7 @@ function cutOffSubtree(node, folderid) {
   for(let i = 0; i < children.length; i++) {
     if(node.children[i].folderid === folderid) {
       node.children.splice(i, 1);
-      return true;
+      return node.folderid === IPM_SUBTREE_ID ? node : true;
     }
     if(cutOffSubtree(node.children[i], folderid)) return true;
   }
