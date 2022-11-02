@@ -20,7 +20,7 @@ const styles = {
   },
 };
 
-const RichObjectTreeView = ({classes, writable, data, domainID, handleAdd, handleEdit, handleDelete, ...childProps}) => {
+const FolderHierarchy = ({classes, writable, data, domainID, handleAdd, handleEdit, handleDelete, ...childProps}) => {
 
   const renderTree = ({ folderid, name, children }) => (
     <TreeItem
@@ -69,7 +69,7 @@ const RichObjectTreeView = ({classes, writable, data, domainID, handleAdd, handl
   );
 }
 
-RichObjectTreeView.propTypes = {
+FolderHierarchy.propTypes = {
   classes: PropTypes.object.isRequired,
   domainID: PropTypes.number.isRequired,
   data: PropTypes.object.isRequired,
@@ -79,4 +79,4 @@ RichObjectTreeView.propTypes = {
   writable: PropTypes.bool,
 }
 
-export default withStyles(styles)(RichObjectTreeView);
+export default withStyles(styles)(FolderHierarchy);

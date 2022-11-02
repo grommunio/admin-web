@@ -14,7 +14,7 @@ import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import Tree from 'react-d3-tree';
-import RichObjectTreeView from '../components/RickObjectTreeView';
+import FolderHierarchy from '../components/FolderHierarchy';
 
 const styles = theme => ({
   tablePaper: {
@@ -190,7 +190,7 @@ class Folders extends PureComponent {
         </Grid>
         {!tab && 
           <Paper className={classes.tablePaper} elevation={1}>
-            <RichObjectTreeView
+            <FolderHierarchy
               domainID={domain.ID}
               className={classes.richTree}
               data={filteredTree || folders.Tree}
