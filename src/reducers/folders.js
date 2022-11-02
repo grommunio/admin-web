@@ -14,7 +14,7 @@ import {
   OWNER_DATA_DELETE,
   FOLDERS_TREE_RECEIVED,
 } from '../actions/types';
-import { defaultFetchLimit } from '../constants';
+import { defaultFetchLimit, IPM_SUBTREE_ID } from '../constants';
 import { addItem, append } from '../utils';
 
 const defaultState = {
@@ -33,7 +33,7 @@ function addTreeItem(node, folder, parentID) {
     } else {
       node.children = [{ folderid: folder.folderid, name: folder.displayname }];
     }
-    return true;
+    return parentID === IPM_SUBTREE_ID ? node : true
   }
   node.children?.forEach(child => {
     if(addTreeItem(child, folder, parentID) === true) return;
