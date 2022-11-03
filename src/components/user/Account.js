@@ -378,8 +378,8 @@ class Account extends PureComponent {
             />
           </Grid>
         </Tooltip>}
-        {status !== 4 && <Grid container className={classes.input}>
-          <FormControlLabel
+        <Grid container className={classes.input}>
+          {status !== 4 && <FormControlLabel
             control={
               <Checkbox
                 checked={smtp || false }
@@ -388,8 +388,8 @@ class Account extends PureComponent {
               />
             }
             label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
-          />
-          <FormControlLabel
+          />}
+          {status !== 4 && <FormControlLabel
             control={
               <Checkbox
                 checked={changePassword || false }
@@ -398,8 +398,8 @@ class Account extends PureComponent {
               />
             }
             label={t('Allow password changes')}
-          />
-          <FormControlLabel
+          />}
+          {status !== 4 && <FormControlLabel
             control={
               <Checkbox
                 checked={pop3_imap || false /*eslint-disable-line*/}
@@ -408,7 +408,7 @@ class Account extends PureComponent {
               />
             }
             label={t('Allow POP3/IMAP logins')}
-          />
+          />}
           <FormControlLabel
             control={
               <Checkbox
@@ -419,7 +419,7 @@ class Account extends PureComponent {
             }
             label={t('Hide from GAL')}
           />
-        </Grid>}
+        </Grid>
         {status !== 4 && <Grid container className={classes.input}>
           <FormControlLabel
             control={
