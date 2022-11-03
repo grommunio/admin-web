@@ -52,9 +52,15 @@ const styles = theme => ({
   treeContainer: {
     height: '100%',
     display: 'flex',
+    stroke: theme.palette.primary.main,
   },
   treeNodeLabel: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+    fontWeight: 'lighter',
     stroke: theme.palette.mode === 'dark' ? 'white' : 'black',
+  },
+  treeNode: {
+    stroke: theme.palette.primary.main,
   },
   richTree: {
     padding: theme.spacing(1, 3, 1, 1),
@@ -98,7 +104,7 @@ class Folders extends PureComponent {
   renderNode = ({ nodeDatum, toggleNode }) => {
     const { classes } = this.props;
     return <g onClick={this.handleNodeClicked(nodeDatum?.folderid)}>
-      <rect className={classes.treeNodeLabel} width="20" height="20" x="-10" onClick={toggleNode} />
+      <rect className={classes.treeNode} width="20" height="20" x="-10" onClick={toggleNode} />
       <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
         {nodeDatum?.name}
       </text>
@@ -109,7 +115,7 @@ class Folders extends PureComponent {
     const container = this.treeContainer;
     return {
       x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
-      y: 20,
+      y: 50,
     };
   }
 
@@ -215,7 +221,7 @@ class Folders extends PureComponent {
                   max: 2,
                 }}
                 separation={{
-                  siblings: 1,
+                  siblings: 2,
                   nonSiblings: 2,
                 }}
                 onNodeClick={this.handleNodeClicked}

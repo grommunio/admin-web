@@ -20,6 +20,9 @@ code {
     monospace;
 }
 
+.rd3t-link {
+	stroke: inherit !important;
+}
 
 pre {
   margin:0;

@@ -53,11 +53,17 @@ const styles = theme => ({
     margin: theme.spacing(2, 0, 0, 2),
   },
   treeContainer: {
-    display: 'flex',
     height: '100%',
+    display: 'flex',
+    stroke: theme.palette.primary.main,
   },
   treeNodeLabel: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif',
+    fontWeight: 'lighter',
     stroke: theme.palette.mode === 'dark' ? 'white' : 'black',
+  },
+  treeNode: {
+    stroke: theme.palette.primary.main,
   },
 });
 
@@ -100,7 +106,7 @@ class Classes extends Component {
   renderNode = ({ nodeDatum, toggleNode }) => {
     const { classes } = this.props;
     return <g onClick={this.handleNodeClicked(nodeDatum.ID)}>
-      <rect className={classes.treeNodeLabel} width="20" height="20" x="-10" onClick={toggleNode} />
+      <rect className={classes.treeNode} width="20" height="20" x="-10" onClick={toggleNode} />
       <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
         {nodeDatum.name}
       </text>
