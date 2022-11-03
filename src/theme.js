@@ -8,6 +8,10 @@ import grommunioTheme from './themes/grommunio';
 import greenTheme from './themes/green';
 import magentaTheme from './themes/magenta';
 import purpleTheme from './themes/purple';
+import tealTheme from './themes/teal';
+import orangeTheme from './themes/orange';
+import brownTheme from './themes/brown';
+import blueGreyTheme from './themes/blueGrey';
 
 // Define material-ui theme
 const createCustomTheme = (mode, colorTheme) => {
@@ -20,6 +24,10 @@ function getThemeFromName(name) {
   case 'green': return greenTheme;
   case 'magenta': return magentaTheme;
   case 'purple': return purpleTheme;
+  case 'teal': return tealTheme;
+  case 'orange': return orangeTheme;
+  case 'brown': return brownTheme;
+  case 'bluegrey': return blueGreyTheme;
   default: return grommunioTheme;
   }
 }
