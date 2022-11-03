@@ -111,13 +111,11 @@ class RoleDetails extends PureComponent {
     this.props.edit({
       ...role,
       users: role.users.map(user => user.ID),
-      permissions: role.permissions.map(perm => {
-        return {
-          ...perm,
-          params: perm.params?.ID ? perm.params.ID : perm.params,
-          autocompleteInput: undefined,
-        };
-      }),
+      permissions: role.permissions.map(perm => ({
+        ...perm,
+        params: perm.params?.ID ? perm.params.ID : perm.params,
+        autocompleteInput: undefined,
+      })),
     })
       .then(() => this.setState({ snackbar: 'Success!', autocompleteInput: '' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -127,10 +125,9 @@ class RoleDetails extends PureComponent {
     const copy = [...this.state.role.permissions];
     const input = event.target.value;
     copy[idx].permission = input;
-    if(input === 'SystemAdmin') {
-      copy[idx].params = '';
-      copy[idx].autocompleteInput = '';
-    }
+    copy[idx].ID = undefined;
+    copy[idx].params = '';
+    copy[idx].autocompleteInput = '';
     this.setState({
       role: {
         ...this.state.role,
@@ -244,7 +241,7 @@ class RoleDetails extends PureComponent {
               value={users || []}
               filterAttribute={'username'}
               onChange={this.handleAutocomplete('users')}
-              onInputChange={this.handleACInput}
+              onInputChange={this.handleInput('autocompleteInput')}
               className={classes.input} 
               options={Users || []}
               label={t('Users')}
