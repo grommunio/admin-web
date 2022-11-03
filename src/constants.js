@@ -9,7 +9,7 @@ export const ORG_ADMIN = 'OrgAdmin';
 export const IPM_SUBTREE_ID = "144115188075855873";
 export const IPM_SUBTREE_OBJECT = {
   folderid: IPM_SUBTREE_ID,
-  displayname: 'IPM_SUBTREE',
+  displayname: 'Public Folders',
   comment: 'All Public Folders (root)',
   container: '',
   creationtime: null,
