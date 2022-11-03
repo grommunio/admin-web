@@ -17,7 +17,7 @@ const defaultState = {
   selectedDomain: -1,
   Domains: [],
   loading: true,
-  expanded: false,
+  expanded: true,
   open: false,
 };
 
