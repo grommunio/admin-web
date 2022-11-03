@@ -4,7 +4,9 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
-import { AddCircleOutline, Delete, Edit } from '@mui/icons-material';
+import { AddCircleOutline, AssignmentTurnedInOutlined,
+  ContactMailOutlined as ContactMail, Delete, DescriptionOutlined as Description, Edit,
+  EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { IPM_SUBTREE_ID } from '../constants';
 import { withStyles } from '@mui/styles';
@@ -12,21 +14,34 @@ import { withStyles } from '@mui/styles';
 const styles = {
   treeItemLabel: {
     display: 'flex',
+    alignItems: 'center',
   },
   treeItemActionsContainer: {
     flex: 1,
     display: 'flex',
     justifyContent: 'end',
   },
+  folderTypeIcon: {
+    marginRight: 8,
+  },
 };
 
 const FolderHierarchy = ({classes, writable, data, domainID, handleAdd, handleEdit, handleDelete, ...childProps}) => {
 
-  const renderTree = ({ folderid, name, children }) => (
+  const containerIcons = {
+    'IPF.Note': <Email fontSize='small' className={classes.folderTypeIcon}/>,
+    'IPF.Contact': <ContactMail fontSize='small' className={classes.folderTypeIcon}/>,
+    'IPF.Appointment': <Event fontSize='small' className={classes.folderTypeIcon}/>,
+    'IPF.Stickynote': <Description fontSize='small' className={classes.folderTypeIcon}/>,
+    'IPF.Task': <AssignmentTurnedInOutlined fontSize='small' className={classes.folderTypeIcon}/>
+  }
+
+  const renderTree = ({ folderid, container, name, children }) => (
     <TreeItem
       key={folderid || -1}
       nodeId={folderid || "-1"}
       label={<div className={classes.treeItemLabel}>
+        {containerIcons[container || 'IPF.Note']}
         {name}
         <IconButton
           size='small'

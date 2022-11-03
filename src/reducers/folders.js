@@ -29,9 +29,15 @@ const defaultState = {
 function addTreeItem(node, folder, parentID) {
   if(node.folderid === parentID) {
     if(node.children) {
-      node.children.push({ folderid: folder.folderid, name: folder.displayname });
+      node.children.push({
+        ...folder,
+        name: folder.displayname
+      });
     } else {
-      node.children = [{ folderid: folder.folderid, name: folder.displayname }];
+      node.children = [{
+        ...folder,
+        name: folder.displayname
+      }];
     }
     return parentID === IPM_SUBTREE_ID ? node : true
   }
