@@ -31,9 +31,6 @@ import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import { getStoreConfig } from '../store';
-
-const config = getStoreConfig();
 
 const styles = theme => ({
   /* || General */
@@ -88,7 +85,6 @@ const styles = theme => ({
     borderRadius: 12,
   },
   background: {
-    backgroundImage: 'url(' + (config.customImages[window.location.hostname]?.background || background) + ')',
     backgroundSize: 'cover',
     width: '100%',
     height: '100%',
@@ -162,6 +158,11 @@ class Login extends Component {
   render() {
     const { classes, t, auth, settings, serverConfig } = this.props;
     const { user, pass, loading, langsAnchorEl } = this.state;
+    const darkModeStorage = window.localStorage.getItem("darkMode");
+    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
+    const backgroundUrl = serverConfig.customImages[window.location.hostname] ?
+      serverConfig.customImages[window.location.hostname][darkMode === "true" ? "backgroundDark" : "background"] : '';    
+
     return (
       <div className={classes.root}>
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
@@ -242,7 +243,12 @@ class Login extends Component {
             </Button>
           </Paper>
         </Paper>
-        <div className={classes.background}></div>
+        <div
+          className={classes.background}
+          style={{
+            backgroundImage: 'url(' + (backgroundUrl || background) + ')',
+          }}
+        ></div>
       </div>
     );
   }
