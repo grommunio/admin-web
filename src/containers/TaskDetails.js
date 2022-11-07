@@ -135,7 +135,7 @@ class TaskDetails extends PureComponent {
               {command || t('Unknown')}
             </div>
             <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('State')}:</Typography>
+              <Typography variant='h6' className={classes.description}>{t('State ')}:</Typography>
               {t(this.getTaskState(state)) || t('Unknown')}
             </div>
             <div className={classes.centerRow}>
