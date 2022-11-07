@@ -47,7 +47,6 @@ class AddDomain extends PureComponent {
     loading: false,
     domainError: false,
     chat: false,
-    autocompleteInput: '',
   }
 
   statuses = [
@@ -126,7 +125,6 @@ class AddDomain extends PureComponent {
           loading: false,
           createRole: false,
           chat: false,
-          autocompleteInput: '',
           homeserver: '',
         });
         this.props.onSuccess();
@@ -140,14 +138,13 @@ class AddDomain extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal || '',
-      autocompleteInput: newVal?.name || '',
     });
   }
 
   render() {
     const { classes, t, open, onClose, orgs, servers } = this.props;
     const { domainname, domainStatus, orgID, domainError, chat, homeserver,
-      maxUser, title, address, adminName, tel, loading, createRole, autocompleteInput } = this.state;
+      maxUser, title, address, adminName, tel, loading, createRole } = this.state;
 
     return (
       <Dialog
@@ -188,11 +185,9 @@ class AddDomain extends PureComponent {
             <MagnitudeAutocomplete
               value={orgID}
               filterAttribute={'name'}
-              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('orgID')}
               className={classes.input} 
               options={orgs}
-              onInputChange={this.handleInput('autocompleteInput')}
               label={t('Organization')}
             />
             <TextField 
