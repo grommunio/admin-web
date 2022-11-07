@@ -39,7 +39,7 @@ async function handleLoginErrors(response) {
     return Promise.reject(new Error("Could not connect to backend"));
   }
   await response.json().then(json => {
-    message = json.error;
+    message = json.message;
   });
   return Promise.reject(new Error(message));
 }
