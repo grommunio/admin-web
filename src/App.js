@@ -8,7 +8,6 @@ import Loadable from "react-loadable";
 import Loader from "./components/Loading";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import { authAuthenticating } from "./actions/auth";
 import background from "!file-loader!./res/bootback.svg";
 import backgroundDark from "!file-loader!./res/bootback-dark.svg";
 import i18n from "./i18n";
@@ -82,18 +81,12 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
-    const { authAuthenticating } = this.props;
-    authAuthenticating(false);
-  }
-
   render() {
     const { classes, Domains, serverConfig } = this.props;
-    const { loading, authenticating, authenticated, capabilities } = this.props;
+    const { loading, authenticated, capabilities } = this.props;
     const darkModeStorage = window.localStorage.getItem("darkMode");
     const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
     const routesProps = {
-      authenticating,
       authenticated,
       loading,
     };
@@ -127,9 +120,7 @@ class App extends Component {
 App.propTypes = {
   classes: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
-  authAuthenticating: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
-  authenticating: PropTypes.bool.isRequired,
   authenticated: PropTypes.bool.isRequired,
   capabilities: PropTypes.array.isRequired,
   loading: PropTypes.bool,
@@ -137,11 +128,10 @@ App.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { authenticating, authenticated, capabilities } = state.auth;
+  const { authenticated, capabilities } = state.auth;
   const { Domains, loading } = state.drawer;
 
   return {
-    authenticating,
     authenticated,
     capabilities,
     Domains,
@@ -153,7 +143,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
   return {
     changeSettings: (field, value) => dispatch(changeSettings(field, value)),
-    authAuthenticating: state => dispatch(authAuthenticating(state)),
   };
 };
 

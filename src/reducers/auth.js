@@ -2,27 +2,19 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  AUTH_AUTHENTICATING,
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
 } from '../actions/types';
 
 const defaultState = {
   error: false,
-  authenticated: false,     
-  authenticating: true,
+  authenticated: false,
   capabilities: [],
   csrf: '',
 };
 
 function authReducer(state = defaultState, action) {
   switch (action.type) {
-  case AUTH_AUTHENTICATING:
-    return {
-      ...state,
-      authenticating: action.authenticating,
-      error: false,
-    };
 
   case AUTH_AUTHENTICATED:
     return {

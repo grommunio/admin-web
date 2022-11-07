@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  AUTH_AUTHENTICATING,
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
   PROFILE_DATA_RECEIVED,
@@ -76,13 +75,6 @@ export function authLoginWithToken(token) {
 export function authLogout() {
   clearStorage();
   return authAuthenticated(false);
-}
-
-export function authAuthenticating(authenticating = true) {
-  return {
-    type: AUTH_AUTHENTICATING,
-    authenticating,
-  };
 }
 
 export function authAuthenticated(authenticated = true, capabilities=[], csrf='') {
