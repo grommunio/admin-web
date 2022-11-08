@@ -25,10 +25,10 @@ class ImportDialog extends PureComponent {
   };
 
   handleImport = () => {
-    const { importUser, onSuccess, onError, user } = this.props;
+    const { importUser, onSuccess, onError, user, domainID } = this.props;
     const { force } = this.state;
     this.setState({ loading: true });
-    importUser({ ID: user.ID, force })
+    importUser({ ID: user.ID, force, domain: domainID })
       .then(() => {
         if(onSuccess) onSuccess();
         this.setState({ loading: false });
@@ -92,6 +92,7 @@ ImportDialog.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   importUser: PropTypes.func.isRequired,
+  domainID: PropTypes.number,
 };
 
 const mapDispatchToProps = dispatch => {

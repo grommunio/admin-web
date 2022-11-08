@@ -12,6 +12,7 @@ import {
   Button,
   Divider,
   Tooltip,
+  IconButton,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { getStringAfterLastSlash, setDateTimeString } from '../utils';
@@ -19,6 +20,7 @@ import Feedback from '../components/Feedback';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchTaskDetails } from '../actions/taskq';
 import { green, red } from '@mui/material/colors';
+import { Refresh } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -86,7 +88,11 @@ class TaskDetails extends PureComponent {
     params: {},
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.refresh();
+  }
+
+  refresh = async () => {
     const { fetch } = this.props;
     const task = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -137,6 +143,9 @@ class TaskDetails extends PureComponent {
             <div className={classes.centerRow}>
               <Typography variant='h6' className={classes.description}>{t('State ')}:</Typography>
               {t(this.getTaskState(state)) || t('Unknown')}
+              <IconButton onClick={this.refresh}>
+                <Refresh color="primary"/>
+              </IconButton>
             </div>
             <div className={classes.centerRow}>
               <Typography variant='h6' className={classes.description}>{t('Message')}:</Typography>

@@ -501,13 +501,13 @@ export function putUserOof(domainID, userID, oofSettings) {
 
 export function searchLdap(params) {
   return async () => {
-    return await get(buildQuery('/domains/ldap/search', params));
+    return await get(buildQuery('/domains/ldap/search', { organization: 0, ...params }));
   };
 }
 
 export function importUser(params) {
   return async () => {
-    return await post(buildQuery('/domains/ldap/importUser', params));
+    return await post(buildQuery('/domains/ldap/importUser', { organization: 0, ...params }));
   };
 }
 
@@ -520,25 +520,25 @@ export function sync(domainID, userID) {
 export function syncAll(params, domainID) {
   return async () => {
     return await post(buildQuery('/domains/' + (domainID !== undefined ? domainID + '/' : '')
-      + 'ldap/downsync', params));
+      + 'ldap/downsync', { ...params }));
   };
 }
 
 export function ldapDump(params) {
   return async () => {
-    return await get(buildQuery('/domains/ldap/dump', params));
+    return await get(buildQuery('/domains/ldap/dump', { organization: 0, ...params }));
   };
 }
 
 export function checkLdap(params) {
   return async () => {
-    return await get(buildQuery('/domains/ldap/check', params));
+    return await get(buildQuery('/domains/ldap/check', { organization: 0, ...params }));
   };
 }
 
 export function deleteOrphans(params) {
   return async () => {
-    return await yeet(buildQuery('/domains/ldap/check', params));
+    return await yeet(buildQuery('/domains/ldap/check', { organization: 0, ...params }));
   };
 }
 
@@ -570,6 +570,26 @@ export function setAuthmgr(config) {
   return async () => {
     return await put('/system/mconf/authmgr', config);
   };
+}
+
+/* ORG LDAP */
+
+export function orgLdapConfig(orgID, params={}) {
+  return async () => await get(buildQuery(`/system/orgs/${orgID}/ldap`, params));
+}
+
+export function updateOrgLdap(orgID, config, params={}) {
+  return async () => await put(buildQuery(`/system/orgs/${orgID}/ldap`, params), config);
+}
+
+export function orgSyncAll(orgID, params={}) {
+  return async () => {
+    return await post(buildQuery('/system/orgs/' + orgID + '/ldap/downsync', params));
+  };
+}
+
+export function deleteOrgLdap(orgID) {
+  return async () => await yeet(`/system/orgs/${orgID}/ldap`);
 }
 
 /*

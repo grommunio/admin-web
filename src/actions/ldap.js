@@ -4,8 +4,10 @@
 import {
   LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
+  LDAP_DATA_CLEAR,
 } from './types';
-import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap, setAuthmgr, authmgr } from '../api';
+import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap, setAuthmgr,
+  authmgr, orgLdapConfig, orgSyncAll, updateOrgLdap, deleteOrgLdap } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchLdapConfig() {
@@ -16,7 +18,7 @@ export function updateLdapConfig(config, params) {
   return async dispatch => {
     try {
       const resp = await dispatch(updateLdap(config, params));
-      return Promise.resolve(resp?.message); // Can't use default hander here
+      return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
     }
@@ -65,7 +67,51 @@ export function syncLdapUsers(params, domainID) {
   return async dispatch => {
     try {
       const resp = await dispatch(syncAll(params, domainID));
-      if(resp?.taskID) return resp;
+      return resp;
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function clearLdapSearch() {
+  return {
+    type: LDAP_DATA_CLEAR,
+  };
+}
+
+/* ORGANIZATION LDAP */
+
+export function fetchOrgLdapConfig(...endpointParams) {
+  return defaultDetailsHandler(orgLdapConfig, ...endpointParams);
+}
+
+export function syncOrgLdapUsers(orgID, params) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(orgSyncAll(orgID, params));
+      return resp;
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function updateOrgLdapConfig(orgID, config, params) {
+  return async dispatch => {
+    try {
+      const resp = await dispatch(updateOrgLdap(orgID, config, params));
+      return Promise.resolve(resp?.message); // Can't use default hander here
+    } catch (err) {
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function deleteOrgLdapConfig(orgID) {
+  return async dispatch => {
+    try {
+      await dispatch(deleteOrgLdap(orgID));
     } catch (err) {
       return Promise.reject(err.message);
     }

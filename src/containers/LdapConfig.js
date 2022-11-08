@@ -8,7 +8,7 @@ import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
   Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr } from '../actions/ldap';
+import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr, deleteLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
 import { cloneObject } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
@@ -99,9 +99,6 @@ const styles = theme => ({
   },
   tooltip: {
     marginTop: -2,
-  },
-  subcaption: {
-    margin: theme.spacing(1, 0, 0, 2),
   },
   radioGroup: {
     marginLeft: 16,
@@ -702,6 +699,7 @@ class LdapConfig extends PureComponent {
         </form>
         <DeleteConfig
           open={deleting}
+          delete={this.props.delete}
           onSuccess={this.handleDeleteSuccess}
           onError={this.handleDeleteError}
           onClose={this.handleDeleteClose}
@@ -731,6 +729,7 @@ LdapConfig.propTypes = {
   authMgr: PropTypes.func.isRequired,
   fetchAuthMgr: PropTypes.func.isRequired,
   adminConfig: PropTypes.object.isRequired,
+  delete: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -755,6 +754,7 @@ const mapDispatchToProps = dispatch => {
       .catch(message => Promise.reject(message)),
     sync: async params => await dispatch(syncLdapUsers(params))
       .catch(message => Promise.reject(message)),
+    delete: async () => await dispatch(deleteLdapConfig()),
   };
 };
 

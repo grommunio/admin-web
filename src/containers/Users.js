@@ -134,7 +134,7 @@ class Users extends Component {
   })
 
   checkUsers = () => {
-    this.props.check({})
+    this.props.check({ domain: this.props.domain.ID })
       .catch(msg => this.setState({ snackbar: msg }));
     this.setState({ checking: true });
   }

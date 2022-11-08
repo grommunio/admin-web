@@ -4,6 +4,18 @@
 import moment from "moment";
 import store from './store';
 
+export function objectToArray(obj) {
+  const arr = [];
+  Object.entries(obj).forEach(([key, value]) => arr.push({ key, value }));
+  return arr;
+}
+
+export function arrayToObject(arr) {
+  const obj = {};
+  arr.forEach(attr => obj[attr.key] = attr.value);
+  return obj;
+}
+
 /**
  * Creates a timeout of `delay` milliseconds
  * 

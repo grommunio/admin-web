@@ -7,11 +7,11 @@ import { withStyles } from '@mui/styles';
 import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
-import { CircularProgress, Divider, Grid, Grow, IconButton, InputAdornment, List, ListItem, ListItemText,
+import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemText,
   Paper, TextField, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { fetchLdapData } from '../actions/ldap';
+import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
 import { debounce } from 'debounce';
 import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
@@ -32,17 +32,23 @@ const styles = theme => ({
   searchTf: {
     maxWidth: 500,
   },
-  loaderContainer: {
-    margin: theme.spacing(2, 2, 2, 2),
+  checkbox: {
+    marginLeft: 16,
   },
 });
 
 class Ldap extends PureComponent {
 
   state = {
+    search: '',
     loading: false,
     confirming: null,
     snackbar: '',
+    searchInOrg: false,
+  }
+
+  componentWillUnmount() {
+    this.props.clear();
   }
 
   handleNavigation = path => event => {
@@ -52,8 +58,19 @@ class Ldap extends PureComponent {
   }
 
   handleLdapSearch = ({ target: t }) => {
+    const { searchInOrg } = this.state;
+    const { domain } = this.props;
     const query = t.value;
-    if(query.length > 2) this.debounceFetch({ query });
+    if(query.length > 2) {
+      this.debounceFetch({
+        query,
+        domain: searchInOrg ? undefined : domain.ID,
+        organization: searchInOrg ? domain.orgID : undefined,
+      });
+    }
+    this.setState({
+      search: query,
+    });
   }
 
   debounceFetch = debounce(params => {
@@ -72,9 +89,20 @@ class Ldap extends PureComponent {
 
   handleError = error => this.setState({ snackbar: error });
 
+  handleCheckbox = field => e => {
+    const { checked } = e.target;
+    const { domain } = this.props;
+    this.setState({ [field]: checked });
+    this.debounceFetch({
+      query: this.state.search,
+      domain: checked ? undefined : domain.ID,
+      organization: checked ? domain.orgID : undefined,
+    });
+  }
+
   render() {
     const { classes, t, domain, ldapUsers } = this.props;
-    const { loading, snackbar, confirming } = this.state;
+    const { search, loading, snackbar, confirming, searchInOrg } = this.state;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     return (
       <ViewWrapper
@@ -92,6 +120,7 @@ class Ldap extends PureComponent {
             autoFocus
             placeholder={t("Search LDAP")}
             onChange={this.handleLdapSearch}
+            value={search}
             variant="outlined"
             color="primary"
             fullWidth
@@ -103,6 +132,18 @@ class Ldap extends PureComponent {
                 </InputAdornment>
               ),
             }}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={searchInOrg || false }
+                value={searchInOrg || false}
+                onChange={this.handleCheckbox('searchInOrg')}
+                color="primary"
+              />
+            }
+            label={t('Search in entire organisation')}
+            className={classes.checkbox}
           />
         </Grid>
         {ldapUsers.length > 0 && <Paper elevation={1}>
@@ -123,19 +164,11 @@ class Ldap extends PureComponent {
             )}
           </List>
         </Paper>}
-        <Grid container justifyContent="center" className={classes.loaderContainer}>
-          <Grow
-            in={loading}
-            timeout={{
-              appear: 500,
-              enter: 10,
-              exit: 10,
-            }}
-          >
-            <CircularProgress color="primary" size={40}/>
-          </Grow>
-        </Grid>
+        {loading && <Grid container justifyContent="center">
+          <CircularProgress color="primary" size={40}/>
+        </Grid>}
         <ImportDialog
+          domainID={domain.ID}
           open={!!confirming}
           user={confirming || {}}
           onSuccess={this.handleSuccess}
@@ -155,6 +188,7 @@ Ldap.propTypes = {
   domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   ldapUsers: PropTypes.array.isRequired,
+  clear: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -167,6 +201,7 @@ const mapDispatchToProps = dispatch => {
   return {
     fetch: async params => await dispatch(fetchLdapData(params))
       .catch(err => Promise.reject(err)),
+    clear: () => dispatch(clearLdapSearch())
   };
 };
 

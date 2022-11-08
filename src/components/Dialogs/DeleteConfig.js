@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { deleteLdapConfig } from '../../actions/ldap';
-import { connect } from 'react-redux';
 
 const styles = {
 };
@@ -20,9 +18,9 @@ class GeneralDelete extends PureComponent {
   }
 
   handleDelete = () => {
-    const { onSuccess, onError } = this.props;
+    const { orgID, onSuccess, onError } = this.props;
     this.setState({ loading: true });
-    this.props.delete()
+    this.props.delete(orgID) // Optional, will just be ignored for global config
       .then(() => {
         if(onSuccess) onSuccess();
         this.setState({ loading: false });
@@ -73,13 +71,8 @@ GeneralDelete.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
+  orgID: PropTypes.number,
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    delete: async () => await dispatch(deleteLdapConfig()),
-  };
-};
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GeneralDelete)));
+export default withTranslation()(withStyles(styles)(GeneralDelete));
