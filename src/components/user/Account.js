@@ -405,6 +405,7 @@ class Account extends PureComponent {
                 checked={pop3_imap || false /*eslint-disable-line*/}
                 onChange={handleCheckbox('pop3_imap')}
                 color="primary"
+                disabled={privArchive}
               />
             }
             label={t('Allow POP3/IMAP logins')}
@@ -456,6 +457,7 @@ class Account extends PureComponent {
             control={
               <Checkbox
                 checked={privArchive || false }
+                value={privFiles || false }
                 onChange={handleCheckbox('privArchive')}
                 color="primary"
               />

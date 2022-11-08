@@ -375,12 +375,28 @@ class UserDetails extends PureComponent {
     this.setState({ user: { ...user, aliases: copy } });
   }
 
-  handleCheckbox = field => e => this.setState({
-    user: {
-      ...this.state.user,
-      [field]: e.target.checked,
-    },
-  });
+  handleCheckbox = field => e => {
+    const { pop3_imap } = this.state.user;
+    const { checked } = e.target;
+    
+    if(field === "privArchive") {
+      this.setState({
+        user: {
+          ...this.state.user,
+          // If archive is allowed, pop3 must be unabled
+          "pop3_imap": checked || pop3_imap,
+          [field]: checked,
+        },
+      });
+    } else {
+      this.setState({
+        user: {
+          ...this.state.user,
+          [field]: checked,
+        },
+      });
+    }
+  }
 
   handlePropertyCheckbox = field => e => {
     const { user } = this.state;
