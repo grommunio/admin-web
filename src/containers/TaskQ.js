@@ -100,7 +100,7 @@ class TasQ extends Component {
   render() {
     const { classes, t, taskq, tableState, handleMatch, handleRequestSort,
       handleEdit } = this.props;
-    const { order, orderBy, match, snackbar } = tableState;
+    const { loading, order, orderBy, match, snackbar } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -110,6 +110,7 @@ class TasQ extends Component {
         // subtitle={t("taskq_sub")}
         snackbar={snackbar || this.state.snackbar}
         onSnackbarClose={this.handleSnackbarClose}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.chipGrid}>
           <Chip

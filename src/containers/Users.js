@@ -174,7 +174,7 @@ class Users extends Component {
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
+    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { addingContact, checking, taskMessage, taskID } = this.state;
     return (
@@ -185,6 +185,7 @@ class Users extends Component {
         href="https://docs.grommunio.com/admin/administration.html#users"
         snackbar={snackbar || this.state.snackbar}
         onSnackbarClose={this.handleSnackbarClose}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

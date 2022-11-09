@@ -48,6 +48,7 @@ class FolderDetails extends PureComponent {
     readonly: true,
     adding: false,
     snackbar: '',
+    loading: true,
   };
 
   types = [
@@ -64,11 +65,11 @@ class FolderDetails extends PureComponent {
     const folderId = splits[3];
     // If folder is IPM_SUBTREE
     if(folderId === IPM_SUBTREE_ID) {
-      this.setState({ folder: IPM_SUBTREE_OBJECT, readonly: true });
+      this.setState({ folder: IPM_SUBTREE_OBJECT, readonly: true, loading: false });
       await fetchOwners(splits[1], IPM_SUBTREE_ID);
     } else {
       const folder = await fetch(splits[1], folderId);
-      this.setState({ folder: folder, readonly: false });
+      this.setState({ folder: folder, readonly: false, loading: false });
       await fetchOwners(splits[1], folder.folderid);
     }
   }
@@ -105,13 +106,14 @@ class FolderDetails extends PureComponent {
   render() {
     const { classes, t, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { folder, adding, snackbar, readonly } = this.state;
+    const { folder, adding, snackbar, readonly, loading } = this.state;
 
     return (
       <ViewWrapper
         topbarTitle={t('Folders')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

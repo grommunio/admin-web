@@ -48,6 +48,7 @@ class MailQ extends PureComponent {
     gromoxMailq: '',
     postqueue: [],
     snackbar: '',
+    loading: true,
   };
 
   fetchInterval = null;
@@ -69,7 +70,7 @@ class MailQ extends PureComponent {
     const data = await this.props.fetch()
       .catch(snackbar => this.setState({ snackbar }));
     if(data) {
-      this.setState({ ...data });
+      this.setState({ ...data, loading: false });
     }
   }
 
@@ -116,7 +117,7 @@ class MailQ extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { selected, snackbar, gromoxMailq, postqueue } = this.state;
+    const { selected, snackbar, gromoxMailq, postqueue, loading } = this.state;
     const actionsDisabled = selected.length === 0;
     return (
       <TableViewContainer
@@ -125,6 +126,7 @@ class MailQ extends PureComponent {
         href="https://docs.grommunio.com/admin/administration.html#id2"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >  
         <div className={classes.logViewer}>
           <Paper elevation={1} className={classes.paper}>

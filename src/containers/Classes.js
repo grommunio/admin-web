@@ -74,6 +74,7 @@ class Classes extends Component {
     root: -1,
     snackbar: '',
     checking: false,
+    loading: true,
   }
 
   columns = [
@@ -98,7 +99,8 @@ class Classes extends Component {
     const { domain, fetchTrees } = this.props;
     // Table view is fetched in tableHOC
     fetchTrees(domain.ID, {})
-      .catch(msg => this.setState({ snackbar: msg }));
+      .then(() => this.setState({ loading: false }))
+      .catch(msg => this.setState({ snackbar: msg, loading: false }));
   }
 
   handleCheckClose = () => this.setState({ checking: false });
@@ -138,7 +140,7 @@ class Classes extends Component {
       handleDeleteSuccess, handleEdit } = this.props;
     const { order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { tab, root } = this.state;
+    const { tab, root, loading } = this.state;
 
     return (
       <TableViewContainer
@@ -149,6 +151,7 @@ class Classes extends Component {
         snackbar={snackbar || this.state.snackbar}
         onSnackbarClose={this.handleSnackbarClose}
         baseRef={tc => (this.treeContainer = tc)}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

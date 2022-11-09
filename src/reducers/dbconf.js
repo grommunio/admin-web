@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  DBCONF_DATA_FETCH,
   DBCONF_DATA_RECEIVED,
   DBCONF_SERVICE_DELETE,
   DBCONF_SERVICE_ADD,
@@ -11,7 +10,6 @@ import {
 import { addItem } from '../utils';
 
 const defaultState = {
-  loading: false,
   services: [],
   commands: {
     key: [],
@@ -22,16 +20,9 @@ const defaultState = {
 
 function dbconfReducer(state = defaultState, action) {
   switch (action.type) {
-  case DBCONF_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case DBCONF_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       services: action.services,
       commands: action.commands,
     };

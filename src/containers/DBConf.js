@@ -47,8 +47,9 @@ class DBConf extends Component {
 
   componentDidMount() {
     this.props.fetch()
+      .then(() => this.setState({ loading: false }))
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        this.setState({ snackbar: msg || 'Unknown error', loading: false });
       });
   }
 
@@ -60,6 +61,7 @@ class DBConf extends Component {
     configuring: false,
     offset: defaultFetchLimit,
     tab: 0,
+    loading: true,
   }
 
   handleAdd = () => this.setState({ adding: true });
@@ -98,7 +100,7 @@ class DBConf extends Component {
 
   render() {
     const { classes, t, services, commands, history } = this.props;
-    const { adding, configuring, snackbar, match, tab, deleting } = this.state;
+    const { adding, configuring, snackbar, match, tab, deleting, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <TableViewContainer
@@ -107,6 +109,7 @@ class DBConf extends Component {
         subtitle={t('dbconf_sub')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

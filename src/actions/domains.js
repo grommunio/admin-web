@@ -3,7 +3,6 @@
 
 import {
   DOMAIN_DATA_ERROR,
-  DOMAIN_DATA_FETCH,
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ADD,
   DOMAIN_NEXT_SET,
@@ -14,7 +13,6 @@ import { defaultDeleteHandler, defaultPatchHandler, defaultPostHandler } from '.
 
 export function fetchDomainData(params) {
   return async dispatch => {
-    await dispatch({ type: DOMAIN_DATA_FETCH });
     try {
       const domainData = await dispatch(domains(params));
       if(!params?.offset) await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });

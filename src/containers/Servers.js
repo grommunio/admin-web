@@ -83,7 +83,7 @@ class Servers extends PureComponent {
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { order, orderBy, match, adding, snackbar, deleting } = tableState;
+    const { loading, order, orderBy, match, adding, snackbar, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -102,6 +102,7 @@ class Servers extends PureComponent {
         }
         snackbar={snackbar || this.state.snackbar}
         onSnackbarClose={this.handleSnackbarClose}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

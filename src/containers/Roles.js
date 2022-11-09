@@ -48,7 +48,7 @@ class Roles extends PureComponent {
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { order, match, adding, snackbar, deleting } = tableState;
+    const { loading, order, match, adding, snackbar, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -68,6 +68,7 @@ class Roles extends PureComponent {
         subtitle={t('roles_sub')}
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

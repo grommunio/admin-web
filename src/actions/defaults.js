@@ -2,14 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  CREATE_PARAMS_DATA_FETCH,
   CREATE_PARAMS_DATA_RECEIVED,
 } from './types';
 import { createParams, editCreateParams } from '../api';
 import { defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchCreateParamsData(...endpointParams) {
-  return defaultListHandler(createParams, CREATE_PARAMS_DATA_RECEIVED, CREATE_PARAMS_DATA_FETCH, ...endpointParams);
+  return defaultListHandler(createParams, CREATE_PARAMS_DATA_RECEIVED, ...endpointParams);
 }
 
 export function editCreateParamsData(...endpointParams) {

@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  MLISTS_DATA_FETCH,
   MLISTS_DATA_RECEIVED,
   MLIST_DATA_ADD,
   MLIST_DATA_DELETE,
@@ -13,7 +12,6 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultPatchHandler,
 
 export function fetchMListsData(domainID, params) {
   return async dispatch => {
-    await dispatch({ type: MLISTS_DATA_FETCH });
     try {
       const response = await dispatch(mlists(domainID, params));
       await dispatch({ type: MLISTS_DATA_RECEIVED, data: response, offset: params?.offset });

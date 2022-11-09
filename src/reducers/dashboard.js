@@ -9,7 +9,6 @@ import {
 
 const defaultState = {
   timer: -1,
-  loading: false,
   error: null,
   Dashboard: {
     cpuPercent: {
@@ -69,7 +68,6 @@ function dashboardReducer(state = defaultState, action) {
   case DASHBOARD_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Dashboard: {
         cpuPercent: addUsageData(state.Dashboard.cpuPercent, action.data.cpuPercent),
@@ -92,7 +90,6 @@ function dashboardReducer(state = defaultState, action) {
     return {
       ...state,
       error: action.error,
-      loading: false,
     };
   }
 

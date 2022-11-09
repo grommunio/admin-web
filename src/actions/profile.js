@@ -2,12 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  PROFILE_DATA_FETCH,
   PROFILE_DATA_RECEIVED,
 } from '../actions/types';
 import { profile } from '../api';
 import { defaultListHandler } from './handlers';
 
 export function fetchProfileData() {
-  return defaultListHandler(profile, PROFILE_DATA_RECEIVED, PROFILE_DATA_FETCH);
+  return defaultListHandler(profile, PROFILE_DATA_RECEIVED);
 }

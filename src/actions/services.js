@@ -2,14 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  SERVICES_DATA_FETCH,
   SERVICES_DATA_RECEIVED,
 } from '../actions/types';
 import { services, postServices } from '../api';
 import { defaultListHandler, defaultPatchHandler } from './handlers';
 
 export function fetchServicesData() {
-  return defaultListHandler(services, SERVICES_DATA_RECEIVED, SERVICES_DATA_FETCH);
+  return defaultListHandler(services, SERVICES_DATA_RECEIVED);
 }
 
 export function serviceAction(...endpointParams) {

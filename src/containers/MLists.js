@@ -74,7 +74,7 @@ class MLists extends Component {
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
+    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
 
     return (
@@ -85,6 +85,7 @@ class MLists extends Component {
         href="https://docs.grommunio.com/admin/administration.html#mail-lists"
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

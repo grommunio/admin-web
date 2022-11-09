@@ -6,7 +6,6 @@ import {
   AUTH_ERROR,
   PROFILE_DATA_RECEIVED,
   DRAWER_DOMAINS_REVEICED,
-  DRAWER_DOMAINS_FETCH,
 } from '../actions/types';
 import { login, renewToken, profile, drawerDomains } from '../api';
 
@@ -21,7 +20,6 @@ export function authLogin(user, pass) {
         const profileData = await dispatch(profile());
         await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
-          await dispatch({ type: DRAWER_DOMAINS_FETCH });
           const domains = await dispatch(drawerDomains());
           await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
           await dispatch(authAuthenticated(true, profileData.capabilities, csrf));
@@ -56,7 +54,6 @@ export function authLoginWithToken(token) {
       const profileData = await dispatch(profile());
       await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
       if(profileData) {
-        await dispatch({ type: DRAWER_DOMAINS_FETCH });
         const domains = await dispatch(drawerDomains());
         await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
         await dispatch(authAuthenticated(true, profileData.capabilities, csrf));

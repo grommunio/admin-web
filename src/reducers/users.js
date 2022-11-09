@@ -3,7 +3,6 @@
 
 import {
   USERS_DATA_ERROR,
-  USERS_DATA_FETCH,
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
   USER_DATA_DELETE,
@@ -17,8 +16,6 @@ import { append } from '../utils';
 
 const defaultState = {
   error: null,
-  loading: false,
-  ready: false,
   count: 0,
   Users: [],
   Orphaned: [],
@@ -42,7 +39,6 @@ function usersReducer(state=defaultState, action) {
   case USERS_DATA_RECEIVED: 
     return {
       ...state,
-      loading: false,
       Users: action.data.data,
       count: action.data.count,
     };
@@ -50,23 +46,14 @@ function usersReducer(state=defaultState, action) {
   case USERS_NEXT_SET:
     return {
       ...state,
-      loading: false,
       Users: append(state.Users, action.data.data),
       count: action.data.count,
-    };
-
-  case USERS_DATA_FETCH:
-    return {
-      ...state,
-      ready: false,
-      loading: true,
     };
 
   case USERS_DATA_ERROR:
     return {
       ...state,
       ready: false,
-      loading: false,
       error: action.error,
     };
 

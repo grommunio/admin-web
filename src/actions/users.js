@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  USERS_DATA_FETCH,
   USERS_DATA_RECEIVED,
   USERS_DATA_ERROR,
   USER_DATA_ADD,
@@ -27,7 +26,6 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
 
 export function fetchUsersData(domainID, params) {
   return async dispatch => {
-    await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(users(domainID, params));
       if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
@@ -43,7 +41,6 @@ export function fetchUsersData(domainID, params) {
 
 export function fetchPlainUsersData(domainID, params) {
   return async dispatch => {
-    await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(usersPlain(domainID, params));
       await dispatch({ type: USERS_DATA_RECEIVED, data });
@@ -109,7 +106,6 @@ export function fetchUserData(domainID, userID, ignoreStoreData) {
 
 export function fetchAllUsers(params) {
   return async dispatch => {
-    await dispatch({type: USERS_DATA_FETCH});
     try {
       const data = await dispatch(allUsers(params));
       if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
@@ -127,7 +123,7 @@ export function fetchLdapDump(...endpointParams) {
 }
 
 export function fetchUserSync(...endpointParams) {
-  return defaultListHandler(userSync, USERS_SYNC_RECEIVED, null, ...endpointParams);
+  return defaultListHandler(userSync, USERS_SYNC_RECEIVED, ...endpointParams);
 }
 
 export function fetchUserOof(...endpointParams) {
@@ -163,7 +159,7 @@ export function setUserSendAs(...endpointParams) {
 }
 
 export function checkLdapUsers(...endpointParams) {
-  return defaultListHandler(checkLdap, ORPHANED_USERS_RECEIVED, null, ...endpointParams);
+  return defaultListHandler(checkLdap, ORPHANED_USERS_RECEIVED, ...endpointParams);
 }
 
 export function addUserData(...endpointParams) {

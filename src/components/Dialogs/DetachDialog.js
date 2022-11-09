@@ -13,10 +13,6 @@ const styles = {
 
 class DetachDialog extends PureComponent {
 
-  state = {
-    loading: false,
-  }
-
   render() {
     const { t, open, loading, onClose, onDetach } = this.props;
 

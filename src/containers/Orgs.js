@@ -64,7 +64,7 @@ class Orgs extends Component {
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
+    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -75,6 +75,7 @@ class Orgs extends Component {
         subtitle={t("orgs_sub")}
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

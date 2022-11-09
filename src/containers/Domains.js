@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import {
   Paper,
@@ -49,7 +49,7 @@ const styles = (theme) => ({
   },
 });
 
-class Domains extends Component {
+class Domains extends PureComponent {
   state = {
     showDeleted: false,
   };
@@ -78,7 +78,7 @@ class Domains extends Component {
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
     const { showDeleted } = this.state;
-    const { order, orderBy, match, snackbar, adding, deleting } = tableState;
+    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
@@ -90,6 +90,7 @@ class Domains extends Component {
         snackbar={snackbar}
         href="https://docs.grommunio.com/admin/administration.html#domains"
         onSnackbarClose={clearSnackbar}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Button

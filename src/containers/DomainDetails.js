@@ -75,6 +75,7 @@ class DomainListDetails extends PureComponent {
     tab: 0,
     chat: false,
     autocompleteInput: '',
+    loading: true,
   }
 
   statuses = [
@@ -96,6 +97,7 @@ class DomainListDetails extends PureComponent {
     domain.syncPolicy = domain.syncPolicy || {};
     const domainOrg = this.props.orgs.find(o => o.ID === domain.orgID);
     this.setState({
+      loading: false,
       ...(domain || {}),
       autocompleteInput: domainOrg?.name || '',
       orgID: domainOrg,
@@ -217,13 +219,14 @@ class DomainListDetails extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
       tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
-      chat, homeserver, autocompleteInput } = this.state;
+      chat, homeserver, autocompleteInput, loading } = this.state;
     
     return (
       <ViewWrapper
         topbarTitle={t('Domains')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

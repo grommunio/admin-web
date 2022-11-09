@@ -40,6 +40,7 @@ class ContactDetails extends PureComponent {
     user: {
       properties: {},
     },
+    loading: true,
   }
 
   async componentDidMount() {
@@ -48,7 +49,7 @@ class ContactDetails extends PureComponent {
     const user = await fetch(splits[1], splits[3])
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     user.syncPolicy = user.syncPolicy || {};
-    this.setState({ user });
+    this.setState({ user, loading: false });
   }
 
   handlePropertyChange = field => event => {
@@ -85,7 +86,7 @@ class ContactDetails extends PureComponent {
 
   render() {
     const { classes, t, history } = this.props;
-    const { snackbar, user } = this.state;
+    const { snackbar, user, loading } = this.state;
     const { properties } = user;
 
     return (
@@ -93,6 +94,7 @@ class ContactDetails extends PureComponent {
         topbarTitle={t('Users')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container className={classes.header}>

@@ -66,6 +66,7 @@ class RoleDetails extends PureComponent {
     },
     autocompleteInput: '',
     snackbar: '',
+    loading: true,
   };
 
 
@@ -76,7 +77,7 @@ class RoleDetails extends PureComponent {
     await fetchPermissions().catch(err => this.setState({ snackbar: err }));
     await fetchUser().catch(err => this.setState({ snackbar: err }));
     const role = await fetch(getStringAfterLastSlash());
-    this.setState({ role });
+    this.setState({ role, loading: false });
   }
 
   handleRoleInput = field => event => {
@@ -196,7 +197,7 @@ class RoleDetails extends PureComponent {
 
   render() {
     const { classes, t, Users, Permissions, Domains, Orgs } = this.props;
-    const { snackbar, role, autocompleteInput } = this.state;
+    const { loading, snackbar, role, autocompleteInput } = this.state;
     const { name, description, users, permissions } = role;
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
@@ -206,6 +207,7 @@ class RoleDetails extends PureComponent {
         topbarTitle={t('Role')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

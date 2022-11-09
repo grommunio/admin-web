@@ -5,7 +5,6 @@ import {
   SERVERS_DATA_ADD,
   SERVERS_DATA_DELETE,
   SERVERS_DATA_ERROR,
-  SERVERS_DATA_FETCH,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
@@ -15,7 +14,6 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
 
 export function fetchServersData(params) {
   return async dispatch => {
-    await dispatch({ type: SERVERS_DATA_FETCH });
     try {
       const serversData = await dispatch(servers(params));
       await dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });

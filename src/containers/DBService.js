@@ -49,6 +49,7 @@ class DBService extends PureComponent {
     name: '',
     unsaved: false,
     deleting: false,
+    loading: true,
   }
 
   async componentDidMount() {
@@ -59,6 +60,7 @@ class DBService extends PureComponent {
     this.setState({
       files: files?.data || [],
       name: name || '',
+      loading: false,
     });
   }
 
@@ -96,7 +98,7 @@ class DBService extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { name, snackbar, files, deleting } = this.state;
+    const { name, snackbar, files, deleting, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
     return (
@@ -104,6 +106,7 @@ class DBService extends PureComponent {
         topbarTitle={t('DB Service')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

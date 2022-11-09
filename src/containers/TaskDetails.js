@@ -86,6 +86,7 @@ class TaskDetails extends PureComponent {
     updated: null,
     message: '',
     params: {},
+    loading: false,
   }
 
   componentDidMount() {
@@ -94,12 +95,16 @@ class TaskDetails extends PureComponent {
 
   refresh = async () => {
     const { fetch } = this.props;
+    this.setState({ loading: true });
     const task = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState( task ? {
-      ...task,
-      params: task.params || {},
-    } : {});
+    this.setState({
+      loading: false,
+      ...(task ? {
+        ...task,
+        params: task.params || {},
+      } : {})
+    });
   }
 
   handleNavigation = path => event => {
@@ -122,13 +127,14 @@ class TaskDetails extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { snackbar, ID, command, state, created, updated, message, params } = this.state;
+    const { loading, snackbar, ID, command, state, created, updated, message, params } = this.state;
 
     return (
       <ViewWrapper
         topbarTitle={t('Task queue')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container direction="column" className={classes.container}>

@@ -82,6 +82,7 @@ class Sync extends PureComponent {
     onlyActive: false,
     filterEnded: 20,
     filterUpdated: 120,
+    loading: true,
   };
 
   columns = [
@@ -100,7 +101,7 @@ class Sync extends PureComponent {
     const { orderBy, type, filterEnded, filterUpdated } = this.state;
     this.props.fetch({ filterEnded, filterUpdated })
       .then(this.handleSort(orderBy, type, false))
-      .catch(snackbar => this.setState({ snackbar }));
+      .catch(snackbar => this.setState({ snackbar, loading: false }));
     this.fetchInterval = setInterval(() => {
       this.handleRefresh();
     }, 2000);
@@ -136,7 +137,7 @@ class Sync extends PureComponent {
         type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
       );
     }
-    this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
+    this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type, loading: false });
   }
 
   getRowClass(row, diff) {
@@ -163,7 +164,7 @@ class Sync extends PureComponent {
 
   render() {
     const { classes, t, sync } = this.props;
-    const { snackbar, sortedDevices, order, orderBy, match, showPush, onlyActive,
+    const { loading, snackbar, sortedDevices, order, orderBy, match, showPush, onlyActive,
       filterEnded, filterUpdated } = this.state;
 
     return (
@@ -183,6 +184,7 @@ class Sync extends PureComponent {
         subtitle={t('sync_sub')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <FormControlLabel

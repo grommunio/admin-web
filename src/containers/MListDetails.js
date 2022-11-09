@@ -53,6 +53,7 @@ class MListDetails extends PureComponent {
     class: '',
     unsaved: false,
     autocompleteInput: '',
+    loading: true,
   }
 
   async componentDidMount() {
@@ -61,11 +62,14 @@ class MListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState( mList ? {
-      ...mList,
-      class: mList.class || '',
-      autocompleteInput: mList.class?.classname || '',
-    } : {});
+    this.setState({
+      loading: false,
+      ...(mList ? {
+        ...mList,
+        class: mList.class || '',
+        autocompleteInput: mList.class?.classname || '',
+      } : {})
+    });
   }
 
   listTypes = [
@@ -133,13 +137,14 @@ class MListDetails extends PureComponent {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class,
-      autocompleteInput } = this.state;
+      autocompleteInput, loading } = this.state;
 
     return (
       <ViewWrapper
         topbarTitle={t('Mail lists')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

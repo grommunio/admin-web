@@ -109,6 +109,7 @@ class DomainMenu extends PureComponent {
     createParams: {},
     langs: [],
     snackbar: '',
+    loading: true,
   }
 
   async componentDidMount() {
@@ -117,9 +118,9 @@ class DomainMenu extends PureComponent {
       .then(() => {
         const { createParams } = this.props;
         // Update mask
-        this.setState(formatCreateParams(createParams));
+        this.setState({ ...formatCreateParams(createParams), loading: false });
       })
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .catch(message => this.setState({ snackbar: message || 'Unknown error', loading: false }));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     if(langs) this.setState({ langs });
@@ -198,7 +199,7 @@ class DomainMenu extends PureComponent {
 
   render() {
     const { classes, domain, t, capabilities } = this.props;
-    const { snackbar, deleting, sizeUnits, langs, createParams } = this.state;
+    const { snackbar, deleting, sizeUnits, langs, createParams, loading } = this.state;
     const { prohibitsendquota, prohibitreceivequota, storagequotalimit,
       lang, privChat, privArchive, privFiles, privVideo,
       // eslint-disable-next-line camelcase
@@ -211,6 +212,7 @@ class DomainMenu extends PureComponent {
         headline={t("Domain overview")}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container direction="column" className={classes.container}>

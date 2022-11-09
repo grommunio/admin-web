@@ -35,6 +35,7 @@ function withTable(WrappedComponent, defaultState={}) {
         snackbar: '',
         adding: false,
         deleting: false,
+        loading: true,
         ...defaultState,
       };
     }
@@ -44,14 +45,16 @@ function withTable(WrappedComponent, defaultState={}) {
     }
   
     fetchData(params) {
-      const { domain } = this.props;
+      const { domain, fetchTableData } = this.props;
       const { order, orderBy } = this.state;
       if(domain?.ID) {
-        this.props.fetchTableData(domain.ID, { sort: orderBy + "," + order, ...(params || {})})
-          .catch((msg) => this.setState({ snackbar: msg }));
+        fetchTableData(domain.ID, { sort: orderBy + "," + order, ...(params || {})})
+          .then(() => this.setState({ loading: false }))
+          .catch((msg) => this.setState({ snackbar: msg, loading: false }));
       } else {
-        this.props.fetchTableData({ sort: orderBy + "," + order, ...(params || {})})
-          .catch((msg) => this.setState({ snackbar: msg }));
+        fetchTableData({ sort: orderBy + "," + order, ...(params || {})})
+          .then(() => this.setState({ loading: false }))
+          .catch((msg) => this.setState({ snackbar: msg, loading: false }));
       }
     }
 

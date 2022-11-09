@@ -3,7 +3,6 @@
 
 import {
   ROLES_DATA_ERROR,
-  ROLES_DATA_FETCH,
   ROLES_DATA_RECEIVED,
   PERMISSIONS_DATA_RECEIVED,
   ROLE_DATA_ADD,
@@ -14,7 +13,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  loading: false,
   error: null,
   Roles: [],
   Permissions: [],
@@ -23,16 +21,9 @@ const defaultState = {
 
 function rolesReducer(state = defaultState, action) {
   switch (action.type) {
-  case ROLES_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case ROLES_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Roles: action.data.data,
       count: action.data.count,
@@ -41,7 +32,6 @@ function rolesReducer(state = defaultState, action) {
   case ROLES_NEXT_SET:
     return {
       ...state,
-      loading: false,
       error: null,
       Roles: append(state.Roles, action.data.data),
       count: action.data.count,
@@ -50,7 +40,6 @@ function rolesReducer(state = defaultState, action) {
   case ROLES_DATA_ERROR: {
     return {
       ...state,
-      loading: false,
       error: action.error,
     };
   }
@@ -58,7 +47,6 @@ function rolesReducer(state = defaultState, action) {
   case PERMISSIONS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Permissions: action.data.data,
     };

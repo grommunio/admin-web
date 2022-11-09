@@ -3,7 +3,6 @@
 
 import {
   FOLDERS_DATA_ERROR,
-  FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
   FOLDER_DATA_ADD,
   FOLDER_DATA_DELETE,
@@ -17,7 +16,6 @@ import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from '
 
 export function fetchFolderData(domainID, params) {
   return async dispatch => {
-    await dispatch({ type: FOLDERS_DATA_FETCH });
     try {
       const response = await dispatch(folders(domainID, params));
       if(!params?.offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
@@ -31,7 +29,7 @@ export function fetchFolderData(domainID, params) {
 }
 
 export function fetchFolderTree(...endpointParams) {
-  return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, FOLDERS_DATA_FETCH, ...endpointParams);
+  return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, ...endpointParams);
 }
 
 export function fetchFolderDetails(...endpointParams) {
@@ -75,7 +73,7 @@ export function deleteFolderData(domainID, id, params) {
 }
 
 export function fetchOwnersData(...endpointParams) {
-  return defaultListHandler(owners, OWNERS_DATA_RECEIVED, FOLDERS_DATA_FETCH, ...endpointParams);
+  return defaultListHandler(owners, OWNERS_DATA_RECEIVED, ...endpointParams);
 }
 
 export function addOwnerData(domainID, folderID, ownersData) {

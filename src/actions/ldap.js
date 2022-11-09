@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
   LDAP_DATA_CLEAR,
 } from './types';
@@ -51,7 +50,7 @@ export function deleteLdapConfig() {
 }
 
 export function fetchLdapData(...endpointParams) {
-  return defaultListHandler(searchLdap, LDAP_DATA_RECEIVED, LDAP_DATA_FETCH, ...endpointParams);
+  return defaultListHandler(searchLdap, LDAP_DATA_RECEIVED, ...endpointParams);
 }
 
 export function importLdapData(...endpointParams) {

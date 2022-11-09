@@ -6,7 +6,7 @@ import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from '
 import { TASK_DATA_RECEIVED, TASK_STATUS_RECEIVED } from './types';
 
 export function fetchTaskqData(...endpointParams) {
-  return defaultListHandler(taskq, TASK_DATA_RECEIVED, null, ...endpointParams);
+  return defaultListHandler(taskq, TASK_DATA_RECEIVED, ...endpointParams);
 }
 
 export function fetchTaskDetails(...endpointParams) {
@@ -14,7 +14,7 @@ export function fetchTaskDetails(...endpointParams) {
 }
 
 export function fetchTaskqStatus(...endpointParams) {
-  return defaultListHandler(taskqStatus, TASK_STATUS_RECEIVED, null, ...endpointParams);
+  return defaultListHandler(taskqStatus, TASK_STATUS_RECEIVED, ...endpointParams);
 }
 
 export function startTaskqServer(...endpointParams) {

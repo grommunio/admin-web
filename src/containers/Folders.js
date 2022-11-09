@@ -162,7 +162,7 @@ class Folders extends PureComponent {
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, deleting } = tableState;
+    const { loading, snackbar, deleting } = tableState;
     const { adding, tab, filteredTree } = this.state;
 
     return (
@@ -174,6 +174,7 @@ class Folders extends PureComponent {
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
         baseRef={tc => (this.treeContainer = tc)}
+        loading={loading}
       >
         <Grid container alignItems="flex-end" className={classes.buttonGrid}>
           <Tabs

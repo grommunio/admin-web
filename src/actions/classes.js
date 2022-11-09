@@ -5,7 +5,6 @@ import {
   CLASSES_DATA_ADD,
   CLASSES_DATA_DELETE,
   CLASSES_DATA_ERROR,
-  CLASSES_DATA_FETCH,
   CLASSES_DATA_RECEIVED,
   CLASSES_TREE_RECEIVED,
   CLASSES_SELECT_RECEIVED,
@@ -16,7 +15,6 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler,
 
 export function fetchClassesData(domainID, params, select) {
   return async dispatch => {
-    await dispatch({ type: CLASSES_DATA_FETCH });
     try {
       const response = await dispatch(classes(domainID, params));
       await dispatch({
@@ -32,7 +30,7 @@ export function fetchClassesData(domainID, params, select) {
 }
 
 export function fetchClassesTree(...endpointParams) {
-  return defaultListHandler(classesTree, CLASSES_TREE_RECEIVED, CLASSES_DATA_FETCH, ...endpointParams);
+  return defaultListHandler(classesTree, CLASSES_TREE_RECEIVED, ...endpointParams);
 }
 
 export function fetchClassDetails(...endpointParams) {

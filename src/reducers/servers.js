@@ -6,14 +6,12 @@ import {
   SERVERS_DATA_ADD,
   SERVERS_DATA_DELETE,
   SERVERS_DATA_ERROR,
-  SERVERS_DATA_FETCH,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  loading: false,
   error: null,
   Servers: [],
   policy: "round-robin",
@@ -22,16 +20,9 @@ const defaultState = {
 
 function serversReducer(state = defaultState, action) {
   switch (action.type) {
-  case SERVERS_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case SERVERS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Servers: action.offset ? append(state.Servers, action.data.data) : action.data.data,
       count: action.data.count,
@@ -40,7 +31,6 @@ function serversReducer(state = defaultState, action) {
   case SERVERS_DATA_ERROR:
     return {
       ...state,
-      loading: false,
       error: action.error,
     };
 

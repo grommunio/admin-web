@@ -44,6 +44,7 @@ class ServerDetails extends PureComponent {
     server: {},
     unsaved: false,
     autocompleteInput: '',
+    loading: true,
   }
 
   async componentDidMount() {
@@ -51,6 +52,7 @@ class ServerDetails extends PureComponent {
     const server = await fetch(getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
+      loading: false,
       server: server || {},
     });
   }
@@ -85,7 +87,7 @@ class ServerDetails extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { server, snackbar } = this.state;
+    const { loading, server, snackbar } = this.state;
     const { hostname, extname, domains, users } = server;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
 
@@ -94,6 +96,7 @@ class ServerDetails extends PureComponent {
         topbarTitle={t('Servers')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

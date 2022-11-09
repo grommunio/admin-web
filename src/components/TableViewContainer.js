@@ -36,14 +36,14 @@ class TableViewContainer extends PureComponent {
 
   render() {
     const { classes, children, baseRef, topbarTitle, handleScroll, headline, subtitle,
-      snackbar, onSnackbarClose, href } = this.props;
+      snackbar, onSnackbarClose, href, loading } = this.props;
     return (
       <div
         className={classes.root}
         onScroll={debounce(handleScroll || (() => null), 100)}
         id="scrollDiv"
       >
-        <TopBar title={topbarTitle}/>
+        <TopBar title={topbarTitle} loading={loading}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base} ref={baseRef}>
           <Typography variant="h2" className={classes.pageTitle}>
@@ -88,6 +88,7 @@ TableViewContainer.propTypes = {
   onSnackbarClose: PropTypes.func,
   subtitle: PropTypes.string,
   href: PropTypes.string,
+  loading: PropTypes.bool,
 };
 
 export default withTranslation()(withStyles(styles)(TableViewContainer));

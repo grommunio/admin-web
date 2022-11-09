@@ -95,6 +95,7 @@ class License extends PureComponent {
     counts: {},
     customImages: [],
     configOpen: false,
+    loading: true,
   }
 
   componentDidMount() {
@@ -104,11 +105,12 @@ class License extends PureComponent {
         const counts = {};
         Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
         this.setState({
+          loading: false,
           counts,
           customImages: Object.entries(customImages).map(([hostname, images]) => ({ hostname, ...images})),
         });
       })
-      .catch(snackbar => this.setState({ snackbar }));
+      .catch(snackbar => this.setState({ snackbar, loading: false }));
   }
 
   handleUpload = () => {
@@ -178,7 +180,7 @@ class License extends PureComponent {
 
   render() {
     const { classes, t, license, Domains } = this.props;
-    const { snackbar, expandedDomainIdxs, domainUsers, domainsExpanded, counts, customImages, configOpen } = this.state;
+    const { snackbar, expandedDomainIdxs, domainUsers, domainsExpanded, counts, customImages, configOpen, loading } = this.state;
 
     return (
       <TableViewContainer
@@ -187,6 +189,7 @@ class License extends PureComponent {
         href="https://docs.grommunio.com/admin/administration.html#license"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container alignItems="center">

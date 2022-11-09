@@ -158,22 +158,25 @@ class OrgDetails extends PureComponent {
     force: false,
     snackbar: '',
     overridingLdap: false,
+    loading: true,
   }
 
   async componentDidMount() {
     const { fetch, fetchLdap, fetchDomains } = this.props;
     const orgID = getStringAfterLastSlash();
     fetchDomains();
-    const ldap = await fetchLdap(orgID)
-      .catch(snackbar => this.setState({ snackbar }));
     const org = await fetch(orgID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    this.setState({ ...(org || {}) });
+
+    const ldap = await fetchLdap(orgID)
+      .catch(snackbar => this.setState({ snackbar }));
     const config = ldap?.data;
     const available = ldap?.ldapAvailable || false;
     const connection = config?.connection || {};
     const users = config?.users || {};
     this.setState({
-      ...(org || {}),
+      loading: false,
       overridingLdap: Object.keys(ldap?.data || {}).length > 0, // Org ldap config received => Show ldap form
       available,
       baseDn: config.baseDn || '',
@@ -344,7 +347,7 @@ class OrgDetails extends PureComponent {
     const { ID, name, description, domains, snackbar, autocompleteInput, available, force, deleting, server, bindUser,
       bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
-      aliases, taskMessage, taskID, overridingLdap } = this.state;
+      aliases, taskMessage, taskID, overridingLdap, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const nameAcceptable = name && name.length < 33;
 
@@ -353,6 +356,7 @@ class OrgDetails extends PureComponent {
         topbarTitle={t('Organizations')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

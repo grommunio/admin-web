@@ -132,6 +132,7 @@ class LdapConfig extends PureComponent {
     taskID: null,
     force: false,
     snackbar: '',
+    loading: true,
   }
 
   /* Formats state to new config object for backend */
@@ -178,6 +179,7 @@ class LdapConfig extends PureComponent {
     const connection = config?.connection || {};
     const users = config?.users || {};
     this.setState({
+      loading: false,
       authBackendSelection: authResp?.data?.authBackendSelection || 'always_mysql',
       available,
       baseDn: config.baseDn || '',
@@ -333,10 +335,10 @@ class LdapConfig extends PureComponent {
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
       username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
-      authBackendSelection, aliases, taskMessage, taskID } = this.state;
+      authBackendSelection, aliases, taskMessage, taskID, loading } = this.state;
     return (
       <div className={classes.root}>
-        <TopBar />
+        <TopBar loading={loading}/>
         <div className={classes.toolbar}></div>
         <form className={classes.base} onSubmit={this.handleSave}>
           <Typography variant="h2" className={classes.pageTitle}>

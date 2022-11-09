@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  FOLDERS_DATA_FETCH,
   FOLDERS_DATA_RECEIVED,
   FOLDERS_DATA_ERROR,
   FOLDER_DATA_ADD,
@@ -18,7 +17,6 @@ import { defaultFetchLimit, IPM_SUBTREE_ID } from '../constants';
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  loading: false,
   error: null,
   moreDataAvailable: true,
   Folders: [],
@@ -66,16 +64,9 @@ function cutOffSubtree(node, folderid) {
 
 function foldersReducer(state = defaultState, action) {
   switch (action.type) {
-  case FOLDERS_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case FOLDERS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Folders: action.data.data,
       moreDataAvailable: action.data.data.length == defaultFetchLimit,
@@ -84,7 +75,6 @@ function foldersReducer(state = defaultState, action) {
   case FOLDERS_TREE_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Tree: action.data,
     };
@@ -92,7 +82,6 @@ function foldersReducer(state = defaultState, action) {
   case FOLDERS_NEXT_SET:
     return {
       ...state,
-      loading: false,
       error: null,
       Folders: append(state.Folders, action.data.data),
       moreDataAvailable: action.data.data.length == defaultFetchLimit,
@@ -102,7 +91,6 @@ function foldersReducer(state = defaultState, action) {
     return {
       ...state,
       error: action.error,
-      loading: false,
     };
   }
 
@@ -123,7 +111,6 @@ function foldersReducer(state = defaultState, action) {
   case OWNERS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Owners: action.data.data,
     };

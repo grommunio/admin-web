@@ -4,26 +4,17 @@
 import {
   AUTH_AUTHENTICATED,
   LOGS_DATA_RECEIVED,
-  LOGS_DATA_FETCH,
 } from '../actions/types';
 
 const defaultState = {
-  loading: false,
   Logs: [],
 };
 
 function membersReducer(state = defaultState, action) {
   switch (action.type) {
-  case LOGS_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case LOGS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       Logs: action.data.data,
     };
 

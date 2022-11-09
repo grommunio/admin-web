@@ -80,6 +80,7 @@ class Defaults extends PureComponent {
     },
     langs: [],
     unsaved: false,
+    loading: true,
   }
 
   async componentDidMount() {
@@ -88,9 +89,9 @@ class Defaults extends PureComponent {
       .then(() => {
         const { createParams } = this.props;
         // Update mask
-        this.setState(formatCreateParams(createParams));
+        this.setState({...formatCreateParams(createParams), loading: false });
       })
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .catch(message => this.setState({ snackbar: message || 'Unknown error', loading: false }));
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     if(langs) this.setState({ langs });
@@ -162,7 +163,7 @@ class Defaults extends PureComponent {
 
   render() {
     const { classes, t } = this.props;
-    const { createParams, sizeUnits, snackbar, langs } = this.state;
+    const { createParams, sizeUnits, snackbar, langs, loading } = this.state;
     const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
       lang, privChat, privArchive, privFiles, privVideo,
       // eslint-disable-next-line camelcase
@@ -174,6 +175,7 @@ class Defaults extends PureComponent {
         topbarTitle={t('Defaults')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

@@ -3,7 +3,6 @@
 
 import {
   ANTISPAM_DATA_ERROR,
-  ANTISPAM_DATA_FETCH,
   ANTISPAM_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
@@ -20,12 +19,6 @@ const defaultState = {
 
 function antispamReducer(state = defaultState, action) {
   switch (action.type) {
-  case ANTISPAM_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case ANTISPAM_DATA_RECEIVED:
     return {
       ...state,
@@ -42,7 +35,6 @@ function antispamReducer(state = defaultState, action) {
     return {
       ...state,
       error: action.error,
-      loading: false,
     };
   }
 

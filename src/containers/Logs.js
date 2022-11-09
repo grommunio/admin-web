@@ -73,10 +73,13 @@ class Logs extends PureComponent {
     filename: '',
     autorefresh: false,
     clipboardMessage: '',
+    loading: true,
   };
 
   componentDidMount() {
-    this.props.fetch({ sort: "name,asc" });
+    this.props.fetch({ sort: "name,asc" })
+      .then(() => this.setState({ loading: false }))
+      .catch(snackbar => this.setState({ snackbar, loading: false }))
   }
 
   handleNavigation = (path) => (event) => {
@@ -148,7 +151,7 @@ class Logs extends PureComponent {
 
   render() {
     const { classes, t, logs } = this.props;
-    const { snackbar, log, filename, autorefresh, clipboardMessage } = this.state;
+    const { snackbar, log, filename, autorefresh, clipboardMessage, loading } = this.state;
 
     return (
       <TableViewContainer
@@ -157,6 +160,7 @@ class Logs extends PureComponent {
         href="https://docs.grommunio.com/admin/administration.html#logs"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <div className={classes.logViewer}>
           <List style={{ width: 200 }}>

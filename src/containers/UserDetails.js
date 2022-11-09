@@ -100,6 +100,7 @@ class UserDetails extends PureComponent {
     detachLoading: false,
     domainDetails: {},
     forwardError: false,
+    loading: true,
   };
 
   async componentDidMount() {
@@ -109,7 +110,7 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     const defaultPolicy = user.defaultPolicy || {};
     user.syncPolicy = user.syncPolicy || {};
-    this.setState(this.getStateOverwrite(user, defaultPolicy));
+    this.setState({ ...this.getStateOverwrite(user, defaultPolicy), loading: false });
     const langs = await storeLangs()
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
     // If Sys admin read-only permissions
@@ -563,7 +564,7 @@ class UserDetails extends PureComponent {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const sysAdminReadPermissions = this.context.includes(SYSTEM_ADMIN_READ);
-    const { user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
+    const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
       detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
     return (
@@ -571,6 +572,7 @@ class UserDetails extends PureComponent {
         topbarTitle={t('Users')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container className={classes.header}>

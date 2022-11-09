@@ -72,6 +72,7 @@ class ClassDetails extends PureComponent {
     stack: [],
     unsaved: false,
     autocompleteInput: '',
+    loading: true,
   }
 
   operators = [
@@ -96,6 +97,7 @@ class ClassDetails extends PureComponent {
     const _class = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
+      loading: false,
       stack: _class ? [_class] : [],
       _class: _class ? {
         ..._class,
@@ -253,13 +255,14 @@ class ClassDetails extends PureComponent {
   render() {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { _class, autocompleteInput, snackbar, stack } = this.state;
+    const { _class, autocompleteInput, snackbar, stack, loading } = this.state;
     const { classname, parentClasses, members, filters, children } = _class;
     return (
       <ViewWrapper
         topbarTitle={t('Groups')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

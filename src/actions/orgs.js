@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  ORGS_DATA_FETCH,
   ORGS_DATA_RECEIVED,
   ORG_DATA_ADD,
   ORG_DATA_DELETE,
@@ -13,7 +12,6 @@ import { defaultDeleteHandler, defaultDetailsHandler,
 
 export function fetchOrgsData(params={}) {
   return async dispatch => {
-    await dispatch({ type: ORGS_DATA_FETCH });
     try {
       const orgData = await dispatch(orgs(params));
       await dispatch({ type: ORGS_DATA_RECEIVED, data: orgData, offset: params?.offset });

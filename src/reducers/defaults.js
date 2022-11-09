@@ -3,12 +3,10 @@
 
 import {
   AUTH_AUTHENTICATED,
-  CREATE_PARAMS_DATA_FETCH,
   CREATE_PARAMS_DATA_RECEIVED,
 } from '../actions/types';
 
 const defaultState = {
-  loading: false,
   error: null,
   CreateParams: {
     user: {},
@@ -18,16 +16,9 @@ const defaultState = {
 
 function defaultsReducer(state = defaultState, action) {
   switch (action.type) {
-  case CREATE_PARAMS_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-
   case CREATE_PARAMS_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       CreateParams: action.data.data,
     };

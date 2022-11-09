@@ -130,6 +130,11 @@ const styles = theme => ({
       },
     },
   },
+  lp: {
+    position: 'absolute',
+    top: 64,
+    width: '100%',
+  },
 });
 
 class TopBar extends PureComponent {
@@ -194,7 +199,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, title, onAdd, fetching, settings, license, drawer, setDrawerExpansion, config } = this.props;
+    const { classes, t, profile, title, onAdd, loading, settings, license, drawer, setDrawerExpansion, config } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
     const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
@@ -322,12 +327,12 @@ class TopBar extends PureComponent {
           </Button>}
         </Toolbar>
         <Fade
-          in={fetching}
+          in={loading}
           style={{
-            transitionDelay: '500ms',
+            //transitionDelay: '500ms',
           }}
         >
-          <LinearProgress variant="indeterminate" color="primary"/>
+          <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
         </Fade>
       </AppBar>
     );
@@ -346,7 +351,7 @@ TopBar.propTypes = {
   Domains: PropTypes.array.isRequired,
   drawer: PropTypes.object.isRequired,
   onAdd: PropTypes.func,
-  fetching: PropTypes.bool,
+  loading: PropTypes.bool,
   authLogout: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
@@ -356,14 +361,12 @@ TopBar.propTypes = {
 };
 
 const mapStateToProps = state => {
-  const { drawer, domains, users, folders, dashboard, services, settings, license, config } = state;
+  const { drawer, settings, license, config } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
     settings,
     license: license.License,
-    fetching: domains.loading || users.loading || folders.loading
-      || dashboard.loading || services.loading ,
     drawer,
     config,
   };

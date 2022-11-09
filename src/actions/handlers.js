@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-export function defaultListHandler(endpoint, receivedActionType, fetchActionType, ...endpointParams) {
+export function defaultListHandler(endpoint, receivedActionType, ...endpointParams) {
   return async dispatch => {
-    if(fetchActionType) {
-      await dispatch({ type: fetchActionType });
-    }
     try {
       const data = await dispatch(endpoint(...endpointParams));
       await dispatch({ type: receivedActionType, data });

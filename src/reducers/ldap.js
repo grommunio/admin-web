@@ -4,29 +4,20 @@
 import {
   AUTH_AUTHENTICATED,
   LDAP_DATA_ERROR,
-  LDAP_DATA_FETCH,
   LDAP_DATA_RECEIVED,
   LDAP_DATA_CLEAR,
 } from '../actions/types';
 
 const defaultState = {
-  loading: false,
   error: null,
   Users: [],
 };
 
 function ldapReducer(state=defaultState, action) {
-  switch(action.type) {
-  case LDAP_DATA_FETCH:
-    return {
-      ...state,
-      loading: true,
-    };
-    
+  switch(action.type) { 
   case LDAP_DATA_RECEIVED:
     return {
       ...state,
-      loading: false,
       error: null,
       Users: action.data.data,
     };
@@ -34,7 +25,6 @@ function ldapReducer(state=defaultState, action) {
   case LDAP_DATA_ERROR:
     return {
       ...state,
-      loading: false,
       error: action.error,
     };
 

@@ -3,7 +3,6 @@
 
 import {
   ROLES_DATA_ERROR,
-  ROLES_DATA_FETCH,
   ROLES_DATA_RECEIVED,
   ROLE_DATA_ADD,
   ROLE_DATA_DELETE,
@@ -16,7 +15,6 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
 
 export function fetchRolesData(params) {
   return async dispatch => {
-    await dispatch({ type: ROLES_DATA_FETCH });
     try {
       const response = await dispatch(roles(params));
       if(!params?.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
@@ -34,7 +32,7 @@ export function fetchRoleData(...endpointParams) {
 }
 
 export function fetchPermissionsData(...endpointParams) {
-  return defaultListHandler(permissions, PERMISSIONS_DATA_RECEIVED, null, ...endpointParams);
+  return defaultListHandler(permissions, PERMISSIONS_DATA_RECEIVED, ...endpointParams);
 }
 
 export function addRolesData(...endpointParams) {

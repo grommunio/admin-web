@@ -43,6 +43,7 @@ class DBFile extends PureComponent {
     data: [],
     unsaved: false,
     deleting: false,
+    loading: true,
   }
 
   async componentDidMount() {
@@ -54,6 +55,7 @@ class DBFile extends PureComponent {
     const data = [];
     Object.entries(file?.data || {}).forEach(([key, value]) => data.push({ key, value }));
     this.setState({
+      loading: false,
       data,
     });
   }
@@ -107,13 +109,14 @@ class DBFile extends PureComponent {
 
   render() {
     const { classes, t, history } = this.props;
-    const { snackbar, data } = this.state;
+    const { snackbar, data, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     return (
       <ViewWrapper
         topbarTitle={t('DB Service')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
+        loading={loading}
       >
         <Paper className={classes.paper} elevation={1}>
           <Grid container>

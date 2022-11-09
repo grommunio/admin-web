@@ -32,10 +32,10 @@ const styles = theme => ({
 class ViewWrapper extends PureComponent {
 
   render() {
-    const { classes, children, topbarTitle, snackbar, onSnackbarClose } = this.props;
+    const { classes, children, topbarTitle, snackbar, onSnackbarClose, loading } = this.props;
     return (
       <div className={classes.root}>
-        <TopBar title={topbarTitle}/>
+        <TopBar title={topbarTitle} loading={loading}/>
         <div className={classes.toolbar}></div>
         <div className={classes.base}>
           {children}
@@ -59,6 +59,7 @@ ViewWrapper.propTypes = {
   topbarTitle: PropTypes.string,
   snackbar: PropTypes.string,
   onSnackbarClose: PropTypes.func,
+  loading: PropTypes.bool,
 };
 
 export default withTranslation()(withStyles(styles)(ViewWrapper));
