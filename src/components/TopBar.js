@@ -329,7 +329,7 @@ class TopBar extends PureComponent {
         <Fade
           in={loading}
           style={{
-            //transitionDelay: '500ms',
+            transitionDelay: '500ms',
           }}
         >
           <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
