@@ -5,14 +5,12 @@ import {
   AUTH_AUTHENTICATED,
   SERVERS_DATA_ADD,
   SERVERS_DATA_DELETE,
-  SERVERS_DATA_ERROR,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   Servers: [],
   policy: "round-robin",
   count: 0,
@@ -23,15 +21,8 @@ function serversReducer(state = defaultState, action) {
   case SERVERS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Servers: action.offset ? append(state.Servers, action.data.data) : action.data.data,
       count: action.data.count,
-    };
-  
-  case SERVERS_DATA_ERROR:
-    return {
-      ...state,
-      error: action.error,
     };
 
   case SERVERS_DATA_ADD:

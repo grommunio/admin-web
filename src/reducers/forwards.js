@@ -3,12 +3,10 @@
 
 import {
   AUTH_AUTHENTICATED,
-  FORWARDS_DATA_ERROR,
   FORWARDS_DATA_RECEIVED,
 } from '../actions/types';
 
 const defaultState = {
-  error: null,
   Forwards: [],
 };
 
@@ -17,16 +15,8 @@ function forwardsReducer(state = defaultState, action) {
   case FORWARDS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Forwards: action.data.data,
     };
-    
-  case FORWARDS_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {

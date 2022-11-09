@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  FOLDERS_DATA_ERROR,
   FOLDERS_DATA_RECEIVED,
   FOLDER_DATA_ADD,
   FOLDER_DATA_DELETE,
@@ -21,7 +20,6 @@ export function fetchFolderData(domainID, params) {
       if(!params?.offset) await dispatch({ type: FOLDERS_DATA_RECEIVED, data: response });
       else await dispatch({ type: FOLDERS_NEXT_SET, data: response });
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -47,7 +45,6 @@ export function addFolderData(domainID, folder) {
         await dispatch(addOwner(domainID, folderData.folderid, { username: owners[i].username }));
       }
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error });
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -65,7 +62,6 @@ export function deleteFolderData(domainID, id, params) {
       if(resp?.taskID) return resp;
       await dispatch({ type: FOLDER_DATA_DELETE, id });
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -85,7 +81,6 @@ export function addOwnerData(domainID, folderID, ownersData) {
       const response = await dispatch(owners(domainID, folderID, { limit: 1000000, level: 0 }));
       await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -99,7 +94,6 @@ export function setFolderPermissions(domainID, folderID, memberID, permissions) 
       const response = await dispatch(owners(domainID, folderID, { limit: 1000000, level: 0 }));
       await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -113,7 +107,6 @@ export function deleteOwnerData(domainID, folderID, memberID) {
       const response = await dispatch(owners(domainID, folderID, { limit: 1000000, level: 0 }));
       await dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
-      await dispatch({ type: FOLDERS_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }

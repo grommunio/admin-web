@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  ROLES_DATA_ERROR,
   ROLES_DATA_RECEIVED,
   ROLE_DATA_ADD,
   ROLE_DATA_DELETE,
@@ -20,7 +19,6 @@ export function fetchRolesData(params) {
       if(!params?.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
       else await dispatch({ type: ROLES_NEXT_SET, data: response });
     } catch(error) {
-      await dispatch({ type: ROLES_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }

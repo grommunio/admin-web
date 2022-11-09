@@ -4,7 +4,6 @@
 import {
   CLASSES_DATA_ADD,
   CLASSES_DATA_DELETE,
-  CLASSES_DATA_ERROR,
   CLASSES_DATA_RECEIVED,
   CLASSES_TREE_RECEIVED,
   CLASSES_SELECT_RECEIVED,
@@ -13,7 +12,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   Classes: [],
   Trees: [],
   Select: [],
@@ -25,7 +23,6 @@ function classesReducer(state = defaultState, action) {
   case CLASSES_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Classes: action.offset ? append(state.Classes, action.data.data) : action.data.data,
       count: action.data.count,
     };
@@ -33,7 +30,6 @@ function classesReducer(state = defaultState, action) {
   case CLASSES_TREE_RECEIVED:
     return {
       ...state,
-      error: null,
       Trees: action.data.data,
     };
 
@@ -42,13 +38,6 @@ function classesReducer(state = defaultState, action) {
       ...state,
       Select: action.data.data,
     };
-  
-  case CLASSES_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case CLASSES_DATA_DELETE:
     return {

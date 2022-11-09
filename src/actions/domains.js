@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  DOMAIN_DATA_ERROR,
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ADD,
   DOMAIN_NEXT_SET,
@@ -18,7 +17,6 @@ export function fetchDomainData(params) {
       if(!params?.offset) await dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
       else await dispatch({ type: DOMAIN_NEXT_SET, data: domainData });
     } catch(error) {
-      await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }
@@ -33,7 +31,6 @@ export function fetchDomainDetails(id) {
       domainData.defaultPolicy = defaultPolicy.data;
       return Promise.resolve(domainData);
     } catch(error) {
-      await dispatch({ type: DOMAIN_DATA_ERROR, error});
       console.error(error);
       return Promise.reject(error.message);
     }

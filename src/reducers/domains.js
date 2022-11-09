@@ -3,7 +3,6 @@
 
 import {
   DOMAIN_DATA_RECEIVED,
-  DOMAIN_DATA_ERROR,
   DOMAIN_DATA_ADD,
   DOMAIN_NEXT_SET,
   DOMAIN_DATA_DELETE,
@@ -12,7 +11,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   count: 0,
   Domains: [],
 };
@@ -30,7 +28,6 @@ function domainsReducer(state = defaultState, action) {
   case DOMAIN_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Domains: action.data.data,
       count: action.data.count,
     };
@@ -38,15 +35,8 @@ function domainsReducer(state = defaultState, action) {
   case DOMAIN_NEXT_SET:
     return {
       ...state,
-      error: null,
       Domains: append(state.Domains, action.data.data),
       count: action.data.count,
-    };
-    
-  case DOMAIN_DATA_ERROR:
-    return {
-      ...state,
-      error: action.error,
     };
 
   case DOMAIN_DATA_ADD:

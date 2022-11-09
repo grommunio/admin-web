@@ -3,12 +3,10 @@
 
 import {
   AUTH_AUTHENTICATED,
-  MEMBERS_DATA_ERROR,
   MEMBERS_DATA_RECEIVED,
 } from '../actions/types';
 
 const defaultState = {
-  error: null,
   Members: [],
 };
 
@@ -17,16 +15,8 @@ function membersReducer(state = defaultState, action) {
   case MEMBERS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Members: action.data.data,
     };
-    
-  case MEMBERS_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {

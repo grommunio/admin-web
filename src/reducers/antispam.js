@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  ANTISPAM_DATA_ERROR,
   ANTISPAM_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
@@ -30,13 +29,6 @@ function antispamReducer(state = defaultState, action) {
         bytesAllocated: action.data.bytes_allocated,
       },
     };
-    
-  case ANTISPAM_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {

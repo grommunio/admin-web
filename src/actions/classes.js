@@ -4,7 +4,6 @@
 import {
   CLASSES_DATA_ADD,
   CLASSES_DATA_DELETE,
-  CLASSES_DATA_ERROR,
   CLASSES_DATA_RECEIVED,
   CLASSES_TREE_RECEIVED,
   CLASSES_SELECT_RECEIVED,
@@ -23,7 +22,6 @@ export function fetchClassesData(domainID, params, select) {
         offset: params?.offset,
       });
     } catch(error) {
-      await dispatch({ type: CLASSES_DATA_ERROR, error});
       return Promise.reject(error.message);
     }
   };

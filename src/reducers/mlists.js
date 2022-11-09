@@ -3,7 +3,6 @@
 
 import {
   AUTH_AUTHENTICATED,
-  MLISTS_DATA_ERROR,
   MLISTS_DATA_RECEIVED,
   MLIST_DATA_ADD,
   MLIST_DATA_DELETE,
@@ -11,7 +10,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   MLists: [],
   count: 0,
 };
@@ -21,17 +19,9 @@ function mlistsReducer(state = defaultState, action) {
   case MLISTS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       MLists: action.offset ? append(state.MLists, action.data.data) : action.data.data,
       count: action.data.count,
     };
-    
-  case MLISTS_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case MLIST_DATA_ADD:
     return {

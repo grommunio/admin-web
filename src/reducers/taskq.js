@@ -7,7 +7,6 @@ import {
 } from '../actions/types';
 
 const defaultState = {
-  error: null,
   count: 0,
   Tasks: [],
   running: false,
@@ -20,7 +19,6 @@ function taskqReducer(state = defaultState, action) {
   case TASK_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Tasks: action.data.data,
       count: action.data.count,
     };

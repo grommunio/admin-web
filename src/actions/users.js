@@ -3,7 +3,6 @@
 
 import {
   USERS_DATA_RECEIVED,
-  USERS_DATA_ERROR,
   USER_DATA_ADD,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
@@ -32,7 +31,6 @@ export function fetchUsersData(domainID, params) {
       else await dispatch({ type: USERS_NEXT_SET, data });
       return data;
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
@@ -46,7 +44,6 @@ export function fetchPlainUsersData(domainID, params) {
       await dispatch({ type: USERS_DATA_RECEIVED, data });
       return data;
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
@@ -59,7 +56,6 @@ export function fetchUserCount(domainID) {
       const data = await dispatch(userCount(domainID));
       return data.count;
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
@@ -72,7 +68,6 @@ export function fetchUserData(domainID, userID, ignoreStoreData) {
     try {
       userData = await dispatch(user(domainID, userID));
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
@@ -111,7 +106,6 @@ export function fetchAllUsers(params) {
       if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
       else await dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
-      await dispatch({type: USERS_DATA_ERROR, error: 'Failed to fetch users'});
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }

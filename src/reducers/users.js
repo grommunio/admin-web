@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  USERS_DATA_ERROR,
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
   USER_DATA_DELETE,
@@ -15,7 +14,6 @@ import {
 import { append } from '../utils';
 
 const defaultState = {
-  error: null,
   count: 0,
   Users: [],
   Orphaned: [],
@@ -48,13 +46,6 @@ function usersReducer(state=defaultState, action) {
       ...state,
       Users: append(state.Users, action.data.data),
       count: action.data.count,
-    };
-
-  case USERS_DATA_ERROR:
-    return {
-      ...state,
-      ready: false,
-      error: action.error,
     };
 
   case USER_DATA_ADD:

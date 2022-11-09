@@ -3,13 +3,11 @@
 
 import {
   AUTH_AUTHENTICATED,
-  LDAP_DATA_ERROR,
   LDAP_DATA_RECEIVED,
   LDAP_DATA_CLEAR,
 } from '../actions/types';
 
 const defaultState = {
-  error: null,
   Users: [],
 };
 
@@ -18,14 +16,7 @@ function ldapReducer(state=defaultState, action) {
   case LDAP_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Users: action.data.data,
-    };
-
-  case LDAP_DATA_ERROR:
-    return {
-      ...state,
-      error: action.error,
     };
 
   case LDAP_DATA_CLEAR:

@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  ROLES_DATA_ERROR,
   ROLES_DATA_RECEIVED,
   PERMISSIONS_DATA_RECEIVED,
   ROLE_DATA_ADD,
@@ -13,7 +12,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   Roles: [],
   Permissions: [],
   count: 0,
@@ -24,7 +22,6 @@ function rolesReducer(state = defaultState, action) {
   case ROLES_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Roles: action.data.data,
       count: action.data.count,
     };
@@ -32,22 +29,14 @@ function rolesReducer(state = defaultState, action) {
   case ROLES_NEXT_SET:
     return {
       ...state,
-      error: null,
       Roles: append(state.Roles, action.data.data),
       count: action.data.count,
     };
-    
-  case ROLES_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
+
 
   case PERMISSIONS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Permissions: action.data.data,
     };
 

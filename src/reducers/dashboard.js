@@ -2,14 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import {
-  DASHBOARD_DATA_ERROR,
   DASHBOARD_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
 const defaultState = {
   timer: -1,
-  error: null,
   Dashboard: {
     cpuPercent: {
       idle: [],
@@ -68,7 +66,6 @@ function dashboardReducer(state = defaultState, action) {
   case DASHBOARD_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Dashboard: {
         cpuPercent: addUsageData(state.Dashboard.cpuPercent, action.data.cpuPercent),
         cpuPie: {
@@ -85,13 +82,6 @@ function dashboardReducer(state = defaultState, action) {
       load: action.data.load || [],
       timer: (timer + 1) % 10,
     };
-  
-  case DASHBOARD_DATA_ERROR: {
-    return {
-      ...state,
-      error: action.error,
-    };
-  }
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {

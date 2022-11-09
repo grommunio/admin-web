@@ -3,7 +3,6 @@
 
 import {
   AUTH_AUTHENTICATED,
-  ORGS_DATA_ERROR,
   ORGS_DATA_RECEIVED,
   ORG_DATA_ADD,
   ORG_DATA_DELETE,
@@ -11,7 +10,6 @@ import {
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  error: null,
   Orgs: [],
   count: 0,
 };
@@ -21,15 +19,8 @@ function orgsReducer(state = defaultState, action) {
   case ORGS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       Orgs: action.offset ? append(state.Orgs, action.data.data) : action.data.data,
       count: action.data.count,
-    };
-    
-  case ORGS_DATA_ERROR:
-    return {
-      ...state,
-      error: action.error,
     };
 
   case ORG_DATA_ADD:

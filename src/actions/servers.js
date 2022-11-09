@@ -4,7 +4,6 @@
 import {
   SERVERS_DATA_ADD,
   SERVERS_DATA_DELETE,
-  SERVERS_DATA_ERROR,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
 } from '../actions/types';
@@ -19,7 +18,6 @@ export function fetchServersData(params) {
       await dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });
     } catch(error) {
       console.error(error);
-      await dispatch({ type: SERVERS_DATA_ERROR });
       return Promise.reject(error.message);
     }
   };

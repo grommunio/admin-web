@@ -7,7 +7,6 @@ import {
 } from '../actions/types';
 
 const defaultState = {
-  error: null,
   CreateParams: {
     user: {},
     domain: {},
@@ -19,7 +18,6 @@ function defaultsReducer(state = defaultState, action) {
   case CREATE_PARAMS_DATA_RECEIVED:
     return {
       ...state,
-      error: null,
       CreateParams: action.data.data,
     };
 
