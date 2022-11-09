@@ -15,7 +15,7 @@ import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
 import { debounce } from 'debounce';
 import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 
 const styles = theme => ({
@@ -133,7 +133,7 @@ class Ldap extends PureComponent {
               ),
             }}
           />
-          <FormControlLabel
+          {this.context.includes(ORG_ADMIN) && <FormControlLabel
             control={
               <Checkbox
                 checked={searchInOrg || false }
@@ -144,7 +144,7 @@ class Ldap extends PureComponent {
             }
             label={t('Search in entire organisation')}
             className={classes.checkbox}
-          />
+          />}
         </Grid>
         {ldapUsers.length > 0 && <Paper elevation={1}>
           <List>
