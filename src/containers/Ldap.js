@@ -7,7 +7,7 @@ import { withStyles } from '@mui/styles';
 import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
-import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemText,
+import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
   Paper, TextField, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -17,6 +17,7 @@ import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
+import { AccountCircle, ContactMail } from '@mui/icons-material';
 
 const styles = theme => ({
   pageTitle: {
@@ -150,6 +151,12 @@ class Ldap extends PureComponent {
           <List>
             {ldapUsers.map((user, idx) => <React.Fragment key={idx}>
               <ListItem >
+                <ListItemAvatar>
+                  {user.type === "contact" ?
+                    <ContactMail /> :
+                    <AccountCircle />
+                  }
+                </ListItemAvatar>
                 <ListItemText
                   primary={user.name}
                   primaryTypographyProps={{ color: 'primary' }}
