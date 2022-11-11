@@ -8,7 +8,7 @@ import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
 import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
-  Paper, TextField, Typography } from '@mui/material';
+  Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
@@ -46,6 +46,7 @@ class Ldap extends PureComponent {
     confirming: null,
     snackbar: '',
     searchInOrg: false,
+    showAll: false,
   }
 
   componentWillUnmount() {
@@ -59,7 +60,7 @@ class Ldap extends PureComponent {
   }
 
   handleLdapSearch = ({ target: t }) => {
-    const { searchInOrg } = this.state;
+    const { searchInOrg, showAll } = this.state;
     const { domain } = this.props;
     const query = t.value;
     if(query.length > 2) {
@@ -67,6 +68,7 @@ class Ldap extends PureComponent {
         query,
         domain: searchInOrg ? undefined : domain.ID,
         organization: searchInOrg ? domain.orgID : undefined,
+        showAll,
       });
     }
     this.setState({
@@ -92,18 +94,20 @@ class Ldap extends PureComponent {
 
   handleCheckbox = field => e => {
     const { checked } = e.target;
+    const { search } = this.state;
     const { domain } = this.props;
     this.setState({ [field]: checked });
-    this.debounceFetch({
+    if(search.length > 2) this.debounceFetch({
       query: this.state.search,
       domain: checked ? undefined : domain.ID,
       organization: checked ? domain.orgID : undefined,
+      showAll: checked,
     });
   }
 
   render() {
     const { classes, t, domain, ldapUsers } = this.props;
-    const { search, loading, snackbar, confirming, searchInOrg } = this.state;
+    const { search, loading, snackbar, confirming, searchInOrg, showAll } = this.state;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     return (
       <ViewWrapper
@@ -134,6 +138,18 @@ class Ldap extends PureComponent {
               ),
             }}
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showAll || false }
+                value={showAll || false}
+                onChange={this.handleCheckbox('showAll')}
+                color="primary"
+              />
+            }
+            label={t('Show all')}
+            className={classes.checkbox}
+          />
           {this.context.includes(ORG_ADMIN) && <FormControlLabel
             control={
               <Checkbox
@@ -162,9 +178,17 @@ class Ldap extends PureComponent {
                   primaryTypographyProps={{ color: 'primary' }}
                   secondary={user.email}
                 />
-                {writable && <IconButton onClick={this.handleImport(user)} size="large">
-                  <Import />
-                </IconButton>}
+                {writable && <Tooltip title={user.error || t("Import user")}>
+                  <span>
+                    <IconButton
+                      disabled={!!user.error}
+                      onClick={this.handleImport(user)}
+                      size="large"
+                    >
+                      <Import />
+                    </IconButton>
+                  </span>
+                </Tooltip>}
               </ListItem>
               <Divider />
             </React.Fragment>
