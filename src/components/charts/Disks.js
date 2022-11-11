@@ -2,19 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
 import { withTheme } from '@emotion/react';
 
-const styles = {
-  root: {
-    flex: 1,
-    width: 0,
-  },
-};
 
 class Disks extends Component {
 
@@ -27,9 +20,9 @@ class Disks extends Component {
   };
 
   render() {
-    const { classes, disks, t, theme } = this.props;
+    const { disks, t, theme } = this.props;
     return (
-      <div className={classes.root}>
+      <div style={{ flex: 1, width: 0 }}>
         <Typography style={{ margin: '8px 0 0 16px'}}>{t("Disks")}</Typography>
         <Chart
           options={{
@@ -125,4 +118,4 @@ Disks.propTypes = {
 };
 
 
-export default withTheme(withTranslation()(withStyles(styles)(Disks)));
+export default withTheme(withTranslation()(Disks));
