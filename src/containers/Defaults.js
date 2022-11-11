@@ -16,6 +16,7 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
+  IconButton,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { getStoreLangs } from '../actions/users';
@@ -25,6 +26,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { editCreateParamsData, fetchCreateParamsData } from '../actions/defaults';
 import { red, yellow } from '@mui/material/colors';
 import { formatCreateParams } from '../utils';
+import { HelpOutline } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -185,6 +187,13 @@ class Defaults extends PureComponent {
             >
               {t('editHeadline', { item: 'Defaults' })}
             </Typography>
+            <IconButton
+              size="small"
+              href="https://docs.grommunio.com/admin/administration.html#defaults"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
           </Grid>
           <FormControl className={classes.form}>
             <Typography

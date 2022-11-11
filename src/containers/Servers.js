@@ -93,7 +93,7 @@ class Servers extends PureComponent {
           {t("Servers")}
           <IconButton
             size="small"
-            href="https://docs.grommunio.com/admin/administration.html#id1"
+            href="https://docs.grommunio.com/admin/administration.html#servers"
             target="_blank"
           >
             <HelpOutline fontSize="small"/>
