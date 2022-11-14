@@ -323,11 +323,6 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
-  handleKeyPress = event => {
-    const { newPw, checkPw } = this.state;
-    if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
-  }
-
   handleSaveRoles = () => {
     const { editUserRoles, domain } = this.props;
     const { ID, roles } = this.state.user;
@@ -398,19 +393,6 @@ class UserDetails extends PureComponent {
       });
     }
   }
-
-  handlePropertyCheckbox = field => e => {
-    const { user } = this.state;
-    this.setState({
-      user: {
-        ...user,
-        properties: {
-          ...user.properties,
-          [field]: e.target.checked,
-        },
-      },
-    });
-  } 
 
   handleUnitChange = unit => event => this.setState({
     sizeUnits: {
@@ -508,16 +490,6 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleRadio = field => event => {
-    const { syncPolicy } = this.state;
-    this.setState({
-      syncPolicy: {
-        ...syncPolicy,
-        [field]: parseInt(event.target.value),
-      },
-    });
-  }
-
   handleSyncCheckboxChange = field => (event, newVal) => {
     const { syncPolicy } = this.state;
     this.setState({
@@ -557,6 +529,30 @@ class UserDetails extends PureComponent {
         ...this.state.user,
         homeserver: newVal || '',
       },
+    });
+  }
+
+  /**
+   * This method is a bit obfuscated. MUI multiselects only work with arrays.
+   * However, the property `attributehidden_gromox` uses a bitmask. To merge these functionalities,
+   * the array of selected values is reduced to a bitmask by bitwise-OR-ing the elements.
+   * The properties state always holds this bitmask.
+   * The MUI component's state expands this bitmask into 3 explicitely defined array elements, that match the bits.
+   * For example, `attributehidden_gromox === 3` results in `[1, 2, 0]` for the component.
+   */
+  handleMultiselectChange = field => event => {
+    const { user } = this.state;
+    const { value } = event.target;
+    const mask = (value || []).reduce((prev, next) => prev | next, 0)  // bitwise OR array elements
+    this.setState({
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: mask,
+        },
+      },
+      unsaved: true,
     });
   }
 
@@ -650,13 +646,13 @@ class UserDetails extends PureComponent {
             handlePropertyChange={this.handlePropertyChange}
             handleIntPropertyChange={this.handleIntPropertyChange}
             handleCheckbox={this.handleCheckbox}
-            handlePropertyCheckbox={this.handlePropertyCheckbox}
             handleUnitChange={this.handleUnitChange}
             handlePasswordChange={this.handlePasswordDialogToggle(true)}
             rawData={rawData}
             handleQuotaDelete={this.handleQuotaDelete}
             handleChatUser={this.handleChatUser}
             handleServer={this.handleServer}
+            handleMultiselectChange={this.handleMultiselectChange}
           />}
           {tab === 1 && <User
             user={user}

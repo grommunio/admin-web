@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
-  Select, TextField, Typography, Tooltip } from '@mui/material';
+  Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -82,6 +82,12 @@ class Account extends PureComponent {
     { name: 'Shared', ID: 4 },
   ]
 
+  hiddenFrom = [
+    { ID: 1, name: 'GAL', value: 0x01 },
+    { ID: 2, name: 'AL', value: 0x02 },
+    { ID: 3, name: 'Delegates', value: 0x04 }
+  ]
+
   formatMSE(rawMSE) {
     let exp = Math.log(rawMSE) / Math.log(1024) | 0;
     let res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
@@ -148,14 +154,14 @@ class Account extends PureComponent {
 
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs, handlePropertyCheckbox,
+      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
       handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
-      servers, handleInput } = this.props;
+      servers, handleInput, handleMultiselectChange } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
     const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
-      prohibitsendquota, attributehidden } = properties;
+      prohibitsendquota, attributehidden_gromox } = properties;
 
     return (
       <FormControl className={classes.form}>
@@ -341,6 +347,25 @@ class Account extends PureComponent {
             </div>
           </Grid>
         </div>
+        <FormControl className={classes.input} fullWidth>
+          <InputLabel id="demo-multiple-name-label">{t("Hide from")}</InputLabel>
+          <Select
+            multiple
+            // Transform bitmask to array elements
+            value={attributehidden_gromox ? [attributehidden_gromox & 1, attributehidden_gromox & 2, attributehidden_gromox & 4] : []}
+            onChange={handleMultiselectChange('attributehidden_gromox')}
+            input={<OutlinedInput label={t("Hide from")}/>}
+          >
+            {this.hiddenFrom.map(({ ID, name, value }) => (
+              <MenuItem
+                key={ID}
+                value={value}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           className={classes.input}
           label={t("Creation time")}
@@ -410,16 +435,6 @@ class Account extends PureComponent {
             }
             label={t('Allow POP3/IMAP logins')}
           />}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={!!attributehidden}
-                onChange={handlePropertyCheckbox('attributehidden')}
-                color="primary"
-              />
-            }
-            label={t('Hide from GAL')}
-          />
         </Grid>
         {status !== 4 && <Grid container className={classes.input}>
           <FormControlLabel
@@ -487,10 +502,10 @@ Account.propTypes = {
   handleQuotaDelete: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
   handleServer: PropTypes.func.isRequired,
-  handlePropertyCheckbox: PropTypes.func.isRequired,
   rawData: PropTypes.object,
   langs: PropTypes.array,
   servers: PropTypes.array.isRequired,
+  handleMultiselectChange: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
