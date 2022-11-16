@@ -146,6 +146,7 @@ class OrgDetails extends PureComponent {
     displayName: '',
     defaultQuota: '',
     filter: '',
+    contactFilter: '',
     templates: 'none',
     attributes: [],
     searchAttributes: [],
@@ -190,6 +191,7 @@ class OrgDetails extends PureComponent {
       displayName: users.displayName || '',
       defaultQuota: users.defaultQuota || '',
       filter: users.filter || '',
+      contactFilter: users.contactFilter || '',
       templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
       attributes: objectToArray(users.attributes || {}),
@@ -261,6 +263,7 @@ class OrgDetails extends PureComponent {
     formatted.users.attributes = arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota) || undefined;
     formatted.users.filter = copy.filter; // Put single string in array (necessary)
+    formatted.users.contactFilter = copy.contactFilter;
     formatted.users.templates = copy.templates === 'none' ?
       [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
     formatted.users.searchAttributes = [...this.state.searchAttributes];
@@ -316,6 +319,7 @@ class OrgDetails extends PureComponent {
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "name", "displayName"],
         filter: "objectClass=user",
+        contactFilter: "objectclass=contact",
         aliases: 'proxyAddresses',
       });
     } else if(templates === 'OpenLDAP') {
@@ -326,6 +330,7 @@ class OrgDetails extends PureComponent {
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
         filter: "objectClass=posixAccount",
+        contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
       });
     } else {
@@ -346,7 +351,7 @@ class OrgDetails extends PureComponent {
     const { classes, t, Domains, adminConfig } = this.props;
     const { ID, name, description, domains, snackbar, autocompleteInput, available, force, deleting, server, bindUser,
       bindPass, starttls, baseDn, objectID, disabled,
-      username, filter, templates, attributes, defaultQuota, displayName, searchAttributes,
+      username, filter, contactFilter, templates, attributes, defaultQuota, displayName, searchAttributes,
       aliases, taskMessage, taskID, overridingLdap, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
     const nameAcceptable = name && name.length < 33;
@@ -627,6 +632,15 @@ class OrgDetails extends PureComponent {
                 id="filter"
                 name="filter"
                 autoComplete="filter"
+              />
+              <LdapTextfield
+                label={t('LDAP Contact Filter')}
+                onChange={this.handleInput('contactFilter')}
+                value={contactFilter || ''}
+                desc={t("LDAP search filter to apply to contact lookup")}
+                id="contactFilter"
+                name="contactFilter"
+                autoComplete="contactFilter"
               />
               <LdapTextfield
                 label={t('Unique Identifier Attribute')}
