@@ -7,7 +7,7 @@ import TreeItem from '@mui/lab/TreeItem';
 import { AddCircleOutline, AssignmentTurnedInOutlined,
   ContactsOutlined as Contacts, Delete, StickyNote2Outlined as StickyNote, Edit,
   EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
-import { IconButton, Typography } from '@mui/material';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 import { IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -48,7 +48,9 @@ const FolderHierarchy = ({classes, t, writable, data, domainID, handleAdd, handl
           size='small'
           onClick={handleAdd(folderid)}
         >
-          <AddCircleOutline color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
+          <Tooltip title={t("Add new folder within this folder")} placement="right" arrow>
+            <AddCircleOutline color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
+          </Tooltip>
         </IconButton>
         <div className={classes.treeItemActionsContainer}>
           <IconButton
