@@ -266,7 +266,7 @@ class DomainListDetails extends PureComponent {
               ))}
             </TextField>
             {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
-              value={orgID}
+              value={orgID || ''}
               filterAttribute={'name'}
               onChange={this.handleAutocomplete('orgID')}
               className={classes.input} 
@@ -311,7 +311,7 @@ class DomainListDetails extends PureComponent {
               onChange={this.handleInput('tel')}
             />
             <MagnitudeAutocomplete
-              value={homeserver}
+              value={homeserver || ''}
               filterAttribute={'hostname'}
               onChange={this.handleServer}
               className={classes.input} 
