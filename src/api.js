@@ -180,30 +180,16 @@ async function renew() {
 }
 
 /**
- * Converts an object to an array
- * 
- * @param {Object} obj object to transform
- * @returns {Array} created array
- */
-function toArray(obj) {
-  const arr = [];
-  Object.entries(obj).forEach(([name, val]) => arr.push({ name, val }));
-  return arr;
-}
-
-/**
  * Builds query from endpoint and params
  * 
  * @param {String} endpoint endpoint path/url
  * @param {Object} params parameters to convert to `key=value,` strings
  * @returns {String} created query string
  */
-function buildQuery(endpoint, params) {
-  let query = endpoint;
-  const paramsArray = toArray(params || {});
-  if(paramsArray.length === 0) return query;
-  query += '?';
-  paramsArray.forEach(param => query += ![undefined].includes(param.val) ? `${param.name}=${param.val}&` : '');
+function buildQuery(endpoint, params={}) {
+  const paramsArray = Object.entries(params);
+  if(paramsArray.length === 0) return endpoint;
+  const query = endpoint + '?' + paramsArray.reduce((prev, [name, val]) => prev + (val !== undefined ? `${name}=${val}&` : ''), '');
   return query.slice(0, -1);
 }
 
