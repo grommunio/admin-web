@@ -537,7 +537,7 @@ class UserDetails extends PureComponent {
    * However, the property `attributehidden_gromox` uses a bitmask. To merge these functionalities,
    * the array of selected values is reduced to a bitmask by bitwise-OR-ing the elements.
    * The properties state always holds this bitmask.
-   * The MUI component's state expands this bitmask into 3 explicitely defined array elements, that match the bits.
+   * The MUI component's state expands this bitmask into 3 explicitly defined array elements, that match the bits.
    * For example, `attributehidden_gromox === 3` results in `[1, 2, 0]` for the component.
    */
   handleMultiselectChange = field => event => {

@@ -95,7 +95,7 @@ Following attributes are available:
 
 * `devMode:boolean` For development, enables redux logger (default: `false`)
 
-* `defaultDarkMode:boolean` If `true`, the app will be set to dark mode, if not explicitely set by the user/browser
+* `defaultDarkMode:boolean` If `true`, the app will be set to dark mode, if not explicitly set by the user/browser
 
 * `defaultTheme:string` Name of the default theme to use. Available themes: grommunio, green, purple, magenta (default: "grommunio")
 

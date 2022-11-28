@@ -32,7 +32,7 @@ export function updateAuthMgr(config) {
   return async dispatch => {
     try {
       const resp = await dispatch(setAuthmgr(config));
-      return Promise.resolve(resp?.message); // Can't use default hander here
+      return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
     }
@@ -100,7 +100,7 @@ export function updateOrgLdapConfig(orgID, config, params) {
   return async dispatch => {
     try {
       const resp = await dispatch(updateOrgLdap(orgID, config, params));
-      return Promise.resolve(resp?.message); // Can't use default hander here
+      return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
     }
