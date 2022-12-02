@@ -62,6 +62,7 @@ class Status extends PureComponent {
       .then(() => {
         if(this.props.vhosts.includes('local')) this.setState({ vhost: 'local'});
       });
+    // Refresh every second by default
     this.fetchInterval = setInterval(() => {
       this.fetchData();
     }, 1000);
@@ -95,6 +96,7 @@ class Status extends PureComponent {
     }, interval);
   }
 
+  // Converts an object to a sorted array
   toSortedArray = obj => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));

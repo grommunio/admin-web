@@ -102,6 +102,7 @@ class Sync extends PureComponent {
     this.props.fetch({ filterEnded, filterUpdated })
       .then(this.handleSort(orderBy, type, false))
       .catch(snackbar => this.setState({ snackbar, loading: false }));
+    // Fetch sync data every 2 seconds
     this.fetchInterval = setInterval(() => {
       this.handleRefresh();
     }, 2000);
@@ -124,6 +125,13 @@ class Sync extends PureComponent {
       .catch(snackbar => this.setState({ snackbar }));
   }
 
+  /**
+   * Sorts table rows
+   * @param {string} attribute the table attribute to sort by
+   * @param {string} type either int or string expected
+   * @param {Boolean} switchOrder force a switch of the previous order
+   * @returns 
+   */
   handleSort = (attribute, type, switchOrder) => () => {
     const sortedDevices = [...this.props.sync];
     const { order: stateOrder, orderBy } = this.state;
@@ -149,6 +157,7 @@ class Sync extends PureComponent {
     return classes.defaultRow;
   }
 
+  // Handles search input filter
   getMatch(row) {
     const { match, showPush, onlyActive } = this.state;
     const lcMatch = match.toLowerCase();

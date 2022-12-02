@@ -10,7 +10,7 @@ import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, Menu
 import { withTranslation } from 'react-i18next';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr, deleteLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
-import { cloneObject } from '../utils';
+import { arrayToObject, cloneObject, objectToArray } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import Add from '@mui/icons-material/Add';
 import Delete from '@mui/icons-material/Close';
@@ -158,7 +158,7 @@ class LdapConfig extends PureComponent {
     formatted.users = {};
     formatted.users.username = copy.username;
     formatted.users.displayName = copy.displayName;
-    formatted.users.attributes = this.arrayToObject([...this.state.attributes]);
+    formatted.users.attributes = arrayToObject([...this.state.attributes]);
     formatted.users.defaultQuota = parseInt(copy.defaultQuota) || undefined;
     formatted.users.filter = copy.filter; // Put single string in array (necessary)
     formatted.users.contactFilter = copy.contactFilter;
@@ -181,6 +181,7 @@ class LdapConfig extends PureComponent {
     const available = resp?.ldapAvailable || false;
     const connection = config?.connection || {};
     const users = config?.users || {};
+    // Format LDAP config
     this.setState({
       loading: false,
       authBackendSelection: authResp?.data?.authBackendSelection || 'always_mysql',
@@ -199,21 +200,9 @@ class LdapConfig extends PureComponent {
       contactFilter: users.contactFilter || '',
       templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
       searchAttributes: users.searchAttributes || [],
-      attributes: this.objectToArray(users.attributes || {}),
+      attributes: objectToArray(users.attributes || {}),
       aliases: users.aliases || '',
     });
-  }
-
-  objectToArray(obj) {
-    const arr = [];
-    Object.entries(obj).forEach(([key, value]) => arr.push({ key, value }));
-    return arr;
-  }
-
-  arrayToObject(arr) {
-    const obj = {};
-    arr.forEach(attr => obj[attr.key] = attr.value);
-    return obj;
   }
 
   handleNavigation = path => event => {
@@ -320,6 +309,7 @@ class LdapConfig extends PureComponent {
   handleSync = importUser => () => this.props.sync({ import: importUser })
     .then(response => {
       if(response?.taskID) {
+        // Background task created -> Show task dialog
         this.setState({
           taskMessage: response.message || 'Task created',
           loading: false,

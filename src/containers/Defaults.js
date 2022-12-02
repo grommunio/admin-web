@@ -118,6 +118,7 @@ class Defaults extends PureComponent {
       storagequotalimit, prohibitreceivequota, prohibitsendquota,
       chatUser, chatTeam } = createParams;
 
+    // Convert quotas from selected size unit to KiB
     const quotas = {
       storagequotalimit: storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
       prohibitreceivequota: prohibitreceivequota * 2

@@ -15,7 +15,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { getStringAfterLastSlash, setDateTimeString } from '../utils';
+import { getStringAfterLastSlash, getTaskState, setDateTimeString } from '../utils';
 import Feedback from '../components/Feedback';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchTaskDetails } from '../actions/taskq';
@@ -113,18 +113,6 @@ class TaskDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
-  getTaskState(state) {
-    switch(state) {
-    case 0: return "Queued";
-    case 1: return "Loaded";
-    case 2: return "Running";
-    case 3: return "Completed";
-    case 4: return "Error";
-    case 5: return "Cancelled";
-    default: return "Unknown";
-    }
-  }
-
   render() {
     const { classes, t } = this.props;
     const { loading, snackbar, ID, command, state, created, updated, message, params } = this.state;
@@ -148,7 +136,7 @@ class TaskDetails extends PureComponent {
             </div>
             <div className={classes.centerRow}>
               <Typography variant='h6' className={classes.description}>{t('State ')}:</Typography>
-              {t(this.getTaskState(state)) || t('Unknown')}
+              {t(getTaskState(state)) || t('Unknown')}
               <IconButton onClick={this.refresh}>
                 <Refresh color="primary"/>
               </IconButton>

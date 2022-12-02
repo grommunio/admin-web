@@ -18,6 +18,11 @@ const createCustomTheme = (mode, colorTheme) => {
   return createTheme(getThemeFromName(colorTheme)(mode));
 };
 
+/**
+ * Returns the MUI theme object identified by the theme name
+ * @param {string} name Name of the MUI theme
+ * @returns MUI theme
+ */
 function getThemeFromName(name) {
   switch(name) {
   case 'grommunio': return grommunioTheme;

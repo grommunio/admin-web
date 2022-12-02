@@ -103,10 +103,12 @@ class License extends PureComponent {
       .then(async () => {
         const { Domains, fetchCount, customImages } = this.props;
         const counts = {};
+        // Get user count of domains
         Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
         this.setState({
           loading: false,
           counts,
+          // Show custom images from config
           customImages: Object.entries(customImages).map(([hostname, images]) => ({ hostname, ...images})),
         });
       })
@@ -166,6 +168,7 @@ class License extends PureComponent {
 
   handleConfigClose = () => this.setState({ configOpen: false });
 
+  // Saves stringified config object to clipboard
   handleCopyToClipboard = () => {
     copyToClipboard('"customImages": ' + JSON.stringify(
       this.state.customImages.reduce((prevValue, currentValue) => ({

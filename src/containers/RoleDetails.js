@@ -114,7 +114,7 @@ class RoleDetails extends PureComponent {
       users: role.users.map(user => user.ID),
       permissions: role.permissions.map(perm => ({
         ...perm,
-        params: perm.params?.ID ? perm.params.ID : perm.params,
+        params: perm.params?.ID ? perm.params.ID : perm.params, // If params have not been edited, send the ID
         autocompleteInput: undefined,
       })),
     })
@@ -182,6 +182,10 @@ class RoleDetails extends PureComponent {
     });
   }
 
+  /**
+   * Checks if all permissions have proper parameters.
+   * @returns boolean, if all permissions are set properly
+   */
   checkProperPermissions = () => {
     const { permissions } = this.state.role;
     const every = permissions.every(p => {

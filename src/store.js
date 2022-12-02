@@ -70,8 +70,4 @@ export const store = createStore(
   ))
 );
 
-export function getStoreConfig() {
-  return store.getState().config;
-}
-
 export default store;

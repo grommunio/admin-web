@@ -67,6 +67,8 @@ class Settings extends Component {
   handleLangChange = event => {
     const { changeSettings } = this.props;
     const lang = event.target.value;
+
+    // Update i18n, redux store and local storage
     i18n.changeLanguage(lang);
     changeSettings('language', lang);
     window.localStorage.setItem('lang', lang);

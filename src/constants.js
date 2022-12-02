@@ -16,6 +16,7 @@ export const IPM_SUBTREE_OBJECT = {
 };
 export const defaultFetchLimit = 50;
 
+// Options used by the global search textfield
 export const globalSearchOptions = [
   {
     label: 'Users',

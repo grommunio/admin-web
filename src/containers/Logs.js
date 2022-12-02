@@ -94,6 +94,7 @@ class Logs extends PureComponent {
     if(log) this.setState({ log: log.data, filename, skip: 0 });
   }
 
+  // Fetches additional log rows, append on top
   handleScroll = async () => {
     const { skip, filename, log } = this.state;
     let newLog = await this.props.fetchLog(filename, { skip: (skip + 1) * 20 })
@@ -104,6 +105,7 @@ class Logs extends PureComponent {
     }
   }
 
+  // Fetch all logs AFTER clicked row time
   handleDate = time => async () => {
     const { filename } = this.state;
     const log = await this.props.fetchLog(filename, { after: time })
@@ -111,6 +113,10 @@ class Logs extends PureComponent {
     if(log) this.setState({ log: log.data, skip: 0 });
   }
 
+  /*
+    Handles autorefresh.
+    Appends new logs at the bottom of the list
+  */
   handleRefresh = async () => {
     const { filename, log } = this.state;
     if(log.length === 0) this.handleLog(filename)();

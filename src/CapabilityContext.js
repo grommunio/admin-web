@@ -2,5 +2,5 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React from 'react';
-// Create react context for capabilities within the app
+// Context to access user globally
 export const CapabilityContext = React.createContext([]);

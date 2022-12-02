@@ -52,6 +52,7 @@ class Menu extends PureComponent {
     history.push(`/${path}`);
   };
 
+  // Sorts table rows
   handleSort = orderBy => () => {
     const sortedDomains = [...this.props.domains];
     const { order: stateOrder, orderBy: stateOrderBy } = this.state;

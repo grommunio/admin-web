@@ -70,6 +70,9 @@ const styles = theme => ({
   },
 });
 
+/**
+ * This is by far the biggest component in the app, tread with caution
+ */
 class UserDetails extends PureComponent {
 
   state = {
@@ -124,13 +127,23 @@ class UserDetails extends PureComponent {
     this.setState({ domainDetails, langs: langs || [] });
   }
 
+  // Transformes backend json object to useable component state object
   getStateOverwrite(user, defaultPolicy) {
     if(!user) return;
     const properties = {
       ...user.properties,
     };
+    
+    // Ignore domain part of username (which is an email)
     const username = user.username.slice(0, user.username.indexOf('@'));
+
+    // Only role IDs are important
     const roles = (user.roles && user.roles.map(role => role.ID)) || [];
+
+    /* Calculate sizeUnits (MiB, GiB, TiB) based on KiB value for every quota 
+      The idea behind this loop is to find the highest devisor of the KiB value (1024^x)
+      If the KiB value (quotaLimit) is divisible by, for exampe, 1024 but not by 1024^2, the sizeUnit must be MiB.
+    */    
     let sizeUnits = {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
@@ -192,12 +205,15 @@ class UserDetails extends PureComponent {
       },
       unsaved: true,
     });
+
+    // Check if mail is formatted correctly
     if(field === 'destination') {
       const mail = e.target.value;
       this.debounceFetch(mail ? { email: encodeURIComponent(mail) } : null);
     }
   }
 
+  // When sanitizing user input, only check every 200ms
   debounceFetch = debounce(async params => {
     if(!params) {
       this.setState({ forwardError: false });
@@ -258,13 +274,20 @@ class UserDetails extends PureComponent {
     });
   }
 
+  /**
+   * Handles saving the user
+   * Before sending the user state object to the backend it needs to be transformed according to the API spec
+   */
   handleEdit = () => {
     const { edit, domain, editStore } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
     const { username, aliases, fetchmail, forward, properties, homeserver } = user;
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
+
+    // Don't send quotas if the textfield is empty. There is a seperate endpoint to delete quotas
+    // Otherwise, convert quota (MiB, GiB or TiB) into KiB
     const storePayload = {
-      messagesizeextended: undefined,
+      messagesizeextended: undefined, // MSE is read-only
       storagequotalimit: [null, undefined, ""].includes(storagequotalimit) ? undefined : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
       prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota) ? undefined : prohibitreceivequota * 2
         ** (10 * sizeUnits.prohibitreceivequota),
@@ -274,27 +297,29 @@ class UserDetails extends PureComponent {
     Promise.all([
       edit(domain.ID, {
         ...user,
-        username: username + "@" + domain.domainname,
+        username: username + "@" + domain.domainname, // Add domain to username (username is an email)
         domainID: undefined,
         homeserver: homeserver?.ID || null,
-        aliases: aliases.filter(alias => alias !== ''),
-        fetchmail: fetchmail.map(e => { return {
+        aliases: aliases.filter(alias => alias !== ''), // Filter empty aliases
+        fetchmail: fetchmail.map(e => ({ // Transform fetchmail objects
           ...e,
           date: undefined,
           sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
-        };}),
+        })),
         properties: {
           ...properties,
+          // Remove quotas from user props, they must only be sent to the user store (separate endpoint)
           messagesizeextended: undefined,
           storagequotalimit: undefined,
           prohibitreceivequota: undefined,
           prohibitsendquota: undefined,
         },
-        syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
+        syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
         forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
         roles: undefined,
         ldapID: undefined,
       }),
+      // Only send store props if there are none-undefined values
       Object.keys(storePayload).filter(k => storePayload[k] !== undefined).length > 0 ?
         editStore(domain.ID, user.ID, storePayload)
         : () => null,
@@ -310,7 +335,7 @@ class UserDetails extends PureComponent {
         const defaultPolicy = user.defaultPolicy || {};
         user.syncPolicy = user.syncPolicy || {};
         this.setState({
-          ...this.getStateOverwrite(user, defaultPolicy),
+          ...this.getStateOverwrite(user, defaultPolicy), // New backend user object received -> convert to state objects
           snackbar: 'Success!',
         });
       }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
@@ -379,7 +404,7 @@ class UserDetails extends PureComponent {
       this.setState({
         user: {
           ...this.state.user,
-          // If archive is allowed, pop3 must be unabled
+          // If archive is allowed, pop3 must be enabled
           "pop3_imap": checked || pop3_imap,
           [field]: checked,
         },
@@ -402,15 +427,16 @@ class UserDetails extends PureComponent {
   });
 
   handleDetachDialog = detaching => () => this.setState({ detaching });
-
+  
   handleDetach = () => {
+    const { user } = this.state;
     const { domain, edit } = this.props;
     this.setState({ detachLoading: true });
-    edit(domain.ID, { ID: this.state.user.ID, ldapID: null })
+    edit(domain.ID, { ID: user.ID, ldapID: null })
       .then(() => this.setState({
         user: {
-          ...this.state.user,
-          ldapID: null,
+          ...user,
+          ldapID: null, // User detached from LDAP -> Remove LDAP ID
         },
         snackbar: 'Success!',
         detachLoading: false,
