@@ -112,12 +112,14 @@ class Users extends Component {
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {
+          // Background task was created -> Show task dialog
           this.setState({
             taskMessage: response.message || 'Task created',
             loading: false,
             taskID: response.taskID,
           });
         } else {
+          // No task created -> Reload table data
           const { tableState } = this.props;
           const { order, orderBy, match } = tableState;
           this.setState({ snackbar: 'Success!' });
@@ -141,6 +143,7 @@ class Users extends Component {
 
   handleCheckClose = () => this.setState({ checking: false });
 
+  // Generates quota bar chart
   calculateGraph(obj) {
     const { classes } = this.props;
     const { prohibitsendquota, messagesizeextended } = obj;
@@ -165,7 +168,7 @@ class Users extends Component {
 
   handleContactClose = () => this.setState({ addingContact: false });
 
-  handleContactSuccess = () => this.setState({ addingContact: false });
+  handleContactSuccess = () => this.setState({ addingContact: false, snackbar: 'Success!' });
 
   handleContactError = (error) => this.setState({ snackbar: error });
 

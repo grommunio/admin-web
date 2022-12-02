@@ -21,7 +21,7 @@ import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 import { fetchTaskqData, fetchTaskqStatus, startTaskqServer, stopTaskqServer } from "../actions/taskq";
-import { setDateTimeString } from "../utils";
+import { getTaskState, setDateTimeString } from "../utils";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 import SearchTextfield from "../components/SearchTextfield";
@@ -76,18 +76,6 @@ class TasQ extends Component {
 
   handleStop = () => {
     this.props.stop().catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  getTaskState(state) {
-    switch(state) {
-    case 0: return "Queued";
-    case 1: return "Loaded";
-    case 2: return "Running";
-    case 3: return "Completed";
-    case 4: return "Error";
-    case 5: return "Cancelled";
-    default: return "Unknown";
-    }
   }
 
   handleSnackbarClose = () => {
@@ -171,7 +159,7 @@ class TasQ extends Component {
               {taskq.Tasks.map((obj, idx) => 
                 <TableRow key={idx} hover onClick={handleEdit('/taskq/' + obj.ID)}>
                   <TableCell>{obj.command}</TableCell>
-                  <TableCell>{t(this.getTaskState(obj.state))}</TableCell>
+                  <TableCell>{t(getTaskState(obj.state))}</TableCell>
                   <TableCell>{obj.message}</TableCell>
                   <TableCell>{obj.created ? setDateTimeString(obj.created) : ''}</TableCell>
                   <TableCell>{obj.updated ? setDateTimeString(obj.updated) : ''}</TableCell>

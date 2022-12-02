@@ -170,6 +170,7 @@ class OrgDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({ ...(org || {}) });
 
+    // Fetch and format organisation LDAP config
     const ldap = await fetchLdap(orgID)
       .catch(snackbar => this.setState({ snackbar }));
     const config = ldap?.data;

@@ -145,6 +145,7 @@ class Folders extends PureComponent {
     this.setState({ filteredTree });
   }
 
+  // Recursive tree filter
   prune(node, text) {
     const children = [];
     node.children?.forEach(child => {

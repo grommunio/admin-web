@@ -112,8 +112,10 @@ class Login extends Component {
   }
   
   componentDidMount() {
+    // Check if JWT is already in local storage
     let grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
     if(grommunioAuthJwt) {
+      // token found, try to login
       const { authLoginWithToken } = this.props;
       authLoginWithToken(grommunioAuthJwt).catch(err => console.error(err));
     }
@@ -147,6 +149,7 @@ class Login extends Component {
 
   handleLangChange = lang => () => {
     const { changeSettings } = this.props;
+    // Set language in i18n, redux store and local storage
     i18n.changeLanguage(lang);
     changeSettings('language', lang);
     window.localStorage.setItem('lang', lang);

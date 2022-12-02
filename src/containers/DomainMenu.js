@@ -177,6 +177,7 @@ class DomainMenu extends PureComponent {
       privChat, privVideo, privFiles, privArchive,
       storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
 
+    // Convert quotas from selected size unit to KiB
     const quotas = {
       storagequotalimit: storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
       prohibitreceivequota: prohibitreceivequota * 2

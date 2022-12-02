@@ -72,7 +72,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-    // Get the selected language from local store and apply with i18-next
+    // Get the selected language from local store and apply to i18-next
     const { changeSettings } = props;
     const lang = localStorage.getItem("lang");
     if (lang) {

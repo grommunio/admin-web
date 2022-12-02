@@ -6,6 +6,7 @@ import { createLogger } from 'redux-logger';
 import { SERVER_CONFIG_SET } from './actions/types';
 import store from './store';
 
+// Yeet config into redux store
 const setConfig = (newConfig) => {
   store.dispatch({ type: SERVER_CONFIG_SET, data: newConfig });
 };

@@ -4,12 +4,22 @@
 import moment from "moment";
 import store from './store';
 
+/**
+ * Converts object to array of { key, value } objects
+ * @param {Object} obj 
+ * @returns 
+ */
 export function objectToArray(obj) {
   const arr = [];
   Object.entries(obj).forEach(([key, value]) => arr.push({ key, value }));
   return arr;
 }
 
+/**
+ * Converts array of { key, value } objects to object
+ * @param {Object} obj 
+ * @returns 
+ */
 export function arrayToObject(arr) {
   const obj = {};
   arr.forEach(attr => obj[attr.key] = attr.value);
@@ -359,9 +369,14 @@ export function formatCreateParams(createParams) {
     domain.chatTeam = domain.chat;
     delete domain.chat;
   }
+
+  /* Calculate sizeUnits (MiB, GiB, TiB) based on KiB value for every quota
+    The idea behind this loop is to find the highest devisor of the KiB value (1024^x)
+    If the KiB value (quotaLimit) is divisible by, for exampe, 1024 but not by 1024^2, the sizeUnit must be MiB.
+  */
   for(let quotaLimit in sizeUnits) {
     if(user[quotaLimit] === undefined) continue;
-    user[quotaLimit] = user[quotaLimit] / 1024;
+    user[quotaLimit] = user[quotaLimit] / 1024; // quotas are stored in KiB => Convert to MiB
     for(let i = 2; i >= 0; i--) {
       if(user[quotaLimit] === 0) break;
       let r = user[quotaLimit] % 1024 ** i;
@@ -382,6 +397,11 @@ export function formatCreateParams(createParams) {
   };
 }
 
+/**
+ * Converts user status enum value to human-readable representation
+ * @param {Number} status enum value of a user status
+ * @returns String representation of the enum
+ */
 export function getUserStatusString(status) {
   switch(status) {
   case 0: return "Normal";
@@ -391,12 +411,34 @@ export function getUserStatusString(status) {
   }
 }
 
+/**
+ * Converts user type enum value to human-readable representation
+ * @param {Number} status enum value of a user type
+ * @returns String representation of the enum
+ */
 export function getUserTypeString(type) {
   switch(type) {
   case 0: return "User";
   case 1: return "Mail list";
   case 7: return "Room";
   case 8: return "Equipment";
+  default: return "Unknown";
+  }
+}
+
+/**
+ * Converts task state enum value to human-readable representation
+ * @param {Number} status enum value of a task state
+ * @returns String representation of the task state
+ */
+export function getTaskState(state) {
+  switch(state) {
+  case 0: return "Queued";
+  case 1: return "Loaded";
+  case 2: return "Running";
+  case 3: return "Completed";
+  case 4: return "Error";
+  case 5: return "Cancelled";
   default: return "Unknown";
   }
 }

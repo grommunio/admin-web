@@ -110,7 +110,6 @@ class Disks extends Component {
 }
 
 Disks.propTypes = {
-  classes: PropTypes.object.isRequired,
   disks: PropTypes.array.isRequired,
   timer: PropTypes.number,
   t: PropTypes.func.isRequired,
