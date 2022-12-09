@@ -98,6 +98,7 @@ const styles = theme => ({
     position: 'absolute',
     top: 8,
     right: 8,
+    color: 'black',
   },
 });
 
@@ -171,7 +172,7 @@ class Login extends Component {
         <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={this.handleLogin} >
           <Tooltip title="Language">
             <IconButton className={classes.lang} onClick={this.handleMenuOpen('langsAnchorEl')}>
-              <Translate />
+              <Translate color="inherit"/>
             </IconButton>
           </Tooltip>
           <Menu
