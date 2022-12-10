@@ -13,6 +13,9 @@ import {
   FormControl,
   MenuItem,
   Button,
+  FormControlLabel,
+  Checkbox,
+  Tooltip,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
@@ -20,6 +23,7 @@ import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../const
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
+import { Info } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -39,6 +43,15 @@ const styles = theme => ({
     alignItems: 'center',
     marginBottom: 32,
   },
+  checkbox: {
+    marginLeft: 8,
+  },
+  flexBox: {
+    display: 'flex',
+  },
+  infoIcon: {
+    marginLeft: 8,
+  }
 });
 
 class FolderDetails extends PureComponent {
@@ -79,6 +92,16 @@ class FolderDetails extends PureComponent {
       folder: {
         ...this.state.folder,
         [field]: event.target.value,
+      },
+      unsaved: true,
+    });
+  }
+
+  handleCheckbox = field => e => {
+    this.setState({
+      folder: {
+        ...this.state.folder,
+        [field]: e.target.checked,
       },
       unsaved: true,
     });
@@ -161,7 +184,7 @@ class FolderDetails extends PureComponent {
               disabled={readonly}
             />
           </FormControl>
-          <Grid container className={classes.grid}>
+          <Grid container className={classes.grid} alignItems="center">
             <Button
               onClick={this.handleAdd}
               disabled={!writable}
@@ -170,6 +193,22 @@ class FolderDetails extends PureComponent {
             >
               {t('Open permissions')}
             </Button>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={folder.syncMobile || false}
+                  onChange={this.handleCheckbox('syncMobile')}
+                  color="primary"
+                />
+              }
+              className={classes.checkbox}
+              label={<span className={classes.flexBox}>
+                {t('Sync on mobile devices')}
+                <Tooltip placement='top' title={t("sync_warning")}>
+                  <Info className={classes.infoIcon}/>
+                </Tooltip>
+              </span>}
+            />
           </Grid>
           <Grid container>
             <Button
