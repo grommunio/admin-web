@@ -421,7 +421,9 @@ export function getUserTypeString(type) {
   case 0: return "User";
   case 1: return "Mail list";
   case 7: return "Room";
+  case 6: return "Contact";
   case 8: return "Equipment";
+  case 1073741824: return "Shared";
   default: return "Unknown";
   }
 }
