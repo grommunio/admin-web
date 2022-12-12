@@ -414,7 +414,7 @@
     "SSL certificate check": "Vérification du certificat SSL",
     "SSL certificate path": "Chemin du certificat SSL",
     "SSL fingerprint": "Empreinte digitale SSL",
-    "Save": "Sauvez",
+    "Save": "Enregistrer",
     "Save LDAP configuration even if it's faulty": "Sauvegarder la configuration LDAP même si elle est défectueuse",
     "Scanned Mails": "Courriers examinés",
     "Seach users": "Recherche d'utilisateurs",
