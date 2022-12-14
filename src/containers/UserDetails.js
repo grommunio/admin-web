@@ -342,8 +342,9 @@ class UserDetails extends PureComponent {
   }
 
   handleDump = () => {
-    const { dump } = this.props;
-    dump({ ID: this.state.user.ldapID })
+    const { dump, domain } = this.props;
+    const { ldapID } = this.state.user;
+    dump({ ID: ldapID, organization: domain.orgID || 0 })
       .then(data => this.setState({ dump: data.data }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }

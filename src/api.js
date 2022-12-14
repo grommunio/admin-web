@@ -512,7 +512,7 @@ export function syncAll(params, domainID) {
 
 export function ldapDump(params) {
   return async () => {
-    return await get(buildQuery('/domains/ldap/dump', { organization: 0, ...params }));
+    return await get(buildQuery('/domains/ldap/dump', { ...params }));
   };
 }
 
