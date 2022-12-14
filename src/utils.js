@@ -421,7 +421,26 @@ export function getUserTypeString(type) {
   case 0: return "User";
   case 1: return "Mail list";
   case 7: return "Room";
+  case 6: return "Contact";
   case 8: return "Equipment";
+  case 1073741824: return "Shared";
+  default: return "Unknown";
+  }
+}
+
+/**
+ * Converts task state enum value to human-readable representation
+ * @param {Number} status enum value of a task state
+ * @returns String representation of the task state
+ */
+export function getTaskState(state) {
+  switch(state) {
+  case 0: return "Queued";
+  case 1: return "Loaded";
+  case 2: return "Running";
+  case 3: return "Completed";
+  case 4: return "Error";
+  case 5: return "Cancelled";
   default: return "Unknown";
   }
 }
