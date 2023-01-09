@@ -50,6 +50,7 @@ class AddServer extends PureComponent {
         this.setState({
           hostname: '',
           extname: '',
+          loading: false,
         });
         onSuccess();
       })

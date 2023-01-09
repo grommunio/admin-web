@@ -60,6 +60,7 @@ class AddOrg extends PureComponent {
           name: '',
           description: '',
           domains: [],
+          loading: false,
         });
         onSuccess();
       })
