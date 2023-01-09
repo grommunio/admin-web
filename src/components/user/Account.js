@@ -427,7 +427,7 @@ class Account extends PureComponent {
           {status !== 4 && <FormControlLabel
             control={
               <Checkbox
-                checked={pop3_imap || false /*eslint-disable-line*/}
+                checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
                 onChange={handleCheckbox('pop3_imap')}
                 color="primary"
                 disabled={privArchive}
@@ -440,7 +440,7 @@ class Account extends PureComponent {
           <FormControlLabel
             control={
               <Checkbox
-                checked={privChat || false }
+                checked={privChat || false}
                 onChange={handleCheckbox('privChat')}
                 color="primary"
               />
@@ -471,8 +471,8 @@ class Account extends PureComponent {
           <FormControlLabel
             control={
               <Checkbox
-                checked={privArchive || false }
-                value={privFiles || false }
+                checked={privArchive || false}
+                value={privFiles || false}
                 onChange={handleCheckbox('privArchive')}
                 color="primary"
               />
