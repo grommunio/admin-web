@@ -36,8 +36,16 @@ class Contact extends PureComponent {
   render() {
     const { classes, t, user, handlePropertyChange } = this.props;
     const { properties, ldapID } = user;
-    const { mobiletelephonenumber, comment, hometelephonenumber, home2telephonenumber, businesstelephonenumber,
-      business2telephonenumber, pagertelephonenumber, primaryfaxnumber, assistanttelephonenumber } = properties;
+
+    const tfProps = (label, field) => ({
+      variant: ldapID ? "filled" : 'outlined',
+      fullWidth: true,
+      onChange: handlePropertyChange(field),
+      value: properties[field] || '',
+      label: t(label),
+      className: classes.input,
+    });
+
     return (
       <FormControl className={classes.form}>
         <div className={classes.flexRow}>
@@ -49,74 +57,34 @@ class Contact extends PureComponent {
         <Grid container>
           <Grid item xs={12} className={classes.gridItem}>
             <TextField 
-              className={classes.input} 
-              label={t("Business 1")} 
-              fullWidth 
-              value={businesstelephonenumber || ''}
-              onChange={handlePropertyChange('businesstelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Privat 1")} 
-              fullWidth 
-              value={hometelephonenumber || ''}
-              onChange={handlePropertyChange('hometelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.input} 
-              label={t("Business 2")} 
-              fullWidth 
-              value={business2telephonenumber || ''}
-              onChange={handlePropertyChange('business2telephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Privat 2")} 
-              fullWidth 
-              value={home2telephonenumber || ''}
-              onChange={handlePropertyChange('home2telephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.input} 
-              label={t("Fax")} 
-              fullWidth 
-              value={primaryfaxnumber || ''}
-              onChange={handlePropertyChange('primaryfaxnumber')}
-              variant={ldapID ? "filled" : 'outlined'}
+              {...tfProps("Business 1", 'businesstelephonenumber')}
             />
             <TextField
-              className={classes.input} 
-              label={t("Mobile")} 
-              fullWidth 
-              value={mobiletelephonenumber || ''}
-              onChange={handlePropertyChange('mobiletelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
+              {...tfProps("Privat 1", 'hometelephonenumber')}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.input} 
-              label={t("Assistant")} 
-              fullWidth 
-              value={assistanttelephonenumber || ''}
-              onChange={handlePropertyChange('assistanttelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Business 2", 'business2telephonenumber')}
             />
-            <TextField 
-              className={classes.input} 
-              label={t("Pager")} 
-              fullWidth 
-              value={pagertelephonenumber || ''}
-              onChange={handlePropertyChange('pagertelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Privat 2", 'home2telephonenumber')}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.gridItem}>
+            <TextField
+              {...tfProps("Fax", 'primaryfaxnumber')}
+            />
+            <TextField
+              {...tfProps("Mobile", 'mobiletelephonenumber')}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.gridItem}>
+            <TextField
+              {...tfProps("Assistant", 'assistanttelephonenumber')}
+            />
+            <TextField
+              {...tfProps("Pager", 'pagertelephonenumber')}
             />
           </Grid>
         </Grid>
@@ -127,14 +95,10 @@ class Contact extends PureComponent {
             <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
           </Tooltip>}
         </div>
-        <TextField 
-          className={classes.input}
-          fullWidth
-          value={comment || ''}
-          onChange={handlePropertyChange('comment')}
+        <TextField
+          {...tfProps("", 'comment')}
           multiline
           rows={4}
-          variant={ldapID ? "filled" : 'outlined'}
         />
       </FormControl>
     );

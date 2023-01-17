@@ -110,18 +110,24 @@ class Oof extends PureComponent {
 
   render() {
     const { classes, t, history } = this.props;
-    const { tab, state, externalAudience, startTime, endTime, internalSubject, internalReply, externalReply, externalSubject,
-      snackbar } = this.state;
+    const { tab, state, startTime, endTime, snackbar } = this.state;
+
+    const tfProps = (label, field) => ({
+      fullWidth: true,
+      disabled: state === 0,
+      label: t(label),
+      value: this.state[field],
+      onChange: this.handleInput(field),
+    });
+
     return (<>
       <FormControl className={classes.form}>
         <div className={classes.flexRow}>
           <TextField
+            {...tfProps("State ", "state")}
             select
             className={classes.input}
-            label={t("State ")}
-            fullWidth
-            value={state}
-            onChange={this.handleInput('state')}
+            disabled={false}
           >
             {this.oofStates.map((status, key) => (
               <MenuItem key={key} value={status.value}>
@@ -130,12 +136,10 @@ class Oof extends PureComponent {
             ))}
           </TextField>
           <TextField
+            {...tfProps("External audience", "externalAudience")}
             select
             className={classes.input}
-            label={t("External audience")}
-            fullWidth
-            value={externalAudience}
-            onChange={this.handleInput('externalAudience')}
+            disabled={false}
           >
             {this.externalAudiences.map((audience, key) => (
               <MenuItem key={key} value={audience.value}>
@@ -144,20 +148,14 @@ class Oof extends PureComponent {
             ))}
           </TextField>
           <CustomDateTimePicker
-            label="Start time"
-            value={startTime}
+            {...tfProps("Start time", "startTime")}
             onChange={this.handleDateInput('startTime')}
             className={classes.input}
-            fullWidth
-            disabled={state === 0}
           />
           <CustomDateTimePicker
-            label="End time"
-            value={endTime}
+            {...tfProps("End time", "endTime")}
             onChange={this.handleDateInput('endTime')}
             className={classes.input}
-            fullWidth
-            disabled={state === 0}
           />
         </div>
         <Tabs
@@ -171,42 +169,26 @@ class Oof extends PureComponent {
         </Tabs>
         {tab === 0 && <div className={classes.tabs}>
           <TextField 
-            label={t("Internal subject")}
-            fullWidth
-            value={internalSubject || ''}
-            onChange={this.handleInput('internalSubject')}
+            {...tfProps("Internal subject", "internalSubject")}
             className={classes.mail}
-            disabled={state === 0}
           />
-          <TextField 
-            label={t("Internal reply")}
-            fullWidth
-            value={internalReply || ''}
-            onChange={this.handleInput('internalReply')}
+          <TextField
+            {...tfProps("Internal reply", "internalReply")}
             multiline
             rows={4}
             className={classes.mail}
-            disabled={state === 0}
           />
         </div>}
         {tab === 1 && <div className={classes.tabs}>
-          <TextField 
-            label={t("External subject")}
-            fullWidth
-            value={externalSubject || ''}
-            onChange={this.handleInput('externalSubject')}
+          <TextField
+            {...tfProps("External subject", "externalSubject")}
             className={classes.mail}
-            disabled={state === 0}
           />
-          <TextField 
-            label={t("External reply")}
-            fullWidth
-            value={externalReply || ''}
-            onChange={this.handleInput('externalReply')}
+          <TextField
+            {...tfProps("External reply", "externalReply")}
             multiline
             rows={4}
             className={classes.mail}
-            disabled={state === 0}
           />
         </div>}
       </FormControl>

@@ -36,56 +36,57 @@ class SlimSyncPolicies extends PureComponent {
   render() {
     const { classes, t, syncPolicy, defaultPolicy, handleChange, handleSlider, handleCheckbox } = this.props;
 
-    const { reqdevenc, allowsimpledevpw, devpwenabled, devpwexpiration, maxinacttimedevlock,
-      devpwhistory, alphanumpwreq, maxdevpwfailedattempts, mindevpwlenngth, allowstoragecard,
-      mindevcomplexchars } = syncPolicy;
+    const { maxdevpwfailedattempts, mindevpwlenngth, mindevcomplexchars } = syncPolicy;
+
+    const defaultCheckboxProps = (label, field) => {
+      const valueIsDefault = syncPolicy[field] === defaultPolicy[field];
+      return {
+        control: <Checkbox
+          className={valueIsDefault ? "" : classes.blueCheckbox}
+          checked={!!syncPolicy[field]}
+          onChange={handleCheckbox(field)}
+          color={valueIsDefault ? "default" : "primary"}
+        />,
+        label: t(label),
+      }
+    };
+
+    const defaultTfProps = (label, field) => ({
+      className: classes.slider,
+      style: { marginBottom: 8 },
+      label: t(label),
+      value: syncPolicy[field],
+      InputLabelProps: {
+        className: syncPolicy[field] === defaultPolicy[field] ? "" : classes.blueCheckbox,
+      },
+      onChange: handleChange(field),
+      variant: "standard"
+    });
+
+    const defaultSliderProps = field => ({
+      color: syncPolicy[field] === defaultPolicy[field] ? "secondary" : "primary",
+      marks: true,
+      className: classes.slider,
+      onChange: handleSlider(field),
+      step: 1,
+      valueLabelDisplay: "auto",
+    });
+
     return (
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.header}>{t('General')}</Typography>
         <FormControlLabel
-          control={
-            <Checkbox
-              className={reqdevenc === defaultPolicy.reqdevenc ? "": classes.blueCheckbox}
-              checked={!!reqdevenc}
-              onChange={handleCheckbox('reqdevenc')}
-              color={reqdevenc === defaultPolicy.reqdevenc ? "default" : "primary"}
-            />
-          }
-          label={t('Require encryption on device')}
+          {...defaultCheckboxProps("Require encryption on device", "reqdevenc")}
         />
         <FormControlLabel
-          control={
-            <Checkbox
-              className={allowstoragecard === defaultPolicy.allowstoragecard ? "" : classes.blueCheckbox}
-              checked={!!allowstoragecard}
-              onChange={handleCheckbox('allowstoragecard')}
-              color={allowstoragecard === defaultPolicy.allowstoragecard ? "default" : "primary"}
-            />
-          }
-          label={t('Require encryption on storage card')}
+          {...defaultCheckboxProps("Require encryption on storage card", "allowstoragecard")}
         />
         <Typography variant="h6" className={classes.header}>{t('Passwords')}</Typography>
         <FormControlLabel
-          control={
-            <Checkbox
-              className={devpwenabled === defaultPolicy.devpwenabled ? "" : classes.blueCheckbox}
-              checked={!!devpwenabled}
-              onChange={handleCheckbox('devpwenabled')}
-              color={devpwenabled === defaultPolicy.devpwenabled ? "default" : "primary"}
-            />
-          }
-          label={t('Password required')}
+          {...defaultCheckboxProps("Password required", "devpwenabled")}
         />
         <FormControlLabel
-          control={
-            <Checkbox
-              className={allowsimpledevpw === defaultPolicy.allowsimpledevpw ? "" : classes.blueCheckbox}
-              checked={!!allowsimpledevpw}
-              onChange={handleCheckbox('allowsimpledevpw')}
-              color={allowsimpledevpw === defaultPolicy.allowsimpledevpw ? "default" : "primary"}
-            />
-          }
-          label={t('Allow simple passwords')}
+          {...defaultCheckboxProps("Allow simple passwords", "allowsimpledevpw")}
           style={{ marginBottom: 8 }}
         />
         <div>
@@ -93,27 +94,14 @@ class SlimSyncPolicies extends PureComponent {
             {t('Minimum password length')}
           </Typography>
           <Slider
-            className={classes.slider}
+            {...defaultSliderProps("mindevpwlenngth")}
             value={mindevpwlenngth || 4}
-            valueLabelDisplay="auto"
-            color={mindevpwlenngth === defaultPolicy.mindevpwlenngth ? "secondary" : "primary"}
-            step={1}
-            marks
             min={1}
             max={16}
-            onChange={handleSlider("mindevpwlenngth")}
           />
         </div>
         <FormControlLabel
-          control={
-            <Checkbox
-              className={alphanumpwreq === defaultPolicy.alphanumpwreq ? "" : classes.blueCheckbox}
-              checked={!!alphanumpwreq}
-              onChange={handleCheckbox('alphanumpwreq')}
-              color={alphanumpwreq === defaultPolicy.alphanumpwreq ? "default" : "primary"}
-            />
-          }
-          label={t('Require alphanumeric password')}
+          {...defaultCheckboxProps("Require alphanumeric password", "alphanumpwreq")}
           style={{ marginBottom: 8 }}
         />
         <div>
@@ -121,15 +109,10 @@ class SlimSyncPolicies extends PureComponent {
             {t('Minimum password character sets')}
           </Typography>
           <Slider
-            className={classes.slider}
+            {...defaultSliderProps("mindevcomplexchars")}
             value={mindevcomplexchars || 3}
-            valueLabelDisplay="auto"
-            color={mindevcomplexchars === defaultPolicy.mindevcomplexchars ? "secondary" : "primary"}
-            step={1}
-            marks
             min={1}
             max={4}
-            onChange={handleSlider("mindevcomplexchars")}
           />
         </div>
         <div>
@@ -137,49 +120,21 @@ class SlimSyncPolicies extends PureComponent {
             {t('Number of failed login attempts allowed')}
           </Typography>
           <Slider
-            className={classes.slider}
+            {...defaultSliderProps("maxdevpwfailedattempts")}
             value={maxdevpwfailedattempts || 8}
-            valueLabelDisplay="auto"
-            color={maxdevpwfailedattempts === defaultPolicy.maxdevpwfailedattempts ? "secondary" : "primary"}
-            step={1}
-            marks
             min={4}
             max={16}
-            onChange={handleSlider("maxdevpwfailedattempts")}
           />
         </div>
         <TextField
-          className={classes.slider}
-          label={t('Password expiration (days)')}
-          value={devpwexpiration}
-          InputLabelProps={{
-            className: devpwexpiration === defaultPolicy.devpwexpiration ? "" : classes.blueCheckbox,
-          }}
-          onChange={handleChange("devpwexpiration")}
-          variant="standard"
-          style={{ marginBottom: 8 }}
+          {...defaultTfProps("Password expiration (days)", "devpwexpiration")}
         />
         <TextField
-          className={classes.slider}
-          label={t("Inactivity (seconds) before device locks itself")}
-          value={maxinacttimedevlock}
-          onChange={handleChange("maxinacttimedevlock")}
-          InputLabelProps={{
-            className: maxinacttimedevlock === defaultPolicy.maxinacttimedevlock ? "" : classes.blueCheckbox,
-          }}
-          variant="standard"
-          style={{ marginBottom: 8 }}
+          {...defaultTfProps("Inactivity (seconds) before device locks itself", "maxinacttimedevlock")}
         />
         <TextField
-          className={classes.slider}
+          {...defaultTfProps("Password history", "devpwhistory")}
           style={{ marginBottom: 16 }}
-          label={t("Password history")}
-          value={devpwhistory}
-          InputLabelProps={{
-            className: devpwhistory === defaultPolicy.devpwhistory ? "" : classes.blueCheckbox,
-          }}
-          onChange={handleChange("devpwhistory")}
-          variant="standard"
         />
       </FormControl>
     );

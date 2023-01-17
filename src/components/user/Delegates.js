@@ -117,49 +117,42 @@ class Delegates extends PureComponent {
   render() {
     const { classes, t, Users, userID, history, disabled } = this.props;
     const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = this.state;
+    const defaultTfProps = {
+      multiple: true,
+      filterAttribute: 'username',
+      className: classes.input,
+      options: Users.filter(u => u.ID !== userID) || [],
+      getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
+      placeholder: t("Search users") + "...",
+    }
     return (
       <>
         <FormControl className={classes.form}>
           <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
           <FormControl className={classes.input}>
             <MagnitudeAutocomplete
-              multiple
+              {...defaultTfProps}
               value={delegates || []}
-              filterAttribute={'username'}
               inputValue={delegatesACInput}
               onChange={this.handleAutocomplete('delegates', 'dEdited')}
-              className={classes.input} 
-              options={Users.filter(u => u.ID !== userID) || []}
               onInputChange={this.handleInput('delegatesACInput')}
               label={t('Delegates')}
-              placeholder={t("Search users") + "..."}
-              getOptionLabel={(delegate) => delegate.username || delegate || ''}
             />
             <MagnitudeAutocomplete
-              multiple
+              {...defaultTfProps}
               value={sendAsUsers || []}
-              filterAttribute={'username'}
               inputValue={sendAsACInput}
               onChange={this.handleAutocomplete('sendAsUsers', 'sEdited')}
-              className={classes.input} 
-              options={Users.filter(u => u.ID !== userID) || []}
               onInputChange={this.handleInput('sendAsACInput')}
               label={t('Send as')}
-              placeholder={t("Search users") + "..."}
-              getOptionLabel={(sendAsUser) => sendAsUser.username || sendAsUser || ''}
             />
             <MagnitudeAutocomplete
-              multiple
+              {...defaultTfProps}
               value={permittedUsers || []}
-              filterAttribute={'username'}
               inputValue={puACInput}
               onChange={this.handleAutocomplete('permittedUsers', 'puEdited')}
-              className={classes.input} 
-              options={Users.filter(u => u.ID !== userID) || []}
               onInputChange={this.handleInput('puACInput')}
               label={t('Full permission users')}
-              placeholder={t("Search users") + "..."}
-              getOptionLabel={(option) => option.username || option || ''}
             />
           </FormControl>
         </FormControl>

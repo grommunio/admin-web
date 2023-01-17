@@ -15,14 +15,10 @@ const styles = theme => ({
     marginTop: theme.spacing(4),
   },
   input: {
-    margin: theme.spacing(1, 1, 1, 1),
+    margin: theme.spacing(1),
   },
   divider: {
     margin: theme.spacing(2, 0, 2, 0),
-  },
-  address: {
-    margin: theme.spacing(1),
-    flex: 1,
   },
   gridItem: {
     display: 'flex',
@@ -33,11 +29,11 @@ const styles = theme => ({
   },
   grid: {
     display: 'flex',
-    margin: theme.spacing(1, 1, 1, 1),
+    margin: theme.spacing(1),
     flex: 1,
   },
   propertyInput: {
-    margin: theme.spacing(1, 1, 1, 1),
+    margin: theme.spacing(1),
     flex: 1,
   },
   countrySelect: {
@@ -56,9 +52,17 @@ class User extends PureComponent {
   render() {
     const { classes, t, user, handlePropertyChange } = this.props;
     const { properties, ldapID } = user;
-    const { title, displayname, nickname, primarytelephonenumber, streetaddress,
-      departmentname, companyname, officelocation, givenname, surname, initials,
-      assistant, country, locality, stateorprovince, postalcode } = properties;
+    const { country } = properties;
+
+    const tfProps = (label, field) => ({
+      variant: ldapID ? "filled" : 'outlined',
+      fullWidth: true,
+      onChange: handlePropertyChange(field),
+      value: properties[field] || '',
+      label: t(label),
+      className: classes.propertyInput,
+    });
+    
     return (
       <FormControl className={classes.form}>
         <div className={classes.flexRow}>
@@ -71,45 +75,26 @@ class User extends PureComponent {
           <Grid item xs={12} className={classes.gridItem}>
             <div className={classes.grid}>
               <TextField 
+                {...tfProps("First name", "givenname")}
                 className={classes.flexTextfield}
-                label={t("First name")}
-                value={givenname || ''}
-                onChange={handlePropertyChange('givenname')}
-                variant={ldapID ? "filled" : 'outlined'}
+                fullWidth={false}
               />
               <TextField 
-                //className={classes.flexTextfield}
-                label={t("Initials")}
-                value={initials || ''}
-                onChange={handlePropertyChange('initials')}
-                variant={ldapID ? "filled" : 'outlined'}
+                {...tfProps("Initials", "initials")}
+                className={undefined}
+                fullWidth={false}
               />
             </div>
-            <TextField 
-              className={classes.propertyInput} 
-              label={t("Surname")} 
-              fullWidth 
-              value={surname || ''}
-              onChange={handlePropertyChange('surname')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Surname", "surname")}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
             <TextField 
-              className={classes.propertyInput}
-              label={t("Display name")}
-              fullWidth
-              value={displayname || ''}
-              onChange={handlePropertyChange('displayname')}
-              variant={ldapID ? "filled" : 'outlined'}
+              {...tfProps("Display name", "displayname")}
             />
-            <TextField 
-              className={classes.propertyInput} 
-              label={t("Nickname")} 
-              fullWidth 
-              value={nickname || ''}
-              onChange={handlePropertyChange('nickname')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Nickname", "nickname")}
             />
           </Grid>
         </Grid>
@@ -117,13 +102,10 @@ class User extends PureComponent {
         <Grid container>
           <Grid item xs={6} style={{ display: 'flex' }}>
             <TextField 
-              className={classes.address}
-              label={t("Address")}
-              value={streetaddress || ''}
-              onChange={handlePropertyChange('streetaddress')}
+              {...tfProps("Address", "streetaddress")}
+              fullWidth={false}
               multiline
               rows={3}
-              variant={ldapID ? "filled" : 'outlined'}
               inputProps={{
                 style: {
                   height: 95,
@@ -132,77 +114,39 @@ class User extends PureComponent {
             />
           </Grid>
           <Grid item xs={6} style={{ paddingRight: 16 }}>
-            <TextField 
+            <TextField
+              {...tfProps("Position", "title")}
               className={classes.input}
-              label={t("Position")}
-              fullWidth
-              value={title || ''}
-              onChange={handlePropertyChange('title')}
-              variant={ldapID ? "filled" : 'outlined'}
             />
-            <TextField 
+            <TextField
+              {...tfProps("Company", "companyname")}
               className={classes.input}
-              label={t("Company")}
-              fullWidth
-              value={companyname || ''}
-              onChange={handlePropertyChange('companyname')}
-              variant={ldapID ? "filled" : 'outlined'}
             />
           </Grid>
         </Grid>
         <Grid container>
           <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.propertyInput}
-              label={t("Locality")}
-              fullWidth
-              value={locality || ''}
-              onChange={handlePropertyChange('locality')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Locality", "locality")}
             />
-            <TextField 
-              className={classes.propertyInput}
-              label={t("Department")}
-              fullWidth
-              value={departmentname || ''}
-              onChange={handlePropertyChange('departmentname')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Department", "departmentname")}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.propertyInput}
-              label={t("State")}
-              fullWidth
-              value={stateorprovince || ''}
-              onChange={handlePropertyChange('stateorprovince')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("State", "stateorprovince")}
             />
-            <TextField 
-              className={classes.propertyInput}
-              label={t("Office")}
-              fullWidth
-              value={officelocation || ''}
-              onChange={handlePropertyChange('officelocation')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Office", "officelocation")}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              className={classes.propertyInput}
-              label={t("Postal Code")}
-              fullWidth
-              value={postalcode || ''}
-              onChange={handlePropertyChange('postalcode')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Postal Code", "postalcode")}
             />
-            <TextField 
-              className={classes.propertyInput}
-              label={t("Assistant")}
-              fullWidth
-              value={assistant || ''}
-              onChange={handlePropertyChange('assistant')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Assistant", "assistant")}
             />
           </Grid>
           <Grid item xs={12} className={classes.gridItem}>
@@ -220,13 +164,8 @@ class User extends PureComponent {
                 )}
               </NativeSelect>
             </FormControl>
-            <TextField 
-              className={classes.propertyInput} 
-              label={t("Telephone")} 
-              fullWidth 
-              value={primarytelephonenumber || ''}
-              onChange={handlePropertyChange('primarytelephonenumber')}
-              variant={ldapID ? "filled" : 'outlined'}
+            <TextField
+              {...tfProps("Telephone", "primarytelephonenumber")}
             />
           </Grid>
         </Grid>
