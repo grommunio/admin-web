@@ -245,7 +245,7 @@ class LdapConfig extends PureComponent {
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
       });
-    } if(templates === 'Univention') {
+    } else if(templates === 'Univention') {
       this.setState({
         templates,
         objectID: 'entryUUID',

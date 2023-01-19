@@ -334,6 +334,17 @@ class OrgDetails extends PureComponent {
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
       });
+    } else if(templates === 'Univention') {
+      this.setState({
+        templates,
+        objectID: 'entryUUID',
+        username: 'mailPrimaryAddress',
+        displayName: 'displayName',
+        searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
+        filter: "objectClass=posixAccount",
+        contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
+        aliases: 'mailAlternativeAddress',
+      });
     } else {
       this.setState({ templates });
     }
@@ -624,6 +635,7 @@ class OrgDetails extends PureComponent {
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
                 <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
+                <MenuItem value="Univention">Univention</MenuItem>
               </LdapTextfield>
               <LdapTextfield
                 label={t('LDAP Filter')}
