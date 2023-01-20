@@ -130,7 +130,7 @@ class MailQ extends PureComponent {
       >  
         <div className={classes.logViewer}>
           <Paper elevation={1} className={classes.paper}>
-            <Typography variant="h6" className={classes.header}>Postqueue {t("mail queue")}</Typography>
+            <Typography variant="h6" className={classes.header}>Postfix {t("mail queue")}</Typography>
             <Table size="small">
               <TableHead>
                 <TableRow>

@@ -173,7 +173,7 @@ class TaskDetails extends PureComponent {
                           <span
                             style={{
                               marginRight: 8,
-                              backgroundColor: code - 300 < 0 /* code 2xx */ ? green['500'] : red['500'],
+                              backgroundColor: code < 300 /* code 2xx */ ? green['500'] : red['500'],
                               borderRadius: 4,
                               padding: '2px 4px',
                             }}
