@@ -16,7 +16,7 @@ import { fetchDomainData } from '../actions/domains';
 import { AddCircle, CopyAll, ExpandLess, ExpandMore } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
 import moment from 'moment';
-import { addItem, copyToClipboard } from '../utils';
+import { addItem, copyToClipboard, setDateTimeString } from '../utils';
 
 const styles = theme => ({
   paper: {
@@ -225,11 +225,11 @@ class License extends PureComponent {
             </Typography>
             <Typography className={classes.data}>
               <span className={classes.description}>{t('Created')}:</span>
-              {license.notBefore}
+              {setDateTimeString(license.notBefore)}
             </Typography>
             <Typography className={classes.data}>
               <span className={classes.description}>{t('Expires')}:</span>
-              {license.notAfter}
+              {setDateTimeString(license.notAfter)}
             </Typography>
             <Typography className={classes.data}>
               <span className={classes.description}>{t('Users')}:</span>
