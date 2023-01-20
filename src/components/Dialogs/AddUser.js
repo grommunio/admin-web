@@ -282,7 +282,7 @@ class AddUser extends PureComponent {
               autoFocus
               onChange={this.handleUsernameInput}
               InputProps={{
-                endAdornment: <div>@{domain.domainname}</div>,
+                endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
               }}
               className={classes.input}
               required

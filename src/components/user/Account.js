@@ -171,7 +171,7 @@ class Account extends PureComponent {
             value={username || ''}
             style={{ flex: 1, marginRight: 8 }}
             InputProps={{
-              endAdornment: <div>@{domain.domainname}</div>,
+              endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
             }}
             onChange={handleInput('username')}
           />
