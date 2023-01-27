@@ -707,13 +707,13 @@ class UserDetails extends PureComponent {
             handleAddAlias={this.handleAddAlias}
             handleRemoveAlias={this.handleRemoveAlias}
           />}
-          {tab === 5 && <Delegates
+          {tab === 5 && ID && <Delegates
             domainID={domain.ID}
             orgID={domain.orgID}
             userID={user.ID}
             disabled={!writable}
           />}
-          {tab === 6 && <Oof
+          {tab === 6 && ID && <Oof
             domainID={domain.ID}
             userID={user.ID}
           />}
@@ -723,11 +723,11 @@ class UserDetails extends PureComponent {
             handleEdit={this.handleFetchmailEditDialog}
             handleDelete={this.handleFetchmailDelete}
           />}
-          {tab === 8 && <SyncTab
+          {tab === 8 && ID && <SyncTab
             domainID={domain.ID}
             userID={user.ID}
           />}
-          {tab === 9 && <SlimSyncPolicies
+          {tab === 9 && ID && <SlimSyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}
