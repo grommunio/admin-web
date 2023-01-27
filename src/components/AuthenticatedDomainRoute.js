@@ -13,7 +13,7 @@ const AuthenticatedRoute = ({ component: DomainRoute, props: childProps, domain,
         ? <DomainRoute domain={domain} {...props} {...childProps} />
         : <Redirect
           to={`/login?redirect=${props.location.pathname}${props.location
-            .search}`}
+            .search}${props.location.hash}`}
         />}
   />
 );

@@ -92,7 +92,8 @@ class UserDetails extends PureComponent {
     dump: '',
     changingPw: false,
     snackbar: '',
-    tab: 0,
+    tab: window.location.hash ?
+      (parseInt(window.location.hash.slice(1)) || 0) : 0,
     langs: [],
     sizeUnits: {
       storagequotalimit: 1,
@@ -374,7 +375,10 @@ class UserDetails extends PureComponent {
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
-  handleTabChange = (_, tab) => this.setState({ tab });
+  handleTabChange = (_, tab) => {
+    location.hash = '#' + tab;
+    this.setState({ tab });
+  }
 
   handleAliasEdit = idx => event => {
     const { user } = this.state;

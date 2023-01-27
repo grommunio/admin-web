@@ -17,6 +17,7 @@ const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
   // Get redirect url parameter
   const query = parseParams(window.location.search.substr(1));
   const redirect = query.redirect;
+  const hash = window.location.hash;
 
   return (
     <Route
@@ -25,7 +26,7 @@ const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
         !childProps.authenticated
           ? <C {...props} {...childProps} />
           : <Redirect
-            to={!redirect ? "/" : redirect}
+            to={!redirect ? "/" : redirect + hash}
           />}
     />
   );

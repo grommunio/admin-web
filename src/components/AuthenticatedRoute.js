@@ -18,7 +18,7 @@ const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }) => (
         ? <C {...props} {...childProps} />
         : <Redirect
           to={`/login?redirect=${props.location.pathname}${props.location
-            .search}`}
+            .search}${props.location.hash}`}
         />}
   />
 );

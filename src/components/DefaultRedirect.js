@@ -13,7 +13,7 @@ const DefaultRedirect = () => (
   <Route
     path="*"
     render={() => <Redirect
-      to={`/login?redirect=${window.location.pathname}`}
+      to={`/login?redirect=${window.location.pathname}${window.location.hash}`}
     />}
   />
 );
