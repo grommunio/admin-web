@@ -634,7 +634,7 @@ class OrgDetails extends PureComponent {
               >
                 <MenuItem value='none'>{t('No template')}</MenuItem>
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
-                <MenuItem value="ActiveDirectory">ActiveDirectory</MenuItem>
+                <MenuItem value="ActiveDirectory">Active Directory</MenuItem>
                 <MenuItem value="Univention">Univention</MenuItem>
               </LdapTextfield>
               <LdapTextfield
