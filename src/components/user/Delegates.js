@@ -214,9 +214,9 @@ const mapDispatchToProps = dispatch => {
       .catch(err => console.error(err)),
     fetchPermittedUsers: async (domainID, userID) => await dispatch(fetchPermittedUsers(domainID, userID, {}))
       .catch(err => console.error(err)),
-    fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID))
+    fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
       .catch(err => console.error(err)),
-    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0}))
+    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0, status: 0}))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))
