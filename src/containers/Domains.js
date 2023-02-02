@@ -17,6 +17,10 @@ import {
   Grid,
   TableSortLabel,
   CircularProgress,
+  Hidden,
+  List,
+  ListItemButton,
+  ListItemText,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
@@ -122,45 +126,64 @@ class Domains extends PureComponent {
           {t("showingDomains", { count: filteredDomains.length })}
         </Typography>
         <Paper elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {this.columns.map((column) => (
-                  <TableCell key={column.value}>
-                    <TableSortLabel
-                      active={orderBy === column.value}
-                      align="left"
-                      direction={orderBy === column.value ? order : "asc"}
-                      onClick={handleRequestSort(column.value)}
-                      disabled={column.value === 'activeUsers'}
-                    >
-                      {t(column.label)}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-                <TableCell padding="checkbox" />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredDomains.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={handleEdit("/domains/" + obj.ID)}>
-                  <TableCell>
-                    {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
-                    {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
-                  </TableCell>
-                  <TableCell>{obj.address}</TableCell>
-                  <TableCell>{obj.title}</TableCell>
-                  <TableCell>{obj.activeUsers}</TableCell>
-                  <TableCell>{obj.maxUser}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                      <Delete color="error" />
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>)
-              }
-            </TableBody>
-          </Table>
+          <Hidden lgDown>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  {this.columns.map((column) => (
+                    <TableCell key={column.value}>
+                      <TableSortLabel
+                        active={orderBy === column.value}
+                        align="left"
+                        direction={orderBy === column.value ? order : "asc"}
+                        onClick={handleRequestSort(column.value)}
+                        disabled={column.value === 'activeUsers'}
+                      >
+                        {t(column.label)}
+                      </TableSortLabel>
+                    </TableCell>
+                  ))}
+                  <TableCell padding="checkbox" />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredDomains.map((obj, idx) =>
+                  <TableRow key={idx} hover onClick={handleEdit("/domains/" + obj.ID)}>
+                    <TableCell>
+                      {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
+                      {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
+                    </TableCell>
+                    <TableCell>{obj.address}</TableCell>
+                    <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.activeUsers}</TableCell>
+                    <TableCell>{obj.maxUser}</TableCell>
+                    <TableCell align="right">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="large">
+                        <Delete color="error" />
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>)
+                }
+              </TableBody>
+            </Table>
+          </Hidden>
+          <Hidden lgUp>
+            <List>
+              {filteredDomains.map((obj, idx) => 
+                <ListItemButton
+                  key={idx}
+                  onClick={handleEdit("/domains/" + obj.ID)}
+                  divider
+                >
+                  <ListItemText
+                    primary={`${obj.domainname} ${obj.domainname !== obj.displayname ? `(${obj.displayname})` : ""}
+                      ${obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}`}
+                    secondary={`${obj.activeUsers} / ${obj.maxUser} ${t("Maximum users")}`}
+                  />
+                </ListItemButton>
+              )}
+            </List>
+          </Hidden>
           {domains.Domains.length < domains.count && (
             <Grid container justifyContent="center">
               <CircularProgress
