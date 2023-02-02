@@ -5,7 +5,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress } from '@mui/material';
+  CircularProgress, 
+  Hidden,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, checkLdapUsers, fetchAllUsers } from '../actions/users';
@@ -158,55 +163,79 @@ class GlobalUsers extends Component {
           {t("showingUser", { count: users.Users.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active={orderBy === 'username'}
-                    align="left" 
-                    direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={handleRequestSort('username')}
-                  >
-                    {t('Username')}
-                  </TableSortLabel>
-                </TableCell>
-                {this.columns.map(column =>
-                  <TableCell key={column.value}>
-                    {t(column.label)}
+          <Hidden lgDown>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <TableSortLabel
+                      active={orderBy === 'username'}
+                      align="left" 
+                      direction={orderBy === 'username' ? order : 'asc'}
+                      onClick={handleRequestSort('username')}
+                    >
+                      {t('Username')}
+                    </TableSortLabel>
                   </TableCell>
-                )}
-                <TableCell padding="checkbox"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.Users.map((obj, idx) => {
-                const properties = obj.properties || {};
-                return (
-                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
-                    <TableCell>
-                      <div className={classes.flexRow}>
-                        {obj.status === 5 ?
-                          <ContactMail className={classes.icon} fontSize='small'/> :
-                          <AccountCircle className={classes.icon} fontSize='small'/>
-                        }
-                        {obj.username}
-                      </div>
+                  {this.columns.map(column =>
+                    <TableCell key={column.value}>
+                      {t(column.label)}
                     </TableCell>
-                    <TableCell>{properties.displayname}</TableCell>
-                    <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
-                    <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
-                    <TableCell>{obj.ldapID || ''}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                        <Delete color="error"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                  )}
+                  <TableCell padding="checkbox"></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {users.Users.map((obj, idx) => {
+                  const properties = obj.properties || {};
+                  return (
+                    <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
+                      <TableCell>
+                        <div className={classes.flexRow}>
+                          {obj.status === 5 ?
+                            <ContactMail className={classes.icon} fontSize='small'/> :
+                            <AccountCircle className={classes.icon} fontSize='small'/>
+                          }
+                          {obj.username}
+                        </div>
+                      </TableCell>
+                      <TableCell>{properties.displayname}</TableCell>
+                      <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
+                      <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
+                      <TableCell>{obj.ldapID || ''}</TableCell>
+                      <TableCell align="right">
+                        {writable && <IconButton onClick={handleDelete(obj)} size="large">
+                          <Delete color="error"/>
+                        </IconButton>}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Hidden>
+          <Hidden lgUp>
+            <List>
+              {users.Users.map((obj, idx) => 
+                <ListItemButton
+                  key={idx}
+                  onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') +  obj.ID)}
+                  divider
+                >
+                  <ListItemIcon>
+                    {obj.status === 5 ?
+                      <ContactMail className={classes.icon} fontSize='large'/> :
+                      <AccountCircle className={classes.icon} fontSize='large'/>
+                    }
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={obj.username || ''}
+                    secondary={obj.properties?.displayname || ''}
+                  />
+                </ListItemButton>
+              )}
+            </List>
+          </Hidden>
           {(users.Users.length < users.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
