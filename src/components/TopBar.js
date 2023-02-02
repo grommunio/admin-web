@@ -129,6 +129,9 @@ const styles = theme => ({
         borderColor: 'white',
       },
     },
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
   },
   lp: {
     position: 'absolute',
@@ -219,7 +222,7 @@ class TopBar extends PureComponent {
                 <KeyboardArrowRight className={classes.burger} />}
             </IconButton>
           </Hidden>
-          <Hidden smDown>
+          <Hidden mdDown>
             {this.links.map((link, idx) =>
               <Tooltip
                 placement="bottom"
