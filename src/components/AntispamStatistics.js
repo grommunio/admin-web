@@ -18,8 +18,14 @@ const styles = theme => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '1fr',
+    },
+    [theme.breakpoints.up('sm')]: {
       gridTemplateColumns: '1fr 1fr',
+    },
+    [theme.breakpoints.up('md')]: {
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
     },
   },
   flexItem: {
@@ -43,7 +49,7 @@ const styles = theme => ({
     flex: 4,
   },
   data: {
-    fontSize: 32,
+    fontSize: '2rem',
     fontWeight: 600,
     lineHeight: 1.1,
     margin: theme.spacing(1, 0, 1, 0),

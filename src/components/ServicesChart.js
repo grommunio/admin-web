@@ -56,9 +56,8 @@ const styles = (theme) => ({
     padding: 6,
   },
   label: {
-    padding: 2,
+    padding: '2px 4px',
     borderRadius: 25,
-    minWidth: 40,
     maxWidth: 80,
     margin: 0,
     textAlign: 'center',

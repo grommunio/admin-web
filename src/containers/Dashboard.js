@@ -34,6 +34,25 @@ const styles = (theme) => ({
   dashboardLayout: {
     display: 'grid',
     [theme.breakpoints.up("xs")]: {
+      gridTemplateColumns: "1fr",
+      gridTemplateAreas: `"antispam"
+                          "antispam"
+                          "antispam"
+                          "antispam"
+                          "headline"
+                          "headline"
+                          "services"
+                          "services"
+                          "cpu"
+                          "cpu"
+                          "memory"
+                          "memory"
+                          "swap"
+                          "swap"
+                          "disk"
+                          "disk"`,
+    }, 
+    [theme.breakpoints.up("sm")]: {
       gridTemplateColumns: "1fr 1fr",
       gridTemplateAreas: `"antispam antispam"
                           "headline headline"

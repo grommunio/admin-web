@@ -40,7 +40,6 @@ const defaultStyles = mode => ({
         padding: '10px 16px',
       },
       body: {
-        height: '40px',
         border: 'none',
       },
     },
