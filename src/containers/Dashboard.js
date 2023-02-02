@@ -93,7 +93,7 @@ const styles = (theme) => ({
     gridArea: 'swap',
   },
   headline: {
-    display: 'grid',
+    gridArea: 'headline',
   },
   donutAndLineChart: {
     display: 'grid',
@@ -203,9 +203,11 @@ class Dashboard extends Component {
             <HelpOutline fontSize="small"/>
           </IconButton>
         </Typography>}
-        {config?.loadAntispamData && <Typography variant="caption" className={classes.subtitle}>
-          {t("mailfilter_sub")}
-        </Typography>}
+        {config?.loadAntispamData && <div className={classes.subtitle}>
+          <Typography variant="caption" >
+            {t("mailfilter_sub")}
+          </Typography>
+        </div>}
         <div className={classes.dashboardLayout}>
           {config?.loadAntispamData && <div className={classes.antispam}>
             <AntispamStatistics data={statistics}/>
@@ -224,9 +226,11 @@ class Dashboard extends Component {
                 <HelpOutline fontSize="small"/>
               </IconButton>
             </Typography>
-            <Typography variant="caption" className={classes.subtitle}>
-              {t("performance_sub")}
-            </Typography>
+            <div className={classes.subtitle}>
+              <Typography variant="caption" >
+                {t("performance_sub")}
+              </Typography>
+            </div>
           </div>
           <div className={classes.cpu}>
             <Paper elevation={1} className={classes.donutAndLineChart}>
