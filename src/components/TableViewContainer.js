@@ -19,7 +19,12 @@ const styles = theme => ({
   },
   base: {
     flexDirection: "column",
-    padding: theme.spacing(2, 2, 2, 2),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1, 0),
+    },
+    [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing(2),
+    },
     flex: 1,
     display: "flex",
   },
