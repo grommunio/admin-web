@@ -19,7 +19,7 @@ import SearchTextfield from '../components/SearchTextfield';
 
 const styles = theme => ({
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
+    padding: theme.spacing(2),
   },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
@@ -27,7 +27,6 @@ const styles = theme => ({
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },

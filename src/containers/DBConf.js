@@ -23,12 +23,11 @@ const styles = theme => ({
     padding: theme.spacing(2, 2, 2, 2),
   },
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
+    padding: theme.spacing(2),
   },
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },

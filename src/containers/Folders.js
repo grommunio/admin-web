@@ -22,7 +22,7 @@ const styles = theme => ({
     borderRadius: 6,
   },
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 0),
+    padding: theme.spacing(2),
   },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
@@ -33,7 +33,6 @@ const styles = theme => ({
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 2, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },

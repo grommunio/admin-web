@@ -34,12 +34,11 @@ const styles = (theme) => ({
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 2, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   buttonGrid: {
-    padding: theme.spacing(0, 0, 2, 2),
+    padding: theme.spacing(0, 2, 2, 2),
   },
   select: {
     maxWidth: 224,

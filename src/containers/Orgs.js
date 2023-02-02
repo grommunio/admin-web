@@ -35,12 +35,11 @@ const styles = (theme) => ({
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
+    padding: theme.spacing(2),
   },
   count: {
     marginLeft: 16,

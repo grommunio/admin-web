@@ -23,23 +23,16 @@ const styles = theme => ({
     borderRadius: 6,
   },
   buttonGrid: {
-    margin: theme.spacing(0, 2, 2, 2),
+    padding: theme.spacing(2),
   },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
   },
-  textfield: {
-    margin: theme.spacing(2, 0, 1, 0),
-  },
   actions: {
     display: 'flex',
     flex: 1,
-    margin: theme.spacing(0, 4, 0, 0),
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-  },
-  newButton: {
-    marginRight: 8,
   },
   count: {
     marginLeft: 16,
@@ -92,7 +85,6 @@ class MLists extends Component {
             variant="contained"
             color="primary"
             onClick={handleAdd}
-            className={classes.newButton}
             disabled={!writable}
           >
             {t('New mail list')}
@@ -102,7 +94,6 @@ class MLists extends Component {
               value={match}
               onChange={handleMatch}
               placeholder={t("Search mail lists")}
-              className={classes.textfield}
             />
           </div>
         </Grid>
