@@ -17,19 +17,11 @@ import { deleteServerData, fetchServerPolicy, fetchServersData, patchServerPolic
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   count: {
     marginLeft: 16,
@@ -103,7 +95,13 @@ class Servers extends PureComponent {
         onSnackbarClose={this.handleSnackbarClose}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search servers")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -112,15 +110,7 @@ class Servers extends PureComponent {
           >
             {t("New server")}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search servers")}
-              className={classes.textfield}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <div>
           <TextField
             value={servers.policy || 'round-robin'}

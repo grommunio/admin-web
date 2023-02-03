@@ -16,19 +16,11 @@ import TableViewContainer from '../components/TableViewContainer';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   count: {
     marginLeft: 16,
@@ -69,7 +61,13 @@ class Roles extends PureComponent {
         onSnackbarClose={clearSnackbar}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search roles")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -78,14 +76,7 @@ class Roles extends PureComponent {
           >
             {t("New role")}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search roles")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingRoles", { count: roles.Roles.length })}
         </Typography>

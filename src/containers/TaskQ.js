@@ -25,19 +25,11 @@ import { getTaskState, setDateTimeString } from "../utils";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 import SearchTextfield from "../components/SearchTextfield";
+import TableActionGrid from "../components/TableActionGrid";
 
 const styles = (theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    padding: theme.spacing(2),
   },
   chipGrid: {
     padding: theme.spacing(2, 2, 0, 2),
@@ -116,7 +108,13 @@ class TasQ extends Component {
             color={"primary"}
           />
         </Grid>
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search tasks")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -125,14 +123,7 @@ class TasQ extends Component {
           >
             {t("Start server")}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search tasks")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingTaskq", { count: taskq.Tasks.length })}
         </Typography>

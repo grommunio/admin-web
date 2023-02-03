@@ -33,19 +33,11 @@ import TableViewContainer from "../components/TableViewContainer";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from "../components/SearchTextfield";
+import TableActionGrid from "../components/TableActionGrid";
 
 const styles = (theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    padding: theme.spacing(0, 2, 2, 2),
   },
   count: {
     marginLeft: 16,
@@ -95,7 +87,22 @@ class Domains extends PureComponent {
         onSnackbarClose={clearSnackbar}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<><FormControlLabel
+            label={t("Show deactivated")}
+            control={
+              <Checkbox
+                checked={showDeleted || false}
+                onChange={this.handleCheckbox("showDeleted")}
+              />
+            }
+          />
+          <SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search domains")}
+          /></>}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -104,23 +111,7 @@ class Domains extends PureComponent {
           >
             {t("New domain")}
           </Button>
-          <div className={classes.actions}>
-            <FormControlLabel
-              label={t("Show deactivated")}
-              control={
-                <Checkbox
-                  checked={showDeleted || false}
-                  onChange={this.handleCheckbox("showDeleted")}
-                />
-              }
-            />
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search domains")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingDomains", { count: filteredDomains.length })}
         </Typography>

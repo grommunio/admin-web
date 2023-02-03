@@ -16,23 +16,15 @@ import TableViewContainer from '../components/TableViewContainer';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   count: {
     marginLeft: 16,
@@ -80,7 +72,13 @@ class MLists extends Component {
         onSnackbarClose={clearSnackbar}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search mail lists")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -89,14 +87,7 @@ class MLists extends Component {
           >
             {t('New mail list')}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search mail lists")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingMLists", { count: mLists.MLists.length })}
         </Typography>

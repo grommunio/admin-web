@@ -18,23 +18,15 @@ import TableViewContainer from '../components/TableViewContainer';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   select: {
     margin: theme.spacing(0, 2, 0, 2),
@@ -146,7 +138,13 @@ class Classes extends Component {
         baseRef={tc => (this.treeContainer = tc)}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search groups")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -155,14 +153,7 @@ class Classes extends Component {
           >
             {t('New group')}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search groups")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Tabs
           indicatorColor="primary"
           textColor="primary"

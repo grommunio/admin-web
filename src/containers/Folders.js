@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Paper, Grid, Tabs, Tab } from '@mui/material';
+import { Paper, Tabs, Tab } from '@mui/material';
 import { deleteFolderData, fetchFolderTree } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
 import { defaultFetchLimit, DOMAIN_ADMIN_WRITE } from '../constants';
@@ -15,26 +15,15 @@ import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import Tree from 'react-d3-tree';
 import FolderHierarchy from '../components/FolderHierarchy';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(1, 2, 3, 2),
     borderRadius: 6,
   },
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  textfield: {
-    margin: theme.spacing(1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   count: {
     margin: theme.spacing(2, 0, 0, 2),
@@ -176,7 +165,12 @@ class Folders extends PureComponent {
         baseRef={tc => (this.treeContainer = tc)}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            onChange={this.handleMatch}
+            placeholder={t("Search folders")}
+          />}
+        >
           <Tabs
             indicatorColor="primary"
             textColor="primary"
@@ -187,14 +181,7 @@ class Folders extends PureComponent {
             <Tab value={0} label={t("List")} />
             <Tab value={1} label={t("Tree")} />
           </Tabs>
-          <div className={classes.actions}>
-            <SearchTextfield
-              onChange={this.handleMatch}
-              placeholder={t("Search folders")}
-              className={classes.textfield}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         {!tab && 
           <Paper className={classes.tablePaper} elevation={1}>
             <FolderHierarchy

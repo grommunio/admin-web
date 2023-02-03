@@ -27,19 +27,11 @@ import TableViewContainer from "../components/TableViewContainer";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 import SearchTextfield from "../components/SearchTextfield";
+import TableActionGrid from "../components/TableActionGrid";
 
 const styles = (theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    padding: theme.spacing(2),
   },
   count: {
     marginLeft: 16,
@@ -76,7 +68,13 @@ class Orgs extends Component {
         onSnackbarClose={clearSnackbar}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search organizations")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -85,14 +83,7 @@ class Orgs extends Component {
           >
             {t("New organization")}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search organizations")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingOrgs", { count: orgs.Orgs.length })}
         </Typography>

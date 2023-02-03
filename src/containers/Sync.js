@@ -14,7 +14,6 @@ import {
   TableBody,
   TableSortLabel,
   Tooltip,
-  Grid,
   TextField,
   FormControlLabel,
   Checkbox,
@@ -29,17 +28,9 @@ import SyncStatistics from "../components/SyncStatistics";
 import { grey, red } from "@mui/material/colors";
 import TableViewContainer from "../components/TableViewContainer";
 import SearchTextfield from "../components/SearchTextfield";
+import TableActionGrid from "../components/TableActionGrid";
 
-const styles = (theme) => ({
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  buttonGrid: {
-    padding: theme.spacing(0, 2, 2, 2),
-  },
+const styles = {
   select: {
     maxWidth: 224,
     marginRight: 8,
@@ -66,7 +57,7 @@ const styles = (theme) => ({
     color: red['500'],
     fontWeight: 400,
   },
-});
+};
 
 class Sync extends PureComponent {
 
@@ -194,7 +185,13 @@ class Sync extends PureComponent {
         onSnackbarClose={() => this.setState({ snackbar: '' })}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={this.handleInput('match')}
+            placeholder={t("Filter")}
+          />}
+        >
           <FormControlLabel
             control={
               <Checkbox
@@ -243,15 +240,7 @@ class Sync extends PureComponent {
             <MenuItem value={20}>10</MenuItem>
             <MenuItem value={20}>20</MenuItem>
           </TextField>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={this.handleInput('match')}
-              placeholder={t("Filter")}
-              className={classes.textfield}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <SyncStatistics data={sync}/>
         <Paper elevation={1}>
           <Table size="small">

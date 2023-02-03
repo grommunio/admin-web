@@ -23,23 +23,15 @@ import SearchTextfield from '../components/SearchTextfield';
 import AddContact from '../components/Dialogs/AddContact';
 import { getUserStatusString, getUserTypeString } from '../utils';
 import { AccountCircle, ContactMail } from '@mui/icons-material';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
   tablePaper: {
     margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
   },
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   newButton: {
     marginRight: 8,
@@ -186,7 +178,13 @@ class Users extends Component {
         onSnackbarClose={this.handleSnackbarClose}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search users")}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -252,14 +250,7 @@ class Users extends Component {
               {t('Check LDAP users')}
             </Button>
           </Tooltip>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={handleMatch}
-              placeholder={t("Search users")}
-            />
-          </div>
-        </Grid>
+        </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingUser", { count: users.Users.length })}
         </Typography>

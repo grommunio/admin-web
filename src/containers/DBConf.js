@@ -17,19 +17,11 @@ import { defaultFetchLimit, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import SearchTextfield from '../components/SearchTextfield';
+import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
   paper: {
     padding: theme.spacing(2, 2, 2, 2),
-  },
-  buttonGrid: {
-    padding: theme.spacing(2),
-  },
-  actions: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
   },
   pre: {
     margin: theme.spacing(1, 0, 1, 0),
@@ -39,6 +31,9 @@ const styles = theme => ({
   },
   button: {
     marginLeft: 8,
+  },
+  tabs: {
+    marginLeft: 16,
   },
 });
 
@@ -110,7 +105,14 @@ class DBConf extends Component {
         onSnackbarClose={() => this.setState({ snackbar: '' })}
         loading={loading}
       >
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        <TableActionGrid
+          tf={<SearchTextfield
+            value={match}
+            onChange={this.handleMatch}
+            placeholder={t("Search services")}
+            className={classes.textfield}
+          />}
+        >
           <Button
             variant="contained"
             color="primary"
@@ -128,16 +130,8 @@ class DBConf extends Component {
           >
             {t("Configure grommunio-dbconf")}
           </Button>
-          <div className={classes.actions}>
-            <SearchTextfield
-              value={match}
-              onChange={this.handleMatch}
-              placeholder={t("Search services")}
-              className={classes.textfield}
-            />
-          </div>
-        </Grid>
-        <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+        </TableActionGrid>
+        <Grid container alignItems="flex-end" className={classes.tabs}>
           <Tabs
             textColor="primary" 
             indicatorColor="primary"
