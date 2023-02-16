@@ -27,7 +27,7 @@ import { editDomainData, fetchDomainDetails } from '../actions/domains';
 import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
-import SlimSyncPolicies from '../components/SlimSyncPolicies';
+import SyncPolicies from '../components/SyncPolicies';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
@@ -330,7 +330,7 @@ class DomainListDetails extends PureComponent {
               label={t('grommunio-chat Team')}
             />
           </FormControl>}
-          {tab === 1 && <SlimSyncPolicies
+          {tab === 1 && <SyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}

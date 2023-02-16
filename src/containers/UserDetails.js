@@ -33,7 +33,7 @@ import FetchMail from '../components/user/FetchMail';
 import AddFetchmail from '../components/Dialogs/AddFetchmail';
 import EditFetchmail from '../components/Dialogs/EditFetchmail';
 import { getPolicyDiff } from '../utils';
-import SlimSyncPolicies from '../components/SlimSyncPolicies';
+import SyncPolicies from '../components/SyncPolicies';
 import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ } from '../constants';
@@ -727,7 +727,7 @@ class UserDetails extends PureComponent {
             domainID={domain.ID}
             userID={user.ID}
           />}
-          {tab === 9 && ID && <SlimSyncPolicies
+          {tab === 9 && ID && <SyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}
