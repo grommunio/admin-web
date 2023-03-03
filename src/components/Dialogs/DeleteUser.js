@@ -18,14 +18,16 @@ const styles = {
 class DeleteUser extends PureComponent {
 
   state = {
-    checked: false,
+    deleteFiles: false,
+    deleteChatUser: false,
     loading: false,
   }
 
   handleDelete = () => {
     const { user, domainID, onSuccess, onError } = this.props;
+    const { deleteFiles, deleteChatUser } = this.state;
     this.setState({ loading: true });
-    this.props.delete(domainID, user.ID, this.state.checked)
+    this.props.delete(domainID, user.ID, { deleteFiles, deleteChatUser })
       .then(() => {
         if(onSuccess) onSuccess();
         this.setState({ loading: false });
@@ -36,9 +38,11 @@ class DeleteUser extends PureComponent {
       });
   }
 
+  handleCheckbox = field => () => this.setState(state => ({ [field]: !state[field] }));
+
   render() {
     const { t, open, user, onClose } = this.props;
-    const { checked, loading } = this.state;
+    const { deleteFiles, deleteChatUser, loading } = this.state;
 
     return (
       <Dialog
@@ -52,13 +56,24 @@ class DeleteUser extends PureComponent {
           <FormControlLabel
             control={
               <Checkbox
-                checked={checked}
-                onChange={() => this.setState({ checked: !checked })}
-                name="checked"
+                checked={deleteFiles}
+                onChange={this.handleCheckbox("deleteFiles")}
+                name="deleteFiles"
                 color="primary"
               />
             }
             label={t("Delete files?")}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={deleteChatUser}
+                onChange={this.handleCheckbox("deleteChatUser")}
+                name="deleteChatUser"
+                color="primary"
+              />
+            }
+            label={t("Delete grommunio-chat user")}
           />
         </DialogContent>
         <DialogActions>
@@ -95,8 +110,8 @@ DeleteUser.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    delete: async (domainID, id, deleteFiles) => {
-      await dispatch(deleteUserData(domainID, id, { deleteFiles }))
+    delete: async (domainID, id, params) => {
+      await dispatch(deleteUserData(domainID, id, params))
         .catch(error => Promise.reject(error));
     },
   };
