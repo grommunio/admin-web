@@ -13,10 +13,9 @@ const setConfig = (newConfig) => {
 
 // Fetch config.js on server and merge with default config
 fetch('//' + window.location.host + '/config.json')
-  .then(response => response.json())
-  .catch(err => console.error(err))
-  .then(res => {
-    if (res) {
+  .then(async response => {
+    if (response.ok) {
+      const res = await response.json()
       setConfig({ ...res });
       // Enable redux logger if devMode is true
       if(res.devMode) {
