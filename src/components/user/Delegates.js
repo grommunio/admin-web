@@ -34,6 +34,7 @@ const styles = theme => ({
   },
 });
 
+
 class Delegates extends PureComponent {
 
   state = {
@@ -62,9 +63,9 @@ class Delegates extends PureComponent {
     const permittedUsers = await fetchPermittedUsers(domainID, userID)
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
-      delegates: delegates?.data || [],
-      permittedUsers: permittedUsers?.data?.map(u => u.username) || [],
-      sendAsUsers: sendAsUsers?.data || [],
+      delegates: delegates?.data?.sort() || [],
+      permittedUsers: permittedUsers?.data?.map(u => u.username).sort() || [],
+      sendAsUsers: sendAsUsers?.data?.sort() || [],
     });
   }
 
@@ -76,7 +77,7 @@ class Delegates extends PureComponent {
 
   handleAutocomplete = (field, editField) => (e, newVal) => {
     this.setState({
-      [field]: newVal.map(r => r.username ? r.username : r),
+      [field]: newVal.map(r => r.username ? r.username : r).sort(),
       [editField]: true,
       delegatesACInput: '',
       sendAsACInput: '',
@@ -117,21 +118,22 @@ class Delegates extends PureComponent {
   render() {
     const { classes, t, Users, userID, history, disabled } = this.props;
     const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = this.state;
-    const defaultTfProps = {
+    const defaultTfProps = field => ({
       multiple: true,
       filterAttribute: 'username',
       className: classes.input,
       options: Users.filter(u => u.ID !== userID) || [],
+      getOptionDisabled: option => this.state[field].includes(option.username),
       getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
       placeholder: t("Search users") + "...",
-    }
+    });
     return (
       <>
         <FormControl className={classes.form}>
           <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
           <FormControl className={classes.input}>
             <MagnitudeAutocomplete
-              {...defaultTfProps}
+              {...defaultTfProps("delegates")}
               value={delegates || []}
               inputValue={delegatesACInput}
               onChange={this.handleAutocomplete('delegates', 'dEdited')}
@@ -139,7 +141,7 @@ class Delegates extends PureComponent {
               label={t('Delegates')}
             />
             <MagnitudeAutocomplete
-              {...defaultTfProps}
+              {...defaultTfProps("sendAsUsers")}
               value={sendAsUsers || []}
               inputValue={sendAsACInput}
               onChange={this.handleAutocomplete('sendAsUsers', 'sEdited')}
@@ -147,7 +149,7 @@ class Delegates extends PureComponent {
               label={t('Send as')}
             />
             <MagnitudeAutocomplete
-              {...defaultTfProps}
+              {...defaultTfProps("permittedUsers")}
               value={permittedUsers || []}
               inputValue={puACInput}
               onChange={this.handleAutocomplete('permittedUsers', 'puEdited')}
