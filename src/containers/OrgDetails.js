@@ -410,6 +410,7 @@ class OrgDetails extends PureComponent {
               value={domains || []}
               filterAttribute={'domainname'}
               onChange={this.handleAutocomplete('domains')}
+              isOptionEqualToValue={(option, value) => option.ID === value.ID}
               inputValue={autocompleteInput}
               onInputChange={this.handleACInput}
               className={classes.input} 

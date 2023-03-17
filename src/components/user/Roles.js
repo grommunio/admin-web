@@ -28,6 +28,7 @@ class RolesTab extends PureComponent {
 
   render() {
     const { classes, t, roles, Roles, handleAutocomplete } = this.props;
+    console.log(roles);
     return (
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
@@ -38,6 +39,7 @@ class RolesTab extends PureComponent {
             value={roles || []}
             filterAttribute={'name'}
             getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
+            getOptionDisabled={option => roles.includes(option.ID)}
             onChange={handleAutocomplete('roles')}
             className={classes.input} 
             options={Roles || []}

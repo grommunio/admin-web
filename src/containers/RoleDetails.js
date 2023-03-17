@@ -252,6 +252,7 @@ class RoleDetails extends PureComponent {
               options={Users || []}
               label={t('Users')}
               placeholder={t("Search users") + "..."}
+              isOptionEqualToValue={(option, value) => option.ID === value.ID}
             />
             {(permissions || []).map((permission, idx) =>
               <div key={idx} className={classes.row}>

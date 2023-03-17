@@ -118,22 +118,22 @@ class Delegates extends PureComponent {
   render() {
     const { classes, t, Users, userID, history, disabled } = this.props;
     const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = this.state;
-    const defaultTfProps = field => ({
+    const defaultTfProps = {
       multiple: true,
       filterAttribute: 'username',
       className: classes.input,
       options: Users.filter(u => u.ID !== userID) || [],
-      getOptionDisabled: option => this.state[field].includes(option.username),
+      isOptionEqualToValue: (option, value) => option.username === value,
       getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
       placeholder: t("Search users") + "...",
-    });
+    };
     return (
       <>
         <FormControl className={classes.form}>
           <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
           <FormControl className={classes.input}>
             <MagnitudeAutocomplete
-              {...defaultTfProps("delegates")}
+              {...defaultTfProps}
               value={delegates || []}
               inputValue={delegatesACInput}
               onChange={this.handleAutocomplete('delegates', 'dEdited')}
@@ -141,7 +141,7 @@ class Delegates extends PureComponent {
               label={t('Delegates')}
             />
             <MagnitudeAutocomplete
-              {...defaultTfProps("sendAsUsers")}
+              {...defaultTfProps}
               value={sendAsUsers || []}
               inputValue={sendAsACInput}
               onChange={this.handleAutocomplete('sendAsUsers', 'sEdited')}
@@ -149,7 +149,7 @@ class Delegates extends PureComponent {
               label={t('Send as')}
             />
             <MagnitudeAutocomplete
-              {...defaultTfProps("permittedUsers")}
+              {...defaultTfProps}
               value={permittedUsers || []}
               inputValue={puACInput}
               onChange={this.handleAutocomplete('permittedUsers', 'puEdited')}

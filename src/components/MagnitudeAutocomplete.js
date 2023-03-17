@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
 const MagnitudeAutocomplete = props => {
   const { t, className, value, filterAttribute, onChange, options, label, getOptionLabel,
     inputValue, onInputChange, freeSolo, multiple, calculateMagnitude, placeholder, renderOption,
-    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled } = props;
+    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue } = props;
   const magnitude = calculateMagnitude === false ? 0 : Math.round(Math.log10(options.length) - 2);
 
   return <Autocomplete
@@ -41,6 +41,7 @@ const MagnitudeAutocomplete = props => {
     autoHighlight
     disabled={disabled || false}
     getOptionDisabled={getOptionDisabled}
+    isOptionEqualToValue={isOptionEqualToValue}
   />;
 };
 
@@ -65,6 +66,7 @@ MagnitudeAutocomplete.propTypes = {
   variant: PropTypes.string,
   fullWidth: PropTypes.bool,
   disabled: PropTypes.bool,
+  isOptionEqualToValue: PropTypes.func,
   getOptionDisabled: PropTypes.func,
 };
 

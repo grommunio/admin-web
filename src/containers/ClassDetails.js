@@ -302,6 +302,7 @@ class ClassDetails extends PureComponent {
               onChange={this.handleMagnitueAutocomplete('parentClasses')}
               className={classes.input} 
               options={_classes || []}
+              isOptionEqualToValue={(option, value) => value.ID === option.ID}
               onInputChange={this.handleAutocompleteInput}
               label={t("Parent groups")}
               placeholder={t("Search groups") + "..."}
