@@ -179,7 +179,6 @@ class OrgDetails extends PureComponent {
     const users = config?.users || {};
     this.setState({
       loading: false,
-      overridingLdap: Object.keys(ldap?.data || {}).length > 0, // Org ldap config received => Show ldap form
       available,
       baseDn: config.baseDn || '',
       disabled: config.disabled === undefined ? true : config.disabled,
@@ -448,7 +447,7 @@ class OrgDetails extends PureComponent {
             />
           }
           label={<span>
-            {t('Override global LDAP config')}
+            {t('Show LDAP config')}
             <Tooltip
               className={classes.tooltip}
               title={t("Specify explicit LDAP configuration for this organisation") + " (" +
