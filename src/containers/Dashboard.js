@@ -193,7 +193,7 @@ class Dashboard extends Component {
       <div className={classes.root}>
         <TopBar />
         <div className={classes.toolbar} />
-        {config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
+        {!!config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
           {t("Mail filter statistics")}
           <IconButton
             size="small"
@@ -203,13 +203,13 @@ class Dashboard extends Component {
             <HelpOutline fontSize="small"/>
           </IconButton>
         </Typography>}
-        {config?.loadAntispamData && <div className={classes.subtitle}>
+        {!!config?.loadAntispamData && <div className={classes.subtitle}>
           <Typography variant="caption" >
             {t("mailfilter_sub")}
           </Typography>
         </div>}
         <div className={classes.dashboardLayout}>
-          {config?.loadAntispamData && <div className={classes.antispam}>
+          {!!config?.loadAntispamData && <div className={classes.antispam}>
             <AntispamStatistics data={statistics}/>
           </div>}
           <div className={classes.services}>
