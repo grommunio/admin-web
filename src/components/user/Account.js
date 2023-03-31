@@ -83,9 +83,9 @@ class Account extends PureComponent {
   ]
 
   hiddenFrom = [
-    { ID: 1, name: 'GAL', value: 0x01 },
-    { ID: 2, name: 'AL', value: 0x02 },
-    { ID: 3, name: 'Delegates', value: 0x04 }
+    { ID: 1, name: 'Global Address List', value: 0x01 },
+    { ID: 2, name: 'Address/Member lists', value: 0x02 },
+    { ID: 3, name: 'Delegate lists', value: 0x04 }
   ]
 
   formatMSE(rawMSE) {
@@ -355,13 +355,13 @@ class Account extends PureComponent {
           </Grid>
         </div>
         <FormControl className={classes.input} fullWidth>
-          <InputLabel id="demo-multiple-name-label">{t("Hide from")}</InputLabel>
+          <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
           <Select
             multiple
             // Transform bitmask to array elements
             value={attributehidden_gromox ? [attributehidden_gromox & 1, attributehidden_gromox & 2, attributehidden_gromox & 4] : []}
             onChange={handleMultiselectChange('attributehidden_gromox')}
-            input={<OutlinedInput label={t("Hide from")}/>}
+            input={<OutlinedInput label={t("Hide user from…")}/>}
           >
             {this.hiddenFrom.map(({ ID, name, value }) => (
               <MenuItem
