@@ -103,7 +103,6 @@ class ClassDetails extends PureComponent {
         ..._class,
         //parentClasses: _class.parentClasses.map(pc => pc.ID),
         filters: _class.filters || [],
-        members: _class.members.toString(),
         children: _class.children || [],
       } : {},
     });
@@ -119,21 +118,10 @@ class ClassDetails extends PureComponent {
     });
   }
 
-  handleMemberInput = event => {
-    this.setState({
-      _class: {
-        ...this.state._class,
-        members: event.target.value,
-        filters: [],
-      },
-      unsaved: true,
-    });
-  }
-
   handleFilterInput = (ANDidx, ORidx, field) => e => {
     const filters = [...this.state._class.filters];
     filters[ANDidx][ORidx][field] = e.target.value;
-    this.setState({ _class: {...this.state._class, filters, members: '' } });
+    this.setState({ _class: {...this.state._class, filters } });
   }
 
   handleAutocomplete = (ANDidx, ORidx, field) => (e, newVal) => {
@@ -172,8 +160,6 @@ class ClassDetails extends PureComponent {
     const { _class } = this.state;
     edit(domain.ID, {
       ..._class,
-      members: _class.members ?
-        _class.members.replace(/\s/g, "").split(',') : [], // Make array from members separated by commas
       children: undefined,
       parentClasses: _class.parentClasses.map(pc => pc.ID),
     })
@@ -207,7 +193,6 @@ class ClassDetails extends PureComponent {
         ..._class,
         parentClasses: _class.parentClasses.map(pc => pc.ID),
         filters: _class.filters || [],
-        members: _class.members.toString(),
         children: _class.children || [],
       } : {},
     });
@@ -230,7 +215,6 @@ class ClassDetails extends PureComponent {
         ..._class,
         parentClasses: _class.parentClasses.map(pc => pc.ID),
         filters: _class.filters || [],
-        members: _class.members.toString(),
         children: _class.children || [],
       } : {},
     });
@@ -256,7 +240,7 @@ class ClassDetails extends PureComponent {
     const { classes, t, domain, _classes } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { _class, autocompleteInput, snackbar, stack, loading } = this.state;
-    const { classname, parentClasses, members, filters, children } = _class;
+    const { classname, parentClasses, filters, children } = _class;
     return (
       <ViewWrapper
         topbarTitle={t('Groups')}
@@ -308,13 +292,6 @@ class ClassDetails extends PureComponent {
               placeholder={t("Search groups") + "..."}
               multiple
               autoSelect
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Members (separate by comma)")} 
-              fullWidth 
-              value={members || ''}
-              onChange={this.handleMemberInput}
             />
           </FormControl>
           <div>

@@ -50,7 +50,6 @@ class AddClass extends PureComponent {
   state = {
     classname: '',
     parentClasses: [],
-    members: '',
     filters: [],
     loading: false,
     autocompleteInput: '',
@@ -77,21 +76,13 @@ class AddClass extends PureComponent {
     });
   }
 
-  handleMemberInput = event => {
-    this.setState({
-      members: event.target.value,
-      filters: [],
-    });
-  }
-
   handleAdd = () => {
     const { add, domain } = this.props;
-    const { classname, parentClasses, members, filters } = this.state;
+    const { classname, parentClasses, filters } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       classname,
       parentClasses: parentClasses.map(c => c.ID),
-      members: members ? members.replace(/\s/g, "").split(',') : [], // Make array from members separated by commas
       filters,
       autocompleteInput: undefined,
     })
@@ -99,7 +90,6 @@ class AddClass extends PureComponent {
         this.setState({
           classname: '',
           parentClasses: [],
-          members: '',
           filters: [],
           loading: false,
           autocompleteInput: '',
@@ -124,7 +114,7 @@ class AddClass extends PureComponent {
   handleFilterInput = (ANDidx, ORidx, field) => e => {
     const filters = [...this.state.filters];
     filters[ANDidx][ORidx][field] = e.target.value;
-    this.setState({ filters, members: '' });
+    this.setState({ filters });
   }
 
   handleAutocomplete = (ANDidx, ORidx, field) => (e, newVal) => {
@@ -167,7 +157,7 @@ class AddClass extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, _classes } = this.props;
-    const { classname, parentClasses, members, filters, loading, autocompleteInput } = this.state;
+    const { classname, parentClasses, filters, loading, autocompleteInput } = this.state;
 
     return (
       <Dialog
@@ -200,13 +190,6 @@ class AddClass extends PureComponent {
               onInputChange={this.handleInput('autocompleteInput')}
               label={t("Parent groups")}
               multiple
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Members (separate by comma)")} 
-              fullWidth 
-              value={members || ''}
-              onChange={this.handleMemberInput}
             />
           </FormControl>
           <div>
