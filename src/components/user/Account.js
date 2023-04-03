@@ -92,7 +92,7 @@ class Account extends PureComponent {
     let exp = Math.log(rawMSE) / Math.log(1024) | 0;
     let res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
 
-    return res + '' + (exp === 0 ? 'bytes' : 'KMGTPEZY'[exp - 1] + 'B');
+    return res + '' + (exp === 0 ? 'bytes' : 'kMGTPEZYRQ'[exp - 1] + 'B');
   }
 
   calculateGraph() {
