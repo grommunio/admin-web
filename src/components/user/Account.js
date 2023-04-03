@@ -85,7 +85,7 @@ class Account extends PureComponent {
   hiddenFrom = [
     { ID: 1, name: 'Global Address List', value: 0x01 },
     { ID: 2, name: 'Address/Member lists', value: 0x02 },
-    { ID: 3, name: 'Delegate lists', value: 0x04 }
+    { ID: 3, name: 'Delegate lists', value: 0x04 },
     { ID: 4, name: 'Ambiguous Name Resolution', value: 0x08 }
   ]
 
