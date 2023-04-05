@@ -411,9 +411,9 @@ export function removeUserSync(domainID, userID) {
   };
 }
 
-export function remoteWipeEngage(domainID, userID, deviceId, password) {
+export function remoteWipeEngage(domainID, userID, deviceId, request) {
   return async () => {
-    return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', { password });
+    return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', request);
   };
 }
 

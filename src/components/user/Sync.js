@@ -96,19 +96,20 @@ class Sync extends PureComponent {
     switch(status) {
     case 0: return 'Unknown';
     case 1: return 'OK';
-    case 2: return 'Pending';
+    case 2: return 'Wipe pending';
     case 4: return 'Requested';
     case 8: return 'Wiped';
+    case 16: return 'Account-only wipe pending'
     default: return 'Unknown';
     }
   }
 
-  handleRemoteWipeConfirm = password => {
+  handleRemoteWipeConfirm = request => {
     const { wipeItOffTheFaceOfEarth, domainID, userID } = this.props;
     const { wipingID } = this.state;
 
-    wipeItOffTheFaceOfEarth(domainID, userID, wipingID, password)
-      .then(() => this.updateWipeStatus(2, wipingID))
+    wipeItOffTheFaceOfEarth(domainID, userID, wipingID, request)
+      .then(() => this.updateWipeStatus(request.status, wipingID))
       .catch(snackbar => this.setState({ snackbar }));
   }
   
@@ -123,7 +124,7 @@ class Sync extends PureComponent {
     const { sortedDevices } = this.state;
     const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
     const copy = [...sortedDevices];
-    copy[idx].wipeStatus = status;
+    if(idx !== -1) copy[idx].wipeStatus = status;
     this.setState({
       snackbar: "Success!",
       sortedDevices: copy,
@@ -217,7 +218,7 @@ class Sync extends PureComponent {
                 <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
                 <TableCell>{this.getWipeStatus(obj.wipeStatus)}</TableCell>
                 <TableCell style={{ display: 'flex' }}>
-                  {obj.wipeStatus >= 2 && <Tooltip title={t("Cancel remote wipe")} placement="top">
+                  {[2, 4, 16].includes(obj.wipeStatus) && <Tooltip title={t("Cancel remote wipe")} placement="top">
                     <IconButton onClick={this.handleRemoteWipeCancel(obj.deviceid)}>
                       <DoNotDisturbOn color="secondary"/>
                     </IconButton>
@@ -283,8 +284,8 @@ const mapDispatchToProps = dispatch => {
       .catch(err => Promise.reject(err)),
     deleteStates: async (domainID, userID) => await dispatch(deleteUserSync(domainID, userID))
       .catch(err => Promise.reject(err)),
-    wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, password) =>
-      await dispatch(engageRemoteWipe(domainID, userID, deviceID, password))
+    wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, request) =>
+      await dispatch(engageRemoteWipe(domainID, userID, deviceID, request))
         .catch(err => Promise.reject(err)),
     resync: async (domainID, userID, deviceID) =>
       await dispatch(engageResync(domainID, userID, deviceID))
