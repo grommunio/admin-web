@@ -5,15 +5,15 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, MenuItem } from '@mui/material';
+  TextField, MenuItem, Chip, Tooltip } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { HelpOutline } from '@mui/icons-material';
+import { Dns, HelpOutline } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddServer from '../components/Dialogs/AddServer';
-import { deleteServerData, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
+import { deleteServerData, fetchServerDnsCheck, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
@@ -29,19 +29,30 @@ const styles = theme => ({
   policy: {
     margin: theme.spacing(1, 2),
   },
+  chipLabel: {
+    paddingRight: 0,
+  },
+  chip: {
+    marginRight: 8,
+  },
 });
 
 class Servers extends PureComponent {
 
   state = {
     snackbar: '',
+    dnsLoading: true,
   }
 
-  componentDidMount() {
-    this.props.fetchPolicy()
+  async componentDidMount() {
+    const { fetchPolicy, fetchDns } = this.props;
+    fetchPolicy()
       .catch(msg => {
         this.setState({ snackbar: msg || 'Unknown error' });
       });
+    fetchDns()
+      .then(() => this.setState({ dnsLoading: false }))
+      .catch(msg => this.setState({ snackbar: msg || 'Unknown error', dnsLoading: false }));
   }
 
   columns = [
@@ -75,7 +86,9 @@ class Servers extends PureComponent {
       handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
     const { loading, order, orderBy, match, adding, snackbar, deleting } = tableState;
+    const { dnsLoading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+    const { host, ext } = servers.DnsCheck;
 
     return (
       <TableViewContainer
@@ -150,17 +163,45 @@ class Servers extends PureComponent {
               </TableRow>
             </TableHead>
             <TableBody>
-              {servers.Servers.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={handleEdit('/servers/' + obj.ID)}>
-                  <TableCell>{obj.hostname}</TableCell>
-                  <TableCell>{obj.extname}</TableCell>
+              {servers.Servers.map((obj, idx) => {
+                const hostnameResolved = !!host[obj.hostname];
+                const extResolved = !!ext[obj.extname];
+                return <TableRow key={idx} hover onClick={handleEdit('/servers/' + obj.ID)}>
+                  <TableCell>
+                    <Tooltip title={t("Hostname check") + " " + (hostnameResolved ? t("passed") : t("failed"))}>
+                      <Chip
+                        size='small'
+                        color={dnsLoading ? "secondary" : hostnameResolved ? "success" : "error"}
+                        icon={<Dns />}
+                        classes={{
+                          root: classes.chip,
+                          label: classes.chipLabel,
+                        }}
+                      />
+                    </Tooltip>
+                    {obj.hostname}
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title={t("Hostname check") + " " + (extResolved ? t("passed") : t("failed"))}>
+                      <Chip
+                        size='small'
+                        color={dnsLoading ? "secondary" : extResolved ? "success" : "error"}
+                        icon={<Dns />}
+                        classes={{
+                          root: classes.chip,
+                          label: classes.chipLabel,
+                        }}
+                      />
+                    </Tooltip>
+                    {obj.extname}
+                  </TableCell>
                   <TableCell align="right">
                     {writable && <IconButton onClick={handleDelete(obj)} size="large">
                       <Delete color="error"/>
                     </IconButton>}
                   </TableCell>
-                </TableRow>
-              )}
+                </TableRow>;
+              })}
             </TableBody>
           </Table>
           {(servers.Servers.length < servers.count) && <Grid container justifyContent="center">
@@ -191,6 +232,7 @@ Servers.contextType = CapabilityContext;
 Servers.propTypes = {
   servers: PropTypes.object.isRequired,
   fetchPolicy: PropTypes.func.isRequired,
+  fetchDns: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   setPolicy: PropTypes.func.isRequired,
   ...defaultTableProptypes,
@@ -208,6 +250,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchServersData(params)).catch(msg => Promise.reject(msg)),
     fetchPolicy: async () =>
       await dispatch(fetchServerPolicy()).catch(msg => Promise.reject(msg)),
+    fetchDns: async () =>
+      await dispatch(fetchServerDnsCheck()).catch(msg => Promise.reject(msg)),
     delete: async id =>
       await dispatch(deleteServerData(id)).catch(msg => Promise.reject(msg)),
     setPolicy: async data => 

@@ -7,11 +7,16 @@ import {
   SERVERS_DATA_DELETE,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
+  SERVER_DNS_CHECK,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
 const defaultState = {
   Servers: [],
+  DnsCheck: {
+    host: {},
+    ext: {},
+  },
   policy: "round-robin",
   count: 0,
 };
@@ -43,6 +48,12 @@ function serversReducer(state = defaultState, action) {
     return {
       ...state,
       policy: action.data.data?.policy || 'round-robin',
+    };
+
+  case SERVER_DNS_CHECK:
+    return {
+      ...state,
+      DnsCheck: {...state.DnsCheck, ...(action.data || {}) },
     };
 
   case AUTH_AUTHENTICATED:

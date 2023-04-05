@@ -5,13 +5,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLabel,
-  Checkbox, Select, MenuItem } from '@mui/material';
+  Checkbox, Select, MenuItem, Divider } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
 import { PureComponent } from 'react';
-import { deleteDomainData } from '../actions/domains';
+import { deleteDomainData, fetchDnsCheckData } from '../actions/domains';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import { CapabilityContext } from '../CapabilityContext';
@@ -19,6 +19,7 @@ import { editCreateParamsData, fetchCreateParamsData } from '../actions/defaults
 import { red, yellow } from '@mui/material/colors';
 import { getStoreLangs } from '../actions/users';
 import { formatCreateParams } from '../utils';
+import DnsHealth from '../components/DnsHealth';
 
 const styles = theme => ({
   root: {
@@ -48,7 +49,7 @@ const styles = theme => ({
     padding: '8px 0',
   },
   container: {
-    margin: theme.spacing(2, 2, 2, 2),
+    padding: theme.spacing(2),
   },
   firstRow: {
     display: 'flex',
@@ -59,11 +60,9 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     justifyContent: 'flex-end',
-    marginRight: 28,
   },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
+  defaultsContainer: {
+    padding: theme.spacing(0, 2),
   },
   input: {
     margin: theme.spacing(0, 0, 2, 0),
@@ -95,6 +94,9 @@ const styles = theme => ({
   buttonGrid: {
     margin: theme.spacing(2, 0, 0, 0),
   },
+  divider: {
+    margin: theme.spacing(2, 0),
+  },
 });
 
 class DomainMenu extends PureComponent {
@@ -107,9 +109,11 @@ class DomainMenu extends PureComponent {
       prohibitsendquota: 1,
     },
     createParams: {},
+    dnsCheck: {}, // TODO: Think about moving this into the store
     langs: [],
     snackbar: '',
     loading: true,
+    dnsLoading: true,
   }
 
   async componentDidMount() {
@@ -260,43 +264,48 @@ class DomainMenu extends PureComponent {
               <Typography variant='h6' className={classes.description}>{t('Telephone')}:</Typography>
               {domain.tel}
             </div>
+            <Divider className={classes.divider}/>
+            <div>
+              <Typography variant='h6'>{t('DNS Health')}</Typography>
+              <DnsHealth domain={domain}/>
+            </div>
+            <Divider className={classes.divider}/>
           </Grid>
           <div className={classes.defaultsContainer}>
-            <FormControl className={classes.form}>
-              <Typography
-                color="primary"
-                variant="h6"
-                className={classes.subheader}
-              >
-                {t('Default user parameters')}
-              </Typography>
-              <TextField
-                select
-                className={classes.input}
-                label={t("Language")}
-                fullWidth
-                value={lang || ''}
-                onChange={this.handleInput('lang')}
-              >
-                {langs.map((l) => (
-                  <MenuItem key={l.code} value={l.code}>
-                    {l.code + ": " + l.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Grid container className={classes.input}>
-                <TextField 
-                  className={classes.flexInput}
-                  label={
-                    <div className={classes.labelContainer}>
-                      {t("Send quota limit")}
-                      <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
-                    </div>
-                  }
-                  value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
-                  onChange={this.handleInput('prohibitsendquota')}
-                  InputProps={{
-                    endAdornment:
+            <Typography
+              color="primary"
+              variant="h6"
+              className={classes.subheader}
+            >
+              {t('Default user parameters')}
+            </Typography>
+            <TextField
+              select
+              className={classes.input}
+              label={t("Language")}
+              fullWidth
+              value={lang || ''}
+              onChange={this.handleInput('lang')}
+            >
+              {langs.map((l) => (
+                <MenuItem key={l.code} value={l.code}>
+                  {l.code + ": " + l.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Grid container className={classes.input}>
+              <TextField 
+                className={classes.flexInput}
+                label={
+                  <div className={classes.labelContainer}>
+                    {t("Send quota limit")}
+                    <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
+                  </div>
+                }
+                value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
+                onChange={this.handleInput('prohibitsendquota')}
+                InputProps={{
+                  endAdornment:
                       <FormControl className={classes.adornment}>
                         <Select
                           onChange={this.handleUnitChange('prohibitsendquota')}
@@ -309,20 +318,20 @@ class DomainMenu extends PureComponent {
                           <MenuItem value={3}>TB</MenuItem>
                         </Select>
                       </FormControl>,
-                  }}
-                />
-                <TextField 
-                  className={classes.flexInput}
-                  label={
-                    <div className={classes.labelContainer}>
-                      {t("Receive quota limit")}
-                      <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
-                    </div>
-                  }
-                  value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
-                  onChange={this.handleInput('prohibitreceivequota')}
-                  InputProps={{
-                    endAdornment:
+                }}
+              />
+              <TextField 
+                className={classes.flexInput}
+                label={
+                  <div className={classes.labelContainer}>
+                    {t("Receive quota limit")}
+                    <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
+                  </div>
+                }
+                value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
+                onChange={this.handleInput('prohibitreceivequota')}
+                InputProps={{
+                  endAdornment:
                       <FormControl className={classes.adornment}>
                         <Select
                           onChange={this.handleUnitChange('prohibitreceivequota')}
@@ -335,21 +344,21 @@ class DomainMenu extends PureComponent {
                           <MenuItem value={3}>TB</MenuItem>
                         </Select>
                       </FormControl>,
-                  }}
-                />
-                <TextField 
-                  className={classes.flexInput}
-                  style={{ marginRight: 0 }}
-                  label={
-                    <div className={classes.labelContainer}>
-                      {t("Storage quota limit")}
-                      <div style={{ width: 6, height: 6, backgroundColor: '#ddd', marginLeft: 4 }}></div>
-                    </div>
-                  }
-                  value={storagequotalimit !== undefined ? storagequotalimit : ''}
-                  onChange={this.handleInput('storagequotalimit')}
-                  InputProps={{
-                    endAdornment:
+                }}
+              />
+              <TextField 
+                className={classes.flexInput}
+                style={{ marginRight: 0 }}
+                label={
+                  <div className={classes.labelContainer}>
+                    {t("Storage quota limit")}
+                    <div style={{ width: 6, height: 6, backgroundColor: '#ddd', marginLeft: 4 }}></div>
+                  </div>
+                }
+                value={storagequotalimit !== undefined ? storagequotalimit : ''}
+                onChange={this.handleInput('storagequotalimit')}
+                InputProps={{
+                  endAdornment:
                       <FormControl className={classes.adornment}>
                         <Select
                           onChange={this.handleUnitChange('storagequotalimit')}
@@ -362,84 +371,83 @@ class DomainMenu extends PureComponent {
                           <MenuItem value={3}>TB</MenuItem>
                         </Select>
                       </FormControl>,
-                  }}
-                />
-              </Grid>
-              <Grid container className={classes.input}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={smtp || false }
-                      onChange={this.handleCheckbox('smtp')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={changePassword || false }
-                      onChange={this.handleCheckbox('changePassword')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow password changes')}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
+                }}
+              />
+            </Grid>
+            <Grid container className={classes.input}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={smtp || false }
+                    onChange={this.handleCheckbox('smtp')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={changePassword || false }
+                    onChange={this.handleCheckbox('changePassword')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow password changes')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
                   checked={pop3_imap || false /*eslint-disable-line*/}
-                      onChange={this.handleCheckbox('pop3_imap')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow POP3/IMAP logins')}
-                />
-              </Grid>
-              <Grid container className={classes.input}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={privChat || false }
-                      onChange={this.handleCheckbox('privChat')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow Chat')}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={privVideo || false }
-                      onChange={this.handleCheckbox('privVideo')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow Meet')}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={privFiles || false }
-                      onChange={this.handleCheckbox('privFiles')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow Files')}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={privArchive || false }
-                      onChange={this.handleCheckbox('privArchive')}
-                      color="primary"
-                    />
-                  }
-                  label={t('Allow Archive')}
-                />
-              </Grid>
-            </FormControl>
+                    onChange={this.handleCheckbox('pop3_imap')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow POP3/IMAP logins')}
+              />
+            </Grid>
+            <Grid container className={classes.input}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privChat || false }
+                    onChange={this.handleCheckbox('privChat')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Chat')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privVideo || false }
+                    onChange={this.handleCheckbox('privVideo')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Meet')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privFiles || false }
+                    onChange={this.handleCheckbox('privFiles')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Files')}
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={privArchive || false }
+                    onChange={this.handleCheckbox('privArchive')}
+                    color="primary"
+                  />
+                }
+                label={t('Allow Archive')}
+              />
+            </Grid>
           </div>
           <Grid container className={classes.buttonGrid}>
             <Button
@@ -477,6 +485,7 @@ DomainMenu.propTypes = {
   delete: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  checkDns: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   storeLangs: PropTypes.func.isRequired,
 };
@@ -500,6 +509,7 @@ const mapDispatchToProps = (dispatch) => {
     fetch: async (domainID, params) => await dispatch(fetchCreateParamsData(domainID, params))
       .catch(message => Promise.reject(message)),
     storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
+    checkDns: async domainID => await dispatch(fetchDnsCheckData(domainID)).catch(msg => Promise.reject(msg)),
   };
 };
 

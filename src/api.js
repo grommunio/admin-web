@@ -295,6 +295,12 @@ export async function changeDomainPassword(id, newPw) {
   } catch(err) { console.error(err); }
 }
 
+export function dns(domainId) {
+  return async () => {
+    return await get('/domains/' + domainId + '/dnsCheck');
+  };
+}
+
 /*
   USERS
 */
@@ -783,6 +789,12 @@ export function serversPolicy() {
 export function editServerPolicy(data) {
   return async () => {
     return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
+  };
+}
+
+export function serverDnsCheck() {
+  return async () => {
+    return await get('/system/servers/dnsCheck');
   };
 }
 

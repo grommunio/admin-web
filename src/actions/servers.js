@@ -6,8 +6,9 @@ import {
   SERVERS_DATA_DELETE,
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
+  SERVER_DNS_CHECK,
 } from '../actions/types';
-import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy } from '../api';
+import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy, serverDnsCheck } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 
@@ -41,6 +42,10 @@ export function deleteServerData(id) {
 
 export function fetchServerPolicy() {
   return defaultListHandler(serversPolicy, SERVERS_POLICY_RECEIVED);
+}
+
+export function fetchServerDnsCheck() {
+  return defaultListHandler(serverDnsCheck, SERVER_DNS_CHECK);
 }
 
 export function patchServerPolicy(data) {

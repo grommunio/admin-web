@@ -95,7 +95,7 @@ class TasQ extends Component {
           <Chip
             className={classes.chip}
             label={t(taskq.running ? "Running" : "Not running")}
-            color={taskq.running ? "success" : "secondary"}
+            color={taskq.running ? "success" : "error"}
           />
           <Chip
             className={classes.chip}
