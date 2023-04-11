@@ -82,6 +82,7 @@ class Sync extends PureComponent {
     { label: "Command", value: "command", type: 'int' },
     { label: "Time", value: 'update', type: 'int' },
     { label: "Device ID", value: "devid" },
+    { label: "EAS", value: "asversion" },
     { label: "Info", value: "addinfo" },
   ];
   
@@ -279,6 +280,7 @@ class Sync extends PureComponent {
                       <TableCell className={classes.cell}>{t(getStringFromCommand(obj.command))}</TableCell>
                       <TableCell className={classes.cell}>{timePast}</TableCell>
                       <TableCell className={classes.cell}>{obj.devid || ''}</TableCell>
+                      <TableCell className={classes.cell}>{obj.asversion || ''}</TableCell>
                       <TableCell className={classes.cell}>{obj.addinfo || ''}</TableCell>
                       <TableCell className={classes.cell} padding="checkbox">
                         {obj.push ? <CheckCircleOutlined /> : <HighlightOffOutlined />}

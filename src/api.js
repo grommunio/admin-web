@@ -295,6 +295,12 @@ export async function changeDomainPassword(id, newPw) {
   } catch(err) { console.error(err); }
 }
 
+export function dns(domainId) {
+  return async () => {
+    return await get('/domains/' + domainId + '/dnsCheck');
+  };
+}
+
 /*
   USERS
 */
@@ -405,9 +411,9 @@ export function removeUserSync(domainID, userID) {
   };
 }
 
-export function remoteWipeEngage(domainID, userID, deviceId, password) {
+export function remoteWipeEngage(domainID, userID, deviceId, request) {
   return async () => {
-    return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', { password });
+    return await post('/domains/' + domainID + '/users/'+ userID + '/sync/' + deviceId + '/wipe', request);
   };
 }
 
@@ -783,6 +789,12 @@ export function serversPolicy() {
 export function editServerPolicy(data) {
   return async () => {
     return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
+  };
+}
+
+export function serverDnsCheck() {
+  return async () => {
+    return await get('/system/servers/dnsCheck');
   };
 }
 

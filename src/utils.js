@@ -80,6 +80,14 @@ export function addItem(arr, item) {
 }
 
 
+export function getChipColorFromScore(score) {
+  if(score >= 100) return "success";
+  if(score >= 80) return "info";
+  if(score >= 50) return "warning";
+  return "error";
+}
+
+
 /**
  * Returns the string after the last '/' in the current URL
  * 

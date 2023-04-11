@@ -1,6 +1,5 @@
 import { orange } from "@mui/material/colors";
 import grey from "../colors/grey";
-import red from "../colors/red";
 import defaultStyles from "./defaultStyles";
 
 const orangeTheme = mode => ({
@@ -24,8 +23,7 @@ const orangeTheme = mode => ({
     },
     MuiChip: {
       styleOverrides: {
-        colorSecondary: {
-          backgroundColor: red['500'],
+        colorError: {
           color: '#000',
         },
         colorPrimary: {
