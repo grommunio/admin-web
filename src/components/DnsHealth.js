@@ -19,6 +19,9 @@ const styles = {
     color: 'black',
     marginRight: 8,
     marginTop: 4,
+  },
+  help: {
+    color: "black !important",
   }
 }
 
@@ -311,7 +314,9 @@ const DNSChip = withTranslation()(withStyles(styles)(({ classes, t, loading, lab
     label={label}
     icon={loading ? <CircularProgress size={16}/> : icon}
     color={loading ? "secondary" : color}
-    deleteIcon={<Tooltip title={t("Details")} placement="top"><HelpOutline /></Tooltip>}
+    deleteIcon={<Tooltip title={t("Details")} placement="top">
+      <HelpOutline color="inherit" className={classes.help}/>
+    </Tooltip>}
     onDelete={onInfo}
   />
 }));
