@@ -30,6 +30,10 @@ const styles = {
   chipIcon: {
     marginRight: "-2px !important",
   },
+  cp: {
+    marginRight: "0px !important",
+    marginLeft: "7px !important",  // This is fine-tuned
+  },
 }
 
 function getEquationValuesFromRequirementTypes(typeA, typeB) {
@@ -81,14 +85,18 @@ class DnsHealth extends PureComponent {
     const { mxRecords, externalIp, localIp } = dnsCheck;
     if(!mxRecords) return errorColor;
 
+    const { externalDNS, internalDNS, reverseLookup, mxDomain } = mxRecords;
     //TODO: Check reverse
-    const score = scoreDNSResult(mxRecords.externalDNS, mxRecords.internalDNS, "req", "rec");
+    const score = scoreDNSResult(externalDNS, internalDNS, "req", "rec");
+
+    const reverseLookupScore = mxDomain === reverseLookup ? score : 70; // Warning, if reverse lookup fails
+
     const matchScore = scoreDNSResult(
-      mxRecords.externalDNS === externalIp,
-      [localIp, externalIp].includes(mxRecords.internalDNS),
+      externalDNS === externalIp,
+      [localIp, externalIp].includes(internalDNS),
       "opt",
       "opt");
-    return getChipColorFromScore(Math.min(score, matchScore));
+    return getChipColorFromScore(Math.min(score, matchScore, reverseLookupScore));
   }
 
   getAutodiscoverColor() {
@@ -327,7 +335,7 @@ const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label,
     className={classes.chip}
     style={{ backgroundColor: loading ? "#969696" : color }}
     label={label}
-    icon={loading ? <CircularProgress size={16}/> : <Icon className={classes.chipIcon} />}
+    icon={loading ? <CircularProgress size={20} className={classes.cp}/> : <Icon className={classes.chipIcon} />}
     color={"info"}  // Necessary for icon color
     onClick={onInfo}
   />

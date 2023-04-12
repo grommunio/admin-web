@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
+import { ArrowForward } from '@mui/icons-material';
 
 
 const styles = theme => ({
@@ -12,9 +13,16 @@ const styles = theme => ({
   result: {
     marginBottom: 16,
   },
+  arrowChart: {
+    paddingTop: 8,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
 });
 
 function MXRecords({ classes, t, onClose, dnsCheck={} }) {
+  const { internalDNS = "", externalDNS = "", mxDomain = "", reverseLookup = "" } = dnsCheck.mxRecords || {};
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
       <DialogTitle>{t("MX Records")}</DialogTitle>
@@ -22,8 +30,25 @@ function MXRecords({ classes, t, onClose, dnsCheck={} }) {
         <Typography>{t("mx_expl")}</Typography>
         <Divider className={classes.divider}/>
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
-        <Typography>{t("Internal DNS")}: {dnsCheck.mxRecords?.internalDNS || t("Unresolvable")}</Typography>
-        <Typography>{t("External DNS")}: {dnsCheck.mxRecords?.externalDNS || t("Unresolvable")}</Typography>
+        <Typography>{t("Internal DNS")}: {internalDNS || t("Unresolvable")}</Typography>
+        <Typography>{t("External DNS")}: {externalDNS || t("Unresolvable")}</Typography>
+        <Divider className={classes.divider}/>
+        <div className={classes.arrowChart}>
+          <div>
+            <Typography>{t("MX Domain")}</Typography>
+            {mxDomain || t("Unresolvable")}
+          </div>
+          <ArrowForward />
+          <div>
+            <Typography>{t("Resolved IP")}</Typography>
+            {externalDNS || t("Unresolvable")}
+          </div>
+          <ArrowForward />
+          <div>
+            <Typography>{t("Reverse lookup")}</Typography>
+            {reverseLookup || t("Unresolvable")}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
