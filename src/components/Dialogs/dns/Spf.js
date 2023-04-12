@@ -22,7 +22,6 @@ function Spf({ classes, t, onClose, dnsCheck={} }) {
         <Typography>{t("spf_expl")}</Typography>
         <Divider className={classes.divider}/>
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
-        <Typography>{t("Internal DNS")}: {dnsCheck.txt?.internalDNS || t("Unresolvable")}</Typography>
         <Typography>{t("External DNS")}: {dnsCheck.txt?.externalDNS || t("Unresolvable")}</Typography>
       </DialogContent>
     </Dialog>

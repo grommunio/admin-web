@@ -148,8 +148,7 @@ class DnsHealth extends PureComponent {
     const { txt } = dnsCheck;
     if(!txt) return errorColor;
 
-    // TODO: Remove internal
-    const score = scoreDNSResult(txt.externalDNS, txt.internalDNS, "rec", "opt");
+    const score = scoreDNSResult(txt.externalDNS, true, "rec", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -158,8 +157,7 @@ class DnsHealth extends PureComponent {
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
-    // TODO: Remove internal
-    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "opt");
+    const score = scoreDNSResult(dkim.externalDNS, true, "rec", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -168,8 +166,7 @@ class DnsHealth extends PureComponent {
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
-    // TODO: Remove internal
-    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "opt");
+    const score = scoreDNSResult(dkim.externalDNS, true, "rec", "opt");
     return getChipColorFromScore(score);
   }
 

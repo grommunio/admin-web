@@ -22,7 +22,6 @@ function Dmarc({ classes, t, onClose, dnsCheck={} }) {
         <Typography>{t("dmarc_expl")}</Typography>
         <Divider className={classes.divider}/>
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
-        <Typography>{t("Internal DNS")}: {dnsCheck.dmarc?.internalDNS || t("Unresolvable")}</Typography>
         <Typography>{t("External DNS")}: {dnsCheck.dmarc?.externalDNS || t("Unresolvable")}</Typography>
       </DialogContent>
     </Dialog>
