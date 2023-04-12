@@ -12,6 +12,9 @@ const styles = theme => ({
   result: {
     marginBottom: 16,
   },
+  res: {
+    wordWrap: 'break-word',
+  }
 });
 
 function Dkim({ classes, t, onClose, dnsCheck={} }) {
@@ -22,8 +25,8 @@ function Dkim({ classes, t, onClose, dnsCheck={} }) {
         <Typography>{t("dkim_expl")}</Typography>
         <Divider className={classes.divider}/>
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
-        <Typography>{t("Internal DNS")}: {dnsCheck.dkim?.internalDNS || t("Unresolvable")}</Typography>
-        <Typography>{t("External DNS")}: {dnsCheck.dkim?.externalDNS || t("Unresolvable")}</Typography>
+        <Typography className={classes.res}>{t("Internal DNS")}: {dnsCheck.dkim?.internalDNS || t("Unresolvable")}</Typography>
+        <Typography className={classes.res}>{t("External DNS")}: {dnsCheck.dkim?.externalDNS || t("Unresolvable")}</Typography>
       </DialogContent>
     </Dialog>
   );

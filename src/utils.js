@@ -81,10 +81,10 @@ export function addItem(arr, item) {
 
 
 export function getChipColorFromScore(score) {
-  if(score >= 100) return "success";
-  if(score >= 80) return "info";
-  if(score >= 50) return "warning";
-  return "error";
+  if(score >= 100) return "#66bb6a";
+  if(score >= 80) return "#29b6f6";
+  if(score >= 50) return "#ffa726";
+  return "#d32f2f";
 }
 
 

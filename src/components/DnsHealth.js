@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import { Chip, CircularProgress, Tooltip } from '@mui/material';
+import { Chip, CircularProgress } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore, HelpOutline } from '@mui/icons-material';
+import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore } from '@mui/icons-material';
 import { getChipColorFromScore } from '../utils';
 import { connect } from 'react-redux';
 import { fetchDnsCheckData } from '../actions/domains';
@@ -17,12 +17,19 @@ const styles = {
   },
   chip: {
     color: 'black',
-    marginRight: 8,
-    marginTop: 4,
+    margin: '4px 8px',
+    padding: '20px 12px',
+    boxShadow: "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+    '&:hover': {
+      boxShadow: "0px 2px 4px -1px rgba(0,0,0,0.3),0px 4px 5px 0px rgba(0,0,0,0.3),0px 1px 10px 0px rgba(0,0,0,0.3)",
+    },
   },
   help: {
     color: "black !important",
-  }
+  },
+  chipIcon: {
+    marginRight: "-2px !important",
+  },
 }
 
 function getEquationValuesFromRequirementTypes(typeA, typeB) {
@@ -44,6 +51,9 @@ function scoreDNSResult(valueA, valueB, reqAType="", reqBType="") {
   return res;
 }
 
+const errorColor = "#d32f2f";
+const successColor = "#66bb6a";
+
 class DnsHealth extends PureComponent {
 
   state = {
@@ -63,13 +73,13 @@ class DnsHealth extends PureComponent {
 
   getReachabiltyColor() {
     const { dnsCheck } = this.state;
-    return !dnsCheck.externalIp ? "error" : "success";
+    return !dnsCheck.externalIp ? errorColor : successColor;
   }
 
   getMXColor() {
     const { dnsCheck } = this.state;
     const { mxRecords, externalIp, localIp } = dnsCheck;
-    if(!mxRecords) return "error";
+    if(!mxRecords) return errorColor;
 
     const score = scoreDNSResult(mxRecords.externalDNS, mxRecords.internalDNS, "req", "rec");
     const matchScore = scoreDNSResult(
@@ -83,7 +93,7 @@ class DnsHealth extends PureComponent {
   getAutodiscoverColor() {
     const { dnsCheck } = this.state;
     const { autodiscover, externalIp, localIp } = dnsCheck;
-    if(!autodiscover) return "error";
+    if(!autodiscover) return errorColor;
 
     const score = scoreDNSResult(autodiscover.internalDNS, autodiscover.externalDNS, "rec", "rec");
     const matchScore = scoreDNSResult(
@@ -97,7 +107,7 @@ class DnsHealth extends PureComponent {
   getAutodiscoverSrvColor() {
     const { dnsCheck } = this.state;
     const { autodiscoverSRV, externalIp, localIp } = dnsCheck;
-    if(!autodiscoverSRV) return "error";
+    if(!autodiscoverSRV) return errorColor;
 
     // TODO: Check for port
     const score = scoreDNSResult(autodiscoverSRV.internalDNS, autodiscoverSRV.externalDNS, "rec", "rec");
@@ -112,7 +122,7 @@ class DnsHealth extends PureComponent {
   getAutoconfigColor() {
     const { dnsCheck } = this.state;
     const { autoconfig, externalIp, localIp } = dnsCheck;
-    if(!autoconfig) return "error";
+    if(!autoconfig) return errorColor;
 
     // TODO: Check for port
     const score = scoreDNSResult(autoconfig.internalDNS, autoconfig.externalDNS, "rec", "");
@@ -127,7 +137,7 @@ class DnsHealth extends PureComponent {
   getSpfColor() {
     const { dnsCheck } = this.state;
     const { txt } = dnsCheck;
-    if(!txt) return "error";
+    if(!txt) return errorColor;
 
     const score = scoreDNSResult(txt.externalDNS, txt.internalDNS, "rec", "");
     return getChipColorFromScore(score);
@@ -136,7 +146,7 @@ class DnsHealth extends PureComponent {
   getDkimColor() {
     const { dnsCheck } = this.state;
     const { dkim } = dnsCheck;
-    if(!dkim) return "error";
+    if(!dkim) return errorColor;
 
     const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "");
     return getChipColorFromScore(score);
@@ -145,7 +155,7 @@ class DnsHealth extends PureComponent {
   getDmarcColor() {
     const { dnsCheck } = this.state;
     const { dkim } = dnsCheck;
-    if(!dkim) return "error";
+    if(!dkim) return errorColor;
 
     const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "");
     return getChipColorFromScore(score);
@@ -155,7 +165,7 @@ class DnsHealth extends PureComponent {
     const { dnsCheck } = this.state;
 
     const scores = records.map(record => {
-      if(!dnsCheck[record]) return "error";
+      if(!dnsCheck[record]) return errorColor;
   
       return scoreDNSResult(dnsCheck[record].externalDNS, dnsCheck[record].internalDNS, "", "");
     });
@@ -164,7 +174,7 @@ class DnsHealth extends PureComponent {
 
   getDavTxtColor(record) {
     const { dnsCheck } = this.state;
-    if(!dnsCheck[record]) return "error";
+    if(!dnsCheck[record]) return errorColor;
 
     const score = scoreDNSResult(dnsCheck[record].externalDNS?.includes("86400"), dnsCheck[record].internalDNS?.includes("86400"), "", "");
     return getChipColorFromScore(score);
@@ -186,7 +196,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("external_ip_expl")}
         label={t("Reachability")}
-        icon={<CallReceived />}
+        icon={CallReceived}
         color={this.getReachabiltyColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Reachability')}
@@ -194,7 +204,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("mx_expl")}
         label={t("MX Records")}
-        icon={<Mail />}
+        icon={Mail}
         color={this.getMXColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('MXRecords')}
@@ -202,7 +212,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("autodiscover_expl")}
         label={t("Autodiscover")}
-        icon={<TravelExplore />}
+        icon={TravelExplore}
         color={this.getAutodiscoverColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Autodiscover')}
@@ -210,7 +220,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("autodiscoverSrv_expl")}
         label={t("Autodiscover SRV")}
-        icon={<TravelExplore />}
+        icon={TravelExplore}
         color={this.getAutodiscoverSrvColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('AutodiscoverSrv')}
@@ -218,7 +228,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("autoconfig_expl")}
         label={t("Autoconfig")}
-        icon={<TravelExplore />}
+        icon={TravelExplore}
         color={this.getAutoconfigColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Autoconfig')}
@@ -226,7 +236,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("spf_expl")}
         label={t("SPF Records")}
-        icon={<Policy />}
+        icon={Policy}
         color={this.getSpfColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Spf')}
@@ -234,7 +244,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("dkim_expl")}
         label={t("DKIM")}
-        icon={<Policy />}
+        icon={Policy}
         color={this.getDkimColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Dkim')}
@@ -242,7 +252,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("dmarc_expl")}
         label={t("DMARC")}
-        icon={<Policy />}
+        icon={Policy}
         color={this.getDmarcColor()}
         loading={loading}
         onInfo={this.asyncDialogImport('Dmarc')}
@@ -250,7 +260,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("caldav_expl")}
         label={t("Caldav(s) TXT")}
-        icon={<EventRepeat />}
+        icon={EventRepeat}
         color={this.getDavTxtColor("caldavTXT")}
         loading={loading}
         onInfo={this.asyncDialogImport('DavTxt')}
@@ -258,7 +268,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("carddav_expl")}
         label={t("Carddav(s) TXT")}
-        icon={<OnDeviceTraining />}
+        icon={OnDeviceTraining}
         color={this.getDavTxtColor("carddavTXT")}
         loading={loading}
         onInfo={this.asyncDialogImport('DavTxt')}
@@ -266,7 +276,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("caldav_expl")}
         label={t("Caldav(s) SRV")}
-        icon={<EventRepeat />}
+        icon={EventRepeat}
         color={this.getOptionalSrvColor(["caldavSRV", "caldavsSRV"])}
         loading={loading}
         onInfo={this.asyncDialogImport('Caldav')}
@@ -274,7 +284,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("carddav_expl")}
         label={t("Carddav(s) SRV")}
-        icon={<OnDeviceTraining />}
+        icon={OnDeviceTraining}
         color={this.getOptionalSrvColor(["carddavSRV", "carddavsSRV"])}
         loading={loading}
         onInfo={this.asyncDialogImport('Carddav')}
@@ -282,7 +292,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("imap_expl")}
         label={t("IMAP(s) SRV")}
-        icon={<AlternateEmail />}
+        icon={AlternateEmail}
         color={this.getOptionalSrvColor(["imapSRV", "imapsSRV"])}
         loading={loading}
         onInfo={this.asyncDialogImport('Imap')}
@@ -290,7 +300,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("pop3_expl")}
         label={t("POP3(s) SRV")}
-        icon={<AlternateEmail />}
+        icon={AlternateEmail}
         color={this.getOptionalSrvColor(["pop3SRV", "pop3sSRV"])}
         loading={loading}
         onInfo={this.asyncDialogImport('Pop3')}
@@ -298,7 +308,7 @@ class DnsHealth extends PureComponent {
       <DNSChip
         title={t("submission_expl")}
         label={t("Submission(s) SRV")}
-        icon={<Send />}
+        icon={Send}
         color={this.getOptionalSrvColor(["submissionSRV"])}
         loading={loading}
         onInfo={this.asyncDialogImport('Submission')}
@@ -308,16 +318,15 @@ class DnsHealth extends PureComponent {
   }
 }
 
-const DNSChip = withTranslation()(withStyles(styles)(({ classes, t, loading, label, color, icon, onInfo }) => {
+const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label, color, icon: Icon, onInfo }) => {
+  console.log(color);
   return <Chip
     className={classes.chip}
+    style={{ backgroundColor: loading ? "#969696" : color }}
     label={label}
-    icon={loading ? <CircularProgress size={16}/> : icon}
-    color={loading ? "secondary" : color}
-    deleteIcon={<Tooltip title={t("Details")} placement="top">
-      <HelpOutline color="inherit" className={classes.help}/>
-    </Tooltip>}
-    onDelete={onInfo}
+    icon={loading ? <CircularProgress size={16}/> : <Icon className={classes.chipIcon} />}
+    color={"info"}  // Necessary for icon color
+    onClick={onInfo}
   />
 }));
 
