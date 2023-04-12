@@ -36,14 +36,14 @@ function getEquationValuesFromRequirementTypes(typeA, typeB) {
   return {
     "reqreq": [-10, 55, 55],
     "reqrec": [15, 55, 30],
-    "req": [25, 55, 20],
+    "reqopt": [25, 55, 20],
     "recrec": [54, 23, 23],
-    "rec": [54, 33, 13],
-    "": [80, 10, 10],
+    "recopt": [54, 33, 13],
+    "optopt": [80, 10, 10],
   }[typeA+typeB];
 }
 
-function scoreDNSResult(valueA, valueB, reqAType="", reqBType="") {
+function scoreDNSResult(valueA, valueB, reqAType="opt", reqBType="opt") {
   const equationValues = getEquationValuesFromRequirementTypes(reqAType, reqBType);
   const valueMultiplier = [1, valueA ? 1 : 0, valueB ? 1 : 0];
   const res = equationValues.map((val, idx) => val * valueMultiplier[idx])
@@ -81,12 +81,13 @@ class DnsHealth extends PureComponent {
     const { mxRecords, externalIp, localIp } = dnsCheck;
     if(!mxRecords) return errorColor;
 
+    //TODO: Check reverse
     const score = scoreDNSResult(mxRecords.externalDNS, mxRecords.internalDNS, "req", "rec");
     const matchScore = scoreDNSResult(
       mxRecords.externalDNS === externalIp,
       [localIp, externalIp].includes(mxRecords.internalDNS),
-      "",
-      "");
+      "opt",
+      "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
   }
 
@@ -99,8 +100,8 @@ class DnsHealth extends PureComponent {
     const matchScore = scoreDNSResult(
       autodiscover.externalDNS === externalIp,
       [localIp, externalIp].includes(autodiscover.internalDNS),
-      "",
-      "");
+      "opt",
+      "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
   }
 
@@ -112,10 +113,10 @@ class DnsHealth extends PureComponent {
     // TODO: Check for port
     const score = scoreDNSResult(autodiscoverSRV.internalDNS, autodiscoverSRV.externalDNS, "rec", "rec");
     const matchScore = scoreDNSResult(
-      autodiscoverSRV.externalDNS === externalIp,
+      autodiscoverSRV.externalDNS === externalIp,  // TODO: Compare forward DNS Lookup for domain result with extIp instead
       [localIp, externalIp].includes(autodiscoverSRV.internalDNS),
-      "",
-      "");
+      "opt",
+      "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
   }
   
@@ -125,12 +126,12 @@ class DnsHealth extends PureComponent {
     if(!autoconfig) return errorColor;
 
     // TODO: Check for port
-    const score = scoreDNSResult(autoconfig.internalDNS, autoconfig.externalDNS, "rec", "");
+    const score = scoreDNSResult(autoconfig.internalDNS, autoconfig.externalDNS, "rec", "opt");
     const matchScore = scoreDNSResult(
       autoconfig.externalDNS === externalIp,
       [localIp, externalIp].includes(autoconfig.internalDNS),
-      "",
-      "");
+      "opt",
+      "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
   }
 
@@ -139,7 +140,8 @@ class DnsHealth extends PureComponent {
     const { txt } = dnsCheck;
     if(!txt) return errorColor;
 
-    const score = scoreDNSResult(txt.externalDNS, txt.internalDNS, "rec", "");
+    // TODO: Remove internal
+    const score = scoreDNSResult(txt.externalDNS, txt.internalDNS, "rec", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -148,7 +150,8 @@ class DnsHealth extends PureComponent {
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
-    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "");
+    // TODO: Remove internal
+    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -157,7 +160,8 @@ class DnsHealth extends PureComponent {
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
-    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "");
+    // TODO: Remove internal
+    const score = scoreDNSResult(dkim.externalDNS, dkim.internalDNS, "rec", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -167,7 +171,7 @@ class DnsHealth extends PureComponent {
     const scores = records.map(record => {
       if(!dnsCheck[record]) return errorColor;
   
-      return scoreDNSResult(dnsCheck[record].externalDNS, dnsCheck[record].internalDNS, "", "");
+      return scoreDNSResult(dnsCheck[record].externalDNS, dnsCheck[record].internalDNS, "opt", "opt");
     });
     return getChipColorFromScore(Math.min(...scores));
   }
@@ -176,7 +180,7 @@ class DnsHealth extends PureComponent {
     const { dnsCheck } = this.state;
     if(!dnsCheck[record]) return errorColor;
 
-    const score = scoreDNSResult(dnsCheck[record].externalDNS?.includes("86400"), dnsCheck[record].internalDNS?.includes("86400"), "", "");
+    const score = scoreDNSResult(dnsCheck[record].externalDNS?.includes("86400"), dnsCheck[record].internalDNS?.includes("86400"), "opt", "opt");
     return getChipColorFromScore(score);
   }
 
@@ -319,7 +323,6 @@ class DnsHealth extends PureComponent {
 }
 
 const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label, color, icon: Icon, onInfo }) => {
-  console.log(color);
   return <Chip
     className={classes.chip}
     style={{ backgroundColor: loading ? "#969696" : color }}
