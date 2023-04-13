@@ -121,8 +121,8 @@ class DnsHealth extends PureComponent {
     // TODO: Check for port
     const score = scoreDNSResult(autodiscoverSRV.internalDNS, autodiscoverSRV.externalDNS, "rec", "rec");
     const matchScore = scoreDNSResult(
-      autodiscoverSRV.externalDNS === externalIp,  // TODO: Compare forward DNS Lookup for domain result with extIp instead
-      [localIp, externalIp].includes(autodiscoverSRV.internalDNS),
+      autodiscoverSRV.ip === externalIp,
+      [localIp, externalIp].includes(autodiscoverSRV.ip),
       "opt",
       "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
