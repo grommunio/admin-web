@@ -316,7 +316,7 @@ class DnsHealth extends PureComponent {
       />
       <DNSChip
         title={t("submission_expl")}
-        label={t("Submission(s) SRV")}
+        label={t("Submission SRV")}
         icon={Send}
         color={this.getOptionalSrvColor(["submissionSRV"])}
         loading={loading}
