@@ -22,7 +22,6 @@ import Storage from '@mui/icons-material/Storage';
 import Orgs from '@mui/icons-material/GroupWork';
 import Logs from '@mui/icons-material/ViewHeadline';
 import Sync from '@mui/icons-material/Sync';
-import Classes from '@mui/icons-material/Class';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
@@ -261,17 +260,6 @@ class NavigationLinks extends PureComponent {
                         <Grid container alignItems="center">
                           <Folder className={classes.nestedIcon}/>
                           <ListItemText primary={t('Public folders')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/classes')}
-                        selected={pathname.startsWith('/' + ID + '/classes')}
-                      >
-                        <Grid container alignItems="center">
-                          <Classes className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Groups')}/>
                         </Grid>
                       </ListItem>
                       <ListItem

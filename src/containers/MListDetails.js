@@ -18,11 +18,9 @@ import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
-import { fetchClassesData } from '../actions/classes';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -50,24 +48,19 @@ class MListDetails extends PureComponent {
     listPrivilege: 0,
     associations: '',
     specifieds: '',
-    class: '',
     unsaved: false,
     autocompleteInput: '',
     loading: true,
   }
 
   async componentDidMount() {
-    const { domain, fetch, fetchClasses } = this.props;
-    await fetchClasses(domain.ID)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    const { domain, fetch } = this.props;
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
       loading: false,
       ...(mList ? {
         ...mList,
-        class: mList.class || '',
-        autocompleteInput: mList.class?.classname || '',
       } : {})
     });
   }
@@ -75,7 +68,6 @@ class MListDetails extends PureComponent {
   listTypes = [
     { ID: 0, name: "Normal" },
     { ID: 2, name: "Domain" },
-    { ID: 3, name: "Group" },
   ]
 
   listPrivileges = [
@@ -103,14 +95,12 @@ class MListDetails extends PureComponent {
 
   handleEdit = () => {
     const { edit, domain } = this.props;
-    const { ID, listname, listType, listPrivilege, associations, specifieds, class: _class } = this.state;
+    const { ID, listname, listType, listPrivilege, associations, specifieds } = this.state;
     edit(domain.ID, {
       ID,
       listname,
       listType,
       listPrivilege,
-      class: _class?.ID || undefined,
-      /* Strip whitespaces and split on ',' */
       associations: Array.isArray(associations) ? associations :
         associations ? associations.replace(/\s/g, "").split(',') : undefined, 
       specifieds: Array.isArray(specifieds) ? specifieds :
@@ -126,18 +116,11 @@ class MListDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
-      [field]: newVal || '',
-      autocompleteInput: newVal?.classname || '',
-    });
-  }
-
   render() {
-    const { classes, t, domain, _classes } = this.props;
+    const { classes, t, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, listname, listType, listPrivilege, associations, specifieds, class: _class,
-      autocompleteInput, loading } = this.state;
+    const { snackbar, listname, listType, listPrivilege, associations, specifieds,
+      loading } = this.state;
 
     return (
       <ViewWrapper
@@ -211,16 +194,6 @@ class MListDetails extends PureComponent {
               value={specifieds || ''}
               onChange={this.handleInput('specifieds')}
             />}
-            {listType === 3 && <MagnitudeAutocomplete
-              value={_class}
-              inputValue={autocompleteInput}
-              onChange={this.handleAutocomplete('class')}
-              filterAttribute={'classname'}
-              className={classes.input} 
-              options={_classes}
-              label={t('Group')}
-              onInputChange={this.handleInput('autocompleteInput')}
-            />}
           </FormControl>
           <Button
             color="secondary"
@@ -252,18 +225,10 @@ MListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  _classes: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
-  fetchClasses: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    _classes: state._classes.Select,
-  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -274,10 +239,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchMListData(domainID, id))
       .then(mlist => mlist)
       .catch(message => Promise.reject(message)),
-    fetchClasses: async (domainID) => await dispatch(fetchClassesData(domainID, { sort: 'classname,asc' }, true))
-      .catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default connect(null, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(MListDetails)));
