@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 const styles = theme => ({
   textfield: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2),
   },
   flexTextfield: {
     flex: 1,

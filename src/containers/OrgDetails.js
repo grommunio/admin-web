@@ -141,6 +141,11 @@ class OrgDetails extends PureComponent {
     bindUser: '',
     bindPass: '',
     starttls: false,
+    // Groups
+    groupMemberAttr: '',
+    groupaddr: '',
+    groupfilter: '',
+    groupname: '',
     // Users
     username: '',
     displayName: '',
@@ -176,6 +181,7 @@ class OrgDetails extends PureComponent {
     const config = ldap?.data;
     const available = ldap?.ldapAvailable || false;
     const connection = config?.connection || {};
+    const groups = config?.groups || {};
     const users = config?.users || {};
     this.setState({
       loading: false,
@@ -187,6 +193,10 @@ class OrgDetails extends PureComponent {
       bindUser: connection.bindUser || '',
       bindPass: connection.bindPass || '',
       starttls: connection.starttls || false,
+      groupMemberAttr: groups.groupMemberAttr || '',
+      groupaddr: groups.groupaddr || '',
+      groupfilter: groups.groupfilter || '',
+      groupname: groups.groupname || '',
       username: users.username || '',
       displayName: users.displayName || '',
       defaultQuota: users.defaultQuota || '',
@@ -256,6 +266,13 @@ class OrgDetails extends PureComponent {
     formatted.connection.bindPass = copy.bindPass;
     formatted.connection.starttls = copy.starttls;
 
+    // Format groups
+    formatted.groups = {};
+    formatted.groups.groupMemberAttr = copy.groupMemberAttr;
+    formatted.groups.groupaddr = copy.groupaddr;
+    formatted.groups.groupfilter = copy.groupfilter;
+    formatted.groups.groupname = copy.groupname;
+
     //Format users
     formatted.users = {};
     formatted.users.username = copy.username;
@@ -321,6 +338,10 @@ class OrgDetails extends PureComponent {
         filter: "objectClass=user",
         contactFilter: "objectclass=contact",
         aliases: 'proxyAddresses',
+        groupMemberAttr: "memberOf",
+        groupaddr: "mail",
+        groupfilter: "(objectclass=group)",
+        groupname: "cn",
       });
     } else if(templates === 'OpenLDAP') {
       this.setState({
@@ -332,6 +353,10 @@ class OrgDetails extends PureComponent {
         filter: "objectClass=posixAccount",
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
+        groupMemberAttr: "memberOf",
+        groupaddr: "mailPrimaryAddress",
+        groupfilter: "(objectclass=posixgroup)",
+        groupname: "cn",
       });
     } else if(templates === 'Univention') {
       this.setState({
@@ -343,6 +368,10 @@ class OrgDetails extends PureComponent {
         filter: "objectClass=posixAccount",
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
+        groupMemberAttr: "memberOf",
+        groupaddr: "mailPrimaryAddress",
+        groupfilter: "(objectclass=posixgroup)",
+        groupname: "cn",
       });
     } else {
       this.setState({ templates });
@@ -361,7 +390,7 @@ class OrgDetails extends PureComponent {
   render() {
     const { classes, t, Domains, adminConfig } = this.props;
     const { ID, name, description, domains, snackbar, autocompleteInput, available, force, deleting, server, bindUser,
-      bindPass, starttls, baseDn, objectID, disabled,
+      bindPass, starttls, baseDn, objectID, disabled, groupMemberAttr, groupaddr, groupfilter, groupname,
       username, filter, contactFilter, templates, attributes, defaultQuota, displayName, searchAttributes,
       aliases, taskMessage, taskID, overridingLdap, loading } = this.state;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
@@ -663,6 +692,42 @@ class OrgDetails extends PureComponent {
                 id="objectID"
                 name="objectID"
                 autoComplete="objectID"
+              />
+              <LdapTextfield
+                label={t('Group name')}
+                onChange={this.handleInput('groupname')}
+                value={groupname || ''}
+                desc={t("ldap_groupname")}
+                id="groupname"
+                name="groupname"
+                autoComplete="groupname"
+              />
+              <LdapTextfield
+                label={t('Group address')}
+                onChange={this.handleInput('groupaddr')}
+                value={groupaddr || ''}
+                desc={t("ldap_groupaddr_desc")}
+                id="groupaddr"
+                name="groupaddr"
+                autoComplete="groupaddr"
+              />
+              <LdapTextfield
+                label={t('Group Member Attribute')}
+                onChange={this.handleInput('groupMemberAttr')}
+                value={groupMemberAttr || ''}
+                desc={t("ldap_groupMemberAttr_desc")}
+                id="groupMemberAttr"
+                name="groupMemberAttr"
+                autoComplete="groupMemberAttr"
+              />
+              <LdapTextfield
+                label={t('Group filter')}
+                onChange={this.handleInput('groupfilter')}
+                value={groupfilter || ''}
+                desc={t("ldap_groupfilter_desc")}
+                id="groupfilter"
+                name="groupfilter"
+                autoComplete="groupfilter"
               />
               <LdapTextfield
                 label={t('LDAP Username Attribute')}
