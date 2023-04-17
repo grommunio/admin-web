@@ -292,7 +292,34 @@ class OrgDetails extends PureComponent {
   handleDelete = () => this.setState({ deleting: true });
 
   handleDeleteSuccess = () => {
-    this.setState({ deleting: false, snackbar: 'Success!' });
+    this.setState({
+      baseDn: '',
+      objectID: '',
+      disabled: true,
+      // Connection
+      server: '',
+      bindUser: '',
+      bindPass: '',
+      starttls: false,
+      // Groups
+      groupMemberAttr: '',
+      groupaddr: '',
+      groupfilter: '',
+      groupname: '',
+      // Users
+      username: '',
+      displayName: '',
+      defaultQuota: '',
+      filter: '',
+      contactFilter: '',
+      templates: 'none',
+      attributes: [],
+      searchAttributes: [],
+      authBackendSelection: 'externid',
+      aliases: '',
+      deleting: false,
+      snackbar: 'Success!'
+    });
   }
 
   handleDeleteClose = () => this.setState({ deleting: false });
