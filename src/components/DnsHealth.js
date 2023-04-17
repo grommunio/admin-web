@@ -185,7 +185,8 @@ class DnsHealth extends PureComponent {
     const { dnsCheck } = this.state;
     if(!dnsCheck[record]) return errorColor;
 
-    const score = scoreDNSResult(dnsCheck[record].externalDNS?.includes("86400"), dnsCheck[record].internalDNS?.includes("86400"), "opt", "opt");
+    const score = scoreDNSResult(dnsCheck[record].externalDNS === '"path=/dav"',
+      dnsCheck[record].internalDNS === '"path=/dav"', "opt", "opt");
     return getChipColorFromScore(score);
   }
 
