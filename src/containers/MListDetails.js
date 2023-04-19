@@ -13,6 +13,8 @@ import {
   FormControl,
   Button,
   MenuItem,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { editMListData, fetchMListData } from '../actions/mlists';
@@ -44,6 +46,8 @@ class MListDetails extends PureComponent {
 
   state = {
     listname: '',
+    displayname: '',
+    hidden: 0,
     listType: 0,
     listPrivilege: 0,
     associations: '',
@@ -59,9 +63,7 @@ class MListDetails extends PureComponent {
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     this.setState({
       loading: false,
-      ...(mList ? {
-        ...mList,
-      } : {})
+      ...(mList || {})
     });
   }
 
@@ -95,12 +97,14 @@ class MListDetails extends PureComponent {
 
   handleEdit = () => {
     const { edit, domain } = this.props;
-    const { ID, listname, listType, listPrivilege, associations, specifieds } = this.state;
+    const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds } = this.state;
     edit(domain.ID, {
       ID,
       listname,
       listType,
       listPrivilege,
+      displayname,
+      hidden,
       associations: Array.isArray(associations) ? associations :
         associations ? associations.replace(/\s/g, "").split(',') : undefined, 
       specifieds: Array.isArray(specifieds) ? specifieds :
@@ -116,10 +120,12 @@ class MListDetails extends PureComponent {
     history.push(`/${path}`);
   }
 
+  handleCheckbox = field => (e) => this.setState({ [field]: e.target.checked ? 1 : 0 });
+
   render() {
     const { classes, t, domain } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, listname, listType, listPrivilege, associations, specifieds,
+    const { snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
       loading } = this.state;
 
     return (
@@ -149,6 +155,24 @@ class MListDetails extends PureComponent {
               inputProps={{
                 disabled: true,
               }}
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Displayname")} 
+              fullWidth 
+              value={displayname}
+              onChange={this.handleInput('displayname')}
+            />
+            <FormControlLabel
+              className={classes.input} 
+              control={
+                <Checkbox
+                  checked={hidden === 1}
+                  onChange={this.handleCheckbox('hidden')}
+                  color="primary"
+                />
+              }
+              label={t('Hide from addressbook')}
             />
             <TextField
               select

@@ -6,7 +6,9 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  MenuItem, 
+  MenuItem,
+  FormControlLabel,
+  Checkbox, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -29,6 +31,8 @@ class AddMList extends PureComponent {
 
   state = {
     listname: '',
+    displayname: '',
+    hidden: 0,
     listType: 0,
     listPrivilege: 0,
     associations: '',
@@ -76,12 +80,14 @@ class AddMList extends PureComponent {
 
   handleAdd = () => {
     const { add, domain, onSuccess, onError } = this.props;
-    const { listname, listType, listPrivilege, associations, specifieds } = this.state;
+    const { listname, hidden, displayname, listType, listPrivilege, associations, specifieds } = this.state;
     this.setState({ loading: true });
     add(domain.ID, {
       listname,
       listType,
       listPrivilege,
+      hidden,
+      displayname,
       /* Strip whitespaces and split on ',' */
       associations: associations ? associations.replace(/\s/g, "").split(',') : undefined, 
       specifieds: specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
@@ -90,6 +96,8 @@ class AddMList extends PureComponent {
         this.setState({
           listname: '',
           listType: 0,
+          hidden: 0,
+          displayname: '',
           listPrivilege: 0,
           associations: '',
           specifieds: '',
@@ -104,9 +112,11 @@ class AddMList extends PureComponent {
       });
   }
 
+  handleCheckbox = field => (e) => this.setState({ [field]: e.target.checked ? 1 : 0 });
+
   render() {
     const { classes, t, open, onClose } = this.props;
-    const { listname, listType, listPrivilege, associations, specifieds, loading } = this.state;
+    const { listname, displayname, hidden, listType, listPrivilege, associations, specifieds, loading } = this.state;
     return (
       <Dialog
         onClose={onClose}
@@ -127,6 +137,24 @@ class AddMList extends PureComponent {
               onChange={this.handleInput('listname')}
               autoFocus
               required
+            />
+            <TextField 
+              className={classes.input} 
+              label={t("Displayname")} 
+              fullWidth 
+              value={displayname}
+              onChange={this.handleInput('displayname')}
+            />
+            <FormControlLabel
+              className={classes.input} 
+              control={
+                <Checkbox
+                  checked={hidden === 1}
+                  onChange={this.handleCheckbox('hidden')}
+                  color="primary"
+                />
+              }
+              label={t('Hide from addressbook')}
             />
             <TextField
               select
