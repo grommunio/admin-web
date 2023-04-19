@@ -250,7 +250,7 @@ class RetractedNavigationLinks extends PureComponent {
                           <Classes fontSize='large' className={classes.icon}/>
                         </ListItem>
                       </Tooltip>
-                      <Tooltip placement="right" title={t('Mail lists')}>
+                      <Tooltip placement="right" title={t('Groups')}>
                         <ListItem
                           className={classes.flexCenter}
                           button

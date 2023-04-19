@@ -13,11 +13,11 @@ import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
 import Search from '@mui/icons-material/Search';
 import Dashboard from '@mui/icons-material/Dashboard';
-import People from '@mui/icons-material/People';
+import Person from '@mui/icons-material/Person';
 import Domains from '@mui/icons-material/Domain';
-import Folder from '@mui/icons-material/Folder';
+import Topic from '@mui/icons-material/Topic';
 import Ldap from '@mui/icons-material/Contacts';
-import MLists from '@mui/icons-material/Email';
+import Groups from '@mui/icons-material/Groups';
 import Storage from '@mui/icons-material/Storage';
 import Orgs from '@mui/icons-material/GroupWork';
 import Logs from '@mui/icons-material/ViewHeadline';
@@ -246,8 +246,19 @@ class NavigationLinks extends PureComponent {
                           pathname.startsWith('/' + ID + '/users')}
                       >
                         <Grid container alignItems="center">
-                          <People className={classes.nestedIcon}/>
+                          <Person className={classes.nestedIcon}/>
                           <ListItemText primary={t('Users')}/>
+                        </Grid>
+                      </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
+                        onClick={this.handleNavigation(ID + '/mailLists')}
+                        selected={pathname.startsWith('/' + ID + '/mailLists')}
+                      >
+                        <Grid container alignItems="center">
+                          <Groups className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Groups')}/>
                         </Grid>
                       </ListItem>
                       <ListItem
@@ -258,19 +269,8 @@ class NavigationLinks extends PureComponent {
                           pathname.startsWith('/' + ID + '/folders')}
                       >
                         <Grid container alignItems="center">
-                          <Folder className={classes.nestedIcon}/>
+                          <Topic className={classes.nestedIcon}/>
                           <ListItemText primary={t('Public folders')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
-                        onClick={this.handleNavigation(ID + '/mailLists')}
-                        selected={pathname.startsWith('/' + ID + '/mailLists')}
-                      >
-                        <Grid container alignItems="center">
-                          <MLists className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Mail lists')}/>
                         </Grid>
                       </ListItem>
                     </List>
@@ -331,7 +331,7 @@ class NavigationLinks extends PureComponent {
               selected={pathname.startsWith('/users')}
             >
               <Grid container alignItems="center">
-                <People className={classes.icon}/>
+                <Person className={classes.icon}/>
                 <ListItemText primary={t('Users')} />
               </Grid>
             </ListItem>

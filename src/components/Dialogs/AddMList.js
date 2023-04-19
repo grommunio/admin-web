@@ -143,12 +143,12 @@ class AddMList extends PureComponent {
         TransitionProps={{
           onEnter: this.handleEnter,
         }}>
-        <DialogTitle>{t('addHeadline', { item: 'Mail list' })}</DialogTitle>
+        <DialogTitle>{t('addHeadline', { item: 'Group' })}</DialogTitle>
         <DialogContent style={{ minWidth: 400 }}>
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
-              label={t("Mail list name")} 
+              label={t("Group name")} 
               fullWidth 
               value={listname || ''}
               onChange={this.handleInput('listname')}

@@ -158,7 +158,7 @@ class MListDetails extends PureComponent {
 
     return (
       <ViewWrapper
-        topbarTitle={t('Mail lists')}
+        topbarTitle={t('Groups')}
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
         loading={loading}
@@ -169,13 +169,13 @@ class MListDetails extends PureComponent {
               color="primary"
               variant="h5"
             >
-              {t('editHeadline', { item: 'Mail list' })}
+              {t('editHeadline', { item: 'Group' })}
             </Typography>
           </Grid>
           <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
-              label={t("Mail list name")} 
+              label={t("Group name")} 
               fullWidth 
               value={listname}
               autoFocus

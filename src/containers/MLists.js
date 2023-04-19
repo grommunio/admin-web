@@ -38,7 +38,7 @@ class MLists extends Component {
   }
 
   columns = [
-    { label: 'Mail list name', value: 'listname' },
+    { label: 'Group name', value: 'listname' },
     { label: 'Type', value: 'listType' },
     { label: 'Privilege', value: 'listPrivilege' },
   ]
@@ -65,7 +65,7 @@ class MLists extends Component {
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={t("Mail lists")}
+        headline={t("Groups")}
         subtitle={t('mlists_sub')}
         href="https://docs.grommunio.com/admin/administration.html#mail-lists"
         snackbar={snackbar}
@@ -76,7 +76,7 @@ class MLists extends Component {
           tf={<SearchTextfield
             value={match}
             onChange={handleMatch}
-            placeholder={t("Search mail lists")}
+            placeholder={t("Search groups")}
           />}
         >
           <Button
@@ -85,7 +85,7 @@ class MLists extends Component {
             onClick={handleAdd}
             disabled={!writable}
           >
-            {t('New mail list')}
+            {t('New group')}
           </Button>
         </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
