@@ -241,7 +241,7 @@ class UserDetails extends PureComponent {
         status: value,
       },
       unsaved: true,
-      changingPw: value === 0 && user.status === 4,
+      changingPw: value === 0 && user.status === 4 && !user.ldapID,
     });
   }
 
