@@ -23,6 +23,8 @@ import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import { fetchPlainUsersData } from '../actions/users';
+import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 
 const styles = theme => ({
   paper: {
@@ -50,21 +52,43 @@ class MListDetails extends PureComponent {
     hidden: 0,
     listType: 0,
     listPrivilege: 0,
-    associations: '',
-    specifieds: '',
+    associations: [],
+    specifieds: [],
     unsaved: false,
-    autocompleteInput: '',
     loading: true,
   }
 
   async componentDidMount() {
-    const { domain, fetch } = this.props;
+    const { domain, fetch, fetchUsers } = this.props;
     const mList = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      loading: false,
-      ...(mList || {})
-    });
+    fetchUsers(domain.ID)
+      .then(() => {
+        const { Users } = this.props;
+        const table = {};
+        Users.forEach(u => table[u.username] = u);
+        if(mList?.ID) {
+          const associations = [];
+          mList.associations.forEach(mListUsername => {
+            if(mListUsername in table) associations.push(table[mListUsername]);
+          });
+
+          const specifieds = [];
+          mList.specifieds.forEach(mListUsername => {
+            if(mListUsername in table) specifieds.push(table[mListUsername]);
+          });
+          
+          this.setState({
+            loading: false,
+            ...mList,
+            associations: associations,
+            specifieds: specifieds,
+          });
+        }
+      })
+      .catch(message => {
+        this.setState({ snackbar: message || 'Unknown error' });
+      });
   }
 
   listTypes = [
@@ -85,7 +109,7 @@ class MListDetails extends PureComponent {
     const val = event.target.value;
     this.setState({
       listPrivilege: val,
-      specifieds: val === 3 ? specifieds : '',
+      specifieds: val === 3 ? specifieds : [],
     });
   }
 
@@ -105,10 +129,8 @@ class MListDetails extends PureComponent {
       listPrivilege,
       displayname,
       hidden,
-      associations: Array.isArray(associations) ? associations :
-        associations ? associations.replace(/\s/g, "").split(',') : undefined, 
-      specifieds: Array.isArray(specifieds) ? specifieds :
-        specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
+      associations: associations.map(user => user.username),
+      specifieds: specifieds.map(user => user.username),
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
@@ -122,8 +144,14 @@ class MListDetails extends PureComponent {
 
   handleCheckbox = field => (e) => this.setState({ [field]: e.target.checked ? 1 : 0 });
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+    });
+  }
+
   render() {
-    const { classes, t, domain } = this.props;
+    const { classes, t, domain, Users } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
       loading } = this.state;
@@ -204,19 +232,25 @@ class MListDetails extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            {listType === 0 && <TextField 
+            {listType === 0 && <MagnitudeAutocomplete
+              multiple
+              value={associations || []}
+              filterAttribute={'username'}
+              onChange={this.handleAutocomplete('associations')}
               className={classes.input} 
-              label={t("Recipients") + " (" + t("separated by comma") + " (,))"} 
-              fullWidth 
-              value={associations || ''}
-              onChange={this.handleInput('associations')}
+              options={Users || []}
+              placeholder={t("Search users") +  "..."}
+              label={t('Recipients')}
             />}
-            {listPrivilege === 3 && <TextField 
+            {listPrivilege === 3 && <MagnitudeAutocomplete
+              multiple
+              value={specifieds || []}
+              filterAttribute={'username'}
+              onChange={this.handleAutocomplete('specifieds')}
               className={classes.input} 
-              label={t("Senders") + " (" + t("separated by comma") + " (,))"}
-              fullWidth 
-              value={specifieds || ''}
-              onChange={this.handleInput('specifieds')}
+              options={Users || []}
+              placeholder={t("Search users") +  "..."}
+              label={t('Senders')}
             />}
           </FormControl>
           <Button
@@ -251,8 +285,16 @@ MListDetails.propTypes = {
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchUsers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
+  Users: PropTypes.array.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    Users: state.users.Users,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -263,8 +305,10 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchMListData(domainID, id))
       .then(mlist => mlist)
       .catch(message => Promise.reject(message)),
+    fetchUsers: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
+      .catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(MListDetails)));

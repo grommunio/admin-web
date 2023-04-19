@@ -13,6 +13,8 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addMListData } from '../../actions/mlists';
+import { fetchPlainUsersData } from '../../actions/users';
+import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
   form: {
@@ -35,8 +37,8 @@ class AddMList extends PureComponent {
     hidden: 0,
     listType: 0,
     listPrivilege: 0,
-    associations: '',
-    specifieds: '',
+    associations: [],
+    specifieds: [],
     loading: false,
     autocompleteInput: '',
   }
@@ -54,6 +56,15 @@ class AddMList extends PureComponent {
     { ID: 4, name: "Outgoing" },
   ]
 
+  handleEnter = () => {
+    const { fetch, onError, domain } = this.props;
+    fetch(domain.ID)
+      .catch(error => {
+        onError(error);
+        this.setState({ loading: false });
+      });
+  }
+
   handleInput = field => event => {
     this.setState({
       [field]: event.target.value,
@@ -65,7 +76,7 @@ class AddMList extends PureComponent {
     const val = event.target.value;
     this.setState({
       listType: val,
-      associations: val === 0 ? associations : '', /* Associations only available if type "all" */
+      associations: val === 0 ? associations : [], /* Associations only available if type "all" */
     });
   }
 
@@ -74,7 +85,7 @@ class AddMList extends PureComponent {
     const val = event.target.value;
     this.setState({
       listPrivilege: val,
-      specifieds: val === 3 ? specifieds : '', /* Specifieds only available if privilege "specific" */
+      specifieds: val === 3 ? specifieds : [], /* Specifieds only available if privilege "specific" */
     });
   }
 
@@ -89,8 +100,8 @@ class AddMList extends PureComponent {
       hidden,
       displayname,
       /* Strip whitespaces and split on ',' */
-      associations: associations ? associations.replace(/\s/g, "").split(',') : undefined, 
-      specifieds: specifieds ? specifieds.replace(/\s/g, "").split(',') : undefined,
+      associations: associations.length > 0 ? associations.map(user => user.username) : undefined, 
+      specifieds: specifieds.length > 0 ? specifieds.map(user => user.username) : undefined,
     })
       .then(() => {
         this.setState({
@@ -114,8 +125,14 @@ class AddMList extends PureComponent {
 
   handleCheckbox = field => (e) => this.setState({ [field]: e.target.checked ? 1 : 0 });
 
+  handleAutocomplete = (field) => (e, newVal) => {
+    this.setState({
+      [field]: newVal || '',
+    });
+  }
+
   render() {
-    const { classes, t, open, onClose } = this.props;
+    const { classes, t, open, onClose, Users } = this.props;
     const { listname, displayname, hidden, listType, listPrivilege, associations, specifieds, loading } = this.state;
     return (
       <Dialog
@@ -184,19 +201,25 @@ class AddMList extends PureComponent {
                 </MenuItem>
               ))}
             </TextField>
-            {listType === 0 && <TextField 
+            {listType === 0 && <MagnitudeAutocomplete
+              multiple
+              value={associations || []}
+              filterAttribute={'username'}
+              onChange={this.handleAutocomplete('associations')}
               className={classes.input} 
-              label={t("Recipients") + " (" + t("separated by comma") + " (,))"} 
-              fullWidth 
-              value={associations || ''}
-              onChange={this.handleInput('associations')}
+              options={Users || []}
+              placeholder={t("Search users") +  "..."}
+              label={t('Recipients')}
             />}
-            {listPrivilege === 3 && <TextField 
-              className={classes.input}
-              label={t("Senders") + " (" + t("separated by comma") + " (,))"}
-              fullWidth 
-              value={specifieds || ''}
-              onChange={this.handleInput('specifieds')}
+            {listPrivilege === 3 && <MagnitudeAutocomplete
+              multiple
+              value={specifieds || []}
+              filterAttribute={'username'}
+              onChange={this.handleAutocomplete('specifieds')}
+              className={classes.input} 
+              options={Users || []}
+              placeholder={t("Search users") +  "..."}
+              label={t('Senders')}
             />}
           </FormControl>
         </DialogContent>
@@ -230,6 +253,14 @@ AddMList.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
+  Users: PropTypes.array.isRequired,
+  fetch: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => {
+  return {
+    Users: state.users.Users,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -238,8 +269,10 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addMListData(domainID, mList))
         .catch(message => Promise.reject(message));
     },
+    fetch: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
+      .catch(message => Promise.reject(message)),
   };
 };
 
-export default connect(null, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
   withTranslation()(withStyles(styles)(AddMList)));

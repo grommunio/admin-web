@@ -28,7 +28,7 @@ class RolesTab extends PureComponent {
 
   render() {
     const { classes, t, roles, Roles, handleAutocomplete } = this.props;
-    console.log(roles);
+
     return (
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
