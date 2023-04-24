@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import { withStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import Loadable from "react-loadable";
@@ -13,6 +13,8 @@ import backgroundDark from "!file-loader!./res/bootback-dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
+import { SYSTEM_ADMIN_WRITE } from "./constants";
+import { fetchLicenseData } from "./actions/license";
 
 const styles = {
   root: {
@@ -68,53 +70,51 @@ const MainView = Loadable({
 });
 
 // Root class
-class App extends Component {
+const App = ({classes, Domains, serverConfig, loading, authenticated, capabilities, changeSettings, fetchLicense}) => {
+  const routesProps = {
+    authenticated,
+    loading,
+  };
+  const darkModeStorage = window.localStorage.getItem("darkMode");
+  const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
 
-  constructor(props) {
-    super(props);
+  // componentDidMount()
+  useEffect(() => {
     // Get the selected language from local store and apply to i18-next
-    const { changeSettings } = props;
     const lang = localStorage.getItem("lang");
     if (lang) {
       i18n.changeLanguage(lang);
       changeSettings("language", lang);
     }
-  }
+  }, []);
 
-  render() {
-    const { classes, Domains, serverConfig } = this.props;
-    const { loading, authenticated, capabilities } = this.props;
-    const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
-    const routesProps = {
-      authenticated,
-      loading,
-    };
-
-    return (
-      <div
-        className={darkMode === "true" ? classes.darkRoot : classes.root}
-        style={{
-          backgroundImage: darkMode === "true" ? `
-          linear-gradient(#1c2025, rgba(28, 32, 37, 0.80)),
-          url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
-            `linear-gradient(rgba(240,240,240,0.99), rgba(240, 240, 240, 0.8)),
-              url(${serverConfig.customImages[window.location.hostname]?.background || background})`
-        }}
-      >
-        <div className={darkMode === "true" ? classes.darkLayer : classes.layer}/>
-        <CapabilityContext.Provider value={capabilities}>
-          <MainView
-            classes={classes}
-            authenticated={authenticated}
-            capabilities={capabilities}
-            domains={Domains || []}
-            routesProps={routesProps}
-          />
-        </CapabilityContext.Provider>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if(capabilities.includes(SYSTEM_ADMIN_WRITE)) fetchLicense();
+  }, [capabilities])
+    
+  return (
+    <div
+      className={darkMode === "true" ? classes.darkRoot : classes.root}
+      style={{
+        backgroundImage: darkMode === "true" ? `
+        linear-gradient(#1c2025, rgba(28, 32, 37, 0.80)),
+        url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
+          `linear-gradient(rgba(240,240,240,0.99), rgba(240, 240, 240, 0.8)),
+            url(${serverConfig.customImages[window.location.hostname]?.background || background})`
+      }}
+    >
+      <div className={darkMode === "true" ? classes.darkLayer : classes.layer}/>
+      <CapabilityContext.Provider value={capabilities}>
+        <MainView
+          classes={classes}
+          authenticated={authenticated}
+          capabilities={capabilities}
+          domains={Domains || []}
+          routesProps={routesProps}
+        />
+      </CapabilityContext.Provider>
+    </div>
+  );
 }
 
 App.propTypes = {
@@ -125,6 +125,7 @@ App.propTypes = {
   capabilities: PropTypes.array.isRequired,
   loading: PropTypes.bool,
   serverConfig: PropTypes.object.isRequired,
+  fetchLicense: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -143,6 +144,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
   return {
     changeSettings: (field, value) => dispatch(changeSettings(field, value)),
+    fetchLicense: async () => await dispatch(fetchLicenseData())
+      .catch(err => console.error(err)),
   };
 };
 

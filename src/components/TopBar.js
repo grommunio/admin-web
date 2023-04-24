@@ -27,7 +27,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import { fetchLicenseData } from '../actions/license';
 import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -156,11 +155,6 @@ class TopBar extends PureComponent {
     { key: 'archiveWebAddress', title: 'Archive', icon: Archive },
     { key: 'rspamdWebAddress', title: 'Rspamd', icon: Filter },
   ]
-
-  componentDidMount() {
-    const { fetch } = this.props;
-    if(this.context.includes(SYSTEM_ADMIN_WRITE)) fetch();
-  }
 
   handleMenuToggle = () => {
     const { setDrawerOpen } = this.props;
@@ -358,7 +352,6 @@ TopBar.propTypes = {
   authLogout: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
   license: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
 };
@@ -389,8 +382,6 @@ const mapDispatchToProps = dispatch => {
     changeSettings: async (field, value) => {
       await dispatch(changeSettings(field, value));
     },
-    fetch: async () => await dispatch(fetchLicenseData())
-      .catch(err => console.error(err)),
   };
 };
 
