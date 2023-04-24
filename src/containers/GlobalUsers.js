@@ -25,8 +25,8 @@ import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
 import AddGlobalContact from '../components/Dialogs/AddGlobalContact';
-import { getUserStatusString, getUserTypeString } from '../utils';
-import { AccountCircle, ContactMail } from '@mui/icons-material';
+import { getUserTypeString } from '../utils';
+import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
@@ -65,9 +65,8 @@ class GlobalUsers extends Component {
   }
 
   columns = [
-    { label: 'Display name', value: 'displayname' },
-    { label: 'Mode', value: 'status' },
     { label: 'Type', value: 'type' },
+    { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
   ]
 
@@ -177,16 +176,17 @@ class GlobalUsers extends Component {
                     <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
                       <TableCell>
                         <div className={classes.flexRow}>
-                          {obj.status === 5 ?
-                            <ContactMail className={classes.icon} fontSize='small'/> :
-                            <AccountCircle className={classes.icon} fontSize='small'/>
+                          {obj.properties.displaytypeex === 0 ?
+                            <AccountCircle className={classes.icon} fontSize='small'/> :
+                            obj.properties.displaytypeex === 1 ? 
+                              <Groups className={classes.icon} fontSize='small'/> :
+                              <ContactMail className={classes.icon} fontSize='small'/>
                           }
                           {obj.username}
                         </div>
                       </TableCell>
-                      <TableCell>{properties.displayname}</TableCell>
-                      <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
                       <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
+                      <TableCell>{properties.displayname}</TableCell>
                       <TableCell>{obj.ldapID || ''}</TableCell>
                       <TableCell align="right">
                         {writable && <IconButton onClick={handleDelete(obj)} size="large">
@@ -208,9 +208,11 @@ class GlobalUsers extends Component {
                   divider
                 >
                   <ListItemIcon>
-                    {obj.status === 5 ?
-                      <ContactMail className={classes.icon} fontSize='large'/> :
-                      <AccountCircle className={classes.icon} fontSize='large'/>
+                    {obj.properties.displaytypeex === 0 ?
+                      <AccountCircle className={classes.icon} fontSize='small'/> :
+                      obj.properties.displaytypeex === 1 ? 
+                        <Groups className={classes.icon} fontSize='small'/> :
+                        <ContactMail className={classes.icon} fontSize='small'/>
                     }
                   </ListItemIcon>
                   <ListItemText

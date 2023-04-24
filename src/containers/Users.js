@@ -21,8 +21,8 @@ import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import AddContact from '../components/Dialogs/AddContact';
-import { getUserStatusString, getUserTypeString } from '../utils';
-import { AccountCircle, ContactMail } from '@mui/icons-material';
+import { getUserTypeString } from '../utils';
+import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
@@ -69,9 +69,8 @@ class Users extends Component {
   };
 
   columns = [
-    { label: 'Display name', value: 'displayname' },
-    { label: 'Mode', value: 'status' },
     { label: 'Type', value: 'type' },
+    { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ]
@@ -292,16 +291,17 @@ class Users extends Component {
                     >
                       <TableCell>
                         <div className={classes.flexRow}>
-                          {obj.status === 5 ?
-                            <ContactMail className={classes.icon} fontSize='small'/> :
-                            <AccountCircle className={classes.icon} fontSize='small'/>
+                          {obj.properties.displaytypeex === 0 ?
+                            <AccountCircle className={classes.icon} fontSize='small'/> :
+                            obj.properties.displaytypeex === 1 ? 
+                              <Groups className={classes.icon} fontSize='small'/> :
+                              <ContactMail className={classes.icon} fontSize='small'/>
                           }
                           {obj.username}
                         </div>
                       </TableCell>
-                      <TableCell>{properties.displayname}</TableCell>
-                      <TableCell>{t(getUserStatusString(obj.status))}</TableCell>
                       <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
+                      <TableCell>{properties.displayname}</TableCell>
                       <TableCell>{obj.ldapID || ''}</TableCell>
                       <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                       <TableCell align="right">
@@ -324,9 +324,11 @@ class Users extends Component {
                   divider
                 >
                   <ListItemIcon>
-                    {obj.status === 5 ?
-                      <ContactMail className={classes.icon} fontSize='large'/> :
-                      <AccountCircle className={classes.icon} fontSize='large'/>
+                    {obj.properties.displaytypeex === 0 ?
+                      <AccountCircle className={classes.icon} fontSize='small'/> :
+                      obj.properties.displaytypeex === 1 ? 
+                        <Groups className={classes.icon} fontSize='small'/> :
+                        <ContactMail className={classes.icon} fontSize='small'/>
                     }
                   </ListItemIcon>
                   <ListItemText
