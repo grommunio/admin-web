@@ -176,9 +176,9 @@ class GlobalUsers extends Component {
                     <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + (obj.status === 5 ? '/contacts/' : '/users/') + obj.ID)}>
                       <TableCell>
                         <div className={classes.flexRow}>
-                          {obj.properties.displaytypeex === 0 ?
+                          {properties.displaytypeex === 0 ?
                             <AccountCircle className={classes.icon} fontSize='small'/> :
-                            obj.properties.displaytypeex === 1 ? 
+                            properties.displaytypeex === 1 ? 
                               <Groups className={classes.icon} fontSize='small'/> :
                               <ContactMail className={classes.icon} fontSize='small'/>
                           }

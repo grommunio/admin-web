@@ -223,96 +223,73 @@ const Routes = ({ childProps, domains, capabilities }) => (
       component={AsyncTaskDetails}
       props={childProps}
     />
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+    {domains.reduce((prev, domain) => {
+      prev.push(<AuthenticatedDomainRoute
         path={`/${domain.ID}`}
         exact
         component={AsyncDomainMenu}
         domain={domain}
         props={childProps}
         key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/users`}
         exact
         component={AsyncUsers}
         props={childProps}
         domain={domain}
         key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/users/:userID*`}
         exact
         component={AsyncUserDetails}
         props={childProps}
         domain={domain}
         key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/contacts/:userID*`}
         exact
         component={AsyncContactDetails}
         props={childProps}
         domain={domain}
         key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/folders`}
         exact
         component={AsyncFolders}
         props={childProps}
         domain={domain}
         key={domain.ID}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/folders/:folderID`}
         exact
         component={AsyncFolderDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/ldap`}
         exact
         component={AsyncLdap}
         props={childProps}
         key={domain.ID}
         domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/mailLists`}
         exact
         component={AsyncMlists}
         props={childProps}
         key={domain.ID}
         domain={domain}
-      />
-    )}
-    {domains.map(domain =>
-      <AuthenticatedDomainRoute
+      />, <AuthenticatedDomainRoute
         path={`/${domain.ID}/mailLists/:mlistID`}
         exact
         component={AsyncMlistDetails}
         props={childProps}
         key={domain.ID}
         domain={domain}
-      />
-    )}
+      />);
+      return prev;
+    }, [])}
     {!childProps.loading ?
       <Route
         route="*"
