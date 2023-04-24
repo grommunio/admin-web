@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, IconButton, Typography } from '@mui/material';
+import { debounce, Fade, IconButton, LinearProgress, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
-import TopBar from './TopBar';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
 import { HelpOutline } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { setTopbarTitle } from '../actions/misc';
 
 const styles = theme => ({
   root: {
@@ -35,44 +36,60 @@ const styles = theme => ({
   subtitle: {
     margin: theme.spacing(0, 2, 2, 2),
   },
+  lp: {
+    position: 'absolute',
+    top: 64,
+    width: '100%',
+  },
 });
 
-class TableViewContainer extends PureComponent {
+const TableViewContainer = ({classes, children, baseRef, handleScroll, headline, subtitle,
+  snackbar, onSnackbarClose, href, loading }) => {
+  const dispatch = useDispatch();
 
-  render() {
-    const { classes, children, baseRef, topbarTitle, handleScroll, headline, subtitle,
-      snackbar, onSnackbarClose, href, loading } = this.props;
-    return (
-      <div
-        className={classes.root}
-        onScroll={debounce(handleScroll || (() => null), 100)}
-        id="scrollDiv"
-      >
-        <TopBar title={topbarTitle} loading={loading}/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base} ref={baseRef}>
-          <Typography variant="h2" className={classes.pageTitle}>
-            {headline}
-            {href && <IconButton
-              size="small"
-              href={href}
-              target="_blank"
-            >
-              <HelpOutline fontSize="small"/>
-            </IconButton>}
-          </Typography>
-          {subtitle && <Typography variant="caption" className={classes.subtitle}>
-            {subtitle}
-          </Typography>}
-          {children}
-        </div>
-        <Feedback
-          snackbar={snackbar || ''}
-          onClose={onSnackbarClose}
-        />
+  // Set topbar title of child component
+  useEffect(() => {
+    dispatch(setTopbarTitle(""));
+  }, []);
+
+  return (
+    <div
+      className={classes.root}
+      onScroll={debounce(handleScroll || (() => null), 100)}
+      id="scrollDiv"
+    >
+      <div className={classes.toolbar}>
+        <Fade
+          in={loading}
+          style={{
+            transitionDelay: '500ms',
+          }}
+        >
+          <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
+        </Fade>
       </div>
-    );
-  }
+      <div className={classes.base} ref={baseRef}>
+        <Typography variant="h2" className={classes.pageTitle}>
+          {headline}
+          {href && <IconButton
+            size="small"
+            href={href}
+            target="_blank"
+          >
+            <HelpOutline fontSize="small"/>
+          </IconButton>}
+        </Typography>
+        {subtitle && <Typography variant="caption" className={classes.subtitle}>
+          {subtitle}
+        </Typography>}
+        {children}
+      </div>
+      <Feedback
+        snackbar={snackbar || ''}
+        onClose={onSnackbarClose}
+      />
+    </div>
+  );
 }
 
 TableViewContainer.propTypes = {

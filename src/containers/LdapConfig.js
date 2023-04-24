@@ -4,9 +4,8 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import TopBar from '../components/TopBar';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
-  Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete } from '@mui/material';
+  Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete, Fade, LinearProgress } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr, deleteLdapConfig } from '../actions/ldap';
 import { connect } from 'react-redux';
@@ -21,6 +20,7 @@ import Feedback from '../components/Feedback';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';
+import { setTopbarTitle } from '../actions/misc';
 
 const styles = theme => ({
   root: {
@@ -104,6 +104,11 @@ const styles = theme => ({
   radioGroup: {
     marginLeft: 16,
   },
+  lp: {
+    position: 'absolute',
+    top: 64,
+    width: '100%',
+  },
 });
 
 class LdapConfig extends PureComponent {
@@ -183,7 +188,8 @@ class LdapConfig extends PureComponent {
   }
 
   async componentDidMount() {
-    const { fetch, fetchAuthMgr } = this.props;
+    const { fetch, resetTopbarTitle, fetchAuthMgr } = this.props;
+    resetTopbarTitle();
     const resp = await fetch()
       .catch(snackbar => this.setState({ snackbar }));
     const authResp = await fetchAuthMgr()
@@ -401,8 +407,16 @@ class LdapConfig extends PureComponent {
       authBackendSelection, groupMemberAttr, groupaddr, groupfilter, groupname, aliases, taskMessage, taskID, loading } = this.state;
     return (
       <div className={classes.root}>
-        <TopBar loading={loading}/>
-        <div className={classes.toolbar}></div>
+        <div className={classes.toolbar}>
+          <Fade
+            in={loading}
+            style={{
+              transitionDelay: '500ms',
+            }}
+          >
+            <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
+          </Fade>
+        </div>
         <form className={classes.base} onSubmit={this.handleSave}>
           <Typography variant="h2" className={classes.pageTitle}>
             {t("LDAP Directory")}
@@ -841,6 +855,7 @@ LdapConfig.propTypes = {
   fetchAuthMgr: PropTypes.func.isRequired,
   adminConfig: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
+  resetTopbarTitle: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -866,6 +881,7 @@ const mapDispatchToProps = dispatch => {
     sync: async params => await dispatch(syncLdapUsers(params))
       .catch(message => Promise.reject(message)),
     delete: async () => await dispatch(deleteLdapConfig()),
+    resetTopbarTitle: () => dispatch(setTopbarTitle("")),
   };
 };
 

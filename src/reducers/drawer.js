@@ -10,6 +10,7 @@ import {
   DOMAIN_DATA_EDIT,
   DOMAIN_DATA_DELETE,
   AUTH_AUTHENTICATED,
+  SET_TOPBAR_TITLE,
 } from '../actions/types';
 import { addItem } from '../utils';
 
@@ -19,6 +20,7 @@ const defaultState = {
   loading: true,
   expanded: true,
   open: false,
+  topbarTitle: "",
 };
 
 function editDomain(arr, item) {
@@ -72,6 +74,12 @@ function drawerReducer(state = defaultState, action) {
     return {
       ...state,
       selectedDomain: action.id,
+    };
+
+  case SET_TOPBAR_TITLE:
+    return {
+      ...state,
+      topbarTitle: action.title,
     };
 
   case AUTH_AUTHENTICATED:

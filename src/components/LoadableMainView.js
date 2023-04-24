@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Drawer from './Drawer';
 import AdminRoutes from '../Routes';
+import TopBar from './TopBar';
 
 export default function LoadableMainView(props) {
   const { classes, authenticated, capabilities, domains, routesProps } = props;
@@ -12,6 +13,7 @@ export default function LoadableMainView(props) {
     <div className={classes.mainView}>
       {authenticated &&
         <Drawer domains={domains}/>}
+      {authenticated && <TopBar />}
       <AdminRoutes domains={domains} childProps={routesProps} capabilities={capabilities}/>
     </div>
   );

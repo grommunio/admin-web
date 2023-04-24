@@ -324,9 +324,9 @@ class Users extends Component {
                   divider
                 >
                   <ListItemIcon>
-                    {obj.properties.displaytypeex === 0 ?
+                    {obj.properties?.displaytypeex === 0 ?
                       <AccountCircle className={classes.icon} fontSize='small'/> :
-                      obj.properties.displaytypeex === 1 ? 
+                      obj.properties?.displaytypeex === 1 ? 
                         <Groups className={classes.icon} fontSize='small'/> :
                         <ContactMail className={classes.icon} fontSize='small'/>
                     }

@@ -4,7 +4,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@mui/styles";
 import PropTypes from "prop-types";
-import TopBar from "../components/TopBar";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
 import { IconButton, Paper, Typography } from "@mui/material";
@@ -191,7 +190,6 @@ class Dashboard extends Component {
 
     return (
       <div className={classes.root}>
-        <TopBar />
         <div className={classes.toolbar} />
         {!!config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
           {t("Mail filter statistics")}

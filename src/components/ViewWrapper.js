@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import TopBar from './TopBar';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { setTopbarTitle } from '../actions/misc';
+import { Fade, LinearProgress } from '@mui/material';
 
 const styles = theme => ({
   root: {
@@ -32,26 +34,42 @@ const styles = theme => ({
   pageTitle: {
     margin: theme.spacing(2, 2, 2, 2),
   },
+  lp: {
+    position: 'absolute',
+    top: 64,
+    width: '100%',
+  },
 });
 
-class ViewWrapper extends PureComponent {
+function ViewWrapper ({classes, children, topbarTitle, snackbar, onSnackbarClose, loading}) {
+  const dispatch = useDispatch();
 
-  render() {
-    const { classes, children, topbarTitle, snackbar, onSnackbarClose, loading } = this.props;
-    return (
-      <div className={classes.root}>
-        <TopBar title={topbarTitle} loading={loading}/>
-        <div className={classes.toolbar}></div>
-        <div className={classes.base}>
-          {children}
-        </div>
-        <Feedback
-          snackbar={snackbar || ''}
-          onClose={onSnackbarClose}
-        />
+  // Set topbar title of child component
+  useEffect(() => {
+    dispatch(setTopbarTitle(topbarTitle));
+  }, []);
+
+  return (
+    <div className={classes.root}>
+      <div className={classes.toolbar}>
+        <Fade
+          in={loading}
+          style={{
+            transitionDelay: '500ms',
+          }}
+        >
+          <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
+        </Fade>
       </div>
-    );
-  }
+      <div className={classes.base}>
+        {children}
+      </div>
+      <Feedback
+        snackbar={snackbar || ''}
+        onClose={onSnackbarClose}
+      />
+    </div>
+  );
 }
 
 ViewWrapper.propTypes = {

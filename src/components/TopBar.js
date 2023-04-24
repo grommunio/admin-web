@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress, Fade,
+import { AppBar, Toolbar, Typography, Hidden, IconButton,
   Box, 
   Menu,
   MenuItem,
@@ -12,7 +12,6 @@ import { AppBar, Toolbar, Typography, Button, Hidden, IconButton, LinearProgress
   Autocomplete,
   TextField,
   InputAdornment} from '@mui/material';
-import Add from '@mui/icons-material/Add';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Burger from '@mui/icons-material/Menu';
@@ -132,11 +131,6 @@ const styles = theme => ({
       display: 'none',
     },
   },
-  lp: {
-    position: 'absolute',
-    top: 64,
-    width: '100%',
-  },
 });
 
 class TopBar extends PureComponent {
@@ -196,7 +190,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, title, onAdd, loading, settings, license, drawer, setDrawerExpansion, config } = this.props;
+    const { classes, t, profile, settings, license, drawer, setDrawerExpansion, config } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
     const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
@@ -235,7 +229,7 @@ class TopBar extends PureComponent {
               </Tooltip>
             )}
           </Hidden>
-          {title && <Typography className={classes.title} variant="h6">{title}</Typography>}
+          {drawer.topbarTitle && <Typography className={classes.title} variant="h6">{drawer.topbarTitle}</Typography>}
           <div className={classes.flexEndContainer}>
             {sysAdmRead && <Autocomplete
               onChange={this.handleAutocomplete}
@@ -318,19 +312,7 @@ class TopBar extends PureComponent {
               </MenuItem>
             </Menu>
           </div>
-          {onAdd && <div className={classes.divider}></div>}
-          {onAdd && <Button onClick={onAdd} color="inherit" className={classes.add}>
-            <Add />{t('Add')}
-          </Button>}
         </Toolbar>
-        <Fade
-          in={loading}
-          style={{
-            transitionDelay: '500ms',
-          }}
-        >
-          <LinearProgress variant="indeterminate" color="primary" className={classes.lp}/>
-        </Fade>
       </AppBar>
     );
   }
