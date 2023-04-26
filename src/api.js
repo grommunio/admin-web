@@ -310,6 +310,7 @@ export function allUsers(params) {
     return await get(buildQuery('/system/users', {
       ...params,
       addressType: 0,
+      matchProps: 'displayname',
       properties: 'displayname,displaytypeex',
     }));
   };
@@ -320,6 +321,7 @@ export function users(domainID, params) {
     return await get(buildQuery(
       '/domains/' + domainID + '/users', {
         ...params,
+        matchProps: 'displayname',
         properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex',
         addressType: 0,
       }));
