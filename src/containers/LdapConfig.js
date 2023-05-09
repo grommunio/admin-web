@@ -111,6 +111,32 @@ const styles = theme => ({
   },
 });
 
+function getDefaultGroupValuesOfTemplate(template, attribute) {
+  if(template === 'ActiveDirectory') {
+    return {
+      groupMemberAttr: "memberOf",
+      groupaddr: "mail",
+      groupfilter: "(objectclass=group)",
+      groupname: "cn",
+    }[attribute];
+  } else if(template === 'OpenLDAP') {
+    return {
+      groupMemberAttr: "memberOf",
+      groupaddr: "mailPrimaryAddress",
+      groupfilter: "(objectclass=posixgroup)",
+      groupname: "cn",
+    }[attribute];
+  } else if(template === 'Univention') {
+    return {
+      groupMemberAttr: "memberOf",
+      groupaddr: "mailPrimaryAddress",
+      groupfilter: "(objectclass=posixgroup)",
+      groupname: "cn",
+    }[attribute];
+  }
+  return {};
+}
+
 class LdapConfig extends PureComponent {
 
   state = {
@@ -188,7 +214,7 @@ class LdapConfig extends PureComponent {
   }
 
   async componentDidMount() {
-    const { fetch, resetTopbarTitle, fetchAuthMgr } = this.props;
+    const { fetch, put, resetTopbarTitle, fetchAuthMgr } = this.props;
     resetTopbarTitle();
     const resp = await fetch()
       .catch(snackbar => this.setState({ snackbar }));
@@ -198,8 +224,31 @@ class LdapConfig extends PureComponent {
     if(!config) return;
     const available = resp?.ldapAvailable || false;
     const connection = config?.connection || {};
-    const groups = config?.groups || {};
     const users = config?.users || {};
+
+    // Backwards compatability code:
+    // If a user just upgraded to the new ldap groups version,
+    // there won't be any values set in the backend by default.
+    // To prevent issues, a request with default values will be sent to the backend,
+    // if any of the groups-values are empty.
+    let requestNecessary = false;
+    if(!config.groups) {
+      config.groups = {};
+    }
+    const groups = config.groups;
+    ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach(att => {
+      if(!groups[att]) {
+        groups[att] = getDefaultGroupValuesOfTemplate(users.templates && users.templates.length > 0 ? users.templates[1] : 'none', att);
+        requestNecessary = true;
+      }
+    });
+
+    if(requestNecessary) {
+      put(config, { force: true })
+        .then(() => this.setState({ snackbar: 'Success! Default LDAP group setting applied' }))
+        .catch(() => this.setState({ snackbar: "Failed to set default groups configuration" }));
+    }
+
     // Format LDAP config
     this.setState({
       loading: false,
