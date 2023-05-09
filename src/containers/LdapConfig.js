@@ -134,7 +134,7 @@ function getDefaultGroupValuesOfTemplate(template, attribute) {
       groupname: "cn",
     }[attribute];
   }
-  return {};
+  return "";
 }
 
 class LdapConfig extends PureComponent {
