@@ -245,7 +245,7 @@ class LdapConfig extends PureComponent {
 
     if(requestNecessary) {
       put(config, { force: true })
-        .then(() => this.setState({ snackbar: 'Success! Default LDAP group setting applied' }))
+        .then(() => this.setState({ snackbar: 'Success! Default LDAP groups configuration applied' }))
         .catch(() => this.setState({ snackbar: "Failed to set default groups configuration" }));
     }
 
