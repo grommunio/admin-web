@@ -37,6 +37,7 @@ const AsyncDefaults = makeLoadableComponent(() => import("./containers/Defaults"
 const AsyncDomainList = makeLoadableComponent(() => import("./containers/Domains"));
 const AsyncDomainListDetails = makeLoadableComponent(() => import("./containers/DomainDetails"));
 const AsyncGlobalUsersList = makeLoadableComponent(() => import("./containers/GlobalUsers"));
+const AsyncGlobalContactsList = makeLoadableComponent(() => import("./containers/GlobalContacts"));
 const AsyncOrgs = makeLoadableComponent(() => import("./containers/Orgs"));
 const AsyncOrgDetails = makeLoadableComponent(() => import("./containers/OrgDetails"));
 const AsyncMlists = makeLoadableComponent(() => import("./containers/MLists"));
@@ -45,6 +46,7 @@ const AsyncChangePw = makeLoadableComponent(() => import("./containers/ChangePw"
 const AsyncSettings = makeLoadableComponent(() => import("./containers/Settings"));
 const AsyncUsers = makeLoadableComponent(() => import("./containers/Users"));
 const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDetails"));
+const AsyncContacts = makeLoadableComponent(() => import("./containers/Contacts"));
 const AsyncContactDetails = makeLoadableComponent(() => import("./containers/ContactDetails"));
 const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
 const AsyncLdapConfig = makeLoadableComponent(() => import("./containers/LdapConfig"));
@@ -101,6 +103,12 @@ const Routes = ({ childProps, domains, capabilities }) => (
       path="/users"
       exact
       component={AsyncGlobalUsersList}
+      props={childProps}
+    />}
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <AuthenticatedRoute
+      path="/contacts"
+      exact
+      component={AsyncGlobalContactsList}
       props={childProps}
     />}
     <AuthenticatedRoute
@@ -242,6 +250,13 @@ const Routes = ({ childProps, domains, capabilities }) => (
         path={`/${domain.ID}/users/:userID*`}
         exact
         component={AsyncUserDetails}
+        props={childProps}
+        domain={domain}
+        key={domain.ID}
+      />, <AuthenticatedDomainRoute
+        path={`/${domain.ID}/contacts`}
+        exact
+        component={AsyncContacts}
         props={childProps}
         domain={domain}
         key={domain.ID}

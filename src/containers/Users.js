@@ -20,9 +20,8 @@ import TaskCreated from '../components/Dialogs/TaskCreated';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
-import AddContact from '../components/Dialogs/AddContact';
 import { getUserTypeString } from '../utils';
-import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
+import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
@@ -60,7 +59,6 @@ class Users extends Component {
     checking: false,
     taskMessage: '',
     taskID: null,
-    addingContact: false,
   }
 
   handleScroll = () => {
@@ -151,14 +149,6 @@ class Users extends Component {
     this.props.clearSnackbar();
   }
 
-  handleAddContact = () => this.setState({ addingContact: true });
-
-  handleContactClose = () => this.setState({ addingContact: false });
-
-  handleContactSuccess = () => this.setState({ addingContact: false, snackbar: 'Success!' });
-
-  handleContactError = (error) => this.setState({ snackbar: error });
-
   render() {
     const { classes, t, users, domain, tableState, handleMatch, handleRequestSort,
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
@@ -166,7 +156,7 @@ class Users extends Component {
       handleDeleteSuccess, handleEdit } = this.props;
     const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { addingContact, checking, taskMessage, taskID } = this.state;
+    const { checking, taskMessage, taskID } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -192,15 +182,6 @@ class Users extends Component {
             disabled={!writable}
           >
             {t('New user')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleAddContact}
-            className={classes.newButton}
-            disabled={!writable}
-          >
-            {t('New contact')}
           </Button>
           <Button
             variant="contained"
@@ -281,21 +262,19 @@ class Users extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.Users.map((obj, idx) => {
+                {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
                   const properties = obj.properties || {};
                   return (
                     <TableRow
                       key={idx}
                       hover
-                      onClick={handleEdit('/' + domain.ID + (obj.status === 5 ? '/contacts/' : '/users/') +  obj.ID)}
+                      onClick={handleEdit('/' + domain.ID + '/users/' +  obj.ID)} /* TODO: Redundant */
                     >
                       <TableCell>
                         <div className={classes.flexRow}>
-                          {properties.displaytypeex === 0 ?
-                            <AccountCircle className={classes.icon} fontSize='small'/> :
-                            properties.displaytypeex === 1 ? 
-                              <Groups className={classes.icon} fontSize='small'/> :
-                              <ContactMail className={classes.icon} fontSize='small'/>
+                          {properties.displaytypeex === 1 ?
+                            <Groups className={classes.icon} fontSize='small'/> :
+                            <AccountCircle className={classes.icon} fontSize='small'/>
                           }
                           {obj.username}
                         </div>
@@ -317,18 +296,16 @@ class Users extends Component {
           </Hidden>
           <Hidden lgUp>
             <List>
-              {users.Users.map((obj, idx) => 
+              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
                 <ListItemButton
                   key={idx}
-                  onClick={handleEdit('/' + domain.ID + (obj.status === 5 ? '/contacts/' : '/users/') +  obj.ID)}
+                  onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}
                   divider
                 >
                   <ListItemIcon>
-                    {obj.properties?.displaytypeex === 0 ?
-                      <AccountCircle className={classes.icon} fontSize='small'/> :
-                      obj.properties?.displaytypeex === 1 ? 
-                        <Groups className={classes.icon} fontSize='small'/> :
-                        <ContactMail className={classes.icon} fontSize='small'/>
+                    {obj.properties?.displaytypeex === 1 ?
+                      <Groups className={classes.icon} fontSize='small'/> :
+                      <AccountCircle className={classes.icon} fontSize='small'/>
                     }
                   </ListItemIcon>
                   <ListItemText
@@ -349,13 +326,6 @@ class Users extends Component {
           onError={handleAddingError}
           domain={domain}
           onClose={handleAddingClose}
-        />
-        <AddContact
-          domain={domain}
-          open={addingContact}
-          onSuccess={this.handleContactSuccess}
-          onError={this.handleContactError}
-          onClose={this.handleContactClose}
         />
         <DeleteUser
           open={!!deleting}

@@ -25,7 +25,7 @@ const styles = {
   },
 };
 
-class DeleteUser extends PureComponent {
+class CheckLdapDialog extends PureComponent {
 
   handleDelete = deleteFiles => () => {
     const { deleteUsers, onClose, onError } = this.props;
@@ -85,7 +85,7 @@ class DeleteUser extends PureComponent {
   }
 }
 
-DeleteUser.propTypes = {
+CheckLdapDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   open: PropTypes.bool,
@@ -109,4 +109,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DeleteUser)));
+  withTranslation()(withStyles(styles)(CheckLdapDialog)));

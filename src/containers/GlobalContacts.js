@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Typography, Button, Grid, TableSortLabel,
+  TableBody, Typography, Button, Grid,
   CircularProgress, 
   Hidden,
   List,
@@ -13,19 +13,16 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   ListItemText} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { deleteUserData, checkLdapUsers, fetchAllUsers } from '../actions/users';
-import { syncLdapUsers } from '../actions/ldap';
+import { deleteUserData, fetchAllContacts } from '../actions/users';
 import DeleteUser from '../components/Dialogs/DeleteUser';
-import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
-import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
-import { getUserTypeString } from '../utils';
-import { AccountCircle, Groups } from '@mui/icons-material';
+import AddGlobalContact from '../components/Dialogs/AddGlobalContact';
+import { ContactMail } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 
 const styles = theme => ({
@@ -56,40 +53,21 @@ const styles = theme => ({
   },
 });
 
-class GlobalUsers extends Component {
+class GlobalContacts extends Component {
 
   state = {
-    checking: false,
     addingContact: false,
   }
 
   columns = [
-    { label: 'Type', value: 'type' },
     { label: 'Display name', value: 'displayname' },
-    { label: 'LDAP ID', value: 'ldapID' },
+    { label: 'E-Mail address', value: 'smtpaddress' },
   ]
 
   handleScroll = () => {
     const { Users, count, loading } = this.props.users;
     this.props.handleScroll(Users, count, loading);
   };
-
-  handleCheckClose = () => this.setState({ checking: false });
-
-  calculateGraph(obj) {
-    const { classes } = this.props;
-    const { prohibitsendquota, messagesizeextended } = obj;
-    const spaceUsed = ((messagesizeextended / (prohibitsendquota * 1024)) * 100).toFixed(0) + '%';
-    return <div className={classes.barBackground}>
-      <div style={{
-        width: spaceUsed,
-        height: 20,
-        background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
-        display: 'flex',
-        justifyContent: 'center',
-      }}></div>
-    </div>;
-  }
 
   handleAddContact = () => this.setState({ addingContact: true });
 
@@ -100,18 +78,17 @@ class GlobalUsers extends Component {
   handleContactError = (error) => this.setState({ snackbar: error });
 
   render() {
-    const { classes, t, users, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    const { classes, t, users, tableState, handleMatch,
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+    const { loading, match, snackbar, deleting } = tableState;
     const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { checking } = this.state;
+    const { addingContact } = this.state;
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
-        headline={t("Users")}
-        subtitle={t("globalusers_sub")}
+        headline={t("Contacts")}
+        subtitle={t("globalcontacts_sub")}
         href="https://docs.grommunio.com/admin/administration.html#users"
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
@@ -127,11 +104,10 @@ class GlobalUsers extends Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleAdd}
-            className={classes.newButton}
+            onClick={this.handleAddContact}
             disabled={!writable}
           >
-            {t('New user')}
+            {t('New contact')}
           </Button>
         </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
@@ -142,16 +118,6 @@ class GlobalUsers extends Component {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active={orderBy === 'username'}
-                      align="left" 
-                      direction={orderBy === 'username' ? order : 'asc'}
-                      onClick={handleRequestSort('username')}
-                    >
-                      {t('Username')}
-                    </TableSortLabel>
-                  </TableCell>
                   {this.columns.map(column =>
                     <TableCell key={column.value}>
                       {t(column.label)}
@@ -161,22 +127,21 @@ class GlobalUsers extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
+                {users.Users.map((obj, idx) => {
                   const properties = obj.properties || {};
                   return (
-                    <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
+                    <TableRow
+                      key={idx}
+                      hover
+                      onClick={handleEdit('/' + obj.domainID + '/contacts/' +  obj.ID)}
+                    >
                       <TableCell>
                         <div className={classes.flexRow}>
-                          {properties.displaytypeex === 1 ?
-                            <Groups className={classes.icon} fontSize='small'/> :
-                            <AccountCircle className={classes.icon} fontSize='small'/>
-                          }
-                          {obj.username}
+                          <ContactMail className={classes.icon} fontSize='small'/>
+                          {properties.displayname || ""}
                         </div>
                       </TableCell>
-                      <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
-                      <TableCell>{properties.displayname}</TableCell>
-                      <TableCell>{obj.ldapID || ''}</TableCell>
+                      <TableCell>{properties.smtpaddress || ""}</TableCell>
                       <TableCell align="right">
                         {writable && <IconButton onClick={handleDelete(obj)} size="large">
                           <Delete color="error"/>
@@ -190,21 +155,18 @@ class GlobalUsers extends Component {
           </Hidden>
           <Hidden lgUp>
             <List>
-              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
+              {users.Users.map((obj, idx) => 
                 <ListItemButton
                   key={idx}
                   onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
                   divider
                 >
                   <ListItemIcon>
-                    {obj.properties?.displaytypeex === 1 ?
-                      <Groups className={classes.icon} fontSize='small'/> :
-                      <AccountCircle className={classes.icon} fontSize='small'/>
-                    }
+                    <ContactMail className={classes.icon} fontSize='small'/>
                   </ListItemIcon>
                   <ListItemText
-                    primary={obj.username || ''}
-                    secondary={obj.properties?.displayname || ''}
+                    primary={obj.properties?.displayname || ''}
+                    secondary={obj.properties?.smtpaddress || ''}
                   />
                 </ListItemButton>
               )}
@@ -214,11 +176,11 @@ class GlobalUsers extends Component {
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper>
-        <AddGlobalUser
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          onClose={handleAddingClose}
+        <AddGlobalContact
+          open={addingContact}
+          onSuccess={this.handleContactSuccess}
+          onError={handleDeleteError}
+          onClose={this.handleContactClose}
         />
         <DeleteUser
           open={!!deleting}
@@ -228,22 +190,15 @@ class GlobalUsers extends Component {
           user={deleting}
           domainID={deleting.domainID || -1}
         />
-        <CheckLdapDialog
-          open={checking}
-          onClose={this.handleCheckClose}
-          onError={handleDeleteError}
-        />
       </TableViewContainer>
     );
   }
 }
 
-GlobalUsers.contextType = CapabilityContext;
-GlobalUsers.propTypes = {
+GlobalContacts.contextType = CapabilityContext;
+GlobalContacts.propTypes = {
   users: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
-  check: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
   ...defaultTableProptypes,
 };
 
@@ -254,17 +209,13 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async params => {
-      await dispatch(fetchAllUsers(params)).catch(error => Promise.reject(error));
+      await dispatch(fetchAllContacts(params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },
-    check: async params => await dispatch(checkLdapUsers(params))
-      .catch(error => Promise.reject(error)),
-    sync: async (params, domainID) => await dispatch(syncLdapUsers(params, domainID))
-      .catch(error => Promise.reject(error)),
   };
 };
 
 export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(GlobalUsers, { orderBy: 'username'});
+  mapStateToProps, mapDispatchToProps, styles)(GlobalContacts, { orderBy: 'username'});

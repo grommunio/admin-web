@@ -27,7 +27,7 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
-import { Add, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
@@ -253,6 +253,18 @@ class NavigationLinks extends PureComponent {
                       <ListItem
                         className={classes.li}
                         button
+                        onClick={this.handleNavigation(ID + '/contacts')}
+                        selected={expandedDomain === ID &&
+                          pathname.startsWith('/' + ID + '/contacts')}
+                      >
+                        <Grid container alignItems="center">
+                          <ContactMail className={classes.nestedIcon}/>
+                          <ListItemText primary={t('Contacts')}/>
+                        </Grid>
+                      </ListItem>
+                      <ListItem
+                        className={classes.li}
+                        button
                         onClick={this.handleNavigation(ID + '/mailLists')}
                         selected={pathname.startsWith('/' + ID + '/mailLists')}
                       >
@@ -333,6 +345,17 @@ class NavigationLinks extends PureComponent {
               <Grid container alignItems="center">
                 <Person className={classes.icon}/>
                 <ListItemText primary={t('Users')} />
+              </Grid>
+            </ListItem>
+            <ListItem
+              button
+              onClick={this.handleNavigation('contacts')}
+              className={classes.li}
+              selected={pathname.startsWith('/contacts')}
+            >
+              <Grid container alignItems="center">
+                <ContactMail className={classes.icon}/>
+                <ListItemText primary={t('Contacts')} />
               </Grid>
             </ListItem>
             <ListItem

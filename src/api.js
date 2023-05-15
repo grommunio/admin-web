@@ -316,6 +316,17 @@ export function allUsers(params) {
   };
 }
 
+export function allContacts(params) {
+  return async () => {
+    return await get(buildQuery('/system/users', {
+      ...params,
+      status: 5,
+      matchProps: 'displayname,smtpaddress',
+      properties: 'displayname,smtpaddress',
+    }));
+  };
+}
+
 export function users(domainID, params) {
   return async () => {
     return await get(buildQuery(
@@ -336,6 +347,18 @@ export function usersPlain(domainID, params={}) {
         limit: 1000000,
         sort: 'username,asc',
         ...params,
+      }));
+  };
+}
+
+export function contacts(domainID, params) {
+  return async () => {
+    return await get(buildQuery(
+      '/domains/' + domainID + '/users', {
+        ...params,
+        status: 5,
+        matchProps: 'displayname,smtpaddress',
+        properties: 'displayname,smtpaddress',
       }));
   };
 }

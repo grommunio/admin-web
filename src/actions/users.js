@@ -18,7 +18,9 @@ import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, def
   userSendAs,
   editUserSendAs,
   userOof,
-  putUserOof
+  putUserOof,
+  contacts,
+  allContacts
 } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
@@ -32,6 +34,20 @@ export function fetchUsersData(domainID, params) {
       return data;
     } catch(err) {
       console.error('Failed to fetch users');
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchContactsData(domainID, params) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(contacts(domainID, params));
+      if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
+      else await dispatch({ type: USERS_NEXT_SET, data });
+      return data;
+    } catch(err) {
+      console.error('Failed to fetch contacts');
       return Promise.reject(err.message);
     }
   };
@@ -107,6 +123,19 @@ export function fetchAllUsers(params) {
       else await dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
       console.error('Failed to fetch users');
+      return Promise.reject(err.message);
+    }
+  };
+}
+
+export function fetchAllContacts(params) {
+  return async dispatch => {
+    try {
+      const data = await dispatch(allContacts(params));
+      if(!params?.offset) await dispatch({ type: USERS_DATA_RECEIVED, data });
+      else await dispatch({ type: USERS_NEXT_SET, data });
+    } catch(err) {
+      console.error('Failed to fetch contacts');
       return Promise.reject(err.message);
     }
   };
