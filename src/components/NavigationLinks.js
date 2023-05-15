@@ -7,7 +7,6 @@ import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
@@ -25,7 +24,7 @@ import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
-import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button } from '@mui/material';
+import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
@@ -47,41 +46,13 @@ const styles = theme => ({
     },
     flex: 1,
   },
-  nested: {
-    paddingLeft: 30,
-  },
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-  },
-  li: {
-    width: 'auto',
-    margin: '6px 12px 6px',
-    borderRadius: '3px',
-    position: 'relative',
-    display: 'flex',
-    padding: '9px 14px',
-    transition: 'all 200ms linear',
-    '&:hover': {
-      backgroundColor: 'transparent',
-      textShadow: '0px 0px 1px white',
-      color: 'white',
-    },
-  },
-  icon: {
-    fontSize: '24px',
-    lineHeight: '30px',
-    float: 'left',
-    marginTop: '2px',
-    marginRight: '15px',
-    textAlign: 'center',
-    verticalAlign: 'middle',
-  },
   nestedIcon: {
     float: 'left',
     paddingLeft: 16,
     paddingRight: 6,
+  },
+  nestedLabel: {
+    paddingLeft: 16,
   },
   tabs: {
     width: 260,
@@ -115,17 +86,23 @@ const styles = theme => ({
     },
   },
   subheader: {
-    margin: theme.spacing(2, 0, 0, 1),
+    margin: theme.spacing(2, 0, 1, 1),
     fontWeight: 600,
   },
   addButton: {
     margin: '0 8px',
+    padding: '8px 16px',
   },
+  flexCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+  }
 });
 
 class NavigationLinks extends PureComponent {
 
   state = {
+    tab: 0,
     filter: '',
     defaultsIn: false,
     adding: false,
@@ -184,8 +161,8 @@ class NavigationLinks extends PureComponent {
           indicatorColor="primary"
           textColor="primary"
         >
-          <Tab className={classes.tab} value={0} label={t('Admin')} />
-          <Tab className={classes.tab} value={1} label={t('Domains')} />
+          <Tab className={classes.tab} label={t('Admin')} />
+          <Tab className={classes.tab} label={t('Domains')} />
         </Tabs>}
         {(tab === 1 || !isSysAdmin) &&
             <Grid container component="form" autoComplete="off">
@@ -212,264 +189,225 @@ class NavigationLinks extends PureComponent {
                 className={classes.textfield}
               />
             </Grid>}
-        <List className={classes.list}>
-          {tab === 1 && isSysAdmin && <Button
-            color="primary"
-            onClick={this.handleAdd}
-            className={classes.addButton}
-          >
-            {t("New domain")}
-            <Add />
-          </Button>}
+        <List>
+          {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
+            <Button
+              color="primary"
+              onClick={this.handleAdd}
+              className={classes.addButton}
+            >
+              {t("New domain")}
+              <Add />
+            </Button>
+          </div>
+          }
           {(tab === 1 || !isSysAdmin) &&
-            domains.map(({ domainname: name, ID, domainStatus }) => {
-              return name.includes(filter) ?
+            domains.map(({ domainname: name, ID, domainStatus }) => 
+              name.includes(filter) &&
                 <React.Fragment key={name}>
-                  <ListItem
+                  <ListItemButton
                     onClick={this.handleDrawer(ID)}
-                    button
-                    className={classes.li}
                     selected={expandedDomain === ID && pathname === '/' + ID}
                   >
-                    <Grid container alignItems="center">
-                      <Domains className={classes.icon} />
-                      <ListItemText primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')} />
-                    </Grid>
-                  </ListItem>
+                    <ListItemIcon>
+                      <Domains />
+                    </ListItemIcon>
+                    <ListItemText primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')} />
+                  </ListItemButton>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
-                      <ListItem
-                        className={classes.li}
-                        button
+                      <ListItemButton
                         onClick={this.handleNavigation(ID + '/users')}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/users')}
                       >
-                        <Grid container alignItems="center">
+                        <ListItemIcon>
                           <Person className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Users')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
+                        </ListItemIcon>
+                        <ListItemText primary={t('Users')} className={classes.nestedLabel}/>
+                      </ListItemButton>
+                      <ListItemButton
                         onClick={this.handleNavigation(ID + '/contacts')}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/contacts')}
                       >
-                        <Grid container alignItems="center">
+                        <ListItemIcon>
                           <ContactMail className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Contacts')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
+                        </ListItemIcon>
+                        <ListItemText primary={t('Contacts')} className={classes.nestedLabel}/>
+                      </ListItemButton>
+                      <ListItemButton
                         onClick={this.handleNavigation(ID + '/mailLists')}
                         selected={pathname.startsWith('/' + ID + '/mailLists')}
                       >
-                        <Grid container alignItems="center">
+                        <ListItemIcon>
                           <Groups className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Groups')}/>
-                        </Grid>
-                      </ListItem>
-                      <ListItem
-                        className={classes.li}
-                        button
+                        </ListItemIcon>
+                        <ListItemText primary={t('Groups')} className={classes.nestedLabel}/>
+                      </ListItemButton>
+                      <ListItemButton
                         onClick={this.handleNavigation(ID + '/folders')}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/folders')}
                       >
-                        <Grid container alignItems="center">
+                        <ListItemIcon>
                           <Topic className={classes.nestedIcon}/>
-                          <ListItemText primary={t('Public folders')}/>
-                        </Grid>
-                      </ListItem>
+                        </ListItemIcon>
+                        <ListItemText primary={t('Public folders')} className={classes.nestedLabel}/>
+                      </ListItemButton>
                     </List>
                   </Collapse>
-                </React.Fragment> : null;
-            })}
-          {(tab === 0 && !isSysAdmin) && <ListItem
-            button
+                </React.Fragment>
+            )}
+          {(tab === 0 && !isSysAdmin) && <ListItemButton
             onClick={this.handleNavigation('taskq')}
-            className={classes.li}
             selected={pathname.startsWith('/taskq')}
           >
-            <Grid container alignItems="center">
-              <TaskAlt className={classes.icon}/>
-              <ListItemText primary={t('Task queue')} />
-            </Grid>
-          </ListItem>}
+            <ListItemIcon>
+              <TaskAlt/>
+            </ListItemIcon>
+            <ListItemText primary={t('Task queue')} />
+          </ListItemButton>}
           {tab === 0 && isSysAdmin && <React.Fragment>
             <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
-            <ListItem
-              button
+            <ListItemButton
               onClick={this.handleNavigation('')}
-              className={classes.li}
               selected={pathname === '/'}
             >
-              <Grid container alignItems="center">
-                <Dashboard className={classes.icon} />
-                <ListItemText primary="Dashboard"/>
-              </Grid>
-            </ListItem>
+              <ListItemIcon>
+                <Dashboard />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard"/>
+            </ListItemButton>
             <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
-            <ListItem
-              className={classes.li}
-              button
+            <ListItemButton
               onClick={this.handleNavigation('orgs')}
               selected={pathname.startsWith('/orgs')}
             >
-              <Grid container alignItems="center">
-                <Orgs className={classes.icon}/>
-                <ListItemText primary={t('Organizations')}/>
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Orgs/>
+              </ListItemIcon>
+              <ListItemText primary={t('Organizations')}/>
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('domains')}
-              className={classes.li}
               selected={pathname.startsWith('/domains')}
             >
-              <Grid container alignItems="center">
-                <Domains className={classes.icon}/>
-                <ListItemText primary={t('Domains')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Domains/>
+              </ListItemIcon>
+              <ListItemText primary={t('Domains')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('users')}
-              className={classes.li}
               selected={pathname.startsWith('/users')}
             >
-              <Grid container alignItems="center">
-                <Person className={classes.icon}/>
-                <ListItemText primary={t('Users')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Person/>
+              </ListItemIcon>
+              <ListItemText primary={t('Users')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('contacts')}
-              className={classes.li}
               selected={pathname.startsWith('/contacts')}
             >
-              <Grid container alignItems="center">
-                <ContactMail className={classes.icon}/>
-                <ListItemText primary={t('Contacts')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <ContactMail/>
+              </ListItemIcon>
+              <ListItemText primary={t('Contacts')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('roles')}
-              className={classes.li}
               selected={pathname === '/roles'}
             >
-              <Grid container alignItems="center">
-                <Roles className={classes.icon}/>
-                <ListItemText primary={t('Roles')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Roles/>
+              </ListItemIcon>
+              <ListItemText primary={t('Roles')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('defaults')}
-              className={classes.li}
               selected={pathname === '/defaults'}
             >
-              <Grid container alignItems="center">
-                <BackupTable className={classes.icon}/>
-                <ListItemText primary={t('Defaults')} />
-              </Grid>
-            </ListItem>
+              <ListItemIcon>
+                <BackupTable/>
+              </ListItemIcon>
+              <ListItemText primary={t('Defaults')} />
+            </ListItemButton>
             <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
-            <ListItem
-              button
+            <ListItemButton
               onClick={this.handleNavigation('directory')}
-              className={classes.li}
               selected={pathname === '/directory'}
             >
-              <Grid container alignItems="center">
-                <Ldap className={classes.icon}/>
-                <ListItemText primary={t('LDAP Directory')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Ldap/>
+              </ListItemIcon>
+              <ListItemText primary={t('LDAP Directory')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('dbconf')}
-              className={classes.li}
               selected={pathname.startsWith('/dbconf')}
             >
-              <Grid container alignItems="center">
-                <Storage className={classes.icon}/>
-                <ListItemText primary={t('Configuration DB')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Storage/>
+              </ListItemIcon>
+              <ListItemText primary={t('Configuration DB')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('servers')}
-              className={classes.li}
               selected={pathname.startsWith('/servers')}
             >
-              <Grid container alignItems="center">
-                <Dns className={classes.icon}/>
-                <ListItemText primary={t('Servers')} />
-              </Grid>
-            </ListItem>
+              <ListItemIcon>
+                <Dns/>
+              </ListItemIcon>
+              <ListItemText primary={t('Servers')} />
+            </ListItemButton>
             <Typography variant="inherit" className={classes.subheader}>{t('Monitoring')}</Typography>
-            <ListItem
-              button
+            <ListItemButton
               onClick={this.handleNavigation('logs')}
-              className={classes.li}
               selected={pathname.startsWith('/logs')}
             >
-              <Grid container alignItems="center">
-                <Logs className={classes.icon}/>
-                <ListItemText primary={t('Logging')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Logs/>
+              </ListItemIcon>
+              <ListItemText primary={t('Logging')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('mailq')}
-              className={classes.li}
               selected={pathname.startsWith('/mailq')}
             >
-              <Grid container alignItems="center">
-                <QueryBuilder className={classes.icon}/>
-                <ListItemText primary={t('Mail queue')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <QueryBuilder/>
+              </ListItemIcon>
+              <ListItemText primary={t('Mail queue')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('taskq')}
-              className={classes.li}
               selected={pathname.startsWith('/taskq')}
             >
-              <Grid container alignItems="center">
-                <TaskAlt className={classes.icon}/>
-                <ListItemText primary={t('Task queue')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <TaskAlt/>
+              </ListItemIcon>
+              <ListItemText primary={t('Task queue')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('sync')}
-              className={classes.li}
               selected={pathname.startsWith('/sync')}
             >
-              <Grid container alignItems="center">
-                <Sync className={classes.icon}/>
-                <ListItemText primary={t('Mobile devices')} />
-              </Grid>
-            </ListItem>
-            <ListItem
-              button
+              <ListItemIcon>
+                <Sync/>
+              </ListItemIcon>
+              <ListItemText primary={t('Mobile devices')} />
+            </ListItemButton>
+            <ListItemButton
               onClick={this.handleNavigation('status')}
-              className={classes.li}
               selected={pathname.startsWith('/status')}
             >
-              <Grid container alignItems="center">
-                <TableChart className={classes.icon}/>
-                <ListItemText primary={t('Live status')} />
-              </Grid>
-            </ListItem>
+              <ListItemIcon>
+                <TableChart/>
+              </ListItemIcon>
+              <ListItemText primary={t('Live status')} />
+            </ListItemButton>
           </React.Fragment>
           }
         </List>
