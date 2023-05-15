@@ -96,7 +96,10 @@ const styles = theme => ({
   flexCenter: {
     display: 'flex',
     justifyContent: 'center',
-  }
+  },
+  selected: {
+    background: 'linear-gradient(150deg, #42A5F5, #2d323b)',
+  },
 });
 
 class NavigationLinks extends PureComponent {
@@ -207,6 +210,7 @@ class NavigationLinks extends PureComponent {
                   <ListItemButton
                     onClick={this.handleDrawer(ID)}
                     selected={expandedDomain === ID && pathname === '/' + ID}
+                    classes={{ selected: classes.selected }}
                   >
                     <ListItemIcon>
                       <Domains />
@@ -219,6 +223,7 @@ class NavigationLinks extends PureComponent {
                         onClick={this.handleNavigation(ID + '/users')}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/users')}
+                        classes={{ selected: classes.selected }}
                       >
                         <ListItemIcon>
                           <Person className={classes.nestedIcon}/>
@@ -227,6 +232,7 @@ class NavigationLinks extends PureComponent {
                       </ListItemButton>
                       <ListItemButton
                         onClick={this.handleNavigation(ID + '/contacts')}
+                        classes={{ selected: classes.selected }}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/contacts')}
                       >
@@ -237,6 +243,7 @@ class NavigationLinks extends PureComponent {
                       </ListItemButton>
                       <ListItemButton
                         onClick={this.handleNavigation(ID + '/mailLists')}
+                        classes={{ selected: classes.selected }}
                         selected={pathname.startsWith('/' + ID + '/mailLists')}
                       >
                         <ListItemIcon>
@@ -246,6 +253,7 @@ class NavigationLinks extends PureComponent {
                       </ListItemButton>
                       <ListItemButton
                         onClick={this.handleNavigation(ID + '/folders')}
+                        classes={{ selected: classes.selected }}
                         selected={expandedDomain === ID &&
                           pathname.startsWith('/' + ID + '/folders')}
                       >
@@ -260,6 +268,7 @@ class NavigationLinks extends PureComponent {
             )}
           {(tab === 0 && !isSysAdmin) && <ListItemButton
             onClick={this.handleNavigation('taskq')}
+            classes={{ selected: classes.selected }}
             selected={pathname.startsWith('/taskq')}
           >
             <ListItemIcon>
@@ -271,6 +280,7 @@ class NavigationLinks extends PureComponent {
             <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
             <ListItemButton
               onClick={this.handleNavigation('')}
+              classes={{ selected: classes.selected }}
               selected={pathname === '/'}
             >
               <ListItemIcon>
@@ -281,6 +291,7 @@ class NavigationLinks extends PureComponent {
             <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
             <ListItemButton
               onClick={this.handleNavigation('orgs')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/orgs')}
             >
               <ListItemIcon>
@@ -290,6 +301,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('domains')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/domains')}
             >
               <ListItemIcon>
@@ -299,6 +311,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('users')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/users')}
             >
               <ListItemIcon>
@@ -308,6 +321,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('contacts')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/contacts')}
             >
               <ListItemIcon>
@@ -317,6 +331,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('roles')}
+              classes={{ selected: classes.selected }}
               selected={pathname === '/roles'}
             >
               <ListItemIcon>
@@ -326,6 +341,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('defaults')}
+              classes={{ selected: classes.selected }}
               selected={pathname === '/defaults'}
             >
               <ListItemIcon>
@@ -336,6 +352,7 @@ class NavigationLinks extends PureComponent {
             <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
             <ListItemButton
               onClick={this.handleNavigation('directory')}
+              classes={{ selected: classes.selected }}
               selected={pathname === '/directory'}
             >
               <ListItemIcon>
@@ -345,6 +362,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('dbconf')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/dbconf')}
             >
               <ListItemIcon>
@@ -354,6 +372,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('servers')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/servers')}
             >
               <ListItemIcon>
@@ -364,6 +383,7 @@ class NavigationLinks extends PureComponent {
             <Typography variant="inherit" className={classes.subheader}>{t('Monitoring')}</Typography>
             <ListItemButton
               onClick={this.handleNavigation('logs')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/logs')}
             >
               <ListItemIcon>
@@ -373,6 +393,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('mailq')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/mailq')}
             >
               <ListItemIcon>
@@ -382,6 +403,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('taskq')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/taskq')}
             >
               <ListItemIcon>
@@ -391,6 +413,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('sync')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/sync')}
             >
               <ListItemIcon>
@@ -400,6 +423,7 @@ class NavigationLinks extends PureComponent {
             </ListItemButton>
             <ListItemButton
               onClick={this.handleNavigation('status')}
+              classes={{ selected: classes.selected }}
               selected={pathname.startsWith('/status')}
             >
               <ListItemIcon>
