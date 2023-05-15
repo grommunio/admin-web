@@ -157,7 +157,7 @@ class Account extends PureComponent {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
       handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
-      servers, handleInput, handleMultiselectChange } = this.props;
+      servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
       ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver, altname } = user;
@@ -328,7 +328,9 @@ class Account extends PureComponent {
               }
               value={storagequotalimit !== undefined ? storagequotalimit : ''}
               onChange={handleIntPropertyChange('storagequotalimit')}
-              helperText={storagequotalimit === "" ? "Use delete icon to remove quota" : ""}
+              helperText={storagequotalimit === "" ? "Use delete icon to remove quota" :
+                storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
+              error={storageQuotaTooHigh}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
@@ -514,6 +516,7 @@ Account.propTypes = {
   langs: PropTypes.array,
   servers: PropTypes.array.isRequired,
   handleMultiselectChange: PropTypes.func.isRequired,
+  storageQuotaTooHigh: PropTypes.bool,
 };
 
 const mapStateToProps = state => {

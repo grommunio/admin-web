@@ -104,7 +104,6 @@ class NavigationLinks extends PureComponent {
   state = {
     tab: 0,
     filter: '',
-    defaultsIn: false,
     adding: false,
     snackbar: '',
   }

@@ -263,16 +263,18 @@ class UserDetails extends PureComponent {
     const { user } = this.state;
     const value = event.target.value;
     const int = parseInt(value);
-    if(!isNaN(int) || value === '') this.setState({
-      user: {
-        ...user,
-        properties: {
-          ...user.properties,
-          [field]: int || value,
+    if(!isNaN(int) || value === '') {
+      this.setState({
+        user: {
+          ...user,
+          properties: {
+            ...user.properties,
+            [field]: int || value,
+          },
         },
-      },
-      unsaved: true,
-    });
+        unsaved: true,
+      });
+    }
   }
 
   /**
@@ -594,6 +596,8 @@ class UserDetails extends PureComponent {
     const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
       detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
+    const storageQuotaTooHigh = parseInt(properties.storagequotalimit) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
+
     return (
       <ViewWrapper
         topbarTitle={t('Users')}
@@ -684,6 +688,7 @@ class UserDetails extends PureComponent {
             handleChatUser={this.handleChatUser}
             handleServer={this.handleServer}
             handleMultiselectChange={this.handleMultiselectChange}
+            storageQuotaTooHigh={storageQuotaTooHigh}
           />}
           {tab === 1 && <User
             user={user}
@@ -746,7 +751,7 @@ class UserDetails extends PureComponent {
               variant="contained"
               color="primary"
               onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
-              disabled={!writable || forwardError}
+              disabled={!writable || forwardError || storageQuotaTooHigh}
             >
               {t('Save')}
             </Button>
