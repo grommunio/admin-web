@@ -147,19 +147,25 @@ class MailQ extends PureComponent {
                   <TableCell>{t("Recipients")}</TableCell>
                   <TableCell className={classes.flexRow}>
                     <Tooltip title={t("Flush mail queue")}>
-                      <IconButton disabled={actionsDisabled} onClick={this.handleFlush}>
-                        <PlayForWork color={actionsDisabled ? "secondary" : "primary"} />
-                      </IconButton>
+                      <span>
+                        <IconButton disabled={actionsDisabled} onClick={this.handleFlush}>
+                          <PlayForWork color={actionsDisabled ? "secondary" : "primary"} />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                     <Tooltip title={t("Requeue")}>
-                      <IconButton disabled={actionsDisabled} onClick={this.handleRequeue}>
-                        <Replay color={actionsDisabled ? "secondary" : "warning"} style={{ transform: 'rotate(180deg)' }} />
-                      </IconButton>
+                      <span>
+                        <IconButton disabled={actionsDisabled} onClick={this.handleRequeue}>
+                          <Replay color={actionsDisabled ? "secondary" : "warning"} style={{ transform: 'rotate(180deg)' }} />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                     <Tooltip title={t("Delete")}>
-                      <IconButton disabled={actionsDisabled} onClick={this.handleDelete}>
-                        <Delete color={actionsDisabled ? "secondary" : "error"} />
-                      </IconButton>
+                      <span>
+                        <IconButton disabled={actionsDisabled} onClick={this.handleDelete}>
+                          <Delete color={actionsDisabled ? "secondary" : "error"} />
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   </TableCell>
                 </TableRow>
