@@ -140,6 +140,35 @@ class NavigationLinks extends PureComponent {
     setTab(tab === 0 ? 1 : 0);
   }
 
+  ListElement = ({ label, path, Icon }) => {
+    const { classes, t } = this.props;
+    return <ListItemButton
+      onClick={this.handleNavigation(path)}
+      classes={{ selected: classes.selected }}
+      selected={location.pathname.endsWith('/' + path)}
+    >
+      <ListItemIcon>
+        <Icon/>
+      </ListItemIcon>
+      <ListItemText primary={t(label)}/>
+    </ListItemButton>;
+  }
+
+  NestedListElement = ({ ID, label, path, Icon }) => {
+    const { classes, t, expandedDomain } = this.props;
+    return <ListItemButton
+      onClick={this.handleNavigation(ID + path)}
+      selected={expandedDomain === ID &&
+        location.pathname.startsWith('/' + ID + path)}
+      classes={{ selected: classes.selected }}
+    >
+      <ListItemIcon>
+        <Icon className={classes.nestedIcon}/>
+      </ListItemIcon>
+      <ListItemText primary={t(label)} className={classes.nestedLabel}/>
+    </ListItemButton>
+  }
+
   render() {
     const { classes, t, tab, expandedDomain, location, domains, capabilities, config } = this.props;
     const { filter, adding, snackbar } = this.state;
@@ -219,49 +248,30 @@ class NavigationLinks extends PureComponent {
                   </ListItemButton>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
-                      <ListItemButton
-                        onClick={this.handleNavigation(ID + '/users')}
-                        selected={expandedDomain === ID &&
-                          pathname.startsWith('/' + ID + '/users')}
-                        classes={{ selected: classes.selected }}
-                      >
-                        <ListItemIcon>
-                          <Person className={classes.nestedIcon}/>
-                        </ListItemIcon>
-                        <ListItemText primary={t('Users')} className={classes.nestedLabel}/>
-                      </ListItemButton>
-                      <ListItemButton
-                        onClick={this.handleNavigation(ID + '/contacts')}
-                        classes={{ selected: classes.selected }}
-                        selected={expandedDomain === ID &&
-                          pathname.startsWith('/' + ID + '/contacts')}
-                      >
-                        <ListItemIcon>
-                          <ContactMail className={classes.nestedIcon}/>
-                        </ListItemIcon>
-                        <ListItemText primary={t('Contacts')} className={classes.nestedLabel}/>
-                      </ListItemButton>
-                      <ListItemButton
-                        onClick={this.handleNavigation(ID + '/mailLists')}
-                        classes={{ selected: classes.selected }}
-                        selected={pathname.startsWith('/' + ID + '/mailLists')}
-                      >
-                        <ListItemIcon>
-                          <Groups className={classes.nestedIcon}/>
-                        </ListItemIcon>
-                        <ListItemText primary={t('Groups')} className={classes.nestedLabel}/>
-                      </ListItemButton>
-                      <ListItemButton
-                        onClick={this.handleNavigation(ID + '/folders')}
-                        classes={{ selected: classes.selected }}
-                        selected={expandedDomain === ID &&
-                          pathname.startsWith('/' + ID + '/folders')}
-                      >
-                        <ListItemIcon>
-                          <Topic className={classes.nestedIcon}/>
-                        </ListItemIcon>
-                        <ListItemText primary={t('Public folders')} className={classes.nestedLabel}/>
-                      </ListItemButton>
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Users"}
+                        path="/users"
+                        Icon={Person}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Contacts"}
+                        path="/contacts"
+                        Icon={ContactMail}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Groups"}
+                        path="/mailLists"
+                        Icon={Groups}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Public folders"}
+                        path="/folders"
+                        Icon={Topic}
+                      />
                     </List>
                   </Collapse>
                 </React.Fragment>
@@ -278,159 +288,83 @@ class NavigationLinks extends PureComponent {
           </ListItemButton>}
           {tab === 0 && isSysAdmin && <React.Fragment>
             <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
-            <ListItemButton
-              onClick={this.handleNavigation('')}
-              classes={{ selected: classes.selected }}
-              selected={pathname === '/'}
-            >
-              <ListItemIcon>
-                <Dashboard />
-              </ListItemIcon>
-              <ListItemText primary="Dashboard"/>
-            </ListItemButton>
+            <this.ListElement
+              label={"Dashboard"}
+              path=""
+              Icon={Dashboard}
+            />
             <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
-            <ListItemButton
-              onClick={this.handleNavigation('orgs')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/orgs')}
-            >
-              <ListItemIcon>
-                <Orgs/>
-              </ListItemIcon>
-              <ListItemText primary={t('Organizations')}/>
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('domains')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/domains')}
-            >
-              <ListItemIcon>
-                <Domains/>
-              </ListItemIcon>
-              <ListItemText primary={t('Domains')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('users')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/users')}
-            >
-              <ListItemIcon>
-                <Person/>
-              </ListItemIcon>
-              <ListItemText primary={t('Users')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('contacts')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/contacts')}
-            >
-              <ListItemIcon>
-                <ContactMail/>
-              </ListItemIcon>
-              <ListItemText primary={t('Contacts')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('roles')}
-              classes={{ selected: classes.selected }}
-              selected={pathname === '/roles'}
-            >
-              <ListItemIcon>
-                <Roles/>
-              </ListItemIcon>
-              <ListItemText primary={t('Roles')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('defaults')}
-              classes={{ selected: classes.selected }}
-              selected={pathname === '/defaults'}
-            >
-              <ListItemIcon>
-                <BackupTable/>
-              </ListItemIcon>
-              <ListItemText primary={t('Defaults')} />
-            </ListItemButton>
+            <this.ListElement
+              label={"Organizations"}
+              path="orgs"
+              Icon={Orgs}
+            />
+            <this.ListElement
+              label={"Domains"}
+              path="domains"
+              Icon={Domains}
+            />
+            <this.ListElement
+              label={"Users"}
+              path="users"
+              Icon={Person}
+            />
+            <this.ListElement
+              label={"Contacts"}
+              path="contacts"
+              Icon={ContactMail}
+            />
+            <this.ListElement
+              label={"Roles"}
+              path="roles"
+              Icon={Roles}
+            />
+            <this.ListElement
+              label={"Defaults"}
+              path="defaults"
+              Icon={BackupTable}
+            />
             <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
-            <ListItemButton
-              onClick={this.handleNavigation('directory')}
-              classes={{ selected: classes.selected }}
-              selected={pathname === '/directory'}
-            >
-              <ListItemIcon>
-                <Ldap/>
-              </ListItemIcon>
-              <ListItemText primary={t('LDAP Directory')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('dbconf')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/dbconf')}
-            >
-              <ListItemIcon>
-                <Storage/>
-              </ListItemIcon>
-              <ListItemText primary={t('Configuration DB')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('servers')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/servers')}
-            >
-              <ListItemIcon>
-                <Dns/>
-              </ListItemIcon>
-              <ListItemText primary={t('Servers')} />
-            </ListItemButton>
-            <Typography variant="inherit" className={classes.subheader}>{t('Monitoring')}</Typography>
-            <ListItemButton
-              onClick={this.handleNavigation('logs')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/logs')}
-            >
-              <ListItemIcon>
-                <Logs/>
-              </ListItemIcon>
-              <ListItemText primary={t('Logging')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('mailq')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/mailq')}
-            >
-              <ListItemIcon>
-                <QueryBuilder/>
-              </ListItemIcon>
-              <ListItemText primary={t('Mail queue')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('taskq')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/taskq')}
-            >
-              <ListItemIcon>
-                <TaskAlt/>
-              </ListItemIcon>
-              <ListItemText primary={t('Task queue')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('sync')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/sync')}
-            >
-              <ListItemIcon>
-                <Sync/>
-              </ListItemIcon>
-              <ListItemText primary={t('Mobile devices')} />
-            </ListItemButton>
-            <ListItemButton
-              onClick={this.handleNavigation('status')}
-              classes={{ selected: classes.selected }}
-              selected={pathname.startsWith('/status')}
-            >
-              <ListItemIcon>
-                <TableChart/>
-              </ListItemIcon>
-              <ListItemText primary={t('Live status')} />
-            </ListItemButton>
+            <this.ListElement
+              label={"LDAP Directory"}
+              path="directory"
+              Icon={Ldap}
+            />
+            <this.ListElement
+              label={"Configuration DB"}
+              path="dbconf"
+              Icon={Storage}
+            />
+            <this.ListElement
+              label={"Servers"}
+              path="servers"
+              Icon={Dns}
+            />
+            <this.ListElement
+              label={"Monitoring"}
+              path="logs"
+              Icon={Logs}
+            />
+            <this.ListElement
+              label={"Mail queue"}
+              path="mailq"
+              Icon={QueryBuilder}
+            />
+            <this.ListElement
+              label={"Task queue"}
+              path="taskq"
+              Icon={TaskAlt}
+            />
+            <this.ListElement
+              label={"Mobile devices"}
+              path="sync"
+              Icon={Sync}
+            />
+            <this.ListElement
+              label={"Live status"}
+              path="status"
+              Icon={TableChart}
+            />
           </React.Fragment>
           }
         </List>
