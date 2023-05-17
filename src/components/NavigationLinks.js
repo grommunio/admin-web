@@ -50,6 +50,7 @@ const styles = theme => ({
     float: 'left',
     paddingLeft: 16,
     paddingRight: 6,
+    color: 'white',
   },
   nestedLabel: {
     paddingLeft: 16,
@@ -100,6 +101,9 @@ const styles = theme => ({
   selected: {
     background: 'linear-gradient(150deg, #42A5F5, #2d323b)',
   },
+  icon: {
+    color: '#fff',
+  }
 });
 
 class NavigationLinks extends PureComponent {
@@ -148,7 +152,7 @@ class NavigationLinks extends PureComponent {
       selected={location.pathname.endsWith('/' + path)}
     >
       <ListItemIcon>
-        <Icon/>
+        <Icon className={classes.icon}/>
       </ListItemIcon>
       <ListItemText primary={t(label)}/>
     </ListItemButton>;
@@ -242,7 +246,7 @@ class NavigationLinks extends PureComponent {
                     classes={{ selected: classes.selected }}
                   >
                     <ListItemIcon>
-                      <Domains />
+                      <Domains className={classes.icon}/>
                     </ListItemIcon>
                     <ListItemText primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')} />
                   </ListItemButton>
@@ -282,7 +286,7 @@ class NavigationLinks extends PureComponent {
             selected={pathname.startsWith('/taskq')}
           >
             <ListItemIcon>
-              <TaskAlt/>
+              <TaskAlt className={classes.icon}/>
             </ListItemIcon>
             <ListItemText primary={t('Task queue')} />
           </ListItemButton>}
