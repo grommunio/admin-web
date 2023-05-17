@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Typography, Button, Grid,
   CircularProgress, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton } from '@mui/material';
-import { fetchMListsData, deleteMListData } from '../actions/mlists';
+import { fetchGroupsData, deleteGroupData } from '../actions/groups';
 import { Delete } from '@mui/icons-material';
 import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
-import AddMList from '../components/Dialogs/AddMList';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -17,6 +16,7 @@ import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import TableActionGrid from '../components/TableActionGrid';
+import AddGroup from '../components/Dialogs/AddGroup';
 
 const styles = theme => ({
   tablePaper: {
@@ -31,7 +31,7 @@ const styles = theme => ({
   },
 });
 
-class MLists extends Component {
+class Groups extends PureComponent {
 
   state = {
     checking: false,
@@ -50,12 +50,12 @@ class MLists extends Component {
   handleCheckClose = () => this.setState({ checking: false });
 
   handleScroll = () => {
-    const { MLists, count, loading } = this.props.mLists;
-    this.props.handleScroll(MLists, count, loading);
+    const { Groups, count, loading } = this.props.groups;
+    this.props.handleScroll(Groups, count, loading);
   };
 
   render() {
-    const { classes, t, mLists, domain, tableState, handleMatch, handleRequestSort,
+    const { classes, t, groups, domain, tableState, handleMatch, handleRequestSort,
       handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
       clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
       handleDeleteSuccess, handleEdit } = this.props;
@@ -67,7 +67,7 @@ class MLists extends Component {
         handleScroll={this.handleScroll}
         headline={t("Groups")}
         subtitle={t('mlists_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#mail-lists"
+        href="https://docs.grommunio.com/admin/administration.html#groups"
         snackbar={snackbar}
         onSnackbarClose={clearSnackbar}
         loading={loading}
@@ -89,7 +89,7 @@ class MLists extends Component {
           </Button>
         </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
-          {t("showingMLists", { count: mLists.MLists.length })}
+          {t("showingGroups", { count: groups.Groups.length })}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Table size="small">
@@ -111,8 +111,8 @@ class MLists extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {mLists.MLists.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/mailLists/' + obj.ID)}>
+              {groups.Groups.map((obj, idx) =>
+                <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/groups/' + obj.ID)}>
                   <TableCell>{obj.listname}</TableCell>
                   <TableCell>{t(this.listTypes[obj.listType])}</TableCell>
                   <TableCell>{t(this.listPrivileges[obj.listPrivilege])}</TableCell>
@@ -125,11 +125,11 @@ class MLists extends Component {
               )}
             </TableBody>
           </Table>
-          {(mLists.MLists.length < mLists.count) && <Grid container justifyContent="center">
+          {(groups.Groups.length < groups.count) && <Grid container justifyContent="center">
             <CircularProgress color="primary" className={classes.circularProgress}/>
           </Grid>}
         </Paper>
-        <AddMList
+        <AddGroup
           open={adding}
           onSuccess={handleAddingSuccess}
           onError={handleAddingError}
@@ -151,28 +151,28 @@ class MLists extends Component {
   }
 }
 
-MLists.contextType = CapabilityContext;
-MLists.propTypes = {
-  mLists: PropTypes.object.isRequired,
+Groups.contextType = CapabilityContext;
+Groups.propTypes = {
+  groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
   ...defaultTableProptypes,
 };
 
 const mapStateToProps = state => {
-  return { mLists: state.mLists };
+  return { groups: state.groups };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async (domainID, params) => {
-      await dispatch(fetchMListsData(domainID, params)).catch(error => Promise.reject(error));
+      await dispatch(fetchGroupsData(domainID, params)).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
-      await dispatch(deleteMListData(domainID, id)).catch(error => Promise.reject(error));
+      await dispatch(deleteGroupData(domainID, id)).catch(error => Promise.reject(error));
     },
   };
 };
 
 export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(MLists, { orderBy: 'listname'});
+  mapStateToProps, mapDispatchToProps, styles)(Groups, { orderBy: 'listname'});

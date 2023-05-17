@@ -12,7 +12,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { addMListData } from '../../actions/mlists';
+import { addGroupData } from '../../actions/groups';
 import { fetchPlainUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
@@ -29,7 +29,7 @@ const styles = theme => ({
   },
 });
 
-class AddMList extends PureComponent {
+class AddGroup extends PureComponent {
 
   state = {
     listname: '',
@@ -244,7 +244,7 @@ class AddMList extends PureComponent {
   }
 }
 
-AddMList.propTypes = {
+AddGroup.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
@@ -265,8 +265,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    add: async (domainID, mList) => {
-      await dispatch(addMListData(domainID, mList))
+    add: async (domainID, group) => {
+      await dispatch(addGroupData(domainID, group))
         .catch(message => Promise.reject(message));
     },
     fetch: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
@@ -275,4 +275,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddMList)));
+  withTranslation()(withStyles(styles)(AddGroup)));

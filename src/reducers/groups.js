@@ -3,36 +3,36 @@
 
 import {
   AUTH_AUTHENTICATED,
-  MLISTS_DATA_RECEIVED,
-  MLIST_DATA_ADD,
-  MLIST_DATA_DELETE,
+  GROUPS_DATA_RECEIVED,
+  GROUP_DATA_ADD,
+  GROUP_DATA_DELETE,
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
 const defaultState = {
-  MLists: [],
+  Groups: [],
   count: 0,
 };
 
-function mlistsReducer(state = defaultState, action) {
+function groupsReducer(state = defaultState, action) {
   switch (action.type) {
-  case MLISTS_DATA_RECEIVED:
+  case GROUPS_DATA_RECEIVED:
     return {
       ...state,
-      MLists: action.offset ? append(state.MLists, action.data.data) : action.data.data,
+      Groups: action.offset ? append(state.Groups, action.data.data) : action.data.data,
       count: action.data.count,
     };
 
-  case MLIST_DATA_ADD:
+  case GROUP_DATA_ADD:
     return {
       ...state,
-      MLists: addItem(state.MLists, action.data),
+      Groups: addItem(state.Groups, action.data),
     };
 
-  case MLIST_DATA_DELETE:
+  case GROUP_DATA_DELETE:
     return {
       ...state,
-      MLists: state.MLists.filter(ml => ml.ID !== action.id),
+      Groups: state.Groups.filter(ml => ml.ID !== action.id),
       count: state.count - 1,
     };
 
@@ -48,4 +48,4 @@ function mlistsReducer(state = defaultState, action) {
   }
 }
 
-export default mlistsReducer;
+export default groupsReducer;

@@ -17,7 +17,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { editMListData, fetchMListData } from '../actions/mlists';
+import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
@@ -44,7 +44,7 @@ const styles = theme => ({
   },
 });
 
-class MListDetails extends PureComponent {
+class GroupDetails extends PureComponent {
 
   state = {
     listname: '',
@@ -60,27 +60,27 @@ class MListDetails extends PureComponent {
 
   async componentDidMount() {
     const { domain, fetch, fetchUsers } = this.props;
-    const mList = await fetch(domain.ID, getStringAfterLastSlash())
+    const group = await fetch(domain.ID, getStringAfterLastSlash())
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
     fetchUsers(domain.ID)
       .then(() => {
         const { Users } = this.props;
         const table = {};
         Users.forEach(u => table[u.username] = u);
-        if(mList?.ID) {
+        if(group?.ID) {
           const associations = [];
-          mList.associations.forEach(mListUsername => {
-            if(mListUsername in table) associations.push(table[mListUsername]);
+          group.associations.forEach(groupUsername => {
+            if(groupUsername in table) associations.push(table[groupUsername]);
           });
 
           const specifieds = [];
-          mList.specifieds.forEach(mListUsername => {
-            if(mListUsername in table) specifieds.push(table[mListUsername]);
+          group.specifieds.forEach(groupUsername => {
+            if(groupUsername in table) specifieds.push(table[groupUsername]);
           });
           
           this.setState({
             loading: false,
-            ...mList,
+            ...group,
             associations: associations,
             specifieds: specifieds,
           });
@@ -255,7 +255,7 @@ class MListDetails extends PureComponent {
           </FormControl>
           <Button
             color="secondary"
-            onClick={this.handleNavigation(domain.ID + '/mailLists')}
+            onClick={this.handleNavigation(domain.ID + '/groups')}
             style={{ marginRight: 8 }}
           >
             {t('Back')}
@@ -278,8 +278,8 @@ class MListDetails extends PureComponent {
   }
 }
 
-MListDetails.contextType = CapabilityContext;
-MListDetails.propTypes = {
+GroupDetails.contextType = CapabilityContext;
+GroupDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
@@ -299,11 +299,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    edit: async (domainID, mlist) => {
-      await dispatch(editMListData(domainID, mlist)).catch(message => Promise.reject(message));
+    edit: async (domainID, group) => {
+      await dispatch(editGroupData(domainID, group)).catch(message => Promise.reject(message));
     },
-    fetch: async (domainID, id) => await dispatch(fetchMListData(domainID, id))
-      .then(mlist => mlist)
+    fetch: async (domainID, id) => await dispatch(fetchGroupData(domainID, id))
+      .then(group => group)
       .catch(message => Promise.reject(message)),
     fetchUsers: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
       .catch(message => Promise.reject(message)),
@@ -311,4 +311,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(MListDetails)));
+  withTranslation()(withStyles(styles)(GroupDetails)));

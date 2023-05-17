@@ -263,7 +263,7 @@ class NavigationLinks extends PureComponent {
                       <this.NestedListElement
                         ID={ID}
                         label={"Groups"}
-                        path="/mailLists"
+                        path="/groups"
                         Icon={Groups}
                       />
                       <this.NestedListElement

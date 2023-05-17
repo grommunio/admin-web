@@ -15,7 +15,7 @@ import People from '@mui/icons-material/People';
 import Domains from '@mui/icons-material/Domain';
 import Folder from '@mui/icons-material/Folder';
 import Ldap from '@mui/icons-material/Contacts';
-import MLists from '@mui/icons-material/Email';
+import Groups from '@mui/icons-material/Email';
 import Storage from '@mui/icons-material/Storage';
 import Orgs from '@mui/icons-material/GroupWork';
 import Logs from '@mui/icons-material/ViewHeadline';
@@ -254,10 +254,10 @@ class RetractedNavigationLinks extends PureComponent {
                         <ListItem
                           className={classes.flexCenter}
                           button
-                          onClick={this.handleNavigation(ID + '/mailLists')}
-                          selected={pathname.startsWith('/' + ID + '/mailLists')}
+                          onClick={this.handleNavigation(ID + '/groups')}
+                          selected={pathname.startsWith('/' + ID + '/groups')}
                         >
-                          <MLists fontSize='large' className={classes.icon}/>
+                          <Groups fontSize='large' className={classes.icon}/>
                         </ListItem>
                       </Tooltip>
                     </List>
