@@ -3,7 +3,7 @@
 
 import React, { PureComponent } from 'react';
 import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles, withTheme } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect as connecc } from 'react-redux';
@@ -12,7 +12,23 @@ import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
 import { withRouter } from 'react-router';
 import moment from 'moment';
-import Editor from 'react-simple-wysiwyg';
+import {
+  BtnBold,
+  BtnBulletList,
+  BtnClearFormatting,
+  BtnItalic,
+  BtnLink,
+  BtnNumberedList,
+  BtnRedo,
+  BtnStrikeThrough,
+  BtnStyles,
+  BtnUnderline,
+  BtnUndo,
+  HtmlButton,
+  Separator,
+  EditorProvider,
+  Editor,
+  Toolbar } from 'react-simple-wysiwyg';
 import * as DOMPurify from 'dompurify';
 
 const styles = theme => ({
@@ -114,8 +130,9 @@ class Oof extends PureComponent {
   }
 
   render() {
-    const { classes, t, history } = this.props;
+    const { classes, t, history, theme } = this.props;
     const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = this.state;
+    const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
 
     const tfProps = (label, field) => ({
       fullWidth: true,
@@ -178,11 +195,32 @@ class Oof extends PureComponent {
             className={classes.mail}
           />
           <div className={classes.mail}>
-            <Editor
-              style={{ minHeight: 100 }}
-              value={internalReply}
-              onChange={this.handleInput("internalReply")}
-            />
+            <EditorProvider>
+              <Editor
+                style={{ minHeight: 100 }}
+                value={internalReply}
+                onChange={this.handleInput("internalReply")}
+              >
+                <Toolbar id={editorClass}>
+                  <BtnUndo id={editorClass}/>
+                  <BtnRedo id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnBold id={editorClass}/>
+                  <BtnItalic id={editorClass}/>
+                  <BtnUnderline id={editorClass}/>
+                  <BtnStrikeThrough id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnNumberedList id={editorClass}/>
+                  <BtnBulletList id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnLink id={editorClass}/>
+                  <BtnClearFormatting id={editorClass}/>
+                  <HtmlButton id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnStyles id={editorClass}/>
+                </Toolbar>
+              </Editor>
+            </EditorProvider>
           </div>
         </div>}
         {tab === 1 && <div className={classes.tabs}>
@@ -233,6 +271,7 @@ Oof.propTypes = {
   setOof: PropTypes.func.isRequired,
   domainID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
+  theme: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -247,4 +286,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default withRouter(connecc(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Oof))));
+  withTranslation()(withStyles(styles)(withTheme(Oof)))));

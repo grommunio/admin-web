@@ -178,3 +178,8 @@ pre code {
 .apexcharts-tooltip {
   color: black;
 }
+
+#wysiwyg {
+  background-color: #000000;
+  color: white;
+}
