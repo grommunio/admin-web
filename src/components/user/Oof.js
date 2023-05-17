@@ -12,6 +12,8 @@ import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
 import { withRouter } from 'react-router';
 import moment from 'moment';
+import Editor from 'react-simple-wysiwyg';
+import * as DOMPurify from 'dompurify';
 
 const styles = theme => ({
   form: {
@@ -42,6 +44,9 @@ const styles = theme => ({
   },
   mail: {
     margin: theme.spacing(1, 0),
+  },
+  editor: {
+    backgroundColor: '#f0f !important',
   },
 });
 
@@ -99,9 +104,9 @@ class Oof extends PureComponent {
       externalAudience,
       startTime: state == 0 ? undefined : moment(startTime).format('YYYY-MM-DD hh:mm') + ':00',
       endTime: state == 0 ? undefined : moment(endTime).format('YYYY-MM-DD hh:mm') + ':00',
-      internalSubject,
+      internalSubject: DOMPurify.sanitize(internalSubject),
       internalReply,
-      externalSubject,
+      externalSubject: DOMPurify.sanitize(externalSubject),
       externalReply,
     })
       .then(() => this.setState({ snackbar: 'Success!' }))
@@ -110,7 +115,7 @@ class Oof extends PureComponent {
 
   render() {
     const { classes, t, history } = this.props;
-    const { tab, state, startTime, endTime, snackbar } = this.state;
+    const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = this.state;
 
     const tfProps = (label, field) => ({
       fullWidth: true,
@@ -172,24 +177,26 @@ class Oof extends PureComponent {
             {...tfProps("Internal subject", "internalSubject")}
             className={classes.mail}
           />
-          <TextField
-            {...tfProps("Internal reply", "internalReply")}
-            multiline
-            rows={4}
-            className={classes.mail}
-          />
+          <div className={classes.mail}>
+            <Editor
+              style={{ minHeight: 100 }}
+              value={internalReply}
+              onChange={this.handleInput("internalReply")}
+            />
+          </div>
         </div>}
         {tab === 1 && <div className={classes.tabs}>
           <TextField
             {...tfProps("External subject", "externalSubject")}
             className={classes.mail}
           />
-          <TextField
-            {...tfProps("External reply", "externalReply")}
-            multiline
-            rows={4}
-            className={classes.mail}
-          />
+          <div className={classes.mail}>
+            <Editor
+              style={{ minHeight: 100 }}
+              value={externalReply}
+              onChange={this.handleInput("externalReply")}
+            />
+          </div>
         </div>}
       </FormControl>
       <Grid container className={classes.buttonGrid}>
