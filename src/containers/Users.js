@@ -367,7 +367,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async (domainID, params) => {
-      await dispatch(fetchUsersData(domainID, params)).catch(error => Promise.reject(error));
+      await dispatch(fetchUsersData(domainID, {...params, mlist: ""})).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
