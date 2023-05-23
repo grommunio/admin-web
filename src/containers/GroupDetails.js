@@ -15,6 +15,8 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { editGroupData, fetchGroupData } from '../actions/groups';
@@ -23,8 +25,10 @@ import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { fetchPlainUsersData } from '../actions/users';
+import { editUserData, fetchPlainUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
+import User from '../components/user/User';
+import Contact from '../components/user/Contact';
 
 const styles = theme => ({
   paper: {
@@ -42,6 +46,9 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
+  tabContainer: {
+    marginTop: 8,
+  },
 });
 
 class GroupDetails extends PureComponent {
@@ -54,8 +61,13 @@ class GroupDetails extends PureComponent {
     listPrivilege: 0,
     associations: [],
     specifieds: [],
-    unsaved: false,
+    tab: window.location.hash ?
+      (parseInt(window.location.hash.slice(1)) || 0) : 0,
     loading: true,
+    user: {
+      properties: {},
+    },
+    userDirty: false,
   }
 
   async componentDidMount() {
@@ -120,8 +132,9 @@ class GroupDetails extends PureComponent {
   }
 
   handleEdit = () => {
-    const { edit, domain } = this.props;
-    const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds } = this.state;
+    const { edit, domain, editUser } = this.props;
+    const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds,
+      user, userDirty } = this.state;
     edit(domain.ID, {
       ID,
       listname,
@@ -132,7 +145,12 @@ class GroupDetails extends PureComponent {
       associations: associations.map(user => user.username),
       specifieds: specifieds.map(user => user.username),
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
+      .then(() => {
+        if(userDirty) editUser(domain.ID, user)
+          .then(() => this.setState({ snackbar: 'Success!' }))
+          .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+        else this.setState({ snackbar: 'Success!' });
+      })
       .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
   }
 
@@ -150,11 +168,30 @@ class GroupDetails extends PureComponent {
     });
   }
 
+  handleTabChange = (_, tab) => {
+    location.hash = '#' + tab;
+    this.setState({ tab });
+  }
+
+  handlePropertyChange = field => event => {
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: event.target.value,
+        },
+      },
+      userDirty: true,
+    });
+  }
+
   render() {
     const { classes, t, domain, Users } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
-      loading } = this.state;
+    const { ID, tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
+      loading, user } = this.state;
 
     return (
       <ViewWrapper
@@ -172,7 +209,23 @@ class GroupDetails extends PureComponent {
               {t('editHeadline', { item: 'Group' })}
             </Typography>
           </Grid>
-          <FormControl className={classes.form}>
+          <div className={classes.tabContainer}>
+            <Tabs
+              indicatorColor="primary"
+              value={tab}
+              onChange={this.handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              classes={{
+                scroller: classes.scroller,
+              }}
+            >
+              <Tab label={t("Group")} />
+              <Tab label={t("User")} disabled={!ID}/>
+              <Tab label={t("Contact")} disabled={!ID}/>
+            </Tabs>
+          </div>
+          {tab === 0 && <FormControl className={classes.form}>
             <TextField 
               className={classes.input} 
               label={t("Group name")} 
@@ -252,7 +305,15 @@ class GroupDetails extends PureComponent {
               placeholder={t("Search users") +  "..."}
               label={t('Senders')}
             />}
-          </FormControl>
+          </FormControl>}
+          {tab === 1 && <User
+            user={user}
+            handlePropertyChange={this.handlePropertyChange}
+          />}
+          {tab === 2 && <Contact
+            user={user}
+            handlePropertyChange={this.handlePropertyChange}
+          />}
           <Button
             color="secondary"
             onClick={this.handleNavigation(domain.ID + '/groups')}
@@ -287,6 +348,7 @@ GroupDetails.propTypes = {
   fetch: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
+  editUser: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   Users: PropTypes.array.isRequired,
 };
@@ -302,6 +364,8 @@ const mapDispatchToProps = dispatch => {
     edit: async (domainID, group) => {
       await dispatch(editGroupData(domainID, group)).catch(message => Promise.reject(message));
     },
+    editUser: async (domainID, group) =>
+      await dispatch(editUserData(domainID, group)).catch(message => Promise.reject(message)),
     fetch: async (domainID, id) => await dispatch(fetchGroupData(domainID, id))
       .then(group => group)
       .catch(message => Promise.reject(message)),

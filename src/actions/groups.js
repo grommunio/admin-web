@@ -6,8 +6,8 @@ import {
   GROUP_DATA_ADD,
   GROUP_DATA_DELETE,
 } from './types';
-import { groups, addGroup, editGroup, deleteGroup, groupDetails } from '../api';
-import { defaultDeleteHandler, defaultDetailsHandler, defaultPatchHandler,
+import { groups, addGroup, editGroup, deleteGroup, groupDetails, user } from '../api';
+import { defaultDeleteHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 
 export function fetchGroupsData(domainID, params) {
@@ -21,8 +21,17 @@ export function fetchGroupsData(domainID, params) {
   };
 }
 
-export function fetchGroupData(...endpointParams) {
-  return defaultDetailsHandler(groupDetails, ...endpointParams);
+export function fetchGroupData(domainID, id) {
+  return async dispatch => {
+    try {
+      const group = await dispatch(groupDetails(domainID, id));
+      const groupUser = await dispatch(user(domainID, group.user));
+      group.user = groupUser;
+      return Promise.resolve(group);
+    } catch(error) {
+      return Promise.reject(error.message);
+    }
+  };
 }
 
 export function addGroupData(...endpointParams) {
