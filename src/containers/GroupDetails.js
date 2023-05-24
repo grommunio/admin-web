@@ -17,6 +17,9 @@ import {
   Checkbox,
   Tabs,
   Tab,
+  List,
+  ListItem,
+  IconButton,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { editGroupData, fetchGroupData } from '../actions/groups';
@@ -29,6 +32,7 @@ import { editUserData, fetchPlainUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
+import { Delete } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -48,6 +52,12 @@ const styles = theme => ({
   },
   tabContainer: {
     marginTop: 8,
+  },
+  listItem: {
+    padding: theme.spacing(1, 0),
+  },
+  listTextfield: {
+    flex: 1,
   },
 });
 
@@ -187,10 +197,35 @@ class GroupDetails extends PureComponent {
     });
   }
 
+  handleAliasEdit = (editType, idx) => event => {
+    const { user } = this.state;
+    const copy = [...user.aliases];
+    switch(editType) {
+    case "edit":
+      copy[idx] = event.target.value;
+      break;
+    case "add":
+      copy.push('');
+      break;
+    case "remove":
+      copy.splice(idx, 1);
+      break;
+    default:
+      return;
+    }
+    this.setState({
+      user: {
+        ...user,
+        aliases: copy
+      },
+      userDirty: true,
+    });
+  }
+
   render() {
     const { classes, t, domain, Users } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { ID, tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
+    const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
       loading, user } = this.state;
 
     return (
@@ -221,8 +256,9 @@ class GroupDetails extends PureComponent {
               }}
             >
               <Tab label={t("Group")} />
-              <Tab label={t("User")} disabled={!ID}/>
-              <Tab label={t("Contact")} disabled={!ID}/>
+              <Tab label={t("User")}/>
+              <Tab label={t("Contact")}/>
+              <Tab label={t("SMTP")}/>
             </Tabs>
           </div>
           {tab === 0 && <FormControl className={classes.form}>
@@ -314,6 +350,26 @@ class GroupDetails extends PureComponent {
             user={user}
             handlePropertyChange={this.handlePropertyChange}
           />}
+          {tab === 3 && <FormControl className={classes.form}>
+            <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
+            <List className={classes.list}>
+              {(user?.aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
+                <TextField
+                  className={classes.listTextfield}
+                  value={alias}
+                  label={t("Alias") + ' ' + (idx + 1)}
+                  onChange={this.handleAliasEdit("edit", idx)}
+                />
+                <IconButton onClick={this.handleAliasEdit("remove", idx)} size="large">
+                  <Delete color="error" />
+                </IconButton>
+              </ListItem>
+              )}
+            </List>
+            <Grid container justifyContent="center">
+              <Button variant="contained" onClick={this.handleAliasEdit("add")}>{t('addHeadline', { item: 'E-Mail' })}</Button>
+            </Grid>
+          </FormControl>}
           <Button
             color="secondary"
             onClick={this.handleNavigation(domain.ID + '/groups')}
