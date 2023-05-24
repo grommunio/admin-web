@@ -118,8 +118,9 @@ class Oof extends PureComponent {
     setOof(domainID, userID, {
       state,
       externalAudience,
-      startTime: state == 0 ? undefined : moment(startTime).format('YYYY-MM-DD hh:mm') + ':00',
-      endTime: state == 0 ? undefined : moment(endTime).format('YYYY-MM-DD hh:mm') + ':00',
+      // Only send dates when oof is scheduled
+      startTime: [0, 1].includes(state) ? undefined : moment(startTime).format('YYYY-MM-DD hh:mm') + ':00',
+      endTime: [0, 1].includes(state) ? undefined : moment(endTime).format('YYYY-MM-DD hh:mm') + ':00',
       internalSubject: DOMPurify.sanitize(internalSubject),
       internalReply,
       externalSubject: DOMPurify.sanitize(externalSubject),
