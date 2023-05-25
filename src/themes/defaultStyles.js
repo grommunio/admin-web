@@ -17,11 +17,13 @@ const defaultStyles = mode => ({
     styleOverrides: {
       root: {
         backgroundImage: 'none',
+        boxShadow: "none",
+        borderRadius: 4,
+        border: "1px solid " + (mode === 'light' ? '#d1d1d1' : '#d6d6d6'),
       },
       elevation1: {
         borderRadius: 8,
         margin: 16,
-        boxShadow: mode === 'light' ? '0px 3px 3px -2px rgba(0, 0, 0, 0.06),0px 3px 4px 0px rgba(0, 0, 0, 0.042),0px 1px 8px 0px rgba(0, 0, 0, 0.036)' : '0 0 1px 0 rgba(0,0,0,0.70), 0 3px 4px -2px rgba(0,0,0,0.50)',
       },
     },
   },

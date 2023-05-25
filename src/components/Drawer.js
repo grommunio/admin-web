@@ -44,6 +44,8 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    border: "none",
+    borderRadius: 0,
   },
   smallDrawerPaper: {
     width: smallDrawerWidth,

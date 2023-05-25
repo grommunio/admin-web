@@ -37,6 +37,8 @@ import { globalSearchOptions } from '../constants';
 const styles = theme => ({
   appbar: {
     height: 64,
+    border: "none",
+    borderRadius: 0,
   },
   toolbarExpanded: {
     height: 64,
@@ -131,6 +133,9 @@ const styles = theme => ({
       display: 'none',
     },
   },
+  menu: {
+    margin: 10,
+  }
 });
 
 class TopBar extends PureComponent {
@@ -300,6 +305,9 @@ class TopBar extends PureComponent {
               keepMounted
               open={Boolean(menuAnchorEl)}
               onClose={this.handleMenuClose('menuAnchorEl')}
+              PaperProps={{
+                className: classes.menu
+              }}
             >
               <MenuItem onClick={this.handleNavigation('settings')}>
                 {t('Settings')}
