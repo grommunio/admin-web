@@ -236,12 +236,14 @@ class LdapConfig extends PureComponent {
       config.groups = {};
     }
     const groups = config.groups;
-    ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach(att => {
-      if(!groups[att]) {
-        groups[att] = getDefaultGroupValuesOfTemplate(users.templates && users.templates.length > 0 ? users.templates[1] : 'none', att);
-        requestNecessary = true;
-      }
-    });
+    if(users.templates && users.templates.length > 0 && !config.disabled) {
+      ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach(att => {
+        if(!groups[att]) {
+          groups[att] = getDefaultGroupValuesOfTemplate(users.templates[1], att);
+          requestNecessary = true;
+        }
+      });
+    }
 
     if(requestNecessary) {
       put(config, { force: true })
