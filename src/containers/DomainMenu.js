@@ -20,6 +20,7 @@ import { red, yellow } from '@mui/material/colors';
 import { getStoreLangs } from '../actions/users';
 import { formatCreateParams } from '../utils';
 import DnsHealth from '../components/DnsHealth';
+import DNSLegend from '../components/DNSLegend';
 
 const styles = theme => ({
   root: {
@@ -268,6 +269,7 @@ class DomainMenu extends PureComponent {
             <div>
               <Typography variant='h6'>{t('DNS Health')}</Typography>
               <DnsHealth domain={domain}/>
+              <DNSLegend />
             </div>
             <Divider className={classes.divider}/>
           </Grid>
