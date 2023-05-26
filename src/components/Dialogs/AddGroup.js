@@ -132,7 +132,7 @@ class AddGroup extends PureComponent {
   }
 
   render() {
-    const { classes, t, open, onClose, Users } = this.props;
+    const { classes, t, open, onClose, Users, domain } = this.props;
     const { listname, displayname, hidden, listType, listPrivilege, associations, specifieds, loading } = this.state;
     return (
       <Dialog
@@ -154,6 +154,9 @@ class AddGroup extends PureComponent {
               onChange={this.handleInput('listname')}
               autoFocus
               required
+              InputProps={{
+                endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain?.domainname}</div>,
+              }}
             />
             <TextField 
               className={classes.input} 
