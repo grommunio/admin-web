@@ -256,7 +256,7 @@ class GroupDetails extends PureComponent {
               }}
             >
               <Tab label={t("Group")} />
-              <Tab label={t("User")}/>
+              <Tab label={t("Details")}/>
               <Tab label={t("Contact")}/>
               <Tab label={t("SMTP")}/>
             </Tabs>
