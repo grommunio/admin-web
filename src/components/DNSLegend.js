@@ -45,8 +45,8 @@ function DNSLegend({ classes }) {
     <div className={classes.redDot}></div><Typography sx={{mr: 1}}>Required</Typography>
     <div className={classes.yellowDot}></div><Typography sx={{mr: 1}}>Recommended</Typography>
     <div className={classes.blueDot}></div><Typography>Optional</Typography>
-    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
-      <Typography variant="caption">Please note: Depending on your environment some recommendations may vary</Typography>
+    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', marginLeft: 8 }}>
+      <Typography variant="caption">Please note: Depending on your environment and DNS configuration some recommendations may vary</Typography>
     </div>
     
   </div>

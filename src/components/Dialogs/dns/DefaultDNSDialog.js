@@ -14,7 +14,7 @@ const styles = theme => ({
   },
 });
 
-function DefaultDNSDialog({ classes, t, onClose, label, field, subtitle, dnsCheck={} }) {
+function DefaultDNSDialog({ classes, t, onClose, label, field, subtitle, dnsCheck={}, example }) {
   const dnsRes = dnsCheck[field] || {};
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
@@ -25,6 +25,11 @@ function DefaultDNSDialog({ classes, t, onClose, label, field, subtitle, dnsChec
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
         <Typography>{t("Internal DNS")}: {dnsRes.internalDNS || t("Unresolvable")}</Typography>
         <Typography>{t("External DNS")}: {dnsRes.externalDNS || t("Unresolvable")}</Typography>
+        {example && <>
+          <Divider className={classes.divider}/>
+          <Typography variant="h6" className={classes.result}>{t("Example")}</Typography>
+          {example}
+        </>}
       </DialogContent>
     </Dialog>
   );
@@ -38,6 +43,8 @@ DefaultDNSDialog.propTypes = {
   subtitle: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   field: PropTypes.string.isRequired,
+  example: PropTypes.any,
+  domain: PropTypes.object.isRequired,
 };
 
 export default withTranslation()(withStyles(styles)(DefaultDNSDialog));

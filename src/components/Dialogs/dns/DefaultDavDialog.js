@@ -14,7 +14,7 @@ const styles = theme => ({
   },
 });
 
-function DefaultDavDialog({ classes, t, onClose, dnsCheck={}, title, subtitle, label1, label2, field1, field2 }) {
+function DefaultDavDialog({ classes, t, onClose, dnsCheck={}, title, subtitle, label1, label2, field1, field2, example }) {
   const dnsRes1 = dnsCheck[field1] || {};
   const dnsRes2 = dnsCheck[field2] || {};
   return (
@@ -30,6 +30,9 @@ function DefaultDavDialog({ classes, t, onClose, dnsCheck={}, title, subtitle, l
         <Typography variant="h6" className={classes.result}>{t(label2)}</Typography>
         <Typography>{t("Internal DNS")}: {dnsRes2.internalDNS || t("Unresolvable")}</Typography>
         <Typography>{t("External DNS")}: {dnsRes2.externalDNS || t("Unresolvable")}</Typography>
+        <Divider className={classes.divider} />
+        <Typography variant="h6" className={classes.result}>{t("Example")}</Typography>
+        {example || ""}
       </DialogContent>
     </Dialog>
   );
@@ -46,6 +49,7 @@ DefaultDavDialog.propTypes = {
   label2: PropTypes.string.isRequired,
   field1: PropTypes.string.isRequired,
   field2: PropTypes.string.isRequired,
+  example: PropTypes.any,
 };
 
 export default withTranslation()(withStyles(styles)(DefaultDavDialog));

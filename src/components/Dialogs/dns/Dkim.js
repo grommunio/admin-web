@@ -17,7 +17,7 @@ const styles = theme => ({
   }
 });
 
-function Dkim({ classes, t, onClose, dnsCheck={} }) {
+function Dkim({ classes, t, onClose, dnsCheck={}, domain }) {
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
       <DialogTitle>{t("DKIM")}</DialogTitle>
@@ -26,6 +26,10 @@ function Dkim({ classes, t, onClose, dnsCheck={} }) {
         <Divider className={classes.divider}/>
         <Typography variant="h6" className={classes.result}>{t("DNS check result")}</Typography>
         <Typography className={classes.res}>{t("External DNS")}: {dnsCheck.dkim?.externalDNS || t("Unresolvable")}</Typography>
+        <Divider className={classes.divider}/>
+        <pre>
+          {`dkim._domainkey.${domain.domainname || "example.at"}.    1    IN    TXT    "v=DKIM1; k=rsa; p=DKIM_PUBLIC_KEY"`}
+        </pre>
       </DialogContent>
     </Dialog>
   );
@@ -36,6 +40,7 @@ Dkim.propTypes = {
   t: PropTypes.func.isRequired,
   onClose: PropTypes.func,
   dnsCheck: PropTypes.object,
+  domain: PropTypes.object,
 };
 
 export default withTranslation()(withStyles(styles)(Dkim));

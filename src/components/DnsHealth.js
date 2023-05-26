@@ -200,7 +200,7 @@ class DnsHealth extends PureComponent {
   handleDialogClose = () => this.setState({ InfoDialog: null });
 
   render() {
-    const { classes, t } = this.props;
+    const { classes, t, domain } = this.props;
     const { loading, InfoDialog, dnsCheck } = this.state;
     return <div className={classes.dnsChips}>
       <DNSChip
@@ -269,23 +269,15 @@ class DnsHealth extends PureComponent {
       />
       <DNSChip
         title={t("caldav_expl")}
-        label={t("Caldav(s) TXT")}
+        label={t("DAV TXT")}
         icon={EventRepeat}
         color={this.getDavTxtColor("caldavTXT")}
         loading={loading}
         onInfo={this.asyncDialogImport('DavTxt')}
       />
       <DNSChip
-        title={t("carddav_expl")}
-        label={t("Carddav(s) TXT")}
-        icon={OnDeviceTraining}
-        color={this.getDavTxtColor("carddavTXT")}
-        loading={loading}
-        onInfo={this.asyncDialogImport('DavTxt')}
-      />
-      <DNSChip
         title={t("caldav_expl")}
-        label={t("Caldav(s) SRV")}
+        label={t("CalDAV(s) SRV")}
         icon={EventRepeat}
         color={this.getOptionalSrvColor(["caldavSRV", "caldavsSRV"])}
         loading={loading}
@@ -293,7 +285,7 @@ class DnsHealth extends PureComponent {
       />
       <DNSChip
         title={t("carddav_expl")}
-        label={t("Carddav(s) SRV")}
+        label={t("CardDAV(s) SRV")}
         icon={OnDeviceTraining}
         color={this.getOptionalSrvColor(["carddavSRV", "carddavsSRV"])}
         loading={loading}
@@ -323,7 +315,7 @@ class DnsHealth extends PureComponent {
         loading={loading}
         onInfo={this.asyncDialogImport('Submission')}
       />
-      {InfoDialog && <InfoDialog onClose={this.handleDialogClose} dnsCheck={dnsCheck}/>}
+      {InfoDialog && <InfoDialog onClose={this.handleDialogClose} dnsCheck={dnsCheck} domain={domain}/>}
     </div>
   }
 }
