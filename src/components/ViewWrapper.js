@@ -23,11 +23,6 @@ const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       padding: theme.spacing(2),
     },
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
     overflowY: 'scroll',
   },
   toolbar: theme.mixins.toolbar,

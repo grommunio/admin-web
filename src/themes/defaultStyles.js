@@ -17,6 +17,7 @@ const defaultStyles = mode => ({
     styleOverrides: {
       root: {
         backgroundImage: 'none',
+        overflow: 'hidden',
         boxShadow: "none",
         borderRadius: 4,
         border: "1px solid " + (mode === 'light' ? '#d1d1d1' : '#d6d6d6'),

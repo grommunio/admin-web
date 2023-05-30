@@ -29,10 +29,7 @@ const styles = theme => ({
     flexDirection: 'column',
   },
   base: {
-    flexDirection: 'column',
     padding: theme.spacing(2, 2, 2, 2),
-    flex: 1,
-    display: 'flex',
     overflowY: 'auto',
     overflowX: 'hidden',
   }, 
