@@ -230,11 +230,33 @@ class Oof extends PureComponent {
             className={classes.mail}
           />
           <div className={classes.mail}>
-            <Editor
-              style={{ minHeight: 100 }}
-              value={externalReply}
-              onChange={this.handleInput("externalReply")}
-            />
+            <EditorProvider>
+              <Editor
+                style={{ minHeight: 100 }}
+                value={externalReply}
+                onChange={this.handleInput("externalReply")}
+              >
+                <Toolbar id={editorClass}>
+                  <BtnUndo id={editorClass}/>
+                  <BtnRedo id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnBold id={editorClass}/>
+                  <BtnItalic id={editorClass}/>
+                  <BtnUnderline id={editorClass}/>
+                  <BtnStrikeThrough id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnNumberedList id={editorClass}/>
+                  <BtnBulletList id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnLink id={editorClass}/>
+                  <BtnClearFormatting id={editorClass}/>
+                  <HtmlButton id={editorClass}/>
+                  <Separator id={editorClass}/>
+                  <BtnStyles id={editorClass}/>
+                </Toolbar>
+              </Editor>
+            </EditorProvider>
+            
           </div>
         </div>}
       </FormControl>
