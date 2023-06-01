@@ -74,10 +74,10 @@ const styles = (theme) => ({
   },
   inactiveChip: {
     color: "white",
-    background: "linear-gradient(150deg, #232526, #414345)",
+    background: "linear-gradient(150deg, #000000, #434343)",
   },
   failedChip: {
-    background: "linear-gradient(150deg, #000000, #434343)",
+    background: "linear-gradient(150deg, #FF512F, #DD2476)",
   },
   activatingChip: {
     background: "linear-gradient(150deg, #FFB75E, #ED8F03)",
@@ -131,30 +131,7 @@ class ServicesChart extends PureComponent {
   };
 
   getChipColor(state) {
-    const {
-      activeChip,
-      errorChip,
-      inactiveChip,
-      failedChip,
-      activatingChip,
-      deactivatingChip,
-    } = this.props.classes;
-    switch (state) {
-    case "active":
-      return activeChip;
-    case "error":
-      return errorChip;
-    case "inactive":
-      return inactiveChip;
-    case "failedChip":
-      return failedChip;
-    case "activatingChip":
-      return activatingChip;
-    case "deactivating":
-      return deactivatingChip;
-    default:
-      return inactiveChip;
-    }
+    return this.props.classes[(state || "inactive") + "Chip"];
   }
 
   handleDialog = (service, action) => () => this.setState({ service, action });
