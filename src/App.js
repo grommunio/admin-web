@@ -8,8 +8,8 @@ import Loadable from "react-loadable";
 import Loader from "./components/Loading";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import background from "!file-loader!./res/bootback.svg";
-import backgroundDark from "!file-loader!./res/bootback-dark.svg";
+import background from "!file-loader!./res/background_light.svg";
+import backgroundDark from "!file-loader!./res/background_dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
@@ -28,13 +28,6 @@ const styles = {
     position: "absolute",
     zIndex: 1,
   },
-  layer: {
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 10,
-  },
   darkRoot: {
     display: "flex",
     flex: 1,
@@ -45,13 +38,6 @@ const styles = {
     height: "100%",
     position: "absolute",
     zIndex: 1,
-  },
-  darkLayer: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 10,
   },
   mainView: {
     display: "flex",
@@ -96,14 +82,11 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     <div
       className={darkMode === "true" ? classes.darkRoot : classes.root}
       style={{
-        backgroundImage: darkMode === "true" ? `
-        linear-gradient(#1c2025, rgba(28, 32, 37, 0.80)),
-        url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
-          `linear-gradient(rgba(240,240,240,0.99), rgba(240, 240, 240, 0.8)),
-            url(${serverConfig.customImages[window.location.hostname]?.background || background})`
+        backgroundImage: darkMode === "true" ?
+          `url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
+          `url(${serverConfig.customImages[window.location.hostname]?.background || background})`
       }}
     >
-      <div className={darkMode === "true" ? classes.darkLayer : classes.layer}/>
       <CapabilityContext.Provider value={capabilities}>
         <MainView
           classes={classes}

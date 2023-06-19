@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Key from '@mui/icons-material/VpnKey';
-import background from '../res/bootback.svg';
 import {
   authLogin,
   authLoginWithToken,
@@ -83,13 +82,6 @@ const styles = theme => ({
     padding: 12,
     backgroundColor: 'black',
     borderRadius: 12,
-  },
-  background: {
-    backgroundSize: 'cover',
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    zIndex: 0,
   },
   loader: {
     color: 'white',
@@ -162,10 +154,7 @@ class Login extends Component {
   render() {
     const { classes, t, auth, settings, serverConfig } = this.props;
     const { user, pass, loading, langsAnchorEl } = this.state;
-    const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
-    const backgroundUrl = serverConfig.customImages[window.location.hostname] ?
-      serverConfig.customImages[window.location.hostname][darkMode === "true" ? "backgroundDark" : "background"] : '';    
+    const config = serverConfig.customImages[window.location.hostname];
 
     return (
       <div className={classes.root}>
@@ -195,7 +184,7 @@ class Login extends Component {
           </Menu>
           <div className={classes.logoContainer}>
             <img
-              src={serverConfig.customImages[window.location.hostname]?.logo || logo}
+              src={config?.logo || logo}
               height={64}
               alt="grommunio"
             />
@@ -247,12 +236,6 @@ class Login extends Component {
             </Button>
           </Paper>
         </Paper>
-        <div
-          className={classes.background}
-          style={{
-            backgroundImage: 'url(' + (backgroundUrl || background) + ')',
-          }}
-        ></div>
       </div>
     );
   }
