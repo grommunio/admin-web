@@ -268,7 +268,7 @@ class TopBar extends PureComponent {
                 />
               )}
             />}
-            {licenseVisible && <Tooltip title={t("Server settings")}>
+            {licenseVisible && <Tooltip title={t("grommunio settings")}>
               <IconButton className={classes.langButton} onClick={this.handleNavigation("license")}>
                 <Settings color="inherit" className={classes.username}/>
               </IconButton>

@@ -15,7 +15,7 @@ import { uploadLicenseData } from '../actions/license';
 import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
-import { AddCircle, Check, CopyAll, DesignServices, ExpandLess, ExpandMore, Update } from '@mui/icons-material';
+import { AddCircle, Check, CopyAll, DesignServices, ExpandLess, ExpandMore, Update, Upgrade } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
 import moment from 'moment';
 import { addItem, copyToClipboard, setDateTimeString } from '../utils';
@@ -90,7 +90,7 @@ const styles = theme => ({
     margin: theme.spacing(1, 0),
   },
   updates: {
-    margin: theme.spacing(3, 2, 3, 2),
+    margin: theme.spacing(2, 2, 3, 2),
   },
   logs: {
     margin: theme.spacing(2, 0),
@@ -99,11 +99,19 @@ const styles = theme => ({
   log: {
     fontSize: 16,
   },
+  updateButton: {
+    marginRight: 8,
+  },
+  subtitle: {
+    margin: theme.spacing(2, 0, 0, 2),
+  }
 });
 
 const IconTab = ({...tabProps}) => {
   return <Tab {...tabProps} sx={{ minHeight: 48 }} iconPosition='start' />
 }
+
+const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
 class License extends PureComponent {
 
@@ -118,6 +126,9 @@ class License extends PureComponent {
     loading: true,
     tab: 0,
     updateLog: [],
+    checkLoading: false,
+    updateLoading: false,
+    upgradeLoading: false,
   }
 
   componentDidMount() {
@@ -208,28 +219,29 @@ class License extends PureComponent {
   }
 
   handleUpdate = action => async () => {
+    this.setState({ [action + "Loading"]: true });
     const updateLog = await this.props.systemUpdate(action)
       .catch(snackbar => this.setState({ snackbar }));
     if(updateLog) {
-      this.setState({ updateLog: updateLog?.log });
+      this.setState({ updateLog: updateLog?.log, [action + "Loading"]: false });
     }
   }
 
   render() {
     const { classes, t, license, Domains } = this.props;
-    const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers,
+    const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers, updateLoading, upgradeLoading, checkLoading,
       domainsExpanded, counts, customImages, configOpen, loading } = this.state;
 
     return (
       <TableViewContainer
-        headline={t("License")}
-        subtitle={t('license_sub')}
+        headline={t("grommunio settings")}
+        subtitle={t('license_sub') /* TODO: Add grommunio settings description */ }
         href="https://docs.grommunio.com/admin/administration.html#license"
         snackbar={snackbar}
         onSnackbarClose={() => this.setState({ snackbar: '' })}
         loading={loading}
       >
-        <Tabs value={tab} onChange={this.handleTab}>
+        <Tabs value={tab} onChange={this.handleTab} sx={{ ml: 1 }}>
           <IconTab label={t("License")} icon={<LicenseIcon />}/>
           <IconTab
             icon={<DesignServices />}
@@ -237,91 +249,98 @@ class License extends PureComponent {
           />
           <IconTab label={t("Updates")} icon={<Update />}/>
         </Tabs>
-        {tab === 0 && <Paper className={classes.paper} elevation={1}>
-          <Grid container alignItems="center">
-            <Grid item className={classes.gridItem}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleUpload}
-                size="small"
-              >
-                {t('Upload')}
-              </Button>
+        {tab === 0 && <>
+          <Typography variant="caption" className={classes.subtitle}>
+            {t("license_sub")}
+          </Typography>
+          <Paper className={classes.paper} elevation={1}>
+            <Grid container alignItems="center">
+              <Grid item className={classes.gridItem}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleUpload}
+                  size="small"
+                >
+                  {t('Upload')}
+                </Button>
+              </Grid>
+              {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
+                <Button
+                  className={classes.buyNow}
+                  variant="contained"
+                  color="primary"
+                  href="https://grommunio.com/product/"
+                  target="_blank"
+                  size="small"
+                >
+                  {t('Buy now')}
+                </Button></>}
             </Grid>
-            {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
-              <Button
-                className={classes.buyNow}
-                variant="contained"
-                color="primary"
-                href="https://grommunio.com/product/"
-                target="_blank"
-                size="small"
-              >
-                {t('Buy now')}
-              </Button></>}
-          </Grid>
-          <Grid container direction="column" className={classes.licenseContainer}>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Product')}:</span>
-              {license.product}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Created')}:</span>
-              {setDateTimeString(license.notBefore)}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Expires')}:</span>
-              {setDateTimeString(license.notAfter)}
-            </Typography>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Users')}:</span>
-              {license.currentUsers}
-              <IconButton onClick={this.toggleDomainExpansion} size="small">
-                {domainsExpanded ? <ExpandLess /> : <ExpandMore />}
-              </IconButton>
-            </Typography>
-            <Collapse in={domainsExpanded} unmountOnExit>
-              <List>
-                {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
-                  <ListItemButton onClick={this.handleExpansion(ID, idx)}>
-                    <ListItemText
-                      primary={`${domainname} (${counts[domainname] || 0})`}
-                    />
-                    {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={expandedDomainIdxs.includes(idx)} unmountOnExit>
-                    <List component="div" disablePadding>
-                      {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
-                        <ListItem key={idx} sx={{ pl: 4 }}>
-                          <ListItemText primary={user.username}/>
-                        </ListItem> 
-                      ) : <div className={classes.progressContainer}>
-                        <CircularProgress/>
-                      </div>}
-                      <ListItemButton onClick={this.handleNavigation(ID)} sx={{ pl: 4 }}>
-                        <ListItemText primary={t('View all') + "..."}/>
-                      </ListItemButton>
-                    </List>
-                  </Collapse>
-                </React.Fragment>)}
-              </List>
-            </Collapse>
-            <Typography className={classes.data}>
-              <span className={classes.description}>{t('Max users')}:</span>
-              {license.maxUsers}
-            </Typography>
-          </Grid>
-          <input
-            accept=".crt,.pem"
-            style={{ display: 'none' }}
-            id="license-upload-input"
-            type="file"
-            ref={r => (this.imageInputRef = r)}
-            onChange={this.handleUploadConfirm}
-          />
-        </Paper>}
-        {tab === 1 &&
+            <Grid container direction="column" className={classes.licenseContainer}>
+              <Typography className={classes.data}>
+                <span className={classes.description}>{t('Product')}:</span>
+                {license.product}
+              </Typography>
+              <Typography className={classes.data}>
+                <span className={classes.description}>{t('Created')}:</span>
+                {setDateTimeString(license.notBefore)}
+              </Typography>
+              <Typography className={classes.data}>
+                <span className={classes.description}>{t('Expires')}:</span>
+                {setDateTimeString(license.notAfter)}
+              </Typography>
+              <Typography className={classes.data}>
+                <span className={classes.description}>{t('Users')}:</span>
+                {license.currentUsers}
+                <IconButton onClick={this.toggleDomainExpansion} size="small">
+                  {domainsExpanded ? <ExpandLess /> : <ExpandMore />}
+                </IconButton>
+              </Typography>
+              <Collapse in={domainsExpanded} unmountOnExit>
+                <List>
+                  {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
+                    <ListItemButton onClick={this.handleExpansion(ID, idx)}>
+                      <ListItemText
+                        primary={`${domainname} (${counts[domainname] || 0})`}
+                      />
+                      {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={expandedDomainIdxs.includes(idx)} unmountOnExit>
+                      <List component="div" disablePadding>
+                        {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
+                          <ListItem key={idx} sx={{ pl: 4 }}>
+                            <ListItemText primary={user.username}/>
+                          </ListItem> 
+                        ) : <div className={classes.progressContainer}>
+                          <CircularProgress/>
+                        </div>}
+                        <ListItemButton onClick={this.handleNavigation(ID)} sx={{ pl: 4 }}>
+                          <ListItemText primary={t('View all') + "..."}/>
+                        </ListItemButton>
+                      </List>
+                    </Collapse>
+                  </React.Fragment>)}
+                </List>
+              </Collapse>
+              <Typography className={classes.data}>
+                <span className={classes.description}>{t('Max users')}:</span>
+                {license.maxUsers}
+              </Typography>
+            </Grid>
+            <input
+              accept=".crt,.pem"
+              style={{ display: 'none' }}
+              id="license-upload-input"
+              type="file"
+              ref={r => (this.imageInputRef = r)}
+              onChange={this.handleUploadConfirm}
+            />
+          </Paper></>}
+        {tab === 1 && <>
+          <Typography variant="caption" className={classes.subtitle}>
+            {t("design_sub")}
+          </Typography>
           <Paper className={classes.paper} elevation={1}>
             {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark}, idx) =>
               <div className={classes.imageGroup} key={idx}>
@@ -404,24 +423,45 @@ class License extends PureComponent {
                 {t("Show config")}
               </Button>
             </Grid>
-          </Paper>}
+          </Paper></>}
         {tab === 2 && <div className={classes.updates}>
+          <div style={{ marginBottom: 24 }}>
+            <Typography variant="caption">
+              {t("design_sub")}
+            </Typography>
+          </div>
           <Button
             variant='contained'
             onClick={this.handleUpdate("check")}
-            startIcon={<Check />}
+            startIcon={checkLoading ? <Loader /> : <Check />}
+            className={classes.updateButton}
           >
             Check for updates
           </Button>
+          <Button
+            variant='contained'
+            onClick={this.handleUpdate("update")}
+            startIcon={updateLoading ? <Loader /> : <Update />}
+            className={classes.updateButton}
+          >
+            Update
+          </Button>
+          <Button
+            variant='contained'
+            onClick={this.handleUpdate("upgrade")}
+            startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
+          >
+            Upgrade
+          </Button>
           <Paper elevation={0} className={classes.logs}>
-            {updateLog.map((log, idx) =>
+            {updateLog.length > 0 ? updateLog.map((log, idx) =>
               <pre
                 key={idx}
                 className={classes.log}
               >
                 {log}
               </pre>
-            )}
+            ) : <Typography align='center'>--- no logs ---</Typography>}
           </Paper>
         </div>}
         <Dialog
