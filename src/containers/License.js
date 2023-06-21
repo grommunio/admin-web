@@ -101,6 +101,10 @@ const styles = theme => ({
   },
 });
 
+const IconTab = ({...tabProps}) => {
+  return <Tab {...tabProps} sx={{ minHeight: 48 }} iconPosition='start' />
+}
+
 class License extends PureComponent {
 
   state = {
@@ -226,9 +230,12 @@ class License extends PureComponent {
         loading={loading}
       >
         <Tabs value={tab} onChange={this.handleTab}>
-          <Tab iconPosition="start" label={t("License")} />
-          <Tab icon={<DesignServices  sx={{ padding: 0 }}/>} iconPosition="start" label={t("Design")} />
-          <Tab label={t("Updates")} />
+          <IconTab label={t("License")} icon={<LicenseIcon />}/>
+          <IconTab
+            icon={<DesignServices />}
+            label={t("Design")}
+          />
+          <IconTab label={t("Updates")} icon={<Update />}/>
         </Tabs>
         {tab === 0 && <Paper className={classes.paper} elevation={1}>
           <Grid container alignItems="center">
@@ -496,7 +503,7 @@ License.propTypes = {
 const mapStateToProps = state => {
   const { license, domains, config } = state;
   return {
-    license: license.License,
+    license: license,
     Domains: domains.Domains,
     customImages: config.customImages,
   };

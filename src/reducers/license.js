@@ -8,7 +8,6 @@ import {
 
 
 const defaultState = {
-  License: {},
 };
 
 function licenseReducer(state = defaultState, action) {
@@ -16,7 +15,7 @@ function licenseReducer(state = defaultState, action) {
   case LICENSE_DATA_RECEIVED:
     return {
       ...state,
-      License: action.data,
+      ...action.data,
     };
 
   case AUTH_AUTHENTICATED:

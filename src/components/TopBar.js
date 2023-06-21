@@ -26,11 +26,10 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import LicenseIcon from './LicenseIcon';
 import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
-import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Translate } from '@mui/icons-material';
+import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 
 
@@ -195,7 +194,7 @@ class TopBar extends PureComponent {
   }
 
   render() {
-    const { classes, t, profile, settings, license, drawer, setDrawerExpansion, config } = this.props;
+    const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = this.props;
     const { menuAnchorEl, langsAnchorEl } = this.state;
     const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
     const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
@@ -269,11 +268,12 @@ class TopBar extends PureComponent {
                 />
               )}
             />}
-            {licenseVisible && <LicenseIcon
-              activated={license.product && license.product !== "Community"}
-              handleNavigation={this.handleNavigation}
-            />}
-            <Tooltip title="Language">
+            {licenseVisible && <Tooltip title={t("Server settings")}>
+              <IconButton className={classes.langButton} onClick={this.handleNavigation("license")}>
+                <Settings color="inherit" className={classes.username}/>
+              </IconButton>
+            </Tooltip>}
+            <Tooltip title={t("Language")}>
               <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
                 <Translate color="inherit" className={classes.username}/>
               </IconButton>
@@ -343,17 +343,15 @@ TopBar.propTypes = {
   authLogout: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
-  license: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => {
-  const { drawer, settings, license, config } = state;
+  const { drawer, settings, config } = state;
   return {
     Domains: state.domains.Domains,
     profile: state.profile,
     settings,
-    license: license.License,
     drawer,
     config,
   };

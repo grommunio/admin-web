@@ -7,6 +7,9 @@ import notActivatedLicense from '../res/notActivatedLicense.svg';
 import activatedLicense from '../res/activatedLicense.svg';
 import { withStyles } from '@mui/styles';
 import { Box } from '@mui/system';
+import { useSelector } from 'react-redux';
+import { Tooltip } from '@mui/material';
+import { withTranslation } from 'react-i18next';
 
 const styles = {
   root: {
@@ -20,27 +23,25 @@ const styles = {
   box: {
     display: 'flex',
     alignItems: 'center',
-    padding: '12px',
-    borderRadius: 32,
+    marginRight: 8,
     cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
   },
 };
 
-function LicenseIcon({ classes, activated, handleNavigation }) {
+function LicenseIcon({ classes, t }) {
+  const license = useSelector(state => state.license);
+  const activated = license.product && license.product !== "Community"
 
   return (
     <div className={classes.root}>
       <Box className={classes.box}>
-        <img
-          className={classes.licenseIcon}
-          src={activated ? activatedLicense : notActivatedLicense}
-          width={32}
-          height={25}
-          onClick={handleNavigation('license')}
-        />
+        <Tooltip title={t(activated ? "Licensed" : "Unlicensed")}>
+          <img
+            className={classes.licenseIcon}
+            src={activated ? activatedLicense : notActivatedLicense}
+            height={20}
+          />
+        </Tooltip>
       </Box>
     </div>
   );
@@ -48,8 +49,7 @@ function LicenseIcon({ classes, activated, handleNavigation }) {
 
 LicenseIcon.propTypes = {
   classes: PropTypes.object.isRequired,
-  activated: PropTypes.bool,
-  handleNavigation: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(LicenseIcon);
+export default withTranslation()(withStyles(styles)(LicenseIcon));
