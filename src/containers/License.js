@@ -5,6 +5,8 @@ import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Button, CircularProgress, Collapse, Dialog, DialogContent, DialogTitle, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper,
+  Tab,
+  Tabs,
   TextField,
   Tooltip,
   Typography } from '@mui/material';
@@ -13,10 +15,12 @@ import { uploadLicenseData } from '../actions/license';
 import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
-import { AddCircle, CopyAll, ExpandLess, ExpandMore } from '@mui/icons-material';
+import { AddCircle, Check, CopyAll, DesignServices, ExpandLess, ExpandMore, Update } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
 import moment from 'moment';
 import { addItem, copyToClipboard, setDateTimeString } from '../utils';
+import LicenseIcon from '../components/LicenseIcon';
+import { systemUpdate } from '../actions/misc';
 
 const styles = theme => ({
   paper: {
@@ -60,6 +64,8 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
     margin: theme.spacing(0, 2),
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   input: {
     margin: theme.spacing(1),
@@ -83,6 +89,16 @@ const styles = theme => ({
   typography: {
     margin: theme.spacing(1, 0),
   },
+  updates: {
+    margin: theme.spacing(3, 2, 3, 2),
+  },
+  logs: {
+    margin: theme.spacing(2, 0),
+    padding: 2,
+  },
+  log: {
+    fontSize: 16,
+  },
 });
 
 class License extends PureComponent {
@@ -96,6 +112,8 @@ class License extends PureComponent {
     customImages: [],
     configOpen: false,
     loading: true,
+    tab: 0,
+    updateLog: [],
   }
 
   componentDidMount() {
@@ -181,9 +199,22 @@ class License extends PureComponent {
     )
   }
 
+  handleTab = (e, tab) => {
+    this.setState({ tab });
+  }
+
+  handleUpdate = action => async () => {
+    const updateLog = await this.props.systemUpdate(action)
+      .catch(snackbar => this.setState({ snackbar }));
+    if(updateLog) {
+      this.setState({ updateLog: updateLog?.log });
+    }
+  }
+
   render() {
     const { classes, t, license, Domains } = this.props;
-    const { snackbar, expandedDomainIdxs, domainUsers, domainsExpanded, counts, customImages, configOpen, loading } = this.state;
+    const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers,
+      domainsExpanded, counts, customImages, configOpen, loading } = this.state;
 
     return (
       <TableViewContainer
@@ -194,7 +225,12 @@ class License extends PureComponent {
         onSnackbarClose={() => this.setState({ snackbar: '' })}
         loading={loading}
       >
-        <Paper className={classes.paper} elevation={1}>
+        <Tabs value={tab} onChange={this.handleTab}>
+          <Tab iconPosition="start" label={t("License")} />
+          <Tab icon={<DesignServices  sx={{ padding: 0 }}/>} iconPosition="start" label={t("Design")} />
+          <Tab label={t("Updates")} />
+        </Tabs>
+        {tab === 0 && <Paper className={classes.paper} elevation={1}>
           <Grid container alignItems="center">
             <Grid item className={classes.gridItem}>
               <Button
@@ -277,15 +313,9 @@ class License extends PureComponent {
             ref={r => (this.imageInputRef = r)}
             onChange={this.handleUploadConfirm}
           />
-        </Paper>
-        <div className={classes.about}>
-          <Typography variant='h2' className={classes.licenseContainer}>
-            {t("Design")}
-          </Typography>
-          <Typography variant="caption" className={classes.subtitle}>
-            {t("design_sub")}
-          </Typography>
-          <Paper className={classes.design} elevation={1}>
+        </Paper>}
+        {tab === 1 &&
+          <Paper className={classes.paper} elevation={1}>
             {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark}, idx) =>
               <div className={classes.imageGroup} key={idx}>
                 <TextField
@@ -367,50 +397,67 @@ class License extends PureComponent {
                 {t("Show config")}
               </Button>
             </Grid>
-          </Paper>
-          <Dialog
-            maxWidth="lg"
-            fullWidth
-            onClose={this.handleConfigClose}
-            open={configOpen}
+          </Paper>}
+        {tab === 2 && <div className={classes.updates}>
+          <Button
+            variant='contained'
+            onClick={this.handleUpdate("check")}
+            startIcon={<Check />}
           >
-            <DialogTitle>
-              {t("Serverconfig")}
-              <Tooltip placement="top" title={t('Copy config')}>
-                <IconButton onClick={this.handleCopyToClipboard} size="large">
-                  <CopyAll />
-                </IconButton>
-              </Tooltip>
-            </DialogTitle>
-            <DialogContent>
-              <pre>
-                <code className={classes.jsonPreview}>
-                  &quot;customImages&quot;: {JSON.stringify(customImages.reduce((prevValue, currentValue) => ({
-                    ...prevValue,
-                    [currentValue.hostname]: {
-                      ...currentValue,
-                      hostname: undefined,
-                    },
-                  }), {}), null, 4)}
-                </code>
+            Check for updates
+          </Button>
+          <Paper elevation={0} className={classes.logs}>
+            {updateLog.map((log, idx) =>
+              <pre
+                key={idx}
+                className={classes.log}
+              >
+                {log}
               </pre>
-              <Typography className={classes.typography}>
-                <Trans i18nKey="configInstructions1">
+            )}
+          </Paper>
+        </div>}
+        <Dialog
+          maxWidth="lg"
+          fullWidth
+          onClose={this.handleConfigClose}
+          open={configOpen}
+        >
+          <DialogTitle>
+            {t("Serverconfig")}
+            <Tooltip placement="top" title={t('Copy config')}>
+              <IconButton onClick={this.handleCopyToClipboard} size="large">
+                <CopyAll />
+              </IconButton>
+            </Tooltip>
+          </DialogTitle>
+          <DialogContent>
+            <pre>
+              <code className={classes.jsonPreview}>
+                  &quot;customImages&quot;: {JSON.stringify(customImages.reduce((prevValue, currentValue) => ({
+                  ...prevValue,
+                  [currentValue.hostname]: {
+                    ...currentValue,
+                    hostname: undefined,
+                  },
+                }), {}), null, 4)}
+              </code>
+            </pre>
+            <Typography className={classes.typography}>
+              <Trans i18nKey="configInstructions1">
                   Copy these lines into
-                  <pre className={classes.pre}>
+                <pre className={classes.pre}>
                     /etc/grommunio-admin-common/config.json
-                  </pre>
-                </Trans>.
-                <Trans i18nKey="configInstructions2">
+                </pre>
+              </Trans>.
+              <Trans i18nKey="configInstructions2">
                   Be careful not to duplicate the
-                  <pre className={classes.pre}>&quot;customImages&quot;</pre> key
-                </Trans>.
-              </Typography>
-            </DialogContent>
-          </Dialog>
-        </div>
+                <pre className={classes.pre}>&quot;customImages&quot;</pre> key
+              </Trans>.
+            </Typography>
+          </DialogContent>
+        </Dialog>
         <div className={classes.about}>
-          <Typography variant='h2' className={classes.licenseContainer}>About</Typography>
           <Typography variant="caption">
             grommunio is Copyright © 2020-{moment().year()}. All rights reserved.
           </Typography>
@@ -441,6 +488,7 @@ License.propTypes = {
   fetchDomains: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   fetchCount: PropTypes.func.isRequired,
+  systemUpdate: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
   customImages: PropTypes.object,
 };
@@ -466,6 +514,8 @@ const mapDispatchToProps = dispatch => {
       await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
+      .catch(err => Promise.reject(err)),
+    systemUpdate: async action => await dispatch(systemUpdate(action))
       .catch(err => Promise.reject(err)),
   };
 };

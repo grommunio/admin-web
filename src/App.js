@@ -21,18 +21,6 @@ const styles = {
     display: "flex",
     flex: 1,
     overflow: "hidden",
-    backgroundColor: "#fafafa",
-    backgroundSize: "cover",
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: 1,
-  },
-  darkRoot: {
-    display: "flex",
-    flex: 1,
-    overflow: "hidden",
-    backgroundColor: "#1c2025",
     backgroundSize: "cover",
     width: "100%",
     height: "100%",
@@ -80,7 +68,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     
   return (
     <div
-      className={darkMode === "true" ? classes.darkRoot : classes.root}
+      className={classes.root}
       style={{
         backgroundImage: darkMode === "true" ?
           `url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 

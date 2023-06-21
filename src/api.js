@@ -250,6 +250,16 @@ export function antispam() {
 }
 
 /*
+  SYSTEM UPDATES
+*/
+
+export function update(action) {
+  return async () => {
+    return await post('/system/updates/' + action);
+  };
+}
+
+/*
   DOMAINS
 */
 
