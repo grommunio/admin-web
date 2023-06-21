@@ -253,6 +253,7 @@ class TopBar extends PureComponent {
                   {...params}
                   className={classes.search}
                   placeholder={t("Search")}
+                  variant="standard"
                   InputProps={{
                     ...params.InputProps,
                     style: { color: 'white' },
