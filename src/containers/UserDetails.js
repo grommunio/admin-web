@@ -10,7 +10,7 @@ import {
   Paper,
   Grid,
   Button,
-  Tabs, Tab, Tooltip,
+  Tooltip,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
@@ -43,6 +43,7 @@ import { debounce } from 'debounce';
 import { checkFormat } from '../api';
 import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
+import Tabs from '../components/user/Tabs';
 
 const styles = theme => ({
   paper: {
@@ -64,9 +65,6 @@ const styles = theme => ({
   },
   tabsContainer: {
     flex: 1,
-  },
-  scroller: {
-    width: 0,
   },
 });
 
@@ -650,26 +648,11 @@ class UserDetails extends PureComponent {
           </Grid>}
           <div className={classes.tabsContainer}>
             <Tabs
-              indicatorColor="primary"
               value={tab}
-              onChange={this.handleTabChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              classes={{
-                scroller: classes.scroller,
-              }}
-            >
-              <Tab label={t("Account")} />
-              <Tab label={t("Details")} disabled={!ID}/>
-              <Tab label={t("Contact")} disabled={!ID}/>
-              <Tab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions}/>
-              <Tab label={t("SMTP")} disabled={!ID}/>
-              <Tab label={t("Permissions")} disabled={!ID}/>
-              <Tab label={t("OOF")} disabled={!ID}/>
-              <Tab label={t("Fetchmail")} disabled={!ID}/>
-              <Tab label={t("Mobile devices")} disabled={!ID}/>
-              <Tab label={t("Sync policy")} disabled={!ID}/>
-            </Tabs>
+              handleTabChange={this.handleTabChange}
+              ID={ID}
+              sysAdminReadPermissions={sysAdminReadPermissions}
+            />
           </div>
           {tab === 0 && <Account
             domain={domainDetails.ID ? domainDetails : domain}

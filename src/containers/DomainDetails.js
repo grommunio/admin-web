@@ -33,6 +33,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
+import { AppSettingsAlt, Dns } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -238,8 +239,8 @@ class DomainListDetails extends PureComponent {
             </Typography>
           </Grid>
           <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
-            <Tab value={0} label={t("Domain")} />
-            <Tab value={1} label={t("Sync policy")} />
+            <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
+            <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
           </Tabs>
           {tab === 0 && <FormControl className={classes.form}>
             <Grid container className={classes.input}>

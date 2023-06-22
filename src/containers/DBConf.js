@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Delete } from '@mui/icons-material';
+import { Delete, MiscellaneousServices, SmartButton } from '@mui/icons-material';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
 import { defaultFetchLimit, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -138,8 +138,8 @@ class DBConf extends Component {
             value={tab}
             onChange={this.handleTab}
           >
-            <Tab value={0} label={t("Services")} />
-            <Tab value={1} label={t("Commands")} />
+            <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
+            <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
           </Tabs>
         </Grid>
         {tab === 0 ? <Paper elevation={1}>

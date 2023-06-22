@@ -32,7 +32,7 @@ import { editUserData, fetchPlainUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
-import { Delete } from '@mui/icons-material';
+import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/icons-material';
 
 const styles = theme => ({
   paper: {
@@ -60,6 +60,14 @@ const styles = theme => ({
     flex: 1,
   },
 });
+
+// eslint-disable-next-line react/prop-types
+const GroupTab = ({ icon: Icon, ...props}) => <Tab
+  {...props}
+  sx={{ minHeight: 48 }}
+  iconPosition='start'
+  icon={<Icon fontSize="small"/>}
+/>
 
 class GroupDetails extends PureComponent {
 
@@ -255,10 +263,10 @@ class GroupDetails extends PureComponent {
                 scroller: classes.scroller,
               }}
             >
-              <Tab label={t("Group")} />
-              <Tab label={t("Details")}/>
-              <Tab label={t("Contact")}/>
-              <Tab label={t("SMTP")}/>
+              <GroupTab label={t("Group")} icon={SwitchAccount}/>
+              <GroupTab label={t("Details")} icon={Badge}/>
+              <GroupTab label={t("Contact")} icon={ContactPhone}/>
+              <GroupTab label={t("SMTP")} icon={ContactMail}/>
             </Tabs>
           </div>
           {tab === 0 && <FormControl className={classes.form}>

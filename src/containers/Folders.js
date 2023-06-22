@@ -16,6 +16,7 @@ import SearchTextfield from '../components/SearchTextfield';
 import Tree from 'react-d3-tree';
 import FolderHierarchy from '../components/FolderHierarchy';
 import TableActionGrid from '../components/TableActionGrid';
+import { AccountTree, List } from '@mui/icons-material';
 
 const styles = theme => ({
   tablePaper: {
@@ -178,8 +179,8 @@ class Folders extends PureComponent {
             onChange={this.handleTab}
             value={tab}
           >
-            <Tab value={0} label={t("List")} />
-            <Tab value={1} label={t("Tree")} />
+            <Tab sx={{ minHeight: 48 }} label={t("List")} iconPosition='start' icon={<List />}/>
+            <Tab sx={{ minHeight: 48 }} label={t("Tree")} iconPosition='start' icon={<AccountTree />}/>
           </Tabs>
         </TableActionGrid>
         {!tab && 
