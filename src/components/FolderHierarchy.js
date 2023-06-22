@@ -18,9 +18,6 @@ const styles = {
     alignItems: 'center',
   },
   treeItemActionsContainer: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'end',
   },
   folderTypeIcon: {
     marginRight: 8,
@@ -54,7 +51,6 @@ const FolderHierarchy = ({classes, t, writable, data, domainID, handleAdd, handl
         </IconButton>
         <div className={classes.treeItemActionsContainer}>
           <IconButton
-            style={{ marginLeft: 8 }}
             size='small'
             onClick={handleEdit('/' + domainID + '/folders/' + folderid)}
           >
