@@ -14,7 +14,6 @@ import { Paper, Table, TableHead, TableRow, TableCell,
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, fetchAllContacts } from '../actions/users';
-import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -24,6 +23,7 @@ import SearchTextfield from '../components/SearchTextfield';
 import AddGlobalContact from '../components/Dialogs/AddGlobalContact';
 import { ContactMail } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 
 const styles = theme => ({
   tablePaper: {
@@ -182,13 +182,15 @@ class GlobalContacts extends Component {
           onError={handleDeleteError}
           onClose={this.handleContactClose}
         />
-        <DeleteUser
+        <DomainDataDelete
           open={!!deleting}
           onSuccess={handleDeleteSuccess}
           onClose={handleDeleteClose}
           onError={handleDeleteError}
-          user={deleting}
           domainID={deleting.domainID || -1}
+          item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
+          delete={this.props.delete}
+          id={deleting.ID}
         />
       </TableViewContainer>
     );

@@ -9,7 +9,7 @@ import { Paper, Table, TableHead, TableRow, TableCell,
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, fetchContactsData } from '../actions/users';
-import DeleteUser from '../components/Dialogs/DeleteUser';
+import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -195,13 +195,15 @@ class Contacts extends Component {
           onError={this.handleContactError}
           onClose={this.handleContactClose}
         />
-        <DeleteUser
+        <DomainDataDelete
           open={!!deleting}
           onSuccess={handleDeleteSuccess}
           onClose={handleDeleteClose}
           onError={handleDeleteError}
+          item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
+          delete={this.props.delete}
+          id={deleting.ID}
           domainID={domain.ID}
-          user={deleting}
         />
         <TaskCreated
           message={taskMessage}
