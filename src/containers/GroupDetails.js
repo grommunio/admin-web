@@ -28,7 +28,7 @@ import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { editUserData, fetchPlainUsersData } from '../actions/users';
+import { editUserData, fetchUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
@@ -338,6 +338,15 @@ class GroupDetails extends PureComponent {
               options={Users || []}
               placeholder={t("Search users") +  "..."}
               label={t('Recipients')}
+              getOptionLabel={user => {
+                // Contact
+                if(user.status === 5) {
+                  const properties = user.properties || {};
+                  return properties["smtpaddress"] || properties["displayname"] || "";
+                } else {
+                  return user.username
+                }
+              }}
             />}
             {listPrivilege === 3 && <MagnitudeAutocomplete
               multiple
@@ -348,6 +357,15 @@ class GroupDetails extends PureComponent {
               options={Users || []}
               placeholder={t("Search users") +  "..."}
               label={t('Senders')}
+              getOptionLabel={user => {
+                // Contact
+                if(user.status === 5) {
+                  const properties = user.properties || {};
+                  return properties["smtpaddress"] || properties["displayname"] || "";
+                } else {
+                  return user.username
+                }
+              }}
             />}
           </FormControl>}
           {tab === 1 && <User
@@ -433,8 +451,9 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID, id) => await dispatch(fetchGroupData(domainID, id))
       .then(group => group)
       .catch(message => Promise.reject(message)),
-    fetchUsers: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
-      .catch(message => Promise.reject(message)),
+    fetchUsers: async (domainID) =>
+      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
+        .catch(message => Promise.reject(message)),
   };
 };
 

@@ -19,7 +19,14 @@ const MagnitudeAutocomplete = props => {
     value={value}
     onChange={onChange}
     options={options || []}
-    getOptionLabel={getOptionLabel || (o => o[filterAttribute] || '')}
+    getOptionLabel={getOptionLabel || (o => {
+      // Contact
+      if(filterAttribute === "username" && o.status === 5) {
+        const properties = o.properties || {};
+        return properties["smtpaddress"] || properties["displayname"] || "";
+      }
+      return o[filterAttribute] || '';
+    })}
     filterOptions={inputValue ? getAutocompleteOptions(filterAttribute, magnitude) : undefined}
     noOptionsText={inputValue && inputValue.length < magnitude ?
       t('Filter more precisely') + '...' : t('No options')}

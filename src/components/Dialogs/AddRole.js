@@ -175,7 +175,7 @@ class AddRole extends PureComponent {
 
   render() {
     const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = this.props;
-    const { name, permissions, description, loading, users, autocompleteInput } = this.state;
+    const { name, permissions, description, loading, users } = this.state;
     const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
     const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
 
@@ -201,7 +201,6 @@ class AddRole extends PureComponent {
               multiple
               value={users || []}
               filterAttribute={'username'}
-              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('users')}
               className={classes.input} 
               options={Users || []}
@@ -336,7 +335,7 @@ const mapDispatchToProps = dispatch => {
     },
     fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0 }))
       .catch(err => Promise.reject(err)),
-    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, level: 0 }))
+    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000 }))
       .catch(err => Promise.reject(err)),
     fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
       .catch(err => Promise.reject(err)),

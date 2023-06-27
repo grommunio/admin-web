@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
-import { fetchPlainUsersData } from '../../actions/users';
+import { fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
@@ -31,7 +31,6 @@ class AddOwner extends PureComponent {
   state = {
     owners: [],
     loading: false,
-    autocompleteInput: '',
   }
 
   componentDidMount() {
@@ -69,13 +68,12 @@ class AddOwner extends PureComponent {
   handleAutocomplete = (field) => (e, newVal) => {
     this.setState({
       [field]: newVal,
-      autocompleteInput: '',
     });
   }
 
   render() {
     const { classes, t, open, onCancel, Users } = this.props;
-    const { owners, loading, autocompleteInput } = this.state;
+    const { owners, loading } = this.state;
     return (
       <Dialog
         onClose={onCancel}
@@ -90,7 +88,6 @@ class AddOwner extends PureComponent {
               multiple
               value={owners || []}
               filterAttribute={'username'}
-              inputValue={autocompleteInput}
               onChange={this.handleAutocomplete('owners')}
               className={classes.input} 
               options={Users || []}
@@ -146,10 +143,9 @@ const mapDispatchToProps = dispatch => {
     add: async (domainID, folderID, owners) => {
       await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg));
     },
-    fetchUsers: async domainID => {
-      await dispatch(fetchPlainUsersData(domainID))
-        .catch(msg => Promise.reject(msg));
-    },
+    fetchUsers: async (domainID) =>
+      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
+        .catch(message => Promise.reject(message)),
   };
 };
 

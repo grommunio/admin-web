@@ -13,7 +13,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addGroupData } from '../../actions/groups';
-import { fetchPlainUsersData } from '../../actions/users';
+import { fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
@@ -272,8 +272,9 @@ const mapDispatchToProps = dispatch => {
       await dispatch(addGroupData(domainID, group))
         .catch(message => Promise.reject(message));
     },
-    fetch: async (domainID) => await dispatch(fetchPlainUsersData(domainID))
-      .catch(message => Promise.reject(message)),
+    fetch: async (domainID) =>
+      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
+        .catch(message => Promise.reject(message)),
   };
 };
 
