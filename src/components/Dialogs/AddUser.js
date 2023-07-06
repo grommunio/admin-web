@@ -54,6 +54,7 @@ class AddUser extends PureComponent {
 
   statuses = [
     { name: 'Normal', ID: 0 },
+    { name: 'Suspended', ID: 1 },
     { name: 'Shared', ID: 4 },
   ]
 
