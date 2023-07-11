@@ -17,7 +17,7 @@ import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
-import { AccountCircle, ContactMail } from '@mui/icons-material';
+import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
 
 const styles = theme => ({
   pageTitle: {
@@ -106,7 +106,7 @@ class Ldap extends PureComponent {
   }
 
   render() {
-    const { classes, t, domain, ldapUsers } = this.props;
+    const { classes, t, domain, ldapUsers, history } = this.props;
     const { search, loading, snackbar, confirming, searchInOrg, showAll } = this.state;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     return (
@@ -116,7 +116,7 @@ class Ldap extends PureComponent {
         onSnackbarClose={() => this.setState({ snackbar: '' })}
       >
         <Typography variant="h2" className={classes.pageTitle}>
-          <BackIcon onClick={this.handleNavigation(domain.ID + '/users')} className={classes.backIcon} />
+          <BackIcon onClick={history.goBack} className={classes.backIcon} />
           <span className={classes.pageTitleSecondary}>| </span>
           {t("LDAP")}
         </Typography>
@@ -169,8 +169,9 @@ class Ldap extends PureComponent {
               <ListItem >
                 <ListItemAvatar>
                   {user.type === "contact" ?
-                    <ContactMail /> :
-                    <AccountCircle />
+                    <ContactMail /> : user.type === "group" ?
+                      <Groups /> :
+                      <AccountCircle />
                   }
                 </ListItemAvatar>
                 <ListItemText

@@ -200,7 +200,7 @@ class Users extends Component {
               onClick={this.handleUserSync(false)}
               disabled={!writable}
             >
-              {t('Sync LDAP users')}
+              {t('Sync LDAP')}
             </Button>
           </Tooltip>
           <Tooltip
@@ -214,7 +214,7 @@ class Users extends Component {
               onClick={this.handleUserSync(true)}
               disabled={!writable}
             >
-              {t('Import LDAP Users')}
+              {t('Import LDAP')}
             </Button>
           </Tooltip>
           <Tooltip
@@ -227,7 +227,7 @@ class Users extends Component {
               onClick={this.checkUsers}
               disabled={!writable}
             >
-              {t('Check LDAP users')}
+              {t('Check LDAP')}
             </Button>
           </Tooltip>
         </TableActionGrid>
