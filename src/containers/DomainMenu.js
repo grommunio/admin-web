@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLabel,
-  Checkbox, Select, MenuItem, Divider } from '@mui/material';
+  Checkbox, Select, MenuItem, Divider, Tooltip } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
@@ -21,6 +21,8 @@ import { getStoreLangs } from '../actions/users';
 import { formatCreateParams } from '../utils';
 import DnsHealth from '../components/DnsHealth';
 import DNSLegend from '../components/DNSLegend';
+import { HelpOutlineOutlined } from '@mui/icons-material';
+import { fetchDrawerDomain } from '../actions/drawer';
 
 const styles = theme => ({
   root: {
@@ -118,8 +120,9 @@ class DomainMenu extends PureComponent {
   }
 
   async componentDidMount() {
-    const { domain, fetch, storeLangs } = this.props;
-    fetch(null, { domain: domain.ID })
+    const { domain, fetch, fetchParams, storeLangs } = this.props;
+    fetch(domain.ID).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    fetchParams(null, { domain: domain.ID })
       .then(() => {
         const { createParams } = this.props;
         // Update mask
@@ -259,7 +262,22 @@ class DomainMenu extends PureComponent {
             </div>
             <div className={classes.flexRow}>
               <Typography variant='h6' className={classes.description}>{t('Users')}:</Typography>
-              {`${domain.activeUsers} active, ${domain.inactiveUsers} inactive, ${domain.maxUser} maximum`}
+              {`${domain.activeUsers || 0} ${t("active")},
+              ${domain.inactiveUsers || 0} ${t("inactive")},
+              ${domain.virtualUsers || 0} ${t("virtual")},
+              ${domain.maxUser} ${t("maximum")}`}
+              <Tooltip
+                placement='right'
+                arrow
+                title={<div>
+                  <Typography><b>{t("Active")}</b>: {t("Normal mailboxes")}</Typography>
+                  <Typography><b>{t("Inactive")}</b>: {t("Deactivated mailboxes")}</Typography>
+                  <Typography><b>{t("Virtual")}</b>: {t("Shared users, contacts, mailing lists / groups")}</Typography>
+                  <Typography><b>{t("Maximum")}</b>: {t("The maximum amount of mailboxes in this domain")}</Typography>
+                </div>}
+              >
+                <HelpOutlineOutlined style={{ marginLeft: 4 }}/>
+              </Tooltip>
             </div>
             <div className={classes.flexRow}>
               <Typography variant='h6' className={classes.description}>{t('Telephone')}:</Typography>
@@ -487,6 +505,7 @@ DomainMenu.propTypes = {
   delete: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchParams: PropTypes.func.isRequired,
   checkDns: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   storeLangs: PropTypes.func.isRequired,
@@ -506,9 +525,11 @@ const mapDispatchToProps = (dispatch) => {
         Promise.reject(error)
       );
     },
+    fetch: async domainID => await dispatch(fetchDrawerDomain(domainID))
+      .catch(message => Promise.reject(message)),
     edit: async (createParams, domainID) => await dispatch(editCreateParamsData(createParams, domainID))
       .catch(message => Promise.reject(message)),
-    fetch: async (domainID, params) => await dispatch(fetchCreateParamsData(domainID, params))
+    fetchParams: async (domainID, params) => await dispatch(fetchCreateParamsData(domainID, params))
       .catch(message => Promise.reject(message)),
     storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
     checkDns: async domainID => await dispatch(fetchDnsCheckData(domainID)).catch(msg => Promise.reject(msg)),

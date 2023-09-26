@@ -54,6 +54,8 @@ class Domains extends PureComponent {
     { label: "Address", value: "address" },
     { label: "Title", value: "title" },
     { label: "Active users", value: "activeUsers" },
+    { label: "Inactive users", value: "inactiveUsers" },
+    { label: "Virtual users", value: "virtualUsers" },
     { label: "Maximum users", value: "maxUser" },
   ];
 
@@ -143,9 +145,11 @@ class Domains extends PureComponent {
                       {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
                       {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
                     </TableCell>
-                    <TableCell>{obj.address}</TableCell>
-                    <TableCell>{obj.title}</TableCell>
+                    <TableCell>{obj.address || ""}</TableCell>
+                    <TableCell>{obj.title || ""}</TableCell>
                     <TableCell>{obj.activeUsers}</TableCell>
+                    <TableCell>{obj.inactiveUsers}</TableCell>
+                    <TableCell>{obj.virtualUsers}</TableCell>
                     <TableCell>{obj.maxUser}</TableCell>
                     <TableCell align="right">
                       {writable && <IconButton onClick={handleDelete(obj)} size="large">

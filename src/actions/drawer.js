@@ -6,12 +6,17 @@ import {
   DRAWER_OPEN,
   DRAWER_DOMAINS_REVEICED,
   SELECT_DRAWER_DOMAIN,
+  DOMAIN_DATA_EDIT
 } from '../actions/types';
-import { drawerDomains } from '../api';
+import { domain, drawerDomains } from '../api';
 import { defaultListHandler } from './handlers';
 
 export function fetchDrawerDomains() {
   return defaultListHandler(drawerDomains, DRAWER_DOMAINS_REVEICED);
+}
+
+export function fetchDrawerDomain(...endpointParams) {
+  return defaultListHandler(domain, DOMAIN_DATA_EDIT,...endpointParams);
 }
 
 export function setDrawerExpansion() {
