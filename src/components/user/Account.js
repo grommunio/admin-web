@@ -2,13 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { PureComponent } from 'react';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
   Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
-import Delete from '@mui/icons-material/Delete';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 import { connect } from 'react-redux';
@@ -157,7 +156,7 @@ class Account extends PureComponent {
   render() {
     const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
       handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
-      handlePasswordChange, handleQuotaDelete, handleChatUser, handleServer,
+      handlePasswordChange, handleChatUser, handleServer,
       servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
@@ -265,7 +264,6 @@ class Account extends PureComponent {
               }
               value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
               onChange={handleIntPropertyChange('prohibitsendquota')}
-              helperText={prohibitsendquota === "" ? "Use delete icon to remove quota" : ""}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
@@ -279,11 +277,6 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={t("Delete quota")} placement="top">
-                      <IconButton size="small" onClick={handleQuotaDelete('prohibitsendquota')}>
-                        <Delete color="error" fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -297,7 +290,6 @@ class Account extends PureComponent {
               }
               value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
               onChange={handleIntPropertyChange('prohibitreceivequota')}
-              helperText={prohibitreceivequota === "" ? "Use delete icon to remove quota" : ""}
               InputProps={{
                 endAdornment:
                   <FormControl className={classes.adornment}>
@@ -311,11 +303,6 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={t("Delete quota")} placement="top">
-                      <IconButton size="small" onClick={handleQuotaDelete('prohibitreceivequota')}>
-                        <Delete color="error" fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -329,8 +316,7 @@ class Account extends PureComponent {
               }
               value={storagequotalimit !== undefined ? storagequotalimit : ''}
               onChange={handleIntPropertyChange('storagequotalimit')}
-              helperText={storagequotalimit === "" ? "Use delete icon to remove quota" :
-                storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
+              helperText={storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
               error={storageQuotaTooHigh}
               InputProps={{
                 endAdornment:
@@ -345,11 +331,6 @@ class Account extends PureComponent {
                       <MenuItem value={2}>GB</MenuItem>
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
-                    <Tooltip title={t("Delete quota")} placement="top">
-                      <IconButton size="small" onClick={handleQuotaDelete('storagequotalimit')}>
-                        <Delete color="error" fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
                   </FormControl>,
               }}
             />
@@ -510,7 +491,6 @@ Account.propTypes = {
   handleCheckbox: PropTypes.func.isRequired,
   handleUnitChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,
-  handleQuotaDelete: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
   handleServer: PropTypes.func.isRequired,
   rawData: PropTypes.object,

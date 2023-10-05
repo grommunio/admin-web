@@ -406,24 +406,6 @@ export function editUserRole(domainID, userID, roles) {
   };
 }
 
-export function storeProps(domainID, userID, props) {
-  return async () => {
-    return await get('/domains/' + domainID + '/users/'+ userID + '/storeProps?properties=' + props);
-  };
-}
-
-export function editStoreProps(domainID, userID, props) {
-  return async () => {
-    return await patch('/domains/' + domainID + '/users/'+ userID + '/storeProps', props);
-  };
-}
-
-export function deleteStoreProps(domainID, userID, props) {
-  return async () => {
-    return await yeet('/domains/' + domainID + '/users/'+ userID + '/storeProps?properties=' + props);
-  };
-}
-
 export function userSync(domainID, userID) {
   return async () => {
     return await get('/domains/' + domainID + '/users/'+ userID + '/sync');

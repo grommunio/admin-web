@@ -11,7 +11,7 @@ import {
   USERS_SYNC_RECEIVED
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
-  ldapDump, checkLdap, deleteOrphans, storeProps, editStoreProps, deleteStoreProps, userSync, removeUserSync,
+  ldapDump, checkLdap, deleteOrphans, userSync, removeUserSync,
   userDelegates, editUserDelegates, setPermittedUser, permittedUsers, usersPlain,
   userCount, 
   storeLangs,
@@ -78,7 +78,7 @@ export function fetchUserCount(domainID) {
   };
 }
 
-export function fetchUserData(domainID, userID, ignoreStoreData) {
+export function fetchUserData(domainID, userID) {
   return async dispatch => {
     let userData = {};
     try {
@@ -87,29 +87,14 @@ export function fetchUserData(domainID, userID, ignoreStoreData) {
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
     }
-    if(!ignoreStoreData) {
-      try {
-        const additionalProps = await dispatch(storeProps(domainID, userID,
-          'messagesizeextended,storagequotalimit,prohibitreceivequota,prohibitsendquota'));
-        if(additionalProps?.data) userData = {
-          ...userData,
-          properties: {
-            ...userData.properties,
-            ...additionalProps.data,
-          },
-        };
-      } catch(err) {
-        // ignore error
-      }
-      try {
-        const defaultPolicy = await dispatch(defaultDomainSyncPolicy(domainID));
-        userData = {
-          ...userData,
-          defaultPolicy: defaultPolicy?.data || {},
-        };
-      } catch(err) {
-        // ignore error
-      }
+    try {
+      const defaultPolicy = await dispatch(defaultDomainSyncPolicy(domainID));
+      userData = {
+        ...userData,
+        defaultPolicy: defaultPolicy?.data || {},
+      };
+    } catch(err) {
+      // ignore error
     }
     return Promise.resolve(userData);
   };
@@ -197,20 +182,12 @@ export function editUserData(...endpointParams) {
   return defaultPatchHandler(editUser, ...endpointParams);
 }
 
-export function editUserStore(...endpointParams) {
-  return defaultPatchHandler(editStoreProps, ...endpointParams);
-}
-
 export function editUserRoles(...endpointParams) {
   return defaultPatchHandler(editUserRole, ...endpointParams);
 }
 
 export function deleteUserData(domainID, id, params) {
   return defaultDeleteHandler(deleteUser, USER_DATA_DELETE, { domainID, id, params });
-}
-
-export function deleteUserStore(...endpointParams) {
-  return defaultPatchHandler(deleteStoreProps, ...endpointParams);
 }
 
 export function deleteOrphanedUsers(params) {

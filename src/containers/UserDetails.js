@@ -13,8 +13,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, editUserStore,
-  deleteUserStore, getStoreLangs} from '../actions/users';
+import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, getStoreLangs} from '../actions/users';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@mui/icons-material/Sync';
 import Detach from '@mui/icons-material/SyncDisabled';
@@ -280,51 +279,40 @@ class UserDetails extends PureComponent {
    * Before sending the user state object to the backend it needs to be transformed according to the API spec
    */
   handleEdit = () => {
-    const { edit, domain, editStore } = this.props;
+    const { edit, domain } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
     const { username, aliases, fetchmail, forward, properties, homeserver } = user;
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
 
-    // Don't send quotas if the textfield is empty. There is a seperate endpoint to delete quotas
-    // Otherwise, convert quota (MiB, GiB or TiB) into KiB
+    // Convert quota (MiB, GiB or TiB) into KiB
     const storePayload = {
       messagesizeextended: undefined, // MSE is read-only
-      storagequotalimit: [null, undefined, ""].includes(storagequotalimit) ? undefined : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
-      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota) ? undefined : prohibitreceivequota * 2
+      storagequotalimit: [null, undefined, ""].includes(storagequotalimit) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
+      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota) ? null : prohibitreceivequota * 2
         ** (10 * sizeUnits.prohibitreceivequota),
-      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota) ? undefined : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
+      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota) ? null : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
     };
 
-    Promise.all([
-      edit(domain.ID, {
-        ...user,
-        username: username + "@" + domain.domainname, // Add domain to username (username is an email)
-        domainID: undefined,
-        homeserver: homeserver?.ID || null,
-        aliases: aliases.filter(alias => alias !== ''), // Filter empty aliases
-        fetchmail: fetchmail.map(e => ({ // Transform fetchmail objects
-          ...e,
-          date: undefined,
-          sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
-        })),
-        properties: {
-          ...properties,
-          // Remove quotas from user props, they must only be sent to the user store (separate endpoint)
-          messagesizeextended: undefined,
-          storagequotalimit: undefined,
-          prohibitreceivequota: undefined,
-          prohibitsendquota: undefined,
-        },
-        syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
-        forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
-        roles: undefined,
-        ldapID: undefined,
-      }),
-      // Only send store props if there are none-undefined values
-      Object.keys(storePayload).filter(k => storePayload[k] !== undefined).length > 0 ?
-        editStore(domain.ID, user.ID, storePayload)
-        : () => null,
-    ]).then(() => this.setState({ snackbar: 'Success!' }))
+    edit(domain.ID, {
+      ...user,
+      username: username + "@" + domain.domainname, // Add domain to username (username is an email)
+      domainID: undefined,
+      homeserver: homeserver?.ID || null,
+      aliases: aliases.filter(alias => alias !== ''), // Filter empty aliases
+      fetchmail: fetchmail.map(e => ({ // Transform fetchmail objects
+        ...e,
+        date: undefined,
+        sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
+      })),
+      properties: {
+        ...properties,
+        ...storePayload
+      },
+      syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
+      forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
+      roles: undefined,
+      ldapID: undefined,
+    }).then(() => this.setState({ snackbar: 'Success!' }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
@@ -355,23 +343,6 @@ class UserDetails extends PureComponent {
     const { ID, roles } = this.state.user;
     editUserRoles(domain.ID, ID, { roles: roles })
       .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-  }
-
-  handleQuotaDelete = prop => () => {
-    const { user } = this.state;
-    const { deleteStoreProp, domain } = this.props;
-    deleteStoreProp(domain.ID, user.ID, prop)
-      .then(() => this.setState({
-        snackbar: 'Success!',
-        user: {
-          ...user,
-          properties: {
-            ...user.properties,
-            [prop]: undefined,
-          },
-        },
-      }))
       .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
   }
 
@@ -667,7 +638,6 @@ class UserDetails extends PureComponent {
             handleUnitChange={this.handleUnitChange}
             handlePasswordChange={this.handlePasswordDialogToggle(true)}
             rawData={rawData}
-            handleQuotaDelete={this.handleQuotaDelete}
             handleChatUser={this.handleChatUser}
             handleServer={this.handleServer}
             handleMultiselectChange={this.handleMultiselectChange}
@@ -785,8 +755,6 @@ UserDetails.propTypes = {
   fetch: PropTypes.func.isRequired,
   fetchRoles: PropTypes.func.isRequired,
   editUserRoles: PropTypes.func.isRequired,
-  editStore: PropTypes.func.isRequired,
-  deleteStoreProp: PropTypes.func.isRequired,
   fetchDomainDetails: PropTypes.func.isRequired,
   storeLangs: PropTypes.func.isRequired,
   dump: PropTypes.func.isRequired,
@@ -809,12 +777,6 @@ const mapDispatchToProps = dispatch => {
       .catch(msg => Promise.reject(msg)),
     edit: async (domainID, user) => {
       await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
-    editStore: async (domainID, user, props) => {
-      await dispatch(editUserStore(domainID, user, props)).catch(msg => Promise.reject(msg));
-    },
-    deleteStoreProp: async (domainID, user, prop) => {
-      await dispatch(deleteUserStore(domainID, user, prop)).catch(msg => Promise.reject(msg));
     },
     editUserRoles: async (domainID, userID, roles) => {
       await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
