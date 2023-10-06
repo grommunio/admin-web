@@ -183,3 +183,8 @@ pre code {
   background-color: #000000;
   color: white;
 }
+
+
+.MuiTableRow-hover {
+  cursor: pointer;
+}
