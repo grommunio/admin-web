@@ -15,7 +15,7 @@ import { uploadLicenseData } from '../actions/license';
 import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
-import { AddCircle, Check, CopyAll, DesignServices, ExpandLess, ExpandMore, Update, Upgrade } from '@mui/icons-material';
+import { AddCircle, Check, CheckCircleOutline, CopyAll, DesignServices, ExpandLess, ExpandMore, Update, Upgrade } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
 import moment from 'moment';
 import { addItem, copyToClipboard, setDateTimeString } from '../utils';
@@ -129,6 +129,7 @@ class License extends PureComponent {
     checkLoading: false,
     updateLoading: false,
     upgradeLoading: false,
+    copied: false,
   }
 
   componentDidMount() {
@@ -219,7 +220,7 @@ class License extends PureComponent {
   }
 
   handleUpdate = action => async () => {
-    this.setState({ [action + "Loading"]: true });
+    this.setState({ [action + "Loading"]: true, copied: false });
     const updateLog = await this.props.systemUpdate(action)
       .catch(snackbar => this.setState({ snackbar }));
     if(updateLog) {
@@ -227,10 +228,17 @@ class License extends PureComponent {
     }
   }
 
+  handleCopyLogs = msg => async () => {
+    const success = await copyToClipboard(msg).catch(err => err);
+    if(success) {
+      this.setState({ copied: true });
+    }
+  }
+
   render() {
     const { classes, t, license, Domains } = this.props;
     const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers, updateLoading, upgradeLoading, checkLoading,
-      domainsExpanded, counts, customImages, configOpen, loading } = this.state;
+      domainsExpanded, counts, customImages, configOpen, loading, copied } = this.state;
 
     return (
       <TableViewContainer
@@ -454,6 +462,11 @@ class License extends PureComponent {
             Upgrade
           </Button>
           <Paper elevation={0} className={classes.logs}>
+            <Tooltip placement="top" title={t('Copy all')}>
+              <IconButton onClick={this.handleCopyLogs(updateLog.join('\n'))} size="large">
+                {copied ? <CheckCircleOutline /> : <CopyAll />}
+              </IconButton>
+            </Tooltip>
             {updateLog.length > 0 ? updateLog.map((log, idx) =>
               <pre
                 key={idx}
