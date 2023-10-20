@@ -21,6 +21,7 @@ import moment from 'moment';
 import { addItem, copyToClipboard, setDateTimeString } from '../utils';
 import LicenseIcon from '../components/LicenseIcon';
 import { systemUpdate } from '../actions/misc';
+import { fetchUpdateLogData } from '../actions/logs';
 
 const styles = theme => ({
   paper: {
@@ -219,13 +220,24 @@ class License extends PureComponent {
     this.setState({ tab });
   }
 
+  fetchInterval = null;
+
+  handleRefresh = async pid => {
+    const response = await this.props.fetchLog(pid).catch();
+    this.setState({ updateLog: response.data });
+    if(response?.processRunning === false) {
+      clearInterval(this.fetchInterval);
+      this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
+    }
+  }
+
   handleUpdate = action => async () => {
     this.setState({ [action + "Loading"]: true, copied: false });
-    const updateLog = await this.props.systemUpdate(action)
+    const response = await this.props.systemUpdate(action)
       .catch(snackbar => this.setState({ snackbar }));
-    if(updateLog) {
-      this.setState({ updateLog: updateLog?.log, [action + "Loading"]: false });
-    }
+    if(response.pid) this.fetchInterval = setInterval(() => {
+      this.handleRefresh(response.pid);
+    }, 1000);
   }
 
   handleCopyLogs = msg => async () => {
@@ -235,10 +247,16 @@ class License extends PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    clearInterval(this.fetchInterval);
+  }
+
   render() {
     const { classes, t, license, Domains } = this.props;
     const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers, updateLoading, upgradeLoading, checkLoading,
       domainsExpanded, counts, customImages, configOpen, loading, copied } = this.state;
+
+    const updating = checkLoading || updateLoading || upgradeLoading;
 
     return (
       <TableViewContainer
@@ -435,7 +453,7 @@ class License extends PureComponent {
         {tab === 2 && <div className={classes.updates}>
           <div style={{ marginBottom: 24 }}>
             <Typography variant="caption">
-              {t("design_sub")}
+              {t("updater_sub")}
             </Typography>
           </div>
           <Button
@@ -443,6 +461,7 @@ class License extends PureComponent {
             onClick={this.handleUpdate("check")}
             startIcon={checkLoading ? <Loader /> : <Check />}
             className={classes.updateButton}
+            disabled={updating}
           >
             Check for updates
           </Button>
@@ -451,6 +470,7 @@ class License extends PureComponent {
             onClick={this.handleUpdate("update")}
             startIcon={updateLoading ? <Loader /> : <Update />}
             className={classes.updateButton}
+            disabled={updating}
           >
             Update
           </Button>
@@ -458,6 +478,7 @@ class License extends PureComponent {
             variant='contained'
             onClick={this.handleUpdate("upgrade")}
             startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
+            disabled={updating}
           >
             Upgrade
           </Button>
@@ -548,6 +569,7 @@ License.propTypes = {
   fetchDomains: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   fetchCount: PropTypes.func.isRequired,
+  fetchLog: PropTypes.func.isRequired,
   systemUpdate: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
   customImages: PropTypes.object,
@@ -577,6 +599,9 @@ const mapDispatchToProps = dispatch => {
       .catch(err => Promise.reject(err)),
     systemUpdate: async action => await dispatch(systemUpdate(action))
       .catch(err => Promise.reject(err)),
+    fetchLog: async (pid) =>
+      await dispatch(fetchUpdateLogData(pid))
+        .catch(error => Promise.reject(error)),
   };
 };
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import { LOGS_DATA_RECEIVED } from '../actions/types';
-import { logs, log } from '../api';
+import { logs, log, updateLog } from '../api';
 import { defaultDetailsHandler, defaultListHandler } from './handlers';
 
 export function fetchLogsData(...endpointParams) {
@@ -11,4 +11,8 @@ export function fetchLogsData(...endpointParams) {
 
 export function fetchLogData(...endpointParams) {
   return defaultDetailsHandler(log, ...endpointParams);
+}
+
+export function fetchUpdateLogData(...endpointParams) {
+  return defaultDetailsHandler(updateLog, ...endpointParams);
 }

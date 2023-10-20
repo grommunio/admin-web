@@ -831,6 +831,12 @@ export function log(filename, params) {
   };
 }
 
+export function updateLog(pid) {
+  return async () => {
+    return await get('/system/updateLog/' + pid);
+  };
+}
+
 /*
   SYNC
 */
