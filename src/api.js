@@ -661,6 +661,18 @@ export function uploadLicense(license) {
   };
 }
 
+export function licenseCreds() {
+  return async () => {
+    return await get('/system/license/creds');
+  };
+}
+
+export function putLicenseCreds(creds) {
+  return async () => {
+    return await put('/system/license/creds', creds);
+  };
+}
+
 /*
   FOLDERS
 */

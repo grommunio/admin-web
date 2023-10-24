@@ -4,8 +4,8 @@
 import {
   LICENSE_DATA_RECEIVED,
 } from '../actions/types';
-import { license, uploadLicense } from '../api';
-import { defaultListHandler, defaultPostHandler } from './handlers';
+import { license, uploadLicense, licenseCreds, putLicenseCreds } from '../api';
+import { defaultDetailsHandler, defaultListHandler, defaultPostHandler } from './handlers';
 
 export function fetchLicenseData() {
   return defaultListHandler(license, LICENSE_DATA_RECEIVED);
@@ -13,4 +13,12 @@ export function fetchLicenseData() {
 
 export function uploadLicenseData(...endpointParams) {
   return defaultPostHandler(uploadLicense, LICENSE_DATA_RECEIVED, ...endpointParams);
+}
+
+export function submitLicenseCreds(...endpointParams) {
+  return defaultDetailsHandler(putLicenseCreds, ...endpointParams)
+}
+
+export function getLicenseCreds(...endpointParams) {
+  return defaultDetailsHandler(licenseCreds, ...endpointParams)
 }

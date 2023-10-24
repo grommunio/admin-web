@@ -1,13 +1,13 @@
-import { Button, CircularProgress, Collapse, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, Typography } from '@mui/material';
+import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
+  Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { setDateTimeString } from '../../utils';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { withTranslation } from 'react-i18next';
-import { fetchDomainData } from '../../actions/domains';
-import { fetchPlainUsersData, fetchUserCount } from '../../actions/users';
-import { uploadLicenseData } from '../../actions/license';
+import { fetchPlainUsersData } from '../../actions/users';
+import { getLicenseCreds, submitLicenseCreds, uploadLicenseData } from '../../actions/license';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -45,6 +45,9 @@ const styles = theme => ({
   },
   subtitle: {
     margin: theme.spacing(2, 0, 0, 2),
+  },
+  tf: {
+    marginTop: 8,
   }
 });
 
@@ -56,6 +59,16 @@ class LicenseTab extends PureComponent {
     expandedDomainIdxs: [],
     domainUsers: {},
     counts: {},
+    dialogOpen: false,
+    username: "",
+    password: "",
+  }
+
+  async componentDidMount() {
+    const creds = await this.props.getCreds().catch();
+    if(creds?.username) {
+      this.setState({ ...creds });
+    }
   }
 
   handleExpansion = (ID, idx) => () => {
@@ -99,9 +112,21 @@ class LicenseTab extends PureComponent {
     });
   }
 
+  handleDialog = dialogOpen => () => this.setState({ dialogOpen });
+
+  handleInput = field => e => this.setState({ [field]: e.target.value });
+
+  handleSubmit = () => {
+    const { setSnackbar } = this.props;
+    const { username, password } = this.state;
+    this.props.submitLicenseCreds({ username, password })
+      .then(() => setSnackbar("Success!"))
+      .catch(setSnackbar);
+  }
+
   render() {
     const { classes, t, license, Domains, counts } = this.props;
-    const { domainsExpanded, expandedDomainIdxs, domainUsers } = this.state;
+    const { domainsExpanded, expandedDomainIdxs, domainUsers, dialogOpen, username, password } = this.state;
 
     return <>
       <Typography variant="caption" className={classes.subtitle}>
@@ -113,10 +138,10 @@ class LicenseTab extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.handleUpload}
+              onClick={this.handleDialog(true)}
               size="small"
             >
-              {t('Upload')}
+              {t(license?.certificate ?'Reactivate license' : 'Reactivate license')}
             </Button>
           </Grid>
           {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
@@ -190,6 +215,54 @@ class LicenseTab extends PureComponent {
           ref={r => (this.imageInputRef = r)}
           onChange={this.handleUploadConfirm}
         />
+        <Dialog
+          maxWidth="md"
+          fullWidth
+          onClose={this.handleDialog(false)}
+          open={dialogOpen}
+        >
+          <DialogTitle>
+            {t("License activation")}
+          </DialogTitle>
+          <DialogContent>
+            <Typography>Input your license credentials to automatically fetch a certificate or upload it manually</Typography>
+            <div style={{ marginTop: 16 }}>
+              <TextField
+                fullWidth
+                label={t("Username")}
+                value={username}
+                onChange={this.handleInput("username")}
+                className={classes.tf}
+              />
+              <TextField
+                fullWidth
+                label={t("Password")}
+                value={password}
+                onChange={this.handleInput("password")}
+                type="password"
+                className={classes.tf}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleUpload}
+              size="small"
+            >
+              {t('Upload license')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSubmit}
+              size="small"
+            >
+              {t('Submit')}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </>;
   }
@@ -204,9 +277,9 @@ LicenseTab.propTypes = {
   counts: PropTypes.object.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   upload: PropTypes.func.isRequired,
-  fetchDomains: PropTypes.func.isRequired,
-  fetchCount: PropTypes.func.isRequired,
   setSnackbar: PropTypes.func.isRequired,
+  submitLicenseCreds: PropTypes.func.isRequired,
+  getCreds: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => {
@@ -219,17 +292,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDomains: async () => {
-      await dispatch(fetchDomainData({ sort: 'domainname,asc', level: 0, limit: 10000 }))
-        .catch(error => Promise.reject(error));
-    },
-    fetchCount: async domainID => await dispatch(fetchUserCount(domainID))
-      .catch(error => Promise.reject(error)),
     fetchUsers: async (domainID) => 
       await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
       .catch(err => Promise.reject(err)),
+    submitLicenseCreds: async creds => await dispatch(submitLicenseCreds(creds))
+      .catch(error => Promise.reject(error)),
+    getCreds: async () => await dispatch(getLicenseCreds())
+      .catch(error => Promise.reject(error)),
   };
 };
 
