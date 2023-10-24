@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import { Button, CircularProgress, IconButton, Paper, Tooltip, Typography } from '@mui/material';
+import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-material';
 import { systemUpdate } from '../../actions/misc';
 import { fetchUpdateLogData } from '../../actions/logs';
@@ -26,19 +26,33 @@ const styles = theme => ({
   updateButton: {
     marginRight: 8,
   },
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  select: {
+    width: 200,
+    marginRight: 8,
+  },
 });
 
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
 class Updater extends PureComponent {
 
-  state = {
-    checkLoading: false,
-    updateLoading: false,
-    upgradeLoading: false,
-    copied: false,
-    updateLog: [],
+  constructor() {
+    super();
+    this.state = {
+      checkLoading: false,
+      updateLoading: false,
+      upgradeLoading: false,
+      copied: false,
+      updateLog: [],
+      repo: localStorage.getItem("packageRepository") || "supported"
+    }
   }
+
+  
 
   fetchInterval = null;
 
@@ -53,8 +67,9 @@ class Updater extends PureComponent {
 
   handleUpdate = action => async () => {
     const { systemUpdate, setSnackbar } = this.props;
+    const { repo } = this.state;
     this.setState({ [action + "Loading"]: true, copied: false });
-    const response = await systemUpdate(action)
+    const response = await systemUpdate(action, repo)
       .catch(snackbar => {
         setSnackbar(snackbar);
         this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
@@ -75,9 +90,15 @@ class Updater extends PureComponent {
     clearInterval(this.fetchInterval);
   }
 
+  handleRepoChange = e => {
+    const { value } = e.target;
+    localStorage.setItem("packageRepository", value);+
+    this.setState({ repo: value });
+  }
+
   render() {
     const { classes, t } = this.props;
-    const { checkLoading, updateLoading, upgradeLoading, updateLog, copied } = this.state;
+    const { checkLoading, updateLoading, upgradeLoading, updateLog, copied, repo } = this.state;
     const updating = checkLoading || updateLoading || upgradeLoading;
 
     return <div className={classes.updates}>
@@ -86,32 +107,45 @@ class Updater extends PureComponent {
           {t("updater_sub")}
         </Typography>
       </div>
-      <Button
-        variant='contained'
-        onClick={this.handleUpdate("check")}
-        startIcon={checkLoading ? <Loader /> : <Check />}
-        className={classes.updateButton}
-        disabled={updating}
-      >
-        Check for updates
-      </Button>
-      <Button
-        variant='contained'
-        onClick={this.handleUpdate("update")}
-        startIcon={updateLoading ? <Loader /> : <Update />}
-        className={classes.updateButton}
-        disabled={updating}
-      >
-        Update
-      </Button>
-      <Button
-        variant='contained'
-        onClick={this.handleUpdate("upgrade")}
-        startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
-        disabled={updating}
-      >
-        Upgrade
-      </Button>
+      <div className={classes.actions}>
+        <TextField
+          label={"Repository"}
+          value={repo}
+          onChange={this.handleRepoChange}
+          select
+          className={classes.select}
+          size='small'
+        >
+          <MenuItem value="supported">Supported</MenuItem>
+          <MenuItem value="community">Community</MenuItem>
+        </TextField>
+        <Button
+          variant='contained'
+          onClick={this.handleUpdate("check")}
+          startIcon={checkLoading ? <Loader /> : <Check />}
+          className={classes.updateButton}
+          disabled={updating}
+        >
+          Check for updates
+        </Button>
+        <Button
+          variant='contained'
+          onClick={this.handleUpdate("update")}
+          startIcon={updateLoading ? <Loader /> : <Update />}
+          className={classes.updateButton}
+          disabled={updating}
+        >
+          Update
+        </Button>
+        <Button
+          variant='contained'
+          onClick={this.handleUpdate("upgrade")}
+          startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
+          disabled={updating}
+        >
+          Upgrade
+        </Button>
+      </div>
       <Paper elevation={0} className={classes.logs}>
         <Tooltip placement="top" title={t('Copy all')}>
           <IconButton onClick={this.handleCopyLogs(updateLog.join('\n'))} size="large">
@@ -141,7 +175,7 @@ Updater.propTypes = {
 
 const mapDispatchToProps = dispatch => {
   return {
-    systemUpdate: async action => await dispatch(systemUpdate(action))
+    systemUpdate: async (action, repo) => await dispatch(systemUpdate(action, repo))
       .catch(err => Promise.reject(err)),
     fetchLog: async (pid) =>
       await dispatch(fetchUpdateLogData(pid))

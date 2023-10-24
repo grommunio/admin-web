@@ -253,9 +253,9 @@ export function antispam() {
   SYSTEM UPDATES
 */
 
-export function update(action) {
+export function update(action, repo="supported") {
   return async () => {
-    return await post('/system/updates/' + action);
+    return await post(buildQuery('/system/updates/' + action, { repo }));
   };
 }
 
