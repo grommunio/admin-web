@@ -4,63 +4,27 @@
 import React, { PureComponent } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { Button, CircularProgress, Collapse, Dialog, DialogContent, DialogTitle, Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper,
+import {
   Tab,
   Tabs,
-  TextField,
-  Tooltip,
   Typography } from '@mui/material';
-import { Trans, withTranslation } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import { uploadLicenseData } from '../actions/license';
 import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
-import { AddCircle, Check, CheckCircleOutline, CopyAll, DesignServices, ExpandLess, ExpandMore, Update, Upgrade } from '@mui/icons-material';
+import { DesignServices, Update } from '@mui/icons-material';
 import { fetchPlainUsersData, fetchUserCount } from '../actions/users';
-import moment from 'moment';
-import { addItem, copyToClipboard, setDateTimeString } from '../utils';
+import moment from 'moment'
 import LicenseIcon from '../components/LicenseIcon';
 import { systemUpdate } from '../actions/misc';
 import { fetchUpdateLogData } from '../actions/logs';
+import LicenseTab from '../components/license/LicenseTab';
+import Design from '../components/license/Design';
+import Updater from '../components/license/Updater';
+
 
 const styles = theme => ({
-  paper: {
-    margin: theme.spacing(3, 2, 3, 2),
-    padding: theme.spacing(2, 2, 2, 2),
-  },
-  design: {
-    margin: theme.spacing(3, 0),
-    padding: theme.spacing(2),
-  },
-  description: {
-    display: 'inline-block',
-    fontWeight: 500,
-    width: 200,
-  },
-  data: {
-    padding: '8px 0',
-  },
-  licenseContainer: {
-    margin: theme.spacing(1, 0, 1, 0),
-  },
-  buyNow: {
-    margin: theme.spacing(0, 0, 0, 1),
-  },
-  headline: {
-    marginRight: 8,
-  },
-  grid: {
-    margin: theme.spacing(0, 1),
-  },
-  gridItem: {
-    display: 'flex',
-    flex: 1,
-  },
-  progressContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    margin: theme.spacing(1),
-  },
   about: {
     display: 'flex',
     flexDirection: 'column',
@@ -68,195 +32,45 @@ const styles = theme => ({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  input: {
-    margin: theme.spacing(1),
-  },
-  flexBox: {
-    display: 'flex',
-  },
-  imgPreview: {
-    maxWidth: '100%',
-  },
-  imageGroup: {
-    margin: theme.spacing(0, 0, 4, 0),
-  },
-  jsonPreview: {
-    whiteSpace: 'pre',
-  },
-  pre: {
-    display: 'inline',
-    margin: theme.spacing(0, 0.5)
-  },
-  typography: {
-    margin: theme.spacing(1, 0),
-  },
-  updates: {
-    margin: theme.spacing(2, 2, 3, 2),
-  },
-  logs: {
-    margin: theme.spacing(2, 0),
-    padding: 2,
-  },
-  log: {
-    fontSize: 16,
-  },
-  updateButton: {
-    marginRight: 8,
-  },
-  subtitle: {
-    margin: theme.spacing(2, 0, 0, 2),
-  }
 });
 
 const IconTab = ({...tabProps}) => {
   return <Tab {...tabProps} sx={{ minHeight: 48 }} iconPosition='start' />
 }
 
-const Loader = () => <CircularProgress color='inherit' size={20}/>;
-
 class License extends PureComponent {
 
   state = {
     snackbar: '',
-    domainsExpanded: false,
-    expandedDomainIdxs: [],
-    domainUsers: {},
     counts: {},
-    customImages: [],
-    configOpen: false,
     loading: true,
     tab: 0,
-    updateLog: [],
-    checkLoading: false,
-    updateLoading: false,
-    upgradeLoading: false,
-    copied: false,
   }
 
   componentDidMount() {
     this.props.fetchDomains()
       .then(async () => {
-        const { Domains, fetchCount, customImages } = this.props;
+        const { Domains, fetchCount } = this.props;
         const counts = {};
         // Get user count of domains
         Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
         this.setState({
           loading: false,
           counts,
-          // Show custom images from config
-          customImages: Object.entries(customImages).map(([hostname, images]) => ({ hostname, ...images})),
         });
       })
       .catch(snackbar => this.setState({ snackbar, loading: false }));
-  }
-
-  handleUpload = () => {
-    this.imageInputRef.click();
-  }
-
-  handleUploadConfirm = event => {
-    this.props.upload(event.target.files[0])
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-
-  handleExpansion = (ID, idx) => () => {
-    const { expandedDomainIdxs, domainUsers } = this.state;
-    const copy = [...expandedDomainIdxs];
-    if(copy.includes(idx)) {
-      copy.splice(copy.findIndex(arrayIdx => arrayIdx === idx), 1);
-    } else {
-      if(!domainUsers[ID]) this.fetchUsers(ID);
-      copy.push(idx);
-    }
-    this.setState({ expandedDomainIdxs: copy });
-  }
-
-  fetchUsers = async id => {
-    const users = await this.props.fetchUsers(id)
-      .catch(snackbar => this.setState({ snackbar }));
-    this.setState({
-      domainUsers: {
-        ...this.state.domainUsers,
-        [id]: users.data,
-      },
-    });
-  }
-
-  handleNavigation = domainID => () => {
-    this.props.history.push(`/${domainID}/users`);
-  }
-
-  toggleDomainExpansion = () => this.setState({ domainsExpanded: !this.state.domainsExpanded });
-
-  handleAddImageGroup = () => this.setState({
-    customImages: addItem(this.state.customImages, {}),
-  });
-
-  handleImgInput = (field, idx) => e => {
-    const copy = [...this.state.customImages];
-    copy[idx][field] = e.target.value;
-    this.setState({ customImages: copy });
-  }
-
-  handleShowConfig = () => this.setState({ configOpen: true });
-
-  handleConfigClose = () => this.setState({ configOpen: false });
-
-  // Saves stringified config object to clipboard
-  handleCopyToClipboard = () => {
-    copyToClipboard('"customImages": ' + JSON.stringify(
-      this.state.customImages.reduce((prevValue, currentValue) => ({
-        ...prevValue,
-        [currentValue.hostname]: {
-          ...currentValue,
-          hostname: undefined,
-        },
-      }), {}), null, 4)
-    )
   }
 
   handleTab = (e, tab) => {
     this.setState({ tab });
   }
 
-  fetchInterval = null;
-
-  handleRefresh = async pid => {
-    const response = await this.props.fetchLog(pid).catch();
-    this.setState({ updateLog: response.data });
-    if(response?.processRunning === false) {
-      clearInterval(this.fetchInterval);
-      this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
-    }
-  }
-
-  handleUpdate = action => async () => {
-    this.setState({ [action + "Loading"]: true, copied: false });
-    const response = await this.props.systemUpdate(action)
-      .catch(snackbar => this.setState({ snackbar }));
-    if(response.pid) this.fetchInterval = setInterval(() => {
-      this.handleRefresh(response.pid);
-    }, 1000);
-  }
-
-  handleCopyLogs = msg => async () => {
-    const success = await copyToClipboard(msg).catch(err => err);
-    if(success) {
-      this.setState({ copied: true });
-    }
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.fetchInterval);
-  }
+  setSnackbar = snackbar => this.setState({ snackbar });
 
   render() {
-    const { classes, t, license, Domains } = this.props;
-    const { tab, updateLog, snackbar, expandedDomainIdxs, domainUsers, updateLoading, upgradeLoading, checkLoading,
-      domainsExpanded, counts, customImages, configOpen, loading, copied } = this.state;
-
-    const updating = checkLoading || updateLoading || upgradeLoading;
+    const { classes, t } = this.props;
+    const { tab, snackbar, loading, counts } = this.state;
 
     return (
       <TableViewContainer
@@ -275,269 +89,9 @@ class License extends PureComponent {
           />
           <IconTab label={t("Updates")} icon={<Update />}/>
         </Tabs>
-        {tab === 0 && <>
-          <Typography variant="caption" className={classes.subtitle}>
-            {t("license_sub")}
-          </Typography>
-          <Paper className={classes.paper} elevation={1}>
-            <Grid container alignItems="center">
-              <Grid item className={classes.gridItem}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={this.handleUpload}
-                  size="small"
-                >
-                  {t('Upload')}
-                </Button>
-              </Grid>
-              {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
-                <Button
-                  className={classes.buyNow}
-                  variant="contained"
-                  color="primary"
-                  href="https://grommunio.com/product/"
-                  target="_blank"
-                  size="small"
-                >
-                  {t('Buy now')}
-                </Button></>}
-            </Grid>
-            <Grid container direction="column" className={classes.licenseContainer}>
-              <Typography className={classes.data}>
-                <span className={classes.description}>{t('Product')}:</span>
-                {license.product}
-              </Typography>
-              <Typography className={classes.data}>
-                <span className={classes.description}>{t('Created')}:</span>
-                {setDateTimeString(license.notBefore)}
-              </Typography>
-              <Typography className={classes.data}>
-                <span className={classes.description}>{t('Expires')}:</span>
-                {setDateTimeString(license.notAfter)}
-              </Typography>
-              <Typography className={classes.data}>
-                <span className={classes.description}>{t('Users')}:</span>
-                {license.currentUsers}
-                <IconButton onClick={this.toggleDomainExpansion} size="small">
-                  {domainsExpanded ? <ExpandLess /> : <ExpandMore />}
-                </IconButton>
-              </Typography>
-              <Collapse in={domainsExpanded} unmountOnExit>
-                <List>
-                  {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
-                    <ListItemButton onClick={this.handleExpansion(ID, idx)}>
-                      <ListItemText
-                        primary={`${domainname} (${counts[domainname] || 0})`}
-                      />
-                      {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={expandedDomainIdxs.includes(idx)} unmountOnExit>
-                      <List component="div" disablePadding>
-                        {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
-                          <ListItem key={idx} sx={{ pl: 4 }}>
-                            <ListItemText primary={user.username}/>
-                          </ListItem> 
-                        ) : <div className={classes.progressContainer}>
-                          <CircularProgress/>
-                        </div>}
-                        <ListItemButton onClick={this.handleNavigation(ID)} sx={{ pl: 4 }}>
-                          <ListItemText primary={t('View all') + "..."}/>
-                        </ListItemButton>
-                      </List>
-                    </Collapse>
-                  </React.Fragment>)}
-                </List>
-              </Collapse>
-              <Typography className={classes.data}>
-                <span className={classes.description}>{t('Max users')}:</span>
-                {license.maxUsers}
-              </Typography>
-            </Grid>
-            <input
-              accept=".crt,.pem"
-              style={{ display: 'none' }}
-              id="license-upload-input"
-              type="file"
-              ref={r => (this.imageInputRef = r)}
-              onChange={this.handleUploadConfirm}
-            />
-          </Paper></>}
-        {tab === 1 && <>
-          <Typography variant="caption" className={classes.subtitle}>
-            {t("design_sub")}
-          </Typography>
-          <Paper className={classes.paper} elevation={1}>
-            {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark}, idx) =>
-              <div className={classes.imageGroup} key={idx}>
-                <TextField
-                  label={t("Hostname")}
-                  value={hostname || ''}
-                  className={classes.input}
-                  required
-                  fullWidth
-                  onChange={this.handleImgInput("hostname", idx)}
-                />
-                <div className={classes.flexBox}>
-                  <Grid container direction="column" alignItems="center" className={classes.grid}>
-                    <TextField
-                      label={t("Logo")}
-                      value={logo || ''}
-                      className={classes.iconInput}
-                      variant="standard"
-                      onChange={this.handleImgInput("logo", idx)}
-                      fullWidth
-                    />
-                    <img src={logo || ''} alt="" className={classes.imgPreview}/>
-                  </Grid>
-                  <Grid container direction="column"  alignItems="center" className={classes.grid}>
-                    <TextField
-                      label={t("Logo light")}
-                      value={logoLight || ''}
-                      className={classes.iconInput}
-                      variant="standard"
-                      onChange={this.handleImgInput("logoLight", idx)}
-                      fullWidth
-                    />
-                    <img src={logoLight || ''} alt="" className={classes.imgPreview}/>
-                  </Grid>
-                  <Grid container direction="column"  alignItems="center" className={classes.grid}>
-                    <TextField
-                      label={t("Icon")}
-                      value={icon || ''}
-                      className={classes.iconInput}
-                      variant="standard"
-                      onChange={this.handleImgInput("icon", idx)}
-                      fullWidth
-                    />
-                    <img src={icon || ''} alt="" className={classes.imgPreview}/>
-                  </Grid>
-                  <Grid container direction="column" alignItems="center" className={classes.grid}>
-                    <TextField
-                      label={t("Background")}
-                      value={background || ''}
-                      className={classes.iconInput}
-                      variant="standard"
-                      onChange={this.handleImgInput("background", idx)}
-                      fullWidth
-                    />
-                    <img src={background || ''} alt="" className={classes.imgPreview}/>
-                  </Grid>
-                  <Grid container direction="column" alignItems="center" className={classes.grid}>
-                    <TextField
-                      label={t("Background dark")}
-                      value={backgroundDark || ''}
-                      className={classes.iconInput}
-                      variant="standard"
-                      onChange={this.handleImgInput("backgroundDark", idx)}
-                      fullWidth
-                    />
-                    <img src={backgroundDark || ''} alt="" className={classes.imgPreview}/>
-                  </Grid>
-                </div>
-              </div>
-            )}
-            <div className={classes.progressContainer}>
-              <Tooltip title={t("Add new set of icons for explicit hostname")}>
-                <IconButton onClick={this.handleAddImageGroup}>
-                  <AddCircle color="primary"/>
-                </IconButton>
-              </Tooltip>
-            </div>
-            <Grid container>
-              <Button variant='contained' onClick={this.handleShowConfig}>
-                {t("Show config")}
-              </Button>
-            </Grid>
-          </Paper></>}
-        {tab === 2 && <div className={classes.updates}>
-          <div style={{ marginBottom: 24 }}>
-            <Typography variant="caption">
-              {t("updater_sub")}
-            </Typography>
-          </div>
-          <Button
-            variant='contained'
-            onClick={this.handleUpdate("check")}
-            startIcon={checkLoading ? <Loader /> : <Check />}
-            className={classes.updateButton}
-            disabled={updating}
-          >
-            Check for updates
-          </Button>
-          <Button
-            variant='contained'
-            onClick={this.handleUpdate("update")}
-            startIcon={updateLoading ? <Loader /> : <Update />}
-            className={classes.updateButton}
-            disabled={updating}
-          >
-            Update
-          </Button>
-          <Button
-            variant='contained'
-            onClick={this.handleUpdate("upgrade")}
-            startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
-            disabled={updating}
-          >
-            Upgrade
-          </Button>
-          <Paper elevation={0} className={classes.logs}>
-            <Tooltip placement="top" title={t('Copy all')}>
-              <IconButton onClick={this.handleCopyLogs(updateLog.join('\n'))} size="large">
-                {copied ? <CheckCircleOutline /> : <CopyAll />}
-              </IconButton>
-            </Tooltip>
-            {updateLog.length > 0 ? updateLog.map((log, idx) =>
-              <pre
-                key={idx}
-                className={classes.log}
-              >
-                {log}
-              </pre>
-            ) : <Typography align='center'>--- no logs ---</Typography>}
-          </Paper>
-        </div>}
-        <Dialog
-          maxWidth="lg"
-          fullWidth
-          onClose={this.handleConfigClose}
-          open={configOpen}
-        >
-          <DialogTitle>
-            {t("Serverconfig")}
-            <Tooltip placement="top" title={t('Copy config')}>
-              <IconButton onClick={this.handleCopyToClipboard} size="large">
-                <CopyAll />
-              </IconButton>
-            </Tooltip>
-          </DialogTitle>
-          <DialogContent>
-            <pre>
-              <code className={classes.jsonPreview}>
-                  &quot;customImages&quot;: {JSON.stringify(customImages.reduce((prevValue, currentValue) => ({
-                  ...prevValue,
-                  [currentValue.hostname]: {
-                    ...currentValue,
-                    hostname: undefined,
-                  },
-                }), {}), null, 4)}
-              </code>
-            </pre>
-            <Typography className={classes.typography}>
-              <Trans i18nKey="configInstructions1">
-                  Copy these lines into
-                <pre className={classes.pre}>
-                    /etc/grommunio-admin-common/config.json
-                </pre>
-              </Trans>.
-              <Trans i18nKey="configInstructions2">
-                  Be careful not to duplicate the
-                <pre className={classes.pre}>&quot;customImages&quot;</pre> key
-              </Trans>.
-            </Typography>
-          </DialogContent>
-        </Dialog>
+        {tab === 0 && <LicenseTab counts={{counts}} setSnackbar={this.setSnackbar}/>}
+        {tab === 1 && <Design />}
+        {tab === 2 && <Updater setSnackbar={this.setSnackbar}/>}
         <div className={classes.about}>
           <Typography variant="caption">
             grommunio is Copyright © 2020-{moment().year()}. All rights reserved.
