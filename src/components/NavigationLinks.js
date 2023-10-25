@@ -52,8 +52,12 @@ const styles = theme => ({
     paddingRight: 6,
     color: 'white',
   },
+  drawerItemLabel: {
+    fontWeight: 700,
+  },
   nestedLabel: {
     paddingLeft: 16,
+    fontWeight: 700,
   },
   tabs: {
     width: 260,
@@ -99,7 +103,7 @@ const styles = theme => ({
     justifyContent: 'center',
   },
   selected: {
-    background: 'linear-gradient(150deg, #42A5F5, #2d323b)',
+    background: `${theme.palette.primary.main} !important`,
   },
   icon: {
     color: '#fff',
@@ -146,30 +150,38 @@ class NavigationLinks extends PureComponent {
 
   ListElement = ({ label, path, Icon }) => {
     const { classes, t } = this.props;
+    const selected = location.pathname.endsWith('/' + path);
     return <ListItemButton
       onClick={this.handleNavigation(path)}
       classes={{ selected: classes.selected }}
-      selected={location.pathname.endsWith('/' + path)}
+      selected={selected}
     >
       <ListItemIcon>
         <Icon className={classes.icon}/>
       </ListItemIcon>
-      <ListItemText primary={t(label)}/>
+      <ListItemText
+        primary={t(label)}
+        primaryTypographyProps={{ className: selected ? classes.drawerItemLabel : null }}
+      />
     </ListItemButton>;
   }
 
   NestedListElement = ({ ID, label, path, Icon }) => {
     const { classes, t, expandedDomain } = this.props;
+    const selected = expandedDomain === ID &&
+      location.pathname.startsWith('/' + ID + path);
     return <ListItemButton
       onClick={this.handleNavigation(ID + path)}
-      selected={expandedDomain === ID &&
-        location.pathname.startsWith('/' + ID + path)}
+      selected={selected}
       classes={{ selected: classes.selected }}
     >
       <ListItemIcon>
         <Icon className={classes.nestedIcon}/>
       </ListItemIcon>
-      <ListItemText primary={t(label)} className={classes.nestedLabel}/>
+      <ListItemText
+        primary={t(label)}
+        primaryTypographyProps={{ className: selected ? classes.nestedLabel : null }}
+      />
     </ListItemButton>
   }
 
