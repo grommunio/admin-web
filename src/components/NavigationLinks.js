@@ -56,7 +56,6 @@ const styles = theme => ({
     fontWeight: 700,
   },
   nestedLabel: {
-    paddingLeft: 16,
     fontWeight: 700,
   },
   tabs: {
@@ -249,18 +248,23 @@ class NavigationLinks extends PureComponent {
           </div>
           }
           {(tab === 1 || !isSysAdmin) &&
-            domains.map(({ domainname: name, ID, domainStatus }) => 
-              name.includes(filter) &&
-                <React.Fragment key={name}>
+            domains
+              .filter(({ domainname }) => domainname.includes(filter))
+              .map(({ domainname: name, ID, domainStatus }) => {
+                const selected = expandedDomain === ID && pathname === '/' + ID;
+                return <React.Fragment key={name}>
                   <ListItemButton
                     onClick={this.handleDrawer(ID)}
-                    selected={expandedDomain === ID && pathname === '/' + ID}
+                    selected={selected}
                     classes={{ selected: classes.selected }}
                   >
                     <ListItemIcon>
                       <Domains className={classes.icon}/>
                     </ListItemIcon>
-                    <ListItemText primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')} />
+                    <ListItemText
+                      primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}
+                      primaryTypographyProps={{ className: selected ? classes.drawerItemLabel : null }}
+                    />
                   </ListItemButton>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
@@ -291,7 +295,7 @@ class NavigationLinks extends PureComponent {
                     </List>
                   </Collapse>
                 </React.Fragment>
-            )}
+              })}
           {(tab === 0 && !isSysAdmin) && <ListItemButton
             onClick={this.handleNavigation('taskq')}
             classes={{ selected: classes.selected }}
