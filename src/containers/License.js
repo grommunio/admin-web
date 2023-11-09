@@ -45,6 +45,7 @@ class License extends PureComponent {
     counts: {},
     loading: true,
     tab: 0,
+    tabsDisabled: false,
   }
 
   componentDidMount() {
@@ -68,9 +69,11 @@ class License extends PureComponent {
 
   setSnackbar = snackbar => this.setState({ snackbar });
 
+  setTabsDisabled = tabsDisabled => this.setState({ tabsDisabled });
+
   render() {
     const { classes, t } = this.props;
-    const { tab, snackbar, loading, counts } = this.state;
+    const { tab, snackbar, loading, counts, tabsDisabled } = this.state;
 
     return (
       <TableViewContainer
@@ -82,16 +85,17 @@ class License extends PureComponent {
         loading={loading}
       >
         <Tabs value={tab} onChange={this.handleTab} sx={{ ml: 1 }}>
-          <IconTab label={t("License")} icon={<LicenseIcon />}/>
+          <IconTab disabled={tabsDisabled} label={t("License")} icon={<LicenseIcon />}/>
           <IconTab
             icon={<DesignServices />}
             label={t("Design")}
+            disabled={tabsDisabled}
           />
           <IconTab label={t("Updates")} icon={<Update />}/>
         </Tabs>
         {tab === 0 && <LicenseTab counts={{counts}} setSnackbar={this.setSnackbar}/>}
         {tab === 1 && <Design />}
-        {tab === 2 && <Updater setSnackbar={this.setSnackbar}/>}
+        {tab === 2 && <Updater setSnackbar={this.setSnackbar} setTabsDisabled={this.setTabsDisabled}/>}
         <div className={classes.about}>
           <Typography variant="caption">
             grommunio is Copyright © 2020-{moment().year()}. All rights reserved.

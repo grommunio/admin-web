@@ -8,6 +8,7 @@ import { fetchUpdateLogData } from '../../actions/logs';
 import { copyToClipboard } from '../../utils';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import { Prompt } from 'react-router-dom/cjs/react-router-dom.min';
 
 const styles = theme => ({
   data: {
@@ -50,25 +51,38 @@ class Updater extends PureComponent {
       updateLog: [],
       repo: localStorage.getItem("packageRepository") || "supported"
     }
+  
+    window.addEventListener('beforeunload', this.onBeforeUnload);
   }
 
-  
+  onBeforeUnload = (e) => {
+    const { checkLoading, updateLoading, upgradeLoading } = this.state;
+    if (checkLoading || updateLoading || upgradeLoading) {
+      e.preventDefault();
+      e.returnValue = 'Updater is running! Are you sure you want to quit?';
+      return;
+    }
+    delete e['returnValue'];
+  }
 
   fetchInterval = null;
 
   handleRefresh = async pid => {
-    const response = await this.props.fetchLog(pid).catch();
+    const { setTabsDisabled, fetchLog } = this.props;
+    const response = await fetchLog(pid).catch();
     this.setState({ updateLog: response.data });
     if(response?.processRunning === false) {
       clearInterval(this.fetchInterval);
       this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
+      setTabsDisabled(false);
     }
   }
 
   handleUpdate = action => async () => {
-    const { systemUpdate, setSnackbar } = this.props;
+    const { systemUpdate, setSnackbar, setTabsDisabled } = this.props;
     const { repo } = this.state;
     this.setState({ [action + "Loading"]: true, copied: false });
+    setTabsDisabled(true);
     const response = await systemUpdate(action, repo)
       .catch(snackbar => {
         setSnackbar(snackbar);
@@ -161,6 +175,10 @@ class Updater extends PureComponent {
           </pre>
         ) : <Typography align='center'>--- no logs ---</Typography>}
       </Paper>
+      <Prompt
+        when={updating}
+        message={`Updater is still running!`}
+      />
     </div>
   }
 }
@@ -171,6 +189,7 @@ Updater.propTypes = {
   systemUpdate: PropTypes.func.isRequired,
   fetchLog: PropTypes.func.isRequired,
   setSnackbar: PropTypes.func.isRequired,
+  setTabsDisabled: PropTypes.func.isRequired,
 }
 
 const mapDispatchToProps = dispatch => {
