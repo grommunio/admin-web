@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { AccountBalance, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key, MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
+import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key, MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
 import { withTranslation } from 'react-i18next';
 import { withStyles } from '@mui/styles';
@@ -31,6 +31,7 @@ function UserTabs({ t, ID, value, classes, handleTabChange, sysAdminReadPermissi
     }}
   >
     <UserTab label={t("Account")} icon={AccountBalance} />
+    <UserTab label={t("Alt names")} icon={AltRoute} />
     <UserTab label={t("Details")} disabled={!ID} icon={Badge}/>
     <UserTab label={t("Contact")} disabled={!ID} icon={ContactPhone}/>
     <UserTab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions} icon={SupervisorAccount}/>

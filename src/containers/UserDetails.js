@@ -43,6 +43,7 @@ import { checkFormat } from '../api';
 import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
 import Tabs from '../components/user/Tabs';
+import Altnames from '../components/user/Altnames';
 
 const styles = theme => ({
   paper: {
@@ -76,6 +77,7 @@ class UserDetails extends PureComponent {
     adding: false,
     editing: null,
     user: {
+      altnames: [],
       fetchmail: [],
       forward: {},
       roles: [],
@@ -161,6 +163,7 @@ class UserDetails extends PureComponent {
       }
       properties[quotaLimit] = Math.ceil(properties[quotaLimit]);
     }
+
     return {
       sizeUnits,
       rawData: user,
@@ -281,7 +284,7 @@ class UserDetails extends PureComponent {
   handleEdit = () => {
     const { edit, domain } = this.props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
-    const { username, aliases, fetchmail, forward, properties, homeserver } = user;
+    const { username, aliases, fetchmail, forward, properties, homeserver, altnames } = user;
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
 
     // Convert quota (MiB, GiB or TiB) into KiB
@@ -310,6 +313,7 @@ class UserDetails extends PureComponent {
       },
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
       forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
+      altnames: altnames.map(({ altname }) => ({ altname })),
       roles: undefined,
       ldapID: undefined,
     }).then(() => this.setState({ snackbar: 'Success!' }))
@@ -558,6 +562,29 @@ class UserDetails extends PureComponent {
     });
   }
 
+  handleAltnameEdit = (action, idx=0) => e => {
+    const altnames = [...this.state.user.altnames]
+    switch(action) {
+    case "add": {
+      altnames.push({ altname: "", magic: 0 });
+      break;
+    }
+    case "edit": {
+      altnames[idx].altname = e.target.value;
+      break;
+    }
+    case "delete": {
+      altnames.splice(idx, 1);
+    }
+    }
+    this.setState({
+      user: {
+        ...this.state.user,
+        altnames: altnames,
+      }
+    })
+  }
+
   render() {
     const { classes, t, domain, history } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
@@ -643,19 +670,23 @@ class UserDetails extends PureComponent {
             handleMultiselectChange={this.handleMultiselectChange}
             storageQuotaTooHigh={storageQuotaTooHigh}
           />}
-          {tab === 1 && <User
+          {tab === 1 && <Altnames
+            user={user}
+            handleAltnameEdit={this.handleAltnameEdit}
+          />}
+          {tab === 2 && <User
             user={user}
             handlePropertyChange={this.handlePropertyChange}
           />}
-          {tab === 2 && <Contact
+          {tab === 3 && <Contact
             user={user}
             handlePropertyChange={this.handlePropertyChange}
           />}
-          {tab === 3 && sysAdminReadPermissions && <Roles
+          {tab === 4 && sysAdminReadPermissions && <Roles
             roles={roles}
             handleAutocomplete={this.handleAutocomplete}
           />}
-          {tab === 4 && <Smtp
+          {tab === 5 && <Smtp
             user={user}
             aliases={aliases}
             forward={forward || {}}
@@ -665,34 +696,34 @@ class UserDetails extends PureComponent {
             handleAddAlias={this.handleAddAlias}
             handleRemoveAlias={this.handleRemoveAlias}
           />}
-          {tab === 5 && ID && <Delegates
+          {tab === 6 && ID && <Delegates
             domainID={domain.ID}
             orgID={domain.orgID}
             userID={user.ID}
             disabled={!writable}
           />}
-          {tab === 6 && ID && <Oof
+          {tab === 7 && ID && <Oof
             domainID={domain.ID}
             userID={user.ID}
           />}
-          {tab === 7 && <FetchMail
+          {tab === 8 && <FetchMail
             fetchmail={fetchmail}
             handleAdd={this.handleFetchmailDialog(true)}
             handleEdit={this.handleFetchmailEditDialog}
             handleDelete={this.handleFetchmailDelete}
           />}
-          {tab === 8 && ID && <SyncTab
+          {tab === 9 && ID && <SyncTab
             domainID={domain.ID}
             userID={user.ID}
           />}
-          {tab === 9 && ID && <SyncPolicies
+          {tab === 10 && ID && <SyncPolicies
             syncPolicy={syncPolicy}
             defaultPolicy={defaultPolicy}
             handleChange={this.handleSyncChange}
             handleCheckbox={this.handleSyncCheckboxChange}
             handleSlider={this.handleSlider}
           />}
-          {tab !== 5 && tab !== 6 && <Grid container className={classes.buttonGrid}>
+          {tab !== 6 && tab !== 7 && <Grid container className={classes.buttonGrid}>
             <Button
               onClick={history.goBack}
               style={{ marginRight: 8 }}
@@ -703,7 +734,7 @@ class UserDetails extends PureComponent {
             <Button
               variant="contained"
               color="primary"
-              onClick={tab === 3 ? this.handleSaveRoles : this.handleEdit}
+              onClick={tab === 4 ? this.handleSaveRoles : this.handleEdit}
               disabled={!writable || forwardError || storageQuotaTooHigh}
             >
               {t('Save')}

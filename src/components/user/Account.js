@@ -160,7 +160,7 @@ class Account extends PureComponent {
       servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = this.props;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
-      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver, altname } = user;
+      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
     const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
       prohibitsendquota, attributehidden_gromox } = properties;
 
@@ -185,13 +185,6 @@ class Account extends PureComponent {
             {t('Change password')}
           </Button>}
         </Grid>
-        <TextField
-          className={classes.input}
-          label={t("Alternative name")}
-          fullWidth
-          value={altname || ''}
-          onChange={handleInput('altname')}
-        />
         {ldapID && <TextField 
           label={t("LDAP ID")}
           className={classes.input}
