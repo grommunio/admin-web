@@ -53,7 +53,6 @@ class AddGroup extends PureComponent {
     { ID: 1, name: "Internal" },
     { ID: 2, name: "Domain" },
     { ID: 3, name: "Specific" },
-    { ID: 4, name: "Outgoing" },
   ]
 
   handleEnter = () => {

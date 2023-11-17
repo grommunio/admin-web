@@ -55,7 +55,7 @@ class Groups extends PureComponent {
 
   listTypes = ['Normal', 'Domain', 'Group']
 
-  listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing']
+  listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing (deprecated)']
 
   handleCheckClose = () => this.setState({ checking: false });
 
