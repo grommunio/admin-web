@@ -5,10 +5,10 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress,
-  TextField, MenuItem, Chip, Tooltip } from '@mui/material';
+  TextField, MenuItem, Chip, Tooltip, Alert } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Dns, HelpOutline } from '@mui/icons-material';
+import { Dns, HelpOutline, Warning } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -108,6 +108,16 @@ class Servers extends PureComponent {
         onSnackbarClose={this.handleSnackbarClose}
         loading={loading}
       >
+        <Alert
+          severity={"error"}
+          elevation={1}
+          variant="filled"
+          icon={<Warning />}
+          sx={{ my: 0, mx: 2 }}
+        >
+          Disclaimer! Be sure to know what you are doing.
+          If your grommunio is hosted on a single server, there is no configuration necessary.
+        </Alert>
         <TableActionGrid
           tf={<SearchTextfield
             value={match}
