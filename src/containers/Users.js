@@ -157,6 +157,15 @@ class Users extends Component {
     const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
     const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
     const { checking, taskMessage, taskID } = this.state;
+
+    const userCounts = users.Users.reduce((prev, curr) => {
+      const shared = curr.status === 4;
+      return {
+        normal: prev.normal + (shared ? 0 : 1),
+        shared: prev.shared + (shared ? 1 : 0),
+      }
+    }, { normal: 0, shared: 0 });
+
     return (
       <TableViewContainer
         handleScroll={this.handleScroll}
@@ -233,6 +242,7 @@ class Users extends Component {
         </TableActionGrid>
         <Typography className={classes.count} color="textPrimary">
           {t("showingUser", { count: users.Users.length })}
+          {` (${userCounts.normal} normal, ${userCounts.shared} shared)`}
         </Typography>
         <Paper className={classes.tablePaper} elevation={1}>
           <Hidden lgDown>
@@ -281,7 +291,7 @@ class Users extends Component {
                       </TableCell>
                       <TableCell>
                         {t(getUserTypeString(properties.displaytypeex))}
-                        {obj.status === 4 && `(${t("Shared")})`}
+                        {obj.status === 4 && ` (${t("Shared")})`}
                       </TableCell>
                       <TableCell>{properties.displayname}</TableCell>
                       <TableCell>{obj.ldapID || ''}</TableCell>
