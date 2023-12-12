@@ -7,26 +7,23 @@ import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
 import Dashboard from '@mui/icons-material/Dashboard';
-import People from '@mui/icons-material/People';
 import Domains from '@mui/icons-material/Domain';
-import Folder from '@mui/icons-material/Folder';
 import Ldap from '@mui/icons-material/Contacts';
-import Groups from '@mui/icons-material/Email';
+import Groups from '@mui/icons-material/Groups';
 import Storage from '@mui/icons-material/Storage';
 import Orgs from '@mui/icons-material/GroupWork';
 import Logs from '@mui/icons-material/ViewHeadline';
 import Sync from '@mui/icons-material/Sync';
-import Classes from '@mui/icons-material/Class';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
-import { IconButton, Tooltip, Avatar } from '@mui/material';
+import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain, setDrawerExpansion } from '../actions/drawer';
-import { Add, AdminPanelSettings, BackupTable, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBuilder, TableChart,
+  TaskAlt, Topic } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
@@ -126,7 +123,10 @@ const styles = theme => ({
   flexCenter: {
     display: 'flex',
     justifyContent: 'center',
-  }
+  },
+  selected: {
+    background: `${theme.palette.primary.main} !important`,
+  },
 });
 
 class RetractedNavigationLinks extends PureComponent {
@@ -167,6 +167,40 @@ class RetractedNavigationLinks extends PureComponent {
     setTab(tab === 0 ? 1 : 0);
   }
 
+  ListElement = ({ label="", path, Icon, ...rest }) => {
+    const { classes, t } = this.props;
+    const selected = location.pathname.endsWith('/' + path);
+    return <Tooltip title={t(label)} placement="right">
+      <ListItemButton
+        onClick={this.handleNavigation(path)}
+        classes={{ root: classes.flexCenter, selected: classes.selected }}
+        selected={selected}
+        {...rest}
+      >
+        <ListItemIcon className={classes.flexCenter}>
+          <Icon fontSize='large' className={classes.icon}/>
+        </ListItemIcon>
+      </ListItemButton>
+    </Tooltip>;
+  }
+
+  NestedListElement = ({ ID, label="", path, Icon }) => {
+    const { classes, t, expandedDomain } = this.props;
+    const selected = expandedDomain === ID &&
+      location.pathname.startsWith('/' + ID + path);
+    return <Tooltip title={t(label)} placement="right">
+      <ListItemButton
+        onClick={this.handleNavigation(ID + path)}
+        classes={{ root: classes.flexCenter, selected: classes.selected }}
+        selected={selected}
+      >
+        <ListItemIcon className={classes.flexCenter}>
+          <Icon fontSize='large' className={classes.icon}/>
+        </ListItemIcon>
+      </ListItemButton>
+    </Tooltip>;
+  }
+
   render() {
     const { classes, t, expandedDomain, location, domains, capabilities, tab, config } = this.props;
     const { filter, adding, snackbar } = this.state;
@@ -205,216 +239,129 @@ class RetractedNavigationLinks extends PureComponent {
               return name.includes(filter) ?
                 <React.Fragment key={name}>
                   <Tooltip  placement="right" title={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}>
-                    <ListItem
+                    <ListItemButton
                       onClick={this.handleDrawer(ID)}
-                      button
-                      className={classes.flexCenter}
+                      classes={{ root: classes.flexCenter, selected: classes.selected }}
                       selected={expandedDomain === ID && pathname === '/' + ID}
+                      style={{ flexGrow: 0 }}
                     >
                       <Avatar>
                         {name[0]}
                       </Avatar>
-                    </ListItem>
+                    </ListItemButton>
                   </Tooltip>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
-                      <Tooltip placement="right" title={t('Users')}>
-                        <ListItem
-                          className={classes.flexCenter}
-                          button
-                          onClick={this.handleNavigation(ID + '/users')}
-                          selected={expandedDomain === ID &&
-                            pathname.startsWith('/' + ID + '/users')}
-                        >
-                          <People fontSize='large' className={classes.icon}/>
-                        </ListItem>
-                      </Tooltip>
-                      <Tooltip placement="right" title={t('Folders')}>
-                        <ListItem
-                          className={classes.flexCenter}
-                          button
-                          onClick={this.handleNavigation(ID + '/folders')}
-                          selected={expandedDomain === ID &&
-                            pathname.startsWith('/' + ID + '/folders')}
-                        >
-                          <Folder fontSize='large' className={classes.icon}/>
-                        </ListItem>
-                      </Tooltip>
-                      <Tooltip placement="right" title={t('Groups')}>
-                        <ListItem
-                          className={classes.flexCenter}
-                          button
-                          onClick={this.handleNavigation(ID + '/classes')}
-                          selected={pathname.startsWith('/' + ID + '/classes')}
-                        >
-                          <Classes fontSize='large' className={classes.icon}/>
-                        </ListItem>
-                      </Tooltip>
-                      <Tooltip placement="right" title={t('Groups')}>
-                        <ListItem
-                          className={classes.flexCenter}
-                          button
-                          onClick={this.handleNavigation(ID + '/groups')}
-                          selected={pathname.startsWith('/' + ID + '/groups')}
-                        >
-                          <Groups fontSize='large' className={classes.icon}/>
-                        </ListItem>
-                      </Tooltip>
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Users"}
+                        path="/users"
+                        Icon={Person}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Contacts"}
+                        path="/contacts"
+                        Icon={ContactMail}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Groups"}
+                        path="/groups"
+                        Icon={Groups}
+                      />
+                      <this.NestedListElement
+                        ID={ID}
+                        label={"Folders"}
+                        path="/folders"
+                        Icon={Topic}
+                      />
                     </List>
                   </Collapse>
                 </React.Fragment> : null;
             })}
-          {(tab === 0 && !isSysAdmin) && <Tooltip  placement="right" title={t('Task queue')}>
-            <ListItem
-              button
-              onClick={this.handleNavigation('taskq')}
-              className={classes.flexCenter}
-              selected={pathname.startsWith('/taskq')}
-            >
-              <TaskAlt fontSize='large' className={classes.icon}/>
-            </ListItem>
-          </Tooltip>}
+          {(tab === 0 && !isSysAdmin) && <this.ListElement
+            label={"Task queue"}
+            path="taskq"
+            Icon={TaskAlt}
+            style={{ flexGrow: 0 }}
+          />}
           {tab === 0 && isSysAdmin && <React.Fragment>
-            <Tooltip placement="right" title={t('Dashboard')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('')}
-                selected={pathname === '/'}
-                className={classes.flexCenter}
-              >
-                <Dashboard fontSize='large' className={classes.icon} />
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Organizations')}>
-              <ListItem
-                className={classes.flexCenter}
-                button
-                onClick={this.handleNavigation('orgs')}
-                selected={pathname.startsWith('/orgs')}
-              >
-                <Orgs fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Domains')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('domains')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/domains')}
-              >
-                <Domains fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Users')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('users')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/users')}
-              >
-                <People fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Roles')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('roles')}
-                className={classes.flexCenter}
-                selected={pathname === '/roles'}
-              >
-                <Roles fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Defaults')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('defaults')}
-                className={classes.flexCenter}
-                selected={pathname === '/defaults'}
-              >
-                <BackupTable fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('LDAP Directory')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('directory')}
-                className={classes.flexCenter}
-                selected={pathname === '/directory'}
-              >
-                <Ldap fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Configuration DB')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('dbconf')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/dbconf')}
-              >
-                <Storage fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Servers')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('servers')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/servers')}
-              >
-                <Dns fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Logging')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('logs')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/logs')}
-              >
-                <Logs fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Mail queue')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('mailq')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/mailq')}
-              >
-                <QueryBuilder fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Task queue')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('taskq')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/taskq')}
-              >
-                <TaskAlt fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Mobile devices')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('sync')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/sync')}
-              >
-                <Sync fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
-            <Tooltip placement="right" title={t('Live status')}>
-              <ListItem
-                button
-                onClick={this.handleNavigation('status')}
-                className={classes.flexCenter}
-                selected={pathname.startsWith('/status')}
-              >
-                <TableChart fontSize='large' className={classes.icon}/>
-              </ListItem>
-            </Tooltip>
+            <this.ListElement
+              label={"Dashboard"}
+              path=""
+              Icon={Dashboard}
+            />
+            <this.ListElement
+              label={"Organizations"}
+              path="orgs"
+              Icon={Orgs}
+            />
+            <this.ListElement
+              label={"Domains"}
+              path="domains"
+              Icon={Domains}
+            />
+            <this.ListElement
+              label={"Users"}
+              path="users"
+              Icon={Person}
+            />
+            <this.ListElement
+              label={"Contacts"}
+              path="contacts"
+              Icon={ContactMail}
+            />
+            <this.ListElement
+              label={"Roles"}
+              path="roles"
+              Icon={Roles}
+            />
+            <this.ListElement
+              label={"Defaults"}
+              path="defaults"
+              Icon={BackupTable}
+            />
+            <this.ListElement
+              label={"LDAP Directory"}
+              path="directory"
+              Icon={Ldap}
+            />
+            <this.ListElement
+              label={"Configuration DB"}
+              path="dbconf"
+              Icon={Storage}
+            />
+            <this.ListElement
+              label={"Servers"}
+              path="servers"
+              Icon={Dns}
+            />
+            <this.ListElement
+              label={"Monitoring"}
+              path="logs"
+              Icon={Logs}
+            />
+            <this.ListElement
+              label={"Mail queue"}
+              path="mailq"
+              Icon={QueryBuilder}
+            />
+            <this.ListElement
+              label={"Task queue"}
+              path="taskq"
+              Icon={TaskAlt}
+            />
+            <this.ListElement
+              label={"Mobile devices"}
+              path="sync"
+              Icon={Sync}
+            />
+            <this.ListElement
+              label={"Live status"}
+              path="status"
+              Icon={TableChart}
+            />
           </React.Fragment>
           }
         </List>

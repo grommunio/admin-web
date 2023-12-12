@@ -296,16 +296,11 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment>
               })}
-          {(tab === 0 && !isSysAdmin) && <ListItemButton
-            onClick={this.handleNavigation('taskq')}
-            classes={{ selected: classes.selected }}
-            selected={pathname.startsWith('/taskq')}
-          >
-            <ListItemIcon>
-              <TaskAlt className={classes.icon}/>
-            </ListItemIcon>
-            <ListItemText primary={t('Task queue')} />
-          </ListItemButton>}
+          {(tab === 0 && !isSysAdmin) && <this.ListElement
+            label={"Task queue"}
+            path="taskq"
+            Icon={TaskAlt}
+          />}
           {tab === 0 && isSysAdmin && <React.Fragment>
             <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
             <this.ListElement
