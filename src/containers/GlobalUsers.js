@@ -174,7 +174,10 @@ class GlobalUsers extends Component {
                           {obj.username}
                         </div>
                       </TableCell>
-                      <TableCell>{t(getUserTypeString(properties.displaytypeex))}</TableCell>
+                      <TableCell>
+                        {t(getUserTypeString(properties.displaytypeex))}
+                        {obj.status === 4 && ` (${t("Shared")})`}
+                      </TableCell>
                       <TableCell>{properties.displayname}</TableCell>
                       <TableCell>{obj.ldapID || ''}</TableCell>
                       <TableCell align="right">
