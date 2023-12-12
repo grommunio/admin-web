@@ -7,10 +7,9 @@ import thunkMiddleware from 'redux-thunk';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 // Keep alphabetically ordered
+import aboutReducer from './reducers/about';
 import antispamReducer from './reducers/antispam';
 import authReducer from './reducers/auth';
-import aboutReducer from './reducers/about';
-import classesReducer from './reducers/classes';
 import configReducer from './reducers/config';
 import dashboardReducer from './reducers/dashboard';
 import dbconfReducer from './reducers/dbconf';
@@ -41,7 +40,6 @@ export const store = createStore(
     about: aboutReducer,
     antispam: antispamReducer,
     auth: authReducer,
-    _classes: classesReducer,
     config: configReducer,
     dashboard: dashboardReducer,
     dbconf: dbconfReducer,
@@ -49,10 +47,10 @@ export const store = createStore(
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,
+    groups: groupsReducer,
     ldap: ldapReducer,
     license: licenseReducer,
     logs: logsReducer,
-    groups: groupsReducer,
     orgs: orgsReducer,
     profile: profileReducer,
     roles: rolesReducer,
