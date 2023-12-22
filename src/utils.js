@@ -436,3 +436,10 @@ export function getTaskState(state) {
     5: "Cancelled"
   }[state] || "Unknown";
 }
+
+export function checkHolidaySeason() {
+  const date = moment();
+  const month = date.get('month');
+  const day = date.get('date');
+  return month === 11 && day >= 24 && day <= 31;
+}

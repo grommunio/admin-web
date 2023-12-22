@@ -16,7 +16,7 @@ import { CapabilityContext } from "./CapabilityContext";
 import { SYSTEM_ADMIN_WRITE } from "./constants";
 import { fetchLicenseData } from "./actions/license";
 import './snow.css';
-import moment from "moment";
+import { checkHolidaySeason } from "./utils";
 
 const styles = {
   root: {
@@ -53,7 +53,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
   };
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
-  const isHolidaySeason = React.useMemo(() => moment().isBetween(moment("2023-12-24"), moment("2024-01-01")));
+  const isHolidaySeason = React.useMemo(checkHolidaySeason, []);
 
   // componentDidMount()
   useEffect(() => {
@@ -78,8 +78,8 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
           `url(${serverConfig.customImages[window.location.hostname]?.background || background})`
       }}
     >
-      {isHolidaySeason && [...Array(50)].map((key) => 
-        <div key={key} className="snowflake">
+      {isHolidaySeason && [...Array(50)].map((_, idx) => 
+        <div key={idx} className="snowflake">
           <div className="inner">❅</div>
         </div>
       )}
