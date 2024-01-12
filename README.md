@@ -101,6 +101,8 @@ Following attributes are available:
 
 * `loadAntispamData:boolean` Whether or not to load antispam data in the dashboard (default: `true`)
 
+* `rspamdWebAddress:String` Url of production rspamd server (default: `''`)
+
 * `mailWebAddress:String` Url of production mail server (default: `''`)
 
 * `chatWebAddress:String` Url of production chat server (default: `''`)
