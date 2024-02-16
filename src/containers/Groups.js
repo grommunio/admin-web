@@ -220,8 +220,8 @@ class Groups extends PureComponent {
                   <TableCell>{t(this.listTypes[obj.listType])}</TableCell>
                   <TableCell>{t(this.listPrivileges[obj.listPrivilege])}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                      <Delete color="error"/>
+                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                      <Delete color="error" fontSize="small"/>
                     </IconButton>}
                   </TableCell>
                 </TableRow>

@@ -191,8 +191,8 @@ class GlobalUsers extends Component {
                       <TableCell>{properties.displayname}</TableCell>
                       <TableCell>{obj.ldapID || ''}</TableCell>
                       <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                          <Delete color="error"/>
+                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                          <Delete color="error" fontSize='small'/>
                         </IconButton>}
                       </TableCell>
                     </TableRow>

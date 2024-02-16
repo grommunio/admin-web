@@ -39,7 +39,6 @@ const defaultStyles = mode => ({
   MuiTableCell: {
     styleOverrides: {
       head: {
-        height: '30px',
         padding: '10px 16px',
       },
       body: {

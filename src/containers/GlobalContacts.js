@@ -143,8 +143,8 @@ class GlobalContacts extends Component {
                       </TableCell>
                       <TableCell>{properties.smtpaddress || ""}</TableCell>
                       <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                          <Delete color="error"/>
+                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                          <Delete color="error" fontSize='small'/>
                         </IconButton>}
                       </TableCell>
                     </TableRow>

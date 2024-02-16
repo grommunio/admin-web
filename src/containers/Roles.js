@@ -106,8 +106,8 @@ class Roles extends PureComponent {
                   <TableCell>{obj.description}</TableCell>
                   <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                      <Delete color="error"/>
+                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                      <Delete color="error" fontSize='small'/>
                     </IconButton>}
                   </TableCell>
                 </TableRow>

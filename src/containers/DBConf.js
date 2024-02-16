@@ -157,8 +157,8 @@ class DBConf extends Component {
                 <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
                   <TableCell>{service}</TableCell>
                   <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(service)} size="large">
-                      <Delete color="error" />
+                    {writable && <IconButton onClick={this.handleDelete(service)} size="small">
+                      <Delete color="error" fontSize="small"/>
                     </IconButton>}
                   </TableCell>
                 </TableRow>

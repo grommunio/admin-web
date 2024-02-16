@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -297,8 +297,8 @@ class Users extends Component {
                       <TableCell>{obj.ldapID || ''}</TableCell>
                       <TableCell>{this.getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
                       <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="large">
-                          <Delete color="error"/>
+                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                          <Delete color="error" fontSize="small"/>
                         </IconButton>}
                       </TableCell>
                     </TableRow>
