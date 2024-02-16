@@ -14,7 +14,7 @@
     "apexcharts": "^3.35.4",
     "debounce": "1.2.0",
     "dompurify": "^3.0.3",
-    "i18next": "19.5.1",
+    "i18next": "^19.5.1",
     "moment": "^2.29.4",
     "prop-types": "15.7.2",
     "react": "17.0.2",
@@ -28,10 +28,10 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "^5.0.1",
     "react-simple-wysiwyg": "^2.2.5",
-    "redux": "4.0.5",
-    "redux-dynamic-middlewares": "2.0.0",
-    "redux-logger": "3.0.6",
-    "redux-thunk": "2.3.0"
+    "redux": "^4.0.5",
+    "redux-dynamic-middlewares": "^2.0.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
