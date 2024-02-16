@@ -10,7 +10,7 @@ import { withTranslation } from 'react-i18next';
 const MagnitudeAutocomplete = props => {
   const { t, className, value, filterAttribute, onChange, options, label, getOptionLabel,
     inputValue, onInputChange, freeSolo, multiple, calculateMagnitude, placeholder, renderOption,
-    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue } = props;
+    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue, disableCloseOnSelect } = props;
   const magnitude = calculateMagnitude === false ? 0 : Math.round(Math.log10(options.length) - 2);
 
   return <Autocomplete
@@ -49,6 +49,7 @@ const MagnitudeAutocomplete = props => {
     disabled={disabled || false}
     getOptionDisabled={getOptionDisabled}
     isOptionEqualToValue={isOptionEqualToValue}
+    disableCloseOnSelect={disableCloseOnSelect || multiple || false}
   />;
 };
 
@@ -75,6 +76,7 @@ MagnitudeAutocomplete.propTypes = {
   disabled: PropTypes.bool,
   isOptionEqualToValue: PropTypes.func,
   getOptionDisabled: PropTypes.func,
+  disableCloseOnSelect: PropTypes.bool,
 };
 
 export default withTranslation()(MagnitudeAutocomplete);
