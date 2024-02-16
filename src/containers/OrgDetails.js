@@ -400,6 +400,21 @@ class OrgDetails extends PureComponent {
         groupfilter: "(objectclass=posixgroup)",
         groupname: "cn",
       });
+    } else if(templates === '389ds') {
+      this.setState({
+        templates,
+        objectID: 'entryUUID',
+        username: 'mail',
+        displayName: 'displayName',
+        searchAttributes: ["mail", "givenName", "cn", "sn", "displayName"],
+        filter: "objectClass=posixAccount",
+        contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount)))',
+        aliases: 'mailAlternateAddress',
+        groupMemberAttr: "memberOf",
+        groupaddr: "mail",
+        groupfilter: "(objectclass=posixGroup)",
+        groupname: "cn",
+      });
     } else {
       this.setState({ templates });
     }
@@ -692,6 +707,7 @@ class OrgDetails extends PureComponent {
                 <MenuItem value="OpenLDAP">OpenLDAP</MenuItem>
                 <MenuItem value="ActiveDirectory">Active Directory</MenuItem>
                 <MenuItem value="Univention">Univention</MenuItem>
+                <MenuItem value="389ds">389DS / Red Hat Directory Server / FreeIPA</MenuItem>
               </LdapTextfield>
               <LdapTextfield
                 label={t('LDAP Filter')}
