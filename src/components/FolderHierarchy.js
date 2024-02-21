@@ -1,9 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem from '@mui/lab/TreeItem';
 import { AddCircleOutline, AssignmentTurnedInOutlined,
   ContactsOutlined as Contacts, Delete, StickyNote2Outlined as StickyNote, Edit,
   EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
@@ -11,8 +9,12 @@ import { IconButton, Tooltip, Typography } from '@mui/material';
 import { IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
+import { TreeItem, TreeView } from '@mui/x-tree-view';
 
-const styles = {
+const styles = theme => ({
+  richTree: {
+    padding: theme.spacing(1, 3, 1, 1),
+  },
   treeItemLabel: {
     display: 'flex',
     alignItems: 'center',
@@ -22,9 +24,9 @@ const styles = {
   folderTypeIcon: {
     marginRight: 8,
   },
-};
+});
 
-const FolderHierarchy = ({classes, t, writable, data, domainID, handleAdd, handleEdit, handleDelete, ...childProps}) => {
+const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, handleEdit, handleDelete }) => {
 
   const containerIcons = {
     'IPF.Note': <Email fontSize='small' className={classes.folderTypeIcon}/>,
@@ -73,10 +75,10 @@ const FolderHierarchy = ({classes, t, writable, data, domainID, handleAdd, handl
 
   return (
     <TreeView
+      className={classes.richTree}
       defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpanded={[IPM_SUBTREE_ID]}
       defaultExpandIcon={<ChevronRightIcon />}
-      {...childProps}
     >
       {Object.keys(data).length !== 0 && renderTree(data)}
     </TreeView>

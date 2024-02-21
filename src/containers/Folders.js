@@ -51,9 +51,6 @@ const styles = theme => ({
   treeNode: {
     stroke: theme.palette.primary.main,
   },
-  richTree: {
-    padding: theme.spacing(1, 3, 1, 1),
-  },
 });
 
 class Folders extends PureComponent {
@@ -187,7 +184,6 @@ class Folders extends PureComponent {
           <Paper className={classes.tablePaper} elevation={1}>
             <FolderHierarchy
               domainID={domain.ID}
-              className={classes.richTree}
               data={filteredTree || folders.Tree}
               handleAdd={this.handleAdd}
               handleEdit={handleEdit}
