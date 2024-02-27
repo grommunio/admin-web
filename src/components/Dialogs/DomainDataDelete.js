@@ -1,71 +1,60 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
-const styles = {
-  
-};
 
-class DomainDataDelete extends PureComponent {
+const DomainDataDelete = props => {
+  const [loading, setLoading] = useState(false);
 
-  state = {
-    loading: false,
-  }
-
-  handleDelete = () => {
-    const { id, onSuccess, onError, domainID } = this.props;
-    this.setState({ loading: true });
-    this.props.delete(domainID, id)
+  const handleDelete = () => {
+    const { id, onSuccess, onError, domainID } = props;
+    setLoading(true);
+    props.delete(domainID, id)
       .then(msg => {
         if(onSuccess) onSuccess(msg);
-        this.setState({ loading: false });
+        setLoading(false);
       })
       .catch(error => {
         if(onError) onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  render() {
-    const { t, open, item, onClose } = this.props;
-    const { loading } = this.state;
+  const { t, open, item, onClose } = props;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleDelete}
-            variant="contained"
-            color="secondary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="secondary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Confirm')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 DomainDataDelete.propTypes = {
-  classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   item: PropTypes.string,
   id: PropTypes.number,
@@ -77,4 +66,4 @@ DomainDataDelete.propTypes = {
   delete: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DomainDataDelete));
+export default withTranslation()(DomainDataDelete);

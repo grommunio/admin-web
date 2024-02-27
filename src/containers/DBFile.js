@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { Add, Delete } from '@mui/icons-material';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -37,150 +38,135 @@ const styles = theme => ({
   },
 });
 
-class DBFile extends PureComponent {
-
-  state = {
+const DBFile = props => {
+  const [state, setState] = useState({
     data: [],
     unsaved: false,
     deleting: false,
     loading: true,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { fetch } = this.props;
-    const splits = window.location.pathname.split('/');
-    const file = await fetch(splits[2], splits[3])
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    
-    const data = [];
-    Object.entries(file?.data || {}).forEach(([key, value]) => data.push({ key, value }));
-    this.setState({
-      loading: false,
-      data,
-    });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch } = props;
+      const splits = window.location.pathname.split('/');
+      const file = await fetch(splits[2], splits[3])
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      
+      const data = [];
+      Object.entries(file?.data || {}).forEach(([key, value]) => data.push({ key, value }));
+      setState({
+        ...state, 
+        loading: false,
+        data,
+      });
+    }
 
-  handleInput = field => event => {
-    this.setState({
-      data: {
-        ...this.state.data,
-        [field]: event.target.value,
-      },
-      unsaved: true,
-    });
-  }
+    inner();
+  }, []);
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleDataInput = (field, idx) => e => {
-    const data = [...this.state.data];
+  const handleDataInput = (field, idx) => e => {
+    const data = [...state.data];
     data[idx][field] = e.target.value;
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleAddRow = () => {
-    const data = [...this.state.data];
+  const handleAddRow = () => {
+    const data = [...state.data];
     data.push({ key: '', value: '' });
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleRemoveRow = idx => () => {
-    const data = [...this.state.data];
+  const handleRemoveRow = idx => () => {
+    const data = [...state.data];
     data.splice(idx, 1);
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleEdit = () => {
+  const handleEdit = () => {
     const splits = window.location.pathname.split('/');
-    this.props.edit(splits[2], splits[3], { data: this.formatData(this.state.data) })
-      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '')}))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+    props.edit(splits[2], splits[3], { data: formatData(state.data) })
+      .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '')}))
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  formatData(data) {
+  const formatData = (data) => {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value);
     return obj;
   }
 
-  render() {
-    const { classes, t, history } = this.props;
-    const { snackbar, data, loading } = this.state;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    return (
-      <ViewWrapper
-        topbarTitle={t('DB Service')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'File' })}
-            </Typography>
-          </Grid>
-          <FormControl className={classes.form}>
-            {data.map((pair, idx) => <Grid container key={idx}>
-              <TextField
-                label="key"
-                value={pair.key}
-                onChange={this.handleDataInput('key', idx)}
-                className={classes.flexTextfield}
-                variant="standard"
-              />
-              <TextField
-                label="value"
-                value={pair.value}
-                onChange={this.handleDataInput('value', idx)}
-                className={classes.flexTextfield}
-                variant="standard"
-              />
-              {writable && <IconButton onClick={this.handleRemoveRow(idx)} size="large">
-                <Delete color="error"/>
-              </IconButton>}
-            </Grid>
-            )}
-            {writable && <Grid container justifyContent="center">
-              <IconButton onClick={this.handleAddRow} size="large">
-                <Add color="primary"/>
-              </IconButton>
-            </Grid>}
-          </FormControl>
-          <Button
-            color="secondary"
-            onClick={history.goBack}
-            style={{ marginRight: 8 }}
-          >
-            {t('Back')}
-          </Button>
-          <Button
-            variant="contained"
+  const { classes, t, navigate } = props;
+  const { snackbar, data, loading } = state;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  return (
+    <ViewWrapper
+      topbarTitle={t('DB Service')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
             color="primary"
-            onClick={this.handleEdit}
-            disabled={!writable}
+            variant="h5"
           >
-            {t('Save')}
-          </Button>
-        </Paper>
-      </ViewWrapper>
-    );
-  }
+            {t('editHeadline', { item: 'File' })}
+          </Typography>
+        </Grid>
+        <FormControl className={classes.form}>
+          {data.map((pair, idx) => <Grid container key={idx}>
+            <TextField
+              label="key"
+              value={pair.key}
+              onChange={handleDataInput('key', idx)}
+              className={classes.flexTextfield}
+              variant="standard"
+            />
+            <TextField
+              label="value"
+              value={pair.value}
+              onChange={handleDataInput('value', idx)}
+              className={classes.flexTextfield}
+              variant="standard"
+            />
+            {writable && <IconButton onClick={handleRemoveRow(idx)} size="large">
+              <Delete color="error"/>
+            </IconButton>}
+          </Grid>
+          )}
+          {writable && <Grid container justifyContent="center">
+            <IconButton onClick={handleAddRow} size="large">
+              <Add color="primary"/>
+            </IconButton>
+          </Grid>}
+        </FormControl>
+        <Button
+          color="secondary"
+          onClick={() => navigate(-1)}
+          style={{ marginRight: 8 }}
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEdit}
+          disabled={!writable}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+    </ViewWrapper>
+  );
 }
 
-DBFile.contextType = CapabilityContext;
 DBFile.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
 };
@@ -196,5 +182,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBFile)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBFile))));

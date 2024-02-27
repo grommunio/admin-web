@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -14,9 +14,9 @@ import {
   Button,
   List,
   ListItemText,
-  ListItem,
   Divider,
   IconButton,
+  ListItemButton,
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchServiceFiles, deleteDBFile, renameDBService } from '../actions/dbconf';
@@ -26,6 +26,7 @@ import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -42,142 +43,144 @@ const styles = theme => ({
   },
 });
 
-class DBService extends PureComponent {
-
-  state = {
+const DBService = props => {
+  const [state, setState] = useState({
     files: [],
     name: '',
     unsaved: false,
     deleting: false,
     loading: true,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { fetch } = this.props;
-    const name = getStringAfterLastSlash();
-    const files = await fetch(name)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      files: files?.data || [],
-      name: name || '',
-      loading: false,
-    });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch } = props;
+      const name = getStringAfterLastSlash();
+      const files = await fetch(name)
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      setState({
+        ...state,
+        files: files?.data || [],
+        name: name || '',
+        loading: false,
+      });
+    };
 
-  handleInput = field => e => {
-    this.setState({
+    inner();
+  }, []);
+
+  const handleInput = field => e => {
+    setState({
+      ...state, 
       [field]: e.target.value,
     });
   }
 
-  handleDelete = file => event => {
+  const handleDelete = file => event => {
     event.stopPropagation();
-    this.setState({ deleting: file });
+    setState({ ...state, deleting: file });
   }
 
-  handleDeleteSuccess = resp => {
-    const files = [...this.state.files].filter(f => f !== this.state.deleting);
-    this.setState({ deleting: false, snackbar: 'Success! ' + (resp?.message || ''), files });
+  const handleDeleteSuccess = resp => {
+    const files = [...state.files].filter(f => f !== state.deleting);
+    setState({ ...state, deleting: false, snackbar: 'Success! ' + (resp?.message || ''), files });
   }
 
-  handleDeleteClose = () => this.setState({ deleting: false });
+  const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  handleDeleteError = error => this.setState({ snackbar: error });
+  const handleDeleteError = error => setState({ ...state, snackbar: error });
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleEdit = () => {
-    this.props.rename(getStringAfterLastSlash(), this.state.name)
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+  const handleEdit = () => {
+    props.rename(getStringAfterLastSlash(), state.name)
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  render() {
-    const { classes, t } = this.props;
-    const { name, snackbar, files, deleting, loading } = this.state;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+  const { classes, t } = props;
+  const { name, snackbar, files, deleting, loading } = state;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('DB Service')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'Service' })}
-            </Typography>
-          </Grid>
-          <FormControl className={classes.form}>
-            <TextField
-              label={t("Service")} 
-              className={classes.input} 
-              value={name || ''}
-              autoFocus
-              onChange={this.handleInput('name')}
-            />
-          </FormControl>
-          <Typography variant="h6">Files</Typography>
-          <List>
-            {files.map((file, idx) => <React.Fragment key={idx}>
-              <ListItem button onClick={this.handleNavigation(`dbconf/${name}/${file}`)}>
-                <ListItemText
-                  primary={file}
-                />
-                {writable && <IconButton onClick={this.handleDelete(file)} size="large">
-                  <Delete color="error" />
-                </IconButton>}
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-            )}
-          </List>
-          <Button
-            color="secondary"
-            onClick={this.handleNavigation('dbconf')}
-            style={{ marginRight: 8 }}
-          >
-            {t('Back')}
-          </Button>
-          <Button
-            variant="contained"
+  return (
+    <ViewWrapper
+      topbarTitle={t('DB Service')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
             color="primary"
-            onClick={this.handleEdit}
-            disabled={!writable}
+            variant="h5"
           >
-            {t('Save')}
-          </Button>
-        </Paper>
-        <DomainDataDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
-          item={deleting}
-          id={deleting}
-          domainID={name}
-        />
-      </ViewWrapper>
-    );
-  }
+            {t('editHeadline', { item: 'Service' })}
+          </Typography>
+        </Grid>
+        <FormControl className={classes.form}>
+          <TextField
+            label={t("Service")} 
+            className={classes.input} 
+            value={name || ''}
+            autoFocus
+            onChange={handleInput('name')}
+          />
+        </FormControl>
+        <Typography variant="h6">Files</Typography>
+        <List>
+          {files.map((file, idx) => <React.Fragment key={idx}>
+            <ListItemButton onClick={handleNavigation(`dbconf/${name}/${file}`)}>
+              <ListItemText
+                primary={file}
+              />
+              {writable && <IconButton onClick={handleDelete(file)} size="large">
+                <Delete color="error" />
+              </IconButton>}
+            </ListItemButton>
+            <Divider />
+          </React.Fragment>
+          )}
+        </List>
+        <Button
+          color="secondary"
+          onClick={handleNavigation('dbconf')}
+          style={{ marginRight: 8 }}
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEdit}
+          disabled={!writable}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+      <DomainDataDelete
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting}
+        id={deleting}
+        domainID={name}
+      />
+    </ViewWrapper>
+  );
 }
 
-DBService.contextType = CapabilityContext;
 DBService.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   rename: PropTypes.func.isRequired,
@@ -196,5 +199,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBService)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBService))));

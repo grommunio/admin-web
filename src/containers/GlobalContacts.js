@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid,
@@ -53,151 +53,142 @@ const styles = theme => ({
   },
 });
 
-class GlobalContacts extends Component {
-
-  state = {
-    addingContact: false,
-  }
-
-  columns = [
+const GlobalContacts = props => {
+  const [addingContact, setAddingContact] = useState(false);
+  const context = useContext(CapabilityContext);
+  const columns = [
     { label: 'Display name', value: 'displayname' },
     { label: 'E-Mail address', value: 'smtpaddress' },
   ]
 
-  handleScroll = () => {
-    const { Users, count, loading } = this.props.users;
-    this.props.handleScroll(Users, count, loading);
+  const handleScroll = () => {
+    const { Users, count, loading } = props.users;
+    props.handleScroll(Users, count, loading);
   };
 
-  handleAddContact = () => this.setState({ addingContact: true });
+  const handleAddContact = () => setAddingContact(true);
 
-  handleContactClose = () => this.setState({ addingContact: false });
+  const handleContactClose = () => setAddingContact(false);
 
-  handleContactSuccess = () => this.setState({ addingContact: false });
+  const handleContactSuccess = () => setAddingContact(false);
 
-  handleContactError = (error) => this.setState({ snackbar: error });
-
-  render() {
-    const { classes, t, users, tableState, handleMatch,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, match, snackbar, deleting } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { addingContact } = this.state;
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Contacts")}
-        subtitle={t("globalcontacts_sub")}
-        href="https://docs.grommunio.com/admin/administration.html#users"
-        snackbar={snackbar}
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
-      > 
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search users")}
-          />}
+  const { classes, t, users, tableState, handleMatch,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, match, snackbar, deleting } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Contacts")}
+      subtitle={t("globalcontacts_sub")}
+      href="https://docs.grommunio.com/admin/administration.html#users"
+      snackbar={snackbar}
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    > 
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search users")}
+        />}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddContact}
+          disabled={!writable}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleAddContact}
-            disabled={!writable}
-          >
-            {t('New contact')}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingUser", { count: users.Users.length })}
-        </Typography>
-        <Paper className={classes.tablePaper} elevation={1}>
-          <Hidden lgDown>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      {t(column.label)}
+          {t('New contact')}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingUser", { count: users.Users.length })}
+      </Typography>
+      <Paper className={classes.tablePaper} elevation={1}>
+        <Hidden lgDown>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {columns.map(column =>
+                  <TableCell key={column.value}>
+                    {t(column.label)}
+                  </TableCell>
+                )}
+                <TableCell padding="checkbox"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.Users.map((obj, idx) => {
+                const properties = obj.properties || {};
+                return (
+                  <TableRow
+                    key={idx}
+                    hover
+                    onClick={handleEdit('/' + obj.domainID + '/contacts/' +  obj.ID)}
+                  >
+                    <TableCell>
+                      <div className={classes.flexRow}>
+                        <ContactMail className={classes.icon} fontSize='small'/>
+                        {properties.displayname || ""}
+                      </div>
                     </TableCell>
-                  )}
-                  <TableCell padding="checkbox"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.Users.map((obj, idx) => {
-                  const properties = obj.properties || {};
-                  return (
-                    <TableRow
-                      key={idx}
-                      hover
-                      onClick={handleEdit('/' + obj.domainID + '/contacts/' +  obj.ID)}
-                    >
-                      <TableCell>
-                        <div className={classes.flexRow}>
-                          <ContactMail className={classes.icon} fontSize='small'/>
-                          {properties.displayname || ""}
-                        </div>
-                      </TableCell>
-                      <TableCell>{properties.smtpaddress || ""}</TableCell>
-                      <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                          <Delete color="error" fontSize='small'/>
-                        </IconButton>}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Hidden>
-          <Hidden lgUp>
-            <List>
-              {users.Users.map((obj, idx) => 
-                <ListItemButton
-                  key={idx}
-                  onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
-                  divider
-                >
-                  <ListItemIcon>
-                    <ContactMail className={classes.icon} fontSize='small'/>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={obj.properties?.displayname || ''}
-                    secondary={obj.properties?.smtpaddress || ''}
-                  />
-                </ListItemButton>
-              )}
-            </List>
-          </Hidden>
-          {(users.Users.length < users.count) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
-        <AddGlobalContact
-          open={addingContact}
-          onSuccess={this.handleContactSuccess}
-          onError={handleDeleteError}
-          onClose={this.handleContactClose}
-        />
-        <DomainDataDelete
-          open={!!deleting}
-          onSuccess={handleDeleteSuccess}
-          onClose={handleDeleteClose}
-          onError={handleDeleteError}
-          domainID={deleting.domainID || -1}
-          item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
-          delete={this.props.delete}
-          id={deleting.ID}
-        />
-      </TableViewContainer>
-    );
-  }
+                    <TableCell>{properties.smtpaddress || ""}</TableCell>
+                    <TableCell align="right">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                        <Delete color="error" fontSize='small'/>
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Hidden>
+        <Hidden lgUp>
+          <List>
+            {users.Users.map((obj, idx) => 
+              <ListItemButton
+                key={idx}
+                onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
+                divider
+              >
+                <ListItemIcon>
+                  <ContactMail className={classes.icon} fontSize='small'/>
+                </ListItemIcon>
+                <ListItemText
+                  primary={obj.properties?.displayname || ''}
+                  secondary={obj.properties?.smtpaddress || ''}
+                />
+              </ListItemButton>
+            )}
+          </List>
+        </Hidden>
+        {(users.Users.length < users.count) && <Grid container justifyContent="center">
+          <CircularProgress color="primary" className={classes.circularProgress}/>
+        </Grid>}
+      </Paper>
+      <AddGlobalContact
+        open={addingContact}
+        onSuccess={handleContactSuccess}
+        onError={handleDeleteError}
+        onClose={handleContactClose}
+      />
+      <DomainDataDelete
+        open={!!deleting}
+        onSuccess={handleDeleteSuccess}
+        onClose={handleDeleteClose}
+        onError={handleDeleteError}
+        domainID={deleting.domainID || -1}
+        item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
+        delete={props.delete}
+        id={deleting.ID}
+      />
+    </TableViewContainer>
+  );
 }
 
-GlobalContacts.contextType = CapabilityContext;
 GlobalContacts.propTypes = {
   users: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,

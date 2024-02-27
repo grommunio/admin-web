@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, FormControl, Grid, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -12,11 +12,11 @@ import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDe
   fetchUserSendAs, 
   setUserSendAs,
   fetchAllUsers} from '../../actions/users';
-import { withRouter } from 'react-router';
 import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../../constants';
+import { withRouter } from '../../hocs/withRouter';
 
 const styles = theme => ({
   form: {
@@ -35,9 +35,8 @@ const styles = theme => ({
 });
 
 
-class Delegates extends PureComponent {
-
-  state = {
+const Delegates = props => {
+  const [state, setState] = useState({
     delegates: [],
     sendAsUsers: [],
     permittedUsers: [],
@@ -48,35 +47,43 @@ class Delegates extends PureComponent {
     dEdited: false,
     sEdited: false,
     puEdited: false,
-  };
+  });
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { fetchDelegates, fetchSendAs, fetchPermittedUsers, fetchUsers, fetchOrgUsers, userID, domainID, orgID } = this.props;
-    const sysAdminPermissions = this.context.includes(SYSTEM_ADMIN_WRITE);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { fetchDelegates, fetchSendAs, fetchPermittedUsers, fetchUsers, fetchOrgUsers, userID, domainID, orgID } = props;
+      const sysAdminPermissions = context.includes(SYSTEM_ADMIN_WRITE);
+  
+      (sysAdminPermissions && orgID ? fetchOrgUsers(orgID) : fetchUsers(domainID))
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      const delegates = await fetchDelegates(domainID, userID)
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      const sendAsUsers = await fetchSendAs(domainID, userID)
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      const permittedUsers = await fetchPermittedUsers(domainID, userID)
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      setState({
+        ...state, 
+        delegates: delegates?.data?.sort() || [],
+        permittedUsers: permittedUsers?.data?.map(u => u.username).sort() || [],
+        sendAsUsers: sendAsUsers?.data?.sort() || [],
+      });
+    }
 
-    (sysAdminPermissions && orgID ? fetchOrgUsers(orgID) : fetchUsers(domainID))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    const delegates = await fetchDelegates(domainID, userID)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    const sendAsUsers = await fetchSendAs(domainID, userID)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    const permittedUsers = await fetchPermittedUsers(domainID, userID)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      delegates: delegates?.data?.sort() || [],
-      permittedUsers: permittedUsers?.data?.map(u => u.username).sort() || [],
-      sendAsUsers: sendAsUsers?.data?.sort() || [],
-    });
-  }
+    fetchData();
+  }, []);
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state, 
       [field]: event.target.value,
     });
   }
 
-  handleAutocomplete = (field, editField) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field, editField) => (e, newVal) => {
+    setState({
+      ...state, 
       [field]: newVal.map(r => r.username ? r.username : r).sort(),
       [editField]: true,
       delegatesACInput: '',
@@ -85,106 +92,106 @@ class Delegates extends PureComponent {
     });
   }
 
-  handleSave = () => {
-    const { setUserDelegates, setUserSendAs, setPermittedUserData, userID, domainID } = this.props;
-    const { delegates, permittedUsers, sendAsUsers, dEdited, sEdited, puEdited } = this.state;
+  const handleSave = () => {
+    const { setUserDelegates, setUserSendAs, setPermittedUserData, userID, domainID } = props;
+    const { delegates, permittedUsers, sendAsUsers, dEdited, sEdited, puEdited } = state;
     if(dEdited) setUserDelegates(domainID, userID, delegates)
-      .then(() => this.setState({
+      .then(() => setState({
+        ...state, 
         snackbar: 'Success!',
         delegatesACInput: '',
         puACInput: '',
         sendAsACInput: '',
-      })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      })).catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
 
     if(sEdited) setUserSendAs(domainID, userID, sendAsUsers)
-      .then(() => this.setState({
+      .then(() => setState({
+        ...state, 
         snackbar: 'Success!',
         delegatesACInput: '',
         puACInput: '',
         sendAsACInput: '',
-      })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      })).catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
     
     if(puEdited) setPermittedUserData(domainID, userID, {
       usernames: permittedUsers,
     })
-      .then(() => this.setState({
+      .then(() => setState({
+        ...state, 
         snackbar: 'Success!',
         delegatesACInput: '',
         puACInput: '',
         sendAsACInput: '',
-      })).catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      })).catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  render() {
-    const { classes, t, Users, userID, history, disabled } = this.props;
-    const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = this.state;
-    const defaultTfProps = {
-      multiple: true,
-      filterAttribute: 'username',
-      className: classes.input,
-      options: Users.filter(u => u.ID !== userID) || [],
-      isOptionEqualToValue: (option, value) => option.username === value,
-      getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
-      placeholder: t("Search users") + "...",
-    };
-    return (
-      <>
-        <FormControl className={classes.form}>
-          <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
-          <FormControl className={classes.input}>
-            <MagnitudeAutocomplete
-              {...defaultTfProps}
-              value={delegates || []}
-              inputValue={delegatesACInput}
-              onChange={this.handleAutocomplete('delegates', 'dEdited')}
-              onInputChange={this.handleInput('delegatesACInput')}
-              label={t('Delegates')}
-            />
-            <MagnitudeAutocomplete
-              {...defaultTfProps}
-              value={sendAsUsers || []}
-              inputValue={sendAsACInput}
-              onChange={this.handleAutocomplete('sendAsUsers', 'sEdited')}
-              onInputChange={this.handleInput('sendAsACInput')}
-              label={t('Send as')}
-            />
-            <MagnitudeAutocomplete
-              {...defaultTfProps}
-              value={permittedUsers || []}
-              inputValue={puACInput}
-              onChange={this.handleAutocomplete('permittedUsers', 'puEdited')}
-              onInputChange={this.handleInput('puACInput')}
-              label={t('Full permission users')}
-            />
-          </FormControl>
+  const { classes, t, Users, userID, navigate, disabled } = props;
+  const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = state;
+  const defaultTfProps = {
+    multiple: true,
+    filterAttribute: 'username',
+    className: classes.input,
+    options: Users.filter(u => u.ID !== userID) || [],
+    isOptionEqualToValue: (option, value) => option.username === value,
+    getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
+    placeholder: t("Search users") + "...",
+  };
+  return (
+    <>
+      <FormControl className={classes.form}>
+        <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
+        <FormControl className={classes.input}>
+          <MagnitudeAutocomplete
+            {...defaultTfProps}
+            value={delegates || []}
+            inputValue={delegatesACInput}
+            onChange={handleAutocomplete('delegates', 'dEdited')}
+            onInputChange={handleInput('delegatesACInput')}
+            label={t('Delegates')}
+          />
+          <MagnitudeAutocomplete
+            {...defaultTfProps}
+            value={sendAsUsers || []}
+            inputValue={sendAsACInput}
+            onChange={handleAutocomplete('sendAsUsers', 'sEdited')}
+            onInputChange={handleInput('sendAsACInput')}
+            label={t('Send as')}
+          />
+          <MagnitudeAutocomplete
+            {...defaultTfProps}
+            value={permittedUsers || []}
+            inputValue={puACInput}
+            onChange={handleAutocomplete('permittedUsers', 'puEdited')}
+            onInputChange={handleInput('puACInput')}
+            label={t('Full permission users')}
+          />
         </FormControl>
-        <Grid container className={classes.buttonGrid}>
-          <Button
-            onClick={history.goBack}
-            style={{ marginRight: 8 }}
-            color="secondary"
-          >
-            {t('Back')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSave}
-            disabled={disabled}
-          >
-            {t('Save')}
-          </Button>
-        </Grid>
-        <Feedback
-          snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
-        />
-      </>
-    );
-  }
+      </FormControl>
+      <Grid container className={classes.buttonGrid}>
+        <Button
+          onClick={() => navigate(-1)}
+          style={{ marginRight: 8 }}
+          color="secondary"
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          disabled={disabled}
+        >
+          {t('Save')}
+        </Button>
+      </Grid>
+      <Feedback
+        snackbar={snackbar}
+        onClose={() => setState({ ...state, snackbar: '' })}
+      />
+    </>
+  );
 }
 
-Delegates.contextType = CapabilityContext;
 Delegates.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
@@ -200,7 +207,7 @@ Delegates.propTypes = {
   setUserDelegates: PropTypes.func.isRequired,
   setUserSendAs: PropTypes.func.isRequired,
   setPermittedUserData: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
 };
 

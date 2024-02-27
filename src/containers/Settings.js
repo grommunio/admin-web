@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
-import i18n from '../i18n';
 import TableViewContainer from '../components/TableViewContainer';
-import ColorModeContext from '../ColorContext';
+import { withRouter } from '../hocs/withRouter';
+import { CapabilityContext } from '../CapabilityContext';
 
 const styles = theme => ({
   paper: {
@@ -49,107 +49,84 @@ const styles = theme => ({
   },
 });
 
-class Settings extends Component {
-
-  state = {
+const Settings = props => {
+  const [state, setState] = useState({
     snackbar: '',
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  handleInput = field => event => {
-    this.props.changeSettings(field, event.target.value);
-  }
-
-  handleDarkModeChange = event => {
+  const handleDarkModeChange = event => {
     window.localStorage.setItem('darkMode', event.target.checked);
-    this.context.toggleColorMode();
+    context.toggleColorMode();
   }
 
-  handleLangChange = event => {
-    const { changeSettings } = this.props;
-    const lang = event.target.value;
-
-    // Update i18n, redux store and local storage
-    i18n.changeLanguage(lang);
-    changeSettings('language', lang);
-    window.localStorage.setItem('lang', lang);
-  }
-
-  handleNavigation = path => event => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  }
-
-  handleThemeSelect = e => {
+  const handleThemeSelect = e => {
     const { value: colorTheme } = e.target;
     window.localStorage.setItem('colorTheme', colorTheme);
-    this.context.setColorTheme(colorTheme);
+    context.setColorTheme(colorTheme);
   }
 
-  render() {
-    const { classes, t, history, serverConfig } = this.props;
-    const { snackbar } = this.state;
-    const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
+  const { classes, t, navigate, serverConfig } = props;
+  const { snackbar } = state;
+  const darkModeStorage = window.localStorage.getItem("darkMode");
+  const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
 
-    const colorTheme = window.localStorage.getItem("colorTheme") || serverConfig.defaultTheme;
-    return (
-      <TableViewContainer
-        headline={t("Settings")}
-        subtitle={t('settings_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#settings"
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <FormControl className={classes.form}>
-            <FormControl className={classes.input}>
-              <FormLabel component="legend">{t('Darkmode')}</FormLabel>
-              <Switch
-                checked={(darkMode === 'true')}
-                onChange={this.handleDarkModeChange}
-                color="primary"
-              />
-            </FormControl>
-            <TextField
-              label={t("Theme")}
-              value={colorTheme}
-              onChange={this.handleThemeSelect}
-              select
-              className={classes.input}
-            >
-              <MenuItem value="grommunio">grommunio</MenuItem>
-              <MenuItem value="bluegrey">bluegrey</MenuItem>
-              <MenuItem value="brown">brown</MenuItem>
-              <MenuItem value="green">green</MenuItem>
-              <MenuItem value="magenta">magenta</MenuItem>
-              <MenuItem value="orange">orange</MenuItem>
-              <MenuItem value="purple">purple</MenuItem>
-              <MenuItem value="teal">teal</MenuItem>
-            </TextField>
+  const colorTheme = window.localStorage.getItem("colorTheme") || serverConfig.defaultTheme;
+  return (
+    <TableViewContainer
+      headline={t("Settings")}
+      subtitle={t('settings_sub')}
+      href="https://docs.grommunio.com/admin/administration.html#settings"
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <FormControl className={classes.form}>
+          <FormControl className={classes.input}>
+            <FormLabel component="legend">{t('Darkmode')}</FormLabel>
+            <Switch
+              checked={(darkMode === 'true')}
+              onChange={handleDarkModeChange}
+              color="primary"
+            />
           </FormControl>
-          <Grid container className={classes.buttonGrid}>
-            <Button
-              onClick={history.goBack}
-              style={{ marginRight: 8 }}
-              color="secondary"
-            >
-              {t('Back')}
-            </Button>
-          </Grid>
-        </Paper>
-      </TableViewContainer>
-    );
-  }
+          <TextField
+            label={t("Theme")}
+            value={colorTheme}
+            onChange={handleThemeSelect}
+            select
+            className={classes.input}
+          >
+            <MenuItem value="grommunio">grommunio</MenuItem>
+            <MenuItem value="bluegrey">bluegrey</MenuItem>
+            <MenuItem value="brown">brown</MenuItem>
+            <MenuItem value="green">green</MenuItem>
+            <MenuItem value="magenta">magenta</MenuItem>
+            <MenuItem value="orange">orange</MenuItem>
+            <MenuItem value="purple">purple</MenuItem>
+            <MenuItem value="teal">teal</MenuItem>
+          </TextField>
+        </FormControl>
+        <Grid container className={classes.buttonGrid}>
+          <Button
+            onClick={() => navigate(-1)}
+            style={{ marginRight: 8 }}
+            color="secondary"
+          >
+            {t('Back')}
+          </Button>
+        </Grid>
+      </Paper>
+    </TableViewContainer>
+  );
 }
 
-Settings.contextType = ColorModeContext;
 Settings.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   serverConfig: PropTypes.object.isRequired,
 };
 
@@ -169,5 +146,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Settings)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(Settings))));

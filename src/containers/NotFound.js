@@ -4,7 +4,7 @@
 import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Typography, Button, Grid } from '@mui/material';
-import { withRouter } from 'react-router';
+import { useNavigate } from 'react-router';
 
 const styles = {
   root: {
@@ -16,9 +16,10 @@ const styles = {
   },
 };
 
-export default withRouter(withStyles(styles)(function NotFound(props) {
+export default withStyles(styles)(function NotFound(props) {
   const { classes } = props;
-  const handleButton = () => props.history.push('/');
+  const navigate = useNavigate();
+  const handleButton = () => navigate('/');
 
   return (
     <div className={classes.root}>
@@ -30,4 +31,4 @@ export default withRouter(withStyles(styles)(function NotFound(props) {
       </Grid>
     </div>
   );
-}));
+});

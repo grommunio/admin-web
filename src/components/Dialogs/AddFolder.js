@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -26,22 +26,21 @@ const styles = theme => ({
   },
 });
 
-class AddFolder extends PureComponent {
-
-  state = {
+const AddFolder = props => {
+  const [folder, setFolder] = useState({
     displayname: '',
     container: 'IPF.Note',
     owners: [],
     comment: '',
-    loading: false,
-  }
+  });
+  const [loading, setLoading] = useState(false);
 
-  componentDidMount() {
-    this.props.fetchUsers(this.props.domain.ID)
-      .catch(error => this.setState({ snackbar: error }));
-  }
+  useEffect(() => {
+    props.fetchUsers(props.domain.ID)
+      .catch();
+  }, []);
 
-  types = [
+  const types = [
     { name: 'Mail and post items', ID: 'IPF.Note' },
     { name: 'Contact', ID: 'IPF.Contact' },
     { name: 'Appointment', ID: 'IPF.Appointment' },
@@ -49,126 +48,114 @@ class AddFolder extends PureComponent {
     { name: 'Task', ID: 'IPF.Task' },
   ]
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setFolder({
+      ...folder,
       [field]: event.target.value,
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
-
-  handleAdd = () => {
-    const { add, onSuccess, onError, domain, parentID } = this.props;
-    this.setState({ loading: true });
-    add(domain.ID, {
-      ...this.state,
-      parentID,
-      loading: undefined,
-      autocompleteInput: undefined,
-    })
+  const handleAdd = () => {
+    const { add, onSuccess, onError, domain, parentID } = props;
+    setLoading(true);
+    add(domain.ID, {...folder, parentID})
       .then(() => {
-        this.setState({
+        setFolder({
           displayname: '',
           container: 'IPF.Note',
           owners: [],
           comment: '',
-          loading: false,
-          autocompleteInput: '',
         });
+        setLoading(false);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setFolder({
+      ...folder,
       [field]: newVal,
     });
   }
 
-  render() {
-    const { classes, t, open, onClose, Users } = this.props;
-    const { displayname, owners, container, comment, loading } = this.state;
-
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>{t('addHeadline', { item: 'Folder' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              label={t("Folder name")}
-              value={displayname}
-              onChange={this.handleInput('displayname')}
-              className={classes.input}
-              autoFocus
-              required
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Container")}
-              fullWidth
-              value={container || ''}
-              onChange={this.handleInput('container')}
-            >
-              {this.types.map((type, key) => (
-                <MenuItem key={key} value={type.ID}>
-                  {t(type.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Comment")} 
-              fullWidth
-              multiline
-              rows={4}
-              value={comment}
-              variant="outlined"
-              onChange={this.handleInput('comment')}
-            />
-            <MagnitudeAutocomplete
-              multiple
-              value={owners || []}
-              filterAttribute={'username'}
-              onChange={this.handleAutocomplete('owners')}
-              className={classes.input} 
-              options={Users || []}
-              onInputChange={this.handleInput('autocompleteInput')}
-              label={t('Owners')}
-              placeholder={t("Search domains")  + "..."}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
+  const { classes, t, open, onClose, Users } = props;
+  const { displayname, owners, container, comment } = folder;
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>{t('addHeadline', { item: 'Folder' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            label={t("Folder name")}
+            value={displayname}
+            onChange={handleInput('displayname')}
+            className={classes.input}
+            autoFocus
+            required
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Container")}
+            fullWidth
+            value={container || ''}
+            onChange={handleInput('container')}
           >
+            {types.map((type, key) => (
+              <MenuItem key={key} value={type.ID}>
+                {t(type.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField 
+            className={classes.input} 
+            label={t("Comment")} 
+            fullWidth
+            multiline
+            rows={4}
+            value={comment}
+            variant="outlined"
+            onChange={handleInput('comment')}
+          />
+          <MagnitudeAutocomplete
+            multiple
+            value={owners || []}
+            filterAttribute={'username'}
+            onChange={handleAutocomplete('owners')}
+            className={classes.input} 
+            options={Users || []}
+            label={t('Owners')}
+            placeholder={t("Search domains")  + "..."}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
             Cancel
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={!displayname || loading}
-          >
-            {loading ? <CircularProgress size={24}/> : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={!displayname || loading}
+        >
+          {loading ? <CircularProgress size={24}/> : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddFolder.propTypes = {

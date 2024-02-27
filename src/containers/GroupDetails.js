@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/icons-material';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -69,9 +70,8 @@ const GroupTab = ({ icon: Icon, ...props}) => <Tab
   icon={<Icon fontSize="small"/>}
 />
 
-class GroupDetails extends PureComponent {
-
-  state = {
+const GroupDetails = props => {
+  const [state, setState] = useState({
     listname: '',
     displayname: '',
     hidden: 0,
@@ -86,47 +86,58 @@ class GroupDetails extends PureComponent {
       properties: {},
     },
     userDirty: false,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { domain, fetch, fetchUsers } = this.props;
-    const group = await fetch(domain.ID, getStringAfterLastSlash())
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    fetchUsers(domain.ID)
-      .then(() => {
-        const { Users } = this.props;
-        const table = {};
-        Users.forEach(u => table[u.username] = u);
-        if(group?.ID) {
-          const associations = [];
-          group.associations.forEach(groupUsername => {
-            if(groupUsername in table) associations.push(table[groupUsername]);
-          });
+  useEffect(() => {
+    const inner = async () => {
+      const { domain, fetchUsers } = props;
+      fetchUsers(domain.ID)
+        .catch(message => {
+          setState({ ...state, snackbar: message || 'Unknown error' });
+        });
+    }
 
-          const specifieds = [];
-          group.specifieds.forEach(groupUsername => {
-            if(groupUsername in table) specifieds.push(table[groupUsername]);
-          });
-          
-          this.setState({
-            loading: false,
-            ...group,
-            associations: associations,
-            specifieds: specifieds,
-          });
-        }
-      })
-      .catch(message => {
-        this.setState({ snackbar: message || 'Unknown error' });
-      });
-  }
+    inner();
+  }, []);
 
-  listTypes = [
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch, Users } = props;
+      const table = {};
+      const group = await fetch(domain.ID, getStringAfterLastSlash())
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      Users.forEach(u => table[u.username] = u);
+      if(group?.ID) {
+        const associations = [];
+        group.associations.forEach(groupUsername => {
+          if(groupUsername in table) associations.push(table[groupUsername]);
+        });
+
+        const specifieds = [];
+        group.specifieds.forEach(groupUsername => {
+          if(groupUsername in table) specifieds.push(table[groupUsername]);
+        });
+        
+        setState({
+          ...state, 
+          loading: false,
+          ...group,
+          associations: associations,
+          specifieds: specifieds,
+        });
+      }
+    };
+
+    inner();
+  }, [props.Users]);
+
+  const listTypes = [
     { ID: 0, name: "Normal" },
     { ID: 2, name: "Domain" },
   ]
 
-  listPrivileges = [
+  const listPrivileges = [
     { ID: 0, name: "All" },
     { ID: 1, name: "Internal" },
     { ID: 2, name: "Domain" },
@@ -134,25 +145,27 @@ class GroupDetails extends PureComponent {
     { ID: 4, name: "Outgoing (deprecated)" },
   ]
 
-  handlePrivilegeChange = event => {
-    const { specifieds } = this.state;
+  const handlePrivilegeChange = event => {
+    const { specifieds } = state;
     const val = event.target.value;
-    this.setState({
+    setState({
+      ...state, 
       listPrivilege: val,
       specifieds: val === 3 ? specifieds : [],
     });
   }
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state, 
       [field]: event.target.value,
     });
   }
 
-  handleEdit = () => {
-    const { edit, domain, editUser } = this.props;
+  const handleEdit = () => {
+    const { edit, domain, editUser } = props;
     const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds,
-      user, userDirty } = this.state;
+      user, userDirty } = state;
     edit(domain.ID, {
       ID,
       listname,
@@ -165,35 +178,37 @@ class GroupDetails extends PureComponent {
     })
       .then(() => {
         if(userDirty) editUser(domain.ID, user)
-          .then(() => this.setState({ snackbar: 'Success!' }))
-          .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-        else this.setState({ snackbar: 'Success!' });
+          .then(() => setState({ ...state, snackbar: 'Success!' }))
+          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        else setState({ ...state, snackbar: 'Success!' });
       })
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleCheckbox = field => (e) => this.setState({ [field]: e.target.checked ? 1 : 0 });
+  const handleCheckbox = field => (e) => setState({ ...state, [field]: e.target.checked ? 1 : 0 });
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setState({
+      ...state, 
       [field]: newVal || '',
     });
   }
 
-  handleTabChange = (_, tab) => {
+  const handleTabChange = (_, tab) => {
     location.hash = '#' + tab;
-    this.setState({ tab });
+    setState({ ...state, tab });
   }
 
-  handlePropertyChange = field => event => {
-    const { user } = this.state;
-    this.setState({
+  const handlePropertyChange = field => event => {
+    const { user } = state;
+    setState({
+      ...state, 
       user: {
         ...user,
         properties: {
@@ -205,8 +220,8 @@ class GroupDetails extends PureComponent {
     });
   }
 
-  handleAliasEdit = (editType, idx) => event => {
-    const { user } = this.state;
+  const handleAliasEdit = (editType, idx) => event => {
+    const { user } = state;
     const copy = [...user.aliases];
     switch(editType) {
     case "edit":
@@ -221,7 +236,8 @@ class GroupDetails extends PureComponent {
     default:
       return;
     }
-    this.setState({
+    setState({
+      ...state, 
       user: {
         ...user,
         aliases: copy
@@ -230,203 +246,199 @@ class GroupDetails extends PureComponent {
     });
   }
 
-  render() {
-    const { classes, t, domain, Users } = this.props;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
-      loading, user } = this.state;
+  const { classes, t, domain, Users } = props;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
+    loading, user } = state;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Groups')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'Group' })}
-            </Typography>
-          </Grid>
-          <div className={classes.tabContainer}>
-            <Tabs
-              indicatorColor="primary"
-              value={tab}
-              onChange={this.handleTabChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              classes={{
-                scroller: classes.scroller,
-              }}
-            >
-              <GroupTab label={t("Group")} icon={SwitchAccount}/>
-              <GroupTab label={t("Details")} icon={Badge}/>
-              <GroupTab label={t("Contact")} icon={ContactPhone}/>
-              <GroupTab label={t("SMTP")} icon={ContactMail}/>
-            </Tabs>
-          </div>
-          {tab === 0 && <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Group name")} 
-              fullWidth 
-              value={listname}
-              autoFocus
-              required
-              inputProps={{
-                disabled: true,
-              }}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Displayname")} 
-              fullWidth 
-              value={displayname}
-              onChange={this.handleInput('displayname')}
-            />
-            <FormControlLabel
-              className={classes.input} 
-              control={
-                <Checkbox
-                  checked={hidden === 1}
-                  onChange={this.handleCheckbox('hidden')}
-                  color="primary"
-                />
-              }
-              label={t('Hide from addressbook')}
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Type")}
-              fullWidth
-              value={listType}
-              inputProps={{
-                disabled: true,
-              }}
-            >
-              {this.listTypes.map((status, key) => (
-                <MenuItem key={key} value={status.ID}>
-                  {t(status.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Privilege")}
-              fullWidth
-              value={listPrivilege}
-              onChange={this.handlePrivilegeChange}
-            >
-              {this.listPrivileges.map((status, key) => (
-                <MenuItem key={key} value={status.ID}>
-                  {t(status.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            {listType === 0 && <MagnitudeAutocomplete
-              multiple
-              value={associations || []}
-              filterAttribute={'username'}
-              onChange={this.handleAutocomplete('associations')}
-              className={classes.input} 
-              options={Users || []}
-              placeholder={t("Search users") +  "..."}
-              label={t('Recipients')}
-              getOptionLabel={user => {
-                // Contact
-                if(user.status === 5) {
-                  const properties = user.properties || {};
-                  return properties["smtpaddress"] || properties["displayname"] || "";
-                } else {
-                  return user.username
-                }
-              }}
-            />}
-            {listPrivilege === 3 && <MagnitudeAutocomplete
-              multiple
-              value={specifieds || []}
-              filterAttribute={'username'}
-              onChange={this.handleAutocomplete('specifieds')}
-              className={classes.input} 
-              options={Users || []}
-              placeholder={t("Search users") +  "..."}
-              label={t('Senders')}
-              getOptionLabel={user => {
-                // Contact
-                if(user.status === 5) {
-                  const properties = user.properties || {};
-                  return properties["smtpaddress"] || properties["displayname"] || "";
-                } else {
-                  return user.username
-                }
-              }}
-            />}
-          </FormControl>}
-          {tab === 1 && <User
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />}
-          {tab === 2 && <Contact
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />}
-          {tab === 3 && <FormControl className={classes.form}>
-            <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
-            <List className={classes.list}>
-              {(user?.aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
-                <TextField
-                  className={classes.listTextfield}
-                  value={alias}
-                  label={t("Alias") + ' ' + (idx + 1)}
-                  onChange={this.handleAliasEdit("edit", idx)}
-                />
-                <IconButton onClick={this.handleAliasEdit("remove", idx)} size="large">
-                  <Delete color="error" />
-                </IconButton>
-              </ListItem>
-              )}
-            </List>
-            <Grid container justifyContent="center">
-              <Button variant="contained" onClick={this.handleAliasEdit("add")}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-            </Grid>
-          </FormControl>}
-          <Button
-            color="secondary"
-            onClick={this.handleNavigation(domain.ID + '/groups')}
-            style={{ marginRight: 8 }}
-          >
-            {t('Back')}
-          </Button>
-          <Button
-            variant="contained"
+  return (
+    <ViewWrapper
+      topbarTitle={t('Groups')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
             color="primary"
-            onClick={this.handleEdit}
-            disabled={!writable}
+            variant="h5"
           >
-            {t('Save')}
-          </Button>
-        </Paper>
-        <Feedback
-          snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
-        />
-      </ViewWrapper>
-    );
-  }
+            {t('editHeadline', { item: 'Group' })}
+          </Typography>
+        </Grid>
+        <div className={classes.tabContainer}>
+          <Tabs
+            indicatorColor="primary"
+            value={tab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            classes={{
+              scroller: classes.scroller,
+            }}
+          >
+            <GroupTab label={t("Group")} icon={SwitchAccount}/>
+            <GroupTab label={t("Details")} icon={Badge}/>
+            <GroupTab label={t("Contact")} icon={ContactPhone}/>
+            <GroupTab label={t("SMTP")} icon={ContactMail}/>
+          </Tabs>
+        </div>
+        {tab === 0 && <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Group name")} 
+            fullWidth 
+            value={listname}
+            autoFocus
+            required
+            inputProps={{
+              disabled: true,
+            }}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Displayname")} 
+            fullWidth 
+            value={displayname}
+            onChange={handleInput('displayname')}
+          />
+          <FormControlLabel
+            className={classes.input} 
+            control={
+              <Checkbox
+                checked={hidden === 1}
+                onChange={handleCheckbox('hidden')}
+                color="primary"
+              />
+            }
+            label={t('Hide from addressbook')}
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Type")}
+            fullWidth
+            value={listType}
+            inputProps={{
+              disabled: true,
+            }}
+          >
+            {listTypes.map((status, key) => (
+              <MenuItem key={key} value={status.ID}>
+                {t(status.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            className={classes.input}
+            label={t("Privilege")}
+            fullWidth
+            value={listPrivilege}
+            onChange={handlePrivilegeChange}
+          >
+            {listPrivileges.map((status, key) => (
+              <MenuItem key={key} value={status.ID}>
+                {t(status.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          {listType === 0 && <MagnitudeAutocomplete
+            multiple
+            value={associations || []}
+            filterAttribute={'username'}
+            onChange={handleAutocomplete('associations')}
+            className={classes.input} 
+            options={Users || []}
+            placeholder={t("Search users") +  "..."}
+            label={t('Recipients')}
+            getOptionLabel={user => {
+              // Contact
+              if(user.status === 5) {
+                const properties = user.properties || {};
+                return properties["smtpaddress"] || properties["displayname"] || "";
+              } else {
+                return user.username
+              }
+            }}
+          />}
+          {listPrivilege === 3 && <MagnitudeAutocomplete
+            multiple
+            value={specifieds || []}
+            filterAttribute={'username'}
+            onChange={handleAutocomplete('specifieds')}
+            className={classes.input} 
+            options={Users || []}
+            placeholder={t("Search users") +  "..."}
+            label={t('Senders')}
+            getOptionLabel={user => {
+              // Contact
+              if(user.status === 5) {
+                const properties = user.properties || {};
+                return properties["smtpaddress"] || properties["displayname"] || "";
+              } else {
+                return user.username
+              }
+            }}
+          />}
+        </FormControl>}
+        {tab === 1 && <User
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />}
+        {tab === 2 && <Contact
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />}
+        {tab === 3 && <FormControl className={classes.form}>
+          <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
+          <List className={classes.list}>
+            {(user?.aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
+              <TextField
+                className={classes.listTextfield}
+                value={alias}
+                label={t("Alias") + ' ' + (idx + 1)}
+                onChange={handleAliasEdit("edit", idx)}
+              />
+              <IconButton onClick={handleAliasEdit("remove", idx)} size="large">
+                <Delete color="error" />
+              </IconButton>
+            </ListItem>
+            )}
+          </List>
+          <Grid container justifyContent="center">
+            <Button variant="contained" onClick={handleAliasEdit("add")}>{t('addHeadline', { item: 'E-Mail' })}</Button>
+          </Grid>
+        </FormControl>}
+        <Button
+          color="secondary"
+          onClick={handleNavigation(domain.ID + '/groups')}
+          style={{ marginRight: 8 }}
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEdit}
+          disabled={!writable}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+      <Feedback
+        snackbar={snackbar}
+        onClose={() => setState({ ...state, snackbar: '' })}
+      />
+    </ViewWrapper>
+  );
 }
 
-GroupDetails.contextType = CapabilityContext;
 GroupDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
@@ -457,5 +469,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(GroupDetails))));

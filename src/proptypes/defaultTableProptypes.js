@@ -7,7 +7,7 @@ const defaultTableProptypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   fetchTableData: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   handleRequestSort: PropTypes.func.isRequired,
   handleMatch: PropTypes.func.isRequired,
   tableState: PropTypes.object.isRequired,

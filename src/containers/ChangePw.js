@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -29,80 +29,78 @@ const styles = theme => ({
   },
 });
 
-class ChangePw extends Component {
-
-  state = {
+const ChangePw = props => {
+  const [state, setState] = useState({
     oldPw: '',
     newPw: '',
     reType: '',
     snackbar: '',
-  }
+  });
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state,
       [field]: event.target.value,
     });
   }
 
-  handleSave = () => changePw(this.state.oldPw, this.state.newPw)
-    .then(() => this.setState({ snackbar: 'Success!' }))
-    .catch(msg => this.setState({ snackbar: msg.message || 'Unknown error' }));
+  const handleSave = () => changePw(state.oldPw, state.newPw)
+    .then(() => setState({ ...state, snackbar: 'Success!' }))
+    .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
 
-  render() {
-    const { classes, t } = this.props;
-    const { oldPw, newPw, reType, snackbar } = this.state;
+  const { classes, t } = props;
+  const { oldPw, newPw, reType, snackbar } = state;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Dashboard')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Old password")} 
-              fullWidth 
-              value={oldPw || ''}
-              onChange={this.handleInput('oldPw')}
-              type="password"
-              autoFocus
-              autoCapitalize=""
-            />
-          </FormControl>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("New password")} 
-              fullWidth 
-              value={newPw || ''}
-              onChange={this.handleInput('newPw')}
-              type="password"
-            />
-          </FormControl>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Repeat new password")} 
-              fullWidth 
-              value={reType || ''}
-              onChange={this.handleInput('reType')}
-              type="password"
-            />
-          </FormControl>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSave}
-            disabled={!newPw || !oldPw || !reType || newPw !== reType}
-          >
-            {t('Save')}
-          </Button>
-        </Paper>
-      </ViewWrapper>
-    );
-  }
+  return (
+    <ViewWrapper
+      topbarTitle={t('Dashboard')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Old password")} 
+            fullWidth 
+            value={oldPw || ''}
+            onChange={handleInput('oldPw')}
+            type="password"
+            autoFocus
+            autoCapitalize=""
+          />
+        </FormControl>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("New password")} 
+            fullWidth 
+            value={newPw || ''}
+            onChange={handleInput('newPw')}
+            type="password"
+          />
+        </FormControl>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Repeat new password")} 
+            fullWidth 
+            value={reType || ''}
+            onChange={handleInput('reType')}
+            type="password"
+          />
+        </FormControl>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSave}
+          disabled={!newPw || !oldPw || !reType || newPw !== reType}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+    </ViewWrapper>
+  );
 }
 
 ChangePw.propTypes = {

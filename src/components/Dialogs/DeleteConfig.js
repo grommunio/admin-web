@@ -1,70 +1,59 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
-const styles = {
-};
 
-class GeneralDelete extends PureComponent {
+const GeneralDelete = props => {
+  const [loading, setLoading] = useState(false);
 
-  state = {
-    loading: false,
-  }
-
-  handleDelete = () => {
+  const handleDelete = () => {
     const { orgID, onSuccess, onError } = this.props;
-    this.setState({ loading: true });
+    setLoading(true);
     this.props.delete(orgID) // Optional, will just be ignored for global config
       .then(() => {
         if(onSuccess) onSuccess();
-        this.setState({ loading: false });
+        setLoading(false);
       })
       .catch(err => {
         if(onError) onError(err);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  render() {
-    const { t, open, onClose } = this.props;
-    const { loading } = this.state;
-
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Are you sure you want to delete the LDAP config?</DialogTitle>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleDelete}
-            variant="contained"
-            color="primary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  const { t, open, onClose } = props;
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Are you sure you want to delete the LDAP config?</DialogTitle>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="primary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Confirm')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 GeneralDelete.propTypes = {
-  classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
@@ -75,4 +64,4 @@ GeneralDelete.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(styles)(GeneralDelete));
+export default withTranslation()(GeneralDelete);

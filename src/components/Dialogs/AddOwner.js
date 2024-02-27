@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl,
@@ -26,96 +26,77 @@ const styles = theme => ({
   },
 });
 
-class AddOwner extends PureComponent {
+const AddOwner = props => {
+  const [owners, setOwners] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  state = {
-    owners: [],
-    loading: false,
-  }
-
-  componentDidMount() {
-    const { fetchUsers, domain } = this.props;
+  useEffect(() => {
+    const { fetchUsers, domain } = props;
     fetchUsers(domain.ID)
       .catch(() => {
-        this.setState({ loading: false });
+        setLoading(false);
       });
-  }
+  }, []);
 
-  handleInput = field => event => {
-    this.setState({
-      [field]: event.target.value,
-    });
-  }
-
-  handleAdd = () => {
-    const { add, onSuccess, onError, domain, folderID } = this.props;
-    this.setState({ loading: true });
-    add(domain.ID, folderID, this.state.owners)
+  const handleAdd = () => {
+    const { add, onSuccess, onError, domain, folderID } = props;
+    setLoading(true);
+    add(domain.ID, folderID, owners)
       .then(() => {
-        this.setState({
-          owners: [],
-          autocompleteInput: '',
-          loading: false,
-        });
+        setOwners([]);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
-      [field]: newVal,
-    });
+  const handleAutocomplete = (e, newVal) => {
+    setOwners(newVal);
   }
 
-  render() {
-    const { classes, t, open, onCancel, Users } = this.props;
-    const { owners, loading } = this.state;
-    return (
-      <Dialog
-        onClose={onCancel}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>{t('addHeadline', { item: 'Owner' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <MagnitudeAutocomplete
-              multiple
-              value={owners || []}
-              filterAttribute={'username'}
-              onChange={this.handleAutocomplete('owners')}
-              className={classes.input} 
-              options={Users || []}
-              onInputChange={this.handleInput('autocompleteInput')}
-              placeholder={t("Search users") +  "..."}
-              label={t('Owners')}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onCancel}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={owners.length === 0 || loading}
-          >
-            {loading ? <CircularProgress size={24}/> : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  const { classes, t, open, onCancel, Users } = props;
+  return (
+    <Dialog
+      onClose={onCancel}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>{t('addHeadline', { item: 'Owner' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <MagnitudeAutocomplete
+            multiple
+            value={owners || []}
+            filterAttribute={'username'}
+            onChange={handleAutocomplete}
+            className={classes.input} 
+            options={Users || []}
+            placeholder={t("Search users") +  "..."}
+            label={t('Owners')}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onCancel}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={owners.length === 0 || loading}
+        >
+          {loading ? <CircularProgress size={24}/> : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddOwner.propTypes = {

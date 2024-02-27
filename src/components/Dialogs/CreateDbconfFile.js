@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
@@ -35,14 +35,8 @@ const styles = theme => ({
   },
 });
 
-class CreateDbconfFile extends PureComponent {
-
-  constructor() {
-    super();
-    this.fileInputRef = React.createRef();
-  }
-
-  state = {
+const CreateDbconfFile = props => {
+  const [state, setState] = useState({
     data: [
       { key: 'commit_key', value: '' },
       { key: 'commit_file', value: '' },
@@ -50,131 +44,131 @@ class CreateDbconfFile extends PureComponent {
     ],
     service: '',
     loading: false,
-  }
+  });
 
-  commandKeys = ['key', 'file', 'service'];
+  const commandKeys = ['key', 'file', 'service'];
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state,
       [field]: event.target.value,
     });
   }
 
-  handleDataInput = idx => e => {
-    const data = [...this.state.data];
+  const handleDataInput = idx => e => {
+    const data = [...state.data];
     data[idx].value = e.target.value;
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleUpload = () => {
-    const { history, upload } = this.props;
-    const { service, data } = this.state;
-    this.setState({ loading: true });
+  const handleUpload = () => {
+    const { navigate, upload, onError } = props;
+    const { service, data } = state;
+    setState({ ...state, loading: true });
     // Create service
-    upload('grommunio-dbconf', service, this.formatData(data))
+    upload('grommunio-dbconf', service, formatData(data))
       .then(() => {
         // Create service file
-        history.push('/dbconf/grommunio-dbconf/' + service);
+        navigate('/dbconf/grommunio-dbconf/' + service);
       })
       .catch(error => {
-        this.props.onError(error);
-        this.setState({ loading: false });
+        onError(error);
+        setState({ ...state, loading: false });
       });
   }
 
-  formatData(data) {
+  const formatData = (data) => {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value || undefined);
     return obj;
   }
 
-  handleTemplate = e => {
+  const handleTemplate = e => {
     const { value } = e.target;
     if (value === "postfix") {
-      this.setState({
+      setState({
+        ...state,
         service: 'postfix',
         data: [
           { key: 'commit_key', value: '#POSTCONF' },
           { key: 'commit_file', value: '#POSTCONF' },
           { key: 'commit_service', value: '#RELOAD' },
         ]
-      })
+      });
     }
   }
 
-  render() {
-    const { classes, t, open, onClose, commands } = this.props;
-    const { service, data, loading } = this.state;
+  const { classes, t, open, onClose, commands } = props;
+  const { service, data, loading } = state;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Configure grommunio-dbconf</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Template")} 
-              fullWidth
-              onChange={this.handleTemplate}
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>Configure grommunio-dbconf</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Template")} 
+            fullWidth
+            onChange={handleTemplate}
+            select
+          >
+            <MenuItem value="postfix">postfix</MenuItem>
+          </TextField>
+          <TextField 
+            className={classes.input} 
+            label={t("Service name")} 
+            fullWidth 
+            value={service || ''}
+            onChange={handleInput('service')}
+            autoFocus
+            required
+          />
+          <Typography variant="h6">Data</Typography>
+          {data.map((pair, idx) => <Grid key={idx} container alignItems="center">
+            <Typography className={classes.gridTypo}>
+              {pair.key}
+            </Typography>
+            <TextField
+              label={t("Value")}
+              value={pair.value}
+              onChange={handleDataInput(idx)}
+              className={classes.flexTextfield}
               select
             >
-              <MenuItem value="postfix">postfix</MenuItem>
+              {commands[commandKeys[idx]].map((command, idx) =>
+                <MenuItem key={idx} value={command}>
+                  {command}
+                </MenuItem>
+              )}
             </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Service name")} 
-              fullWidth 
-              value={service || ''}
-              onChange={this.handleInput('service')}
-              autoFocus
-              required
-            />
-            <Typography variant="h6">Data</Typography>
-            {data.map((pair, idx) => <Grid key={idx} container alignItems="center">
-              <Typography className={classes.gridTypo}>
-                {pair.key}
-              </Typography>
-              <TextField
-                label={t("Value")}
-                value={pair.value}
-                onChange={this.handleDataInput(idx)}
-                className={classes.flexTextfield}
-                select
-              >
-                {commands[this.commandKeys[idx]].map((command, idx) =>
-                  <MenuItem key={idx} value={command}>
-                    {command}
-                  </MenuItem>
-                )}
-              </TextField>
-            </Grid>
-            )}
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleUpload}
-            variant="contained"
-            color="primary"
-            disabled={loading || !service}
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+          </Grid>
+          )}
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleUpload}
+          variant="contained"
+          color="primary"
+          disabled={loading || !service}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 CreateDbconfFile.propTypes = {
@@ -186,7 +180,7 @@ CreateDbconfFile.propTypes = {
   onError: PropTypes.func.isRequired,
   upload: PropTypes.func.isRequired,
   commands: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

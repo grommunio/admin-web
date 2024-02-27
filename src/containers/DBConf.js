@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -18,6 +18,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import SearchTextfield from '../components/SearchTextfield';
 import TableActionGrid from '../components/TableActionGrid';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -37,17 +38,8 @@ const styles = theme => ({
   },
 });
 
-class DBConf extends Component {
-
-  componentDidMount() {
-    this.props.fetch()
-      .then(() => this.setState({ loading: false }))
-      .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error', loading: false });
-      });
-  }
-
-  state = {
+const DBConf = props => {
+  const [state, setState] = useState({
     snackbar: '',
     match: '',
     adding: false,
@@ -56,167 +48,171 @@ class DBConf extends Component {
     offset: defaultFetchLimit,
     tab: 0,
     loading: true,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  handleAdd = () => this.setState({ adding: true });
+  useEffect(() => {
+    props.fetch()
+      .then(() => setState({ ...state, loading: false }))
+      .catch(msg => {
+        setState({ ...state, snackbar: msg || 'Unknown error', loading: false });
+      });
+  }, []);
 
-  handleAddingSuccess = () => this.setState({ adding: false, configuring: false, snackbar: 'Success!' });
+  const handleAddingSuccess = () => setState({ ...state, adding: false, configuring: false, snackbar: 'Success!' });
 
-  handleAddingClose = () => this.setState({ adding: false, configuring: false });
+  const handleAddingClose = () => setState({ ...state, adding: false, configuring: false });
 
-  handleAddingError = error => this.setState({ snackbar: error });
+  const handleAddingError = error => setState({ ...state, snackbar: error });
 
-  handleDelete = service => event => {
+  const handleDelete = service => event => {
     event.stopPropagation();
-    this.setState({ deleting: service });
+    setState({ ...state, deleting: service });
   }
 
-  handleDeleteSuccess = resp => {
-    this.setState({ deleting: false, snackbar: 'Success! ' + (resp?.message || '')});
+  const handleDeleteSuccess = resp => {
+    setState({ ...state, deleting: false, snackbar: 'Success! ' + (resp?.message || '')});
   }
 
-  handleDeleteClose = () => this.setState({ deleting: false });
+  const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  handleDeleteError = error => this.setState({ snackbar: error });
+  const handleDeleteError = error => setState({ ...state, snackbar: error });
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleMatch = e => {
+  const handleMatch = e => {
     const { value } = e.target;
-    this.setState({ match: value });
+    setState({ ...state, match: value });
   }
 
-  handleTab = (e, tab) => this.setState({ tab });
+  const handleTab = (e, tab) => setState({ ...state,tab });
 
-  render() {
-    const { classes, t, services, commands, history } = this.props;
-    const { adding, configuring, snackbar, match, tab, deleting, loading } = this.state;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    return (
-      <TableViewContainer
-        headline={t("Configuration DB")}
-        href="https://docs.grommunio.com/admin/administration.html#db-configuration"
-        subtitle={t('dbconf_sub')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
+  const { classes, t, services, commands, navigate } = props;
+  const { adding, configuring, snackbar, match, tab, deleting, loading } = state;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  return (
+    <TableViewContainer
+      headline={t("Configuration DB")}
+      href="https://docs.grommunio.com/admin/administration.html#db-configuration"
+      subtitle={t('dbconf_sub')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search services")}
+          className={classes.textfield}
+        />}
       >
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={this.handleMatch}
-            placeholder={t("Search services")}
-            className={classes.textfield}
-          />}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setState({ ...state, adding: true })}
+          disabled={!writable}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.setState({ adding: true })}
-            disabled={!writable}
-          >
-            {t("Create file")}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.setState({ configuring: true })}
-            className={classes.button}
-            disabled={!writable}
-          >
-            {t("Configure grommunio-dbconf")}
-          </Button>
-        </TableActionGrid>
-        <Grid container alignItems="flex-end" className={classes.tabs}>
-          <Tabs
-            textColor="primary" 
-            indicatorColor="primary"
-            value={tab}
-            onChange={this.handleTab}
-          >
-            <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
-            <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
-          </Tabs>
-        </Grid>
-        {tab === 0 ? <Paper elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  {t('Name')}
+          {t("Create file")}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setState({ ...state, configuring: true })}
+          className={classes.button}
+          disabled={!writable}
+        >
+          {t("Configure grommunio-dbconf")}
+        </Button>
+      </TableActionGrid>
+      <Grid container alignItems="flex-end" className={classes.tabs}>
+        <Tabs
+          textColor="primary" 
+          indicatorColor="primary"
+          value={tab}
+          onChange={handleTab}
+        >
+          <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
+          <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
+        </Tabs>
+      </Grid>
+      {tab === 0 ? <Paper elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                {t('Name')}
+              </TableCell>
+              <TableCell padding="checkbox"></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {services.filter(s => s.includes(match)).map((service, idx) =>
+              <TableRow onClick={handleNavigation('dbconf/' + service)} key={idx} hover>
+                <TableCell>{service}</TableCell>
+                <TableCell align="right">
+                  {writable && <IconButton onClick={handleDelete(service)} size="small">
+                    <Delete color="error" fontSize="small"/>
+                  </IconButton>}
                 </TableCell>
-                <TableCell padding="checkbox"></TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {services.filter(s => s.includes(match)).map((service, idx) =>
-                <TableRow onClick={this.handleNavigation('dbconf/' + service)} key={idx} hover>
-                  <TableCell>{service}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={this.handleDelete(service)} size="small">
-                      <Delete color="error" fontSize="small"/>
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Paper> : <Paper className={classes.paper}>
-          <Typography variant="h6">{t("Key")}</Typography>
-          {commands.key.length > 0 ? commands.key.map((key, idx) =>
-            <pre className={classes.pre} key={idx}>
-              <code key={idx}>{key}</code>
-            </pre>
-          ) : <Typography><i>{t("none")}</i></Typography>}
-          <Typography className={classes.title} variant="h6">{t("File")}</Typography>
-          {commands.file.length > 0 ? commands.file.map((key, idx) =>
-            <pre className={classes.pre} key={idx}>
-              <code>{key}</code>
-            </pre>
-          ) : <Typography><i>{t("none")}</i></Typography>}
-          <Typography className={classes.title} variant="h6">{t("Service")}</Typography>
-          {commands.service.length > 0 ? commands.service.map((key, idx) =>
-            <pre className={classes.pre} key={idx}>
-              <code>{key}</code>
-            </pre>
-          ) : <Typography><i>{t("none")}</i></Typography>}
-        </Paper>}
-        <GeneralDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={this.handleDeleteSuccess}
-          onError={this.handleDeleteError}
-          onClose={this.handleDeleteClose}
-          item={deleting}
-          id={deleting}
-        />
-        <UploadServiceFile
-          open={adding}
-          onClose={this.handleAddingClose}
-          onError={this.handleAddingError}
-          onSuccess={this.handleAddingSuccess}
-        />
-        <CreateDbconfFile
-          open={configuring}
-          onClose={this.handleAddingClose}
-          onError={this.handleAddingError}
-          onSuccess={this.handleAddingSuccess}
-          history={history}
-        />
-      </TableViewContainer>
-    );
-  }
+            )}
+          </TableBody>
+        </Table>
+      </Paper> : <Paper className={classes.paper}>
+        <Typography variant="h6">{t("Key")}</Typography>
+        {commands.key.length > 0 ? commands.key.map((key, idx) =>
+          <pre className={classes.pre} key={idx}>
+            <code key={idx}>{key}</code>
+          </pre>
+        ) : <Typography><i>{t("none")}</i></Typography>}
+        <Typography className={classes.title} variant="h6">{t("File")}</Typography>
+        {commands.file.length > 0 ? commands.file.map((key, idx) =>
+          <pre className={classes.pre} key={idx}>
+            <code>{key}</code>
+          </pre>
+        ) : <Typography><i>{t("none")}</i></Typography>}
+        <Typography className={classes.title} variant="h6">{t("Service")}</Typography>
+        {commands.service.length > 0 ? commands.service.map((key, idx) =>
+          <pre className={classes.pre} key={idx}>
+            <code>{key}</code>
+          </pre>
+        ) : <Typography><i>{t("none")}</i></Typography>}
+      </Paper>}
+      <GeneralDelete
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting}
+        id={deleting}
+      />
+      <UploadServiceFile
+        open={adding}
+        onClose={handleAddingClose}
+        onError={handleAddingError}
+        onSuccess={handleAddingSuccess}
+      />
+      <CreateDbconfFile
+        open={configuring}
+        onClose={handleAddingClose}
+        onError={handleAddingError}
+        onSuccess={handleAddingSuccess}
+        navigate={navigate}
+      />
+    </TableViewContainer>
+  );
 }
 
-DBConf.contextType = CapabilityContext;
 DBConf.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   services: PropTypes.array.isRequired,
   commands: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -242,5 +238,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBConf)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBConf))));

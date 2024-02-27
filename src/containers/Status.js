@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
-import React, { PureComponent } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
@@ -41,9 +41,8 @@ const styles = (theme) => ({
   },
 });
 
-class Status extends PureComponent {
-
-  state = {
+const Status = props => {
+  const [state, setState] = useState({
     vhost: '',
     snackbar: null,
     data: {
@@ -53,131 +52,122 @@ class Status extends PureComponent {
       filterZones: {},
     },
     interval: 1000,
-  };
+  });
 
-  fetchInterval = null;
+  let fetchInterval = null;
 
-  async componentDidMount() {
-    this.props.fetch()
+  useEffect(() => {
+    props.fetch()
       .then(() => {
-        if(this.props.vhosts.includes('local')) this.setState({ vhost: 'local'});
+        if(props.vhosts.includes('local')) setState({ ...state, vhost: 'local'});
       });
     // Refresh every second by default
-    this.fetchInterval = setInterval(() => {
-      this.fetchData();
+    fetchInterval = setInterval(() => {
+      fetchData();
     }, 1000);
-  }
 
-  handleNavigation = (path) => (event) => {
-    const { history } = this.props;
-    event.preventDefault();
-    history.push(`/${path}`);
-  };
+    return () => {
+      clearInterval(fetchInterval);
+    }
+  }, []);
 
-  fetchData = async () => {
-    const { vhost } = this.state;
+  const fetchData = async () => {
+    const { vhost } = state;
     if(vhost) {
-      const data = await this.props.fetchVhostStatus(this.state.vhost)
-        .catch(snackbar => this.setState({ snackbar }));
-      if(data) this.setState({ data });
+      const data = await props.fetchVhostStatus(state.vhost)
+        .catch(snackbar => setState({ ...state, snackbar }));
+      if(data) setState({ ...state, data });
     }
   }
 
-  componentWillUnmount() {
-    clearInterval(this.fetchInterval);
-  }
-
-  handleIntervalChange = ({ target: t }) => {
+  const handleIntervalChange = ({ target: t }) => {
     const interval = t.value;
-    clearInterval(this.fetchInterval);
-    this.setState({ interval });
-    this.fetchInterval = setInterval(() => {
-      this.fetchData();
+    clearInterval(fetchInterval);
+    setState({ ...state, interval });
+    fetchInterval = setInterval(() => {
+      fetchData();
     }, interval);
   }
 
   // Converts an object to a sorted array
-  toSortedArray = obj => Object.entries(obj)
+  const toSortedArray = obj => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
 
-  handleChange = field => e => {
-    this.setState({ [field]: e.target.value });
+  const handleChange = field => e => {
+    setState({ ...state, [field]: e.target.value });
   }
 
-  render() {
-    const { classes, t, vhosts } = this.props;
-    const { snackbar, data, interval, vhost } = this.state;
-    const { connections, serverZones, filterZones } = data;
-    return (
-      <TableViewContainer
-        headline={t("Live status")  + (data.hostName ? ' - ' + data.hostName : '')}
-        subtitle={t('livestatus_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#live-status"
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
+  const { classes, t, vhosts } = props;
+  const { snackbar, data, interval, vhost } = state;
+  const { connections, serverZones, filterZones } = data;
+  return (
+    <TableViewContainer
+      headline={t("Live status")  + (data.hostName ? ' - ' + data.hostName : '')}
+      subtitle={t('livestatus_sub')}
+      href="https://docs.grommunio.com/admin/administration.html#live-status"
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+    >
+      <TextField
+        select
+        value={vhost}
+        label="Vhost"
+        className={classes.tf}
+        onChange={handleChange('vhost')}
       >
-        <TextField
-          select
-          value={vhost}
-          label="Vhost"
-          className={classes.tf}
-          onChange={this.handleChange('vhost')}
-        >
-          {vhosts.map((host, key) =>
-            <MenuItem value={host} key={key}>{host}</MenuItem>
-          )}
-        </TextField>
-        <TextField
-          select
-          value={interval}
-          label={t("Update interval")}
-          className={classes.tf}
-          onChange={this.handleIntervalChange}
-        >
-          <MenuItem value={1000}>1 {t("second")}</MenuItem>
-          <MenuItem value={2000}>2 {t("seconds")}</MenuItem>
-          <MenuItem value={3000}>3 {t("seconds")}</MenuItem>
-          <MenuItem value={5000}>5 {t("seconds")}</MenuItem>
-          <MenuItem value={10000}>10 {t("seconds")}</MenuItem>
-        </TextField>
-        <Typography variant="h2" className={classes.pageTitle}>
-          {t("Connections")}
-        </Typography>
-        <Typography variant="caption" className={classes.subtitle}>
-          {t("Current active connections being processed")}
-        </Typography>
-        <Connections data={connections || {}} />
-        <Typography variant="h2" className={classes.pageTitle}>
-          {t("Requests")}
-        </Typography>
-        <Typography variant="caption" className={classes.subtitle}>
-          {t("All processed requests by the services")}
-        </Typography>
-        <Requests data={connections || {}} />
-        <div className={classes.logViewer}>
-          <TableContainer component={Paper} className={classes.paper}>
-            <div style={{ marginBottom: 8 }}>
-              <Typography variant="h5">
-                {t("Host details")}
-              </Typography>
-              <Typography variant="caption">
-                {t("Detailed and summarized overview over all requests")}
-              </Typography>
-            </div>
-            <ServerZones serverZones={this.toSortedArray(serverZones || {})} />
-            <FilterZones filterZones={filterZones || {}} />
-          </TableContainer>
-        </div>
-      </TableViewContainer>
-    );
-  }
+        {vhosts.map((host, key) =>
+          <MenuItem value={host} key={key}>{host}</MenuItem>
+        )}
+      </TextField>
+      <TextField
+        select
+        value={interval}
+        label={t("Update interval")}
+        className={classes.tf}
+        onChange={handleIntervalChange}
+      >
+        <MenuItem value={1000}>1 {t("second")}</MenuItem>
+        <MenuItem value={2000}>2 {t("seconds")}</MenuItem>
+        <MenuItem value={3000}>3 {t("seconds")}</MenuItem>
+        <MenuItem value={5000}>5 {t("seconds")}</MenuItem>
+        <MenuItem value={10000}>10 {t("seconds")}</MenuItem>
+      </TextField>
+      <Typography variant="h2" className={classes.pageTitle}>
+        {t("Connections")}
+      </Typography>
+      <Typography variant="caption" className={classes.subtitle}>
+        {t("Current active connections being processed")}
+      </Typography>
+      <Connections data={connections || {}} />
+      <Typography variant="h2" className={classes.pageTitle}>
+        {t("Requests")}
+      </Typography>
+      <Typography variant="caption" className={classes.subtitle}>
+        {t("All processed requests by the services")}
+      </Typography>
+      <Requests data={connections || {}} />
+      <div className={classes.logViewer}>
+        <TableContainer component={Paper} className={classes.paper}>
+          <div style={{ marginBottom: 8 }}>
+            <Typography variant="h5">
+              {t("Host details")}
+            </Typography>
+            <Typography variant="caption">
+              {t("Detailed and summarized overview over all requests")}
+            </Typography>
+          </div>
+          <ServerZones serverZones={toSortedArray(serverZones || {})} />
+          <FilterZones filterZones={filterZones || {}} />
+        </TableContainer>
+      </div>
+    </TableViewContainer>
+  );
 }
 
 Status.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchVhostStatus: PropTypes.func.isRequired,
   vhosts: PropTypes.array.isRequired,

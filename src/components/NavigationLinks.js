@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ListItemText from '@mui/material/ListItemText';
 import List from '@mui/material/List';
@@ -30,6 +29,7 @@ import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt }
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   drawerHeader: {
@@ -109,49 +109,49 @@ const styles = theme => ({
   }
 });
 
-class NavigationLinks extends PureComponent {
-
-  state = {
+const NavigationLinks = props => {
+  const [state, setState] = useState({
     tab: 0,
     filter: '',
     adding: false,
     snackbar: '',
-  }
+  });
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleDrawer = domain => event => {
+  const handleDrawer = domain => event => {
     event.preventDefault();
-    this.props.selectDomain(domain);
-    this.props.history.push(`/${domain}`);
+    props.selectDomain(domain);
+    props.navigate(`/${domain}`);
   }
 
-  handleTextInput = event => {
-    this.setState({ filter: event.target.value });
+  const handleTextInput = event => {
+    setState({ ...state, filter: event.target.value });
   }
 
-  handleAdd = () => this.setState({ adding: true });
+  const handleAdd = () => setState({ ...state, adding: true });
 
-  handleAddingClose = () => this.setState({ adding: false });
+  const handleAddingClose = () => setState({ ...state, adding: false });
 
-  handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+  const handleAddingSuccess = () => setState({ ...state, adding: false, snackbar: 'Success!' });
 
-  handleAddingError = (error) => this.setState({ snackbar: error });
+  const handleAddingError = (error) => setState({ ...state, snackbar: error });
 
-  toggleTab = () => {
-    const { tab, setTab } = this.props;
+  const toggleTab = () => {
+    const { tab, setTab } = props;
     setTab(tab === 0 ? 1 : 0);
   }
 
-  ListElement = ({ label, path, Icon }) => {
-    const { classes, t } = this.props;
+  // eslint-disable-next-line react/prop-types
+  const ListElement = ({ label, path, Icon }) => {
+    const { classes, t } = props;
     const selected = location.pathname.endsWith('/' + path);
     return <ListItemButton
-      onClick={this.handleNavigation(path)}
+      onClick={handleNavigation(path)}
       classes={{ selected: classes.selected }}
       selected={selected}
     >
@@ -165,12 +165,13 @@ class NavigationLinks extends PureComponent {
     </ListItemButton>;
   }
 
-  NestedListElement = ({ ID, label, path, Icon }) => {
-    const { classes, t, expandedDomain } = this.props;
+  // eslint-disable-next-line react/prop-types
+  const NestedListElement = ({ ID, label, path, Icon }) => {
+    const { classes, t, expandedDomain } = props;
     const selected = expandedDomain === ID &&
       location.pathname.startsWith('/' + ID + path);
     return <ListItemButton
-      onClick={this.handleNavigation(ID + path)}
+      onClick={handleNavigation(ID + path)}
       selected={selected}
       classes={{ selected: classes.selected }}
     >
@@ -184,39 +185,38 @@ class NavigationLinks extends PureComponent {
     </ListItemButton>
   }
 
-  render() {
-    const { classes, t, tab, expandedDomain, location, domains, capabilities, config } = this.props;
-    const { filter, adding, snackbar } = this.state;
-    const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
-    const pathname = location.pathname;
-    return(
-      <React.Fragment>
-        <div className={classes.drawerHeader}>
-          <img
-            src={config.customImages[window.location.hostname]?.logoLight || logo}
-            height="32"
-            alt="grommunio"
-            onClick={this.handleNavigation('')}
-            className={classes.logo}
-          />
-        </div>
-        {isSysAdmin && <Tabs
-          onChange={this.toggleTab}
-          value={tab}
-          className={classes.tabs}
-          indicatorColor="primary"
-          textColor="primary"
-        >
-          <Tab className={classes.tab} label={t('Admin')} />
-          <Tab className={classes.tab} label={t('Domains')} />
-        </Tabs>}
-        {(tab === 1 || !isSysAdmin) &&
+  const { classes, t, tab, expandedDomain, domains, capabilities, config } = props;
+  const { filter, adding, snackbar } = state;
+  const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
+  const pathname = location.pathname;
+  return(
+    <React.Fragment>
+      <div className={classes.drawerHeader}>
+        <img
+          src={config.customImages[window.location.hostname]?.logoLight || logo}
+          height="32"
+          alt="grommunio"
+          onClick={handleNavigation('')}
+          className={classes.logo}
+        />
+      </div>
+      {isSysAdmin && <Tabs
+        onChange={toggleTab}
+        value={tab}
+        className={classes.tabs}
+        indicatorColor="primary"
+        textColor="primary"
+      >
+        <Tab className={classes.tab} label={t('Admin')} />
+        <Tab className={classes.tab} label={t('Domains')} />
+      </Tabs>}
+      {(tab === 1 || !isSysAdmin) &&
             <Grid container component="form" autoComplete="off">
               <TextField
                 variant="outlined"
                 label={t('Search')}
                 value={filter}
-                onChange={this.handleTextInput}
+                onChange={handleTextInput}
                 InputLabelProps={{
                   classes: {
                     root: classes.input,
@@ -235,26 +235,26 @@ class NavigationLinks extends PureComponent {
                 className={classes.textfield}
               />
             </Grid>}
-        <List>
-          {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
-            <Button
-              color="primary"
-              onClick={this.handleAdd}
-              className={classes.addButton}
-            >
-              {t("New domain")}
-              <Add />
-            </Button>
-          </div>
-          }
-          {(tab === 1 || !isSysAdmin) &&
+      <List>
+        {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
+          <Button
+            color="primary"
+            onClick={handleAdd}
+            className={classes.addButton}
+          >
+            {t("New domain")}
+            <Add />
+          </Button>
+        </div>
+        }
+        {(tab === 1 || !isSysAdmin) &&
             domains
               .filter(({ domainname }) => domainname.includes(filter))
               .map(({ domainname: name, ID, domainStatus }) => {
                 const selected = expandedDomain === ID && pathname === '/' + ID;
                 return <React.Fragment key={name}>
                   <ListItemButton
-                    onClick={this.handleDrawer(ID)}
+                    onClick={handleDrawer(ID)}
                     selected={selected}
                     classes={{ selected: classes.selected }}
                   >
@@ -268,25 +268,25 @@ class NavigationLinks extends PureComponent {
                   </ListItemButton>
                   <Collapse in={expandedDomain === ID} unmountOnExit>
                     <List component="div" disablePadding>
-                      <this.NestedListElement
+                      <NestedListElement
                         ID={ID}
                         label={"Users"}
                         path="/users"
                         Icon={Person}
                       />
-                      <this.NestedListElement
+                      <NestedListElement
                         ID={ID}
                         label={"Contacts"}
                         path="/contacts"
                         Icon={ContactMail}
                       />
-                      <this.NestedListElement
+                      <NestedListElement
                         ID={ID}
                         label={"Groups"}
                         path="/groups"
                         Icon={Groups}
                       />
-                      <this.NestedListElement
+                      <NestedListElement
                         ID={ID}
                         label={"Public folders"}
                         path="/folders"
@@ -296,115 +296,113 @@ class NavigationLinks extends PureComponent {
                   </Collapse>
                 </React.Fragment>
               })}
-          {(tab === 0 && !isSysAdmin) && <this.ListElement
+        {(tab === 0 && !isSysAdmin) && <ListElement
+          label={"Task queue"}
+          path="taskq"
+          Icon={TaskAlt}
+        />}
+        {tab === 0 && isSysAdmin && <React.Fragment>
+          <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
+          <ListElement
+            label={"Dashboard"}
+            path=""
+            Icon={Dashboard}
+          />
+          <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
+          <ListElement
+            label={"Organizations"}
+            path="orgs"
+            Icon={Orgs}
+          />
+          <ListElement
+            label={"Domains"}
+            path="domains"
+            Icon={Domains}
+          />
+          <ListElement
+            label={"Users"}
+            path="users"
+            Icon={Person}
+          />
+          <ListElement
+            label={"Contacts"}
+            path="contacts"
+            Icon={ContactMail}
+          />
+          <ListElement
+            label={"Roles"}
+            path="roles"
+            Icon={Roles}
+          />
+          <ListElement
+            label={"Defaults"}
+            path="defaults"
+            Icon={BackupTable}
+          />
+          <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
+          <ListElement
+            label={"LDAP Directory"}
+            path="directory"
+            Icon={Ldap}
+          />
+          <ListElement
+            label={"Configuration DB"}
+            path="dbconf"
+            Icon={Storage}
+          />
+          <ListElement
+            label={"Servers"}
+            path="servers"
+            Icon={Dns}
+          />
+          <ListElement
+            label={"Monitoring"}
+            path="logs"
+            Icon={Logs}
+          />
+          <ListElement
+            label={"Mail queue"}
+            path="mailq"
+            Icon={QueryBuilder}
+          />
+          <ListElement
             label={"Task queue"}
             path="taskq"
             Icon={TaskAlt}
-          />}
-          {tab === 0 && isSysAdmin && <React.Fragment>
-            <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>
-            <this.ListElement
-              label={"Dashboard"}
-              path=""
-              Icon={Dashboard}
-            />
-            <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
-            <this.ListElement
-              label={"Organizations"}
-              path="orgs"
-              Icon={Orgs}
-            />
-            <this.ListElement
-              label={"Domains"}
-              path="domains"
-              Icon={Domains}
-            />
-            <this.ListElement
-              label={"Users"}
-              path="users"
-              Icon={Person}
-            />
-            <this.ListElement
-              label={"Contacts"}
-              path="contacts"
-              Icon={ContactMail}
-            />
-            <this.ListElement
-              label={"Roles"}
-              path="roles"
-              Icon={Roles}
-            />
-            <this.ListElement
-              label={"Defaults"}
-              path="defaults"
-              Icon={BackupTable}
-            />
-            <Typography variant="inherit" className={classes.subheader}>{t('Configuration')}</Typography>
-            <this.ListElement
-              label={"LDAP Directory"}
-              path="directory"
-              Icon={Ldap}
-            />
-            <this.ListElement
-              label={"Configuration DB"}
-              path="dbconf"
-              Icon={Storage}
-            />
-            <this.ListElement
-              label={"Servers"}
-              path="servers"
-              Icon={Dns}
-            />
-            <this.ListElement
-              label={"Monitoring"}
-              path="logs"
-              Icon={Logs}
-            />
-            <this.ListElement
-              label={"Mail queue"}
-              path="mailq"
-              Icon={QueryBuilder}
-            />
-            <this.ListElement
-              label={"Task queue"}
-              path="taskq"
-              Icon={TaskAlt}
-            />
-            <this.ListElement
-              label={"Mobile devices"}
-              path="sync"
-              Icon={Sync}
-            />
-            <this.ListElement
-              label={"Live status"}
-              path="status"
-              Icon={TableChart}
-            />
-          </React.Fragment>
-          }
-        </List>
-        <AddDomain
-          open={adding}
-          onSuccess={this.handleAddingSuccess}
-          onError={this.handleAddingError}
-          onClose={this.handleAddingClose}
-        />
-        <Feedback
-          snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: "" })}
-        />
-      </React.Fragment>
-    );
-  }
+          />
+          <ListElement
+            label={"Mobile devices"}
+            path="sync"
+            Icon={Sync}
+          />
+          <ListElement
+            label={"Live status"}
+            path="status"
+            Icon={TableChart}
+          />
+        </React.Fragment>
+        }
+      </List>
+      <AddDomain
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        onClose={handleAddingClose}
+      />
+      <Feedback
+        snackbar={snackbar}
+        onClose={() => setState({ ...state, snackbar: "" })}
+      />
+    </React.Fragment>
+  );
 }
 
 NavigationLinks.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   domains: PropTypes.array,
   capabilities: PropTypes.array.isRequired,
-  location: PropTypes.object.isRequired,
   expandedDomain: PropTypes.number,
   selectDomain: PropTypes.func.isRequired,
   tab: PropTypes.number.isRequired,

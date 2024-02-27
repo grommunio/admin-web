@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import {
   Paper,
@@ -38,118 +38,116 @@ const styles = (theme) => ({
   },
 });
 
-class Orgs extends Component {
+const Orgs = props => {
+  const context = useContext(CapabilityContext);
 
-  columns = [
+  const columns = [
     { label: "Name", value: "name" },
     { label: "Description", value: "description" },
   ];
 
-  handleScroll = () => {
-    const { Orgs, count, loading } = this.props.orgs;
-    this.props.handleScroll(Orgs, count, loading);
+  const handleScroll = () => {
+    const { Orgs, count, loading } = props.orgs;
+    props.handleScroll(Orgs, count, loading);
   };
 
-  render() {
-    const { classes, t, orgs, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+  const { classes, t, orgs, tableState, handleMatch, handleRequestSort,
+    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Organizations")}
-        href="https://docs.grommunio.com/admin/administration.html#organizations"
-        subtitle={t("orgs_sub")}
-        snackbar={snackbar}
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Organizations")}
+      href="https://docs.grommunio.com/admin/administration.html#organizations"
+      subtitle={t("orgs_sub")}
+      snackbar={snackbar}
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search organizations")}
+        />}
       >
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search organizations")}
-          />}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          disabled={!writable}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            disabled={!writable}
-          >
-            {t("New organization")}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingOrgs", { count: orgs.Orgs.length })}
-        </Typography>
-        <Paper elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {this.columns.map((column) => (
-                  <TableCell key={column.value}>
-                    <TableSortLabel
-                      active={orderBy === column.value}
-                      align="left"
-                      direction={orderBy === column.value ? order : "asc"}
-                      onClick={handleRequestSort(column.value)}
-                    >
-                      {t(column.label)}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-                <TableCell padding="checkbox" />
+          {t("New organization")}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingOrgs", { count: orgs.Orgs.length })}
+      </Typography>
+      <Paper elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell key={column.value}>
+                  <TableSortLabel
+                    active={orderBy === column.value}
+                    align="left"
+                    direction={orderBy === column.value ? order : "asc"}
+                    onClick={handleRequestSort(column.value)}
+                  >
+                    {t(column.label)}
+                  </TableSortLabel>
+                </TableCell>
+              ))}
+              <TableCell padding="checkbox" />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {orgs.Orgs.map((obj, idx) => 
+              <TableRow key={idx} hover onClick={handleEdit('/orgs/' + obj.ID)}>
+                <TableCell>{obj.name}</TableCell>
+                <TableCell>{obj.description}</TableCell>
+                <TableCell align="right">
+                  {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                    <Delete color="error" fontSize="small"/>
+                  </IconButton>}
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {orgs.Orgs.map((obj, idx) => 
-                <TableRow key={idx} hover onClick={handleEdit('/orgs/' + obj.ID)}>
-                  <TableCell>{obj.name}</TableCell>
-                  <TableCell>{obj.description}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                      <Delete color="error" fontSize="small"/>
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {orgs.Orgs.length < orgs.count && (
-            <Grid container justifyContent="center">
-              <CircularProgress
-                color="primary"
-                className={classes.circularProgress}
-              />
-            </Grid>
-          )}
-        </Paper>
-        <AddOrg
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          onClose={handleAddingClose}
-        />
-        <GeneralDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={handleDeleteSuccess}
-          onError={handleDeleteError}
-          onClose={handleDeleteClose}
-          item={deleting.name}
-          id={deleting.ID}
-        />
-      </TableViewContainer>
-    );
-  }
+            )}
+          </TableBody>
+        </Table>
+        {orgs.Orgs.length < orgs.count && (
+          <Grid container justifyContent="center">
+            <CircularProgress
+              color="primary"
+              className={classes.circularProgress}
+            />
+          </Grid>
+        )}
+      </Paper>
+      <AddOrg
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        onClose={handleAddingClose}
+      />
+      <GeneralDelete
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting.name}
+        id={deleting.ID}
+      />
+    </TableViewContainer>
+  );
 }
 
-Orgs.contextType = CapabilityContext;
 Orgs.propTypes = {
   orgs: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,

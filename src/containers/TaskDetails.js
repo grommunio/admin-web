@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -21,6 +21,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchTaskDetails } from '../actions/taskq';
 import { green, red } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -76,9 +77,8 @@ const styles = theme => ({
   },
 });
 
-class TaskDetails extends PureComponent {
-
-  state = {
+const TaskDetails = props => {
+  const [task, setTask] = useState({
     ID: -1,
     command: '',
     state: 0,
@@ -87,128 +87,126 @@ class TaskDetails extends PureComponent {
     message: '',
     params: {},
     loading: false,
-  }
+  });
 
-  componentDidMount() {
-    this.refresh();
-  }
+  useEffect(() => {
+    refresh();
+  }, []);
 
-  refresh = async () => {
-    const { fetch } = this.props;
-    this.setState({ loading: true });
-    const task = await fetch(getStringAfterLastSlash())
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
+  const refresh = async () => {
+    const { fetch } = props;
+    setTask({ ...task, loading: true });
+    const taskData = await fetch(getStringAfterLastSlash())
+      .catch(message => setTask({ ...task, snackbar: message || 'Unknown error' }));
+    setTask({
+      ...task, 
       loading: false,
-      ...(task ? {
-        ...task,
-        params: task.params || {},
+      ...(taskData ? {
+        ...taskData,
+        params: taskData.params || {},
       } : {})
     });
   }
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  render() {
-    const { classes, t } = this.props;
-    const { loading, snackbar, ID, command, state, created, updated, message, params } = this.state;
+  const { classes, t } = props;
+  const { loading, snackbar, ID, command, state, created, updated, message, params } = task;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Task queue')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container direction="column" className={classes.container}>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('Task ID')}:</Typography>
-              {ID || t('Unknown')}
-            </div>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('Command')}:</Typography>
-              {command || t('Unknown')}
-            </div>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('State ')}:</Typography>
-              {t(getTaskState(state)) || t('Unknown')}
-              <IconButton onClick={this.refresh}>
-                <Refresh color="primary"/>
-              </IconButton>
-            </div>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('Message')}:</Typography>
-              {message || t('Unknown')}
-            </div>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('Created')}:</Typography>
-              {setDateTimeString(created) || t('Unknown')}
-            </div>
-            <div className={classes.centerRow}>
-              <Typography variant='h6' className={classes.description}>{t('Updated')}:</Typography>
-              {setDateTimeString(updated) || t('Unknown')}
-            </div>
+  return (
+    <ViewWrapper
+      topbarTitle={t('Task queue')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setTask({ ...task, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container direction="column" className={classes.container}>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('Task ID')}:</Typography>
+            {ID || t('Unknown')}
+          </div>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('Command')}:</Typography>
+            {command || t('Unknown')}
+          </div>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('State ')}:</Typography>
+            {t(getTaskState(state)) || t('Unknown')}
+            <IconButton onClick={refresh}>
+              <Refresh color="primary"/>
+            </IconButton>
+          </div>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('Message')}:</Typography>
+            {message || t('Unknown')}
+          </div>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('Created')}:</Typography>
+            {setDateTimeString(created) || t('Unknown')}
+          </div>
+          <div className={classes.centerRow}>
+            <Typography variant='h6' className={classes.description}>{t('Updated')}:</Typography>
+            {setDateTimeString(updated) || t('Unknown')}
+          </div>
             
-            <Divider style={{ marginTop: 8 }}/>
-            <Typography variant="h6" className={classes.params}>
-              {t('Params')}
-            </Typography>
-            {Object.entries(params).map(([param, value], key) => {
-              const displayValue = JSON.stringify(value);
-              return param !== 'result' ? <div className={classes.centerRow}>
-                <Typography className={classes.description}>{param}:</Typography>
-                {displayValue || t('Unknown')}
-              </div> :
-                <div className={classes.flexRow} key={key}>
-                  <div className={classes.description}>{param}</div>
-                  <div>
-                    {(value || []).map(({username, code, message}, idx) =>
-                      <Tooltip key={idx} placement='right' title={message || ''}>
-                        <Typography className={classes.resultParam}>
-                          <span
-                            style={{
-                              marginRight: 8,
-                              backgroundColor: code < 300 /* code 2xx */ ? green['500'] : red['500'],
-                              borderRadius: 4,
-                              padding: '2px 4px',
-                            }}
-                          >
-                            {code}
-                          </span>
-                          {username}
-                        </Typography>
-                      </Tooltip>
-                    )}
-                  </div>
-                </div>;
-            })}
-          </Grid>
-          <Button
-            color="secondary"
-            onClick={this.handleNavigation('taskq')}
-          >
-            {t('Back')}
-          </Button>
-        </Paper>
-        <Feedback
-          snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: '' })}
-        />
-      </ViewWrapper>
-    );
-  }
+          <Divider style={{ marginTop: 8 }}/>
+          <Typography variant="h6" className={classes.params}>
+            {t('Params')}
+          </Typography>
+          {Object.entries(params).map(([param, value], key) => {
+            const displayValue = JSON.stringify(value);
+            return param !== 'result' ? <div className={classes.centerRow}>
+              <Typography className={classes.description}>{param}:</Typography>
+              {displayValue || t('Unknown')}
+            </div> :
+              <div className={classes.flexRow} key={key}>
+                <div className={classes.description}>{param}</div>
+                <div>
+                  {(value || []).map(({username, code, message}, idx) =>
+                    <Tooltip key={idx} placement='right' title={message || ''}>
+                      <Typography className={classes.resultParam}>
+                        <span
+                          style={{
+                            marginRight: 8,
+                            backgroundColor: code < 300 /* code 2xx */ ? green['500'] : red['500'],
+                            borderRadius: 4,
+                            padding: '2px 4px',
+                          }}
+                        >
+                          {code}
+                        </span>
+                        {username}
+                      </Typography>
+                    </Tooltip>
+                  )}
+                </div>
+              </div>;
+          })}
+        </Grid>
+        <Button
+          color="secondary"
+          onClick={handleNavigation('taskq')}
+        >
+          {t('Back')}
+        </Button>
+      </Paper>
+      <Feedback
+        snackbar={snackbar}
+        onClose={() => setTask({ ...task, snackbar: '' })}
+      />
+    </ViewWrapper>
+  );
 }
 
 TaskDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
 };
 
@@ -220,5 +218,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(TaskDetails)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(TaskDetails))));

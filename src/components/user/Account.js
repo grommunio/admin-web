@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
   Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput } from '@mui/material';
 import { withStyles } from '@mui/styles';
@@ -63,48 +63,45 @@ const styles = theme => ({
   },
 });
 
-class Account extends PureComponent {
+const Account = props => {
+  const context = useContext(CapabilityContext);
 
-  state = {
-    autocompleteInput: '',
-  }
-
-  types = [
+  const types = [
     { name: 'User', ID: 0 },
     { name: 'Mail list', ID: 1 },
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
   ]
 
-  statuses = [
+  const statuses = [
     { name: 'Normal', ID: 0 },
     { name: 'Suspended', ID: 1 },
     { name: 'Shared', ID: 4 },
   ]
 
-  hiddenFrom = [
+  const hiddenFrom = [
     { ID: 1, name: 'Global Address List', value: 0x01 },
     { ID: 2, name: 'Address/Member lists', value: 0x02 },
     { ID: 3, name: 'Delegate lists', value: 0x04 },
     { ID: 4, name: 'Ambiguous Name Resolution', value: 0x08 }
   ]
 
-  formatMSE(rawMSE) {
+  const formatMSE = (rawMSE) => {
     let exp = Math.log(rawMSE) / Math.log(1024) | 0;
     let res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
 
     return res + '' + (exp === 0 ? 'bytes' : 'kMGTPEZYRQ'[exp - 1] + 'B');
   }
 
-  calculateGraph() {
-    const { classes, rawData, t } = this.props;
+  const calculateGraph = () => {
+    const { classes, rawData, t } = props;
     const {
       messagesizeextended: rawMSE,
       storagequotalimit: rawSTQ,
       prohibitreceivequota: rawRQ,
       prohibitsendquota: rawSQ,
     } = rawData.properties || {};
-    const readableMSE = this.formatMSE(rawMSE);
+    const readableMSE = formatMSE(rawMSE);
     const usedSpace = ((rawMSE / rawSTQ / 1024) * 100 || 0).toFixed(0) + '%';
     const rqPosition = (rawRQ / rawSTQ * 100).toFixed(0) + '%';
     const sqPosition = (rawSQ / rawSTQ * 100).toFixed(0) + '%';
@@ -153,112 +150,111 @@ class Account extends PureComponent {
     </div>;
   }
 
-  render() {
-    const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
-      handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
-      handlePasswordChange, handleChatUser, handleServer,
-      servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = this.props;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
+  const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
+    handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
+    handlePasswordChange, handleChatUser, handleServer,
+    servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = props;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
-      ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
-    const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
-      prohibitsendquota, attributehidden_gromox } = properties;
+    ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
+  const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
+    prohibitsendquota, attributehidden_gromox } = properties;
 
-    return (
-      <FormControl className={classes.form}>
-        <Grid container className={classes.input}>
-          <TextField
-            label={t("Username")}
-            value={username || ''}
-            style={{ flex: 1, marginRight: 8 }}
-            InputProps={{
-              endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
-            }}
-            onChange={handleInput('username')}
-          />
-          {writable && status !== 4 && ldapID === null && <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePasswordChange}
-            size="small"
-          >
-            {t('Change password')}
-          </Button>}
-        </Grid>
-        {ldapID && <TextField 
-          label={t("LDAP ID")}
-          className={classes.input}
-          value={ldapID || ''}
-          disabled
+  return (
+    <FormControl className={classes.form}>
+      <Grid container className={classes.input}>
+        <TextField
+          label={t("Username")}
+          value={username || ''}
           style={{ flex: 1, marginRight: 8 }}
-        />}
-        <TextField
-          select
-          className={classes.input}
-          label={t("Mode")}
-          fullWidth
-          value={status || 0}
-          onChange={handleStatusInput}
+          InputProps={{
+            endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
+          }}
+          onChange={handleInput('username')}
+        />
+        {writable && status !== 4 && ldapID === null && <Button
+          variant="contained"
+          color="primary"
+          onClick={handlePasswordChange}
+          size="small"
         >
-          {this.statuses.map((status, key) => (
-            <MenuItem key={key} value={status.ID}>
-              {t(status.name)}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          select
-          className={classes.input}
-          label={t("Type")}
-          fullWidth
-          disabled={displaytypeex === 1}
-          value={displaytypeex || 0}
-          onChange={handlePropertyChange('displaytypeex')}
-        >
-          {this.types.map((type, key) => (
-            <MenuItem key={key} value={type.ID}>
-              {t(type.name)}
-            </MenuItem>
-          ))}
-        </TextField>
-        {this.context.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
-          value={homeserver || ''}
-          filterAttribute={'hostname'}
-          onChange={handleServer}
-          className={classes.input} 
-          options={servers}
-          label={t('Homeserver')}
-          disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
-        />}
-        <TextField
-          select
-          className={classes.input}
-          label={t("Language")}
-          fullWidth
-          value={lang || 'en_US'}
-          disabled
-        >
-          {langs.map((l) => (
-            <MenuItem key={l.code} value={l.code}>
-              {l.code + ": " + l.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <div className={classes.quota}>
-          <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
-          <Grid container style={{ marginTop: 8 }}>
-            <TextField 
-              className={classes.flexInput}
-              label={
-                <div className={classes.labelContainer}>
-                  {t("Send quota limit")}
-                  <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
-                </div>
-              }
-              value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
-              onChange={handleIntPropertyChange('prohibitsendquota')}
-              InputProps={{
-                endAdornment:
+          {t('Change password')}
+        </Button>}
+      </Grid>
+      {ldapID && <TextField 
+        label={t("LDAP ID")}
+        className={classes.input}
+        value={ldapID || ''}
+        disabled
+        style={{ flex: 1, marginRight: 8 }}
+      />}
+      <TextField
+        select
+        className={classes.input}
+        label={t("Mode")}
+        fullWidth
+        value={status || 0}
+        onChange={handleStatusInput}
+      >
+        {statuses.map((status, key) => (
+          <MenuItem key={key} value={status.ID}>
+            {t(status.name)}
+          </MenuItem>
+        ))}
+      </TextField>
+      <TextField
+        select
+        className={classes.input}
+        label={t("Type")}
+        fullWidth
+        disabled={displaytypeex === 1}
+        value={displaytypeex || 0}
+        onChange={handlePropertyChange('displaytypeex')}
+      >
+        {types.map((type, key) => (
+          <MenuItem key={key} value={type.ID}>
+            {t(type.name)}
+          </MenuItem>
+        ))}
+      </TextField>
+      {context.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
+        value={homeserver || ''}
+        filterAttribute={'hostname'}
+        onChange={handleServer}
+        className={classes.input} 
+        options={servers}
+        label={t('Homeserver')}
+        disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
+      />}
+      <TextField
+        select
+        className={classes.input}
+        label={t("Language")}
+        fullWidth
+        value={lang || 'en_US'}
+        disabled
+      >
+        {langs.map((l) => (
+          <MenuItem key={l.code} value={l.code}>
+            {l.code + ": " + l.name}
+          </MenuItem>
+        ))}
+      </TextField>
+      <div className={classes.quota}>
+        <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
+        <Grid container style={{ marginTop: 8 }}>
+          <TextField 
+            className={classes.flexInput}
+            label={
+              <div className={classes.labelContainer}>
+                {t("Send quota limit")}
+                <div style={{ width: 6, height: 6, backgroundColor: yellow['500'], marginLeft: 4 }}></div>
+              </div>
+            }
+            value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
+            onChange={handleIntPropertyChange('prohibitsendquota')}
+            InputProps={{
+              endAdornment:
                   <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('prohibitsendquota')}
@@ -271,20 +267,20 @@ class Account extends PureComponent {
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
                   </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.flexInput}
-              label={
-                <div className={classes.labelContainer}>
-                  {t("Receive quota limit")}
-                  <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
-                </div>
-              }
-              value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
-              onChange={handleIntPropertyChange('prohibitreceivequota')}
-              InputProps={{
-                endAdornment:
+            }}
+          />
+          <TextField 
+            className={classes.flexInput}
+            label={
+              <div className={classes.labelContainer}>
+                {t("Receive quota limit")}
+                <div style={{ width: 6, height: 6, backgroundColor: red['500'], marginLeft: 4 }}></div>
+              </div>
+            }
+            value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
+            onChange={handleIntPropertyChange('prohibitreceivequota')}
+            InputProps={{
+              endAdornment:
                   <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('prohibitreceivequota')}
@@ -297,22 +293,22 @@ class Account extends PureComponent {
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
                   </FormControl>,
-              }}
-            />
-            <TextField 
-              className={classes.flexInput}
-              label={
-                <div className={classes.labelContainer}>
-                  {t("Storage quota limit")}
-                  <div style={{ width: 6, height: 6, backgroundColor: '#ddd', marginLeft: 4 }}></div>
-                </div>
-              }
-              value={storagequotalimit !== undefined ? storagequotalimit : ''}
-              onChange={handleIntPropertyChange('storagequotalimit')}
-              helperText={storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
-              error={storageQuotaTooHigh}
-              InputProps={{
-                endAdornment:
+            }}
+          />
+          <TextField 
+            className={classes.flexInput}
+            label={
+              <div className={classes.labelContainer}>
+                {t("Storage quota limit")}
+                <div style={{ width: 6, height: 6, backgroundColor: '#ddd', marginLeft: 4 }}></div>
+              </div>
+            }
+            value={storagequotalimit !== undefined ? storagequotalimit : ''}
+            onChange={handleIntPropertyChange('storagequotalimit')}
+            helperText={storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
+            error={storageQuotaTooHigh}
+            InputProps={{
+              endAdornment:
                   <FormControl className={classes.adornment}>
                     <Select
                       onChange={handleUnitChange('storagequotalimit')}
@@ -325,152 +321,150 @@ class Account extends PureComponent {
                       <MenuItem value={3}>TB</MenuItem>
                     </Select>
                   </FormControl>,
-              }}
-            />
-            <div className={classes.graphContainer}>
-              {this.calculateGraph()}
-            </div>
-          </Grid>
-        </div>
-        <FormControl className={classes.input} fullWidth>
-          <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
-          <Select
-            multiple
-            // Transform bitmask to array elements
-            value={attributehidden_gromox ? [attributehidden_gromox & 1, attributehidden_gromox & 2, attributehidden_gromox & 4, attributehidden_gromox & 8] : []}
-            onChange={handleMultiselectChange('attributehidden_gromox')}
-            input={<OutlinedInput label={t("Hide user from…")}/>}
-          >
-            {this.hiddenFrom.map(({ ID, name, value }) => (
-              <MenuItem
-                key={ID}
-                value={value}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          className={classes.input}
-          label={t("Creation time")}
-          fullWidth
-          value={creationtime || ''}
-          onChange={handlePropertyChange('creationtime')}
-          disabled
-        />
-        {status !== 4 && <Tooltip
-          placement="top-start"
-          title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
-        >
-          <Grid container className={classes.input}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chat || false}
-                  onChange={handleChatUser}
-                  color="primary"
-                />
-              }
-              label={t('Create grommunio-chat User')}
-              disabled={!domain.chat}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chatAdmin || false}
-                  onChange={handleCheckbox('chatAdmin')}
-                  color="primary"
-                />
-              }
-              disabled={!chat || !domain.chat}
-              label={t('grommunio-chat admin permissions')}
-            />
-          </Grid>
-        </Tooltip>}
-        <Grid container className={classes.input}>
-          {status !== 4 && <FormControlLabel
-            control={
-              <Checkbox
-                checked={smtp || false }
-                onChange={handleCheckbox('smtp')}
-                color="primary"
-              />
-            }
-            label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
-          />}
-          {status !== 4 && <FormControlLabel
-            control={
-              <Checkbox
-                checked={changePassword || false }
-                onChange={handleCheckbox('changePassword')}
-                color="primary"
-              />
-            }
-            label={t('Allow password changes')}
-          />}
-          {status !== 4 && <FormControlLabel
-            control={
-              <Checkbox
-                checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
-                onChange={handleCheckbox('pop3_imap')}
-                color="primary"
-                disabled={privArchive}
-              />
-            }
-            label={t('Allow POP3/IMAP logins')}
-          />}
+            }}
+          />
+          <div className={classes.graphContainer}>
+            {calculateGraph()}
+          </div>
         </Grid>
-        {status !== 4 && <Grid container className={classes.input}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={privChat || false}
-                onChange={handleCheckbox('privChat')}
-                color="primary"
-              />
-            }
-            disabled={!chat}
-            label={t('Allow Chat')}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={privVideo || false }
-                onChange={handleCheckbox('privVideo')}
-                color="primary"
-              />
-            }
-            label={t('Allow Meet')}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={privFiles || false }
-                onChange={handleCheckbox('privFiles')}
-                color="primary"
-              />
-            }
-            label={t('Allow Files')}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={privArchive || false}
-                value={privFiles || false}
-                onChange={handleCheckbox('privArchive')}
-                color="primary"
-              />
-            }
-            label={t('Allow Archive')}
-          />
-        </Grid>}
+      </div>
+      <FormControl className={classes.input} fullWidth>
+        <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
+        <Select
+          multiple
+          // Transform bitmask to array elements
+          value={attributehidden_gromox ? [attributehidden_gromox & 1, attributehidden_gromox & 2, attributehidden_gromox & 4, attributehidden_gromox & 8] : []}
+          onChange={handleMultiselectChange('attributehidden_gromox')}
+          input={<OutlinedInput label={t("Hide user from…")}/>}
+        >
+          {hiddenFrom.map(({ ID, name, value }) => (
+            <MenuItem
+              key={ID}
+              value={value}
+            >
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
       </FormControl>
-    );
-  }
+      <TextField
+        className={classes.input}
+        label={t("Creation time")}
+        fullWidth
+        value={creationtime || ''}
+        onChange={handlePropertyChange('creationtime')}
+        disabled
+      />
+      {status !== 4 && <Tooltip
+        placement="top-start"
+        title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
+      >
+        <Grid container className={classes.input}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={chat || false}
+                onChange={handleChatUser}
+                color="primary"
+              />
+            }
+            label={t('Create grommunio-chat User')}
+            disabled={!domain.chat}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={chatAdmin || false}
+                onChange={handleCheckbox('chatAdmin')}
+                color="primary"
+              />
+            }
+            disabled={!chat || !domain.chat}
+            label={t('grommunio-chat admin permissions')}
+          />
+        </Grid>
+      </Tooltip>}
+      <Grid container className={classes.input}>
+        {status !== 4 && <FormControlLabel
+          control={
+            <Checkbox
+              checked={smtp || false }
+              onChange={handleCheckbox('smtp')}
+              color="primary"
+            />
+          }
+          label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
+        />}
+        {status !== 4 && <FormControlLabel
+          control={
+            <Checkbox
+              checked={changePassword || false }
+              onChange={handleCheckbox('changePassword')}
+              color="primary"
+            />
+          }
+          label={t('Allow password changes')}
+        />}
+        {status !== 4 && <FormControlLabel
+          control={
+            <Checkbox
+                checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
+              onChange={handleCheckbox('pop3_imap')}
+              color="primary"
+              disabled={privArchive}
+            />
+          }
+          label={t('Allow POP3/IMAP logins')}
+        />}
+      </Grid>
+      {status !== 4 && <Grid container className={classes.input}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={privChat || false}
+              onChange={handleCheckbox('privChat')}
+              color="primary"
+            />
+          }
+          disabled={!chat}
+          label={t('Allow Chat')}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={privVideo || false }
+              onChange={handleCheckbox('privVideo')}
+              color="primary"
+            />
+          }
+          label={t('Allow Meet')}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={privFiles || false }
+              onChange={handleCheckbox('privFiles')}
+              color="primary"
+            />
+          }
+          label={t('Allow Files')}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={privArchive || false}
+              value={privFiles || false}
+              onChange={handleCheckbox('privArchive')}
+              color="primary"
+            />
+          }
+          label={t('Allow Archive')}
+        />
+      </Grid>}
+    </FormControl>
+  );
 }
 
-Account.contextType = CapabilityContext;
 Account.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

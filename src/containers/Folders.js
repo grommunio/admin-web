@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Tabs, Tab } from '@mui/material';
 import { deleteFolderData, fetchFolderTree } from '../actions/folders';
@@ -53,18 +53,19 @@ const styles = theme => ({
   },
 });
 
-class Folders extends PureComponent {
-
-  state = {
+const Folders = props => {
+  const [state, setState] = useState({
     offset: 0,
     tab: 0,
     root: -1,
     adding: null,
     filteredTree: null,
-  }
+  });
+  const context = useContext(CapabilityContext);
+  const treeContainer = useRef();
 
-  handleScroll = () => {
-    const { domain, folders, fetchTableData, tableState } = this.props;
+  const handleScroll = () => {
+    const { domain, folders, fetchTableData, tableState } = props;
     const { moreDataAvailable, loading } = folders;
     if (moreDataAvailable &&
       Math.floor(
@@ -73,23 +74,25 @@ class Folders extends PureComponent {
       ) <=
       document.getElementById("scrollDiv").offsetHeight + 20
     ) {
-      const { offset } = this.state;
+      const { offset } = state;
       if (!loading) { 
-        this.setState({
+        setState({
+          ...state,
           offset: offset + defaultFetchLimit,
-        }, () => fetchTableData(domain.ID, {
-          offset: this.state.offset,
+        });
+        fetchTableData(domain.ID, {
+          offset: defaultFetchLimit + offset,
           match: tableState.match || undefined,
-        }));
+        })
       }
     }
   };
 
-  handleTab = (_, tab) => this.setState({ tab });
+  const handleTab = (_, tab) => setState({ ...state, tab });
 
-  renderNode = ({ nodeDatum, toggleNode }) => {
-    const { classes } = this.props;
-    return <g onClick={this.handleNodeClicked(nodeDatum?.folderid)}>
+  const renderNode = ({ nodeDatum, toggleNode }) => {
+    const { classes } = props;
+    return <g onClick={handleNodeClicked(nodeDatum?.folderid)}>
       <rect className={classes.treeNode} width="20" height="20" x="-10" onClick={toggleNode} />
       <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
         {nodeDatum?.name}
@@ -97,45 +100,45 @@ class Folders extends PureComponent {
     </g>;
   }
 
-  getOffset() {
-    const container = this.treeContainer;
+  const getOffset = () => {
+    const container = treeContainer.current;
     return {
       x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
       y: 50,
     };
   }
 
-  handleNodeClicked = id => () => {
-    const { domain, history } = this.props;
-    history.push('/' + domain.ID + '/folders/' + id);
+  const handleNodeClicked = id => () => {
+    const { domain, navigate } = props;
+    navigate('/' + domain.ID + '/folders/' + id);
   }
 
-  handleAdd = parentID => e => {
+  const handleAdd = parentID => e => {
     e.stopPropagation();
-    this.setState({ adding: parentID });
+    setState({ ...state, adding: parentID });
   }
 
-  handleAddingClose = () => {
-    this.setState({ adding: null });
+  const handleAddingClose = () => {
+    setState({ ...state, adding: null });
   }
 
-  handleAddingSuccess = () => {
-    this.props.handleAddingSuccess();
-    this.setState({ adding: null });
+  const handleAddingSuccess = () => {
+    props.handleAddingSuccess();
+    setState({ ...state, adding: null });
   }
 
-  handleMatch = e => {
+  const handleMatch = e => {
     const { value } = e.target;
-    const Tree = structuredClone(this.props.folders.Tree);
-    const filteredTree = this.prune(Tree, value);
-    this.setState({ filteredTree });
+    const Tree = structuredClone(props.folders.Tree);
+    const filteredTree = prune(Tree, value);
+    setState({ ...state, filteredTree });
   }
 
   // Recursive tree filter
-  prune(node, text) {
+  const prune = (node, text) => {
     const children = [];
     node.children?.forEach(child => {
-      if(this.prune(child, text)) {
+      if(prune(child, text)) {
         children.push(child);
       }
     });
@@ -144,100 +147,97 @@ class Folders extends PureComponent {
   }
 
 
-  render() {
-    const { classes, t, folders, domain, tableState, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { loading, snackbar, deleting } = tableState;
-    const { adding, tab, filteredTree } = this.state;
+  const { classes, t, folders, domain, tableState, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const { loading, snackbar, deleting } = tableState;
+  const { adding, tab, filteredTree } = state;
 
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Folders")}
-        subtitle={t('folders_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#folders"
-        snackbar={snackbar}
-        onSnackbarClose={clearSnackbar}
-        baseRef={tc => (this.treeContainer = tc)}
-        loading={loading}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Folders")}
+      subtitle={t('folders_sub')}
+      href="https://docs.grommunio.com/admin/administration.html#folders"
+      snackbar={snackbar}
+      onSnackbarClose={clearSnackbar}
+      baseRef={treeContainer}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          onChange={handleMatch}
+          placeholder={t("Search folders")}
+        />}
       >
-        <TableActionGrid
-          tf={<SearchTextfield
-            onChange={this.handleMatch}
-            placeholder={t("Search folders")}
-          />}
+        <Tabs
+          indicatorColor="primary"
+          textColor="primary"
+          className={classes.tabs}
+          onChange={handleTab}
+          value={tab}
         >
-          <Tabs
-            indicatorColor="primary"
-            textColor="primary"
-            className={classes.tabs}
-            onChange={this.handleTab}
-            value={tab}
-          >
-            <Tab sx={{ minHeight: 48 }} label={t("List")} iconPosition='start' icon={<List />}/>
-            <Tab sx={{ minHeight: 48 }} label={t("Tree")} iconPosition='start' icon={<AccountTree />}/>
-          </Tabs>
-        </TableActionGrid>
-        {!tab && 
-          <Paper className={classes.tablePaper} elevation={1}>
-            <FolderHierarchy
-              domainID={domain.ID}
-              data={filteredTree || folders.Tree}
-              handleAdd={this.handleAdd}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              writable={writable}
+          <Tab sx={{ minHeight: 48 }} label={t("List")} iconPosition='start' icon={<List />}/>
+          <Tab sx={{ minHeight: 48 }} label={t("Tree")} iconPosition='start' icon={<AccountTree />}/>
+        </Tabs>
+      </TableActionGrid>
+      {!tab && 
+        <Paper className={classes.tablePaper} elevation={1}>
+          <FolderHierarchy
+            domainID={domain.ID}
+            data={filteredTree || folders.Tree}
+            handleAdd={handleAdd}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+            writable={writable}
+          />
+        </Paper>}
+      {tab === 1 && 
+        <div className={classes.treeContainer}>
+          <Paper style={{ flex: 1 }}>
+            <Tree
+              data={folders.Tree}
+              orientation="vertical"
+              renderCustomNodeElement={renderNode}
+              depthFactor={50}
+              pathFunc="step"
+              translate={getOffset()}
+              scaleExtent={{
+                min: 0.1,
+                max: 2,
+              }}
+              separation={{
+                siblings: 2,
+                nonSiblings: 2,
+              }}
+              onNodeClick={handleNodeClicked}
+              collapsible={false}
             />
-          </Paper>}
-        {tab === 1 && 
-          <div className={classes.treeContainer}>
-            <Paper style={{ flex: 1 }}>
-              <Tree
-                data={folders.Tree}
-                orientation="vertical"
-                renderCustomNodeElement={this.renderNode}
-                depthFactor={50}
-                pathFunc="step"
-                translate={this.getOffset()}
-                scaleExtent={{
-                  min: 0.1,
-                  max: 2,
-                }}
-                separation={{
-                  siblings: 2,
-                  nonSiblings: 2,
-                }}
-                onNodeClick={this.handleNodeClicked}
-                collapsible={false}
-              />
-            </Paper>
-          </div>}
-        <AddFolder
-          open={!!adding}
-          onClose={this.handleAddingClose}
-          onSuccess={this.handleAddingSuccess}
-          onError={handleAddingError}
-          domain={domain}
-          parentID={adding}
-        />
-        <DeleteFolder
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={handleDeleteSuccess}
-          onError={handleDeleteError}
-          onClose={handleDeleteClose}
-          item={deleting.displayname}
-          id={deleting.folderid}
-          domainID={domain.ID}
-        />
-      </TableViewContainer>
-    );
-  }
+          </Paper>
+        </div>}
+      <AddFolder
+        open={!!adding}
+        onClose={handleAddingClose}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        domain={domain}
+        parentID={adding}
+      />
+      <DeleteFolder
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting.displayname}
+        id={deleting.folderid}
+        domainID={domain.ID}
+      />
+    </TableViewContainer>
+  );
 }
 
-Folders.contextType = CapabilityContext;
 Folders.propTypes = {
   domain: PropTypes.object.isRequired,
   folders: PropTypes.object.isRequired,

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid,
@@ -46,265 +46,264 @@ const styles = theme => ({
   },
 });
 
-class Contacts extends Component {
-
-  state = {
+const Contacts = props => {
+  const context = useContext(CapabilityContext);
+  const [state, setState] = useState({
     snackbar: '',
     checking: false,
     taskMessage: '',
     taskID: null,
     addingContact: false,
-  }
+  });
 
-  handleScroll = () => {
-    const { Users, count, loading } = this.props.users;
-    this.props.handleScroll(Users, count, loading);
+  const handleScroll = () => {
+    const { Users, count, loading } = props.users;
+    props.handleScroll(Users, count, loading);
   };
 
-  columns = [
+  const columns = [
     { label: 'Display name', value: 'displayname' },
     { label: 'E-Mail address', value: 'smtpaddress' },
   ]
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleTaskClose = () => this.setState({
+  const handleTaskClose = () => setState({
+    ...state,
     taskMessage: "",
     taskID: null,
   })
 
-  handleSnackbarClose = () => {
-    this.setState({ snackbar: '' });
-    this.props.clearSnackbar();
+  const handleSnackbarClose = () => {
+    setState({ ...state, snackbar: '' });
+    props.clearSnackbar();
   }
 
   /* This function is not actually doing what it pretends to do.
   *  There is no endpoint to explicitely sync LDAP groups.
   *  However, LDAP groups are just users, so syncing users has the desired effect.
   */
-  handleContactsSync = importUsers => () => {
-    const { sync, domain, fetchTableData } = this.props;
+  const handleContactsSync = importUsers => () => {
+    const { sync, domain, fetchTableData } = props;
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {
           // Background task was created -> Show task dialog
-          this.setState({
+          setState({
+            ...state,
             taskMessage: response.message || 'Task created',
             loading: false,
             taskID: response.taskID,
           });
         } else {
           // No task created -> Reload table data
-          const { tableState } = this.props;
+          const { tableState } = props;
           const { order, orderBy, match } = tableState;
-          this.setState({ snackbar: 'Success!' });
+          setState({ ...state, snackbar: 'Success!' });
           fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
-            .catch(msg => this.setState({ snackbar: msg }));
+            .catch(msg => setState({ ...state, snackbar: msg }));
         }
       })
-      .catch(msg => this.setState({ snackbar: msg }));
+      .catch(msg => setState({ ...state, snackbar: msg }));
   }
 
-  checkUsers = async () => {
-    await this.props.check({ domain: this.props.domain.ID })
-      .catch(msg => this.setState({ snackbar: msg }));
-    this.setState({ checking: true });
+  const checkUsers = async () => {
+    await props.check({ domain: props.domain.ID })
+      .catch(msg => setState({ ...state, snackbar: msg }));
+    setState({ ...state, checking: true });
   }
 
-  handleAddContact = () => this.setState({ addingContact: true });
+  const handleAddContact = () => setState({ ...state, addingContact: true });
 
-  handleContactClose = () => this.setState({ addingContact: false });
+  const handleContactClose = () => setState({ ...state, addingContact: false });
 
-  handleContactSuccess = () => this.setState({ addingContact: false, snackbar: 'Success!' });
+  const handleContactSuccess = () => setState({ ...state, addingContact: false, snackbar: 'Success!' });
 
-  handleContactError = (error) => this.setState({ snackbar: error });
+  const handleContactError = (error) => setState({ ...state, snackbar: error });
 
-  handleCheckClose = () => this.setState({ checking: false });
+  const handleCheckClose = () => setState({ ...state, checking: false });
 
-  render() {
-    const { classes, t, users, domain, tableState, handleMatch,
-      handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, match, snackbar, deleting } = tableState;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { addingContact, checking, taskMessage, taskID } = this.state;
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Contacts")}
-        subtitle={t('contacts_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#users"
-        snackbar={snackbar || this.state.snackbar}
-        onSnackbarClose={this.handleSnackbarClose}
-        loading={loading}
+  const { classes, t, users, domain, tableState, handleMatch,
+    handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, match, snackbar, deleting } = tableState;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const { addingContact, checking, taskMessage, taskID } = state;
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Contacts")}
+      subtitle={t('contacts_sub')}
+      href="https://docs.grommunio.com/admin/administration.html#users"
+      snackbar={snackbar || state.snackbar}
+      onSnackbarClose={handleSnackbarClose}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search contacts")}
+        />}
       >
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search contacts")}
-          />}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAddContact}
+          className={classes.newButton}
+          disabled={!writable}
+        >
+          {t('New contact')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleNavigation(domain.ID + '/ldap')}
+          className={classes.newButton}
+          disabled={!writable}
+        >
+          {t('Search in LDAP')}
+        </Button>
+        <Tooltip placement="top" title={t("Synchronize LDAP for this domain")}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.newButton}
+            onClick={handleContactsSync(false)}
+            disabled={!writable}
+          >
+            {t('Sync LDAP')}
+          </Button>
+        </Tooltip>
+        <Tooltip
+          placement="top"
+          title={t("Import new contacts from LDAP for this domain") + " " + t("and synchronize previously imported ones")}
         >
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleAddContact}
             className={classes.newButton}
+            onClick={handleContactsSync(true)}
             disabled={!writable}
           >
-            {t('New contact')}
+            {t('Import LDAP')}
           </Button>
+        </Tooltip>
+        <Tooltip
+          placement="top"
+          title={t("Check status of imported contacts of this domain")}
+        >
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleNavigation(domain.ID + '/ldap')}
-            className={classes.newButton}
+            onClick={checkUsers}
             disabled={!writable}
           >
-            {t('Search in LDAP')}
+            {t('Check LDAP')}
           </Button>
-          <Tooltip placement="top" title={t("Synchronize LDAP for this domain")}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.newButton}
-              onClick={this.handleContactsSync(false)}
-              disabled={!writable}
-            >
-              {t('Sync LDAP')}
-            </Button>
-          </Tooltip>
-          <Tooltip
-            placement="top"
-            title={t("Import new contacts from LDAP for this domain") + " " + t("and synchronize previously imported ones")}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.newButton}
-              onClick={this.handleContactsSync(true)}
-              disabled={!writable}
-            >
-              {t('Import LDAP')}
-            </Button>
-          </Tooltip>
-          <Tooltip
-            placement="top"
-            title={t("Check status of imported contacts of this domain")}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.checkUsers}
-              disabled={!writable}
-            >
-              {t('Check LDAP')}
-            </Button>
-          </Tooltip>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingUser", { count: users.Users.length })}
-        </Typography>
-        <Paper className={classes.tablePaper} elevation={1}>
-          <Hidden lgDown>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      {t(column.label)}
+        </Tooltip>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingUser", { count: users.Users.length })}
+      </Typography>
+      <Paper className={classes.tablePaper} elevation={1}>
+        <Hidden lgDown>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {columns.map(column =>
+                  <TableCell key={column.value}>
+                    {t(column.label)}
+                  </TableCell>
+                )}
+                <TableCell padding="checkbox"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.Users.map((obj, idx) => {
+                const properties = obj.properties || {};
+                return (
+                  <TableRow
+                    key={idx}
+                    hover
+                    onClick={handleEdit('/' + domain.ID + '/contacts/' +  obj.ID)}
+                  >
+                    <TableCell>
+                      <div className={classes.flexRow}>
+                        <ContactMail className={classes.icon} fontSize='small'/>
+                        {properties.displayname || ""}
+                      </div>
                     </TableCell>
-                  )}
-                  <TableCell padding="checkbox"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.Users.map((obj, idx) => {
-                  const properties = obj.properties || {};
-                  return (
-                    <TableRow
-                      key={idx}
-                      hover
-                      onClick={handleEdit('/' + domain.ID + '/contacts/' +  obj.ID)}
-                    >
-                      <TableCell>
-                        <div className={classes.flexRow}>
-                          <ContactMail className={classes.icon} fontSize='small'/>
-                          {properties.displayname || ""}
-                        </div>
-                      </TableCell>
-                      <TableCell>{properties.smtpaddress || ""}</TableCell>
-                      <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                          <Delete color="error" fontSize="small"/>
-                        </IconButton>}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Hidden>
-          <Hidden lgUp>
-            <List>
-              {users.Users.map((obj, idx) => 
-                <ListItemButton
-                  key={idx}
-                  onClick={handleEdit('/' + domain.ID + '/contacts/' +  obj.ID)}
-                  divider
-                >
-                  <ListItemIcon>
-                    <ContactMail className={classes.icon} fontSize='small'/>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={obj.properties?.displayname || ''}
-                    secondary={obj.properties?.smtpaddress || ''}
-                  />
-                </ListItemButton>
-              )}
-            </List>
-          </Hidden>
-          {(users.Users.length < users.count) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
-        <AddContact
-          domain={domain}
-          open={addingContact}
-          onSuccess={this.handleContactSuccess}
-          onError={this.handleContactError}
-          onClose={this.handleContactClose}
-        />
-        <DomainDataDelete
-          open={!!deleting}
-          onSuccess={handleDeleteSuccess}
-          onClose={handleDeleteClose}
-          onError={handleDeleteError}
-          item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
-          delete={this.props.delete}
-          id={deleting.ID}
-          domainID={domain.ID}
-        />
-        <TaskCreated
-          message={taskMessage}
-          taskID={taskID}
-          onClose={this.handleTaskClose}
-        />
-        <CheckLdapDialog
-          open={checking}
-          onClose={this.handleCheckClose}
-          onError={handleDeleteError}
-        />
-      </TableViewContainer>
-    );
-  }
+                    <TableCell>{properties.smtpaddress || ""}</TableCell>
+                    <TableCell align="right">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                        <Delete color="error" fontSize="small"/>
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Hidden>
+        <Hidden lgUp>
+          <List>
+            {users.Users.map((obj, idx) => 
+              <ListItemButton
+                key={idx}
+                onClick={handleEdit('/' + domain.ID + '/contacts/' +  obj.ID)}
+                divider
+              >
+                <ListItemIcon>
+                  <ContactMail className={classes.icon} fontSize='small'/>
+                </ListItemIcon>
+                <ListItemText
+                  primary={obj.properties?.displayname || ''}
+                  secondary={obj.properties?.smtpaddress || ''}
+                />
+              </ListItemButton>
+            )}
+          </List>
+        </Hidden>
+        {(users.Users.length < users.count) && <Grid container justifyContent="center">
+          <CircularProgress color="primary" className={classes.circularProgress}/>
+        </Grid>}
+      </Paper>
+      <AddContact
+        domain={domain}
+        open={addingContact}
+        onSuccess={handleContactSuccess}
+        onError={handleContactError}
+        onClose={handleContactClose}
+      />
+      <DomainDataDelete
+        open={!!deleting}
+        onSuccess={handleDeleteSuccess}
+        onClose={handleDeleteClose}
+        onError={handleDeleteError}
+        item={deleting.properties?.displayname || deleting.properties?.smtpaddress || deleting.username || ""}
+        delete={props.delete}
+        id={deleting.ID}
+        domainID={domain.ID}
+      />
+      <TaskCreated
+        message={taskMessage}
+        taskID={taskID}
+        onClose={handleTaskClose}
+      />
+      <CheckLdapDialog
+        open={checking}
+        onClose={handleCheckClose}
+        onError={handleDeleteError}
+      />
+    </TableViewContainer>
+  );
 }
 
-Contacts.contextType = CapabilityContext;
 Contacts.propTypes = {
   users: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,

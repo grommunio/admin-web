@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { AppBar, Toolbar, Typography, Hidden, IconButton,
@@ -13,7 +13,6 @@ import { AppBar, Toolbar, Typography, Hidden, IconButton,
   TextField,
   InputAdornment} from '@mui/material';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
@@ -31,6 +30,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
+import { withRouter } from '../hocs/withRouter';
 
 
 const styles = theme => ({
@@ -137,15 +137,15 @@ const styles = theme => ({
   }
 });
 
-class TopBar extends PureComponent {
-
-  state = {
+const TopBar = props => {
+  const context = useContext(CapabilityContext);
+  const [state, setState] = useState({
     menuAnchorEl: null,
     langsAnchorEl: null,
     search: '',
-  }
+  });
 
-  links = [
+  const links = [
     { key: 'mailWebAddress', title: 'E-Mail', icon: MailOutlineIcon },
     { key: 'chatWebAddress', title: 'Chat', icon: Chat },
     { key: 'videoWebAddress', title: 'Video', icon: Duo },
@@ -154,180 +154,180 @@ class TopBar extends PureComponent {
     { key: 'rspamdWebAddress', title: 'Rspamd', icon: Filter },
   ]
 
-  handleMenuToggle = () => {
-    const { setDrawerOpen } = this.props;
+  const handleMenuToggle = () => {
+    const { setDrawerOpen } = props;
     setDrawerOpen();
   }
 
-  handleMenuOpen = menu => e => this.setState({
+  const handleMenuOpen = menu => e => setState({
+    ...state, 
     [menu]: e.currentTarget,
   });
 
-  handleMenuClose = menu => () => this.setState({
+  const handleMenuClose = menu => () => setState({
+    ...state, 
     [menu]: null,
   });
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  handleLogout = () => {
-    const { history, authLogout } = this.props;
-    history.push('/');
+  const handleLogout = () => {
+    const { navigate, authLogout } = props;
+    navigate('/');
     authLogout();
   }
 
-  handleLangChange = lang => () => {
-    const { changeSettings } = this.props;
+  const handleLangChange = lang => () => {
+    const { changeSettings } = props;
     i18n.changeLanguage(lang);
     changeSettings('language', lang);
     window.localStorage.setItem('lang', lang);
-    this.setState({
+    setState({
+      ...state, 
       langsAnchorEl: null,
     });
   }
 
-  handleAutocomplete = (_, newVal) => {
-    if(newVal?.route) this.props.history.push(newVal.route);
+  const handleAutocomplete = (_, newVal) => {
+    if(newVal?.route) props.navigate(newVal.route);
   }
 
-  render() {
-    const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = this.props;
-    const { menuAnchorEl, langsAnchorEl } = this.state;
-    const licenseVisible = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const sysAdmRead = this.context.includes(SYSTEM_ADMIN_READ);
+  const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
+  const { menuAnchorEl, langsAnchorEl } = state;
+  const licenseVisible = context.includes(SYSTEM_ADMIN_WRITE);
+  const sysAdmRead = context.includes(SYSTEM_ADMIN_READ);
   
-    return (
-      <AppBar color='inherit' position="fixed" className={classes.appbar}>
-        <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
-          <Hidden lgUp>
-            <IconButton color="inherit" onClick={this.handleMenuToggle} size="large">
-              <Burger className={classes.burger}/>
-            </IconButton>
-          </Hidden>
-          <Hidden lgDown>
-            <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
-              {drawer.expanded ?
-                <KeyboardArrowLeft className={classes.burger} /> :
-                <KeyboardArrowRight className={classes.burger} />}
-            </IconButton>
-          </Hidden>
-          <Hidden mdDown>
-            {this.links.map((link, idx) =>
-              <Tooltip
-                placement="bottom"
-                title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
-              >
-                <span>
-                  <IconButton
-                    href={config[link.key]}
-                    disabled={!config[link.key]}
-                    target="_blank"
-                    className={classes.iconButton}
-                    size="large">
-                    <link.icon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            )}
-          </Hidden>
-          {drawer.topbarTitle && <Typography className={classes.title} variant="h6">{drawer.topbarTitle}</Typography>}
-          <div className={classes.flexEndContainer}>
-            {sysAdmRead && <Autocomplete
-              onChange={this.handleAutocomplete}
-              getOptionLabel={o => t(o.label) || ''}
-              className={classes.autoComplete}
-              options={globalSearchOptions}
-              autoHighlight
-              fullWidth
-              filterOptions={(options, state) => {
-                const input = state.inputValue.toLowerCase();
-                return options.filter(o => o.tags.some(tag =>
-                  tag.includes(input) || t(tag).includes(input)))
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  className={classes.search}
-                  placeholder={t("Search")}
-                  variant="standard"
-                  InputProps={{
-                    ...params.InputProps,
-                    style: { color: 'white' },
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <Search htmlColor='white' />
-                        </InputAdornment>
-                        {params.InputProps.startAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-            />}
-            {licenseVisible && <Tooltip title={t("grommunio settings")}>
-              <IconButton className={classes.langButton} onClick={this.handleNavigation("license")}>
-                <Settings color="inherit" className={classes.username}/>
-              </IconButton>
-            </Tooltip>}
-            <Tooltip title={t("Language")}>
-              <IconButton className={classes.langButton} onClick={this.handleMenuOpen('langsAnchorEl')}>
-                <Translate color="inherit" className={classes.username}/>
-              </IconButton>
+  return (
+    <AppBar color='inherit' position="fixed" className={classes.appbar}>
+      <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
+        <Hidden lgUp>
+          <IconButton color="inherit" onClick={handleMenuToggle} size="large">
+            <Burger className={classes.burger}/>
+          </IconButton>
+        </Hidden>
+        <Hidden lgDown>
+          <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
+            {drawer.expanded ?
+              <KeyboardArrowLeft className={classes.burger} /> :
+              <KeyboardArrowRight className={classes.burger} />}
+          </IconButton>
+        </Hidden>
+        <Hidden mdDown>
+          {links.map((link, idx) =>
+            <Tooltip
+              placement="bottom"
+              title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
+            >
+              <span>
+                <IconButton
+                  href={config[link.key]}
+                  disabled={!config[link.key]}
+                  target="_blank"
+                  className={classes.iconButton}
+                  size="large">
+                  <link.icon />
+                </IconButton>
+              </span>
             </Tooltip>
-            <Box className={classes.profileButton} onClick={this.handleMenuOpen('menuAnchorEl')}>
-              <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
-              <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
-            </Box>
-            <Menu
-              id="lang-menu"
-              anchorEl={langsAnchorEl}
-              keepMounted
-              open={Boolean(langsAnchorEl)}
-              onClose={this.handleMenuClose('langsAnchorEl')}
-            >
-              {getLangs().map(({key, value}) =>
-                <MenuItem
-                  selected={settings.language === key}
-                  value={key}
-                  key={key}
-                  onClick={this.handleLangChange(key)}
-                >
-                  {value}
-                </MenuItem>  
-              )}
-            </Menu>
-            <Menu
-              id="simple-menu"
-              anchorEl={menuAnchorEl}
-              keepMounted
-              open={Boolean(menuAnchorEl)}
-              onClose={this.handleMenuClose('menuAnchorEl')}
-              PaperProps={{
-                className: classes.menu
-              }}
-            >
-              <MenuItem onClick={this.handleNavigation('settings')}>
-                {t('Settings')}
-              </MenuItem>
-              <MenuItem onClick={this.handleNavigation('changePassword')}>
-                {t('Change password')}
-              </MenuItem>
-              <MenuItem onClick={this.handleLogout}>
-                {t('Logout')}
-              </MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
-      </AppBar>
-    );
-  }
+          )}
+        </Hidden>
+        {drawer.topbarTitle && <Typography className={classes.title} variant="h6">{drawer.topbarTitle}</Typography>}
+        <div className={classes.flexEndContainer}>
+          {sysAdmRead && <Autocomplete
+            onChange={handleAutocomplete}
+            getOptionLabel={o => t(o.label) || ''}
+            className={classes.autoComplete}
+            options={globalSearchOptions}
+            autoHighlight
+            fullWidth
+            filterOptions={(options, state) => {
+              const input = state.inputValue.toLowerCase();
+              return options.filter(o => o.tags.some(tag =>
+                tag.includes(input) || t(tag).includes(input)))
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                className={classes.search}
+                placeholder={t("Search")}
+                variant="standard"
+                InputProps={{
+                  ...params.InputProps,
+                  style: { color: 'white' },
+                  startAdornment: (
+                    <>
+                      <InputAdornment position="start">
+                        <Search htmlColor='white' />
+                      </InputAdornment>
+                      {params.InputProps.startAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+          />}
+          {licenseVisible && <Tooltip title={t("grommunio settings")}>
+            <IconButton className={classes.langButton} onClick={handleNavigation("license")}>
+              <Settings color="inherit" className={classes.username}/>
+            </IconButton>
+          </Tooltip>}
+          <Tooltip title={t("Language")}>
+            <IconButton className={classes.langButton} onClick={handleMenuOpen('langsAnchorEl')}>
+              <Translate color="inherit" className={classes.username}/>
+            </IconButton>
+          </Tooltip>
+          <Box className={classes.profileButton} onClick={handleMenuOpen('menuAnchorEl')}>
+            <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
+            <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>
+          </Box>
+          <Menu
+            id="lang-menu"
+            anchorEl={langsAnchorEl}
+            keepMounted
+            open={Boolean(langsAnchorEl)}
+            onClose={handleMenuClose('langsAnchorEl')}
+          >
+            {getLangs().map(({key, value}) =>
+              <MenuItem
+                selected={settings.language === key}
+                value={key}
+                key={key}
+                onClick={handleLangChange(key)}
+              >
+                {value}
+              </MenuItem>  
+            )}
+          </Menu>
+          <Menu
+            id="simple-menu"
+            anchorEl={menuAnchorEl}
+            keepMounted
+            open={Boolean(menuAnchorEl)}
+            onClose={handleMenuClose('menuAnchorEl')}
+            PaperProps={{
+              className: classes.menu
+            }}
+          >
+            <MenuItem onClick={handleNavigation('settings')}>
+              {t('Settings')}
+            </MenuItem>
+            <MenuItem onClick={handleNavigation('changePassword')}>
+              {t('Change password')}
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              {t('Logout')}
+            </MenuItem>
+          </Menu>
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
-TopBar.contextType = CapabilityContext;
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
@@ -335,7 +335,7 @@ TopBar.propTypes = {
   title: PropTypes.string,
   setDrawerExpansion: PropTypes.func.isRequired,
   setDrawerOpen: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
   drawer: PropTypes.object.isRequired,
   onAdd: PropTypes.func,

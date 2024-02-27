@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { Chip, CircularProgress } from '@mui/material';
@@ -58,30 +58,29 @@ function scoreDNSResult(valueA, valueB, reqAType="opt", reqBType="opt") {
 const errorColor = "#d32f2f";
 const successColor = "#66bb6a";
 
-class DnsHealth extends PureComponent {
-
-  state = {
+const DnsHealth = props => {
+  const [state, setState] = useState({
     loading: true,
     dnsCheck: {},
     InfoDialog: null,
-  }
+  });
 
-  componentDidMount() {
-    const { checkDns, domain } = this.props;
+  useEffect(() => {
+    const { checkDns, domain } = props;
     checkDns(domain.ID)
       .then(dnsCheck => {
-        this.setState({dnsCheck, loading: false});
+        setState({ ...state, dnsCheck, loading: false});
       })
-      .catch(message => this.setState({ snackbar: message || 'Unknown error', loading: false }));
-  }
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error', loading: false }));
+  }, []);
 
-  getReachabiltyColor() {
-    const { dnsCheck } = this.state;
+  const getReachabiltyColor = () => {
+    const { dnsCheck } = state;
     return !dnsCheck.externalIp ? errorColor : successColor;
   }
 
-  getMXColor() {
-    const { dnsCheck } = this.state;
+  const getMXColor = () => {
+    const { dnsCheck } = state;
     const { mxRecords, externalIp, localIp } = dnsCheck;
     if(!mxRecords) return errorColor;
 
@@ -99,8 +98,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(Math.min(score, matchScore, reverseLookupScore));
   }
 
-  getAutodiscoverColor() {
-    const { dnsCheck } = this.state;
+  const getAutodiscoverColor = () => {
+    const { dnsCheck } = state;
     const { autodiscover, externalIp, localIp } = dnsCheck;
     if(!autodiscover) return errorColor;
 
@@ -113,8 +112,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(Math.min(score, matchScore));
   }
 
-  getAutodiscoverSrvColor() {
-    const { dnsCheck } = this.state;
+  const getAutodiscoverSrvColor = () => {
+    const { dnsCheck } = state;
     const { autodiscoverSRV, externalIp, localIp } = dnsCheck;
     if(!autodiscoverSRV) return errorColor;
 
@@ -128,8 +127,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(Math.min(score, matchScore));
   }
   
-  getAutoconfigColor() {
-    const { dnsCheck } = this.state;
+  const getAutoconfigColor = () => {
+    const { dnsCheck } = state;
     const { autoconfig, externalIp, localIp } = dnsCheck;
     if(!autoconfig) return errorColor;
 
@@ -143,8 +142,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(Math.min(score, matchScore));
   }
 
-  getSpfColor() {
-    const { dnsCheck } = this.state;
+  const getSpfColor = () => {
+    const { dnsCheck } = state;
     const { txt } = dnsCheck;
     if(!txt) return errorColor;
 
@@ -152,8 +151,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(score);
   }
 
-  getDkimColor() {
-    const { dnsCheck } = this.state;
+  const getDkimColor = () => {
+    const { dnsCheck } = state;
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
@@ -161,8 +160,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(score);
   }
 
-  getDmarcColor() {
-    const { dnsCheck } = this.state;
+  const getDmarcColor = () => {
+    const { dnsCheck } = state;
     const { dkim } = dnsCheck;
     if(!dkim) return errorColor;
 
@@ -170,8 +169,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(score);
   }
 
-  getOptionalSrvColor(records=[]) {
-    const { dnsCheck } = this.state;
+  const getOptionalSrvColor = (records=[]) => {
+    const { dnsCheck } = state;
 
     const scores = records.map(record => {
       if(!dnsCheck[record]) return errorColor;
@@ -181,8 +180,8 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(Math.min(...scores));
   }
 
-  getDavTxtColor(record) {
-    const { dnsCheck } = this.state;
+  const getDavTxtColor = (record) => {
+    const { dnsCheck } = state;
     if(!dnsCheck[record]) return errorColor;
 
     const score = scoreDNSResult(dnsCheck[record].externalDNS === '"path=/dav"',
@@ -190,134 +189,132 @@ class DnsHealth extends PureComponent {
     return getChipColorFromScore(score);
   }
 
-  asyncDialogImport = path => async () => {
+  const asyncDialogImport = path => async () => {
     const InfoDialog = await import("./Dialogs/dns/" + path)
       .then(component => component.default)
       .catch(() => console.log("Failed to import dialog"));
-    this.setState({ InfoDialog: InfoDialog || null });
+    setState({ ...state, InfoDialog: InfoDialog || null });
   }
 
-  handleDialogClose = () => this.setState({ InfoDialog: null });
+  const handleDialogClose = () => setState({ ...state, InfoDialog: null });
 
-  render() {
-    const { classes, t, domain } = this.props;
-    const { loading, InfoDialog, dnsCheck } = this.state;
-    return <div className={classes.dnsChips}>
-      <DNSChip
-        title={t("external_ip_expl")}
-        label={t("Reachability")}
-        icon={CallReceived}
-        color={this.getReachabiltyColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Reachability')}
-      />
-      <DNSChip
-        title={t("mx_expl")}
-        label={t("MX Records")}
-        icon={Mail}
-        color={this.getMXColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('MXRecords')}
-      />
-      <DNSChip
-        title={t("autodiscover_expl")}
-        label={t("Autodiscover")}
-        icon={TravelExplore}
-        color={this.getAutodiscoverColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Autodiscover')}
-      />
-      <DNSChip
-        title={t("autodiscoverSrv_expl")}
-        label={t("Autodiscover SRV")}
-        icon={TravelExplore}
-        color={this.getAutodiscoverSrvColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('AutodiscoverSrv')}
-      />
-      <DNSChip
-        title={t("autoconfig_expl")}
-        label={t("Autoconfig")}
-        icon={TravelExplore}
-        color={this.getAutoconfigColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Autoconfig')}
-      />
-      <DNSChip
-        title={t("spf_expl")}
-        label={t("SPF Records")}
-        icon={Policy}
-        color={this.getSpfColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Spf')}
-      />
-      <DNSChip
-        title={t("dkim_expl")}
-        label={t("DKIM")}
-        icon={Policy}
-        color={this.getDkimColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Dkim')}
-      />
-      <DNSChip
-        title={t("dmarc_expl")}
-        label={t("DMARC")}
-        icon={Policy}
-        color={this.getDmarcColor()}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Dmarc')}
-      />
-      <DNSChip
-        title={t("caldav_expl")}
-        label={t("DAV TXT")}
-        icon={EventRepeat}
-        color={this.getDavTxtColor("caldavTXT")}
-        loading={loading}
-        onInfo={this.asyncDialogImport('DavTxt')}
-      />
-      <DNSChip
-        title={t("caldav_expl")}
-        label={t("CalDAV(s) SRV")}
-        icon={EventRepeat}
-        color={this.getOptionalSrvColor(["caldavSRV", "caldavsSRV"])}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Caldav')}
-      />
-      <DNSChip
-        title={t("carddav_expl")}
-        label={t("CardDAV(s) SRV")}
-        icon={OnDeviceTraining}
-        color={this.getOptionalSrvColor(["carddavSRV", "carddavsSRV"])}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Carddav')}
-      />
-      <DNSChip
-        title={t("imap_expl")}
-        label={t("IMAP(s) SRV")}
-        icon={AlternateEmail}
-        color={this.getOptionalSrvColor(["imapSRV", "imapsSRV"])}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Imap')}
-      />
-      <DNSChip
-        title={t("pop3_expl")}
-        label={t("POP3(s) SRV")}
-        icon={AlternateEmail}
-        color={this.getOptionalSrvColor(["pop3SRV", "pop3sSRV"])}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Pop3')}
-      />
-      <DNSChip
-        title={t("submission_expl")}
-        label={t("Submission SRV")}
-        icon={Send}
-        color={this.getOptionalSrvColor(["submissionSRV"])}
-        loading={loading}
-        onInfo={this.asyncDialogImport('Submission')}
-      />
-      {InfoDialog && <InfoDialog onClose={this.handleDialogClose} dnsCheck={dnsCheck} domain={domain}/>}
-    </div>
-  }
+  const { classes, t, domain } = props;
+  const { loading, InfoDialog, dnsCheck } = state;
+  return <div className={classes.dnsChips}>
+    <DNSChip
+      title={t("external_ip_expl")}
+      label={t("Reachability")}
+      icon={CallReceived}
+      color={getReachabiltyColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Reachability')}
+    />
+    <DNSChip
+      title={t("mx_expl")}
+      label={t("MX Records")}
+      icon={Mail}
+      color={getMXColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('MXRecords')}
+    />
+    <DNSChip
+      title={t("autodiscover_expl")}
+      label={t("Autodiscover")}
+      icon={TravelExplore}
+      color={getAutodiscoverColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Autodiscover')}
+    />
+    <DNSChip
+      title={t("autodiscoverSrv_expl")}
+      label={t("Autodiscover SRV")}
+      icon={TravelExplore}
+      color={getAutodiscoverSrvColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('AutodiscoverSrv')}
+    />
+    <DNSChip
+      title={t("autoconfig_expl")}
+      label={t("Autoconfig")}
+      icon={TravelExplore}
+      color={getAutoconfigColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Autoconfig')}
+    />
+    <DNSChip
+      title={t("spf_expl")}
+      label={t("SPF Records")}
+      icon={Policy}
+      color={getSpfColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Spf')}
+    />
+    <DNSChip
+      title={t("dkim_expl")}
+      label={t("DKIM")}
+      icon={Policy}
+      color={getDkimColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Dkim')}
+    />
+    <DNSChip
+      title={t("dmarc_expl")}
+      label={t("DMARC")}
+      icon={Policy}
+      color={getDmarcColor()}
+      loading={loading}
+      onInfo={asyncDialogImport('Dmarc')}
+    />
+    <DNSChip
+      title={t("caldav_expl")}
+      label={t("DAV TXT")}
+      icon={EventRepeat}
+      color={getDavTxtColor("caldavTXT")}
+      loading={loading}
+      onInfo={asyncDialogImport('DavTxt')}
+    />
+    <DNSChip
+      title={t("caldav_expl")}
+      label={t("CalDAV(s) SRV")}
+      icon={EventRepeat}
+      color={getOptionalSrvColor(["caldavSRV", "caldavsSRV"])}
+      loading={loading}
+      onInfo={asyncDialogImport('Caldav')}
+    />
+    <DNSChip
+      title={t("carddav_expl")}
+      label={t("CardDAV(s) SRV")}
+      icon={OnDeviceTraining}
+      color={getOptionalSrvColor(["carddavSRV", "carddavsSRV"])}
+      loading={loading}
+      onInfo={asyncDialogImport('Carddav')}
+    />
+    <DNSChip
+      title={t("imap_expl")}
+      label={t("IMAP(s) SRV")}
+      icon={AlternateEmail}
+      color={getOptionalSrvColor(["imapSRV", "imapsSRV"])}
+      loading={loading}
+      onInfo={asyncDialogImport('Imap')}
+    />
+    <DNSChip
+      title={t("pop3_expl")}
+      label={t("POP3(s) SRV")}
+      icon={AlternateEmail}
+      color={getOptionalSrvColor(["pop3SRV", "pop3sSRV"])}
+      loading={loading}
+      onInfo={asyncDialogImport('Pop3')}
+    />
+    <DNSChip
+      title={t("submission_expl")}
+      label={t("Submission SRV")}
+      icon={Send}
+      color={getOptionalSrvColor(["submissionSRV"])}
+      loading={loading}
+      onInfo={asyncDialogImport('Submission')}
+    />
+    {InfoDialog && <InfoDialog onClose={handleDialogClose} dnsCheck={dnsCheck} domain={domain}/>}
+  </div>
 }
 
 const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label, color, icon: Icon, onInfo }) => {

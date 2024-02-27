@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 
 export default function ToggleColorMode({ children }) {
-  const config = useSelector((state) => ({...state.config}));
+  const config = useSelector(state => state.config);
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
   const [mode, setMode] = React.useState(darkMode === 'true' ? 'dark' : 'light');

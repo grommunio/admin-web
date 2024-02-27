@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -59,9 +59,8 @@ const styles = theme => ({
   },
 });
 
-class AntispamStatistics extends PureComponent {
-
-  formatBytes = (bytes) => {
+const AntispamStatistics = props => {
+  const formatBytes = (bytes) => {
     if (bytes > 10000) {
       return Math.round(bytes/1000) + "k";
     } 
@@ -69,50 +68,47 @@ class AntispamStatistics extends PureComponent {
     return bytes;
   }
 
-  render() {
-    const {classes, t, data} = this.props;
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <MailOutlineIcon className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.scanned}</Typography>
-              <Typography className={classes.label}>{t("Scanned Mails")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <NotInterestedIcon className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.spamCount}</Typography>
-              <Typography className={classes.label}>{t("Spam Count")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <PlaylistAddCheckIcon className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.learned}</Typography>
-              <Typography className={classes.label}>{t("Learned")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <StorageIcon className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{this.formatBytes(data.bytesAllocated)}</Typography>
-              <Typography className={classes.label}>{t("Bytes allocated")}</Typography>
-            </div>
-          </Paper>
-        </div>
+  const {classes, t, data} = props;
+  return (
+    <div className={classes.root}>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <MailOutlineIcon className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.scanned}</Typography>
+            <Typography className={classes.label}>{t("Scanned Mails")}</Typography>
+          </div>
+        </Paper>
       </div>
-    );
-  }
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <NotInterestedIcon className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.spamCount}</Typography>
+            <Typography className={classes.label}>{t("Spam Count")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <PlaylistAddCheckIcon className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.learned}</Typography>
+            <Typography className={classes.label}>{t("Learned")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <StorageIcon className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{formatBytes(data.bytesAllocated)}</Typography>
+            <Typography className={classes.label}>{t("Bytes allocated")}</Typography>
+          </div>
+        </Paper>
+      </div>
+    </div>
+  );
 }
 
 AntispamStatistics.propTypes = {

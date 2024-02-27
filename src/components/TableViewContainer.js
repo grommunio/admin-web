@@ -99,7 +99,7 @@ TableViewContainer.propTypes = {
     PropTypes.node,
     PropTypes.string,
   ]).isRequired,
-  baseRef: PropTypes.func,
+  baseRef: PropTypes.any,
   topbarTitle: PropTypes.string,
   handleScroll: PropTypes.func,
   headline: PropTypes.oneOfType([

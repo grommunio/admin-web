@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext } from 'react';
 import { FormControl, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
@@ -24,40 +24,37 @@ const styles = theme => ({
   },
 });
 
-class RolesTab extends PureComponent {
+const RolesTab = props => {
+  const { classes, t, roles, Roles, handleAutocomplete } = props;
+  const context = useContext(CapabilityContext);    
 
-  render() {
-    const { classes, t, roles, Roles, handleAutocomplete } = this.props;
-
-    return (
-      <FormControl className={classes.form}>
-        <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
-        <FormControl className={classes.input}>
-          <MagnitudeAutocomplete
-            multiple
-            disabled={!this.context.includes(SYSTEM_ADMIN_WRITE)}
-            value={roles || []}
-            filterAttribute={'name'}
-            getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
-            getOptionDisabled={option => roles.includes(option.ID)}
-            onChange={handleAutocomplete('roles')}
-            className={classes.input} 
-            options={Roles || []}
-            label={t('Roles')}
-            placeholder={t("Search roles") + "..."}
-            renderOption={(props, option) => (
-              <li {...props} key={option.ID}>
-                {option.name || option || ''}
-              </li>
-            )}
-          />
-        </FormControl>
+  return (
+    <FormControl className={classes.form}>
+      <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
+      <FormControl className={classes.input}>
+        <MagnitudeAutocomplete
+          multiple
+          disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
+          value={roles || []}
+          filterAttribute={'name'}
+          getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
+          getOptionDisabled={option => roles.includes(option.ID)}
+          onChange={handleAutocomplete('roles')}
+          className={classes.input} 
+          options={Roles || []}
+          label={t('Roles')}
+          placeholder={t("Search roles") + "..."}
+          renderOption={(props, option) => (
+            <li {...props} key={option.ID}>
+              {option.name || option || ''}
+            </li>
+          )}
+        />
       </FormControl>
-    );
-  }
+    </FormControl>
+  );
 }
 
-RolesTab.contextType = CapabilityContext;
 RolesTab.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,

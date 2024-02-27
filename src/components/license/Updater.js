@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material';
@@ -8,7 +8,6 @@ import { fetchUpdateLogData } from '../../actions/logs';
 import { copyToClipboard } from '../../utils';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
-import { Prompt } from 'react-router-dom/cjs/react-router-dom.min';
 
 const styles = theme => ({
   data: {
@@ -39,24 +38,26 @@ const styles = theme => ({
 
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
-class Updater extends PureComponent {
+const Updater = props => {
+  const [state, setState] = useState({
+    checkLoading: false,
+    updateLoading: false,
+    upgradeLoading: false,
+    copied: false,
+    updateLog: [],
+    repo: localStorage.getItem("packageRepository") || "supported"
+  });
 
-  constructor() {
-    super();
-    this.state = {
-      checkLoading: false,
-      updateLoading: false,
-      upgradeLoading: false,
-      copied: false,
-      updateLog: [],
-      repo: localStorage.getItem("packageRepository") || "supported"
+  useEffect(() => {
+    window.addEventListener('beforeunload', onBeforeUnload)
+
+    return () => {
+      clearInterval(fetchInterval);
     }
-  
-    window.addEventListener('beforeunload', this.onBeforeUnload);
-  }
+  }, []);
 
-  onBeforeUnload = (e) => {
-    const { checkLoading, updateLoading, upgradeLoading } = this.state;
+  const onBeforeUnload = (e) => {
+    const { checkLoading, updateLoading, upgradeLoading } = state;
     if (checkLoading || updateLoading || upgradeLoading) {
       e.preventDefault();
       e.returnValue = 'Updater is running! Are you sure you want to quit?';
@@ -65,122 +66,112 @@ class Updater extends PureComponent {
     delete e['returnValue'];
   }
 
-  fetchInterval = null;
+  let fetchInterval = null;
 
-  handleRefresh = async pid => {
-    const { setTabsDisabled, fetchLog } = this.props;
+  const handleRefresh = async pid => {
+    const { setTabsDisabled, fetchLog } = props;
     const response = await fetchLog(pid).catch();
-    this.setState({ updateLog: response.data });
+    setState({ ...state, updateLog: response.data });
     if(response?.processRunning === false) {
-      clearInterval(this.fetchInterval);
-      this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
+      clearInterval(fetchInterval);
+      setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       setTabsDisabled(false);
     }
   }
 
-  handleUpdate = action => async () => {
-    const { systemUpdate, setSnackbar, setTabsDisabled } = this.props;
-    const { repo } = this.state;
-    this.setState({ [action + "Loading"]: true, copied: false });
+  const handleUpdate = action => async () => {
+    const { systemUpdate, setSnackbar, setTabsDisabled } = props;
+    const { repo } = state;
+    setState({ ...state, [action + "Loading"]: true, copied: false });
     setTabsDisabled(true);
     const response = await systemUpdate(action, repo)
       .catch(snackbar => {
         setSnackbar(snackbar);
-        this.setState({ checkLoading: false, updateLoading: false, upgradeLoading: false });
+        setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       });
-    if(response.pid) this.fetchInterval = setInterval(() => {
-      this.handleRefresh(response.pid);
+    if(response.pid) fetchInterval = setInterval(() => {
+      handleRefresh(response.pid);
     }, 1000);
   }
 
-  handleCopyLogs = msg => async () => {
+  const handleCopyLogs = msg => async () => {
     const success = await copyToClipboard(msg).catch(err => err);
     if(success) {
-      this.setState({ copied: true });
+      setState({ ...state, copied: true });
     }
   }
 
-  componentWillUnmount() {
-    clearInterval(this.fetchInterval);
-  }
-
-  handleRepoChange = e => {
+  const handleRepoChange = e => {
     const { value } = e.target;
     localStorage.setItem("packageRepository", value);+
-    this.setState({ repo: value });
+    setState({ ...state, repo: value });
   }
 
-  render() {
-    const { classes, t } = this.props;
-    const { checkLoading, updateLoading, upgradeLoading, updateLog, copied, repo } = this.state;
-    const updating = checkLoading || updateLoading || upgradeLoading;
+  const { classes, t } = props;
+  const { checkLoading, updateLoading, upgradeLoading, updateLog, copied, repo } = state;
+  const updating = checkLoading || updateLoading || upgradeLoading;
 
-    return <div className={classes.updates}>
-      <div style={{ marginBottom: 24 }}>
-        <Typography variant="caption">
-          {t("updater_sub")}
-        </Typography>
-      </div>
-      <div className={classes.actions}>
-        <TextField
-          label={"Repository"}
-          value={repo}
-          onChange={this.handleRepoChange}
-          select
-          className={classes.select}
-          size='small'
-        >
-          <MenuItem value="supported">Supported</MenuItem>
-          <MenuItem value="community">Community</MenuItem>
-        </TextField>
-        <Button
-          variant='contained'
-          onClick={this.handleUpdate("check")}
-          startIcon={checkLoading ? <Loader /> : <Check />}
-          className={classes.updateButton}
-          disabled={updating}
-        >
-          Check for updates
-        </Button>
-        <Button
-          variant='contained'
-          onClick={this.handleUpdate("update")}
-          startIcon={updateLoading ? <Loader /> : <Update />}
-          className={classes.updateButton}
-          disabled={updating}
-        >
-          Update
-        </Button>
-        <Button
-          variant='contained'
-          onClick={this.handleUpdate("upgrade")}
-          startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
-          disabled={updating}
-        >
-          Upgrade
-        </Button>
-      </div>
-      <Paper elevation={0} className={classes.logs}>
-        <Tooltip placement="top" title={t('Copy all')}>
-          <IconButton onClick={this.handleCopyLogs(updateLog.join('\n'))} size="large">
-            {copied ? <CheckCircleOutline /> : <CopyAll />}
-          </IconButton>
-        </Tooltip>
-        {updateLog.length > 0 ? updateLog.map((log, idx) =>
-          <pre
-            key={idx}
-            className={classes.log}
-          >
-            {log}
-          </pre>
-        ) : <Typography align='center'>--- no logs ---</Typography>}
-      </Paper>
-      <Prompt
-        when={updating}
-        message={`Updater is still running!`}
-      />
+  return <div className={classes.updates}>
+    <div style={{ marginBottom: 24 }}>
+      <Typography variant="caption">
+        {t("updater_sub")}
+      </Typography>
     </div>
-  }
+    <div className={classes.actions}>
+      <TextField
+        label={"Repository"}
+        value={repo}
+        onChange={handleRepoChange}
+        select
+        className={classes.select}
+        size='small'
+      >
+        <MenuItem value="supported">Supported</MenuItem>
+        <MenuItem value="community">Community</MenuItem>
+      </TextField>
+      <Button
+        variant='contained'
+        onClick={handleUpdate("check")}
+        startIcon={checkLoading ? <Loader /> : <Check />}
+        className={classes.updateButton}
+        disabled={updating}
+      >
+          Check for updates
+      </Button>
+      <Button
+        variant='contained'
+        onClick={handleUpdate("update")}
+        startIcon={updateLoading ? <Loader /> : <Update />}
+        className={classes.updateButton}
+        disabled={updating}
+      >
+          Update
+      </Button>
+      <Button
+        variant='contained'
+        onClick={handleUpdate("upgrade")}
+        startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
+        disabled={updating}
+      >
+          Upgrade
+      </Button>
+    </div>
+    <Paper elevation={0} className={classes.logs}>
+      <Tooltip placement="top" title={t('Copy all')}>
+        <IconButton onClick={handleCopyLogs(updateLog.join('\n'))} size="large">
+          {copied ? <CheckCircleOutline /> : <CopyAll />}
+        </IconButton>
+      </Tooltip>
+      {updateLog.length > 0 ? updateLog.map((log, idx) =>
+        <pre
+          key={idx}
+          className={classes.log}
+        >
+          {log}
+        </pre>
+      ) : <Typography align='center'>--- no logs ---</Typography>}
+    </Paper>
+  </div>
 }
 
 Updater.propTypes = {

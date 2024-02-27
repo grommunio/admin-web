@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from "react";
+import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Paper,
@@ -44,12 +44,11 @@ const styles = (theme) => ({
   },
 });
 
-class Domains extends PureComponent {
-  state = {
-    showDeleted: false,
-  };
+const Domains = props => {
+  const [showDeleted, setShowDeleted] = useState(false);
+  const context = useContext(CapabilityContext);
 
-  columns = [
+  const columns = [
     { label: "Domain", value: "domainname" },
     { label: "Address", value: "address" },
     { label: "Title", value: "title" },
@@ -59,155 +58,148 @@ class Domains extends PureComponent {
     { label: "Maximum users", value: "maxUser" },
   ];
 
-  handleScroll = () => {
-    const { Domains, count, loading } = this.props.domains;
-    this.props.handleScroll(Domains, count, loading);
+  const handleScroll = () => {
+    const { Domains, count, loading } = props.domains;
+    props.handleScroll(Domains, count, loading);
   };
 
-  handleCheckbox = (field) => (event) =>
-    this.setState({
-      [field]: event.target.checked,
-    });
+  const handleCheckbox = (event) => setShowDeleted(event.target.checked);
 
-  render() {
-    const { classes, t, domains, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { showDeleted } = this.state;
-    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
+  const { classes, t, domains, tableState, handleMatch, handleRequestSort,
+    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Domains")}
-        subtitle={t('domains_sub')}
-        snackbar={snackbar}
-        href="https://docs.grommunio.com/admin/administration.html#domains"
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Domains")}
+      subtitle={t('domains_sub')}
+      snackbar={snackbar}
+      href="https://docs.grommunio.com/admin/administration.html#domains"
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<><FormControlLabel
+          label={t("Show deactivated")}
+          control={
+            <Checkbox
+              checked={showDeleted || false}
+              onChange={handleCheckbox}
+            />
+          }
+        />
+        <SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search domains")}
+        /></>}
       >
-        <TableActionGrid
-          tf={<><FormControlLabel
-            label={t("Show deactivated")}
-            control={
-              <Checkbox
-                checked={showDeleted || false}
-                onChange={this.handleCheckbox("showDeleted")}
-              />
-            }
-          />
-          <SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search domains")}
-          /></>}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          disabled={!writable}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            disabled={!writable}
-          >
-            {t("New domain")}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingDomains", { count: filteredDomains.length })}
-        </Typography>
-        <Paper elevation={1}>
-          <Hidden lgDown>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  {this.columns.map((column) => (
-                    <TableCell key={column.value}>
-                      <TableSortLabel
-                        active={orderBy === column.value}
-                        align="left"
-                        direction={orderBy === column.value ? order : "asc"}
-                        onClick={handleRequestSort(column.value)}
-                        disabled={column.value === 'activeUsers'}
-                      >
-                        {t(column.label)}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
-                  <TableCell padding="checkbox" />
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredDomains.map((obj, idx) =>
-                  <TableRow key={idx} hover onClick={handleEdit("/domains/" + obj.ID)}>
-                    <TableCell>
-                      {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
-                      {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
-                    </TableCell>
-                    <TableCell>{obj.address || ""}</TableCell>
-                    <TableCell>{obj.title || ""}</TableCell>
-                    <TableCell>{obj.activeUsers}</TableCell>
-                    <TableCell>{obj.inactiveUsers}</TableCell>
-                    <TableCell>{obj.virtualUsers}</TableCell>
-                    <TableCell>{obj.maxUser}</TableCell>
-                    <TableCell align="right">
-                      {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                        <Delete color="error" fontSize="small"/>
-                      </IconButton>}
-                    </TableCell>
-                  </TableRow>)
-                }
-              </TableBody>
-            </Table>
-          </Hidden>
-          <Hidden lgUp>
-            <List>
-              {filteredDomains.map((obj, idx) => 
-                <ListItemButton
-                  key={idx}
-                  onClick={handleEdit("/domains/" + obj.ID)}
-                  divider
-                >
-                  <ListItemText
-                    primary={`${obj.domainname} ${obj.domainname !== obj.displayname ? `(${obj.displayname})` : ""}
+          {t("New domain")}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingDomains", { count: filteredDomains.length })}
+      </Typography>
+      <Paper elevation={1}>
+        <Hidden lgDown>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell key={column.value}>
+                    <TableSortLabel
+                      active={orderBy === column.value}
+                      align="left"
+                      direction={orderBy === column.value ? order : "asc"}
+                      onClick={handleRequestSort(column.value)}
+                      disabled={column.value === 'activeUsers'}
+                    >
+                      {t(column.label)}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+                <TableCell padding="checkbox" />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredDomains.map((obj, idx) =>
+                <TableRow key={idx} hover onClick={handleEdit("/domains/" + obj.ID)}>
+                  <TableCell>
+                    {obj.domainname}{obj.domainname !== obj.displayname ? ` (${obj.displayname}) ` : " "}
+                    {obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}
+                  </TableCell>
+                  <TableCell>{obj.address || ""}</TableCell>
+                  <TableCell>{obj.title || ""}</TableCell>
+                  <TableCell>{obj.activeUsers}</TableCell>
+                  <TableCell>{obj.inactiveUsers}</TableCell>
+                  <TableCell>{obj.virtualUsers}</TableCell>
+                  <TableCell>{obj.maxUser}</TableCell>
+                  <TableCell align="right">
+                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                      <Delete color="error" fontSize="small"/>
+                    </IconButton>}
+                  </TableCell>
+                </TableRow>)
+              }
+            </TableBody>
+          </Table>
+        </Hidden>
+        <Hidden lgUp>
+          <List>
+            {filteredDomains.map((obj, idx) => 
+              <ListItemButton
+                key={idx}
+                onClick={handleEdit("/domains/" + obj.ID)}
+                divider
+              >
+                <ListItemText
+                  primary={`${obj.domainname} ${obj.domainname !== obj.displayname ? `(${obj.displayname})` : ""}
                       ${obj.domainStatus === 3 ? `[${t("Deactivated")}]` : ""}`}
-                    secondary={`${obj.activeUsers} / ${obj.maxUser} ${t("Maximum users")}`}
-                  />
-                </ListItemButton>
-              )}
-            </List>
-          </Hidden>
-          {domains.Domains.length < domains.count && (
-            <Grid container justifyContent="center">
-              <CircularProgress
-                color="primary"
-                className={classes.circularProgress}
-              />
-            </Grid>
-          )}
-        </Paper>
-        <AddDomain
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          onClose={handleAddingClose}
-        />
-        <DeleteDomain
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={handleDeleteSuccess}
-          onError={handleDeleteError}
-          onClose={handleDeleteClose}
-          item={deleting.domainname}
-          id={deleting.ID}
-        />
-      </TableViewContainer>
-    );
-  }
+                  secondary={`${obj.activeUsers} / ${obj.maxUser} ${t("Maximum users")}`}
+                />
+              </ListItemButton>
+            )}
+          </List>
+        </Hidden>
+        {domains.Domains.length < domains.count && (
+          <Grid container justifyContent="center">
+            <CircularProgress
+              color="primary"
+              className={classes.circularProgress}
+            />
+          </Grid>
+        )}
+      </Paper>
+      <AddDomain
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        onClose={handleAddingClose}
+      />
+      <DeleteDomain
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting.domainname}
+        id={deleting.ID}
+      />
+    </TableViewContainer>
+  );
 }
 
-Domains.contextType = CapabilityContext;
 Domains.propTypes = {
   domains: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,

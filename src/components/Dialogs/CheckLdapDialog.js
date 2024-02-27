@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent,Button,
@@ -25,64 +25,62 @@ const styles = {
   },
 };
 
-class CheckLdapDialog extends PureComponent {
+const CheckLdapDialog = props => {
 
-  handleDelete = deleteFiles => () => {
-    const { deleteUsers, onClose, onError } = this.props;
+  const handleDelete = deleteFiles => () => {
+    const { deleteUsers, onClose, onError } = props;
     deleteUsers({ deleteFiles }).then(onClose).catch(onError);
   }
 
-  render() {
-    const { classes, t, open, onClose, Orphaned } = this.props;
+  const { classes, t, open, onClose, Orphaned } = props;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>{t('Orphaned users')}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          {Orphaned.length > 0 ? <List>
-            {Orphaned.map(user => 
-              <ListItem key={user.ID}>
-                <ListItemText
-                  primary={user.username}
-                />
-              </ListItem>  
-            )}
-          </List> : <Typography>{t("All LDAP users are valid")}</Typography>}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Close')}
-          </Button>
-          <Button
-            className={classes.delete}
-            onClick={this.handleDelete(true)}
-            variant="contained"
-            color="secondary"
-            disabled={Orphaned.length === 0}
-          >
-            {t('Delete with files')}
-          </Button>
-          <Button
-            className={classes.delete}
-            onClick={this.handleDelete(false)}
-            variant="contained"
-            color="secondary"
-            disabled={Orphaned.length === 0}
-          >
-            {t('Delete')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>{t('Orphaned users')}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        {Orphaned.length > 0 ? <List>
+          {Orphaned.map(user => 
+            <ListItem key={user.ID}>
+              <ListItemText
+                primary={user.username}
+              />
+            </ListItem>  
+          )}
+        </List> : <Typography>{t("All LDAP users are valid")}</Typography>}
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Close')}
+        </Button>
+        <Button
+          className={classes.delete}
+          onClick={handleDelete(true)}
+          variant="contained"
+          color="secondary"
+          disabled={Orphaned.length === 0}
+        >
+          {t('Delete with files')}
+        </Button>
+        <Button
+          className={classes.delete}
+          onClick={handleDelete(false)}
+          variant="contained"
+          color="secondary"
+          disabled={Orphaned.length === 0}
+        >
+          {t('Delete')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 CheckLdapDialog.propTypes = {

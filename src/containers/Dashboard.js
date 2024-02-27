@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { withStyles } from "@mui/styles";
 import PropTypes from "prop-types";
 import ServicesChart from "../components/ServicesChart";
@@ -144,140 +144,137 @@ const styles = (theme) => ({
   },
 });
 
-class Dashboard extends Component {
-  componentDidMount() {
-    const { fetch, fetchServices, fetchAntispam, fetchAbout, config } = this.props;
-    fetch().catch((msg) => this.setState({ snackbar: msg }));
-    fetchServices().catch((msg) => this.setState({ snackbar: msg }));
-    if(config?.loadAntispamData) fetchAntispam().catch((msg) => this.setState({ snackbar: msg }));
-    fetchAbout().catch((msg) => this.setState({ snackbar: msg }));
-    this.fetchDashboard();
-  }
-
-  state = {
+const Dashboard = props => {
+  const [state, setState] = useState({
     snackbar: null,
-  };
+  });
+  let fetchInterval = null;
 
-  fetchInterval = null;
+  useEffect(() => {
+    const { fetch, fetchServices, fetchAntispam, fetchAbout, config } = props;
+    fetch().catch((msg) => setState({ ...state, snackbar: msg }));
+    fetchServices().catch((msg) => setState({ ...state, snackbar: msg }));
+    if(config?.loadAntispamData) fetchAntispam().catch((msg) => setState({ ...state, snackbar: msg }));
+    fetchAbout().catch((msg) => setState({ ...state, snackbar: msg }));
+    fetchDashboard();
 
-  fetchDashboard() {
-    this.fetchInterval = setInterval(() => {
-      this.props.fetch().catch((msg) => this.setState({ snackbar: msg }));
+    return () => {
+      clearInterval(fetchInterval);
+    }
+  }, []);
+
+  const fetchDashboard = () => {
+    fetchInterval = setInterval(() => {
+      props.fetch().catch((msg) => setState({ ...state, snackbar: msg }));
     }, 1000);
   }
 
-  componentWillUnmount() {
-    clearInterval(this.fetchInterval);
-  }
+  const {
+    classes,
+    t,
+    cpuPercent,
+    cpuPie,
+    memory,
+    memoryPie,
+    disks,
+    load,
+    timer,
+    statistics,
+    config,
+  } = props;
+  const { snackbar } = state;
 
-  render() {
-    const {
-      classes,
-      t,
-      cpuPercent,
-      cpuPie,
-      memory,
-      memoryPie,
-      disks,
-      load,
-      timer,
-      statistics,
-      config,
-    } = this.props;
-    const { snackbar } = this.state;
+  const totalCpuUsage = cpuPie.values.slice(0, 4).reduce((pv, cv) => pv + cv, 0).toFixed(1);
 
-    const totalCpuUsage = cpuPie.values.slice(0, 4).reduce((pv, cv) => pv + cv, 0).toFixed(1);
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.toolbar} />
-        {!!config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
-          {t("Mail filter statistics")}
-          <IconButton
-            size="small"
-            href="https://docs.grommunio.com/admin/administration.html#antispam"
-            target="_blank"
-          >
-            <HelpOutline fontSize="small"/>
-          </IconButton>
-        </Typography>}
-        {!!config?.loadAntispamData && <div className={classes.subtitle}>
-          <Typography variant="caption" >
-            {t("mailfilter_sub")}
-          </Typography>
+  return (
+    <div className={classes.root}>
+      <div className={classes.toolbar} />
+      {!!config?.loadAntispamData && <Typography variant="h2" className={classes.pageTitle}>
+        {t("Mail filter statistics")}
+        <IconButton
+          size="small"
+          href="https://docs.grommunio.com/admin/administration.html#antispam"
+          target="_blank"
+        >
+          <HelpOutline fontSize="small"/>
+        </IconButton>
+      </Typography>}
+      {!!config?.loadAntispamData && <div className={classes.subtitle}>
+        <Typography variant="caption" >
+          {t("mailfilter_sub")}
+        </Typography>
+      </div>}
+      <div className={classes.dashboardLayout}>
+        {!!config?.loadAntispamData && <div className={classes.antispam}>
+          <AntispamStatistics data={statistics}/>
         </div>}
-        <div className={classes.dashboardLayout}>
-          {!!config?.loadAntispamData && <div className={classes.antispam}>
-            <AntispamStatistics data={statistics}/>
-          </div>}
-          <div className={classes.services}>
-            <ServicesChart/>
-          </div>
-          <div className={classes.headline}>
-            <Typography variant="h2" className={classes.pageTitle}>
-              {t("Performance")}
-              <IconButton
-                size="small"
-                href="https://docs.grommunio.com/admin/administration.html#services"
-                target="_blank"
-              >
-                <HelpOutline fontSize="small"/>
-              </IconButton>
+        <div className={classes.services}>
+          <ServicesChart/>
+        </div>
+        <div className={classes.headline}>
+          <Typography variant="h2" className={classes.pageTitle}>
+            {t("Performance")}
+            <IconButton
+              size="small"
+              href="https://docs.grommunio.com/admin/administration.html#services"
+              target="_blank"
+            >
+              <HelpOutline fontSize="small"/>
+            </IconButton>
+          </Typography>
+          <div className={classes.subtitle}>
+            <Typography variant="caption" >
+              {t("performance_sub")}
             </Typography>
-            <div className={classes.subtitle}>
-              <Typography variant="caption" >
-                {t("performance_sub")}
-              </Typography>
-            </div>
-          </div>
-          <div className={classes.cpu}>
-            <Paper elevation={1} className={classes.donutAndLineChart}>
-              <div className={classes.donutChart}>
-                <Typography className={classes.chartTitle}>
-                  {`${t("CPU")}: ${totalCpuUsage || 0}%`}
-                </Typography>
-                <CPUPie cpuPie={cpuPie} />
-              </div>
-              <div className={classes.lineChart}>
-                <CPULine cpuPercent={cpuPercent}/>
-              </div>
-            </Paper>
-          </div>
-          <div className={classes.memory}>
-            <Paper elevation={1} className={classes.donutAndLineChart}>
-              <div className={classes.donutChart}>
-                <Typography className={classes.chartTitle}>
-                  {`${t("Memory")}: ${memory.percent[memory.percent.length - 1] || 0}%`}
-                </Typography>
-                <MemoryPie memoryPie={memoryPie}/>
-              </div>
-              <div className={classes.lineChart}>
-                <MemoryLine memory={memory}/>
-              </div>
-            </Paper>
-          </div>
-          <div className={classes.swap}>
-            <Paper elevation={1} className={classes.donutAndLineChart}>
-              <div className={classes.fullChart}>
-                <Disks disks={disks} timer={timer}/>
-              </div>
-            </Paper>
-          </div>
-          <div className={classes.disk}>
-            <Load load={load}/>
           </div>
         </div>
-        <Typography variant="h2" className={classes.pageTitle}>
-          {t("Versions")}
-        </Typography>
-        <About />
-        <Feedback
-          snackbar={snackbar}
-          onClose={() => this.setState({ snackbar: "" })}
-        />
+        <div className={classes.cpu}>
+          <Paper elevation={1} className={classes.donutAndLineChart}>
+            <div className={classes.donutChart}>
+              <Typography className={classes.chartTitle}>
+                {`${t("CPU")}: ${totalCpuUsage || 0}%`}
+              </Typography>
+              <CPUPie cpuPie={cpuPie} />
+            </div>
+            <div className={classes.lineChart}>
+              <CPULine cpuPercent={cpuPercent}/>
+            </div>
+          </Paper>
+        </div>
+        <div className={classes.memory}>
+          <Paper elevation={1} className={classes.donutAndLineChart}>
+            <div className={classes.donutChart}>
+              <Typography className={classes.chartTitle}>
+                {`${t("Memory")}: ${memory.percent[memory.percent.length - 1] || 0}%`}
+              </Typography>
+              <MemoryPie memoryPie={memoryPie}/>
+            </div>
+            <div className={classes.lineChart}>
+              <MemoryLine memory={memory}/>
+            </div>
+          </Paper>
+        </div>
+        <div className={classes.swap}>
+          <Paper elevation={1} className={classes.donutAndLineChart}>
+            <div className={classes.fullChart}>
+              <Disks disks={disks} timer={timer}/>
+            </div>
+          </Paper>
+        </div>
+        <div className={classes.disk}>
+          <Load load={load}/>
+        </div>
       </div>
-    );
-  }
+      <Typography variant="h2" className={classes.pageTitle}>
+        {t("Versions")}
+      </Typography>
+      <About />
+      <Feedback
+        snackbar={snackbar}
+        onClose={() => setState({ ...state, snackbar: "" })}
+      />
+    </div>
+  );
 }
 
 Dashboard.propTypes = {

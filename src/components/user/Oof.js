@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField } from '@mui/material';
 import { withStyles, withTheme } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -10,7 +10,6 @@ import { connect as connecc } from 'react-redux';
 import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
-import { withRouter } from 'react-router';
 import moment from 'moment';
 import {
   BtnBold,
@@ -30,6 +29,7 @@ import {
   Editor,
   Toolbar } from 'react-simple-wysiwyg';
 import * as DOMPurify from 'dompurify';
+import { withRouter } from '../../hocs/withRouter';
 
 const styles = theme => ({
   form: {
@@ -66,9 +66,8 @@ const styles = theme => ({
   },
 });
 
-class Oof extends PureComponent {
-
-  state = {
+const Oof = props => {
+  const [oof, setOof] = useState({
     state: 0,
     externalAudience: 0,
     startTime: null,
@@ -79,43 +78,50 @@ class Oof extends PureComponent {
     externalReply: "",
     tab: 0,
     snackbar: '',
-  }
+  });
 
-  async componentDidMount() {
-    const { domainID, userID, fetchOof } = this.props;
-    const oof = await fetchOof(domainID, userID)
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      ...(oof || {}),
-    })
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const { domainID, userID, fetchOof } = props;
+      const oofData = await fetchOof(domainID, userID)
+        .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
+      setOof({
+        ...oof,
+        ...(oofData || {}),
+      })
+    }
 
-  oofStates = [
+    fetchData();
+  }, []);
+
+  
+
+  const oofStates = [
     { value: 0, label: 'Disabled' },
     { value: 1, label: 'Enabled' },
     { value: 2, label: 'Scheduled' },
   ]
 
-  externalAudiences = [
+  const externalAudiences = [
     { value: 0, label: 'None' },
     { value: 1, label: 'Known' },
     { value: 2, label: 'All' },
   ]
 
-  handleInput = field => e => {
-    this.setState({ [field]: e.target.value });
+  const handleInput = field => e => {
+    setOof({ ...oof, [field]: e.target.value });
   }
 
-  handleDateInput = field => newVal => {
-    this.setState({ [field]: newVal });
+  const handleDateInput = field => newVal => {
+    setOof({ ...oof, [field]: newVal });
   }
 
-  handleTabChange = (e, tab) => this.setState({ tab });
+  const handleTabChange = (e, tab) => setOof({ ...oof, tab });
 
-  handleSave = () => {
-    const { domainID, userID, setOof } = this.props;
-    const { state, externalAudience, startTime, endTime, internalSubject, internalReply, externalSubject, externalReply } = this.state;
-    setOof(domainID, userID, {
+  const handleSave = () => {
+    const { domainID, userID, patchOof } = props;
+    const { state, externalAudience, startTime, endTime, internalSubject, internalReply, externalSubject, externalReply } = oof;
+    patchOof(domainID, userID, {
       state,
       externalAudience,
       // Only send dates when oof is scheduled
@@ -126,172 +132,170 @@ class Oof extends PureComponent {
       externalSubject: DOMPurify.sanitize(externalSubject),
       externalReply,
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .then(() => setOof({ ...oof, snackbar: 'Success!' }))
+      .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
   }
 
-  render() {
-    const { classes, t, history, theme } = this.props;
-    const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = this.state;
-    const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
+  const { classes, t, navigate, theme } = props;
+  const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = oof;
+  const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
 
-    const tfProps = (label, field) => ({
-      fullWidth: true,
-      disabled: state === 0,
-      label: t(label),
-      value: this.state[field],
-      onChange: this.handleInput(field),
-    });
+  const tfProps = (label, field) => ({
+    fullWidth: true,
+    disabled: state === 0,
+    label: t(label),
+    value: oof[field],
+    onChange: handleInput(field),
+  });
 
-    return (<>
-      <FormControl className={classes.form}>
-        <div className={classes.flexRow}>
-          <TextField
-            {...tfProps("State ", "state")}
-            select
-            className={classes.input}
-            disabled={false}
-          >
-            {this.oofStates.map((status, key) => (
-              <MenuItem key={key} value={status.value}>
-                {t(status.label)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            {...tfProps("External audience", "externalAudience")}
-            select
-            className={classes.input}
-            disabled={false}
-          >
-            {this.externalAudiences.map((audience, key) => (
-              <MenuItem key={key} value={audience.value}>
-                {t(audience.label)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <CustomDateTimePicker
-            {...tfProps("Start time", "startTime")}
-            onChange={this.handleDateInput('startTime')}
-            className={classes.input}
-          />
-          <CustomDateTimePicker
-            {...tfProps("End time", "endTime")}
-            onChange={this.handleDateInput('endTime')}
-            className={classes.input}
-          />
+  return (<>
+    <FormControl className={classes.form}>
+      <div className={classes.flexRow}>
+        <TextField
+          {...tfProps("State ", "state")}
+          select
+          className={classes.input}
+          disabled={false}
+        >
+          {oofStates.map((status, key) => (
+            <MenuItem key={key} value={status.value}>
+              {t(status.label)}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          {...tfProps("External audience", "externalAudience")}
+          select
+          className={classes.input}
+          disabled={false}
+        >
+          {externalAudiences.map((audience, key) => (
+            <MenuItem key={key} value={audience.value}>
+              {t(audience.label)}
+            </MenuItem>
+          ))}
+        </TextField>
+        <CustomDateTimePicker
+          {...tfProps("Start time", "startTime")}
+          onChange={handleDateInput('startTime')}
+          className={classes.input}
+        />
+        <CustomDateTimePicker
+          {...tfProps("End time", "endTime")}
+          onChange={handleDateInput('endTime')}
+          className={classes.input}
+        />
+      </div>
+      <Tabs
+        indicatorColor="primary"
+        value={tab}
+        onChange={handleTabChange}
+        className={classes.tabs}
+      >
+        <Tab label={t("Inside my organization")} />
+        <Tab label={t("Outside my organization")} />
+      </Tabs>
+      {tab === 0 && <div className={classes.tabs}>
+        <TextField 
+          {...tfProps("Internal subject", "internalSubject")}
+          className={classes.mail}
+        />
+        <div className={classes.mail}>
+          <EditorProvider>
+            <Editor
+              style={{ minHeight: 100 }}
+              value={internalReply}
+              onChange={handleInput("internalReply")}
+            >
+              <Toolbar id={editorClass}>
+                <BtnUndo id={editorClass}/>
+                <BtnRedo id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnBold id={editorClass}/>
+                <BtnItalic id={editorClass}/>
+                <BtnUnderline id={editorClass}/>
+                <BtnStrikeThrough id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnNumberedList id={editorClass}/>
+                <BtnBulletList id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnLink id={editorClass}/>
+                <BtnClearFormatting id={editorClass}/>
+                <HtmlButton id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnStyles id={editorClass}/>
+              </Toolbar>
+            </Editor>
+          </EditorProvider>
         </div>
-        <Tabs
-          indicatorColor="primary"
-          value={tab}
-          onChange={this.handleTabChange}
-          className={classes.tabs}
-        >
-          <Tab label={t("Inside my organization")} />
-          <Tab label={t("Outside my organization")} />
-        </Tabs>
-        {tab === 0 && <div className={classes.tabs}>
-          <TextField 
-            {...tfProps("Internal subject", "internalSubject")}
-            className={classes.mail}
-          />
-          <div className={classes.mail}>
-            <EditorProvider>
-              <Editor
-                style={{ minHeight: 100 }}
-                value={internalReply}
-                onChange={this.handleInput("internalReply")}
-              >
-                <Toolbar id={editorClass}>
-                  <BtnUndo id={editorClass}/>
-                  <BtnRedo id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnBold id={editorClass}/>
-                  <BtnItalic id={editorClass}/>
-                  <BtnUnderline id={editorClass}/>
-                  <BtnStrikeThrough id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnNumberedList id={editorClass}/>
-                  <BtnBulletList id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnLink id={editorClass}/>
-                  <BtnClearFormatting id={editorClass}/>
-                  <HtmlButton id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnStyles id={editorClass}/>
-                </Toolbar>
-              </Editor>
-            </EditorProvider>
-          </div>
-        </div>}
-        {tab === 1 && <div className={classes.tabs}>
-          <TextField
-            {...tfProps("External subject", "externalSubject")}
-            className={classes.mail}
-          />
-          <div className={classes.mail}>
-            <EditorProvider>
-              <Editor
-                style={{ minHeight: 100 }}
-                value={externalReply}
-                onChange={this.handleInput("externalReply")}
-              >
-                <Toolbar id={editorClass}>
-                  <BtnUndo id={editorClass}/>
-                  <BtnRedo id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnBold id={editorClass}/>
-                  <BtnItalic id={editorClass}/>
-                  <BtnUnderline id={editorClass}/>
-                  <BtnStrikeThrough id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnNumberedList id={editorClass}/>
-                  <BtnBulletList id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnLink id={editorClass}/>
-                  <BtnClearFormatting id={editorClass}/>
-                  <HtmlButton id={editorClass}/>
-                  <Separator id={editorClass}/>
-                  <BtnStyles id={editorClass}/>
-                </Toolbar>
-              </Editor>
-            </EditorProvider>
+      </div>}
+      {tab === 1 && <div className={classes.tabs}>
+        <TextField
+          {...tfProps("External subject", "externalSubject")}
+          className={classes.mail}
+        />
+        <div className={classes.mail}>
+          <EditorProvider>
+            <Editor
+              style={{ minHeight: 100 }}
+              value={externalReply}
+              onChange={handleInput("externalReply")}
+            >
+              <Toolbar id={editorClass}>
+                <BtnUndo id={editorClass}/>
+                <BtnRedo id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnBold id={editorClass}/>
+                <BtnItalic id={editorClass}/>
+                <BtnUnderline id={editorClass}/>
+                <BtnStrikeThrough id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnNumberedList id={editorClass}/>
+                <BtnBulletList id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnLink id={editorClass}/>
+                <BtnClearFormatting id={editorClass}/>
+                <HtmlButton id={editorClass}/>
+                <Separator id={editorClass}/>
+                <BtnStyles id={editorClass}/>
+              </Toolbar>
+            </Editor>
+          </EditorProvider>
             
-          </div>
-        </div>}
-      </FormControl>
-      <Grid container className={classes.buttonGrid}>
-        <Button
-          onClick={history.goBack}
-          style={{ marginRight: 8 }}
-          color="secondary"
-        >
-          {t('Back')}
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.handleSave}
-          disabled={startTime && moment(startTime).isAfter(endTime)}
-        >
-          {t('Save')}
-        </Button>
-      </Grid>
-      <Feedback
-        snackbar={snackbar}
-        onClose={() => this.setState({ snackbar: '' })}
-      />
-    </>
-    );
-  }
+        </div>
+      </div>}
+    </FormControl>
+    <Grid container className={classes.buttonGrid}>
+      <Button
+        onClick={() => navigate(-1)}
+        style={{ marginRight: 8 }}
+        color="secondary"
+      >
+        {t('Back')}
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSave}
+        disabled={startTime && moment(startTime).isAfter(endTime)}
+      >
+        {t('Save')}
+      </Button>
+    </Grid>
+    <Feedback
+      snackbar={snackbar}
+      onClose={() => setOof({ ...oof, snackbar: '' })}
+    />
+  </>
+  );
 }
 
 Oof.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetchOof: PropTypes.func.isRequired,
-  setOof: PropTypes.func.isRequired,
+  patchOof: PropTypes.func.isRequired,
   domainID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
   theme: PropTypes.object.isRequired,
@@ -302,7 +306,7 @@ const mapDispatchToProps = dispatch => {
     fetchOof: async (domainID, userID) => 
       await dispatch(fetchUserOof(domainID, userID))
         .catch(err => Promise.reject(err)),
-    setOof: async (domainID, userID, oofSettings) => 
+    patchOof: async (domainID, userID, oofSettings) => 
       await dispatch(setUserOof(domainID, userID, oofSettings))
         .catch(err => Promise.reject(err)),
   };

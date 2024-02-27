@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -34,6 +34,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import { AppSettingsAlt, Dns } from '@mui/icons-material';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -56,9 +57,8 @@ const styles = theme => ({
   },
 });
 
-class DomainListDetails extends PureComponent {
-
-  state = {
+const DomainListDetails = props => {
+  const [state, setState] = useState({
     domainname: '',
     domainStatus: 0,
     orgID: '',
@@ -75,57 +75,63 @@ class DomainListDetails extends PureComponent {
     checkPw: '',
     tab: 0,
     chat: false,
-    autocompleteInput: '',
     loading: true,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  statuses = [
+  const statuses = [
     { name: 'Activated', ID: 0 },
     { name: 'Deactivated', ID: 3 },
   ]
 
-  async componentDidMount() {
-    const { fetch, fetchOrgs, fetchServers, capabilities } = this.props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) {
-      await fetchOrgs()
-        .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-      await fetchServers()
-        .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    }
-    const domain = await fetch(getStringAfterLastSlash())
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    const defaultPolicy = domain.defaultPolicy;
-    domain.syncPolicy = domain.syncPolicy || {};
-    const domainOrg = this.props.orgs.find(o => o.ID === domain.orgID);
-    this.setState({
-      loading: false,
-      ...(domain || {}),
-      autocompleteInput: domainOrg?.name || '',
-      orgID: domainOrg,
-      syncPolicy: {
-        ...defaultPolicy,
-        ...domain.syncPolicy,
-        maxattsize: (domain.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
-      },
-      defaultPolicy,
-    });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch, fetchOrgs, fetchServers, capabilities } = props;
+      if(capabilities.includes(SYSTEM_ADMIN_READ)) {
+        await fetchOrgs()
+          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        await fetchServers()
+          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      }
+      const domain = await fetch(getStringAfterLastSlash())
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      const defaultPolicy = domain.defaultPolicy;
+      domain.syncPolicy = domain.syncPolicy || {};
+      const domainOrg = props.orgs.find(o => o.ID === domain.orgID);
+      setState({
+        ...state, 
+        loading: false,
+        ...(domain || {}),
+        orgID: domainOrg,
+        syncPolicy: {
+          ...defaultPolicy,
+          ...domain.syncPolicy,
+          maxattsize: (domain.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
+        },
+        defaultPolicy,
+      });
+    };
 
-  handleInput = field => event => {
-    this.setState({
+    inner();
+  }, []);
+
+  const handleInput = field => event => {
+    setState({
+      ...state, 
       [field]: event.target.value,
     });
   }
 
-  handleCheckbox = field => event => this.setState({
+  const handleCheckbox = field => event => setState({
+    ...state, 
     [field]: event.target.checked,
     unsaved: true,
   });
 
-  handleEdit = () => {
+  const handleEdit = () => {
     const { ID, domainname, domainStatus, orgID, chat, homeserver,
-      maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = this.state;
-    this.props.edit({
+      maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = state;
+    props.edit({
       ID,
       domainname,
       domainStatus,
@@ -139,32 +145,33 @@ class DomainListDetails extends PureComponent {
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
       chat,
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  handlePasswordChange = async () => {
-    const { domain, newPw } = this.state;
+  const handlePasswordChange = async () => {
+    const { domain, newPw } = state;
     await changeDomainPassword(domain.ID, newPw);
-    this.setState({ changingPw: false });
+    setState({ ...state, changingPw: false });
   }
 
-  handleKeyPress = event => {
-    const { newPw, checkPw } = this.state;
-    if(event.key === 'Enter' && newPw === checkPw) this.handlePasswordChange();
+  const handleKeyPress = event => {
+    const { newPw, checkPw } = state;
+    if(event.key === 'Enter' && newPw === checkPw) handlePasswordChange();
   }
 
-  handleBack = () => {
-    const { capabilities } = this.props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) this.props.history.push('/domains');
-    else this.props.history.push('/' + getStringAfterLastSlash());
+  const handleBack = () => {
+    const { capabilities } = props;
+    if(capabilities.includes(SYSTEM_ADMIN_READ)) props.navigate('/domains');
+    else props.navigate('/' + getStringAfterLastSlash());
   }
 
-  handleTab = (e, tab) => this.setState({ tab })
+  const handleTab = (e, tab) => setState({ ...state, tab })
 
-  handleSyncChange = field => event => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSyncChange = field => event => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: event.target.value,
@@ -172,19 +179,10 @@ class DomainListDetails extends PureComponent {
     });
   }
 
-  handleRadio = field => event => {
-    const { syncPolicy } = this.state;
-    this.setState({
-      syncPolicy: {
-        ...syncPolicy,
-        [field]: parseInt(event.target.value),
-      },
-    });
-  }
-
-  handleSyncCheckboxChange = field => (event, newVal) => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSyncCheckboxChange = field => (event, newVal) => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: newVal ? 1 : 0,
@@ -192,9 +190,10 @@ class DomainListDetails extends PureComponent {
     });
   }
 
-  handleSlider = field => (event, newVal) => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSlider = field => (event, newVal) => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: newVal,
@@ -202,208 +201,203 @@ class DomainListDetails extends PureComponent {
     });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setState({
+      ...state, 
       [field]: newVal?.ID || '',
-      autocompleteInput: newVal?.name || '',
     });
   }
 
-  handleServer =(e, newVal) => {
-    this.setState({
+  const handleServer =(e, newVal) => {
+    setState({
+      ...state, 
       homeserver: newVal || '',
     });
   }
 
-  render() {
-    const { classes, t, orgs, capabilities, servers } = this.props;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
-      tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
-      chat, homeserver, autocompleteInput, loading } = this.state;
+  const { classes, t, orgs, capabilities, servers } = props;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
+    tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
+    chat, homeserver, loading } = state;
     
-    return (
-      <ViewWrapper
-        topbarTitle={t('Domains')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'Domain' })}
-            </Typography>
-          </Grid>
-          <Tabs className={classes.tabs} indicatorColor="primary" onChange={this.handleTab} value={tab}>
-            <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
-            <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
-          </Tabs>
-          {tab === 0 && <FormControl className={classes.form}>
-            <Grid container className={classes.input}>
-              <TextField
-                label={t("Domain")} 
-                style={{ flex: 1, marginRight: 8 }} 
-                value={domainname || ''}
-                autoFocus
-                disabled
-              />
-            </Grid>
+  return (
+    <ViewWrapper
+      topbarTitle={t('Domains')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
+            color="primary"
+            variant="h5"
+          >
+            {t('editHeadline', { item: 'Domain' })}
+          </Typography>
+        </Grid>
+        <Tabs className={classes.tabs} indicatorColor="primary" onChange={handleTab} value={tab}>
+          <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
+          <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
+        </Tabs>
+        {tab === 0 && <FormControl className={classes.form}>
+          <Grid container className={classes.input}>
             <TextField
-              select
-              className={classes.input}
-              label={t("Status")}
-              fullWidth
-              value={domainStatus || 0}
-              onChange={this.handleInput('domainStatus')}
-            >
-              {this.statuses.map((status, key) => (
-                <MenuItem key={key} value={status.ID}>
-                  {t(status.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
-              value={orgID || ''}
-              filterAttribute={'name'}
-              onChange={this.handleAutocomplete('orgID')}
-              className={classes.input} 
-              options={orgs}
-              inputValue={autocompleteInput}
-              onInputChange={this.handleInput('autocompleteInput')}
-              label={t('Organization')}
-            />}
-            <TextField 
-              className={classes.input} 
-              label={t("Maximum users")} 
-              fullWidth 
-              value={maxUser || ''}
-              onChange={this.handleInput('maxUser')}
+              label={t("Domain")} 
+              style={{ flex: 1, marginRight: 8 }} 
+              value={domainname || ''}
+              autoFocus
+              disabled
             />
-            <TextField 
-              className={classes.input} 
-              label={t("Title")} 
-              fullWidth 
-              value={title || ''}
-              onChange={this.handleInput('title')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Address")} 
-              fullWidth 
-              value={address || ''}
-              onChange={this.handleInput('address')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Administrator")} 
-              fullWidth 
-              value={adminName || ''}
-              onChange={this.handleInput('adminName')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Telephone")} 
-              fullWidth 
-              value={tel || ''}
-              onChange={this.handleInput('tel')}
-            />
-            <MagnitudeAutocomplete
-              value={homeserver || ''}
-              filterAttribute={'hostname'}
-              onChange={this.handleServer}
-              className={classes.input} 
-              options={servers}
-              label={t('Homeserver')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chat || false}
-                  onChange={this.handleCheckbox('chat')}
-                  color="primary"
-                />
-              }
-              className={classes.input} 
-              label={t('grommunio-chat Team')}
-            />
-          </FormControl>}
-          {tab === 1 && <SyncPolicies
-            syncPolicy={syncPolicy}
-            defaultPolicy={defaultPolicy}
-            handleChange={this.handleSyncChange}
-            handleCheckbox={this.handleSyncCheckboxChange}
-            handleSlider={this.handleSlider}
+          </Grid>
+          <TextField
+            select
+            className={classes.input}
+            label={t("Status")}
+            fullWidth
+            value={domainStatus || 0}
+            onChange={handleInput('domainStatus')}
+          >
+            {statuses.map((status, key) => (
+              <MenuItem key={key} value={status.ID}>
+                {t(status.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
+            value={orgID || ''}
+            filterAttribute={'name'}
+            onChange={handleAutocomplete('orgID')}
+            className={classes.input} 
+            options={orgs}
+            label={t('Organization')}
           />}
+          <TextField 
+            className={classes.input} 
+            label={t("Maximum users")} 
+            fullWidth 
+            value={maxUser || ''}
+            onChange={handleInput('maxUser')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Title")} 
+            fullWidth 
+            value={title || ''}
+            onChange={handleInput('title')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Address")} 
+            fullWidth 
+            value={address || ''}
+            onChange={handleInput('address')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Administrator")} 
+            fullWidth 
+            value={adminName || ''}
+            onChange={handleInput('adminName')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Telephone")} 
+            fullWidth 
+            value={tel || ''}
+            onChange={handleInput('tel')}
+          />
+          <MagnitudeAutocomplete
+            value={homeserver || ''}
+            filterAttribute={'hostname'}
+            onChange={handleServer}
+            className={classes.input} 
+            options={servers}
+            label={t('Homeserver')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={chat || false}
+                onChange={handleCheckbox('chat')}
+                color="primary"
+              />
+            }
+            className={classes.input} 
+            label={t('grommunio-chat Team')}
+          />
+        </FormControl>}
+        {tab === 1 && <SyncPolicies
+          syncPolicy={syncPolicy}
+          defaultPolicy={defaultPolicy}
+          handleChange={handleSyncChange}
+          handleCheckbox={handleSyncCheckboxChange}
+          handleSlider={handleSlider}
+        />}
+        <Button
+          color="secondary"
+          onClick={handleBack}
+          style={{ marginRight: 8 }}
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEdit}
+          disabled={!writable}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+      <Dialog open={!!changingPw} onClose={() => setState({ ...state, changingPw: false })}>
+        <DialogTitle>{t('Change password')}</DialogTitle>
+        <DialogContent>
+          <TextField 
+            className={classes.input} 
+            label={t("New password")} 
+            fullWidth
+            type="password"
+            value={newPw}
+            onChange={event => setState({ ...state, newPw: event.target.value })}
+            autoFocus
+            onKeyPress={handleKeyPress}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Repeat new password")} 
+            fullWidth
+            type="password"
+            value={checkPw}
+            onChange={event => setState({ ...state, checkPw: event.target.value })}
+            onKeyPress={handleKeyPress}
+          />
+        </DialogContent>
+        <DialogActions>
           <Button
             color="secondary"
-            onClick={this.handleBack}
-            style={{ marginRight: 8 }}
-          >
-            {t('Back')}
+            onClick={() => setState({ ...state, changingPw: false })}>
+            {t('Cancel')}
           </Button>
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleEdit}
-            disabled={!writable}
+            onClick={handlePasswordChange}
+            disabled={checkPw !== newPw}
           >
             {t('Save')}
           </Button>
-        </Paper>
-        <Dialog open={!!changingPw} onClose={() => this.setState({ changingPw: false })}>
-          <DialogTitle>{t('Change password')}</DialogTitle>
-          <DialogContent>
-            <TextField 
-              className={classes.input} 
-              label={t("New password")} 
-              fullWidth
-              type="password"
-              value={newPw}
-              onChange={event => this.setState({ newPw: event.target.value })}
-              autoFocus
-              onKeyPress={this.handleKeyPress}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Repeat new password")} 
-              fullWidth
-              type="password"
-              value={checkPw}
-              onChange={event => this.setState({ checkPw: event.target.value })}
-              onKeyPress={this.handleKeyPress}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button
-              color="secondary"
-              onClick={() => this.setState({ changingPw: false })}>
-              {t('Cancel')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handlePasswordChange}
-              disabled={checkPw !== newPw}
-            >
-              {t('Save')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </ViewWrapper>
-    );
-  }
+        </DialogActions>
+      </Dialog>
+    </ViewWrapper>
+  );
 }
 
-DomainListDetails.contextType = CapabilityContext;
 DomainListDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchOrgs: PropTypes.func.isRequired,
   fetchServers: PropTypes.func.isRequired,
@@ -436,5 +430,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainListDetails)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DomainListDetails))));

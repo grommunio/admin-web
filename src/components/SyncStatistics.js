@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { Devices, Notifications, Person, Router, TapAndPlay } from '@mui/icons-material';
 
@@ -51,66 +50,63 @@ const styles = theme => ({
   },
 });
 
-class SyncStatistics extends PureComponent {
+const SyncStatistics = props => {
+  const {classes, t, data} = props;
+  const openConnections = data.length || 0;
+  const pushConnections = data.filter(e => e.push).length || 0;
+  const users = new Set(data.map(e => e.user)).size || 0;
+  const devices = new Set(data.map(e => e.devid)).size || 0;
+  const hosts = new Set(data.map(e => e.ip)).size || 0;
 
-  render() {
-    const {classes, t, data} = this.props;
-    const openConnections = data.length || 0;
-    const pushConnections = data.filter(e => e.push).length || 0;
-    const users = new Set(data.map(e => e.user)).size || 0;
-    const devices = new Set(data.map(e => e.devid)).size || 0;
-    const hosts = new Set(data.map(e => e.ip)).size || 0;
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <TapAndPlay className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{openConnections}</Typography>
-              <Typography className={classes.label}>{t("Open connections")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Notifications className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{pushConnections}</Typography>
-              <Typography className={classes.label}>{t("Push connections")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Person className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{users}</Typography>
-              <Typography className={classes.label}>{t("Users")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Devices className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{devices}</Typography>
-              <Typography className={classes.label}>{t("Devices")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Router className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{hosts}</Typography>
-              <Typography className={classes.label}>{t("Hosts")}</Typography>
-            </div>
-          </Paper>
-        </div>
+  return (
+    <div className={classes.root}>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <TapAndPlay className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{openConnections}</Typography>
+            <Typography className={classes.label}>{t("Open connections")}</Typography>
+          </div>
+        </Paper>
       </div>
-    );
-  }
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Notifications className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{pushConnections}</Typography>
+            <Typography className={classes.label}>{t("Push connections")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Person className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{users}</Typography>
+            <Typography className={classes.label}>{t("Users")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Devices className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{devices}</Typography>
+            <Typography className={classes.label}>{t("Devices")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Router className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{hosts}</Typography>
+            <Typography className={classes.label}>{t("Hosts")}</Typography>
+          </div>
+        </Paper>
+      </div>
+    </div>
+  );
 }
 
 SyncStatistics.propTypes = {
@@ -119,5 +115,4 @@ SyncStatistics.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default connect(null, null)(
-  withTranslation()(withStyles(styles)(SyncStatistics)));
+export default withTranslation()(withStyles(styles)(SyncStatistics));

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -50,60 +50,49 @@ const styles = theme => ({
   },
 });
 
-class Connections extends PureComponent {
+const Connections = props => {
+  const { classes, t, data } = props;
 
-  formatBytes = (bytes) => {
-    if (bytes > 10000) {
-      return Math.round(bytes/1000) + "k";
-    } 
-    
-    return bytes;
-  }
-
-  render() {
-    const { classes, t, data } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Router className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.active}</Typography>
-              <Typography className={classes.label}>{t("Active")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Scanner className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.reading}</Typography>
-              <Typography className={classes.label}>{t("Reading")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Create className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.writing}</Typography>
-              <Typography className={classes.label}>{t("Writing")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <HourglassEmpty className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.waiting}</Typography>
-              <Typography className={classes.label}>{t("Waiting")}</Typography>
-            </div>
-          </Paper>
-        </div>
+  return (
+    <div className={classes.root}>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Router className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.active}</Typography>
+            <Typography className={classes.label}>{t("Active")}</Typography>
+          </div>
+        </Paper>
       </div>
-    );
-  }
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Scanner className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.reading}</Typography>
+            <Typography className={classes.label}>{t("Reading")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Create className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.writing}</Typography>
+            <Typography className={classes.label}>{t("Writing")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <HourglassEmpty className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.waiting}</Typography>
+            <Typography className={classes.label}>{t("Waiting")}</Typography>
+          </div>
+        </Paper>
+      </div>
+    </div>
+  );
 }
 
 Connections.propTypes = {

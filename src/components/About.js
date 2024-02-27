@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -52,9 +52,9 @@ const styles = theme => ({
   },
 });
 
-class About extends PureComponent {
+const About = props => {
 
-  formatBytes = (bytes) => {
+  const formatBytes = (bytes) => {
     if (bytes > 10000) {
       return Math.round(bytes/1000) + "k";
     } 
@@ -62,52 +62,48 @@ class About extends PureComponent {
     return bytes;
   }
 
-  render() {
-    const { classes, t, about } = this.props;
-    const { API, backend, schema } = about;
-
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Dashboard className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{process.env.REACT_APP_BUILD_VERSION}</Typography>
-              <Typography className={classes.label}>{t("Web UI")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Power className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{API}</Typography>
-              <Typography className={classes.label}>{t("API")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Outlet className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{backend}</Typography>
-              <Typography className={classes.label}>{t("Backend")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <StorageIcon className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{this.formatBytes(schema)}</Typography>
-              <Typography className={classes.label}>{t("Database")}</Typography>
-            </div>
-          </Paper>
-        </div>
+  const { classes, t, about } = props;
+  const { API, backend, schema } = about;
+  return (
+    <div className={classes.root}>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Dashboard className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{process.env.REACT_APP_BUILD_VERSION}</Typography>
+            <Typography className={classes.label}>{t("Web UI")}</Typography>
+          </div>
+        </Paper>
       </div>
-    );
-  }
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Power className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{API}</Typography>
+            <Typography className={classes.label}>{t("API")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Outlet className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{backend}</Typography>
+            <Typography className={classes.label}>{t("Backend")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <StorageIcon className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{formatBytes(schema)}</Typography>
+            <Typography className={classes.label}>{t("Database")}</Typography>
+          </div>
+        </Paper>
+      </div>
+    </div>
+  );
 }
 
 const mapStateToProps = state => {

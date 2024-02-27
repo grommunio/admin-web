@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Typography, Button, Grid,
   CircularProgress, Table, TableHead, TableRow, TableCell,
@@ -38,233 +38,232 @@ const styles = theme => ({
   },
 });
 
-class Groups extends PureComponent {
-
-  state = {
+const Groups = props => {
+  const [state, setState] = useState({
     snackbar: '',
     checking: false,
     taskMessage: '',
     taskID: null,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  columns = [
+  const columns = [
     { label: 'Group name', value: 'listname' },
     { label: 'Type', value: 'listType' },
     { label: 'Privilege', value: 'listPrivilege' },
   ]
 
-  listTypes = ['Normal', 'Domain', 'Group']
+  const listTypes = ['Normal', 'Domain', 'Group']
 
-  listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing (deprecated)']
+  const listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing (deprecated)']
 
-  handleCheckClose = () => this.setState({ checking: false });
+  const handleCheckClose = () => setState({ ...state, checking: false });
 
-  handleScroll = () => {
-    const { Groups, count, loading } = this.props.groups;
-    this.props.handleScroll(Groups, count, loading);
+  const handleScroll = () => {
+    const { Groups, count, loading } = props.groups;
+    props.handleScroll(Groups, count, loading);
   };
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
   /* This function is not actually doing what it pretends to do.
   *  There is no endpoint to explicitely sync LDAP groups.
   *  However, LDAP groups are just users, so syncing users has the desired effect.
   */
-  handleGroupSync = importUsers => () => {
-    const { sync, domain, fetchTableData } = this.props;
+  const handleGroupSync = importUsers => () => {
+    const { sync, domain, fetchTableData } = props;
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {
           // Background task was created -> Show task dialog
-          this.setState({
+          setState({
+            ...state, 
             taskMessage: response.message || 'Task created',
             loading: false,
             taskID: response.taskID,
           });
         } else {
           // No task created -> Reload table data
-          const { tableState } = this.props;
+          const { tableState } = props;
           const { order, orderBy, match } = tableState;
-          this.setState({ snackbar: 'Success!' });
+          setState({ ...state, snackbar: 'Success!' });
           fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
-            .catch(msg => this.setState({ snackbar: msg }));
+            .catch(msg => setState({ ...state, snackbar: msg }));
         }
       })
-      .catch(msg => this.setState({ snackbar: msg }));
+      .catch(msg => setState({ ...state, snackbar: msg }));
   }
 
-  checkUsers = async () => {
-    await this.props.check({ domain: this.props.domain.ID })
-      .catch(msg => this.setState({ snackbar: msg }));
-    this.setState({ checking: true });
+  const checkUsers = async () => {
+    await props.check({ domain: props.domain.ID })
+      .catch(msg => setState({ ...state, snackbar: msg }));
+    setState({ ...state, checking: true });
   }
 
-  handleTaskClose = () => this.setState({
+  const handleTaskClose = () => setState({
+    ...state, 
     taskMessage: "",
     taskID: null,
   });
 
-  render() {
-    const { classes, t, groups, domain, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { checking, taskMessage, taskID } = this.state;
+  const { classes, t, groups, domain, tableState, handleMatch, handleRequestSort,
+    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const { checking, taskMessage, taskID } = state;
 
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Groups")}
-        subtitle={t('mlists_sub')}
-        href="https://docs.grommunio.com/admin/administration.html#groups"
-        snackbar={snackbar || this.state.snackbar}
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Groups")}
+      subtitle={t('mlists_sub')}
+      href="https://docs.grommunio.com/admin/administration.html#groups"
+      snackbar={snackbar || state.snackbar}
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search groups")}
+        />}
       >
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search groups")}
-          />}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          disabled={!writable}
+          className={classes.newButton}
+        >
+          {t('New group')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleNavigation(domain.ID + '/ldap')}
+          className={classes.newButton}
+          disabled={!writable}
+        >
+          {t('Search in LDAP')}
+        </Button>
+        <Tooltip placement="top" title={t("Synchronize LDAP for this domain")}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.newButton}
+            onClick={handleGroupSync(false)}
+            disabled={!writable}
+          >
+            {t('Sync LDAP')}
+          </Button>
+        </Tooltip>
+        <Tooltip
+          placement="top"
+          title={t("Import new groups from LDAP for this domain") + " " + t("and synchronize previously imported ones")}
         >
           <Button
             variant="contained"
             color="primary"
-            onClick={handleAdd}
-            disabled={!writable}
             className={classes.newButton}
+            onClick={handleGroupSync(true)}
+            disabled={!writable}
           >
-            {t('New group')}
+            {t('Import LDAP')}
           </Button>
+        </Tooltip>
+        <Tooltip
+          placement="top"
+          title={t("Check status of imported groups of this domain")}
+        >
           <Button
             variant="contained"
             color="primary"
-            onClick={this.handleNavigation(domain.ID + '/ldap')}
-            className={classes.newButton}
+            onClick={checkUsers}
             disabled={!writable}
           >
-            {t('Search in LDAP')}
+            {t('Check LDAP')}
           </Button>
-          <Tooltip placement="top" title={t("Synchronize LDAP for this domain")}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.newButton}
-              onClick={this.handleGroupSync(false)}
-              disabled={!writable}
-            >
-              {t('Sync LDAP')}
-            </Button>
-          </Tooltip>
-          <Tooltip
-            placement="top"
-            title={t("Import new groups from LDAP for this domain") + " " + t("and synchronize previously imported ones")}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              className={classes.newButton}
-              onClick={this.handleGroupSync(true)}
-              disabled={!writable}
-            >
-              {t('Import LDAP')}
-            </Button>
-          </Tooltip>
-          <Tooltip
-            placement="top"
-            title={t("Check status of imported groups of this domain")}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.checkUsers}
-              disabled={!writable}
-            >
-              {t('Check LDAP')}
-            </Button>
-          </Tooltip>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingGroups", { count: groups.Groups.length })}
-        </Typography>
-        <Paper className={classes.tablePaper} elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {this.columns.map(column =>
-                  <TableCell key={column.value}>
-                    <TableSortLabel
-                      active={orderBy === column.value}
-                      align="left" 
-                      direction={orderBy === column.value ? order : 'asc'}
-                      onClick={handleRequestSort(column.value)}
-                    >
-                      {t(column.label)}
-                    </TableSortLabel>
-                  </TableCell>
-                )}
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {groups.Groups.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/groups/' + obj.ID)}>
-                  <TableCell>{obj.listname}</TableCell>
-                  <TableCell>{t(this.listTypes[obj.listType])}</TableCell>
-                  <TableCell>{t(this.listPrivileges[obj.listPrivilege])}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                      <Delete color="error" fontSize="small"/>
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>
+        </Tooltip>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingGroups", { count: groups.Groups.length })}
+      </Typography>
+      <Paper className={classes.tablePaper} elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              {columns.map(column =>
+                <TableCell key={column.value}>
+                  <TableSortLabel
+                    active={orderBy === column.value}
+                    align="left" 
+                    direction={orderBy === column.value ? order : 'asc'}
+                    onClick={handleRequestSort(column.value)}
+                  >
+                    {t(column.label)}
+                  </TableSortLabel>
+                </TableCell>
               )}
-            </TableBody>
-          </Table>
-          {(groups.Groups.length < groups.count) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
-        <AddGroup
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          domain={domain}
-          onClose={handleAddingClose}
-        />
-        <DomainDataDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={handleDeleteSuccess}
-          onError={handleDeleteError}
-          onClose={handleDeleteClose}
-          item={deleting.listname}
-          id={deleting.ID}
-          domainID={domain.ID}
-        />
-        <CheckLdapDialog
-          open={checking}
-          onClose={this.handleCheckClose}
-          onError={handleDeleteError}
-        />
-        <TaskCreated
-          message={taskMessage}
-          taskID={taskID}
-          onClose={this.handleTaskClose}
-        />
-      </TableViewContainer>
-    );
-  }
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {groups.Groups.map((obj, idx) =>
+              <TableRow key={idx} hover onClick={handleEdit('/' + domain.ID + '/groups/' + obj.ID)}>
+                <TableCell>{obj.listname}</TableCell>
+                <TableCell>{t(listTypes[obj.listType])}</TableCell>
+                <TableCell>{t(listPrivileges[obj.listPrivilege])}</TableCell>
+                <TableCell align="right">
+                  {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                    <Delete color="error" fontSize="small"/>
+                  </IconButton>}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        {(groups.Groups.length < groups.count) && <Grid container justifyContent="center">
+          <CircularProgress color="primary" className={classes.circularProgress}/>
+        </Grid>}
+      </Paper>
+      <AddGroup
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        domain={domain}
+        onClose={handleAddingClose}
+      />
+      <DomainDataDelete
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting.listname}
+        id={deleting.ID}
+        domainID={domain.ID}
+      />
+      <CheckLdapDialog
+        open={checking}
+        onClose={handleCheckClose}
+        onError={handleDeleteError}
+      />
+      <TaskCreated
+        message={taskMessage}
+        taskID={taskID}
+        onClose={handleTaskClose}
+      />
+    </TableViewContainer>
+  );
 }
 
-Groups.contextType = CapabilityContext;
 Groups.propTypes = {
   groups: PropTypes.object.isRequired,
   domain: PropTypes.object.isRequired,

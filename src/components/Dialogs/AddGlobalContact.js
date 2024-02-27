@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, TextField,
@@ -11,9 +11,9 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
-import { withRouter } from 'react-router';
 import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -41,207 +41,177 @@ const styles = theme => ({
   },
 });
 
-class AddContact extends PureComponent {
+const AddContact = props => {
+  const [contact, setContact] = useState({
+    displayname: '',
+  });
+  const [domain, setDomain] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  state = {
-    username: '',
-    properties: {
-      displayname: '',
-    },
-    loading: false,
-    domain: '',
-    autocompleteInput: '',
-  }
-
-  handleEnter = async () => {
-    const { fetchDomains, onError } = this.props;
+  const handleEnter = async () => {
+    const { fetchDomains, onError } = props;
     fetchDomains().catch(error => onError(error));
   }
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setContact({
+      ...contact,
       [field]: event.target.value,
     });
   }
 
-  handleCheckbox = field => event => this.setState({ [field]: event.target.checked });
-
-  handleAdd = () => {
-    const { add, onError, onSuccess } = this.props;
-    const { domain, properties } = this.state;
-    this.setState({ loading: true });
+  const handleAdd = () => {
+    const { add, onError, onSuccess } = props;
+    setLoading(true);
     add(domain?.ID || -1, {
       status: 5,
       properties: {
-        ...properties,
+        ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
     })
       .then(() => {
-        this.setState({
-          properties: {
-            displayname: '',
-          },
-          loading: false,
-        });
+        setContact({ displayname: '' });
+        setLoading(false);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handleAddAndEdit = () => {
-    const { history, add, onError } = this.props;
-    const { domain, properties } = this.state;
-
-    this.setState({ loading: true });
+  const handleAddAndEdit = () => {
+    const { add, onError } = props;
+    setLoading(true);
     add(domain?.ID || -1, {
       status: 5,
       properties: {
-        ...properties,
+        ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
     })
       .then(user => {
-        history.push('/' + domain?.ID + '/contacts/' + user.ID);
+        navigate('/' + domain?.ID + '/contacts/' + user.ID);
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handlePropertyChange = field => event => {
-    this.setState({
-      properties: {
-        ...this.state.properties,
-        [field]: event.target.value,
-      },
-    });
+  const handleAutocomplete = (e, newVal) => {
+    setDomain(newVal || '');
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
-      [field]: newVal || '',
-      autocompleteInput: newVal?.domainname || '',
-    });
-  }
+  const { classes, t, open, onClose, Domains } = props;
+  const { smtpaddress, displayname, givenname, initials, surname, nickname } = contact;
 
-  render() {
-    const { classes, t, open, onClose, Domains } = this.props;
-    const { loading, properties, domain, autocompleteInput } = this.state;
-    const { smtpaddress, displayname, givenname, initials, surname, nickname } = properties;
-
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="lg"
-        fullWidth
-        TransitionProps={{
-          onEnter: this.handleEnter,
-        }}
-      >
-        <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
-        <DialogContent>
-          <Grid container>
-            <FormControl className={classes.form}>
-              <MagnitudeAutocomplete
-                value={domain}
-                filterAttribute={'domainname'}
-                inputValue={autocompleteInput}
-                onChange={this.handleAutocomplete('domain')}
-                options={Domains}
-                onInputChange={this.handleInput('autocompleteInput')}
-                label={t('Domain')}
-                placeholder={t("Search domains")  + "..."}
-                autoFocus
-                autoSelect
-              />
-            </FormControl>
-            <Grid item xs={12} className={classes.gridItem}>
-              <TextField
-                className={classes.propertyInput}
-                fullWidth
-                label={t("E-Mail Address")}
-                value={smtpaddress || ''}
-                onChange={this.handlePropertyChange('smtpaddress')}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.gridItem}>
-              <div className={classes.grid}>
-                <TextField 
-                  className={classes.flexTextfield}
-                  label={t("First name")}
-                  value={givenname || ''}
-                  onChange={this.handlePropertyChange('givenname')}
-                />
-                <TextField 
-                  //className={classes.flexTextfield}
-                  label={t("Initials")}
-                  value={initials || ''}
-                  onChange={this.handlePropertyChange('initials')}
-                />
-              </div>
-              <TextField 
-                className={classes.propertyInput} 
-                label={t("Surname")} 
-                fullWidth 
-                value={surname || ''}
-                onChange={this.handlePropertyChange('surname')}
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.gridItem}>
-              <TextField 
-                className={classes.propertyInput}
-                label={t("Display name")}
-                fullWidth
-                value={displayname || ''}
-                onChange={this.handlePropertyChange('displayname')}
-              />
-              <TextField 
-                className={classes.propertyInput} 
-                label={t("Nickname")} 
-                fullWidth 
-                value={nickname || ''}
-                onChange={this.handlePropertyChange('nickname')}
-              />
-            </Grid>
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="lg"
+      fullWidth
+      TransitionProps={{
+        onEnter: handleEnter,
+      }}
+    >
+      <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
+      <DialogContent>
+        <Grid container>
+          <FormControl className={classes.form}>
+            <MagnitudeAutocomplete
+              value={domain}
+              filterAttribute={'domainname'}
+              onChange={handleAutocomplete}
+              options={Domains}
+              label={t('Domain')}
+              placeholder={t("Search domains")  + "..."}
+              autoFocus
+              autoSelect
+            />
+          </FormControl>
+          <Grid item xs={12} className={classes.gridItem}>
+            <TextField
+              className={classes.propertyInput}
+              fullWidth
+              label={t("E-Mail Address")}
+              value={smtpaddress || ''}
+              onChange={handleInput('smtpaddress')}
+            />
           </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAddAndEdit}
-            variant="contained"
-            color="primary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add and edit')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+          <Grid item xs={12} className={classes.gridItem}>
+            <div className={classes.grid}>
+              <TextField 
+                className={classes.flexTextfield}
+                label={t("First name")}
+                value={givenname || ''}
+                onChange={handleInput('givenname')}
+              />
+              <TextField 
+                //className={classes.flexTextfield}
+                label={t("Initials")}
+                value={initials || ''}
+                onChange={handleInput('initials')}
+              />
+            </div>
+            <TextField 
+              className={classes.propertyInput} 
+              label={t("Surname")} 
+              fullWidth 
+              value={surname || ''}
+              onChange={handleInput('surname')}
+            />
+          </Grid>
+          <Grid item xs={12} className={classes.gridItem}>
+            <TextField 
+              className={classes.propertyInput}
+              label={t("Display name")}
+              fullWidth
+              value={displayname || ''}
+              onChange={handleInput('displayname')}
+            />
+            <TextField 
+              className={classes.propertyInput} 
+              label={t("Nickname")} 
+              fullWidth 
+              value={nickname || ''}
+              onChange={handleInput('nickname')}
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAddAndEdit}
+          variant="contained"
+          color="primary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add and edit')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddContact.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -268,5 +238,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddContact))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(AddContact)));

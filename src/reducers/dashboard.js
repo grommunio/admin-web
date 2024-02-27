@@ -41,7 +41,7 @@ const defaultState = {
 };
 
 function addUsageData(currentState, values) {
-  const state = {...currentState};
+  const state = structuredClone({...currentState});
   Object.keys(values).forEach(key => {
     const usage = state[key];
     usage.push(values[key]);

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid, TableSortLabel, CircularProgress } from '@mui/material';
@@ -27,118 +27,116 @@ const styles = theme => ({
   },
 });
 
-class Roles extends PureComponent {
+const Roles = props => {
+  const context = useContext(CapabilityContext);
 
-  handleScroll = () => {
-    const { Roles, count, loading } = this.props.roles;
-    this.props.handleScroll(Roles, count, loading);
+  const handleScroll = () => {
+    const { Roles, count, loading } = props.roles;
+    props.handleScroll(Roles, count, loading);
   };
 
-  render() {
-    const { classes, t, roles, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, order, match, adding, snackbar, deleting } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+  const { classes, t, roles, tableState, handleMatch, handleRequestSort,
+    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, order, match, adding, snackbar, deleting } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={<span>
-          {t("Roles")}
-          <IconButton
-            size="small"
-            href="https://docs.grommunio.com/admin/administration.html#id1"
-            target="_blank"
-          >
-            <HelpOutline fontSize="small"/>
-          </IconButton>
-        </span>
-        }
-        subtitle={t('roles_sub')}
-        snackbar={snackbar}
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
-      >
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search roles")}
-          />}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={<span>
+        {t("Roles")}
+        <IconButton
+          size="small"
+          href="https://docs.grommunio.com/admin/administration.html#id1"
+          target="_blank"
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            disabled={!writable}
-          >
-            {t("New role")}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingRoles", { count: roles.Roles.length })}
-        </Typography>
-        <Paper elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active
-                    align="left" 
-                    direction={order}
-                    onClick={handleRequestSort('name')}
-                  >
-                    {t('Name')}
-                  </TableSortLabel>
+          <HelpOutline fontSize="small"/>
+        </IconButton>
+      </span>
+      }
+      subtitle={t('roles_sub')}
+      snackbar={snackbar}
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    >
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search roles")}
+        />}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          disabled={!writable}
+        >
+          {t("New role")}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingRoles", { count: roles.Roles.length })}
+      </Typography>
+      <Paper elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <TableSortLabel
+                  active
+                  align="left" 
+                  direction={order}
+                  onClick={handleRequestSort('name')}
+                >
+                  {t('Name')}
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>{t('Description')}</TableCell>
+              <TableCell>{t('Permissions')}</TableCell>
+              <TableCell padding="checkbox"></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {roles.Roles.map((obj, idx) =>
+              <TableRow key={idx} hover onClick={handleEdit('/roles/' + obj.ID)}>
+                <TableCell>{obj.name}</TableCell>
+                <TableCell>{obj.description}</TableCell>
+                <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
+                <TableCell align="right">
+                  {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                    <Delete color="error" fontSize='small'/>
+                  </IconButton>}
                 </TableCell>
-                <TableCell>{t('Description')}</TableCell>
-                <TableCell>{t('Permissions')}</TableCell>
-                <TableCell padding="checkbox"></TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {roles.Roles.map((obj, idx) =>
-                <TableRow key={idx} hover onClick={handleEdit('/roles/' + obj.ID)}>
-                  <TableCell>{obj.name}</TableCell>
-                  <TableCell>{obj.description}</TableCell>
-                  <TableCell>{obj.permissions.map(perm => perm.permission).toString()}</TableCell>
-                  <TableCell align="right">
-                    {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                      <Delete color="error" fontSize='small'/>
-                    </IconButton>}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {(roles.Roles.length < roles.count) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
-        <AddRoles
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          onClose={handleAddingClose}
-        />
-        <GeneralDelete
-          open={!!deleting}
-          delete={this.props.delete}
-          onSuccess={handleDeleteSuccess}
-          onError={handleDeleteError}
-          onClose={handleDeleteClose}
-          item={deleting.name}
-          id={deleting.ID}
-        />
-      </TableViewContainer>
-    );
-  }
+            )}
+          </TableBody>
+        </Table>
+        {(roles.Roles.length < roles.count) && <Grid container justifyContent="center">
+          <CircularProgress color="primary" className={classes.circularProgress}/>
+        </Grid>}
+      </Paper>
+      <AddRoles
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        onClose={handleAddingClose}
+      />
+      <GeneralDelete
+        open={!!deleting}
+        delete={props.delete}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+        onClose={handleDeleteClose}
+        item={deleting.name}
+        id={deleting.ID}
+      />
+    </TableViewContainer>
+  );
 }
 
-Roles.contextType = CapabilityContext;
 Roles.propTypes = {
   roles: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,

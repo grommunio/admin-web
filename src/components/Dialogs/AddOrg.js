@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
@@ -26,128 +26,122 @@ const styles = theme => ({
   },
 });
 
-class AddOrg extends PureComponent {
-
-  state = {
+const AddOrg = props => {
+  const [org, setOrg] = useState({
     name: '',
     description: '',
-    autocompleteInput: '',
     domains: [],
-    loading: false,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleEnter = () => {
+    props.fetch();
   }
 
-  handleEnter = () => {
-    this.props.fetch();
-  }
-
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setOrg({
+      ...org,
       [field]: event.target.value,
     });
   }
 
-  handleAdd = () => {
-    const { add, onSuccess, onError } = this.props;
-    const { name, description, domains } = this.state;
-    this.setState({ loading: true });
+  const handleAdd = () => {
+    const { add, onSuccess, onError } = props;
+    const { name, description, domains } = org;
+    setLoading(true);
     add({
       name,
       description,
       domains: domains.map(d => d.ID),
     })
       .then(() => {
-        this.setState({
+        setOrg({
           name: '',
           description: '',
           domains: [],
-          loading: false,
         });
+        setLoading(false);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setOrg({
+      ...org,
       [field]: newVal,
-      autocompleteInput: '',
     });
   }
 
-  render() {
-    const { classes, t, open, onClose, Domains } = this.props;
-    const { name, description, domains, autocompleteInput, loading } = this.state;
-    const nameAcceptable = name.length < 33;
+  const { classes, t, open, onClose, Domains } = props;
+  const { name, description, domains } = org;
+  const nameAcceptable = name.length < 33;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-        TransitionProps={{
-          onEnter: this.handleEnter,
-        }}>
-        <DialogTitle>{t('addHeadline', { item: 'Organization' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Name")} 
-              fullWidth 
-              value={name || ''}
-              onChange={this.handleInput('name')}
-              autoFocus
-              required
-              error={Boolean(name && !nameAcceptable)}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Description")} 
-              fullWidth 
-              value={description || ''}
-              onChange={this.handleInput('description')}
-              multiline
-              rows={4}
-              variant="outlined"
-            />
-            <MagnitudeAutocomplete
-              value={domains || []}
-              filterAttribute={'domainname'}
-              inputValue={autocompleteInput}
-              onChange={this.handleAutocomplete('domains')}
-              className={classes.input} 
-              options={Domains || []}
-              onInputChange={this.handleInput('autocompleteInput')}
-              label={t('Domains')}
-              placeholder={t("Search domains") + "..."}
-              multiple
-              autoSelect
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={loading || !nameAcceptable}
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+      TransitionProps={{
+        onEnter: handleEnter,
+      }}>
+      <DialogTitle>{t('addHeadline', { item: 'Organization' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Name")} 
+            fullWidth 
+            value={name || ''}
+            onChange={handleInput('name')}
+            autoFocus
+            required
+            error={Boolean(name && !nameAcceptable)}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Description")} 
+            fullWidth 
+            value={description || ''}
+            onChange={handleInput('description')}
+            multiline
+            rows={4}
+            variant="outlined"
+          />
+          <MagnitudeAutocomplete
+            value={domains || []}
+            filterAttribute={'domainname'}
+            onChange={handleAutocomplete('domains')}
+            className={classes.input} 
+            options={Domains || []}
+            label={t('Domains')}
+            placeholder={t("Search domains") + "..."}
+            multiple
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={loading || !nameAcceptable}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddOrg.propTypes = {

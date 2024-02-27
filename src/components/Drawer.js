@@ -4,7 +4,6 @@
 import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
@@ -16,6 +15,7 @@ import {
 } from '../actions/drawer';
 import NavigationLinks from './NavigationLinks';
 import RetractedNavigationLinks from './RetractedNavigationLinks';
+import { withRouter } from '../hocs/withRouter';
 
 const drawerWidth = 260;
 const smallDrawerWidth = 75;
@@ -101,7 +101,6 @@ function ResponsiveDrawer(props) {
 ResponsiveDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
   toggleOpen: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
   expanded: PropTypes.bool,

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import { addMiddleware } from 'redux-dynamic-middlewares';
-import { createLogger } from 'redux-logger';
 import { SERVER_CONFIG_SET } from './actions/types';
 import store from './store';
 
@@ -17,9 +15,5 @@ fetch('//' + window.location.host + '/config.json')
     if (response.ok) {
       const res = await response.json()
       setConfig({ ...res });
-      // Enable redux logger if devMode is true
-      if(res.devMode) {
-        addMiddleware(createLogger());
-      }
     }
   });

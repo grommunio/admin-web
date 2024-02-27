@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Divider, FormControl, Grid, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -31,78 +31,76 @@ const styles = theme => ({
   },
 });
 
-class Contact extends PureComponent {
+const Contact = props => {
 
-  render() {
-    const { classes, t, user, handlePropertyChange } = this.props;
-    const { properties, ldapID } = user;
+  const { classes, t, user, handlePropertyChange } = props;
+  const { properties, ldapID } = user;
 
-    const tfProps = (label, field) => ({
-      variant: ldapID ? "filled" : 'outlined',
-      fullWidth: true,
-      onChange: handlePropertyChange(field),
-      value: properties[field] || '',
-      label: t(label),
-      className: classes.input,
-    });
+  const tfProps = (label, field) => ({
+    variant: ldapID ? "filled" : 'outlined',
+    fullWidth: true,
+    onChange: handlePropertyChange(field),
+    value: properties[field] || '',
+    label: t(label),
+    className: classes.input,
+  });
 
-    return (
-      <FormControl className={classes.form}>
-        <div className={classes.flexRow}>
-          <Typography variant="h6">{t('Telephone')}</Typography>
-          {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
-            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
-          </Tooltip>}
-        </div>
-        <Grid container>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField 
-              {...tfProps("Business 1", 'businesstelephonenumber')}
-            />
-            <TextField
-              {...tfProps("Privat 1", 'hometelephonenumber')}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("Business 2", 'business2telephonenumber')}
-            />
-            <TextField
-              {...tfProps("Privat 2", 'home2telephonenumber')}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("Fax", 'primaryfaxnumber')}
-            />
-            <TextField
-              {...tfProps("Mobile", 'mobiletelephonenumber')}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("Assistant", 'assistanttelephonenumber')}
-            />
-            <TextField
-              {...tfProps("Pager", 'pagertelephonenumber')}
-            />
-          </Grid>
+  return (
+    <FormControl className={classes.form}>
+      <div className={classes.flexRow}>
+        <Typography variant="h6">{t('Telephone')}</Typography>
+        {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
+          <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+        </Tooltip>}
+      </div>
+      <Grid container>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField 
+            {...tfProps("Business 1", 'businesstelephonenumber')}
+          />
+          <TextField
+            {...tfProps("Privat 1", 'hometelephonenumber')}
+          />
         </Grid>
-        <Divider className={classes.divider}/>
-        <div className={classes.flexRow}>
-          <Typography variant="h6">{t('Annotation')}</Typography>
-          {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
-            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
-          </Tooltip>}
-        </div>
-        <TextField
-          {...tfProps("", 'comment')}
-          multiline
-          rows={4}
-        />
-      </FormControl>
-    );
-  }
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("Business 2", 'business2telephonenumber')}
+          />
+          <TextField
+            {...tfProps("Privat 2", 'home2telephonenumber')}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("Fax", 'primaryfaxnumber')}
+          />
+          <TextField
+            {...tfProps("Mobile", 'mobiletelephonenumber')}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("Assistant", 'assistanttelephonenumber')}
+          />
+          <TextField
+            {...tfProps("Pager", 'pagertelephonenumber')}
+          />
+        </Grid>
+      </Grid>
+      <Divider className={classes.divider}/>
+      <div className={classes.flexRow}>
+        <Typography variant="h6">{t('Annotation')}</Typography>
+        {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
+          <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+        </Tooltip>}
+      </div>
+      <TextField
+        {...tfProps("", 'comment')}
+        multiline
+        rows={4}
+      />
+    </FormControl>
+  );
 }
 
 Contact.propTypes = {

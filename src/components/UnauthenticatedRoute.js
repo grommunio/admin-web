@@ -3,7 +3,7 @@
 
 import React from "react";
 import { PropTypes } from "prop-types";
-import { Route, Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { parseParams } from '../utils';
 
@@ -19,16 +19,12 @@ const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
   const redirect = query.redirect;
   const hash = window.location.hash;
 
+  if(childProps.authenticated) {
+    return <Navigate to={!redirect ? "/" : redirect + hash}/>
+  }
+
   return (
-    <Route
-      {...rest}
-      render={props =>
-        !childProps.authenticated
-          ? <C {...props} {...childProps} />
-          : <Redirect
-            to={!redirect ? "/" : redirect + hash}
-          />}
-    />
+    <C {...childProps} {...rest}/>
   );
 };
 

@@ -86,14 +86,14 @@ function foldersReducer(state = defaultState, action) {
     return {
       ...state,
       Folders: addItem(state.Folders, action.data),
-      Tree: addTreeItem(state.Tree, action.data, action.parentID),
+      Tree: addTreeItem(structuredClone(state.Tree), action.data, action.parentID),
     };
 
   case FOLDER_DATA_DELETE:
     return {
       ...state,
       Folders: state.Folders.filter(folder => folder.folderid !== action.id),
-      Tree: removeFolder(state.Tree, action.id),
+      Tree: removeFolder(structuredClone(state.Tree), action.id),
     };
 
   case OWNERS_DATA_RECEIVED:

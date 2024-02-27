@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import {
@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogContent, Dialog, DialogActions,
 } from '@mui/material';
-import { PureComponent } from 'react';
 import { changeUserPassword } from '../../api';
 import { withTranslation } from 'react-i18next';
 
@@ -23,72 +22,70 @@ const styles = theme => ({
   },
 });
 
-class ChangeUserPassword extends PureComponent {
-
-  state = {
+const ChangeUserPassword = props => {
+  const [state, setState] = useState({
     newPw: '',
     checkPw: '',
-  }
+  });
 
-  handlePasswordChange = async () => {
-    const { domain, onClose, onSuccess, onError, user } = this.props;
-    const { newPw } = this.state;
+  const handlePasswordChange = async () => {
+    const { domain, onClose, onSuccess, onError, user } = props;
+    const { newPw } = state;
     await changeUserPassword(domain.ID, user.ID, newPw)
       .then(() => {
         onSuccess();
-        this.setState({ newPw: '', checkPw: '' });
+        setState({ ...state, newPw: '', checkPw: '' });
       })
       .catch(onError);
     onClose();
   }
 
-
-  render() {
-    const { classes, t, changingPw, onClose } = this.props;
-    const { newPw, checkPw } = this.state;
-    return (
-      <Dialog open={changingPw} onClose={onClose}>
-        <DialogTitle>{t('Change password')}</DialogTitle>
-        <DialogContent className={classes.content}>
-          <TextField
-            className={classes.input}
-            label={t("New password")} 
-            fullWidth
-            type="password"
-            value={newPw}
-            onChange={({ target }) => this.setState({ newPw: target.value })}
-            autoFocus
-            onKeyPress={this.handleKeyPress}
-          />
-          <TextField
-            className={classes.input}
-            label={t("Repeat new password")} 
-            fullWidth
-            type="password"
-            value={checkPw}
-            onChange={({ target }) => this.setState({ checkPw: target.value })}
-            onKeyPress={this.handleKeyPress}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="secondary"
-            onClick={onClose}
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handlePasswordChange}
-            disabled={checkPw !== newPw}
-          >
-            {t('Save')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
+  const handleInput = field => e => {
+    setState({ ...state, [field]: e.target.value });
   }
+
+  const { classes, t, changingPw, onClose } = props;
+  const { newPw, checkPw } = state;
+  return (
+    <Dialog open={changingPw} onClose={onClose}>
+      <DialogTitle>{t('Change password')}</DialogTitle>
+      <DialogContent className={classes.content}>
+        <TextField
+          className={classes.input}
+          label={t("New password")} 
+          fullWidth
+          type="password"
+          value={newPw}
+          onChange={handleInput("newPw")}
+          autoFocus
+        />
+        <TextField
+          className={classes.input}
+          label={t("Repeat new password")} 
+          fullWidth
+          type="password"
+          value={checkPw}
+          onChange={handleInput("checkPw")}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button
+          color="secondary"
+          onClick={onClose}
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handlePasswordChange}
+          disabled={checkPw !== newPw}
+        >
+          {t('Save')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 ChangeUserPassword.propTypes = {

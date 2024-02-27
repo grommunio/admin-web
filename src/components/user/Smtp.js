@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
   MenuItem,
   TextField, Tooltip, Typography } from '@mui/material';
@@ -37,59 +37,56 @@ const styles = theme => ({
   },
 });
 
-class Smtp extends PureComponent {
+const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardInput, handleAliasEdit,
+  handleRemoveAlias, handleAddAlias }) => {
 
-  render() {
-    const { classes, t, user, aliases, forward, forwardError, handleForwardInput, handleAliasEdit, handleRemoveAlias,
-      handleAddAlias } = this.props;
-    return (
-      <FormControl className={classes.form}>
-        <div className={classes.flexRow}>
-          <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
-          {user?.ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
-            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
-          </Tooltip>}
-        </div>
-        <List className={classes.list}>
-          {(aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
-            <TextField
-              className={classes.listTextfield}
-              value={alias}
-              label={t("Alias") + ' ' + (idx + 1)}
-              onChange={handleAliasEdit(idx)}
-            />
-            <IconButton onClick={handleRemoveAlias(idx)} size="large">
-              <Delete color="error" />
-            </IconButton>
-          </ListItem>
-          )}
-        </List>
-        <Grid container justifyContent="center">
-          <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-        </Grid>
-        <Typography variant="h6" className={classes.headline}>{t('E-Mail forward')}</Typography>
-        <Grid container className={classes.bottom} >
+  return (
+    <FormControl className={classes.form}>
+      <div className={classes.flexRow}>
+        <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
+        {user?.ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
+          <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+        </Tooltip>}
+      </div>
+      <List className={classes.list}>
+        {(aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
           <TextField
-            className={classes.select}
-            value={forward.forwardType === undefined ? '' : forward.forwardType}
-            label={t('Forward type')}
-            onChange={handleForwardInput('forwardType')}
-            select
-          >
-            <MenuItem value={0}>{t('CC')}</MenuItem>
-            <MenuItem value={1}>{t('Redirect')}</MenuItem>
-          </TextField>
-          <TextField
-            error={forwardError}
             className={classes.listTextfield}
-            value={forward.destination || ''}
-            label={t('Destination')}
-            onChange={handleForwardInput('destination')}
+            value={alias}
+            label={t("Alias") + ' ' + (idx + 1)}
+            onChange={handleAliasEdit(idx)}
           />
-        </Grid>
-      </FormControl>
-    );
-  }
+          <IconButton onClick={handleRemoveAlias(idx)} size="large">
+            <Delete color="error" />
+          </IconButton>
+        </ListItem>
+        )}
+      </List>
+      <Grid container justifyContent="center">
+        <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
+      </Grid>
+      <Typography variant="h6" className={classes.headline}>{t('E-Mail forward')}</Typography>
+      <Grid container className={classes.bottom} >
+        <TextField
+          className={classes.select}
+          value={forward.forwardType === undefined ? '' : forward.forwardType}
+          label={t('Forward type')}
+          onChange={handleForwardInput('forwardType')}
+          select
+        >
+          <MenuItem value={0}>{t('CC')}</MenuItem>
+          <MenuItem value={1}>{t('Redirect')}</MenuItem>
+        </TextField>
+        <TextField
+          error={forwardError}
+          className={classes.listTextfield}
+          value={forward.destination || ''}
+          label={t('Destination')}
+          onChange={handleForwardInput('destination')}
+        />
+      </Grid>
+    </FormControl>
+  );
 }
 
 Smtp.propTypes = {

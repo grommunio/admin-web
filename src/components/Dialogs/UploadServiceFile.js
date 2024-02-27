@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
@@ -32,148 +32,142 @@ const styles = theme => ({
   },
 });
 
-class UploadServiceFile extends PureComponent {
-
-  constructor() {
-    super();
-    this.fileInputRef = React.createRef();
-  }
-
-  state = {
+const UploadServiceFile = props => {
+  const [state, setState] = useState({
     data: [
       { key: '', value: '' },
     ],
     filename: '',
     service: '',
     loading: false,
-  }
+  });
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state,
       [field]: event.target.value,
     });
   }
 
-  handleDataInput = (field, idx) => e => {
-    const data = [...this.state.data];
+  const handleDataInput = (field, idx) => e => {
+    const data = [...state.data];
     data[idx][field] = e.target.value;
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleAddRow = () => {
-    const data = [...this.state.data];
+  const handleAddRow = () => {
+    const data = [...state.data];
     data.push({ key: '', value: '' });
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleRemoveRow = idx => () => {
-    const data = [...this.state.data];
+  const handleRemoveRow = idx => () => {
+    const data = [...state.data];
     data.splice(idx, 1);
-    this.setState({ data });
+    setState({ ...state, data });
   }
 
-  handleUpload = () => {
-    const { upload } = this.props;
-    const { service, filename, data } = this.state;
-    this.setState({ loading: true });
-    upload(service, filename, this.formatData(data))
+  const handleUpload = () => {
+    const { upload } = props;
+    const { service, filename, data } = state;
+    setState({ ...state, loading: true });
+    upload(service, filename, formatData(data))
       .then(() => {
-        this.setState({
-          data: [],
+        setState({
+          ...state, 
+          data: [{ key: '', value: '' }],
           filename: '',
           service: '',
           loading: false,
         });
-        this.props.onSuccess();
+        props.onSuccess();
       })
       .catch(error => {
-        this.props.onError(error);
-        this.setState({ loading: false });
+        props.onError(error);
+        setState({ ...state, loading: false });
       });
   }
 
-  formatData(data) {
+  const formatData = (data) => {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value);
     return obj;
   }
 
-  render() {
-    const { classes, t, open, onClose } = this.props;
-    const { service, filename, data, loading } = this.state;
+  const { classes, t, open, onClose } = props;
+  const { service, filename, data, loading } = state;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>{t('addHeadline', { item: 'File' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Service name")} 
-              fullWidth 
-              value={service || ''}
-              onChange={this.handleInput('service')}
-              autoFocus
-              required
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>{t('addHeadline', { item: 'File' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Service name")} 
+            fullWidth 
+            value={service || ''}
+            onChange={handleInput('service')}
+            autoFocus
+            required
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("File name")} 
+            fullWidth 
+            value={filename || ''}
+            onChange={handleInput('filename')}
+            required
+          />
+          <Typography>{t("Data")}</Typography>
+          {data.map((pair, idx) => <Grid container key={idx}>
+            <TextField
+              label={t("Key")}
+              value={pair.key}
+              onChange={handleDataInput('key', idx)}
+              className={classes.flexTextfield}
             />
-            <TextField 
-              className={classes.input} 
-              label={t("File name")} 
-              fullWidth 
-              value={filename || ''}
-              onChange={this.handleInput('filename')}
-              required
+            <TextField
+              label={t("Value")}
+              value={pair.value}
+              onChange={handleDataInput('value', idx)}
+              className={classes.flexTextfield}
             />
-            <Typography>{t("Data")}</Typography>
-            {data.map((pair, idx) => <Grid container key={idx}>
-              <TextField
-                label={t("Key")}
-                value={pair.key}
-                onChange={this.handleDataInput('key', idx)}
-                className={classes.flexTextfield}
-              />
-              <TextField
-                label={t("Value")}
-                value={pair.value}
-                onChange={this.handleDataInput('value', idx)}
-                className={classes.flexTextfield}
-              />
-              <IconButton onClick={this.handleRemoveRow(idx)} size="large">
-                <Delete color="error"/>
-              </IconButton>
-            </Grid>
-            )}
-            <Grid container justifyContent="center">
-              <IconButton onClick={this.handleAddRow} size="large">
-                <Add color="primary"/>
-              </IconButton>
-            </Grid>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleUpload}
-            variant="contained"
-            color="primary"
-            disabled={loading || !service}
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+            <IconButton onClick={handleRemoveRow(idx)} size="large">
+              <Delete color="error"/>
+            </IconButton>
+          </Grid>
+          )}
+          <Grid container justifyContent="center">
+            <IconButton onClick={handleAddRow} size="large">
+              <Add color="primary"/>
+            </IconButton>
+          </Grid>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleUpload}
+          variant="contained"
+          color="primary"
+          disabled={loading || !service}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 UploadServiceFile.propTypes = {

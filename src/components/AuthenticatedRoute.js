@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import {Navigate, useLocation } from "react-router-dom";
 
 /**
  * react-router <Route> which can only be accessed if authenticated,
@@ -10,17 +10,14 @@ import { Route, Redirect } from "react-router-dom";
  * 
  * @param {Object} props
  */
-const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      childProps.authenticated
-        ? <C {...props} {...childProps} />
-        : <Redirect
-          to={`/login?redirect=${props.location.pathname}${props.location
-            .search}${props.location.hash}`}
-        />}
-  />
-);
+const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
+  const location = useLocation();
+  if(!childProps.authenticated) {
+    return <Navigate to={`/login?redirect=${location.pathname}${location
+      .search}${location.hash}`}/>
+  }
+
+  return <C  {...rest} {...childProps} />
+};
 
 export default AuthenticatedRoute;

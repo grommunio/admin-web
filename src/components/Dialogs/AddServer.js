@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
@@ -24,96 +24,88 @@ const styles = theme => ({
   },
 });
 
-class AddServer extends PureComponent {
-
-  state = {
+const AddServer = props => {
+  const [server, setServer] = useState({
     hostname: '',
     extname: '',
-    loading: false,
-  }
+  });
+  const [loading, setLoading] = useState(false);
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setServer({
+      ...server,
       [field]: event.target.value,
     });
   }
 
-  handleAdd = () => {
-    const { add, onSuccess, onError } = this.props;
-    const { hostname, extname } = this.state;
-    this.setState({ loading: true });
-    add({
-      hostname,
-      extname,
-    })
+  const handleAdd = () => {
+    const { add, onSuccess, onError } = props;
+    setLoading(true);
+    add(server)
       .then(() => {
-        this.setState({
+        setServer({
           hostname: '',
           extname: '',
-          loading: false,
         });
+        setLoading(false);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  render() {
-    const { classes, t, open, onClose } = this.props;
-    const { hostname, extname, loading } = this.state;
+  const { classes, t, open, onClose } = props;
+  const { hostname, extname } = server;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-        TransitionProps={{
-          onEnter: this.handleEnter,
-        }}>
-        <DialogTitle>{t('addHeadline', { item: 'Server' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Hostname")} 
-              fullWidth 
-              value={hostname || ''}
-              onChange={this.handleInput('hostname')}
-              autoFocus
-              required
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("extname")} 
-              fullWidth 
-              value={extname || ''}
-              onChange={this.handleInput('extname')}
-              required
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={loading || !hostname || !extname}
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+    >
+      <DialogTitle>{t('addHeadline', { item: 'Server' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Hostname")} 
+            fullWidth 
+            value={hostname || ''}
+            onChange={handleInput('hostname')}
+            autoFocus
+            required
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("extname")} 
+            fullWidth 
+            value={extname || ''}
+            onChange={handleInput('extname')}
+            required
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={loading || !hostname || !extname}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddServer.propTypes = {

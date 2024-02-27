@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Grid,
   IconButton,
   Table,
@@ -44,26 +44,25 @@ const styles = theme => ({
   },
 });
 
-class Sync extends PureComponent {
-
-  componentDidMount() {
-    const { fetch, domainID, userID } = this.props;
-    const { orderBy, type } = this.state; 
-    fetch(domainID, userID)
-      .then(this.handleSort(orderBy, type, false))
-      .catch(snackbar => this.setState({ snackbar }));
-  }
-
-  state = {
+const Sync = props => {
+  const [state, setState] = useState({
     snackbar: '',
     sortedDevices: null,
     order: 'asc',
     orderBy: 'pid',
     type: 'int',
     wipingID: '',
-  };
+  });
 
-  columns = [
+  useEffect(() => {
+    const { fetch, domainID, userID } = props;
+    const { orderBy, type } = state; 
+    fetch(domainID, userID)
+      .then(handleSort(orderBy, type, false))
+      .catch(snackbar => setState({ ...state, snackbar }));
+  }, []);
+
+  const columns = [
     { label: "Device ID", value: "deviceid" },
     { label: "Device user", value: "deviceuser" },
     { label: "Device Type / Agent", value: "devicetype" },
@@ -74,9 +73,9 @@ class Sync extends PureComponent {
     { label: "Wipe status", value: "wipeStatus", type: 'int' },
   ];
 
-  handleSort = (attribute, type, switchOrder) => () => {
-    const sortedDevices = [...this.props.sync];
-    const { order: stateOrder, orderBy } = this.state;
+  const handleSort = (attribute, type, switchOrder) => () => {
+    const sortedDevices = [...props.sync];
+    const { order: stateOrder, orderBy } = state;
     const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
     if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
       sortedDevices.sort((a, b) =>
@@ -87,12 +86,12 @@ class Sync extends PureComponent {
         type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
       );
     }
-    this.setState({ sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
+    setState({ ...state, sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
-  handlePasswordDialog = (wipingID) => () => this.setState({ wipingID });
+  const handlePasswordDialog = (wipingID) => () => setState({ ...state, wipingID });
 
-  getWipeStatus(status) {
+  const getWipeStatus = (status) => {
     switch(status) {
     case 0: return 'Unknown';
     case 1: return 'OK';
@@ -104,28 +103,29 @@ class Sync extends PureComponent {
     }
   }
 
-  handleRemoteWipeConfirm = request => {
-    const { wipeItOffTheFaceOfEarth, domainID, userID } = this.props;
-    const { wipingID } = this.state;
+  const handleRemoteWipeConfirm = request => {
+    const { wipeItOffTheFaceOfEarth, domainID, userID } = props;
+    const { wipingID } = state;
 
     wipeItOffTheFaceOfEarth(domainID, userID, wipingID, request)
-      .then(() => this.updateWipeStatus(request.status, wipingID))
-      .catch(snackbar => this.setState({ snackbar }));
+      .then(() => updateWipeStatus(request.status, wipingID))
+      .catch(snackbar => setState({ ...state, snackbar }));
   }
   
-  handleRemoteWipeCancel = deviceID => () => {
-    const { panicStopWiping, domainID, userID } = this.props;
+  const handleRemoteWipeCancel = deviceID => () => {
+    const { panicStopWiping, domainID, userID } = props;
     panicStopWiping(domainID, userID, deviceID)
-      .then(() => this.updateWipeStatus(1, deviceID))
-      .catch(snackbar => this.setState({ snackbar }));
+      .then(() => updateWipeStatus(1, deviceID))
+      .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  updateWipeStatus(status, deviceID) {
-    const { sortedDevices } = this.state;
+  const updateWipeStatus = (status, deviceID) => {
+    const { sortedDevices } = state;
     const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
     const copy = [...sortedDevices];
     if(idx !== -1) copy[idx].wipeStatus = status;
-    this.setState({
+    setState({
+      ...state,
       snackbar: "Success!",
       sortedDevices: copy,
       wipingID: '',
@@ -133,129 +133,128 @@ class Sync extends PureComponent {
     return true;
   }
 
-  handleResync = deviceID => () => {
-    const { resync, domainID, userID } = this.props;
+  const handleResync = deviceID => () => {
+    const { resync, domainID, userID } = props;
 
     resync(domainID, userID, deviceID)
-      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
-      .catch(snackbar => this.setState({ snackbar }));
+      .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
+      .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  handleRemoteDelete = deviceID => () => {
-    const { deleteDevice, domainID, userID } = this.props;
+  const handleRemoteDelete = deviceID => () => {
+    const { deleteDevice, domainID, userID } = props;
 
     deleteDevice(domainID, userID, deviceID)
       .then(resp => {
-        const { sortedDevices } = this.state;
+        const { sortedDevices } = state;
         const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
         const copy = [...sortedDevices];
         copy.splice(idx, 1);
-        this.setState({
+        setState({
+          ...state, 
           snackbar: 'Success! ' + (resp?.message || ''),
           sortedDevices: copy,
         })
       })
-      .catch(snackbar => this.setState({ snackbar }));
+      .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  handleRemoveSyncStates = () => {
-    const { deleteStates, domainID, userID } = this.props;
+  const handleRemoveSyncStates = () => {
+    const { deleteStates, domainID, userID } = props;
     deleteStates(domainID, userID)
-      .then(resp => this.setState({ snackbar: 'Success! ' + (resp?.message || '') }))
-      .catch(snackbar => this.setState({ snackbar }));
+      .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
+      .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  render() {
-    const { classes, t, sync } = this.props;
-    const { sortedDevices, order, orderBy, wipingID, snackbar } = this.state;
+  const { classes, t, sync } = props;
+  const { sortedDevices, order, orderBy, wipingID, snackbar } = state;
 
-    return (
-      <FormControl className={classes.form}>
-        <Grid container alignItems="center"  className={classes.headline}>
-          <Typography variant="h6">{t('Mobile devices')}</Typography>
-          <div className={classes.flexEndContainer}>
-            <Button
-              variant='contained'
-              //disabled={!sync.length}
-              style={{ display: 'none' }}
-              color="warning"
-              onClick={this.handleRemoveSyncStates}
-            >
+  return (
+    <FormControl className={classes.form}>
+      <Grid container alignItems="center"  className={classes.headline}>
+        <Typography variant="h6">{t('Mobile devices')}</Typography>
+        <div className={classes.flexEndContainer}>
+          <Button
+            variant='contained'
+            //disabled={!sync.length}
+            style={{ display: 'none' }}
+            color="warning"
+            onClick={handleRemoveSyncStates}
+          >
               Delete sync states
-            </Button>
-          </div>
-        </Grid>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              {this.columns.map((column, key) =>
-                <TableCell
-                  key={key}
-                  padding={column.padding || 'normal'}
+          </Button>
+        </div>
+      </Grid>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            {columns.map((column, key) =>
+              <TableCell
+                key={key}
+                padding={column.padding || 'normal'}
+              >
+                <TableSortLabel
+                  active={orderBy === column.value}
+                  align="left" 
+                  direction={order}
+                  onClick={handleSort(column.value, column.type, true)}
                 >
-                  <TableSortLabel
-                    active={orderBy === column.value}
-                    align="left" 
-                    direction={order}
-                    onClick={this.handleSort(column.value, column.type, true)}
-                  >
-                    {t(column.label)}
-                  </TableSortLabel>
-                </TableCell>
-              )}
-              <TableCell padding="checkbox">{t('Actions')}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(sortedDevices || sync).map((obj, idx) =>
-              <TableRow key={idx}>
-                <TableCell>{obj.deviceid || ''}</TableCell>
-                <TableCell>{obj.deviceuser || ''}</TableCell>
-                <TableCell>{(obj.devicetype || '') + ' / ' + (obj.useragent || '')}</TableCell>
-                <TableCell>{obj.firstsynctime ? parseUnixtime(obj.firstsynctime) : ''}</TableCell>
-                <TableCell>{obj.lastupdatetime ? parseUnixtime(obj.lastupdatetime) : ''}</TableCell>
-                <TableCell>{obj.asversion || ''}</TableCell>
-                <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
-                <TableCell>{this.getWipeStatus(obj.wipeStatus)}</TableCell>
-                <TableCell style={{ display: 'flex' }}>
-                  {[2, 4, 16].includes(obj.wipeStatus) && <Tooltip title={t("Cancel remote wipe")} placement="top">
-                    <IconButton onClick={this.handleRemoteWipeCancel(obj.deviceid)}>
-                      <DoNotDisturbOn color="secondary"/>
-                    </IconButton>
-                  </Tooltip>}
-                  {obj.wipeStatus < 2 && <Tooltip title={t("Remote wipe")} placement="top">
-                    <IconButton onClick={this.handlePasswordDialog(obj.deviceid)}>
-                      <CleaningServices color="error" />
-                    </IconButton>
-                  </Tooltip>}
-                  <Tooltip title={t("Resync")} placement='top'>
-                    <IconButton onClick={this.handleResync(obj.deviceid)}>
-                      <SyncIcon color="primary"/>
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title={t("Delete device")} placement='top'>
-                    <IconButton onClick={this.handleRemoteDelete(obj.deviceid)}>
-                      <Delete color="error"/>
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
+                  {t(column.label)}
+                </TableSortLabel>
+              </TableCell>
             )}
-          </TableBody>
-        </Table>
-        <PasswordSafetyDialog
-          open={Boolean(wipingID)}
-          deviceID={wipingID}
-          onClose={this.handlePasswordDialog('')}
-          onConfirm={this.handleRemoteWipeConfirm}
-        />
-        <Feedback
-          snackbar={snackbar || ''}
-          onClose={() => this.setState({ snackbar: '' })}
-        />
-      </FormControl>
-    );
-  }
+            <TableCell padding="checkbox">{t('Actions')}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(sortedDevices || sync).map((obj, idx) =>
+            <TableRow key={idx}>
+              <TableCell>{obj.deviceid || ''}</TableCell>
+              <TableCell>{obj.deviceuser || ''}</TableCell>
+              <TableCell>{(obj.devicetype || '') + ' / ' + (obj.useragent || '')}</TableCell>
+              <TableCell>{obj.firstsynctime ? parseUnixtime(obj.firstsynctime) : ''}</TableCell>
+              <TableCell>{obj.lastupdatetime ? parseUnixtime(obj.lastupdatetime) : ''}</TableCell>
+              <TableCell>{obj.asversion || ''}</TableCell>
+              <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
+              <TableCell>{getWipeStatus(obj.wipeStatus)}</TableCell>
+              <TableCell style={{ display: 'flex' }}>
+                {[2, 4, 16].includes(obj.wipeStatus) && <Tooltip title={t("Cancel remote wipe")} placement="top">
+                  <IconButton onClick={handleRemoteWipeCancel(obj.deviceid)}>
+                    <DoNotDisturbOn color="secondary"/>
+                  </IconButton>
+                </Tooltip>}
+                {obj.wipeStatus < 2 && <Tooltip title={t("Remote wipe")} placement="top">
+                  <IconButton onClick={handlePasswordDialog(obj.deviceid)}>
+                    <CleaningServices color="error" />
+                  </IconButton>
+                </Tooltip>}
+                <Tooltip title={t("Resync")} placement='top'>
+                  <IconButton onClick={handleResync(obj.deviceid)}>
+                    <SyncIcon color="primary"/>
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t("Delete device")} placement='top'>
+                  <IconButton onClick={handleRemoteDelete(obj.deviceid)}>
+                    <Delete color="error"/>
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <PasswordSafetyDialog
+        open={Boolean(wipingID)}
+        deviceID={wipingID}
+        onClose={handlePasswordDialog('')}
+        onConfirm={handleRemoteWipeConfirm}
+      />
+      <Feedback
+        snackbar={snackbar || ''}
+        onClose={() => setState({ ...state, snackbar: '' })}
+      />
+    </FormControl>
+  );
 }
 
 Sync.propTypes = {

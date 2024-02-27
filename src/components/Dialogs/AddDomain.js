@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -31,9 +31,8 @@ const styles = theme => ({
   },
 });
 
-class AddDomain extends PureComponent {
-
-  state = {
+const AddDomain = props => {
+  const [domain, setDomain] = useState({
     domainname: '',
     domainStatus: 0,
     maxUser: '',
@@ -44,77 +43,74 @@ class AddDomain extends PureComponent {
     orgID: '',
     homeserver: '',
     createRole: false,
-    loading: false,
-    domainError: false,
     chat: false,
-  }
+  });
+  const [loading, setLoading] = useState(false);
+  const [domainError, setDomainError] = useState(false);
 
-  statuses = [
+  const statuses = [
     { name: 'Activated', ID: 0 },
     { name: 'Deactivated', ID: 3 },
   ]
 
-  handleEnter = () => {
-    const { fetch, fetchServers, fetchDefaults } = this.props;
-    fetch().catch(error => this.props.onError(error));
-    fetchServers().catch(error => this.props.onError(error));
+  const handleEnter = () => {
+    const { fetch, fetchServers, fetchDefaults, onError } = props;
+    fetch().catch(error => onError(error));
+    fetchServers().catch(error => onError(error));
     fetchDefaults()
       .then(() => {
-        const { createParams } = this.props;
+        const { createParams } = props;
         // Update mask
-        this.setState({
+        setDomain({
+          ...domain,
           ...(createParams.domain || {}),
         });
       })
-      .catch(error => this.props.onError(error));
+      .catch(error => onError(error));
   }
 
-  handleInput = field => event => {
+  const handleInput = field => event => {
     const val = event.target.value;
-    if(val && field === 'domainname') this.debounceFetch({ domain: val });
-    this.setState({
+    if(val && field === 'domainname') debounceFetch({ domain: val });
+    setDomain({
+      ...domain,
       [field]: val,
     });
   }
 
-  debounceFetch = debounce(async params => {
+  const debounceFetch = debounce(async params => {
     const resp = await checkFormat(params)
-      .catch(snackbar => this.setState({ snackbar, loading: false }));
-    this.setState({ domainError: !!resp?.domain });
+      .catch(() => setLoading(false));
+    setDomainError(!!resp?.domain);
   }, 200)
 
-  handleCheckbox = field => event => {
-    this.setState({
+  const handleCheckbox = field => event => {
+    setDomain({
+      ...domain,
       [field]: event.target.checked,
     });
   }
 
-  handleNumberInput = field => event => {
+  const handleNumberInput = field => event => {
     let input = event.target.value;
     if(input && input.match("^\\d*?$")) input = parseInt(input);
-    this.setState({
+    setDomain({
+      ...domain,
       [field]: input,
     });
   }
 
-  handleAdd = () => {
-    const { domainname, domainStatus, maxUser, orgID, homeserver,
-      title, address, adminName, tel, createRole, chat } = this.state;
-    this.setState({ loading: true });
-    this.props.add({
-      domainname,
-      domainStatus,
-      maxUser,
-      title,
-      address,
-      adminName,
-      tel,
+  const handleAdd = () => {
+    const { add, onError, onSuccess } = props;
+    setLoading(true);
+    add({
+      ...domain,
       orgID: orgID.ID,
-      chat,
       homeserver: homeserver?.ID || null,
+      createRole: undefined,
     }, { createRole })
       .then(() => {
-        this.setState({
+        setDomain({
           domainname: '',
           domainStatus: 0,
           maxUser: '',
@@ -127,154 +123,153 @@ class AddDomain extends PureComponent {
           chat: false,
           homeserver: '',
         });
-        this.props.onSuccess();
+        onSuccess();
       })
       .catch(error => {
-        this.props.onError(error);
-        this.setState({ loading: false });
+        onError(error);
+        setLoading(false);
       });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setDomain({
+      ...domain,
       [field]: newVal || '',
     });
   }
 
-  render() {
-    const { classes, t, open, onClose, orgs, servers } = this.props;
-    const { domainname, domainStatus, orgID, domainError, chat, homeserver,
-      maxUser, title, address, adminName, tel, loading, createRole } = this.state;
+  const { classes, t, open, onClose, orgs, servers } = props;
+  const { domainname, domainStatus, orgID, chat, homeserver,
+    maxUser, title, address, adminName, tel, createRole } = domain;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="md"
-        fullWidth
-        TransitionProps={{
-          onEnter: this.handleEnter,
-        }}>
-        <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Domain")} 
-              fullWidth 
-              value={domainname || ''}
-              onChange={this.handleInput('domainname')}
-              autoFocus
-              required
-              error={!!domainname && domainError}
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Status")}
-              fullWidth
-              value={domainStatus || 0}
-              onChange={this.handleInput('domainStatus')}
-            >
-              {this.statuses.map((status, key) => (
-                <MenuItem key={key} value={status.ID}>
-                  {t(status.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <MagnitudeAutocomplete
-              value={orgID}
-              filterAttribute={'name'}
-              onChange={this.handleAutocomplete('orgID')}
-              className={classes.input} 
-              options={orgs}
-              label={t('Organization')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Maximum users")} 
-              fullWidth 
-              value={maxUser || ''}
-              onChange={this.handleNumberInput('maxUser')}
-              required
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Title")} 
-              fullWidth 
-              value={title || ''}
-              onChange={this.handleInput('title')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Address")} 
-              fullWidth 
-              value={address || ''}
-              onChange={this.handleInput('address')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Administrator")} 
-              fullWidth 
-              value={adminName || ''}
-              onChange={this.handleInput('adminName')}
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("Telephone")} 
-              fullWidth 
-              value={tel || ''}
-              onChange={this.handleInput('tel')}
-            />
-            <MagnitudeAutocomplete
-              value={homeserver}
-              filterAttribute={'hostname'}
-              onChange={this.handleAutocomplete('homeserver')}
-              className={classes.input} 
-              options={servers}
-              label={t('Homeserver')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={createRole}
-                  onChange={this.handleCheckbox('createRole')}
-                  color="primary"
-                />
-              }
-              label={t('Create domain admin role')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chat}
-                  onChange={this.handleCheckbox('chat')}
-                  color="primary"
-                />
-              }
-              label={t('Create grommunio-chat Team')}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="md"
+      fullWidth
+      TransitionProps={{
+        onEnter: handleEnter,
+      }}>
+      <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Domain")} 
+            fullWidth 
+            value={domainname || ''}
+            onChange={handleInput('domainname')}
+            autoFocus
+            required
+            error={!!domainname && domainError}
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Status")}
+            fullWidth
+            value={domainStatus || 0}
+            onChange={handleInput('domainStatus')}
           >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={loading || !domainname || !maxUser || domainError}
-          >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+            {statuses.map((status, key) => (
+              <MenuItem key={key} value={status.ID}>
+                {t(status.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <MagnitudeAutocomplete
+            value={orgID}
+            filterAttribute={'name'}
+            onChange={handleAutocomplete('orgID')}
+            className={classes.input} 
+            options={orgs}
+            label={t('Organization')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Maximum users")} 
+            fullWidth 
+            value={maxUser || ''}
+            onChange={handleNumberInput('maxUser')}
+            required
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Title")} 
+            fullWidth 
+            value={title || ''}
+            onChange={handleInput('title')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Address")} 
+            fullWidth 
+            value={address || ''}
+            onChange={handleInput('address')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Administrator")} 
+            fullWidth 
+            value={adminName || ''}
+            onChange={handleInput('adminName')}
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("Telephone")} 
+            fullWidth 
+            value={tel || ''}
+            onChange={handleInput('tel')}
+          />
+          <MagnitudeAutocomplete
+            value={homeserver}
+            filterAttribute={'hostname'}
+            onChange={handleAutocomplete('homeserver')}
+            className={classes.input} 
+            options={servers}
+            label={t('Homeserver')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={createRole}
+                onChange={handleCheckbox('createRole')}
+                color="primary"
+              />
+            }
+            label={t('Create domain admin role')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={chat}
+                onChange={handleCheckbox('chat')}
+                color="primary"
+              />
+            }
+            label={t('Create grommunio-chat Team')}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={loading || !domainname || !maxUser || domainError}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddDomain.propTypes = {

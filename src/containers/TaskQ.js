@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Paper,
@@ -42,12 +42,13 @@ const styles = (theme) => ({
   },
 });
 
-class TasQ extends Component {
-  state = {
+const TasQ = props => {
+  const [state, setState] = useState({
     snackbar: '',
-  };
+  });
+  const context = useContext(CapabilityContext);
 
-  columns = [
+  const columns = [
     { label: "Command", value: "command" },
     { label: "State ", value: "state" }, //The whitespace is necessary because of a country's state
     { label: "Message", value: "message" },
@@ -55,123 +56,117 @@ class TasQ extends Component {
     { label: "Updated", value: "updated" },
   ];
 
-  componentDidMount() {
-    this.props.status().catch((msg) => this.setState({ snackbar: msg }));
+  useEffect(() => {
+    props.status().catch((msg) => setState({ ...state, snackbar: msg }));
+  }, []);
+
+  const handleStart = () => {
+    props.start()
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch((msg) => setState({ ...state, snackbar: msg }));
   }
 
-  handleStart = () => {
-    this.props.start()
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  handleStop = () => {
-    this.props.stop().catch((msg) => this.setState({ snackbar: msg }));
-  }
-
-  handleSnackbarClose = () => {
-    this.setState({
+  const handleSnackbarClose = () => {
+    setState({
+      ...state, 
       snackbar: '',
     });
-    this.props.clearSnackbar();
+    props.clearSnackbar();
   }
 
-  render() {
-    const { classes, t, taskq, tableState, handleMatch, handleRequestSort,
-      handleEdit } = this.props;
-    const { loading, order, orderBy, match, snackbar } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+  const { classes, t, taskq, tableState, handleMatch, handleRequestSort,
+    handleEdit } = props;
+  const { loading, order, orderBy, match, snackbar } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-    return (
-      <TableViewContainer
-        headline={t("Task queue")}
-        href="https://docs.grommunio.com/admin/administration.html#taskq"
-        // subtitle={t("taskq_sub")}
-        snackbar={snackbar || this.state.snackbar}
-        onSnackbarClose={this.handleSnackbarClose}
-        loading={loading}
+  return (
+    <TableViewContainer
+      headline={t("Task queue")}
+      href="https://docs.grommunio.com/admin/administration.html#taskq"
+      // subtitle={t("taskq_sub")}
+      snackbar={snackbar || state.snackbar}
+      onSnackbarClose={handleSnackbarClose}
+      loading={loading}
+    >
+      <Grid container alignItems="flex-end" className={classes.chipGrid}>
+        <Chip
+          className={classes.chip}
+          label={t(taskq.running ? "Running" : "Not running")}
+          color={taskq.running ? "success" : "error"}
+        />
+        <Chip
+          className={classes.chip}
+          label={t("Queued") + ": " + taskq.queued}
+          color={"primary"}
+        />
+        <Chip
+          className={classes.chip}
+          label={t("Workers") + ": " + taskq.workers}
+          color={"primary"}
+        />
+      </Grid>
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search tasks")}
+        />}
       >
-        <Grid container alignItems="flex-end" className={classes.chipGrid}>
-          <Chip
-            className={classes.chip}
-            label={t(taskq.running ? "Running" : "Not running")}
-            color={taskq.running ? "success" : "error"}
-          />
-          <Chip
-            className={classes.chip}
-            label={t("Queued") + ": " + taskq.queued}
-            color={"primary"}
-          />
-          <Chip
-            className={classes.chip}
-            label={t("Workers") + ": " + taskq.workers}
-            color={"primary"}
-          />
-        </Grid>
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search tasks")}
-          />}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleStart}
+          disabled={!writable || taskq.running}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleStart}
-            disabled={!writable || taskq.running}
-          >
-            {t("Start server")}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingTaskq", { count: taskq.Tasks.length })}
-        </Typography>
-        <Paper elevation={1}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                {this.columns.map((column) => (
-                  <TableCell key={column.value}>
-                    <TableSortLabel
-                      active={orderBy === column.value}
-                      align="left"
-                      direction={orderBy === column.value ? order : "asc"}
-                      onClick={handleRequestSort(column.value)}
-                    >
-                      {t(column.label)}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
+          {t("Start server")}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingTaskq", { count: taskq.Tasks.length })}
+      </Typography>
+      <Paper elevation={1}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell key={column.value}>
+                  <TableSortLabel
+                    active={orderBy === column.value}
+                    align="left"
+                    direction={orderBy === column.value ? order : "asc"}
+                    onClick={handleRequestSort(column.value)}
+                  >
+                    {t(column.label)}
+                  </TableSortLabel>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {taskq.Tasks.map((obj, idx) => 
+              <TableRow key={idx} hover onClick={handleEdit('/taskq/' + obj.ID)}>
+                <TableCell>{obj.command}</TableCell>
+                <TableCell>{t(getTaskState(obj.state))}</TableCell>
+                <TableCell>{obj.message}</TableCell>
+                <TableCell>{obj.created ? setDateTimeString(obj.created) : ''}</TableCell>
+                <TableCell>{obj.updated ? setDateTimeString(obj.updated) : ''}</TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {taskq.Tasks.map((obj, idx) => 
-                <TableRow key={idx} hover onClick={handleEdit('/taskq/' + obj.ID)}>
-                  <TableCell>{obj.command}</TableCell>
-                  <TableCell>{t(getTaskState(obj.state))}</TableCell>
-                  <TableCell>{obj.message}</TableCell>
-                  <TableCell>{obj.created ? setDateTimeString(obj.created) : ''}</TableCell>
-                  <TableCell>{obj.updated ? setDateTimeString(obj.updated) : ''}</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {taskq.Tasks.length < taskq.count && (
-            <Grid container justifyContent="center">
-              <CircularProgress
-                color="primary"
-                className={classes.circularProgress}
-              />
-            </Grid>
-          )}
-        </Paper>
-      </TableViewContainer>
-    );
-  }
+            )}
+          </TableBody>
+        </Table>
+        {taskq.Tasks.length < taskq.count && (
+          <Grid container justifyContent="center">
+            <CircularProgress
+              color="primary"
+              className={classes.circularProgress}
+            />
+          </Grid>
+        )}
+      </Paper>
+    </TableViewContainer>
+  );
 }
 
-TasQ.contextType = CapabilityContext;
 TasQ.propTypes = {
   taskq: PropTypes.object.isRequired,
   status: PropTypes.func.isRequired,

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, Checkbox, FormControlLabel, 
 } from '@mui/material';
@@ -10,81 +9,75 @@ import { withTranslation } from 'react-i18next';
 import { importLdapData } from '../../actions/ldap';
 import { connect } from 'react-redux';
 
-const styles = {
-};
 
-class ImportDialog extends PureComponent {
-
-  state = {
+const ImportDialog = props => {
+  const [state, setState] = useState({
     loading: false,
     force: false,
-  }
+  });
 
-  handleChange = event => {
-    this.setState({ force: event.target.checked });
+  const handleChange = event => {
+    setState({ ...state, force: event.target.checked });
   };
 
-  handleImport = () => {
-    const { importUser, onSuccess, onError, user, domainID } = this.props;
-    const { force } = this.state;
-    this.setState({ loading: true });
+  const handleImport = () => {
+    const { importUser, onSuccess, onError, user, domainID } = props;
+    const { force } = state;
+    setState({ ...state, loading: true });
     importUser({ ID: user.ID, force, domain: domainID })
       .then(() => {
         if(onSuccess) onSuccess();
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       })
       .catch(err => {
         if(onError) onError(err);
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       });
   }
 
-  render() {
-    const { t, open, user, onClose } = this.props;
-    const { loading, force } = this.state;
+  const { t, open, user, onClose } = props;
+  const { loading, force } = state;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Are you sure you want to import {user.name}?</DialogTitle>
-        <DialogContent>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={force}
-                onChange={this.handleChange}
-                color="primary"
-              />
-            }
-            label="force"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleImport}
-            variant="contained"
-            color="primary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Are you sure you want to import {user.name}?</DialogTitle>
+      <DialogContent>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={force}
+              onChange={handleChange}
+              color="primary"
+            />
+          }
+          label="force"
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleImport}
+          variant="contained"
+          color="primary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Confirm')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 ImportDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   user: PropTypes.object,
   open: PropTypes.bool,
@@ -103,4 +96,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ImportDialog)));
+  withTranslation()(ImportDialog));

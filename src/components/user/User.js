@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -47,131 +47,128 @@ const styles = theme => ({
   },
 });
 
-class User extends PureComponent {
+const User = props => {
+  const { classes, t, user, handlePropertyChange } = props;
+  const { properties, ldapID } = user;
+  const { country } = properties;
 
-  render() {
-    const { classes, t, user, handlePropertyChange } = this.props;
-    const { properties, ldapID } = user;
-    const { country } = properties;
-
-    const tfProps = (label, field) => ({
-      variant: ldapID ? "filled" : 'outlined',
-      fullWidth: true,
-      onChange: handlePropertyChange(field),
-      value: properties[field] || '',
-      label: t(label),
-      className: classes.propertyInput,
-    });
+  const tfProps = (label, field) => ({
+    variant: ldapID ? "filled" : 'outlined',
+    fullWidth: true,
+    onChange: handlePropertyChange(field),
+    value: properties[field] || '',
+    label: t(label),
+    className: classes.propertyInput,
+  });
     
-    return (
-      <FormControl className={classes.form}>
-        <div className={classes.flexRow}>
-          <Typography variant="h6">{t('Name')}</Typography>
-          {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
-            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
-          </Tooltip>}
-        </div>
-        <Grid container>
-          <Grid item xs={12} className={classes.gridItem}>
-            <div className={classes.grid}>
-              <TextField 
-                {...tfProps("First name", "givenname")}
-                className={classes.flexTextfield}
-                fullWidth={false}
-              />
-              <TextField 
-                {...tfProps("Initials", "initials")}
-                className={undefined}
-                fullWidth={false}
-              />
-            </div>
-            <TextField
-              {...tfProps("Surname", "surname")}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
+  return (
+    <FormControl className={classes.form}>
+      <div className={classes.flexRow}>
+        <Typography variant="h6">{t('Name')}</Typography>
+        {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
+          <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+        </Tooltip>}
+      </div>
+      <Grid container>
+        <Grid item xs={12} className={classes.gridItem}>
+          <div className={classes.grid}>
             <TextField 
-              {...tfProps("Display name", "displayname")}
-            />
-            <TextField
-              {...tfProps("Nickname", "nickname")}
-            />
-          </Grid>
-        </Grid>
-        <Divider className={classes.divider} />
-        <Grid container>
-          <Grid item xs={6} style={{ display: 'flex' }}>
-            <TextField 
-              {...tfProps("Address", "streetaddress")}
+              {...tfProps("First name", "givenname")}
+              className={classes.flexTextfield}
               fullWidth={false}
-              multiline
-              rows={3}
-              inputProps={{
-                style: {
-                  height: 95,
-                },
-              }}
             />
-          </Grid>
-          <Grid item xs={6} style={{ paddingRight: 16 }}>
-            <TextField
-              {...tfProps("Position", "title")}
-              className={classes.input}
+            <TextField 
+              {...tfProps("Initials", "initials")}
+              className={undefined}
+              fullWidth={false}
             />
-            <TextField
-              {...tfProps("Company", "companyname")}
-              className={classes.input}
-            />
-          </Grid>
+          </div>
+          <TextField
+            {...tfProps("Surname", "surname")}
+          />
         </Grid>
-        <Grid container>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("Locality", "locality")}
-            />
-            <TextField
-              {...tfProps("Department", "departmentname")}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("State", "stateorprovince")}
-            />
-            <TextField
-              {...tfProps("Office", "officelocation")}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <TextField
-              {...tfProps("Postal Code", "postalcode")}
-            />
-            <TextField
-              {...tfProps("Assistant", "assistant")}
-            />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
-            <FormControl className={classes.countrySelect}>
-              <InputLabel variant="standard">{t("Country")}</InputLabel>
-              <NativeSelect
-                value={country || "Germany"}
-                onChange={handlePropertyChange('country')}
-                fullWidth
-              >
-                {world.map(country =>
-                  <option key={country.id} value={country.name}>
-                    {country.name}
-                  </option>  
-                )}
-              </NativeSelect>
-            </FormControl>
-            <TextField
-              {...tfProps("Telephone", "primarytelephonenumber")}
-            />
-          </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField 
+            {...tfProps("Display name", "displayname")}
+          />
+          <TextField
+            {...tfProps("Nickname", "nickname")}
+          />
         </Grid>
-      </FormControl>
-    );
-  }
+      </Grid>
+      <Divider className={classes.divider} />
+      <Grid container>
+        <Grid item xs={6} style={{ display: 'flex' }}>
+          <TextField 
+            {...tfProps("Address", "streetaddress")}
+            fullWidth={false}
+            multiline
+            rows={3}
+            inputProps={{
+              style: {
+                height: 95,
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={6} style={{ paddingRight: 16 }}>
+          <TextField
+            {...tfProps("Position", "title")}
+            className={classes.input}
+          />
+          <TextField
+            {...tfProps("Company", "companyname")}
+            className={classes.input}
+          />
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("Locality", "locality")}
+          />
+          <TextField
+            {...tfProps("Department", "departmentname")}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("State", "stateorprovince")}
+          />
+          <TextField
+            {...tfProps("Office", "officelocation")}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <TextField
+            {...tfProps("Postal Code", "postalcode")}
+          />
+          <TextField
+            {...tfProps("Assistant", "assistant")}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.gridItem}>
+          <FormControl className={classes.countrySelect}>
+            <InputLabel variant="standard">{t("Country")}</InputLabel>
+            <NativeSelect
+              value={country || "Germany"}
+              onChange={handlePropertyChange('country')}
+              fullWidth
+            >
+              {world.map(country =>
+                <option key={country.id} value={country.name}>
+                  {country.name}
+                </option>  
+              )}
+            </NativeSelect>
+          </FormControl>
+          <TextField
+            {...tfProps("Telephone", "primarytelephonenumber")}
+          />
+        </Grid>
+      </Grid>
+    </FormControl>
+  );
 }
 
 User.propTypes = {

@@ -2,80 +2,72 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 /* eslint-disable react/display-name */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import { debounce } from 'debounce';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withStyles } from '@mui/styles';
 import { defaultFetchLimit } from '../constants';
+import { withRouter } from '../hocs/withRouter';
 
 export default function withStyledReduxTable(mapState, mapDispatch, styles) {
-  return (wrappedComponent, defaultState) => connect(mapState, mapDispatch)(
+  return (wrappedComponent, defaultState) => withRouter(connect(mapState, mapDispatch)(
     withTranslation()(withStyles(styles)(
-      withTable(wrappedComponent, defaultState))));
+      withTable(wrappedComponent, defaultState)))));
 }
 
 function withTable(WrappedComponent, defaultState={}) {
 
-  return class extends Component {
-    static propTypes = {
-      fetchTableData: PropTypes.func.isRequired,
-      domain: PropTypes.object,
-      history: PropTypes.object.isRequired,
-    }
+  return function inner(props) {
+    const [state, setState] = useState({
+      offset: 0,
+      orderBy: 'name',
+      order: 'asc',
+      match: '',
+      snackbar: '',
+      adding: false,
+      deleting: false,
+      loading: true,
+      ...defaultState,
+    });
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        offset: 0,
-        orderBy: 'name',
-        order: 'asc',
-        match: '',
-        snackbar: '',
-        adding: false,
-        deleting: false,
-        loading: true,
-        ...defaultState,
-      };
-    }
-
-    componentDidMount() {
-      this.fetchData();
-    }
+    useEffect(() => {
+      fetchData();
+    }, []);
   
-    fetchData(params) {
-      const { domain, fetchTableData } = this.props;
-      const { order, orderBy } = this.state;
+    const fetchData = (params) => {
+      const { domain, fetchTableData } = props;
+      const { order, orderBy } = state;
       if(domain?.ID) {
         fetchTableData(domain.ID, { sort: orderBy + "," + order, ...(params || {})})
-          .then(() => this.setState({ loading: false }))
-          .catch((msg) => this.setState({ snackbar: msg, loading: false }));
+          .then(() => setState({ ...state, loading: false }))
+          .catch((msg) => setState({ ...state, snackbar: msg, loading: false }));
       } else {
         fetchTableData({ sort: orderBy + "," + order, ...(params || {})})
-          .then(() => this.setState({ loading: false }))
-          .catch((msg) => this.setState({ snackbar: msg, loading: false }));
+          .then(() => setState({ ...state, loading: false }))
+          .catch((msg) => setState({ ...state, snackbar: msg, loading: false }));
       }
     }
 
-    handleRequestSort = (orderBy) => () => {
-      const { order: stateOrder, orderBy: stateOrderBy, match } = this.state;
+    const handleRequestSort = (orderBy) => () => {
+      const { order: stateOrder, orderBy: stateOrderBy, match } = state;
       const order =
         stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
   
-      this.fetchData({
+      fetchData({
         sort: orderBy + "," + order,
         match: match || undefined,
       });
   
-      this.setState({
+      setState({
+        ...state, 
         order: order,
         orderBy: orderBy,
         offset: 0,
       });
     };
 
-    handleScroll = (data, count, loading) => {
+    const handleScroll = (data, count, loading) => {
       if (data.length >= count) return;
       if (
         Math.floor(
@@ -84,81 +76,81 @@ function withTable(WrappedComponent, defaultState={}) {
         ) <=
         document.getElementById("scrollDiv").offsetHeight + 20
       ) {
-        const { orderBy, order, offset, match } = this.state;
-        if (!loading) { 
-          this.setState({
-            offset: offset + defaultFetchLimit,
-          }, () => this.fetchData({
+        const { orderBy, order, offset, match } = state;
+        if (!loading) {
+          const newOffset = offset + defaultFetchLimit;
+          setState({
+            ...state, 
+            offset: newOffset,
+          });
+          fetchData({
             sort: orderBy + "," + order,
-            offset: this.state.offset, // state has updated, so get fresh value here
+            offset: newOffset,
             match: match || undefined,
-          }));
-          
+          })
         }
       }
     };
 
-    clearSnackbar = () => this.setState({
+    const clearSnackbar = () => setState({
+      ...state,
       snackbar: '',
     });
 
-    handleMatch = (e) => {
+    const handleMatch = (e) => {
       const { value } = e.target;
-      this.debouceFetch(value);
-      this.setState({ match: value });
+      debouceFetch(value);
+      setState({ ...state, match: value });
     };
   
-    debouceFetch = debounce((value) => {
-      this.fetchData({
+    const debouceFetch = debounce((value) => {
+      fetchData({
         match: value || undefined,
       });
     }, 200);
 
-    handleAdd = () => this.setState({ adding: true });
+    const handleAdd = () => setState({ ...state, adding: true });
 
-    handleAddingClose = () => this.setState({ adding: false });
+    const handleAddingClose = () => setState({ ...state, adding: false });
 
-    handleAddingSuccess = () => this.setState({ adding: false, snackbar: 'Success!' });
+    const handleAddingSuccess = () => setState({ ...state, adding: false, snackbar: 'Success!' });
 
-    handleAddingError = (error) => this.setState({ snackbar: error });
+    const handleAddingError = (error) => setState({ ...state, snackbar: error });
 
-    handleDelete = (item) => (event) => {
+    const handleDelete = (item) => (event) => {
       event.stopPropagation();
-      this.setState({ deleting: item });
+      setState({ ...state, deleting: item });
     };
   
-    handleDeleteSuccess = () =>
-      this.setState({ deleting: false, snackbar: "Success!" });
+    const handleDeleteSuccess = () => setState({ ...state, deleting: false, snackbar: "Success!" });
   
-    handleDeleteClose = () => this.setState({ deleting: false });
+    const handleDeleteClose = () => setState({ ...state, deleting: false });
   
-    handleDeleteError = (error) => this.setState({ snackbar: error });
+    const handleDeleteError = (error) => setState({ ...state, snackbar: error });
 
-    handleEdit = path => (event) => {
+    const handleEdit = path => (event) => {
       if(window.getSelection().toString()) return;
-      this.props.history.push(path);
+      props.navigate(path);
       event.stopPropagation();
     };
 
-    render() {
-      return <WrappedComponent
-        handleRequestSort={this.handleRequestSort}
-        handleMatch={this.handleMatch}
-        handleScroll={this.handleScroll}
-        tableState={this.state}
-        clearSnackbar={this.clearSnackbar}
-        handleAdd={this.handleAdd}
-        handleAddingClose={this.handleAddingClose}
-        handleAddingSuccess={this.handleAddingSuccess}
-        handleAddingError={this.handleAddingError}
-        handleDelete={this.handleDelete}
-        handleDeleteSuccess={this.handleDeleteSuccess}
-        handleDeleteClose={this.handleDeleteClose}
-        handleDeleteError={this.handleDeleteError}
-        handleEdit={this.handleEdit}
-        {...this.props}
-      />;
-    }
+    return <WrappedComponent
+      handleRequestSort={handleRequestSort}
+      handleMatch={handleMatch}
+      handleScroll={handleScroll}
+      tableState={state}
+      clearSnackbar={clearSnackbar}
+      handleAdd={handleAdd}
+      handleAddingClose={handleAddingClose}
+      handleAddingSuccess={handleAddingSuccess}
+      handleAddingError={handleAddingError}
+      handleDelete={handleDelete}
+      handleDeleteSuccess={handleDeleteSuccess}
+      handleDeleteClose={handleDeleteClose}
+      handleDeleteError={handleDeleteError}
+      handleEdit={handleEdit}
+      {...props}
+    />;
   };
 
 }

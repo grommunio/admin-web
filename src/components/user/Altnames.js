@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
   TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
@@ -36,40 +36,38 @@ const styles = theme => ({
   },
 });
 
-class Altnames extends PureComponent {
+const Altnames = props => {
 
-  render() {
-    const { classes, t, user, handleAltnameEdit } = this.props;
-    const { altnames } = user;
+  const { classes, t, user, handleAltnameEdit } = props;
+  const { altnames } = user;
 
-    return (
-      <FormControl className={classes.form}>
-        <div className={classes.flexRow}>
-          <Typography variant="h6">{t('Alternative names')}</Typography>
-          {user?.ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
-            <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
-          </Tooltip>}
-        </div>
-        <List className={classes.list}>
-          {(altnames || []).map((alt, idx) => <ListItem key={idx} className={classes.listItem}>
-            <TextField
-              className={classes.listTextfield}
-              value={alt.altname || ""}
-              label={t("Alt name") + ' ' + (idx + 1)}
-              onChange={handleAltnameEdit("edit", idx)}
-            />
-            <IconButton onClick={handleAltnameEdit("delete", idx)} size="large">
-              <Delete color="error" />
-            </IconButton>
-          </ListItem>
-          )}
-        </List>
-        <Grid container justifyContent="center">
-          <Button variant="contained" onClick={handleAltnameEdit("add")}>{t('addHeadline', { item: 'Alternative name' })}</Button>
-        </Grid>
-      </FormControl>
-    );
-  }
+  return (
+    <FormControl className={classes.form}>
+      <div className={classes.flexRow}>
+        <Typography variant="h6">{t('Alternative names')}</Typography>
+        {user?.ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
+          <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
+        </Tooltip>}
+      </div>
+      <List className={classes.list}>
+        {(altnames || []).map((alt, idx) => <ListItem key={idx} className={classes.listItem}>
+          <TextField
+            className={classes.listTextfield}
+            value={alt.altname || ""}
+            label={t("Alt name") + ' ' + (idx + 1)}
+            onChange={handleAltnameEdit("edit", idx)}
+          />
+          <IconButton onClick={handleAltnameEdit("delete", idx)} size="large">
+            <Delete color="error" />
+          </IconButton>
+        </ListItem>
+        )}
+      </List>
+      <Grid container justifyContent="center">
+        <Button variant="contained" onClick={handleAltnameEdit("add")}>{t('addHeadline', { item: 'Alternative name' })}</Button>
+      </Grid>
+    </FormControl>
+  );
 }
 
 Altnames.propTypes = {

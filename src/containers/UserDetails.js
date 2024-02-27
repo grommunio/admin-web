@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -44,6 +44,7 @@ import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
 import Tabs from '../components/user/Tabs';
 import Altnames from '../components/user/Altnames';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -71,9 +72,8 @@ const styles = theme => ({
 /**
  * This is by far the biggest component in the app, tread with caution
  */
-class UserDetails extends PureComponent {
-
-  state = {
+const UserDetails = props => {
+  const [state, setState] = useState({
     adding: false,
     editing: null,
     user: {
@@ -93,7 +93,6 @@ class UserDetails extends PureComponent {
     snackbar: '',
     tab: window.location.hash ?
       (parseInt(window.location.hash.slice(1)) || 0) : 0,
-    langs: [],
     sizeUnits: {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
@@ -101,35 +100,42 @@ class UserDetails extends PureComponent {
     },
     detaching: false,
     detachLoading: false,
-    domainDetails: {},
-    forwardError: false,
     loading: true,
-  };
+  });
+  const [langs, setLangs] = useState([]);
+  const [domainDetails, setDomainDetails] = useState({});
+  const [forwardError, setForwardError] = useState(false);
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs, fetchServers } = this.props;
-    const splits = window.location.pathname.split('/');
-    const user = await fetch(splits[1], splits[3])
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    const defaultPolicy = user.defaultPolicy || {};
-    user.syncPolicy = user.syncPolicy || {};
-    this.setState({ ...this.getStateOverwrite(user, defaultPolicy), loading: false });
-    const langs = await storeLangs()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    // If Sys admin read-only permissions
-    if(this.context.includes(SYSTEM_ADMIN_READ)) {
-      fetchRoles()
-        .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-      fetchServers()
-        .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    }
-    const domainDetails = await fetchDomainDetails(domain.ID);
-    this.setState({ domainDetails, langs: langs || [] });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs, fetchServers } = props;
+      const splits = window.location.pathname.split('/');
+      const user = await fetch(splits[1], splits[3])
+        .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      const defaultPolicy = user.defaultPolicy || {};
+      user.syncPolicy = user.syncPolicy || {};
+      setState({ ...state, ...getStateOverwrite(user, defaultPolicy), loading: false });
+      const langs = await storeLangs()
+        .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      if(langs) setLangs(langs);
+      // If Sys admin read-only permissions
+      if(context.includes(SYSTEM_ADMIN_READ)) {
+        fetchRoles()
+          .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+        fetchServers()
+          .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      }
+      const domainDetails = await fetchDomainDetails(domain.ID);
+      if(domainDetails) setDomainDetails(domainDetails);
+    };
+
+    inner();
+  }, []);
 
   // Transformes backend json object to useable component state object
-  getStateOverwrite(user, defaultPolicy) {
-    if(!user) return;
+  const getStateOverwrite = (user, defaultPolicy) => {
+    if(!user) return {};
     const properties = {
       ...user.properties,
     };
@@ -184,19 +190,21 @@ class UserDetails extends PureComponent {
     };
   }
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state, 
       user: {
-        ...this.state.user,
+        ...state.user,
         [field]: event.target.value,
       },
       unsaved: true,
     });
   }
 
-  handleForwardInput = field => e => {
-    const { user } = this.state;
-    this.setState({
+  const handleForwardInput = field => e => {
+    const { user } = state;
+    setState({
+      ...state, 
       user: {
         ...user,
         forward: {
@@ -210,32 +218,33 @@ class UserDetails extends PureComponent {
     // Check if mail is formatted correctly
     if(field === 'destination') {
       const mail = e.target.value;
-      this.debounceFetch(mail ? { email: encodeURIComponent(mail) } : null);
+      debounceFetch(mail ? { email: encodeURIComponent(mail) } : null);
     }
   }
 
   // When sanitizing user input, only check every 200ms
-  debounceFetch = debounce(async params => {
+  const debounceFetch = debounce(async params => {
     if(!params) {
-      this.setState({ forwardError: false });
+      setForwardError(false);
     } else {
       const resp = await checkFormat(params)
-        .catch(snackbar => this.setState({ snackbar, loading: false }));
-      this.setState({ forwardError: !!resp?.email });
+        .catch();
+      if(resp) setForwardError(!!resp.email);
     }
-  }, 200)
+  }, 200);
 
-  handleStatusInput = async event => {
-    const { user } = this.state;
+  const handleStatusInput = async event => {
+    const { user } = state;
     const { value } = event.target;
-    const { edit, domain } = this.props;
+    const { edit, domain } = props;
     // Immediately write user status to DB
     await edit(domain.ID, {
       ID: user.ID,
       status: value,
-    }).then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    this.setState({
+    }).then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+    setState({
+      ...state, 
       user: {
         ...user,
         status: value,
@@ -245,9 +254,10 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handlePropertyChange = field => event => {
-    const { user } = this.state;
-    this.setState({
+  const handlePropertyChange = field => event => {
+    const { user } = state;
+    setState({
+      ...state, 
       user: {
         ...user,
         properties: {
@@ -259,12 +269,13 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleIntPropertyChange = field => event => {
-    const { user } = this.state;
+  const handleIntPropertyChange = field => event => {
+    const { user } = state;
     const value = event.target.value;
     const int = parseInt(value);
     if(!isNaN(int) || value === '') {
-      this.setState({
+      setState({
+        ...state, 
         user: {
           ...user,
           properties: {
@@ -281,9 +292,9 @@ class UserDetails extends PureComponent {
    * Handles saving the user
    * Before sending the user state object to the backend it needs to be transformed according to the API spec
    */
-  handleEdit = () => {
-    const { edit, domain } = this.props;
-    const { user, sizeUnits, defaultPolicy, syncPolicy } = this.state;
+  const handleEdit = () => {
+    const { edit, domain } = props;
+    const { user, sizeUnits, defaultPolicy, syncPolicy } = state;
     const { username, aliases, fetchmail, forward, properties, homeserver, altnames } = user;
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
 
@@ -316,104 +327,109 @@ class UserDetails extends PureComponent {
       altnames: altnames.map(({ altname }) => ({ altname })),
       roles: undefined,
       ldapID: undefined,
-    }).then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    }).then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  handleSync = () => {
-    const { sync, domain } = this.props;
-    const { user } = this.state;
+  const handleSync = () => {
+    const { sync, domain } = props;
+    const { user } = state;
     sync(domain.ID, user.ID)
       .then(user => {
         const defaultPolicy = user.defaultPolicy || {};
         user.syncPolicy = user.syncPolicy || {};
-        this.setState({
-          ...this.getStateOverwrite(user, defaultPolicy), // New backend user object received -> convert to state objects
+        setState({
+          ...state, 
+          ...getStateOverwrite(user, defaultPolicy), // New backend user object received -> convert to state objects
           snackbar: 'Success!',
         });
-      }).catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+      }).catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  handleDump = () => {
-    const { dump, domain } = this.props;
-    const { ldapID } = this.state.user;
+  const handleDump = () => {
+    const { dump, domain } = props;
+    const { ldapID } = state.user;
     dump({ ID: ldapID, organization: domain.orgID || 0 })
-      .then(data => this.setState({ dump: data.data }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+      .then(data => setState({ ...state, dump: data.data }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  handleSaveRoles = () => {
-    const { editUserRoles, domain } = this.props;
-    const { ID, roles } = this.state.user;
+  const handleSaveRoles = () => {
+    const { editUserRoles, domain } = props;
+    const { ID, roles } = state.user;
     editUserRoles(domain.ID, ID, { roles: roles })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  handleTabChange = (_, tab) => {
+  const handleTabChange = (_, tab) => {
     location.hash = '#' + tab;
-    this.setState({ tab });
+    setState({ ...state, tab });
   }
 
-  handleAliasEdit = idx => event => {
-    const { user } = this.state;
+  const handleAliasEdit = idx => event => {
+    const { user } = state;
     const copy = [...user.aliases];
     copy[idx] = event.target.value;
-    this.setState({ user: { ...user, aliases: copy } });
+    setState({ ...state, user: { ...user, aliases: copy } });
   }
 
-  handleAddAlias = () => {
-    const { user } = this.state;
+  const handleAddAlias = () => {
+    const { user } = state;
     const copy = [...user.aliases];
     copy.push('');
-    this.setState({ user: { ...user, aliases: copy } });
+    setState({ ...state, user: { ...user, aliases: copy } });
   }
 
-  handleRemoveAlias = idx => () => {
-    const { user } = this.state;
+  const handleRemoveAlias = idx => () => {
+    const { user } = state;
     const copy = [...user.aliases];
     copy.splice(idx, 1);
-    this.setState({ user: { ...user, aliases: copy } });
+    setState({ ...state, user: { ...user, aliases: copy } });
   }
 
-  handleCheckbox = field => e => {
-    const { pop3_imap } = this.state.user;
+  const handleCheckbox = field => e => {
+    const { pop3_imap } = state.user;
     const { checked } = e.target;
     
     if(field === "privArchive") {
-      this.setState({
+      setState({
+        ...state, 
         user: {
-          ...this.state.user,
+          ...state.user,
           // If archive is allowed, pop3 must be enabled
           "pop3_imap": checked || pop3_imap,
           [field]: checked,
         },
       });
     } else {
-      this.setState({
+      setState({
+        ...state, 
         user: {
-          ...this.state.user,
+          ...state.user,
           [field]: checked,
         },
       });
     }
   }
 
-  handleUnitChange = unit => event => this.setState({
+  const handleUnitChange = unit => event => setState({
+    ...state, 
     sizeUnits: {
-      ...this.state.sizeUnits,
+      ...state.sizeUnits,
       [unit]: event.target.value,
     },
   });
 
-  handleDetachDialog = detaching => () => this.setState({ detaching });
+  const handleDetachDialog = detaching => () => setState({ ...state, detaching });
   
-  handleDetach = () => {
-    const { user } = this.state;
-    const { domain, edit } = this.props;
-    this.setState({ detachLoading: true });
+  const handleDetach = () => {
+    const { user } = state;
+    const { domain, edit } = props;
+    setState({ ...state, detachLoading: true });
     edit(domain.ID, { ID: user.ID, ldapID: null })
-      .then(() => this.setState({
+      .then(() => setState({
+        ...state, 
         user: {
           ...user,
           ldapID: null, // User detached from LDAP -> Remove LDAP ID
@@ -422,36 +438,38 @@ class UserDetails extends PureComponent {
         detachLoading: false,
         detaching: false,
       }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error', detachLoading: false }));
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error', detachLoading: false }));
   }
 
-  handleCloseDump = () => this.setState({ dump: '' });
+  const handleCloseDump = () => setState({ ...state, dump: '' });
 
-  handlePasswordDialogToggle = changingPw => () => this.setState({ changingPw });
+  const handlePasswordDialogToggle = changingPw => () => setState({ ...state, changingPw });
 
-  handleSuccess = () => this.setState({ snackbar: 'Success!' });
+  const handleSuccess = () => setState({ ...state, snackbar: 'Success!' });
 
-  handleError = msg => this.setState({ snackbar: msg.message || 'Unknown error' });
+  const handleError = msg => setState({ ...state, snackbar: msg.message || 'Unknown error' });
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setState({
+      ...state, 
       user: {
-        ...this.state.user,
+        ...state.user,
         [field]: newVal.map(r => r.ID ? r.ID : r),
       },
       unsaved: true,
     });
   }
 
-  handleFetchmailDialog = state => () => this.setState({ adding: state })
+  const handleFetchmailDialog = state => () => setState({ ...state, adding: state })
 
-  handleFetchmailEditDialog = state => () => this.setState({ editing: state })
+  const handleFetchmailEditDialog = state => () => setState({ ...state, editing: state })
 
-  addFetchmail = entry => {
-    const { user } = this.state;
+  const addFetchmail = entry => {
+    const { user } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail.push(entry);
-    this.setState({
+    setState({
+      ...state, 
       user: {
         ...user,
         fetchmail,
@@ -460,11 +478,12 @@ class UserDetails extends PureComponent {
     });
   }
 
-  editFetchmail = entry => {
-    const { user, editing } = this.state;
+  const editFetchmail = entry => {
+    const { user, editing } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail[editing] = entry;
-    this.setState({
+    setState({
+      ...state, 
       user: {
         ...user,
         fetchmail,
@@ -473,12 +492,13 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleFetchmailDelete = idx => e => {
-    const { user } = this.state;
+  const handleFetchmailDelete = idx => e => {
+    const { user } = state;
     const fetchmail = [...user.fetchmail];
     e.stopPropagation();
     fetchmail.splice(idx, 1);
-    this.setState({
+    setState({
+      ...state, 
       user: {
         ...user,
         fetchmail,
@@ -486,9 +506,10 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleSyncChange = field => event => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSyncChange = field => event => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: event.target.value,
@@ -496,9 +517,10 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleSyncCheckboxChange = field => (event, newVal) => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSyncCheckboxChange = field => (event, newVal) => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: newVal ? 1 : 0,
@@ -506,9 +528,10 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleSlider = field => (event, newVal) => {
-    const { syncPolicy } = this.state;
-    this.setState({
+  const handleSlider = field => (event, newVal) => {
+    const { syncPolicy } = state;
+    setState({
+      ...state, 
       syncPolicy: {
         ...syncPolicy,
         [field]: newVal,
@@ -516,10 +539,11 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleChatUser = e => {
+  const handleChatUser = e => {
     const { checked } = e.target;
-    const { user } = this.state;
-    this.setState({
+    const { user } = state;
+    setState({
+      ...state, 
       user: {
         ...user,
         chat: checked,
@@ -529,10 +553,11 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleServer =(e, newVal) => {
-    this.setState({
+  const handleServer =(e, newVal) => {
+    setState({
+      ...state, 
       user: {
-        ...this.state.user,
+        ...state.user,
         homeserver: newVal || '',
       },
     });
@@ -546,11 +571,12 @@ class UserDetails extends PureComponent {
    * The MUI component's state expands this bitmask into 3 explicitly defined array elements, that match the bits.
    * For example, `attributehidden_gromox === 3` results in `[1, 2, 0]` for the component.
    */
-  handleMultiselectChange = field => event => {
-    const { user } = this.state;
+  const handleMultiselectChange = field => event => {
+    const { user } = state;
     const { value } = event.target;
     const mask = (value || []).reduce((prev, next) => prev | next, 0)  // bitwise OR array elements
-    this.setState({
+    setState({
+      ...state, 
       user: {
         ...user,
         properties: {
@@ -562,8 +588,8 @@ class UserDetails extends PureComponent {
     });
   }
 
-  handleAltnameEdit = (action, idx=0) => e => {
-    const altnames = [...this.state.user.altnames]
+  const handleAltnameEdit = (action, idx=0) => e => {
+    const altnames = [...state.user.altnames]
     switch(action) {
     case "add": {
       altnames.push({ altname: "", magic: 0 });
@@ -577,210 +603,207 @@ class UserDetails extends PureComponent {
       altnames.splice(idx, 1);
     }
     }
-    this.setState({
+    setState({
+      ...state, 
       user: {
-        ...this.state.user,
+        ...state.user,
         altnames: altnames,
       }
     })
   }
 
-  render() {
-    const { classes, t, domain, history } = this.props;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const sysAdminReadPermissions = this.context.includes(SYSTEM_ADMIN_READ);
-    const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy, langs,
-      detaching, adding, editing, dump, rawData, syncPolicy, domainDetails, forwardError } = this.state;
+  const { classes, t, domain, navigate } = props;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const sysAdminReadPermissions = context.includes(SYSTEM_ADMIN_READ);
+  const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
+    detaching, adding, editing, dump, rawData, syncPolicy } = state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
-    const storageQuotaTooHigh = parseInt(properties.storagequotalimit) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
+  const storageQuotaTooHigh = parseInt(properties.storagequotalimit) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Users')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container className={classes.header}>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
-            </Typography>
-          </Grid>
-          {ldapID && <Grid container className={classes.syncButtons}>
-            <Tooltip title={t("Detach user from LDAP object")} placement="top">
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ marginRight: 8 }}
-                onClick={this.handleDetachDialog(true)}
-                size="small"
-              >
-                <Detach fontSize="small" className={classes.leftIcon} /> {t("Detach")}
-              </Button>
-            </Tooltip>
-            <Tooltip title={t("Synchronize data from LDAP")} placement="top">
-              <Button
-                size="small"
-                onClick={this.handleSync}
-                variant="contained"
-                color="primary"
-                style={{ marginRight: 8 }}
-              >
-                <Sync fontSize="small" className={classes.leftIcon}/> {t("Sync")}
-              </Button>
-            </Tooltip>
-            <Tooltip title={t("Show raw data")} placement="top">
-              <Button
-                size="small"
-                onClick={this.handleDump}
-                variant="contained"
-                color="primary"
-              >
-                <Dump fontSize="small" className={classes.leftIcon}/> {t("LDAP Dump")}
-              </Button>
-            </Tooltip>
-          </Grid>}
-          <div className={classes.tabsContainer}>
-            <Tabs
-              value={tab}
-              handleTabChange={this.handleTabChange}
-              ID={ID}
-              sysAdminReadPermissions={sysAdminReadPermissions}
-            />
-          </div>
-          {tab === 0 && <Account
-            domain={domainDetails.ID ? domainDetails : domain}
-            user={user}
-            sizeUnits={sizeUnits}
-            langs={langs}
-            handleInput={this.handleInput}
-            handleStatusInput={this.handleStatusInput}
-            handlePropertyChange={this.handlePropertyChange}
-            handleIntPropertyChange={this.handleIntPropertyChange}
-            handleCheckbox={this.handleCheckbox}
-            handleUnitChange={this.handleUnitChange}
-            handlePasswordChange={this.handlePasswordDialogToggle(true)}
-            rawData={rawData}
-            handleChatUser={this.handleChatUser}
-            handleServer={this.handleServer}
-            handleMultiselectChange={this.handleMultiselectChange}
-            storageQuotaTooHigh={storageQuotaTooHigh}
-          />}
-          {tab === 1 && <Altnames
-            user={user}
-            handleAltnameEdit={this.handleAltnameEdit}
-          />}
-          {tab === 2 && <User
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />}
-          {tab === 3 && <Contact
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />}
-          {tab === 4 && sysAdminReadPermissions && <Roles
-            roles={roles}
-            handleAutocomplete={this.handleAutocomplete}
-          />}
-          {tab === 5 && <Smtp
-            user={user}
-            aliases={aliases}
-            forward={forward || {}}
-            forwardError={forwardError}
-            handleForwardInput={this.handleForwardInput}
-            handleAliasEdit={this.handleAliasEdit}
-            handleAddAlias={this.handleAddAlias}
-            handleRemoveAlias={this.handleRemoveAlias}
-          />}
-          {tab === 6 && ID && <Delegates
-            domainID={domain.ID}
-            orgID={domain.orgID}
-            userID={user.ID}
-            disabled={!writable}
-          />}
-          {tab === 7 && ID && <Oof
-            domainID={domain.ID}
-            userID={user.ID}
-          />}
-          {tab === 8 && <FetchMail
-            fetchmail={fetchmail}
-            handleAdd={this.handleFetchmailDialog(true)}
-            handleEdit={this.handleFetchmailEditDialog}
-            handleDelete={this.handleFetchmailDelete}
-          />}
-          {tab === 9 && ID && <SyncTab
-            domainID={domain.ID}
-            userID={user.ID}
-          />}
-          {tab === 10 && ID && <SyncPolicies
-            syncPolicy={syncPolicy}
-            defaultPolicy={defaultPolicy}
-            handleChange={this.handleSyncChange}
-            handleCheckbox={this.handleSyncCheckboxChange}
-            handleSlider={this.handleSlider}
-          />}
-          {tab !== 6 && tab !== 7 && <Grid container className={classes.buttonGrid}>
-            <Button
-              onClick={history.goBack}
-              style={{ marginRight: 8 }}
-              color="secondary"
-            >
-              {t('Back')}
-            </Button>
+  return (
+    <ViewWrapper
+      topbarTitle={t('Users')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container className={classes.header}>
+          <Typography
+            color="primary"
+            variant="h5"
+          >
+            {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
+          </Typography>
+        </Grid>
+        {ldapID && <Grid container className={classes.syncButtons}>
+          <Tooltip title={t("Detach user from LDAP object")} placement="top">
             <Button
               variant="contained"
-              color="primary"
-              onClick={tab === 4 ? this.handleSaveRoles : this.handleEdit}
-              disabled={!writable || forwardError || storageQuotaTooHigh}
+              color="secondary"
+              style={{ marginRight: 8 }}
+              onClick={handleDetachDialog(true)}
+              size="small"
             >
-              {t('Save')}
+              <Detach fontSize="small" className={classes.leftIcon} /> {t("Detach")}
             </Button>
-          </Grid>}
-        </Paper>
-        <DetachDialog
-          open={detaching}
-          loading={detachLoading}
-          onClose={this.handleDetachDialog(false)}
-          onDetach={this.handleDetach}
-        />
-        <AddFetchmail
-          open={adding}
-          add={this.addFetchmail}
-          onClose={this.handleFetchmailDialog(false)}
-          username={username + '@' + domain.domainname}
-        />
-        <EditFetchmail
-          open={editing !== null}
-          entry={editing !== null ? fetchmail[editing] : editing}
-          edit={this.editFetchmail}
-          onClose={this.handleFetchmailEditDialog(null)}
-          username={username + '@' + domain.domainname}
-        />
-        <ChangeUserPassword
-          onClose={this.handlePasswordDialogToggle(false)}
-          onError={this.handleError}
-          onSuccess={this.handleSuccess}
-          changingPw={changingPw}
-          domain={domain}
+          </Tooltip>
+          <Tooltip title={t("Synchronize data from LDAP")} placement="top">
+            <Button
+              size="small"
+              onClick={handleSync}
+              variant="contained"
+              color="primary"
+              style={{ marginRight: 8 }}
+            >
+              <Sync fontSize="small" className={classes.leftIcon}/> {t("Sync")}
+            </Button>
+          </Tooltip>
+          <Tooltip title={t("Show raw data")} placement="top">
+            <Button
+              size="small"
+              onClick={handleDump}
+              variant="contained"
+              color="primary"
+            >
+              <Dump fontSize="small" className={classes.leftIcon}/> {t("LDAP Dump")}
+            </Button>
+          </Tooltip>
+        </Grid>}
+        <div className={classes.tabsContainer}>
+          <Tabs
+            value={tab}
+            handleTabChange={handleTabChange}
+            ID={ID}
+            sysAdminReadPermissions={sysAdminReadPermissions}
+          />
+        </div>
+        {tab === 0 && <Account
+          domain={domainDetails.ID ? domainDetails : domain}
           user={user}
-        />
-        <DumpDialog onClose={this.handleCloseDump} open={!!dump} dump={dump} />
-      </ViewWrapper>
-    );
-  }
+          sizeUnits={sizeUnits}
+          langs={langs}
+          handleInput={handleInput}
+          handleStatusInput={handleStatusInput}
+          handlePropertyChange={handlePropertyChange}
+          handleIntPropertyChange={handleIntPropertyChange}
+          handleCheckbox={handleCheckbox}
+          handleUnitChange={handleUnitChange}
+          handlePasswordChange={handlePasswordDialogToggle(true)}
+          rawData={rawData}
+          handleChatUser={handleChatUser}
+          handleServer={handleServer}
+          handleMultiselectChange={handleMultiselectChange}
+          storageQuotaTooHigh={storageQuotaTooHigh}
+        />}
+        {tab === 1 && <Altnames
+          user={user}
+          handleAltnameEdit={handleAltnameEdit}
+        />}
+        {tab === 2 && <User
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />}
+        {tab === 3 && <Contact
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />}
+        {tab === 4 && sysAdminReadPermissions && <Roles
+          roles={roles}
+          handleAutocomplete={handleAutocomplete}
+        />}
+        {tab === 5 && <Smtp
+          user={user}
+          aliases={aliases}
+          forward={forward || {}}
+          forwardError={forwardError}
+          handleForwardInput={handleForwardInput}
+          handleAliasEdit={handleAliasEdit}
+          handleAddAlias={handleAddAlias}
+          handleRemoveAlias={handleRemoveAlias}
+        />}
+        {tab === 6 && ID && <Delegates
+          domainID={domain.ID}
+          orgID={domain.orgID}
+          userID={user.ID}
+          disabled={!writable}
+        />}
+        {tab === 7 && ID && <Oof
+          domainID={domain.ID}
+          userID={user.ID}
+        />}
+        {tab === 8 && <FetchMail
+          fetchmail={fetchmail}
+          handleAdd={handleFetchmailDialog(true)}
+          handleEdit={handleFetchmailEditDialog}
+          handleDelete={handleFetchmailDelete}
+        />}
+        {tab === 9 && ID && <SyncTab
+          domainID={domain.ID}
+          userID={user.ID}
+        />}
+        {tab === 10 && ID && <SyncPolicies
+          syncPolicy={syncPolicy}
+          defaultPolicy={defaultPolicy}
+          handleChange={handleSyncChange}
+          handleCheckbox={handleSyncCheckboxChange}
+          handleSlider={handleSlider}
+        />}
+        {tab !== 6 && tab !== 7 && <Grid container className={classes.buttonGrid}>
+          <Button
+            onClick={() => navigate(-1)}
+            style={{ marginRight: 8 }}
+            color="secondary"
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={tab === 4 ? handleSaveRoles : handleEdit}
+            disabled={!writable || forwardError || storageQuotaTooHigh}
+          >
+            {t('Save')}
+          </Button>
+        </Grid>}
+      </Paper>
+      <DetachDialog
+        open={detaching}
+        loading={detachLoading}
+        onClose={handleDetachDialog(false)}
+        onDetach={handleDetach}
+      />
+      <AddFetchmail
+        open={adding}
+        add={addFetchmail}
+        onClose={handleFetchmailDialog(false)}
+        username={username + '@' + domain.domainname}
+      />
+      <EditFetchmail
+        open={editing !== null}
+        entry={editing !== null ? fetchmail[editing] : editing}
+        edit={editFetchmail}
+        onClose={handleFetchmailEditDialog(null)}
+        username={username + '@' + domain.domainname}
+      />
+      <ChangeUserPassword
+        onClose={handlePasswordDialogToggle(false)}
+        onError={handleError}
+        onSuccess={handleSuccess}
+        changingPw={changingPw}
+        domain={domain}
+        user={user}
+      />
+      <DumpDialog onClose={handleCloseDump} open={!!dump} dump={dump} />
+    </ViewWrapper>
+  );
 }
 
-UserDetails.contextType = CapabilityContext;
 UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
   sync: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -823,5 +846,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(UserDetails)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(UserDetails))));

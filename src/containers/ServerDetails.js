@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -19,6 +19,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editServerData, fetchServerDetails } from '../actions/servers';
 import { getStringAfterLastSlash } from '../utils';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -38,121 +39,123 @@ const styles = theme => ({
   },
 });
 
-class ServerDetails extends PureComponent {
-
-  state = {
+const ServerDetails = props => {
+  const [state, setState] = useState({
     server: {},
     unsaved: false,
-    autocompleteInput: '',
     loading: true,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  async componentDidMount() {
-    const { fetch } = this.props;
-    const server = await fetch(getStringAfterLastSlash())
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
-    this.setState({
-      loading: false,
-      server: server || {},
-    });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch } = props;
+      const server = await fetch(getStringAfterLastSlash())
+        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      setState({
+        ...state, 
+        loading: false,
+        server: server || {},
+      });
+    };
 
-  handleInput = field => event => {
-    this.setState({
+    inner();
+  }, []);
+
+  const handleInput = field => event => {
+    setState({
+      ...state, 
       server: {
-        ...this.state.server,
+        ...state.server,
         [field]: event.target.value,
       },
       unsaved: true,
     });
   }
 
-  handleEdit = () => {
-    const { edit } = this.props;
-    const { server } = this.state;
+  const handleEdit = () => {
+    const { edit } = props;
+    const { server } = state;
     edit({
       ID: server.ID,
       hostname: server.hostname,
       extname: server.extname,
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  handleNavigation = path => event => {
-    const { history } = this.props;
+  const handleNavigation = path => event => {
+    const { navigate } = props;
     event.preventDefault();
-    history.push(`/${path}`);
+    navigate(`/${path}`);
   }
 
-  render() {
-    const { classes, t } = this.props;
-    const { loading, server, snackbar } = this.state;
-    const { hostname, extname, domains, users } = server;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
+  const { classes, t } = props;
+  const { loading, server, snackbar } = state;
+  const { hostname, extname, domains, users } = server;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Servers')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'Server' })}
-            </Typography>
-          </Grid>
-          <Typography>{domains} {t('Domains')} - {users} {t('Users')}</Typography>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Hostname")}
-              onChange={this.handleInput('hostname')}
-              fullWidth 
-              value={hostname || ''}
-              autoFocus
-              required
-            />
-            <TextField 
-              className={classes.input} 
-              label={t("External name")} 
-              fullWidth
-              onChange={this.handleInput('extname')}
-              value={extname || ''}
-              variant="outlined"
-            />
-          </FormControl>
-          <Button
-            color="secondary"
-            onClick={this.handleNavigation('servers')}
-            style={{ marginRight: 8 }}
-          >
-            {t('Back')}
-          </Button>
-          <Button
-            variant="contained"
+  return (
+    <ViewWrapper
+      topbarTitle={t('Servers')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
             color="primary"
-            onClick={this.handleEdit}
-            disabled={!writable || !hostname || !extname}
+            variant="h5"
           >
-            {t('Save')}
-          </Button>
-        </Paper>
-      </ViewWrapper>
-    );
-  }
+            {t('editHeadline', { item: 'Server' })}
+          </Typography>
+        </Grid>
+        <Typography>{domains} {t('Domains')} - {users} {t('Users')}</Typography>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Hostname")}
+            onChange={handleInput('hostname')}
+            fullWidth 
+            value={hostname || ''}
+            autoFocus
+            required
+          />
+          <TextField 
+            className={classes.input} 
+            label={t("External name")} 
+            fullWidth
+            onChange={handleInput('extname')}
+            value={extname || ''}
+            variant="outlined"
+          />
+        </FormControl>
+        <Button
+          color="secondary"
+          onClick={handleNavigation('servers')}
+          style={{ marginRight: 8 }}
+        >
+          {t('Back')}
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEdit}
+          disabled={!writable || !hostname || !extname}
+        >
+          {t('Save')}
+        </Button>
+      </Paper>
+    </ViewWrapper>
+  );
 }
 
-ServerDetails.contextType = CapabilityContext;
 ServerDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
 };
@@ -166,5 +169,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ServerDetails)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(ServerDetails))));

@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-
-import thunkMiddleware from 'redux-thunk';
-import dynamicMiddlewares from 'redux-dynamic-middlewares';
+import { combineReducers } from 'redux';
 
 // Keep alphabetically ordered
 import aboutReducer from './reducers/about';
@@ -31,12 +28,21 @@ import statusReducer from './reducers/status';
 import syncReducer from './reducers/sync';
 import taskqReducer from './reducers/taskq';
 import usersReducer from './reducers/users';
+import { configureStore } from '@reduxjs/toolkit';
+import logger from 'redux-logger';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const getMiddleware = getDefaultMiddleware => {
+  const middleware = getDefaultMiddleware();
+  // eslint-disable-next-line no-undef
+  if (process.env.NODE_ENV === 'development') {
+    middleware.push(logger);
+  }
+  return middleware;
+}
 
 // Create redux store
-export const store = createStore(
-  combineReducers({
+export const store = configureStore({
+  reducer: combineReducers({
     about: aboutReducer,
     antispam: antispamReducer,
     auth: authReducer,
@@ -62,10 +68,7 @@ export const store = createStore(
     taskq: taskqReducer,
     users: usersReducer,
   }),
-  composeEnhancers(applyMiddleware(
-    thunkMiddleware,
-    dynamicMiddlewares,
-  ))
-);
+  middleware: getMiddleware,
+});
 
 export default store;

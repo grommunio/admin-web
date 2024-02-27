@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { fetchDomainData, fetchDomainDetails } from '../../actions/domains';
 import { addUserData, getStoreLangs } from '../../actions/users';
-import { withRouter } from 'react-router';
 import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { withRouter } from '../../hocs/withRouter';
 
 const styles = theme => ({
   form: {
@@ -35,9 +35,8 @@ const styles = theme => ({
   },
 });
 
-class AddGlobalUser extends PureComponent {
-
-  state = {
+const AddGlobalUser = props => {
+  const [state, setState] = useState({
     username: '',
     properties: {
       displayname: '',
@@ -48,48 +47,48 @@ class AddGlobalUser extends PureComponent {
     loading: false,
     password: '',
     repeatPw: '',
-    usernameError: false,
     domain: '',
     homeserver: '',
     lang: '',
-    autocompleteInput: '',
-    langs: [],
     chatAvailable: false,
-  }
+  });
+  const [langs, setLangs] = useState([]);
+  const [usernameError, setUsernameError] = useState(false);
 
-  types = [
+  const types = [
     { name: 'Normal', ID: 0 },
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
   ]
 
-  statuses = [
+  const statuses = [
     { name: 'Normal', ID: 0 },
     { name: 'Suspended', ID: 1 },
     { name: 'Shared', ID: 4 },
   ]
 
-  handleEnter = async () => {
-    const { fetchDomains, fetchServers, fetchDefaults, storeLangs } = this.props;
-    fetchDomains().catch(error => this.props.onError(error));
-    fetchServers().catch(error => this.props.onError(error));
+  const handleEnter = async () => {
+    const { fetchDomains, fetchServers, fetchDefaults, storeLangs, onError } = props;
+    fetchDomains().catch(error => onError(error));
+    fetchServers().catch(error => onError(error));
     fetchDefaults()
       .then(() => {
-        const { createParams } = this.props;
+        const { createParams } = props;
         // Update mask
-        this.setState(this.getStateOverwrite(createParams));
+        setState(getStateOverwrite(createParams));
       })
-      .catch(error => this.props.onError(error));
+      .catch(error => onError(error));
     const langs = await storeLangs()
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    if(langs) this.setState({ langs });
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+    if(langs) setLangs(langs);
   }
 
-  getStateOverwrite(createParams) {
-    if(!createParams) return {};
+  const getStateOverwrite = (createParams) => {
+    if(!createParams) return state;
     const user = createParams.user;
     const { lang, properties } = user || {};
     return {
+      ...state,
       properties: {
         ...(properties || {}),
         storagequotalimit: properties?.storagequotalimit,
@@ -100,48 +99,34 @@ class AddGlobalUser extends PureComponent {
     };
   }
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setState({
+      ...state,
       [field]: event.target.value,
     });
   }
 
-  handleUsernameInput = event => {
-    const { domain } = this.state;
+  const handleUsernameInput = event => {
+    const { domain } = state;
     const val = event.target.value;
-    if(val && domain) this.debounceFetch({ email: encodeURIComponent(val + '@' + domain?.domainname) });
-    this.setState({
+    if(val && domain) debounceFetch({ email: encodeURIComponent(val + '@' + domain?.domainname) });
+    setState({
+      ...state,
       username: val,
     });
   }
 
-  debounceFetch = debounce(async params => {
+  const debounceFetch = debounce(async params => {
     const resp = await checkFormat(params)
-      .catch(snackbar => this.setState({ snackbar, loading: false }));
-    this.setState({ usernameError: !!resp?.email });
+      .catch(snackbar => setState({ ...state, snackbar, loading: false }));
+    setUsernameError(!!resp?.email);
   }, 200)
 
-  handleCheckbox = field => event => this.setState({ [field]: event.target.checked });
+  const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
 
-  handleChatUser = e => {
-    const { checked } = e.target;
-    this.setState({
-      chat: checked,
-      chatAdmin: false,
-    });
-  }
-
-  handleNumberInput = field => event => {
-    let input = event.target.value;
-    if(input && input.match("^\\d*?$")) input = parseInt(input);
-    this.setState({
-      [field]: input,
-    });
-  }
-
-  handleAdd = () => {
-    const { add, onError, onSuccess, createParams } = this.props;
-    const { username, password, properties, domain, status, homeserver, chat, lang } = this.state;
+  const handleAdd = () => {
+    const { add, onError, onSuccess, createParams } = props;
+    const { username, password, properties, domain, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
@@ -149,7 +134,7 @@ class AddGlobalUser extends PureComponent {
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
-    this.setState({ loading: true });
+    setState({ ...state, loading: true });
     add(domain?.ID || -1, {
       username,
       password: status === 4 ? undefined : password,
@@ -165,7 +150,7 @@ class AddGlobalUser extends PureComponent {
       chat,
     })
       .then(() => {
-        this.setState({
+        setState({
           username: '',
           properties: {
             displayname: '',
@@ -177,20 +162,19 @@ class AddGlobalUser extends PureComponent {
           password: '',
           repeatPw: '',
           usernameError: false,
-          autocompleteInput: '',
           lang: '',
         });
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       });
   }
 
-  handleAddAndEdit = () => {
-    const { history, add, onError, createParams } = this.props;
-    const { username, password, subType, properties, domain, status, homeserver, chat, lang } = this.state;
+  const handleAddAndEdit = () => {
+    const { navigate, add, onError, createParams } = props;
+    const { username, password, subType, properties, domain, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
@@ -198,7 +182,7 @@ class AddGlobalUser extends PureComponent {
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
-    this.setState({ loading: true });
+    setState({ ...state, loading: true });
     add(domain?.ID || -1, {
       username,
       password: status === 4 ? undefined : password,
@@ -214,227 +198,215 @@ class AddGlobalUser extends PureComponent {
       chat,
     })
       .then(user => {
-        history.push('/' + domain?.ID + '/users/' + user.ID);
+        navigate('/' + domain?.ID + '/users/' + user.ID);
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       });
   }
 
-  handlePropertyChange = field => event => {
-    this.setState({
+  const handlePropertyChange = field => event => {
+    setState({
+      ...state,
       properties: {
-        ...this.state.properties,
+        ...state.properties,
         [field]: event.target.value,
       },
     });
   }
 
-  handleIntPropertyChange = field => event => {
-    this.setState({
-      properties: {
-        ...this.state.properties,
-        [field]: parseInt(event.target.value) || '',
-      },
-    });
-  }
-
-  handleAutocomplete = async (e, domain) => {
-    const { username, chat } = this.state;
+  const handleAutocomplete = async (e, domain) => {
+    const { username, chat } = state;
     if(!domain) return;
-    const domainDetails = await this.props.fetchDomainDetails(domain.ID);
-    if(username && domain) this.debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
-    this.setState({
+    const domainDetails = await props.fetchDomainDetails(domain.ID);
+    if(username && domain) debounceFetch({ email: encodeURIComponent(username + '@' + domain?.domainname) });
+    setState({
+      ...state,
       domain,
       chatAvailable: domainDetails.chat || false,
-      autocompleteInput: domain?.domainname || '',
       chat: chat && domainDetails.chat,
     });
   }
 
-  handleServer = (e, newVal) => {
-    this.setState({
+  const handleServer = (e, newVal) => {
+    setState({
+      ...state,
       homeserver: newVal || '',
     });
   }
 
-  render() {
-    const { classes, t, open, onClose, Domains, servers } = this.props;
-    const { username, loading, properties, password, repeatPw,
-      usernameError, domain, autocompleteInput, status, homeserver,
-      lang, langs, chat, chatAvailable } = this.state;
-    const { displayname, displaytypeex } = properties;
-    const addDisabled = !domain || usernameError || !username || loading ||
+  const { classes, t, open, onClose, Domains, servers } = props;
+  const { username, loading, properties, password, repeatPw,
+    domain, status, homeserver, lang, chat, chatAvailable } = state;
+  const { displayname, displaytypeex } = properties;
+  const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || password.length < 6) && status !== 4);
     
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-        TransitionProps={{
-          onEnter: this.handleEnter,
-        }}
-      >
-        <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
-        <DialogContent>
-          <FormControl className={classes.form}>
-            <MagnitudeAutocomplete
-              value={domain}
-              filterAttribute={'domainname'}
-              inputValue={autocompleteInput}
-              onChange={this.handleAutocomplete}
-              className={classes.input} 
-              options={Domains}
-              onInputChange={this.handleInput('autocompleteInput')}
-              label={t('Domain')}
-              placeholder={t("Search domains")  + "..."}
-              autoFocus
-              autoSelect
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Mode")}
-              fullWidth
-              value={status || 0}
-              onChange={this.handleInput('status')}
-            >
-              {this.statuses.map((status, key) => (
-                <MenuItem key={key} value={status.ID}>
-                  {t(status.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField 
-              label={t("Username")}
-              value={username || ''}
-              onChange={this.handleUsernameInput}
-              fullWidth
-              InputProps={{
-                endAdornment: <div>@{domain?.domainname || '<select domain>'}</div>,
-                className: classes.noWrap,
-              }}
-              className={classes.input}
-              required
-              error={!!username && usernameError}
-            />
-            {status !== 4 && <TextField 
-              label={t("Password")}
-              value={password || ''}
-              onChange={this.handleInput('password')}
-              className={classes.input}
-              type="password"
-              required
-              FormHelperTextProps={{
-                error: true,
-              }}
-              helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
-              autoComplete="new-password"
-            />}
-            {status !== 4 && <TextField 
-              label={t("Repeat password")}
-              value={repeatPw || ''}
-              onChange={this.handleInput('repeatPw')}
-              className={classes.input}
-              type="password"
-              required
-              FormHelperTextProps={{
-                error: true,
-              }}
-              autoComplete="off"
-              helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
-            />}
-            <TextField 
-              label={t("Display name")}
-              value={displayname || ''}
-              onChange={this.handlePropertyChange('displayname')}
-              className={classes.input}
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Language")}
-              fullWidth
-              value={lang || 'en_US'}
-              onChange={this.handleInput('lang')}
-            >
-              {langs.map((l) => (
-                <MenuItem key={l.code} value={l.code}>
-                  {l.code + ": " + l.name}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              className={classes.input}
-              label={t("Type")}
-              fullWidth
-              value={displaytypeex || 0}
-              onChange={this.handlePropertyChange('displaytypeex')}
-            >
-              {this.types.map((type, key) => (
-                <MenuItem key={key} value={type.ID}>
-                  {t(type.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <MagnitudeAutocomplete
-              value={homeserver}
-              filterAttribute={'hostname'}
-              onChange={this.handleServer}
-              className={classes.input} 
-              options={servers}
-              label={t('Homeserver')}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={chat || false}
-                  onChange={this.handleCheckbox('chat')}
-                  color="primary"
-                />
-              }
-              label={t('Create grommunio-chat User')}
-              disabled={!chatAvailable}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+      TransitionProps={{
+        onEnter: handleEnter,
+      }}
+    >
+      <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
+      <DialogContent>
+        <FormControl className={classes.form}>
+          <MagnitudeAutocomplete
+            value={domain}
+            filterAttribute={'domainname'}
+            onChange={handleAutocomplete}
+            className={classes.input} 
+            options={Domains}
+            label={t('Domain')}
+            placeholder={t("Search domains")  + "..."}
+            autoFocus
+            autoSelect
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Mode")}
+            fullWidth
+            value={status || 0}
+            onChange={handleInput('status')}
           >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAddAndEdit}
-            variant="contained"
-            color="primary"
-            disabled={addDisabled}
+            {statuses.map((status, key) => (
+              <MenuItem key={key} value={status.ID}>
+                {t(status.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField 
+            label={t("Username")}
+            value={username || ''}
+            onChange={handleUsernameInput}
+            fullWidth
+            InputProps={{
+              endAdornment: <div>@{domain?.domainname || '<select domain>'}</div>,
+              className: classes.noWrap,
+            }}
+            className={classes.input}
+            required
+            error={!!username && usernameError}
+          />
+          {status !== 4 && <TextField 
+            label={t("Password")}
+            value={password || ''}
+            onChange={handleInput('password')}
+            className={classes.input}
+            type="password"
+            required
+            FormHelperTextProps={{
+              error: true,
+            }}
+            helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
+            autoComplete="new-password"
+          />}
+          {status !== 4 && <TextField 
+            label={t("Repeat password")}
+            value={repeatPw || ''}
+            onChange={handleInput('repeatPw')}
+            className={classes.input}
+            type="password"
+            required
+            FormHelperTextProps={{
+              error: true,
+            }}
+            autoComplete="off"
+            helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
+          />}
+          <TextField 
+            label={t("Display name")}
+            value={displayname || ''}
+            onChange={handlePropertyChange('displayname')}
+            className={classes.input}
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Language")}
+            fullWidth
+            value={lang || 'en_US'}
+            onChange={handleInput('lang')}
           >
-            {loading ? <CircularProgress size={24}/> : t('Add and edit')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={addDisabled}
+            {langs.map((l) => (
+              <MenuItem key={l.code} value={l.code}>
+                {l.code + ": " + l.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            className={classes.input}
+            label={t("Type")}
+            fullWidth
+            value={displaytypeex || 0}
+            onChange={handlePropertyChange('displaytypeex')}
           >
-            {loading ? <CircularProgress size={24}/> : t('Add')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+            {types.map((type, key) => (
+              <MenuItem key={key} value={type.ID}>
+                {t(type.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <MagnitudeAutocomplete
+            value={homeserver}
+            filterAttribute={'hostname'}
+            onChange={handleServer}
+            className={classes.input} 
+            options={servers}
+            label={t('Homeserver')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={chat || false}
+                onChange={handleCheckbox('chat')}
+                color="primary"
+              />
+            }
+            label={t('Create grommunio-chat User')}
+            disabled={!chatAvailable}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAddAndEdit}
+          variant="contained"
+          color="primary"
+          disabled={addDisabled}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add and edit')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={addDisabled}
+        >
+          {loading ? <CircularProgress size={24}/> : t('Add')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddGlobalUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

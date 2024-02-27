@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -42,126 +42,109 @@ const styles = theme => ({
   },
 });
 
-class AddRole extends PureComponent {
-
-  state = {
+const AddRole = props => {
+  const [role, setRole] = useState({
     name: '',
     description: '',
-    permissions: [{ permission: '', params: '', autocompleteInput: '' }],
+    permissions: [{ permission: '', params: '' }],
     users: [],
-    loading: false,
-    autocompleteInput: '',
-  }
+  });
+  const [loading, setLoading] = useState(false);
 
-  componentDidMount() {
-    const { fetch, fetchDomains, fetchUsers, fetchOrgs } = this.props;
+  useEffect(() => {
+    const { fetch, fetchDomains, fetchUsers, fetchOrgs } = props;
     fetch()
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        setRole({ snackbar: msg || 'Unknown error' });
       });
     fetchDomains()
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        setRole({ snackbar: msg || 'Unknown error' });
       });
     fetchUsers()
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        setRole({ snackbar: msg || 'Unknown error' });
       });
     fetchOrgs()
       .catch(msg => {
-        this.setState({ snackbar: msg || 'Unknown error' });
+        setRole({ snackbar: msg || 'Unknown error' });
       });
-  }
+  }, []);
 
-  handleInput = field => event => {
-    this.setState({
+  const handleInput = field => event => {
+    setRole({
+      ...role,
       [field]: event.target.value,
     });
   }
 
-  handleCheckbox = field => event => this.setState({
-    [field]: event.target.checked,
-  });
-
-  handleAdd = () => {
-    const { add, onSuccess, onError } = this.props;
-    const { users, permissions } = this.state;
-    this.setState({ loading: true });
+  const handleAdd = () => {
+    const { add, onSuccess, onError } = props;
+    const { users, permissions } = role;
+    setLoading(true);
     add({
-      ...this.state,
-      loading: undefined,
-      autocompleteInput: undefined,
+      ...role,
       users: users.map(u => u.ID),
       permissions: permissions.map(permission => {
         const params = permission.params;
         return {
           ...permission,
-          autocompleteInput: undefined,
           params: params.ID,
         };
       }),
     })
       .then(() => {
-        this.setState({
+        setRole({
           name: '',
           description: '',
-          autocompleteInput: '',
-          permissions: [{ permission: '', params: '', autocompleteInput: '' }],
-          loading: false,
+          permissions: [{ permission: '', params: '' }],
         });
+        setLoading(false);
         onSuccess();
       })
       .catch(error => {
         onError(error);
-        this.setState({ loading: false });
+        setLoading(false);
       });
   }
 
-  handleAutocomplete = (field) => (e, newVal) => {
-    this.setState({
+  const handleAutocomplete = (field) => (e, newVal) => {
+    setRole({
+      ...role,
       [field]: newVal,
-      autocompleteInput: '',
     });
   }
 
-  handleSelectPermission = idx => event => {
-    const copy = [...this.state.permissions];
+  const handleSelectPermission = idx => event => {
+    const copy = [...role.permissions];
     const input = event.target.value;
     copy[idx].permission = input;
     if(input === 'SystemAdmin') {
       copy[idx].params = '';
-      copy[idx].autocompleteInput = '';
     }
-    this.setState({ permissions: copy });
+    setRole({ ...role, permissions: copy });
   }
 
-  handleSetParams = idx => (e, newVal) => {
-    const copy = [...this.state.permissions];
+  const handleSetParams = idx => (e, newVal) => {
+    const copy = [...role.permissions];
     copy[idx].params = newVal;
-    copy[idx].autocompleteInput = newVal?.domainname || newVal?.name || '';
-    this.setState({ permissions: copy });
+    setRole({ ...role, permissions: copy });
   }
 
-  handleAutocompleteInput = idx => e => {
-    const copy = [...this.state.permissions];
-    copy[idx].autocompleteInput = e.target.value;
-    this.setState({ permissions: copy });
+  const handleNewRow = () => {
+    const copy = [...role.permissions];
+    copy.push({ permission: '', params: '' });
+    setRole({ ...role, permissions: copy });
   }
 
-  handleNewRow = () => {
-    const copy = [...this.state.permissions];
-    copy.push({ permission: '', params: '', autocompleteInput: '' });
-    this.setState({ permissions: copy });
-  }
-
-  removeRow = idx => () => {
-    const copy = [...this.state.permissions];
+  const removeRow = idx => () => {
+    const copy = [...role.permissions];
     copy.splice(idx, 1);
-    this.setState({ permissions: copy });
+    setRole({ ...role, permissions: copy });
   }
 
-  checkProperPermissions = () => {
-    const { permissions } = this.state;
+  const checkProperPermissions = () => {
+    const { permissions } = role;
     const every = permissions.every(p => {
       if(!p.permission) return false;
       if(["SystemAdmin", "SystemAdminRO", "DomainPurge"].includes(p.permission)) {
@@ -173,132 +156,125 @@ class AddRole extends PureComponent {
     return every;
   }
 
-  render() {
-    const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = this.props;
-    const { name, permissions, description, loading, users } = this.state;
-    const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
-    const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
+  const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = props;
+  const { name, permissions, description, users } = role;
+  const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
+  const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>{t('addHeadline', { item: 'Role' })}</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControl className={classes.form}>
-            <TextField 
-              label={t("Name")}
-              value={name}
-              onChange={this.handleInput('name')}
-              className={classes.input}
-              autoFocus
-              required
-            />
-            <MagnitudeAutocomplete
-              multiple
-              value={users || []}
-              filterAttribute={'username'}
-              onChange={this.handleAutocomplete('users')}
-              className={classes.input} 
-              options={Users || []}
-              onInputChange={this.handleInput('autocompleteInput')}
-              label={t('Users')}
-              placeholder={t("Search users") +  "..."}
-            />
-            {permissions.map((permission, idx) =>
-              <div key={idx} className={classes.row}>
-                <TextField
-                  select
-                  label={t("Permission")}
-                  value={permission.permission || ''}
-                  onChange={this.handleSelectPermission(idx)}
-                  fullWidth
-                  variant="standard"
-                >
-                  {Permissions.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      {name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                {permission.permission.includes('DomainAdmin') /*Read and Write*/ && 
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>{t('addHeadline', { item: 'Role' })}</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControl className={classes.form}>
+          <TextField 
+            label={t("Name")}
+            value={name}
+            onChange={handleInput('name')}
+            className={classes.input}
+            autoFocus
+            required
+          />
+          <MagnitudeAutocomplete
+            multiple
+            value={users || []}
+            filterAttribute={'username'}
+            onChange={handleAutocomplete('users')}
+            className={classes.input} 
+            options={Users || []}
+            label={t('Users')}
+            placeholder={t("Search users") +  "..."}
+          />
+          {permissions.map((permission, idx) =>
+            <div key={idx} className={classes.row}>
+              <TextField
+                select
+                label={t("Permission")}
+                value={permission.permission || ''}
+                onChange={handleSelectPermission(idx)}
+                fullWidth
+                variant="standard"
+              >
+                {Permissions.map((name, key) => (
+                  <MenuItem key={key} value={name}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {permission.permission.includes('DomainAdmin') /*Read and Write*/ && 
                 <MagnitudeAutocomplete
                   value={permission.params}
                   filterAttribute={'domainname'}
-                  inputValue={permission.autocompleteInput}
-                  onChange={this.handleSetParams(idx)}
+                  onChange={handleSetParams(idx)}
                   className={classes.rowTextfield} 
                   options={domains || []}
-                  onInputChange={this.handleAutocompleteInput(idx)}
                   label={t('Params')}
                   placeholder={t('Search domains') + "..."}
                   variant="standard"
                   autoSelect
                   fullWidth
                 />}
-                {permission.permission === ORG_ADMIN /*Read and Write*/ && 
+              {permission.permission === ORG_ADMIN /*Read and Write*/ && 
                 <MagnitudeAutocomplete
                   value={permission.params}
                   filterAttribute={'name'}
-                  inputValue={permission.autocompleteInput}
-                  onChange={this.handleSetParams(idx)}
+                  onChange={handleSetParams(idx)}
                   className={classes.rowTextfield} 
                   options={orgs || []}
-                  onInputChange={this.handleAutocompleteInput(idx)}
                   label={t('Params')}
                   placeholder={t('Search organizations') + "..."}
                   variant="standard"
                   autoSelect
                   fullWidth
                 />}
-                <IconButton size="small" onClick={this.removeRow(idx)}>
-                  <Delete fontSize="small" color="error" />
-                </IconButton>
-              </div>
-            )}
-            <Grid container justifyContent="center" className={classes.addButton}>
-              <Button size="small" onClick={this.handleNewRow}>
-                <Add color="primary" />
-              </Button>
-            </Grid>
-            <TextField 
-              className={classes.input} 
-              label={t("Description")} 
-              fullWidth
-              multiline
-              variant="outlined"
-              rows={4}
-              value={description}
-              onChange={this.handleInput('description')}
-            />
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleAdd}
-            variant="contained"
-            color="primary"
-            disabled={!name
+              <IconButton size="small" onClick={removeRow(idx)}>
+                <Delete fontSize="small" color="error" />
+              </IconButton>
+            </div>
+          )}
+          <Grid container justifyContent="center" className={classes.addButton}>
+            <Button size="small" onClick={handleNewRow}>
+              <Add color="primary" />
+            </Button>
+          </Grid>
+          <TextField 
+            className={classes.input} 
+            label={t("Description")} 
+            fullWidth
+            multiline
+            variant="outlined"
+            rows={4}
+            value={description}
+            onChange={handleInput('description')}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleAdd}
+          variant="contained"
+          color="primary"
+          disabled={!name
               || loading
               || permissions.length === 0
-              || !this.checkProperPermissions()
-            }
-          >
-            {loading ? <CircularProgress size={24}/> : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+              || !checkProperPermissions()
+          }
+        >
+          {loading ? <CircularProgress size={24}/> : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 AddRole.propTypes = {

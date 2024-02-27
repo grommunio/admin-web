@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions, FormControlLabel, Checkbox, CircularProgress, 
@@ -11,93 +10,86 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deleteUserData } from '../../actions/users';
 
-const styles = {
-  
-};
 
-class DeleteUser extends PureComponent {
-
-  state = {
+const DeleteUser = props => {
+  const [state, setState] = useState({
     deleteFiles: false,
     deleteChatUser: false,
     loading: false,
-  }
+  });
 
-  handleDelete = () => {
-    const { user, domainID, onSuccess, onError } = this.props;
-    const { deleteFiles, deleteChatUser } = this.state;
-    this.setState({ loading: true });
-    this.props.delete(domainID, user.ID, { deleteFiles, deleteChatUser })
+  const handleDelete = () => {
+    const { user, domainID, onSuccess, onError } = props;
+    const { deleteFiles, deleteChatUser } = state;
+    setState({ ...state, loading: true });
+    props.delete(domainID, user.ID, { deleteFiles, deleteChatUser })
       .then(() => {
         if(onSuccess) onSuccess();
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       })
       .catch(() => {
         if(onError) onError();
-        this.setState({ loading: false });
+        setState({ ...state, loading: false });
       });
   }
 
-  handleCheckbox = field => () => this.setState(state => ({ [field]: !state[field] }));
+  const handleCheckbox = field => () => setState({ ...state, [field]: !state[field] });
 
-  render() {
-    const { t, open, user, onClose } = this.props;
-    const { deleteFiles, deleteChatUser, loading } = this.state;
+  const { t, open, user, onClose } = props;
+  const { deleteFiles, deleteChatUser, loading } = state;
 
-    return (
-      <Dialog
-        onClose={onClose}
-        open={open}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Are you sure you want to delete {user.username}?</DialogTitle>
-        <DialogContent style={{ minWidth: 400 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={deleteFiles}
-                onChange={this.handleCheckbox("deleteFiles")}
-                name="deleteFiles"
-                color="primary"
-              />
-            }
-            label={t("Delete files?")}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={deleteChatUser}
-                onChange={this.handleCheckbox("deleteChatUser")}
-                name="deleteChatUser"
-                color="primary"
-              />
-            }
-            label={t("Delete grommunio-chat user")}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={onClose}
-            color="secondary"
-          >
-            {t('Cancel')}
-          </Button>
-          <Button
-            onClick={this.handleDelete}
-            variant="contained"
-            color="secondary"
-          >
-            {loading ? <CircularProgress size={24}/> : t('Confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
+  return (
+    <Dialog
+      onClose={onClose}
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Are you sure you want to delete {user.username}?</DialogTitle>
+      <DialogContent style={{ minWidth: 400 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={deleteFiles}
+              onChange={handleCheckbox("deleteFiles")}
+              name="deleteFiles"
+              color="primary"
+            />
+          }
+          label={t("Delete files?")}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={deleteChatUser}
+              onChange={handleCheckbox("deleteChatUser")}
+              name="deleteChatUser"
+              color="primary"
+            />
+          }
+          label={t("Delete grommunio-chat user")}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button
+          onClick={onClose}
+          color="secondary"
+        >
+          {t('Cancel')}
+        </Button>
+        <Button
+          onClick={handleDelete}
+          variant="contained"
+          color="secondary"
+        >
+          {loading ? <CircularProgress size={24}/> : t('Confirm')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 DeleteUser.propTypes = {
-  classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   user: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
   open: PropTypes.bool,
@@ -118,4 +110,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DeleteUser)));
+  withTranslation()(DeleteUser));

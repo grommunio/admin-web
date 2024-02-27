@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Component } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
@@ -56,202 +56,175 @@ const styles = theme => ({
   },
 });
 
-class GlobalUsers extends Component {
-
-  state = {
+const GlobalUsers = props => {
+  const [state, setState] = useState({
     checking: false,
-    addingContact: false,
-  }
+  });
+  const context = useContext(CapabilityContext);
 
-  columns = [
+  const columns = [
     { label: 'Type', value: 'type' },
     { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
   ]
 
-  handleScroll = () => {
-    const { Users, count, loading } = this.props.users;
-    this.props.handleScroll(Users, count, loading);
+  const handleScroll = () => {
+    const { Users, count, loading } = props.users;
+    props.handleScroll(Users, count, loading);
   };
 
-  handleCheckClose = () => this.setState({ checking: false });
+  const handleCheckClose = () => setState({ ...state, checking: false });
 
-  calculateGraph(obj) {
-    const { classes } = this.props;
-    const { prohibitsendquota, messagesizeextended } = obj;
-    const spaceUsed = ((messagesizeextended / (prohibitsendquota * 1024)) * 100).toFixed(0) + '%';
-    return <div className={classes.barBackground}>
-      <div style={{
-        width: spaceUsed,
-        height: 20,
-        background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
-        display: 'flex',
-        justifyContent: 'center',
-      }}></div>
-    </div>;
-  }
+  const { classes, t, users, tableState, handleMatch, handleRequestSort,
+    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
+    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
+    handleDeleteSuccess, handleEdit } = props;
+  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+  const { checking } = state;
 
-  handleAddContact = () => this.setState({ addingContact: true });
+  const userCounts = users.Users.reduce((prev, curr) => {
+    const shared = curr.status === 4;
+    return {
+      normal: prev.normal + (shared ? 0 : 1),
+      shared: prev.shared + (shared ? 1 : 0),
+    }
+  }, { normal: 0, shared: 0 });
 
-  handleContactClose = () => this.setState({ addingContact: false });
-
-  handleContactSuccess = () => this.setState({ addingContact: false });
-
-  handleContactError = (error) => this.setState({ snackbar: error });
-
-  render() {
-    const { classes, t, users, tableState, handleMatch, handleRequestSort,
-      handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-      clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-      handleDeleteSuccess, handleEdit } = this.props;
-    const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
-    const writable = this.context.includes(SYSTEM_ADMIN_WRITE);
-    const { checking } = this.state;
-
-    const userCounts = users.Users.reduce((prev, curr) => {
-      const shared = curr.status === 4;
-      return {
-        normal: prev.normal + (shared ? 0 : 1),
-        shared: prev.shared + (shared ? 1 : 0),
-      }
-    }, { normal: 0, shared: 0 });
-
-    return (
-      <TableViewContainer
-        handleScroll={this.handleScroll}
-        headline={t("Users")}
-        subtitle={t("globalusers_sub")}
-        href="https://docs.grommunio.com/admin/administration.html#users"
-        snackbar={snackbar}
-        onSnackbarClose={clearSnackbar}
-        loading={loading}
-      > 
-        <TableActionGrid
-          tf={<SearchTextfield
-            value={match}
-            onChange={handleMatch}
-            placeholder={t("Search users")}
-          />}
+  return (
+    <TableViewContainer
+      handleScroll={handleScroll}
+      headline={t("Users")}
+      subtitle={t("globalusers_sub")}
+      href="https://docs.grommunio.com/admin/administration.html#users"
+      snackbar={snackbar}
+      onSnackbarClose={clearSnackbar}
+      loading={loading}
+    > 
+      <TableActionGrid
+        tf={<SearchTextfield
+          value={match}
+          onChange={handleMatch}
+          placeholder={t("Search users")}
+        />}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleAdd}
+          className={classes.newButton}
+          disabled={!writable}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAdd}
-            className={classes.newButton}
-            disabled={!writable}
-          >
-            {t('New user')}
-          </Button>
-        </TableActionGrid>
-        <Typography className={classes.count} color="textPrimary">
-          {t("showingUser", { count: users.Users.length })}
-          {` (${userCounts.normal} normal, ${userCounts.shared} shared)`}
-        </Typography>
-        <Paper className={classes.tablePaper} elevation={1}>
-          <Hidden lgDown>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <TableSortLabel
-                      active={orderBy === 'username'}
-                      align="left" 
-                      direction={orderBy === 'username' ? order : 'asc'}
-                      onClick={handleRequestSort('username')}
-                    >
-                      {t('Username')}
-                    </TableSortLabel>
+          {t('New user')}
+        </Button>
+      </TableActionGrid>
+      <Typography className={classes.count} color="textPrimary">
+        {t("showingUser", { count: users.Users.length })}
+        {` (${userCounts.normal} normal, ${userCounts.shared} shared)`}
+      </Typography>
+      <Paper className={classes.tablePaper} elevation={1}>
+        <Hidden lgDown>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'username'}
+                    align="left" 
+                    direction={orderBy === 'username' ? order : 'asc'}
+                    onClick={handleRequestSort('username')}
+                  >
+                    {t('Username')}
+                  </TableSortLabel>
+                </TableCell>
+                {columns.map(column =>
+                  <TableCell key={column.value}>
+                    {t(column.label)}
                   </TableCell>
-                  {this.columns.map(column =>
-                    <TableCell key={column.value}>
-                      {t(column.label)}
+                )}
+                <TableCell padding="checkbox"></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
+                const properties = obj.properties || {};
+                return (
+                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
+                    <TableCell>
+                      <div className={classes.flexRow}>
+                        {properties.displaytypeex === 1 ?
+                          <Groups className={classes.icon} fontSize='small'/> :
+                          <AccountCircle className={classes.icon} fontSize='small'/>
+                        }
+                        {obj.username}
+                      </div>
                     </TableCell>
-                  )}
-                  <TableCell padding="checkbox"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
-                  const properties = obj.properties || {};
-                  return (
-                    <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
-                      <TableCell>
-                        <div className={classes.flexRow}>
-                          {properties.displaytypeex === 1 ?
-                            <Groups className={classes.icon} fontSize='small'/> :
-                            <AccountCircle className={classes.icon} fontSize='small'/>
-                          }
-                          {obj.username}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {t(getUserTypeString(properties.displaytypeex))}
-                        {obj.status === 4 && ` (${t("Shared")})`}
-                      </TableCell>
-                      <TableCell>{properties.displayname}</TableCell>
-                      <TableCell>{obj.ldapID || ''}</TableCell>
-                      <TableCell align="right">
-                        {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                          <Delete color="error" fontSize='small'/>
-                        </IconButton>}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Hidden>
-          <Hidden lgUp>
-            <List>
-              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
-                <ListItemButton
-                  key={idx}
-                  onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
-                  divider
-                >
-                  <ListItemIcon>
-                    {obj.properties?.displaytypeex === 1 ?
-                      <Groups className={classes.icon} fontSize='small'/> :
-                      <AccountCircle className={classes.icon} fontSize='small'/>
-                    }
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={obj.username || ''}
-                    secondary={obj.properties?.displayname || ''}
-                  />
-                </ListItemButton>
-              )}
-            </List>
-          </Hidden>
-          {(users.Users.length < users.count) && <Grid container justifyContent="center">
-            <CircularProgress color="primary" className={classes.circularProgress}/>
-          </Grid>}
-        </Paper>
-        <AddGlobalUser
-          open={adding}
-          onSuccess={handleAddingSuccess}
-          onError={handleAddingError}
-          onClose={handleAddingClose}
-        />
-        <DeleteUser
-          open={!!deleting}
-          onSuccess={handleDeleteSuccess}
-          onClose={handleDeleteClose}
-          onError={handleDeleteError}
-          user={deleting}
-          domainID={deleting.domainID || -1}
-        />
-        <CheckLdapDialog
-          open={checking}
-          onClose={this.handleCheckClose}
-          onError={handleDeleteError}
-        />
-      </TableViewContainer>
-    );
-  }
+                    <TableCell>
+                      {t(getUserTypeString(properties.displaytypeex))}
+                      {obj.status === 4 && ` (${t("Shared")})`}
+                    </TableCell>
+                    <TableCell>{properties.displayname}</TableCell>
+                    <TableCell>{obj.ldapID || ''}</TableCell>
+                    <TableCell align="right">
+                      {writable && <IconButton onClick={handleDelete(obj)} size="small">
+                        <Delete color="error" fontSize='small'/>
+                      </IconButton>}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Hidden>
+        <Hidden lgUp>
+          <List>
+            {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
+              <ListItemButton
+                key={idx}
+                onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
+                divider
+              >
+                <ListItemIcon>
+                  {obj.properties?.displaytypeex === 1 ?
+                    <Groups className={classes.icon} fontSize='small'/> :
+                    <AccountCircle className={classes.icon} fontSize='small'/>
+                  }
+                </ListItemIcon>
+                <ListItemText
+                  primary={obj.username || ''}
+                  secondary={obj.properties?.displayname || ''}
+                />
+              </ListItemButton>
+            )}
+          </List>
+        </Hidden>
+        {(users.Users.length < users.count) && <Grid container justifyContent="center">
+          <CircularProgress color="primary" className={classes.circularProgress}/>
+        </Grid>}
+      </Paper>
+      <AddGlobalUser
+        open={adding}
+        onSuccess={handleAddingSuccess}
+        onError={handleAddingError}
+        onClose={handleAddingClose}
+      />
+      <DeleteUser
+        open={!!deleting}
+        onSuccess={handleDeleteSuccess}
+        onClose={handleDeleteClose}
+        onError={handleDeleteError}
+        user={deleting}
+        domainID={deleting.domainID || -1}
+      />
+      <CheckLdapDialog
+        open={checking}
+        onClose={handleCheckClose}
+        onError={handleDeleteError}
+      />
+    </TableViewContainer>
+  );
 }
 
-GlobalUsers.contextType = CapabilityContext;
 GlobalUsers.propTypes = {
   users: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,

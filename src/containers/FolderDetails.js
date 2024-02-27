@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
 import { Info } from '@mui/icons-material';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -54,17 +55,17 @@ const styles = theme => ({
   }
 });
 
-class FolderDetails extends PureComponent {
-
-  state = {
+const FolderDetails = props => {
+  const [state, setState] = useState({
     folder: {},
     readonly: true,
     adding: false,
     snackbar: '',
     loading: true,
-  };
+  });
+  const context = useContext(CapabilityContext);
 
-  types = [
+  const types = [
     { name: 'Mail and post items', ID: 'IPF.Note' },
     { name: 'Contact', ID: 'IPF.Contact' },
     { name: 'Appointment', ID: 'IPF.Appointment' },
@@ -72,183 +73,185 @@ class FolderDetails extends PureComponent {
     { name: 'Task', ID: 'IPF.Task' },
   ]
 
-  async componentDidMount() {
-    const { fetch, fetchOwners } = this.props;
-    const splits = window.location.pathname.split('/');
-    const folderId = splits[3];
-    // If folder is IPM_SUBTREE
-    if(folderId === IPM_SUBTREE_ID) {
-      this.setState({ folder: IPM_SUBTREE_OBJECT, readonly: true, loading: false });
-      await fetchOwners(splits[1], IPM_SUBTREE_ID);
-    } else {
-      const folder = await fetch(splits[1], folderId);
-      this.setState({ folder: folder, readonly: false, loading: false });
-      await fetchOwners(splits[1], folder.folderid);
-    }
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch, fetchOwners } = props;
+      const splits = window.location.pathname.split('/');
+      const folderId = splits[3];
+      // If folder is IPM_SUBTREE
+      if(folderId === IPM_SUBTREE_ID) {
+        setState({ ...state, folder: IPM_SUBTREE_OBJECT, readonly: true, loading: false });
+        await fetchOwners(splits[1], IPM_SUBTREE_ID);
+      } else {
+        const folder = await fetch(splits[1], folderId);
+        setState({ ...state, folder: folder, readonly: false, loading: false });
+        await fetchOwners(splits[1], folder.folderid);
+      }
+    };
 
-  handleInput = field => event => {
-    this.setState({
+    inner();
+  }, []);
+
+  const handleInput = field => event => {
+    setState({
+      ...state,
       folder: {
-        ...this.state.folder,
+        ...state.folder,
         [field]: event.target.value,
       },
       unsaved: true,
     });
   }
 
-  handleCheckbox = field => e => {
-    this.setState({
+  const handleCheckbox = field => e => {
+    setState({
+      ...state, 
       folder: {
-        ...this.state.folder,
+        ...state.folder,
         [field]: e.target.checked,
       },
       unsaved: true,
     });
   }
 
-  handleEdit = () => {
-    const { domain } = this.props;
-    const { folder } = this.state;
-    this.props.edit(domain.ID, {
+  const handleEdit = () => {
+    const { domain } = props;
+    const { folder } = state;
+    props.edit(domain.ID, {
       ...folder,
       creationtime: undefined,
     })
-      .then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(message => this.setState({ snackbar: message || 'Unknown error' }));
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  handleAdd = () => this.setState({ adding: true });
+  const handleAdd = () => setState({ ...state, adding: true });
 
-  handlePermissionsSuccess = () => this.setState({ snackbar: "Success!" });
+  const handlePermissionsSuccess = () => setState({ ...state, snackbar: "Success!" });
 
-  handlePermissionsError = error => this.setState({ snackbar: error });
+  const handlePermissionsError = error => setState({ ...state, snackbar: error });
 
-  handlePermissionsCancel = () => this.setState({ adding: false });
+  const handlePermissionsCancel = () => setState({ ...state, adding: false });
 
-  render() {
-    const { classes, t, domain } = this.props;
-    const writable = this.context.includes(DOMAIN_ADMIN_WRITE);
-    const { folder, adding, snackbar, readonly, loading } = this.state;
+  const { classes, t, domain } = props;
+  const writable = context.includes(DOMAIN_ADMIN_WRITE);
+  const { folder, adding, snackbar, readonly, loading } = state;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Folders')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('Folder details')}
-            </Typography>
-          </Grid>
-          <FormControl className={classes.form}>
-            <TextField 
-              className={classes.input} 
-              label={t("Folder name")} 
-              fullWidth 
-              value={folder.displayname || ''}
-              autoFocus
-              onChange={this.handleInput('displayname')}
-              disabled={readonly}
-            />
-            <TextField
-              select
-              className={classes.input}
-              label={t("Container")}
-              fullWidth
-              value={folder.container || 'IPF.Note'}
-              onChange={this.handleInput('container')}
-              disabled={readonly}
-            >
-              {this.types.map((type, key) => (
-                <MenuItem key={key} value={type.ID}>
-                  {t(type.name)}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField 
-              className={classes.input} 
-              label={t("Comment")} 
-              fullWidth
-              multiline
-              variant="outlined"
-              rows={4}
-              value={folder.comment || ''}
-              onChange={this.handleInput('comment')}
-              disabled={readonly}
-            />
-          </FormControl>
-          <Grid container className={classes.grid} alignItems="center">
-            <Button
-              onClick={this.handleAdd}
-              disabled={!writable}
-              size="large"
-              variant='outlined'
-            >
-              {t('Open permissions')}
-            </Button>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={folder.syncMobile || false}
-                  onChange={this.handleCheckbox('syncMobile')}
-                  color="primary"
-                />
-              }
-              className={classes.checkbox}
-              label={<span className={classes.flexBox}>
-                {t('Sync on mobile devices')}
-                <Tooltip placement='top' title={t("sync_warning")}>
-                  <Info className={classes.infoIcon}/>
-                </Tooltip>
-              </span>}
-            />
-          </Grid>
-          <Grid container>
-            <Button
-              color="secondary"
-              onClick={this.props.history.goBack}
-              style={{ marginRight: 8 }}
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-              style={{ marginRight: 8 }}
-              disabled={!writable || readonly}
-            >
-              {t('Save')}
-            </Button>
-          </Grid>
-        </Paper>
-        {folder.folderid && <FolderPermissions
-          open={adding}
-          onSuccess={this.handlePermissionsSuccess}
-          onError={this.handlePermissionsError}
-          onCancel={this.handlePermissionsCancel}
-          domain={domain}
-          folderID={folder.folderid}
-        />}
-      </ViewWrapper>
-    );
-  }
+  return (
+    <ViewWrapper
+      topbarTitle={t('Folders')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container>
+          <Typography
+            color="primary"
+            variant="h5"
+          >
+            {t('Folder details')}
+          </Typography>
+        </Grid>
+        <FormControl className={classes.form}>
+          <TextField 
+            className={classes.input} 
+            label={t("Folder name")} 
+            fullWidth 
+            value={folder.displayname || ''}
+            autoFocus
+            onChange={handleInput('displayname')}
+            disabled={readonly}
+          />
+          <TextField
+            select
+            className={classes.input}
+            label={t("Container")}
+            fullWidth
+            value={folder.container || 'IPF.Note'}
+            onChange={handleInput('container')}
+            disabled={readonly}
+          >
+            {types.map((type, key) => (
+              <MenuItem key={key} value={type.ID}>
+                {t(type.name)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField 
+            className={classes.input} 
+            label={t("Comment")} 
+            fullWidth
+            multiline
+            variant="outlined"
+            rows={4}
+            value={folder.comment || ''}
+            onChange={handleInput('comment')}
+            disabled={readonly}
+          />
+        </FormControl>
+        <Grid container className={classes.grid} alignItems="center">
+          <Button
+            onClick={handleAdd}
+            disabled={!writable}
+            size="large"
+            variant='outlined'
+          >
+            {t('Open permissions')}
+          </Button>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={folder.syncMobile || false}
+                onChange={handleCheckbox('syncMobile')}
+                color="primary"
+              />
+            }
+            className={classes.checkbox}
+            label={<span className={classes.flexBox}>
+              {t('Sync on mobile devices')}
+              <Tooltip placement='top' title={t("sync_warning")}>
+                <Info className={classes.infoIcon}/>
+              </Tooltip>
+            </span>}
+          />
+        </Grid>
+        <Grid container>
+          <Button
+            color="secondary"
+            onClick={() => props.navigate(-1)}
+            style={{ marginRight: 8 }}
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEdit}
+            style={{ marginRight: 8 }}
+            disabled={!writable || readonly}
+          >
+            {t('Save')}
+          </Button>
+        </Grid>
+      </Paper>
+      {folder.folderid && <FolderPermissions
+        open={adding}
+        onSuccess={handlePermissionsSuccess}
+        onError={handlePermissionsError}
+        onCancel={handlePermissionsCancel}
+        domain={domain}
+        folderID={folder.folderid}
+      />}
+    </ViewWrapper>
+  );
 }
 
-FolderDetails.contextType = CapabilityContext;
 FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -272,5 +275,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(FolderDetails)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(FolderDetails))));

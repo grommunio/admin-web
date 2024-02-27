@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import { Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { editUserData, fetchUserData } from '../actions/users';
 import { connect } from 'react-redux';
+import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   paper: {
@@ -34,27 +35,31 @@ const styles = theme => ({
   },
 });
 
-class ContactDetails extends PureComponent {
-
-  state = {
+const ContactDetails = props => {
+  const [state, setState] = useState({
     user: {
       properties: {},
     },
     loading: true,
-  }
+  });
 
-  async componentDidMount() {
-    const { fetch } = this.props;
-    const splits = window.location.pathname.split('/');
-    const user = await fetch(splits[1], splits[3])
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
-    user.syncPolicy = user.syncPolicy || {};
-    this.setState({ user, loading: false });
-  }
+  useEffect(() => {
+    const inner = async () => {
+      const { fetch } = props;
+      const splits = window.location.pathname.split('/');
+      const user = await fetch(splits[1], splits[3])
+        .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      user.syncPolicy = user.syncPolicy || {};
+      setState({ ...state, user, loading: false });
+    };
 
-  handlePropertyChange = field => event => {
-    const { user } = this.state;
-    this.setState({
+    inner();
+  }, []);
+
+  const handlePropertyChange = field => event => {
+    const { user } = state;
+    setState({
+      ...state, 
       user: {
         ...user,
         properties: {
@@ -66,9 +71,9 @@ class ContactDetails extends PureComponent {
     });
   }
 
-  handleEdit = () => {
-    const { edit, domain } = this.props;
-    const { user } = this.state;
+  const handleEdit = () => {
+    const { edit, domain } = props;
+    const { user } = state;
     const { properties } = user;
     
     edit(domain.ID, {
@@ -80,75 +85,73 @@ class ContactDetails extends PureComponent {
         prohibitreceivequota: undefined,
         prohibitsendquota: undefined,
       },
-    }).then(() => this.setState({ snackbar: 'Success!' }))
-      .catch(msg => this.setState({ snackbar: msg || 'Unknown error' }));
+    }).then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  render() {
-    const { classes, t, history } = this.props;
-    const { snackbar, user, loading } = this.state;
-    const { properties } = user;
+  const { classes, t, navigate } = props;
+  const { snackbar, user, loading } = state;
+  const { properties } = user;
 
-    return (
-      <ViewWrapper
-        topbarTitle={t('Users')}
-        snackbar={snackbar}
-        onSnackbarClose={() => this.setState({ snackbar: '' })}
-        loading={loading}
-      >
-        <Paper className={classes.paper} elevation={1}>
-          <Grid container className={classes.header}>
-            <Typography
-              color="primary"
-              variant="h5"
-            >
-              {t('editHeadline', { item: 'Contact' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
-            </Typography>
-          </Grid>
-          <div className={classes.flexRow}>
-            <Typography variant="h6">{t('E-Mail')}</Typography>
-          </div>
-          <TextField
-            className={classes.propertyInput}
-            fullWidth
-            label={t("E-Mail Address")}
-            value={properties.smtpaddress || ''}
-            onChange={this.handlePropertyChange('smtpaddress')}
-          />
-          <User
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />
-          <Divider />
-          <Contact
-            user={user}
-            handlePropertyChange={this.handlePropertyChange}
-          />
-          <Grid container className={classes.buttonGrid}>
-            <Button
-              onClick={history.goBack}
-              style={{ marginRight: 8 }}
-              color="secondary"
-            >
-              {t('Back')}
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleEdit}
-            >
-              {t('Save')}
-            </Button>
-          </Grid>
-        </Paper>
-      </ViewWrapper>
-    );
-  }
+  return (
+    <ViewWrapper
+      topbarTitle={t('Users')}
+      snackbar={snackbar}
+      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      loading={loading}
+    >
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container className={classes.header}>
+          <Typography
+            color="primary"
+            variant="h5"
+          >
+            {t('editHeadline', { item: 'Contact' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
+          </Typography>
+        </Grid>
+        <div className={classes.flexRow}>
+          <Typography variant="h6">{t('E-Mail')}</Typography>
+        </div>
+        <TextField
+          className={classes.propertyInput}
+          fullWidth
+          label={t("E-Mail Address")}
+          value={properties.smtpaddress || ''}
+          onChange={handlePropertyChange('smtpaddress')}
+        />
+        <User
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <Divider />
+        <Contact
+          user={user}
+          handlePropertyChange={handlePropertyChange}
+        />
+        <Grid container className={classes.buttonGrid}>
+          <Button
+            onClick={() => navigate(-1)}
+            style={{ marginRight: 8 }}
+            color="secondary"
+          >
+            {t('Back')}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleEdit}
+          >
+            {t('Save')}
+          </Button>
+        </Grid>
+      </Paper>
+    </ViewWrapper>
+  );
 }
 
 ContactDetails.propTypes = {
   classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
+  navigate: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
@@ -165,5 +168,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ContactDetails)));
+export default withRouter(connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(ContactDetails))));

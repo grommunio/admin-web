@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { TextField } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
@@ -20,24 +20,21 @@ const styles = theme => ({
   },
 });
 
-class LdapTextfield extends PureComponent {
+const LdapTextfield = props => {
+  const { classes, children, value, label, desc, flex, ...rest } = props;
 
-  render() {
-    const { classes, children, value, label, desc, flex, ...rest } = this.props;
-
-    return (
-      <TextField
-        {...rest}
-        label={label}
-        helperText={desc || ''}
-        className={flex ? classes.flexTextfield : classes.textfield}
-        color="primary"
-        value={value || ''}
-      >
-        {children}
-      </TextField>
-    );
-  }
+  return (
+    <TextField
+      {...rest}
+      label={label}
+      helperText={desc || ''}
+      className={flex ? classes.flexTextfield : classes.textfield}
+      color="primary"
+      value={value || ''}
+    >
+      {children}
+    </TextField>
+  );
 }
 
 LdapTextfield.propTypes = {

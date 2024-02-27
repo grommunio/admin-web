@@ -3,19 +3,15 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 
-import { Route, Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const AuthenticatedRoute = ({ component: DomainRoute, props: childProps, domain, ...rest }) => (
-  <Route
-    {...rest}
-    render={props =>
-      childProps.authenticated
-        ? <DomainRoute domain={domain} {...props} {...childProps} />
-        : <Redirect
-          to={`/login?redirect=${props.location.pathname}${props.location
-            .search}${props.location.hash}`}
-        />}
-  />
-);
+const AuthenticatedRoute = ({ component: DomainRoute, props: childProps, domain, ...rest }) => {
+  if(!childProps.authenticated) {
+    return <Navigate to={`/login?redirect=${window.location.pathname}${window.location
+      .search}${window.location.hash}`}/>
+  }
+
+  return <DomainRoute domain={domain} {...rest} {...childProps} />
+};
 
 export default AuthenticatedRoute;

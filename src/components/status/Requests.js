@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-present grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
@@ -50,51 +50,40 @@ const styles = theme => ({
   },
 });
 
-class Requests extends PureComponent {
+const Requests = props => {
+  const { classes, t, data } = props;
 
-  formatBytes = (bytes) => {
-    if (bytes > 10000) {
-      return Math.round(bytes/1000) + "k";
-    } 
-    
-    return bytes;
-  }
-
-  render() {
-    const { classes, t, data } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <CheckCircle className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.accepted}</Typography>
-              <Typography className={classes.label}>{t("Accepted")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <CallReceived className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.handled}</Typography>
-              <Typography className={classes.label}>{t("Handled")}</Typography>
-            </div>
-          </Paper>
-        </div>
-        <div className={classes.flexItem}>
-          <Paper className={classes.paper}>
-            <Functions className={classes.icon}/>
-            <div className={classes.labeledData}>
-              <Typography className={classes.data}>{data.requests}</Typography>
-              <Typography className={classes.label}>{t("Total")}</Typography>
-            </div>
-          </Paper>
-        </div>
+  return (
+    <div className={classes.root}>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <CheckCircle className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.accepted}</Typography>
+            <Typography className={classes.label}>{t("Accepted")}</Typography>
+          </div>
+        </Paper>
       </div>
-    );
-  }
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <CallReceived className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.handled}</Typography>
+            <Typography className={classes.label}>{t("Handled")}</Typography>
+          </div>
+        </Paper>
+      </div>
+      <div className={classes.flexItem}>
+        <Paper className={classes.paper}>
+          <Functions className={classes.icon}/>
+          <div className={classes.labeledData}>
+            <Typography className={classes.data}>{data.requests}</Typography>
+            <Typography className={classes.label}>{t("Total")}</Typography>
+          </div>
+        </Paper>
+      </div>
+    </div>
+  );
 }
 
 Requests.propTypes = {

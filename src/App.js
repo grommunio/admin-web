@@ -6,7 +6,6 @@ import { withStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import Loadable from "react-loadable";
 import Loader from "./components/Loading";
-import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import background from "!file-loader!./res/background_light.svg";
 import backgroundDark from "!file-loader!./res/background_dark.svg";
@@ -128,4 +127,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App)));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(App));

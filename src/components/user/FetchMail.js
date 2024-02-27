@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { FormControl, Grid, IconButton,
   Table,
   TableBody,
@@ -30,59 +30,57 @@ const styles = theme => ({
   },
 });
 
-class FetchMail extends PureComponent {
+const FetchMail = props => {
 
-  columns = [
+  const columns = [
     { value: 'srcUser', label: "Source user" },
     { value: 'srcServer', label: "Source server" },
     { value: 'srcFolder', label: "Source folder" },
   ]
 
-  render() {
-    const { classes, t, fetchmail, handleAdd, handleEdit, handleDelete } = this.props;
-    return (
-      <FormControl className={classes.form}>
-        <Grid container alignItems="center"  className={classes.headline}>
-          <Typography variant="h6">{t('Fetchmail')}</Typography>
-          <IconButton onClick={handleAdd} size="large">
-            <AddCircleOutline color="primary" fontSize="small"/>
-          </IconButton>
-        </Grid>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              {this.columns.map((column) => (
-                <TableCell key={column.value}>
-                  {t(column.label)}
-                </TableCell>
-              ))}
-              <TableCell padding="checkbox" />
+  const { classes, t, fetchmail, handleAdd, handleEdit, handleDelete } = props;
+  return (
+    <FormControl className={classes.form}>
+      <Grid container alignItems="center"  className={classes.headline}>
+        <Typography variant="h6">{t('Fetchmail')}</Typography>
+        <IconButton onClick={handleAdd} size="large">
+          <AddCircleOutline color="primary" fontSize="small"/>
+        </IconButton>
+      </Grid>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell key={column.value}>
+                {t(column.label)}
+              </TableCell>
+            ))}
+            <TableCell padding="checkbox" />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {fetchmail.map((entry, idx) => 
+            <TableRow key={idx} hover onClick={handleEdit(idx)}>
+              <TableCell>
+                {entry.srcUser}
+              </TableCell>
+              <TableCell>
+                {entry.srcServer}
+              </TableCell>
+              <TableCell>
+                {entry.srcFolder}
+              </TableCell>
+              <TableCell align="right">
+                <IconButton onClick={handleDelete(idx)} size="large">
+                  <Delete color="error"/>
+                </IconButton>
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {fetchmail.map((entry, idx) => 
-              <TableRow key={idx} hover onClick={handleEdit(idx)}>
-                <TableCell>
-                  {entry.srcUser}
-                </TableCell>
-                <TableCell>
-                  {entry.srcServer}
-                </TableCell>
-                <TableCell>
-                  {entry.srcFolder}
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton onClick={handleDelete(idx)} size="large">
-                    <Delete color="error"/>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </FormControl>
-    );
-  }
+          )}
+        </TableBody>
+      </Table>
+    </FormControl>
+  );
 }
 
 FetchMail.propTypes = {
