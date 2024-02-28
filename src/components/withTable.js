@@ -8,12 +8,12 @@ import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withStyles } from '@mui/styles';
 import { defaultFetchLimit } from '../constants';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 export default function withStyledReduxTable(mapState, mapDispatch, styles) {
-  return (wrappedComponent, defaultState) => withRouter(connect(mapState, mapDispatch)(
+  return (wrappedComponent, defaultState) => connect(mapState, mapDispatch)(
     withTranslation()(withStyles(styles)(
-      withTable(wrappedComponent, defaultState)))));
+      withTable(wrappedComponent, defaultState))));
 }
 
 function withTable(WrappedComponent, defaultState={}) {
@@ -30,6 +30,7 @@ function withTable(WrappedComponent, defaultState={}) {
       loading: true,
       ...defaultState,
     });
+    const navigate = useNavigate();
 
     useEffect(() => {
       fetchData();
@@ -130,7 +131,7 @@ function withTable(WrappedComponent, defaultState={}) {
 
     const handleEdit = path => (event) => {
       if(window.getSelection().toString()) return;
-      props.navigate(path);
+      navigate(path);
       event.stopPropagation();
     };
 

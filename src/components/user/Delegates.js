@@ -16,7 +16,7 @@ import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../../constants';
-import { withRouter } from '../../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -49,6 +49,7 @@ const Delegates = props => {
     puEdited: false,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -125,7 +126,7 @@ const Delegates = props => {
       })).catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const { classes, t, Users, userID, navigate, disabled } = props;
+  const { classes, t, Users, userID, disabled } = props;
   const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = state;
   const defaultTfProps = {
     multiple: true,
@@ -207,7 +208,6 @@ Delegates.propTypes = {
   setUserDelegates: PropTypes.func.isRequired,
   setUserSendAs: PropTypes.func.isRequired,
   setPermittedUserData: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
 };
 
@@ -239,5 +239,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Delegates))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(Delegates)));

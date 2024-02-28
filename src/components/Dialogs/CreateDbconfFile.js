@@ -13,6 +13,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { uploadServiceFile } from '../../actions/dbconf';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -45,6 +46,7 @@ const CreateDbconfFile = props => {
     service: '',
     loading: false,
   });
+  const navigate = useNavigate();
 
   const commandKeys = ['key', 'file', 'service'];
 
@@ -62,7 +64,7 @@ const CreateDbconfFile = props => {
   }
 
   const handleUpload = () => {
-    const { navigate, upload, onError } = props;
+    const { upload, onError } = props;
     const { service, data } = state;
     setState({ ...state, loading: true });
     // Create service
@@ -180,7 +182,6 @@ CreateDbconfFile.propTypes = {
   onError: PropTypes.func.isRequired,
   upload: PropTypes.func.isRequired,
   commands: PropTypes.object.isRequired,
-  navigate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

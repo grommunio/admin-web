@@ -34,7 +34,7 @@ import LdapTextfield from '../components/LdapTextfield';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import { deleteOrgLdapConfig, fetchOrgLdapConfig, syncOrgLdapUsers, updateOrgLdapConfig } from '../actions/ldap';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -166,6 +166,7 @@ const OrgDetails = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -236,7 +237,6 @@ const OrgDetails = props => {
   }
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -966,7 +966,6 @@ OrgDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
@@ -1003,5 +1002,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(OrgDetails))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(OrgDetails)));

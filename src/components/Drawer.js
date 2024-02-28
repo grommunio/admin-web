@@ -15,7 +15,6 @@ import {
 } from '../actions/drawer';
 import NavigationLinks from './NavigationLinks';
 import RetractedNavigationLinks from './RetractedNavigationLinks';
-import { withRouter } from '../hocs/withRouter';
 
 const drawerWidth = 260;
 const smallDrawerWidth = 75;
@@ -124,4 +123,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withTranslation()(withStyles(styles)(ResponsiveDrawer))));
+  withTranslation()(withStyles(styles)(ResponsiveDrawer)));

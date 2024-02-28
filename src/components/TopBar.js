@@ -30,7 +30,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 
 const styles = theme => ({
@@ -144,6 +144,7 @@ const TopBar = props => {
     langsAnchorEl: null,
     search: '',
   });
+  const navigate = useNavigate();
 
   const links = [
     { key: 'mailWebAddress', title: 'E-Mail', icon: MailOutlineIcon },
@@ -170,13 +171,12 @@ const TopBar = props => {
   });
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
 
   const handleLogout = () => {
-    const { navigate, authLogout } = props;
+    const { authLogout } = props;
     navigate('/');
     authLogout();
   }
@@ -193,7 +193,7 @@ const TopBar = props => {
   }
 
   const handleAutocomplete = (_, newVal) => {
-    if(newVal?.route) props.navigate(newVal.route);
+    if(newVal?.route) navigate(newVal.route);
   }
 
   const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
@@ -335,7 +335,6 @@ TopBar.propTypes = {
   title: PropTypes.string,
   setDrawerExpansion: PropTypes.func.isRequired,
   setDrawerOpen: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   Domains: PropTypes.array.isRequired,
   drawer: PropTypes.object.isRequired,
   onAdd: PropTypes.func,
@@ -374,5 +373,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(TopBar))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(TopBar)));

@@ -21,7 +21,7 @@ import DnsHealth from '../components/DnsHealth';
 import DNSLegend from '../components/DNSLegend';
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import { fetchDrawerDomain } from '../actions/drawer';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   root: {
@@ -117,6 +117,7 @@ const DomainMenu = props => {
   });
   const [langs, setLangs] = useState([]);
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -167,7 +168,7 @@ const DomainMenu = props => {
   });
 
   const handleNav = () => {
-    const { domain, navigate } = props;
+    const { domain } = props;
     navigate('/domains/' + domain.ID);
   };
 
@@ -181,7 +182,6 @@ const DomainMenu = props => {
   const handleDeleteError = (error) => setState({ ...state, snackbar: error });
 
   const handleDeleteSuccess = () => {
-    const { navigate } = props;
     navigate('/');
   };
 
@@ -502,7 +502,6 @@ const DomainMenu = props => {
 
 DomainMenu.propTypes = {
   classes: PropTypes.object.isRequired,
-  navigate: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
   capabilities: PropTypes.array,
@@ -540,5 +539,5 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainMenu))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DomainMenu)));

@@ -17,7 +17,7 @@ import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import { fetchDomainDetails } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
-import { withRouter } from '../../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -50,6 +50,7 @@ const AddUser = props => {
   });
   const [langs, setLangs] = useState([]);
   const [usernameError, setUsernameError] = useState(false);
+  const navigate = useNavigate();
 
   const statuses = [
     { name: 'Normal', ID: 0 },
@@ -171,7 +172,7 @@ const AddUser = props => {
   }
 
   const handleAddAndEdit = () => {
-    const { domain, navigate, add, onError, createParams } = props;
+    const { domain, add, onError, createParams } = props;
     const { username, password, subType, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
@@ -377,7 +378,6 @@ const AddUser = props => {
 AddUser.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
@@ -416,5 +416,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(AddUser))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(AddUser)));

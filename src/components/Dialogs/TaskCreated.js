@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { withRouter } from '../../hocs/withRouter';
 import { useNavigate } from 'react-router';
 
 
@@ -50,4 +49,4 @@ TaskCreated.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default withRouter(withTranslation()(TaskCreated));
+export default withTranslation()(TaskCreated);

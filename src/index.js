@@ -12,7 +12,7 @@ import Loading from './components/Loading';
 import './i18n';
 import './config';
 import ToggleColorMode from './components/ToggleColorMode';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from "react-dom/client";
 //import * as serviceWorker from './serviceWorker';
 //import { serviceWorkerNewContent } from './actions/common';
 
@@ -29,7 +29,7 @@ const LoadableApp = Loadable({
 });
 
 const container = document.getElementById('root');
-const root = createRoot(container);
+const root = ReactDOM.createRoot(container);
 root.render(<Provider store={store}>
   <StyledEngineProvider injectFirst>
     <ToggleColorMode>

@@ -8,7 +8,6 @@ import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } fro
 import TableViewContainer from "../components/TableViewContainer";
 import { parseUnixtime } from "../utils";
 import { Delete, Replay, PlayForWork } from "@mui/icons-material";
-import { withRouter } from "../hocs/withRouter";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { withStyles } from "@mui/styles";
@@ -211,7 +210,6 @@ const MailQ = props => {
 MailQ.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   flush: PropTypes.func.isRequired,
   deleteQ: PropTypes.func.isRequired,
@@ -231,5 +229,5 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(MailQ))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(MailQ)));

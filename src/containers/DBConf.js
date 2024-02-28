@@ -18,7 +18,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import SearchTextfield from '../components/SearchTextfield';
 import TableActionGrid from '../components/TableActionGrid';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -50,6 +50,7 @@ const DBConf = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     props.fetch()
@@ -79,7 +80,6 @@ const DBConf = props => {
   const handleDeleteError = error => setState({ ...state, snackbar: error });
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -91,7 +91,7 @@ const DBConf = props => {
 
   const handleTab = (e, tab) => setState({ ...state,tab });
 
-  const { classes, t, services, commands, navigate } = props;
+  const { classes, t, services, commands } = props;
   const { adding, configuring, snackbar, match, tab, deleting, loading } = state;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   return (
@@ -203,7 +203,6 @@ const DBConf = props => {
         onClose={handleAddingClose}
         onError={handleAddingError}
         onSuccess={handleAddingSuccess}
-        navigate={navigate}
       />
     </TableViewContainer>
   );
@@ -212,7 +211,6 @@ const DBConf = props => {
 DBConf.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   services: PropTypes.array.isRequired,
   commands: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -238,5 +236,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBConf))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBConf)));

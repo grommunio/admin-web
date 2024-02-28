@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { selectDrawerDomain } from '../actions/drawer';
 import ViewWrapper from '../components/ViewWrapper';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 
 const Menu = props => {
@@ -17,6 +17,7 @@ const Menu = props => {
     order: 'asc',
     sortedDomains: [],
   });
+  const navigate = useNavigate();
 
   const columns = [
     { label: "Domain", value: "domainname" },
@@ -26,7 +27,7 @@ const Menu = props => {
   ];
 
   const handleNavigation = (path) => (event) => {
-    const { navigate, selectDomain } = props;
+    const { selectDomain } = props;
     event.preventDefault();
     selectDomain(path);
     navigate(`/${path}`);
@@ -99,7 +100,6 @@ const Menu = props => {
 Menu.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domains: PropTypes.array.isRequired,
   selectDomain: PropTypes.func.isRequired,
 };
@@ -116,5 +116,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(Menu)));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(Menu));

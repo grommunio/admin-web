@@ -26,7 +26,7 @@ import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -52,6 +52,7 @@ const DBService = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -92,7 +93,6 @@ const DBService = props => {
   const handleDeleteError = error => setState({ ...state, snackbar: error });
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -180,7 +180,6 @@ const DBService = props => {
 DBService.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
   rename: PropTypes.func.isRequired,
@@ -199,5 +198,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBService))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBService)));

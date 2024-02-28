@@ -34,7 +34,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import { AppSettingsAlt, Dns } from '@mui/icons-material';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -78,6 +78,7 @@ const DomainListDetails = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   const statuses = [
     { name: 'Activated', ID: 0 },
@@ -162,8 +163,7 @@ const DomainListDetails = props => {
 
   const handleBack = () => {
     const { capabilities } = props;
-    if(capabilities.includes(SYSTEM_ADMIN_READ)) props.navigate('/domains');
-    else props.navigate('/' + getStringAfterLastSlash());
+    navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
   }
 
   const handleTab = (e, tab) => setState({ ...state, tab })
@@ -430,5 +430,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainListDetails))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DomainListDetails)));

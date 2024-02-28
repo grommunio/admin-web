@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { withRouter } from '../../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 
 const DeleteFolder = props => {
@@ -16,7 +16,7 @@ const DeleteFolder = props => {
     taskMessage: '',
     taskID: null,
   });
-
+  const navigate = useNavigate();
   
 
   const handleDelete = () => {
@@ -46,7 +46,7 @@ const DeleteFolder = props => {
   const handleCheckbox = e => setState({ ...state, clear: e.target.checked })
 
   const handleViewTask = () => {
-    props.navigate('/taskq/' + state.taskID);
+    navigate('/taskq/' + state.taskID);
   }
 
   const handleClose = () => {
@@ -104,7 +104,6 @@ DeleteFolder.propTypes = {
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
   delete: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
 };
 
-export default withRouter(withTranslation()(DeleteFolder));
+export default withTranslation()(DeleteFolder);

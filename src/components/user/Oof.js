@@ -29,7 +29,7 @@ import {
   Editor,
   Toolbar } from 'react-simple-wysiwyg';
 import * as DOMPurify from 'dompurify';
-import { withRouter } from '../../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   form: {
@@ -79,6 +79,7 @@ const Oof = props => {
     tab: 0,
     snackbar: '',
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,8 +94,6 @@ const Oof = props => {
 
     fetchData();
   }, []);
-
-  
 
   const oofStates = [
     { value: 0, label: 'Disabled' },
@@ -136,7 +135,7 @@ const Oof = props => {
       .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
   }
 
-  const { classes, t, navigate, theme } = props;
+  const { classes, t, theme } = props;
   const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = oof;
   const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
 
@@ -293,7 +292,6 @@ const Oof = props => {
 Oof.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetchOof: PropTypes.func.isRequired,
   patchOof: PropTypes.func.isRequired,
   domainID: PropTypes.number.isRequired,
@@ -312,5 +310,5 @@ const mapDispatchToProps = dispatch => {
   };
 }
 
-export default withRouter(connecc(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(withTheme(Oof)))));
+export default connecc(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(withTheme(Oof))));

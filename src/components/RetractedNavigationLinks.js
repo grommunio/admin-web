@@ -26,7 +26,7 @@ import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBu
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   drawerHeader: {
@@ -136,9 +136,9 @@ const RetractedNavigationLinks = props => {
     adding: false,
     snackbar: '',
   });
+  const navigate = useNavigate();
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -146,7 +146,7 @@ const RetractedNavigationLinks = props => {
   const handleDrawer = domain => event => {
     event.preventDefault();
     props.selectDomain(domain);
-    props.navigate(`/${domain}`);
+    navigate(`/${domain}`);
   }
 
   const handleAdd = () => setState({ ...state, adding: true });
@@ -378,7 +378,6 @@ const RetractedNavigationLinks = props => {
 RetractedNavigationLinks.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domains: PropTypes.array,
   capabilities: PropTypes.array.isRequired,
   expandedDomain: PropTypes.number,
@@ -406,4 +405,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withTranslation()(withStyles(styles)(RetractedNavigationLinks))));
+  withTranslation()(withStyles(styles)(RetractedNavigationLinks)));

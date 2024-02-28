@@ -17,6 +17,7 @@ import Tree from 'react-d3-tree';
 import FolderHierarchy from '../components/FolderHierarchy';
 import TableActionGrid from '../components/TableActionGrid';
 import { AccountTree, List } from '@mui/icons-material';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   tablePaper: {
@@ -63,6 +64,7 @@ const Folders = props => {
   });
   const context = useContext(CapabilityContext);
   const treeContainer = useRef();
+  const navigate = useNavigate();
 
   const handleScroll = () => {
     const { domain, folders, fetchTableData, tableState } = props;
@@ -109,7 +111,7 @@ const Folders = props => {
   }
 
   const handleNodeClicked = id => () => {
-    const { domain, navigate } = props;
+    const { domain } = props;
     navigate('/' + domain.ID + '/folders/' + id);
   }
 

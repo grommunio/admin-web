@@ -21,7 +21,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchTaskDetails } from '../actions/taskq';
 import { green, red } from '@mui/material/colors';
 import { Refresh } from '@mui/icons-material';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -88,6 +88,7 @@ const TaskDetails = props => {
     params: {},
     loading: false,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     refresh();
@@ -109,7 +110,6 @@ const TaskDetails = props => {
   }
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -206,7 +206,6 @@ const TaskDetails = props => {
 TaskDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
 };
 
@@ -218,5 +217,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(TaskDetails))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(TaskDetails)));

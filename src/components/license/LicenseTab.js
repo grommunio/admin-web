@@ -9,7 +9,7 @@ import { withTranslation } from 'react-i18next';
 import { fetchPlainUsersData } from '../../actions/users';
 import { getLicenseCreds, submitLicenseCreds, uploadLicenseData } from '../../actions/license';
 import { connect } from 'react-redux';
-import { withRouter } from '../../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 
 const styles = theme => ({
@@ -63,6 +63,7 @@ const LicenseTab = props => {
     password: "",
   });
   const imageInputRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,7 +102,7 @@ const LicenseTab = props => {
   }
 
   const handleNavigation = domainID => () => {
-    props.navigate(`/${domainID}/users`);
+    navigate(`/${domainID}/users`);
   }
 
   const fetchUsers = async id => {
@@ -274,7 +275,6 @@ const LicenseTab = props => {
 LicenseTab.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   license: PropTypes.object.isRequired,
   Domains: PropTypes.array.isRequired,
   counts: PropTypes.object.isRequired,
@@ -308,5 +308,5 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(styles)(withTranslation()(LicenseTab))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withStyles(styles)(withTranslation()(LicenseTab)));

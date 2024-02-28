@@ -21,7 +21,6 @@ import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import { setTopbarTitle } from '../actions/misc';
-import { withRouter } from '../hocs/withRouter';
 
 const styles = theme => ({
   root: {
@@ -928,7 +927,6 @@ const LdapConfig = props => {
 LdapConfig.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   put: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
@@ -966,5 +964,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(LdapConfig))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(LdapConfig)));

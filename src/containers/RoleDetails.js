@@ -27,7 +27,7 @@ import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -68,6 +68,7 @@ const RoleDetails = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -296,7 +297,7 @@ const RoleDetails = props => {
         </FormControl>
         <Button
           color="secondary"
-          onClick={() => props.navigate('/roles')}
+          onClick={() => navigate('/roles')}
           style={{ marginRight: 8 }}
         >
           {t('Back')}
@@ -320,7 +321,6 @@ const RoleDetails = props => {
 RoleDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchUser: PropTypes.func.isRequired,
@@ -365,5 +365,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(RoleDetails))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(RoleDetails)));

@@ -26,7 +26,6 @@ import { fetchLogsData, fetchLogData } from "../actions/logs";
 import { CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard } from "../utils";
-import { withRouter } from "../hocs/withRouter";
 
 const styles = (theme) => ({
   logViewer: {
@@ -242,7 +241,6 @@ const Logs = props => {
 Logs.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   logs: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchLog: PropTypes.func.isRequired,
@@ -266,7 +264,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default withRouter(connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withTranslation()(withStyles(styles)(Logs))));
+)(withTranslation()(withStyles(styles)(Logs)));

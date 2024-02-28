@@ -20,7 +20,7 @@ import { Add, Delete } from '@mui/icons-material';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -46,6 +46,7 @@ const DBFile = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -97,7 +98,7 @@ const DBFile = props => {
     return obj;
   }
 
-  const { classes, t, navigate } = props;
+  const { classes, t } = props;
   const { snackbar, data, loading } = state;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   return (
@@ -182,5 +183,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DBFile))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(DBFile)));

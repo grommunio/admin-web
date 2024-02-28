@@ -22,6 +22,7 @@ import { ContactMail } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { syncLdapUsers } from '../actions/ldap';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   tablePaper: {
@@ -55,6 +56,7 @@ const Contacts = props => {
     taskID: null,
     addingContact: false,
   });
+  const navigate = useNavigate();
 
   const handleScroll = () => {
     const { Users, count, loading } = props.users;
@@ -67,7 +69,6 @@ const Contacts = props => {
   ]
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }

@@ -11,7 +11,7 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { editUserData, fetchUserData } from '../actions/users';
 import { connect } from 'react-redux';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -42,6 +42,7 @@ const ContactDetails = props => {
     },
     loading: true,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -89,7 +90,7 @@ const ContactDetails = props => {
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  const { classes, t, navigate } = props;
+  const { classes, t } = props;
   const { snackbar, user, loading } = state;
   const { properties } = user;
 
@@ -151,7 +152,6 @@ const ContactDetails = props => {
 
 ContactDetails.propTypes = {
   classes: PropTypes.object.isRequired,
-  navigate: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
@@ -168,5 +168,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ContactDetails))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(ContactDetails)));

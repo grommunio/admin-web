@@ -29,7 +29,7 @@ import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt }
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   drawerHeader: {
@@ -116,9 +116,9 @@ const NavigationLinks = props => {
     adding: false,
     snackbar: '',
   });
+  const navigate = useNavigate();
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -126,7 +126,7 @@ const NavigationLinks = props => {
   const handleDrawer = domain => event => {
     event.preventDefault();
     props.selectDomain(domain);
-    props.navigate(`/${domain}`);
+    navigate(`/${domain}`);
   }
 
   const handleTextInput = event => {
@@ -400,7 +400,6 @@ const NavigationLinks = props => {
 NavigationLinks.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domains: PropTypes.array,
   capabilities: PropTypes.array.isRequired,
   expandedDomain: PropTypes.number,
@@ -426,4 +425,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(withTranslation()(withStyles(styles)(NavigationLinks))));
+  withTranslation()(withStyles(styles)(NavigationLinks)));

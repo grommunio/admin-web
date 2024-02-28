@@ -23,6 +23,7 @@ import SearchTextfield from '../components/SearchTextfield';
 import { getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   tablePaper: {
@@ -60,6 +61,7 @@ const Users = props => {
     taskID: null,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   const handleScroll = () => {
     const { Users, count, loading } = props.users;
@@ -74,7 +76,6 @@ const Users = props => {
   ]
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }

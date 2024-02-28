@@ -18,7 +18,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   pageTitle: {
@@ -49,6 +49,7 @@ const Ldap = props => {
     showAll: false,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     return () => {
@@ -103,7 +104,7 @@ const Ldap = props => {
     });
   }
 
-  const { classes, t, domain, ldapUsers, navigate } = props;
+  const { classes, t, domain, ldapUsers } = props;
   const { search, loading, snackbar, confirming, searchInOrg, showAll } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
@@ -211,7 +212,6 @@ const Ldap = props => {
 Ldap.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   ldapUsers: PropTypes.array.isRequired,
@@ -232,5 +232,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Ldap))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(Ldap)));

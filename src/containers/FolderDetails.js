@@ -24,7 +24,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
 import { Info } from '@mui/icons-material';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -64,6 +64,7 @@ const FolderDetails = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   const types = [
     { name: 'Mail and post items', ID: 'IPF.Note' },
@@ -219,7 +220,7 @@ const FolderDetails = props => {
         <Grid container>
           <Button
             color="secondary"
-            onClick={() => props.navigate(-1)}
+            onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
           >
             {t('Back')}
@@ -251,7 +252,6 @@ FolderDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
-  navigate: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -275,5 +275,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(FolderDetails))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(FolderDetails)));

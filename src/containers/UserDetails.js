@@ -44,7 +44,7 @@ import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
 import Tabs from '../components/user/Tabs';
 import Altnames from '../components/user/Altnames';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -106,6 +106,7 @@ const UserDetails = props => {
   const [domainDetails, setDomainDetails] = useState({});
   const [forwardError, setForwardError] = useState(false);
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -612,7 +613,7 @@ const UserDetails = props => {
     })
   }
 
-  const { classes, t, domain, navigate } = props;
+  const { classes, t, domain } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const sysAdminReadPermissions = context.includes(SYSTEM_ADMIN_READ);
   const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
@@ -802,7 +803,6 @@ const UserDetails = props => {
 UserDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   sync: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
@@ -846,5 +846,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(UserDetails))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(UserDetails)));

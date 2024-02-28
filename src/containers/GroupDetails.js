@@ -33,7 +33,7 @@ import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/icons-material';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -88,6 +88,7 @@ const GroupDetails = props => {
     userDirty: false,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -186,7 +187,6 @@ const GroupDetails = props => {
   }
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -438,7 +438,6 @@ const GroupDetails = props => {
 GroupDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
@@ -469,5 +468,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(GroupDetails))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(GroupDetails)));

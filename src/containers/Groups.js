@@ -21,6 +21,7 @@ import { syncLdapUsers } from '../actions/ldap';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { checkLdapUsers } from '../actions/users';
 import TaskCreated from '../components/Dialogs/TaskCreated';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   tablePaper: {
@@ -46,6 +47,7 @@ const Groups = props => {
     taskID: null,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   const columns = [
     { label: 'Group name', value: 'listname' },
@@ -65,7 +67,6 @@ const Groups = props => {
   };
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }

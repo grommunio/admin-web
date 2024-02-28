@@ -19,7 +19,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editServerData, fetchServerDetails } from '../actions/servers';
 import { getStringAfterLastSlash } from '../utils';
-import { withRouter } from '../hocs/withRouter';
+import { useNavigate } from 'react-router';
 
 const styles = theme => ({
   paper: {
@@ -46,6 +46,7 @@ const ServerDetails = props => {
     loading: true,
   });
   const context = useContext(CapabilityContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
@@ -86,7 +87,6 @@ const ServerDetails = props => {
   }
 
   const handleNavigation = path => event => {
-    const { navigate } = props;
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -155,7 +155,6 @@ const ServerDetails = props => {
 ServerDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
 };
@@ -169,5 +168,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ServerDetails))));
+export default connect(null, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(ServerDetails)));
