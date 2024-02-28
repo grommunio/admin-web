@@ -9,8 +9,8 @@ import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Gri
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import TableViewContainer from '../components/TableViewContainer';
-import { withRouter } from '../hocs/withRouter';
-import { CapabilityContext } from '../CapabilityContext';
+import { useNavigate } from 'react-router';
+import ColorModeContext from '../ColorContext';
 
 const styles = theme => ({
   paper: {
@@ -53,7 +53,8 @@ const Settings = props => {
   const [state, setState] = useState({
     snackbar: '',
   });
-  const context = useContext(CapabilityContext);
+  const context = useContext(ColorModeContext);
+  const navigate = useNavigate();
 
   const handleDarkModeChange = event => {
     window.localStorage.setItem('darkMode', event.target.checked);
@@ -66,7 +67,7 @@ const Settings = props => {
     context.setColorTheme(colorTheme);
   }
 
-  const { classes, t, navigate, serverConfig } = props;
+  const { classes, t, serverConfig } = props;
   const { snackbar } = state;
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
@@ -126,7 +127,6 @@ Settings.propTypes = {
   t: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   changeSettings: PropTypes.func.isRequired,
-  navigate: PropTypes.func.isRequired,
   serverConfig: PropTypes.object.isRequired,
 };
 
@@ -146,5 +146,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Settings))));
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(withStyles(styles)(Settings)));
