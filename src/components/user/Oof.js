@@ -53,7 +53,8 @@ const styles = theme => ({
     margin: theme.spacing(1, 0),
   },
   datePicker: {
-    marginRight: 8,
+    margin: theme.spacing(1),
+    minWidth: 200,
   },
   tabs: {
     margin: theme.spacing(1),
@@ -86,6 +87,12 @@ const Oof = props => {
       const { domainID, userID, fetchOof } = props;
       const oofData = await fetchOof(domainID, userID)
         .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
+      if(oofData.startTime) {
+        oofData.startTime = moment(oofData.startTime);
+      }
+      if(oofData.endTime) {
+        oofData.endTime = moment(oofData.endTime);
+      }
       setOof({
         ...oof,
         ...(oofData || {}),
@@ -177,12 +184,12 @@ const Oof = props => {
         <CustomDateTimePicker
           {...tfProps("Start time", "startTime")}
           onChange={handleDateInput('startTime')}
-          className={classes.input}
+          className={classes.datePicker}
         />
         <CustomDateTimePicker
           {...tfProps("End time", "endTime")}
           onChange={handleDateInput('endTime')}
-          className={classes.input}
+          className={classes.datePicker}
         />
       </div>
       <Tabs

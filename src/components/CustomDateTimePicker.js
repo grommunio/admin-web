@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { InputAdornment, TextField } from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { Clear } from '@mui/icons-material';
 
 const CustomDateTimePicker = props => {
