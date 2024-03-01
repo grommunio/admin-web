@@ -20,7 +20,6 @@ import Feedback from '../components/Feedback';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';
-import { setTopbarTitle } from '../actions/misc';
 
 const styles = theme => ({
   root: {
@@ -219,8 +218,7 @@ const LdapConfig = props => {
 
   useEffect(() => {
     const inner = async () => {
-      const { fetch, put, resetTopbarTitle, fetchAuthMgr } = props;
-      resetTopbarTitle();
+      const { fetch, put, fetchAuthMgr } = props;
       const resp = await fetch()
         .catch(snackbar => setState({ ...state, snackbar }));
       const authResp = await fetchAuthMgr()
@@ -934,7 +932,6 @@ LdapConfig.propTypes = {
   fetchAuthMgr: PropTypes.func.isRequired,
   adminConfig: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
-  resetTopbarTitle: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -960,7 +957,6 @@ const mapDispatchToProps = dispatch => {
     sync: async params => await dispatch(syncLdapUsers(params))
       .catch(message => Promise.reject(message)),
     delete: async () => await dispatch(deleteLdapConfig()),
-    resetTopbarTitle: () => dispatch(setTopbarTitle("")),
   };
 };
 

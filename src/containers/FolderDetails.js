@@ -140,7 +140,6 @@ const FolderDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Folders')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

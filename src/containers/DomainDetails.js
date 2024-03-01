@@ -223,7 +223,6 @@ const DomainListDetails = props => {
     
   return (
     <ViewWrapper
-      topbarTitle={t('Domains')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

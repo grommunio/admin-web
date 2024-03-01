@@ -57,9 +57,7 @@ const Menu = props => {
   const { t, domains } = props;
   const { orderBy, order, sortedDomains } = state;
   return (
-    <ViewWrapper
-      topbarTitle={t('Dashboard')}
-    >
+    <ViewWrapper>
       <Paper elevation={1}>
         <Table size="small">
           <TableHead>

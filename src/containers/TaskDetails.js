@@ -119,7 +119,6 @@ const TaskDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Task queue')}
       snackbar={snackbar}
       onSnackbarClose={() => setTask({ ...task, snackbar: '' })}
       loading={loading}

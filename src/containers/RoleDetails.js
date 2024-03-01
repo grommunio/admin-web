@@ -196,7 +196,6 @@ const RoleDetails = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   return (
     <ViewWrapper
-      topbarTitle={t('Role')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

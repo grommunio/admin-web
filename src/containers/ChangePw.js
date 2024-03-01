@@ -10,6 +10,8 @@ import {
   TextField,
   FormControl,
   Button,
+  Grid,
+  Typography,
 } from '@mui/material';
 import { changePw } from '../api';
 import ViewWrapper from '../components/ViewWrapper';
@@ -53,11 +55,18 @@ const ChangePw = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Dashboard')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
     >
       <Paper className={classes.paper} elevation={1}>
+        <Grid container className={classes.header}>
+          <Typography
+            color="primary"
+            variant="h5"
+          >
+            {t('Change password')}
+          </Typography>
+        </Grid>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 

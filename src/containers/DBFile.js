@@ -103,7 +103,6 @@ const DBFile = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   return (
     <ViewWrapper
-      topbarTitle={t('DB Service')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

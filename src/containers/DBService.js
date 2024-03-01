@@ -109,7 +109,6 @@ const DBService = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('DB Service')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

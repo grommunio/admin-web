@@ -96,7 +96,6 @@ const ContactDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Users')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

@@ -98,7 +98,6 @@ const ServerDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Servers')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

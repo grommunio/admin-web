@@ -253,7 +253,6 @@ const GroupDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Groups')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

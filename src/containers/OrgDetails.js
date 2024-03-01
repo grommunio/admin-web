@@ -473,7 +473,6 @@ const OrgDetails = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Organizations')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

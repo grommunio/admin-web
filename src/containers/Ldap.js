@@ -109,7 +109,6 @@ const Ldap = props => {
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
     <ViewWrapper
-      topbarTitle={domain.domainname}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state,snackbar: '' })}
     >

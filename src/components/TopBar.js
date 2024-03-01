@@ -235,7 +235,6 @@ const TopBar = props => {
             </Tooltip>
           )}
         </Hidden>
-        {drawer.topbarTitle && <Typography className={classes.title} variant="h6">{drawer.topbarTitle}</Typography>}
         <div className={classes.flexEndContainer}>
           {sysAdmRead && <Autocomplete
             onChange={handleAutocomplete}

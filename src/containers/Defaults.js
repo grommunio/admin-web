@@ -175,7 +175,6 @@ const Defaults = props => {
 
   return (
     <ViewWrapper
-      topbarTitle={t('Defaults')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}

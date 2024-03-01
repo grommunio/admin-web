@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { setTopbarTitle } from '../actions/misc';
 import { Fade, LinearProgress } from '@mui/material';
 
 const styles = theme => ({
@@ -36,13 +34,7 @@ const styles = theme => ({
   },
 });
 
-function ViewWrapper ({classes, children, topbarTitle, snackbar, onSnackbarClose, loading}) {
-  const dispatch = useDispatch();
-
-  // Set topbar title of child component
-  useEffect(() => {
-    dispatch(setTopbarTitle(topbarTitle));
-  }, []);
+function ViewWrapper ({classes, children, snackbar, onSnackbarClose, loading}) {
 
   return (
     <div className={classes.root}>
@@ -74,7 +66,6 @@ ViewWrapper.propTypes = {
     PropTypes.node,
     PropTypes.string,
   ]).isRequired,
-  topbarTitle: PropTypes.string,
   snackbar: PropTypes.string,
   onSnackbarClose: PropTypes.func,
   loading: PropTypes.bool,

@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { debounce, Fade, IconButton, LinearProgress, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
 import { HelpOutline } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
-import { setTopbarTitle } from '../actions/misc';
 
 const styles = theme => ({
   root: {
@@ -45,12 +43,6 @@ const styles = theme => ({
 
 const TableViewContainer = ({classes, children, baseRef, handleScroll, headline, subtitle,
   snackbar, onSnackbarClose, href, loading }) => {
-  const dispatch = useDispatch();
-
-  // Set topbar title of child component
-  useEffect(() => {
-    dispatch(setTopbarTitle(""));
-  }, []);
 
   return (
     <div
@@ -100,7 +92,6 @@ TableViewContainer.propTypes = {
     PropTypes.string,
   ]).isRequired,
   baseRef: PropTypes.any,
-  topbarTitle: PropTypes.string,
   handleScroll: PropTypes.func,
   headline: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
