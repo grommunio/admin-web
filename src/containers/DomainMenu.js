@@ -159,13 +159,29 @@ const DomainMenu = props => {
     },
   });
 
-  const handleCheckbox = field => e => setState({
-    ...state, 
-    createParams: {
-      ...state.createParams,
-      [field]: e.target.checked,
-    },
-  });
+  const handleCheckbox = field => e => {
+    const checked = e.target.checked;
+    if(field === "privArchive") {
+      setState({
+        ...state, 
+        createParams: {
+          ...state.createParams,
+          // If archive is allowed, pop3 must be enabled
+          "pop3_imap": checked || pop3_imap,
+          [field]: checked,
+        },
+      });
+    } else {
+      setState({
+        ...state, 
+        createParams: {
+          ...state.createParams,
+          [field]: checked,
+        },
+      });
+    }
+  }
+    
 
   const handleNav = () => {
     const { domain } = props;
@@ -210,7 +226,7 @@ const DomainMenu = props => {
         privChat, privVideo, privFiles, privArchive,
       },
     }, domain.ID)
-      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      //.then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
@@ -428,6 +444,7 @@ const DomainMenu = props => {
                   checked={pop3_imap || false /*eslint-disable-line*/}
                   onChange={handleCheckbox('pop3_imap')}
                   color="primary"
+                  disabled={privArchive}
                 />
               }
               label={t('Allow POP3/IMAP logins')}
