@@ -19,6 +19,7 @@ import {
   Snackbar,
   Alert,
   Tooltip,
+  ListItemButton,
 } from "@mui/material";
 import { connect } from "react-redux";
 import ArrowUp from '@mui/icons-material/ArrowUpward';
@@ -61,6 +62,9 @@ const styles = (theme) => ({
   },
   li: {
     cursor: 'pointer',
+  },
+  selected: {
+    background: `${theme.palette.primary.main} !important`,
   },
 });
 
@@ -161,18 +165,18 @@ const Logs = props => {
             />
           </ListItem>
           {logs.Logs.map((log, idx) =>
-            <ListItem
+            <ListItemButton
               key={idx}
               onClick={handleLog(log)}
-              button
               className={classes.li}
               selected={log === filename}
+              classes={{ selected: classes.selected }}
             >
               <ListItemText
                 primary={log}
                 primaryTypographyProps={{ color: "textPrimary" }}
               />
-            </ListItem>
+            </ListItemButton>
           )}
         </List>
         <Paper elevation={1} className={classes.paper}>

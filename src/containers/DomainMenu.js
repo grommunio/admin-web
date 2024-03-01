@@ -226,7 +226,7 @@ const DomainMenu = props => {
         privChat, privVideo, privFiles, privArchive,
       },
     }, domain.ID)
-      //.then(() => setState({ ...state, snackbar: 'Success!' }))
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
