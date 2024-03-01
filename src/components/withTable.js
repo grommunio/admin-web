@@ -23,13 +23,13 @@ function withTable(WrappedComponent, defaultState={}) {
       offset: 0,
       orderBy: 'name',
       order: 'asc',
-      match: '',
       snackbar: '',
       adding: false,
       deleting: false,
       loading: true,
       ...defaultState,
     });
+    const [match, setMatch] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,7 +51,7 @@ function withTable(WrappedComponent, defaultState={}) {
     }
 
     const handleRequestSort = (orderBy) => () => {
-      const { order: stateOrder, orderBy: stateOrderBy, match } = state;
+      const { order: stateOrder, orderBy: stateOrderBy } = state;
       const order =
         stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
   
@@ -77,7 +77,7 @@ function withTable(WrappedComponent, defaultState={}) {
         ) <=
         document.getElementById("scrollDiv").offsetHeight + 20
       ) {
-        const { orderBy, order, offset, match } = state;
+        const { orderBy, order, offset } = state;
         if (!loading) {
           const newOffset = offset + defaultFetchLimit;
           setState({
@@ -100,8 +100,8 @@ function withTable(WrappedComponent, defaultState={}) {
 
     const handleMatch = (e) => {
       const { value } = e.target;
+      setMatch(value);
       debouceFetch(value);
-      setState({ ...state, match: value });
     };
   
     const debouceFetch = debounce((value) => {
