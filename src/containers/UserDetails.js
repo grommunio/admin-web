@@ -461,9 +461,9 @@ const UserDetails = props => {
     });
   }
 
-  const handleFetchmailDialog = state => () => setState({ ...state, adding: state })
+  const handleFetchmailDialog = open => () => setState({ ...state, adding: open })
 
-  const handleFetchmailEditDialog = state => () => setState({ ...state, editing: state })
+  const handleFetchmailEditDialog = open => () => setState({ ...state, editing: open })
 
   const addFetchmail = entry => {
     const { user } = state;
