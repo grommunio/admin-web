@@ -42,51 +42,47 @@ const styles = (theme) => ({
 });
 
 const Status = props => {
-  const [state, setState] = useState({
-    vhost: '',
-    snackbar: null,
-    data: {
-      connections: {},
-      sharedZones: {},
-      serverZones: {},
-      filterZones: {},
-    },
-    interval: 1000,
+  const [snackbar, setSnackbar] = useState("");
+  const [vhost, setVhost] = useState("");
+  const [interval, setFetchInterval] = useState(1000);
+  const [data, setData] = useState({
+    connections: {},
+    sharedZones: {},
+    serverZones: {},
+    filterZones: {},
   });
 
-  let fetchInterval = null;
+  useEffect(() => {
+    props.fetch();
+  }, []);
 
   useEffect(() => {
-    props.fetch()
-      .then(() => {
-        if(props.vhosts.includes('local')) setState({ ...state, vhost: 'local'});
-      });
-    // Refresh every second by default
-    fetchInterval = setInterval(() => {
-      fetchData();
-    }, 1000);
+    if(props.vhosts.includes('local')) {
+      setVhost('local');
+    }
+  }, [props.vhosts]);
+
+  useEffect(() => {
+    const fetchInterval = setInterval(() => {
+      fetchData("local");
+    }, interval);
 
     return () => {
       clearInterval(fetchInterval);
     }
-  }, []);
+  }, [vhost, interval]);
 
-  const fetchData = async () => {
-    const { vhost } = state;
-    if(vhost) {
-      const data = await props.fetchVhostStatus(state.vhost)
-        .catch(snackbar => setState({ ...state, snackbar }));
-      if(data) setState({ ...state, data });
+  const fetchData = async (vh) => {
+    if(vh) {
+      const data = await props.fetchVhostStatus(vh)
+        .catch(snackbar => setSnackbar(snackbar));
+      if(data) setData(data);
     }
   }
 
   const handleIntervalChange = ({ target: t }) => {
     const interval = t.value;
-    clearInterval(fetchInterval);
-    setState({ ...state, interval });
-    fetchInterval = setInterval(() => {
-      fetchData();
-    }, interval);
+    setFetchInterval(interval);
   }
 
   // Converts an object to a sorted array
@@ -94,12 +90,12 @@ const Status = props => {
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
 
-  const handleChange = field => e => {
-    setState({ ...state, [field]: e.target.value });
+  const handleVhostChange = e => {
+    const value = e.target.value;
+    setVhost(value);
   }
 
   const { classes, t, vhosts } = props;
-  const { snackbar, data, interval, vhost } = state;
   const { connections, serverZones, filterZones } = data;
   return (
     <TableViewContainer
@@ -107,14 +103,14 @@ const Status = props => {
       subtitle={t('livestatus_sub')}
       href="https://docs.grommunio.com/admin/administration.html#live-status"
       snackbar={snackbar}
-      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      onSnackbarClose={() => setSnackbar('')}
     >
       <TextField
         select
         value={vhost}
         label="Vhost"
         className={classes.tf}
-        onChange={handleChange('vhost')}
+        onChange={handleVhostChange}
       >
         {vhosts.map((host, key) =>
           <MenuItem value={host} key={key}>{host}</MenuItem>
