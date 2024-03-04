@@ -10,7 +10,7 @@ const defaultState = {
   Sync: [],
 };
 
-function domainsReducer(state = defaultState, action) {
+function syncReducer(state = defaultState, action) {
   switch (action.type) {
   case SYNC_DATA_RECEIVED:
     return {
@@ -24,4 +24,4 @@ function domainsReducer(state = defaultState, action) {
   }
 }
 
-export default domainsReducer;
+export default syncReducer;

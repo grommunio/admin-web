@@ -47,20 +47,23 @@ const styles = theme => ({
 const Sync = props => {
   const [state, setState] = useState({
     snackbar: '',
-    sortedDevices: null,
     order: 'asc',
     orderBy: 'pid',
     type: 'int',
     wipingID: '',
   });
+  const [sortedDevices, setSortedDevices] = useState([]);
 
   useEffect(() => {
     const { fetch, domainID, userID } = props;
-    const { orderBy, type } = state; 
     fetch(domainID, userID)
-      .then(handleSort(orderBy, type, false))
       .catch(snackbar => setState({ ...state, snackbar }));
   }, []);
+
+  useEffect(() => {
+    const { orderBy, type } = state; 
+    handleSort(orderBy, type, false)();
+  }, [props.sync]);
 
   const columns = [
     { label: "Device ID", value: "deviceid" },
@@ -74,19 +77,20 @@ const Sync = props => {
   ];
 
   const handleSort = (attribute, type, switchOrder) => () => {
-    const sortedDevices = [...props.sync];
+    const devices = [...props.sync];
     const { order: stateOrder, orderBy } = state;
     const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
     if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
-      sortedDevices.sort((a, b) =>
+      devices.sort((a, b) =>
         type !== 'int' ? a[attribute].localeCompare(b[attribute]) : a[attribute] - b[attribute]
       );
     } else {
-      sortedDevices.sort((a, b) => 
+      devices.sort((a, b) => 
         type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
       );
     }
-    setState({ ...state, sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
+    setSortedDevices(devices);
+    setState({ ...state, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
   const handlePasswordDialog = (wipingID) => () => setState({ ...state, wipingID });
@@ -120,16 +124,15 @@ const Sync = props => {
   }
 
   const updateWipeStatus = (status, deviceID) => {
-    const { sortedDevices } = state;
     const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
     const copy = [...sortedDevices];
     if(idx !== -1) copy[idx].wipeStatus = status;
     setState({
       ...state,
       snackbar: "Success!",
-      sortedDevices: copy,
       wipingID: '',
     });
+    setSortedDevices(copy);
     return true;
   }
 
@@ -146,15 +149,14 @@ const Sync = props => {
 
     deleteDevice(domainID, userID, deviceID)
       .then(resp => {
-        const { sortedDevices } = state;
         const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
         const copy = [...sortedDevices];
         copy.splice(idx, 1);
         setState({
           ...state, 
           snackbar: 'Success! ' + (resp?.message || ''),
-          sortedDevices: copy,
-        })
+        });
+        setSortedDevices(copy);
       })
       .catch(snackbar => setState({ ...state, snackbar }));
   }
@@ -167,7 +169,7 @@ const Sync = props => {
   }
 
   const { classes, t, sync } = props;
-  const { sortedDevices, order, orderBy, wipingID, snackbar } = state;
+  const { order, orderBy, wipingID, snackbar } = state;
 
   return (
     <FormControl className={classes.form}>
