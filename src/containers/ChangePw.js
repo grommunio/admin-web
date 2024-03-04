@@ -10,11 +10,9 @@ import {
   TextField,
   FormControl,
   Button,
-  Grid,
-  Typography,
 } from '@mui/material';
 import { changePw } from '../api';
-import ViewWrapper from '../components/ViewWrapper';
+import TableViewContainer from '../components/TableViewContainer';
 
 const styles = theme => ({
   paper: {
@@ -54,19 +52,13 @@ const ChangePw = props => {
   const { oldPw, newPw, reType, snackbar } = state;
 
   return (
-    <ViewWrapper
+    <TableViewContainer
+      headline={t("Change password")}
+      subtitle={t('changePw_sub')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container className={classes.header}>
-          <Typography
-            color="primary"
-            variant="h5"
-          >
-            {t('Change password')}
-          </Typography>
-        </Grid>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -108,7 +100,7 @@ const ChangePw = props => {
           {t('Save')}
         </Button>
       </Paper>
-    </ViewWrapper>
+    </TableViewContainer>
   );
 }
 
