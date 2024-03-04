@@ -62,7 +62,6 @@ const styles = {
 const Sync = props => {
   const [state, setState] = useState({
     snackbar: null,
-    sortedDevices: null,
     order: 'desc',
     orderBy: 'update',
     type: 'int',
@@ -71,8 +70,8 @@ const Sync = props => {
     onlyActive: false,
     filterEnded: 20,
     filterUpdated: 120,
-    loading: true,
   });
+  const [sortedDevices, setSortedDevices] = useState([]);
 
   const columns = [
     { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
@@ -85,31 +84,24 @@ const Sync = props => {
     { label: "Info", value: "addinfo" },
   ];
   
-  let fetchInterval = null;
-  
   useEffect(() => {
-    const inner = async () => {
-      const { orderBy, type, filterEnded, filterUpdated } = state;
-      props.fetch({ filterEnded, filterUpdated })
-        .then(handleSort(orderBy, type, false))
-        .catch(snackbar => setState({ ...state, snackbar, loading: false }));
-      // Fetch sync data every 2 seconds
-      fetchInterval = setInterval(() => {
-        handleRefresh();
-      }, 2000);
-    };
-
-    inner();
-
+    handleRefresh();
+    const fetchInterval = setInterval(() => {
+      handleRefresh();
+    }, 2000);
     return () => {
       clearInterval(fetchInterval);
     }
   }, []);
+
+  useEffect(() => {
+    const { orderBy, type } = state;
+    handleSort(orderBy, type, false)();
+  }, [props.sync]);
   
   const handleRefresh = () => {
-    const { orderBy, type, filterEnded, filterUpdated } = state;
+    const { filterEnded, filterUpdated } = state;
     props.fetch({ filterEnded, filterUpdated })
-      .then(handleSort(orderBy, type, false))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
@@ -121,19 +113,20 @@ const Sync = props => {
    * @returns 
    */
   const handleSort = (attribute, type, switchOrder) => () => {
-    const sortedDevices = [...props.sync];
+    const devices = [...props.sync];
     const { order: stateOrder, orderBy } = state;
     const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
     if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
-      sortedDevices.sort((a, b) =>
+      devices.sort((a, b) =>
         type !== 'int' ? a[attribute].localeCompare(b[attribute]) : a[attribute] - b[attribute]
       );
     } else {
-      sortedDevices.sort((a, b) => 
+      devices.sort((a, b) => 
         type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
       );
     }
-    setState({ ...state, sortedDevices, order: switchOrder ? order : stateOrder, orderBy: attribute, type, loading: false });
+    setSortedDevices(devices);
+    setState({ ...state, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
   const getRowClass = (row, diff) => {
@@ -160,7 +153,7 @@ const Sync = props => {
   const handleCheckbox = field => ({ target: t }) => setState({ ...state, [field]: t.checked });
 
   const { classes, t, sync } = props;
-  const { loading, snackbar, sortedDevices, order, orderBy, match, showPush, onlyActive,
+  const { snackbar, order, orderBy, match, showPush, onlyActive,
     filterEnded, filterUpdated } = state;
 
   return (
@@ -179,7 +172,6 @@ const Sync = props => {
       subtitle={t('sync_sub')}
       snackbar={snackbar}
       onSnackbarClose={() => setState({...state,  snackbar: '' })}
-      loading={loading}
     >
       <TableActionGrid
         tf={<SearchTextfield

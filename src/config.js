@@ -13,7 +13,7 @@ const setConfig = (newConfig) => {
 fetch('//' + window.location.host + '/config.json')
   .then(async response => {
     if (response.ok) {
-      const res = await response.json()
+      const res = await response.json();
       setConfig({ ...res });
     }
   });
