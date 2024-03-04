@@ -443,3 +443,14 @@ export function checkHolidaySeason() {
   const day = date.get('date');
   return month === 11 && day >= 24 && day <= 31;
 }
+
+export function validateAltname(s="") {
+  if(!s) return true;
+  if (s.length > 64)
+    return false;
+  // eslint-disable-next-line no-control-regex
+  const r1 = /^[-A-Za-z0-9.!#$%&'^_`{}~]+$/;
+  const r2 = /(^\.|\.$|\.\.)/;
+  return s.match(r1) && !s.match(r2);
+
+}

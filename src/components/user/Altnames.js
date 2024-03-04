@@ -8,6 +8,7 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Delete, Warning } from '@mui/icons-material';
+import { validateAltname } from '../../utils';
 
 const styles = theme => ({
   form: {
@@ -56,6 +57,7 @@ const Altnames = props => {
             value={alt.altname || ""}
             label={t("Alt name") + ' ' + (idx + 1)}
             onChange={handleAltnameEdit("edit", idx)}
+            error={!validateAltname(alt.altname)}
           />
           <IconButton onClick={handleAltnameEdit("delete", idx)} size="large">
             <Delete color="error" />
