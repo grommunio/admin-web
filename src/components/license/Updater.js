@@ -44,15 +44,16 @@ const Updater = props => {
     updateLoading: false,
     upgradeLoading: false,
     copied: false,
-    updateLog: [],
-    repo: localStorage.getItem("packageRepository") || "supported"
   });
+  const [updateLog, setUpdateLog] = useState([]);
+  const [repo, setRepo] = useState(localStorage.getItem("packageRepository") || "supported");
 
   useEffect(() => {
-    window.addEventListener('beforeunload', onBeforeUnload)
+    const listener = window.addEventListener('beforeunload', onBeforeUnload)
 
     return () => {
       clearInterval(fetchInterval);
+      window.removeEventListener("beforeunload", listener);
     }
   }, []);
 
@@ -70,8 +71,8 @@ const Updater = props => {
 
   const handleRefresh = async pid => {
     const { setTabsDisabled, fetchLog } = props;
-    const response = await fetchLog(pid).catch();
-    setState({ ...state, updateLog: response.data });
+    const response = await fetchLog(pid).catch(snackbar => setState({ ...state, snackbar }));
+    setUpdateLog(response?.data || []);
     if(response?.processRunning === false) {
       clearInterval(fetchInterval);
       setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
@@ -81,7 +82,7 @@ const Updater = props => {
 
   const handleUpdate = action => async () => {
     const { systemUpdate, setSnackbar, setTabsDisabled } = props;
-    const { repo } = state;
+    setUpdateLog([]);
     setState({ ...state, [action + "Loading"]: true, copied: false });
     setTabsDisabled(true);
     const response = await systemUpdate(action, repo)
@@ -89,7 +90,7 @@ const Updater = props => {
         setSnackbar(snackbar);
         setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       });
-    if(response.pid) fetchInterval = setInterval(() => {
+    if(response?.pid) fetchInterval = setInterval(() => {
       handleRefresh(response.pid);
     }, 1000);
   }
@@ -104,11 +105,11 @@ const Updater = props => {
   const handleRepoChange = e => {
     const { value } = e.target;
     localStorage.setItem("packageRepository", value);+
-    setState({ ...state, repo: value });
+    setRepo(value);
   }
 
   const { classes, t } = props;
-  const { checkLoading, updateLoading, upgradeLoading, updateLog, copied, repo } = state;
+  const { checkLoading, updateLoading, upgradeLoading, copied } = state;
   const updating = checkLoading || updateLoading || upgradeLoading;
 
   return <div className={classes.updates}>
