@@ -311,7 +311,7 @@ const mapDispatchToProps = dispatch => {
     },
     fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0 }))
       .catch(err => Promise.reject(err)),
-    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000 }))
+    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, status: 0 }))
       .catch(err => Promise.reject(err)),
     fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
       .catch(err => Promise.reject(err)),
