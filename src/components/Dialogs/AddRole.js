@@ -147,7 +147,7 @@ const AddRole = props => {
     const { permissions } = role;
     const every = permissions.every(p => {
       if(!p.permission) return false;
-      if(["SystemAdmin", "SystemAdminRO", "DomainPurge"].includes(p.permission)) {
+      if(["SystemAdmin", "SystemAdminRO", "DomainPurge", "ResetPasswd"].includes(p.permission)) {
         return true;
       }
       if(!p.params) return false;
