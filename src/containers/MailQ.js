@@ -43,24 +43,20 @@ const styles = (theme) => ({
 const MailQ = props => {
   const [state, setState] = useState({
     selected: [],
-    postfixMailq: '',
-    gromoxMailq: '',
-    postqueue: [],
     snackbar: '',
     loading: true,
   });
-
-  let fetchInterval = null;
+  const [data, setData] = useState({
+    postfixMailq: '',
+    gromoxMailq: '',
+    postqueue: [],
+  });
 
   useEffect(() => {
-    const inner = async () => {
+    fetchData();
+    const fetchInterval = setInterval(() => {
       fetchData();
-      fetchInterval = setInterval(() => {
-        fetchData();
-      }, 10000);
-    };
-
-    inner();
+    }, 10000);
 
     return () => {
       clearInterval(fetchInterval);
@@ -71,7 +67,8 @@ const MailQ = props => {
     const data = await props.fetch()
       .catch(snackbar => setState({ ...state, snackbar }));
     if(data) {
-      setState({ ...state, ...data, loading: false });
+      setState({ ...state, loading: false });
+      setData(data);
     }
   }
 
@@ -114,7 +111,8 @@ const MailQ = props => {
   };
 
   const { classes, t } = props;
-  const { selected, snackbar, gromoxMailq, postqueue, loading } = state;
+  const { selected, snackbar, loading } = state;
+  const { gromoxMailq, postqueue } = data;
   const actionsDisabled = selected.length === 0;
   return (
     <TableViewContainer
