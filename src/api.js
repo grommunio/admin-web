@@ -361,6 +361,12 @@ export function usersPlain(domainID, params={}) {
   };
 }
 
+export function userList() {
+  return async () => {
+    return await get('/users');
+  };
+}
+
 export function contacts(domainID, params) {
   return async () => {
     return await get(buildQuery(
@@ -1184,6 +1190,12 @@ export function about() {
 export async function changePw(oldPw, newPw) {
   try {
     return await put('/passwd', { old: oldPw, new: newPw });
+  } catch(err) { return Promise.reject(err); }
+}
+
+export async function resetPw(username, newpassword) {
+  try {
+    return await put('/passwd/' + username, { new: newpassword });
   } catch(err) { return Promise.reject(err); }
 }
 

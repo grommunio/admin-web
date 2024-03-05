@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 export const DOMAIN_ADMIN_WRITE = 'DomainAdminWrite';
+export const DOMAIN_ADMIN_READ = 'DomainAdminRead';
 export const SYSTEM_ADMIN_READ = 'SystemAdminRead';
 export const SYSTEM_ADMIN_WRITE = 'SystemAdminWrite';
 export const DOMAIN_PURGE = 'DomainPurge';

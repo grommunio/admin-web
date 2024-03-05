@@ -13,7 +13,7 @@ import NotFound from "./containers/NotFound";
 import Loadable from 'react-loadable';
 import Loader from './components/Loading';
 import DefaultRedirect from "./components/DefaultRedirect";
-import { ORG_ADMIN, SYSTEM_ADMIN_READ } from "./constants";
+import { DOMAIN_ADMIN_READ, ORG_ADMIN, SYSTEM_ADMIN_READ } from "./constants";
 
 /**
  * Creates an async component from an async import
@@ -67,6 +67,8 @@ const AsyncStatus = makeLoadableComponent(() => import("./containers/Status"));
 const AsyncServers = makeLoadableComponent(() => import("./containers/Servers"));
 const AsyncServerDetails = makeLoadableComponent(() => import("./containers/ServerDetails"));
 const AsyncLicense = makeLoadableComponent(() => import("./containers/License"));
+const AsyncResetPasswd = makeLoadableComponent(() => import("./containers/ResetPasswd"));
+
 
 /**
  * react-router routes
@@ -78,7 +80,8 @@ const AppRoutes = ({ childProps, domains, capabilities }) => (
     <Route
       path="/"
       element={<AuthenticatedRoute
-        component={capabilities.includes(SYSTEM_ADMIN_READ) ? AsyncMenu : AsyncDomainAdminMenu}
+        component={capabilities.includes(SYSTEM_ADMIN_READ) ? AsyncMenu : 
+          capabilities.includes(DOMAIN_ADMIN_READ) ? AsyncDomainAdminMenu : AsyncResetPasswd}
         props={childProps}
       />}
     />
