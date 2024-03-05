@@ -71,38 +71,41 @@ const styles = (theme) => ({
 const Logs = props => {
   const [state, setState] = useState({
     snackbar: null,
-    log: [],
     skip: 0,
-    filename: '',
     autorefresh: false,
     clipboardMessage: '',
     loading: true,
   });
+  const [filename, setFilename] = useState("");
+  const [log, setLog] = useState([]);
 
   useEffect(() => {
     props.fetch({ sort: "name,asc" })
       .then(() => setState({ ...state, loading: false }))
       .catch(snackbar => setState({ ...state, snackbar, loading: false }))
     
-    return () => {
-      clearInterval(fetchInterval);
-    }
+    
   }, []);
 
   const handleLog = filename => async () => {
-    const log = await props.fetchLog(filename)
+    const freshLog = await props.fetchLog(filename)
       .catch(snackbar => setState({ ...state, snackbar }));
-    if(log) setState({ ...state, log: log.data, filename, skip: 0 });
+    if(freshLog) {
+      setLog(freshLog.data);
+      setFilename(filename);
+      setState({ ...state, skip: 0 });
+    }
   }
 
   // Fetches additional log rows, append on top
   const handleScroll = async () => {
-    const { skip, filename, log } = state;
+    const { skip } = state;
     let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 20 })
       .catch(snackbar => setState({ ...state, snackbar }));
     if(newLog && newLog.data) {
       newLog = newLog.data.concat(log);
-      setState({ ...state, log: newLog, skip: skip + 1 });
+      setState({ ...state, skip: skip + 1 });
+      setLog(newLog);
     }
   }
 
@@ -111,7 +114,6 @@ const Logs = props => {
     Appends new logs at the bottom of the list
   */
   const handleRefresh = async () => {
-    const { filename, log } = state;
     if(log.length === 0) handleLog(filename)();
     else {
       const lastDate = log[log.length - 1].time;
@@ -119,21 +121,30 @@ const Logs = props => {
         .catch(snackbar => setState({ ...state, snackbar }));
       if(newLog && newLog?.data.length > 0) {
         newLog = log.concat(newLog.data);
-        setState({ ...state, log: newLog, filename, skip: 0 });
+        setState({ ...state, skip: 0 });
+        setLog(newLog);
       }
     }
   }
 
-  let fetchInterval = null;
-
   const handleAutoRefresh = ({ target: t }) => {
     const checked = t.checked;
     setState({ ...state, autorefresh: checked });
-    if(checked) fetchInterval = setInterval(() => {
+  }
+
+  useEffect(() => {
+    const { autorefresh } = state;
+    let fetchInterval;
+
+    if(autorefresh) fetchInterval = setInterval(() => {
       handleRefresh();
     }, 5000);
     else clearInterval(fetchInterval);
-  }
+
+    return () => {
+      clearInterval(fetchInterval);
+    }
+  }, [state.autorefresh, filename]);
 
   const handleCopyToClipboard = msg => async () => {
     const success = await copyToClipboard(msg).catch(err => err);
@@ -145,7 +156,7 @@ const Logs = props => {
   const handleSnackbarClose = () => setState({ ...state, clipboardMessage: '' });
 
   const { classes, t, logs } = props;
-  const { snackbar, log, filename, autorefresh, clipboardMessage, loading } = state;
+  const { snackbar, autorefresh, clipboardMessage, loading } = state;
 
   return (
     <TableViewContainer
