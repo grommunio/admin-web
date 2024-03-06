@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
-  Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput } from '@mui/material';
+  Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput, Alert } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
@@ -65,6 +65,7 @@ const styles = theme => ({
 
 const Account = props => {
   const context = useContext(CapabilityContext);
+  const { t } = useTranslation();
 
   const types = [
     { name: 'User', ID: 0 },
@@ -94,7 +95,7 @@ const Account = props => {
   }
 
   const calculateGraph = () => {
-    const { classes, rawData, t } = props;
+    const { classes, rawData } = props;
     const {
       messagesizeextended: rawMSE,
       storagequotalimit: rawSTQ,
@@ -150,7 +151,28 @@ const Account = props => {
     </div>;
   }
 
-  const { classes, t, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
+  const getQuotaWarning = () => {
+    const {
+      messagesizeextended: rawMSE,
+      storagequotalimit: rawSTQ,
+      prohibitreceivequota: rawRQ,
+      prohibitsendquota: rawSQ,
+    } = props.rawData.properties || {};
+    const over100 = [rawSTQ, rawRQ, rawSQ].some(quota => quota > 104857600);
+
+    if(over100) {
+      return rawMSE > 104857600 ? t("quotaWarning4") : t("quotaWarning3");
+    }
+    const over50 = [rawSTQ, rawRQ, rawSQ].some(quota => quota > 52428800);
+    if(over50) {
+      return rawMSE > 52428800 ? t("quotaWarning2") : t("quotaWarning1");
+    }
+    return "";
+  }
+
+  const quotaWarning = useMemo(getQuotaWarning, [props.rawData]);
+
+  const { classes, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
     handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
     handlePasswordChange, handleChatUser, handleServer,
     servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = props;
@@ -327,6 +349,11 @@ const Account = props => {
             {calculateGraph()}
           </div>
         </Grid>
+        <Grid container>
+          {quotaWarning && <Alert style={{ flex: 1, margin: 8 }} severity="warning">
+            {quotaWarning}
+          </Alert>}
+        </Grid>
       </div>
       <FormControl className={classes.input} fullWidth>
         <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
@@ -493,5 +520,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(
-  withTranslation()(withStyles(styles)(Account)));
+export default connect(mapStateToProps)(withStyles(styles)(Account));
