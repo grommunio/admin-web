@@ -22,9 +22,8 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { connect } from "react-redux";
-import ArrowUp from '@mui/icons-material/ArrowUpward';
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { CopyAll, Refresh } from "@mui/icons-material";
+import { ArrowUpward, CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard } from "../utils";
 
@@ -59,6 +58,12 @@ const styles = (theme) => ({
   paper: {
     flex: 1,
     padding: theme.spacing(1, 1, 1, 1),
+    height: 0,
+    minHeight: "99%", // Random 1px scroll, which i can't find, so 99% instead of 100%
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    marginTop: 0,
   },
   li: {
     cursor: 'pointer',
@@ -66,6 +71,10 @@ const styles = (theme) => ({
   selected: {
     background: `${theme.palette.primary.main} !important`,
   },
+  list: {
+    flex: 1,
+    overflowY: 'auto',
+  }
 });
 
 const Logs = props => {
@@ -78,14 +87,28 @@ const Logs = props => {
   });
   const [filename, setFilename] = useState("");
   const [log, setLog] = useState([]);
+  const [scrollDivHeight, setScrollDivHeight] = useState(0);
 
   useEffect(() => {
     props.fetch({ sort: "name,asc" })
       .then(() => setState({ ...state, loading: false }))
-      .catch(snackbar => setState({ ...state, snackbar, loading: false }))
-    
-    
+      .catch(snackbar => setState({ ...state, snackbar, loading: false }));
   }, []);
+
+  useEffect(() => {
+    const list = document.getElementById("logsList");
+    const newHeight = list.scrollHeight;
+    // First fetch
+    if(log.length <= 100) {
+      // Scroll to bottom
+      list.scrollTo({ top: newHeight });
+    } else {
+      // Keep scrolling position after appending list elements at the top
+      list.scrollTo({ top: newHeight - scrollDivHeight });
+    }
+    // Update previous div height
+    setScrollDivHeight(newHeight);
+  }, [log]);
 
   const handleLog = filename => async () => {
     const freshLog = await props.fetchLog(filename)
@@ -97,10 +120,22 @@ const Logs = props => {
     }
   }
 
-  // Fetches additional log rows, append on top
   const handleScroll = async () => {
+    if (document.getElementById("logsList").scrollTop === 0) {
+      const { skip } = state;
+      let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 100 })
+        .catch(snackbar => setState({ ...state, snackbar }));
+      if(newLog && newLog.data.length > 0) {
+        newLog = newLog.data.concat(log);
+        setState({ ...state, skip: skip + 1 });
+        setLog(newLog);
+      }
+    }
+  }
+
+  const handleButtonScroll = async () => {
     const { skip } = state;
-    let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 20 })
+    let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 100 })
       .catch(snackbar => setState({ ...state, snackbar }));
     if(newLog && newLog.data) {
       newLog = newLog.data.concat(log);
@@ -119,7 +154,7 @@ const Logs = props => {
       const lastDate = log[log.length - 1].time;
       let newLog = await props.fetchLog(filename, { after: lastDate })
         .catch(snackbar => setState({ ...state, snackbar }));
-      if(newLog && newLog?.data.length > 0) {
+      if(newLog && newLog.data?.length > 0) {
         newLog = log.concat(newLog.data);
         setState({ ...state, skip: 0 });
         setLog(newLog);
@@ -191,41 +226,46 @@ const Logs = props => {
           )}
         </List>
         <Paper elevation={1} className={classes.paper}>
-          {filename && <Grid container justifyContent="flex-end">
-            <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
-              <Refresh />
-            </IconButton>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={autorefresh}
-                  onChange={handleAutoRefresh}
-                  name="autorefresh"
-                  color="primary"
-                />
-              }
-              label={t("Autorefresh")}
-            />
-          </Grid>}
-          {log.length > 0 ? <>
-            <IconButton onClick={handleScroll} size="large">
-              <ArrowUp />
-            </IconButton>
-            <Tooltip placement="top" title={t('Copy all')}>
-              <IconButton onClick={handleCopyToClipboard(log.map(l => l.message).join('\n'))} size="large">
-                <CopyAll />
+          <div style={{ display: 'flex' }}>
+            {log.length > 0 && <>
+              <IconButton onClick={handleButtonScroll} size="large">
+                <ArrowUpward />
               </IconButton>
-            </Tooltip>
-          </>: filename && <Typography>&lt;no logs&gt;</Typography>}
-          {log.map((log, idx) =>
-            <pre
-              key={idx}
-              className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
-              onClick={handleCopyToClipboard(log.message)}
-            >
-              {'[' + log.time + ']: ' + log.message}
-            </pre>
-          )}
+              <Tooltip placement="top" title={t('Copy all')}>
+                <IconButton onClick={handleCopyToClipboard(log.map(l => l.message).join('\n'))} size="large">
+                  <CopyAll />
+                </IconButton>
+              </Tooltip>
+            </>}
+            {filename && <Grid container justifyContent="flex-end">
+              <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
+                <Refresh />
+              </IconButton>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={autorefresh}
+                    onChange={handleAutoRefresh}
+                    name="autorefresh"
+                    color="primary"
+                  />
+                }
+                label={t("Autorefresh")}
+              />
+            </Grid>}
+          </div>
+          {filename && log.length ===  0 && <Typography>&lt;no logs&gt;</Typography>}
+          <List className={classes.list} id="logsList" onScroll={handleScroll}>
+            {log.map((log, idx) =>
+              <pre
+                key={idx}
+                className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
+                onClick={handleCopyToClipboard(log.message)}
+              >
+                {'[' + log.time + ']: ' + log.message}
+              </pre>
+            )}
+          </List>
         </Paper>
       </div>
       <Portal>
@@ -273,7 +313,7 @@ const mapDispatchToProps = (dispatch) => {
       );
     },
     fetchLog: async (filename, params) =>
-      await dispatch(fetchLogData(filename, { ...params, n: 20 }))
+      await dispatch(fetchLogData(filename, { n: 100, ...params }))
         .then(log => log)
         .catch(error => Promise.reject(error)),
   };
