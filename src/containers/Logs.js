@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@mui/styles";
 import { withTranslation } from "react-i18next";
@@ -20,10 +20,12 @@ import {
   Alert,
   Tooltip,
   ListItemButton,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { ArrowUpward, CopyAll, Refresh } from "@mui/icons-material";
+import { ArrowUpward, Close, CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard } from "../utils";
 
@@ -88,6 +90,7 @@ const Logs = props => {
   const [filename, setFilename] = useState("");
   const [log, setLog] = useState([]);
   const [scrollDivHeight, setScrollDivHeight] = useState(0);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     props.fetch({ sort: "name,asc" })
@@ -190,6 +193,10 @@ const Logs = props => {
 
   const handleSnackbarClose = () => setState({ ...state, clipboardMessage: '' });
 
+  const filteredlogs = useMemo(() => {
+    return log.filter(l => l.message.toLowerCase().includes(search.toLowerCase()))
+  }, [log, search])
+
   const { classes, t, logs } = props;
   const { snackbar, autorefresh, clipboardMessage, loading } = state;
 
@@ -236,6 +243,18 @@ const Logs = props => {
                   <CopyAll />
                 </IconButton>
               </Tooltip>
+              <TextField
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                label={t("Search")}
+                size="small"
+                style={{ width: 400 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">
+                    <IconButton onClick={() => setSearch("")}><Close /></IconButton>
+                  </InputAdornment>,
+                }}
+              />
             </>}
             {filename && <Grid container justifyContent="flex-end">
               <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
@@ -254,9 +273,9 @@ const Logs = props => {
               />
             </Grid>}
           </div>
-          {filename && log.length ===  0 && <Typography>&lt;no logs&gt;</Typography>}
+          {filename && filteredlogs.length ===  0 && <Typography>&lt;no logs&gt;</Typography>}
           <List className={classes.list} id="logsList" onScroll={handleScroll}>
-            {log.map((log, idx) =>
+            {filteredlogs.map((log, idx) =>
               <pre
                 key={idx}
                 className={log.level < 4 ? classes.errorLog : log.level < 6 ? classes.noticeLog : classes.log}
