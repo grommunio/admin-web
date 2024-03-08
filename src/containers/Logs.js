@@ -328,7 +328,7 @@ const Logs = props => {
               {nOptions.map(c => <MenuItem value={c} key={c}>{c}</MenuItem>)}
             </TextField>}
             {filename && <Grid container justifyContent="flex-end">
-              <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
+              <IconButton disabled={!!date} onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
                 <Refresh />
               </IconButton>
               <FormControlLabel

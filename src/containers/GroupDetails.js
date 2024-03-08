@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 import { withTranslation } from 'react-i18next';
@@ -25,10 +25,10 @@ import { connect } from 'react-redux';
 import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { editUserData, fetchUsersData } from '../actions/users';
+import { editUserData, fetchAllUsers, fetchUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
@@ -92,8 +92,8 @@ const GroupDetails = props => {
 
   useEffect(() => {
     const inner = async () => {
-      const { domain, fetchUsers } = props;
-      fetchUsers(domain.ID)
+      const { domain, fetchUsers, fetchOrgUsers } = props;
+      (context.includes(ORG_ADMIN) ? fetchOrgUsers(domain.orgID) : fetchUsers(domain.ID))
         .catch(message => {
           setState({ ...state, snackbar: message || 'Unknown error' });
         });
@@ -246,7 +246,11 @@ const GroupDetails = props => {
     });
   }
 
-  const { classes, t, domain, Users } = props;
+  const filteredUserOptions = useMemo(() => {
+    return props.Users.filter(u => u.properties?.displaytypeex !== 7);
+  }, [props.Users]);
+
+  const { classes, t, domain } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
     loading, user } = state;
@@ -349,7 +353,7 @@ const GroupDetails = props => {
             filterAttribute={'username'}
             onChange={handleAutocomplete('associations')}
             className={classes.input} 
-            options={Users || []}
+            options={filteredUserOptions || []}
             placeholder={t("Search users") +  "..."}
             label={t('Recipients')}
             getOptionLabel={user => {
@@ -368,7 +372,7 @@ const GroupDetails = props => {
             filterAttribute={'username'}
             onChange={handleAutocomplete('specifieds')}
             className={classes.input} 
-            options={Users || []}
+            options={filteredUserOptions || []}
             placeholder={t("Search users") +  "..."}
             label={t('Senders')}
             getOptionLabel={user => {
@@ -438,6 +442,7 @@ GroupDetails.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   fetch: PropTypes.func.isRequired,
+  fetchOrgUsers: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   editUser: PropTypes.func.isRequired,
@@ -464,6 +469,8 @@ const mapDispatchToProps = dispatch => {
     fetchUsers: async (domainID) =>
       await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
         .catch(message => Promise.reject(message)),
+    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
+      .catch(message => Promise.reject(message)),
   };
 };
 
