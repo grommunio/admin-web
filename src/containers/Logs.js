@@ -22,12 +22,15 @@ import {
   ListItemButton,
   TextField,
   InputAdornment,
+  MenuItem,
 } from "@mui/material";
 import { connect } from "react-redux";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { ArrowUpward, Close, CopyAll, Refresh } from "@mui/icons-material";
+import { ArrowUpward, Clear, Close, CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard } from "../utils";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 const styles = (theme) => ({
   logViewer: {
@@ -74,6 +77,7 @@ const styles = (theme) => ({
     background: `${theme.palette.primary.main} !important`,
   },
   list: {
+    paddingTop: 0,
     flex: 1,
     overflowY: 'auto',
   }
@@ -91,6 +95,10 @@ const Logs = props => {
   const [log, setLog] = useState([]);
   const [scrollDivHeight, setScrollDivHeight] = useState(0);
   const [search, setSearch] = useState("");
+  const [n, setN] = useState(100);
+  const [date, setDate] = useState(null);
+
+  const nOptions = [100, 500, 1000, 5000];
 
   useEffect(() => {
     props.fetch({ sort: "name,asc" })
@@ -124,7 +132,7 @@ const Logs = props => {
   }
 
   const handleScroll = async () => {
-    if (document.getElementById("logsList").scrollTop === 0) {
+    if (!date && document.getElementById("logsList").scrollTop === 0) {
       const { skip } = state;
       let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 100 })
         .catch(snackbar => setState({ ...state, snackbar }));
@@ -174,7 +182,7 @@ const Logs = props => {
     const { autorefresh } = state;
     let fetchInterval;
 
-    if(autorefresh) fetchInterval = setInterval(() => {
+    if(autorefresh && !date) fetchInterval = setInterval(() => {
       handleRefresh();
     }, 5000);
     else clearInterval(fetchInterval);
@@ -182,7 +190,7 @@ const Logs = props => {
     return () => {
       clearInterval(fetchInterval);
     }
-  }, [state.autorefresh, filename]);
+  }, [state.autorefresh, filename, date]);
 
   const handleCopyToClipboard = msg => async () => {
     const success = await copyToClipboard(msg).catch(err => err);
@@ -195,7 +203,36 @@ const Logs = props => {
 
   const filteredlogs = useMemo(() => {
     return log.filter(l => l.message.toLowerCase().includes(search.toLowerCase()))
-  }, [log, search])
+  }, [log, search]);
+
+  const handleDateChange = async newVal => {
+    setDate(newVal);
+    setState({ ...state, skip: 0, autorefresh: false });
+    const time = newVal.toISOString().replace("T", " ").replace("Z", "");
+    const freshLog = await props.fetchLog(filename, { n, after: time })
+      .catch(snackbar => setState({ ...state, snackbar }));
+    if(freshLog) {
+      setLog(freshLog.data);
+    }
+  }
+
+  const handleNChange = async e => {
+    const { value } = e.target;
+    setN(value);
+    if(date) {
+      const time = date.toISOString().replace("T", " ").replace("Z", "");
+      const freshLog = await props.fetchLog(filename, { n: value, after: time })
+        .catch(snackbar => setState({ ...state, snackbar }));
+      if(freshLog) {
+        setLog(freshLog.data);
+      }
+    }
+  }
+
+  const handleClear = () => {
+    setDate(null);
+    handleLog(filename)();
+  }
 
   const { classes, t, logs } = props;
   const { snackbar, autorefresh, clipboardMessage, loading } = state;
@@ -233,11 +270,11 @@ const Logs = props => {
           )}
         </List>
         <Paper elevation={1} className={classes.paper}>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', paddingBottom: 8 }}>
             {log.length > 0 && <>
-              <IconButton onClick={handleButtonScroll} size="large">
+              {!date && <IconButton onClick={handleButtonScroll} size="large">
                 <ArrowUpward />
-              </IconButton>
+              </IconButton>}
               <Tooltip placement="top" title={t('Copy all')}>
                 <IconButton onClick={handleCopyToClipboard(log.map(l => l.message).join('\n'))} size="large">
                   <CopyAll />
@@ -247,8 +284,7 @@ const Logs = props => {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 label={t("Search")}
-                size="small"
-                style={{ width: 400 }}
+                style={{ marginRight: 8 }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">
                     <IconButton onClick={() => setSearch("")}><Close /></IconButton>
@@ -256,6 +292,41 @@ const Logs = props => {
                 }}
               />
             </>}
+            {filename && <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DateTimePicker
+                label="From-time"
+                ampm={false}
+                timezone="UTC"
+                closeOnSelect={false}
+                onAccept={handleDateChange}
+                value={date}
+                renderInput={(params) => <TextField
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Clear color="secondary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...params}
+                />}
+              />
+              <Tooltip title={t("Clear date")}>
+                <IconButton onClick={handleClear}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
+            </LocalizationProvider>}
+            {filename && <TextField
+              value={n}
+              onChange={handleNChange}
+              label={t("Count")}
+              select
+              style={{ width: 169, marginLeft: 8 }}
+            >
+              {nOptions.map(c => <MenuItem value={c} key={c}>{c}</MenuItem>)}
+            </TextField>}
             {filename && <Grid container justifyContent="flex-end">
               <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
                 <Refresh />
@@ -263,10 +334,11 @@ const Logs = props => {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={autorefresh}
+                    checked={autorefresh && !date}
                     onChange={handleAutoRefresh}
                     name="autorefresh"
                     color="primary"
+                    disabled={!!date}
                   />
                 }
                 label={t("Autorefresh")}
