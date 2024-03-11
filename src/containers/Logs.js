@@ -300,7 +300,9 @@ const Logs = props => {
                 closeOnSelect={false}
                 onAccept={handleDateChange}
                 value={date}
+                sx={{ minWidth: 250 }}
                 renderInput={(params) => <TextField
+                  {...params}
                   size="small"
                   InputProps={{
                     endAdornment: (
@@ -309,7 +311,6 @@ const Logs = props => {
                       </InputAdornment>
                     ),
                   }}
-                  {...params}
                 />}
               />
               <Tooltip title={t("Clear date")}>
