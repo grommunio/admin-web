@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
@@ -13,8 +13,10 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addGroupData } from '../../actions/groups';
-import { fetchUsersData } from '../../actions/users';
+import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { CapabilityContext } from '../../CapabilityContext';
+import { ORG_ADMIN } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -40,6 +42,7 @@ const AddGroup = props => {
     specifieds: [],
   });
   const [loading, setLoading] = useState(false);
+  const context = useContext(CapabilityContext);
 
   const listTypes = [
     { ID: 0, name: "Normal" },
@@ -54,8 +57,8 @@ const AddGroup = props => {
   ]
 
   const handleEnter = () => {
-    const { fetch, onError, domain } = props;
-    fetch(domain.ID)
+    const { fetch, onError, domain, fetchOrgUsers } = props;
+    (context.includes(ORG_ADMIN) ? fetchOrgUsers(domain.orgID) : fetch(domain.ID))
       .catch(error => {
         onError(error);
         setLoading(false);
@@ -252,6 +255,7 @@ AddGroup.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
+  fetchOrgUsers: PropTypes.func.isRequired,
   add: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   fetch: PropTypes.func.isRequired,
@@ -272,6 +276,8 @@ const mapDispatchToProps = dispatch => {
     fetch: async (domainID) =>
       await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
         .catch(message => Promise.reject(message)),
+    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
+      .catch(message => Promise.reject(message)),
   };
 };
 
