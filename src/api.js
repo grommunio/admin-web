@@ -1227,3 +1227,11 @@ export function storeLangs() {
   };
 }
 
+
+/*
+ * SPAM
+*/
+
+export function spam() {
+  return async () => await get("/system/antispam/stat");
+}

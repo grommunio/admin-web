@@ -21,7 +21,7 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
 import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain, setDrawerExpansion } from '../actions/drawer';
-import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBuilder, TableChart,
+import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBuilder, ReportGmailerrorred, TableChart,
   TaskAlt, Topic } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
@@ -45,11 +45,6 @@ const styles = theme => ({
   },
   nested: {
     paddingLeft: 30,
-  },
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
   },
   li: {
     width: 'auto',
@@ -287,6 +282,11 @@ const RetractedNavigationLinks = props => {
             label={"Dashboard"}
             path=""
             Icon={Dashboard}
+          />
+          <ListElement
+            label={"Spam Handling"}
+            path="spam"
+            Icon={ReportGmailerrorred}
           />
           <ListElement
             label={"Organizations"}

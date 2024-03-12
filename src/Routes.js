@@ -54,6 +54,7 @@ const AsyncServers = makeLoadableComponent(() => import("./containers/Servers"))
 const AsyncServerDetails = makeLoadableComponent(() => import("./containers/ServerDetails"));
 const AsyncLicense = makeLoadableComponent(() => import("./containers/License"));
 const AsyncResetPasswd = makeLoadableComponent(() => import("./containers/ResetPasswd"));
+const AsyncSpam = makeLoadableComponent(() => import("./containers/Spam"));
 
 
 /**
@@ -78,6 +79,13 @@ const AppRoutes = ({ childProps, domains, capabilities }) => (
         props={childProps}
       />}
     />
+    {capabilities.includes(SYSTEM_ADMIN_READ) && <Route
+      path="/spam"
+      element={<AuthenticatedRoute
+        component={AsyncSpam}
+        props={childProps}
+      />}
+    />}
     {capabilities.includes(SYSTEM_ADMIN_READ) && <Route
       path="/domains"
       element={<AuthenticatedRoute

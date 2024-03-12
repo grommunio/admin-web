@@ -25,7 +25,7 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
-import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
+import { Add, BackupTable, ContactMail, Dns, QueryBuilder, ReportGmailerrorred, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
@@ -307,6 +307,11 @@ const NavigationLinks = props => {
             label={"Dashboard"}
             path=""
             Icon={Dashboard}
+          />
+          <ListElement
+            label={"Spam Handling"}
+            path="spam"
+            Icon={ReportGmailerrorred}
           />
           <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
           <ListElement

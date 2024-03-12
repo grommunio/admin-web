@@ -24,6 +24,7 @@ import rolesReducer from './reducers/roles';
 import serversReducer from './reducers/servers';
 import servicesReducer from './reducers/services';
 import settingsReducer from './reducers/settings';
+import spamReducer from './reducers/spam';
 import statusReducer from './reducers/status';
 import syncReducer from './reducers/sync';
 import taskqReducer from './reducers/taskq';
@@ -63,6 +64,7 @@ export const store = configureStore({
     servers: serversReducer,
     services: servicesReducer,
     settings: settingsReducer,
+    spam: spamReducer,
     status: statusReducer,
     sync: syncReducer,
     taskq: taskqReducer,
