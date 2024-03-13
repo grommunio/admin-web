@@ -13,7 +13,7 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   ListItemText} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { deleteUserData, checkLdapUsers, fetchAllUsers } from '../actions/users';
+import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
@@ -75,6 +75,16 @@ const GlobalUsers = props => {
 
   const handleCheckClose = () => setState({ ...state, checking: false });
 
+  const handleRedirect = obj => async (e) => {
+    // If user is a group
+    if(obj.properties?.displaytypeex === 1) {
+      const userDetails = await props.fetchUserDetails(obj.domainID, obj.ID);
+      handleEdit('/' + obj.domainID +'/groups/' + userDetails.mlist)(e);
+    } else {
+      handleEdit('/' + obj.domainID +'/users/' + obj.ID)(e);
+    }
+  }
+
   const { classes, t, users, tableState, handleMatch, handleRequestSort,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
@@ -83,13 +93,17 @@ const GlobalUsers = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const { checking } = state;
 
-  const userCounts = users.Users.reduce((prev, curr) => {
+  const contactsRemoved = users.Users.filter(u => u.status !== 5 /* Remove contacts */);
+
+  const userCounts = contactsRemoved.reduce((prev, curr) => {
+    const isGroup = curr.properties?.displaytypeex === 1;
     const shared = curr.status === 4;
     return {
-      normal: prev.normal + (shared ? 0 : 1),
-      shared: prev.shared + (shared ? 1 : 0),
+      normal: prev.normal + (!shared && !isGroup ? 1 : 0),
+      group: prev.group + (isGroup ? 1 : 0),
+      shared: prev.shared + (shared && !isGroup ? 1 : 0),
     }
-  }, { normal: 0, shared: 0 });
+  }, { normal: 0, group: 0, shared: 0 });
 
   return (
     <TableViewContainer
@@ -119,8 +133,8 @@ const GlobalUsers = props => {
         </Button>
       </TableActionGrid>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: users.Users.length })}
-        {` (${userCounts.normal} normal, ${userCounts.shared} shared)`}
+        {t("showingUser", { count: contactsRemoved.length })}
+        {` (${userCounts.normal} ${t("normal")}, ${userCounts.group} ${t("groups")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
         <Hidden lgDown>
@@ -146,10 +160,10 @@ const GlobalUsers = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
+              {contactsRemoved.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
-                  <TableRow key={idx} hover onClick={handleEdit('/' + obj.domainID + '/users/' + obj.ID)}>
+                  <TableRow key={idx} hover onClick={handleRedirect(obj)}>
                     <TableCell>
                       <div className={classes.flexRow}>
                         {properties.displaytypeex === 1 ?
@@ -230,6 +244,7 @@ GlobalUsers.propTypes = {
   delete: PropTypes.func.isRequired,
   check: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
+  fetchUserDetails: PropTypes.func.isRequired,
   ...defaultTableProptypes,
 };
 
@@ -242,6 +257,9 @@ const mapDispatchToProps = dispatch => {
     fetchTableData: async params => {
       await dispatch(fetchAllUsers(params)).catch(error => Promise.reject(error));
     },
+    fetchUserDetails: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
+      .then(user => user)
+      .catch(msg => Promise.reject(msg)),
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },

@@ -144,13 +144,17 @@ const Users = props => {
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { checking, taskMessage, taskID } = state;
 
-  const userCounts = users.Users.reduce((prev, curr) => {
+  const contactsRemoved = users.Users.filter(u => u.status !== 5 /* Remove contacts */);
+
+  const userCounts = contactsRemoved.reduce((prev, curr) => {
+    const isGroup = curr.properties?.displaytypeex === 1;
     const shared = curr.status === 4;
     return {
-      normal: prev.normal + (shared ? 0 : 1),
-      shared: prev.shared + (shared ? 1 : 0),
+      normal: prev.normal + (!shared && !isGroup ? 1 : 0),
+      group: prev.group + (isGroup ? 1 : 0),
+      shared: prev.shared + (shared && !isGroup ? 1 : 0),
     }
-  }, { normal: 0, shared: 0 });
+  }, { normal: 0, group: 0, shared: 0 });
 
   return (
     <TableViewContainer
@@ -227,8 +231,8 @@ const Users = props => {
         </Tooltip>
       </TableActionGrid>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: users.Users.length })}
-        {` (${userCounts.normal} normal, ${userCounts.shared} shared)`}
+        {t("showingUser", { count: contactsRemoved.length })}
+        {` (${userCounts.normal} ${t("normal")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
         <Hidden lgDown>
@@ -258,7 +262,7 @@ const Users = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => {
+              {contactsRemoved.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow

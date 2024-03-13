@@ -494,7 +494,6 @@ const Account = props => {
 
 Account.propTypes = {
   classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
   domain: PropTypes.object,
   user: PropTypes.object.isRequired,
   sizeUnits: PropTypes.object.isRequired,
