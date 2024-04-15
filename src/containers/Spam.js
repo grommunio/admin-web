@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import TableViewContainer from "../components/TableViewContainer";
 import withStyledReduxTable from "../components/withTable";
 import defaultTableProptypes from "../proptypes/defaultTableProptypes";
-import { getSpamData } from "../actions/spam";
+import { getSpamData, getSpamThroughput } from "../actions/spam";
 import { Paper } from "@mui/material";
 import SpamDonut from "../components/charts/SpamDonut";
+import { useDispatch } from "react-redux";
+import SpamThroughput from "../components/charts/SpamThroughput";
 
 
 const styles = (theme) => ({
@@ -21,8 +23,24 @@ const styles = (theme) => ({
 });
 
 const Spam = props => {
-  const { t, tableState, clearSnackbar} = props;
-  const { loading, snackbar, } = tableState;
+  const { t, tableState, clearSnackbar } = props;
+  const { loading, snackbar } = tableState;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchData();
+    const fetchInterval = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    return () => {
+      clearInterval(fetchInterval);
+    }
+  }, []);
+
+  const fetchData = () => {
+    dispatch(getSpamThroughput());
+  }
 
   return (
     <TableViewContainer
@@ -33,6 +51,9 @@ const Spam = props => {
     >
       <Paper>
         <SpamDonut />
+      </Paper>
+      <Paper>
+        <SpamThroughput />
       </Paper>
     </TableViewContainer>
   );

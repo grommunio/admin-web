@@ -1235,3 +1235,7 @@ export function storeLangs() {
 export function spam() {
   return async () => await get("/system/antispam/stat");
 }
+
+export function spamThroughput() {
+  return async () => await get("/system/antispam/graph?type=day");
+}

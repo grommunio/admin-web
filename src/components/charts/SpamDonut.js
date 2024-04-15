@@ -8,46 +8,42 @@ import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
 import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
+import { Typography } from '@mui/material';
 
 const styles = theme => ({
   root: {
     flex: 1,
-    width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(1),
   },
 });
 
 function SpamDonut(props) {
   const theme = useTheme();
   const { classes } = props;
-  const { actions } = useSelector(state => state.spam.stat);
+  const stat = useSelector(state => state.spam.stat);
+  const { actions, scanned } = stat;
+  
   const data = {
-    "no action": actions["no action"],
-    "add header": actions["add header"],
-    greylist: actions.greylist,
-    reject: actions.reject,
+    "no action": actions["no action"] || 0,
+    "add header": actions["add header"] || 0,
+    greylist: actions.greylist || 0,
+    reject: actions.reject || 0,
   };
 
   return (
     <div className={classes.root}>
+      <div className={classes.chartTitle}>
+        <Typography variant='h6'>
+          Rspamd filter stats
+        </Typography>
+      </div>
       <Chart
         options={{
           labels: Object.keys(data),
-          responsive: [{
-            breakpoint: 250,
-            options: {
-              chart: {
-                width: 250
-              },
-              legend: {
-                position: 'bottom'
-              }
-            }
-          }],
           chart: {
-            width: 268,
+            width: 400,
             type: 'donut',
             animations: {
               enabled: true,
@@ -58,9 +54,21 @@ function SpamDonut(props) {
             }
           },
           plotOptions: {
-            donut: {
-              expandOnClick: false,
-            },
+            pie: {
+              donut: {
+                size: '50%',
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    showAlways: true,
+                    label: "Scanned",
+                    color: "white",
+                    formatter: () => scanned,
+                  },
+                }
+              },
+            }
           },
           states: {
             hover: {
@@ -84,7 +92,7 @@ function SpamDonut(props) {
           },
           legend: {
             position: 'bottom',
-            width: 260,
+            width: 400,
             labels: {
               colors: theme.palette.text.primary,
             },
@@ -96,7 +104,7 @@ function SpamDonut(props) {
         }}
         series={Object.values(data)}
         type="donut"
-        width={268}
+        width={400}
       />
     </div>
   );
