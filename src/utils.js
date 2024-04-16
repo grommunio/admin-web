@@ -454,3 +454,7 @@ export function validateAltname(s="") {
   return s.match(r1) && !s.match(r2);
 
 }
+
+export function dayTimeFromUnix(unixT) {
+  return moment.unix(unixT).format("HH:mm:ss");
+}

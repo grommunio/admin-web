@@ -3,6 +3,7 @@
 
 import {
   SPAM_DATA_RECEIVED,
+  SPAM_HISTORY_RECEIVED,
   SPAM_THROUGHPUT_RECEIVED,
 } from '../actions/types';
 
@@ -23,7 +24,12 @@ const defaultState = {
     { name: "add header", data: [] },
     { name: "greyheader", data: [] },
     { name: "no action", data: [] },
-  ]
+  ],
+  history: {
+    version: 0,
+    rows: [],
+  }
+  // throughputTable: {}
 };
 
 const formatThroughput = raw => {
@@ -35,7 +41,39 @@ const formatThroughput = raw => {
     { name: "greyheader", data: raw[4].map(o => o.y) },
     { name: "no action", data: raw[5].map(o => o.y) },
   ]
-} 
+}
+
+/*const formatThroughputTable = raw => {
+  const totals = {
+    "reject": raw[0].reduce((prev, value) => prev + value.y, 0),
+    "soft reject": raw[1].reduce((prev, value) => prev + value.y, 0),
+    "rewrite subject": raw[2].reduce((prev, value) => prev + value.y, 0),
+    "add header": raw[3].reduce((prev, value) => prev + value.y, 0),
+    "greyheader": raw[4].reduce((prev, value) => prev + value.y, 0),
+    "no action": raw[5].reduce((prev, value) => prev + value.y, 0),
+  }
+
+  const yValues = {
+    "reject": raw[0].map(o => o.y),
+    "soft reject": raw[1].map(o => o.y),
+    "rewrite subject": raw[2].map(o => o.y),
+    "add header": raw[3].map(o => o.y),
+    "greyheader": raw[4].map(o => o.y),
+    "no action": raw[5].map(o => o.y),
+  }
+
+  return [
+    {
+      name: "reject",
+      messages: totals["reject"],
+    },
+    { name: "soft reject", messages: totals["soft reject"] },
+    { name: "rewrite subject", messages: totals["rewrite reject"] },
+    { name: "add header", messages: totals["add header"] },
+    { name: "greyheader", messages: totals["greyheader"] },
+    { name: "no action", messages: totals["no action"] },
+  ]
+}*/
 
 function statusReducer(state = defaultState, action) {
   switch (action.type) {
@@ -51,7 +89,16 @@ function statusReducer(state = defaultState, action) {
     return {
       ...state,
       throughput: formatThroughput(action.data),
+      //throughputTable: formatThroughputTable(action.data),
     };
+
+  case SPAM_HISTORY_RECEIVED:
+    return {
+      ...state,
+      history: {
+        ...action.data,
+      }
+    }
 
   default:
     return state;

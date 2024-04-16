@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
 import { useTheme } from '@emotion/react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
+import { getSpamData } from '../../actions/spam';
 
 const styles = theme => ({
   root: {
@@ -21,9 +22,14 @@ const styles = theme => ({
 
 function SpamDonut(props) {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const { classes } = props;
   const stat = useSelector(state => state.spam.stat);
   const { actions, scanned } = stat;
+
+  useEffect(() => {
+    dispatch(getSpamData()).catch(props.setSnackbar);
+  }, []);
   
   const data = {
     "no action": actions["no action"] || 0,
@@ -112,6 +118,7 @@ function SpamDonut(props) {
 
 SpamDonut.propTypes = {
   classes: PropTypes.object.isRequired,
+  setSnackbar: PropTypes.func.isRequired,
 };
 
 

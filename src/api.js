@@ -1237,5 +1237,9 @@ export function spam() {
 }
 
 export function spamThroughput() {
-  return async () => await get("/system/antispam/graph?type=day");
+  return async () => await get("/system/antispam/graph?type=week"); // TODO: Change to day
+}
+
+export function spamHistory() {
+  return async () => await get("/system/antispam/history");
 }

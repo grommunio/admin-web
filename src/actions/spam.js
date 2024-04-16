@@ -1,6 +1,6 @@
-import { spam, spamThroughput } from "../api";
+import { spam, spamHistory, spamThroughput } from "../api";
 import { defaultListHandler } from "./handlers";
-import { SPAM_DATA_RECEIVED, SPAM_THROUGHPUT_RECEIVED } from "./types";
+import { SPAM_DATA_RECEIVED, SPAM_HISTORY_RECEIVED, SPAM_THROUGHPUT_RECEIVED } from "./types";
 
 
 export function getSpamData() {
@@ -9,4 +9,8 @@ export function getSpamData() {
 
 export function getSpamThroughput() {
   return defaultListHandler(spamThroughput, SPAM_THROUGHPUT_RECEIVED);
+}
+
+export function fetchSpamHistory() {
+  return defaultListHandler(spamHistory, SPAM_HISTORY_RECEIVED);
 }
