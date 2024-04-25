@@ -197,6 +197,10 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             )}
           </TableBody>
         </Table>
+        {selectedMail && <Typography variant='h6' sx={{ ml: 1, mt: 1 }}>
+          Spamscore: {Object.values(selectedMail.symbols)
+            .reduce((partialSum, symbol) => partialSum + symbol.score, 0)}
+        </Typography>}
       </div>}
     </Paper>
   )
