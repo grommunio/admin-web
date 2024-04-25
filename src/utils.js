@@ -458,3 +458,7 @@ export function validateAltname(s="") {
 export function dayTimeFromUnix(unixT) {
   return moment.unix(unixT).format("HH:mm:ss");
 }
+
+export function dateTimeFromUnix(unixT) {
+  return moment.unix(unixT).format("YYYY-MM-DD");
+}
