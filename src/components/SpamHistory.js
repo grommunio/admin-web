@@ -144,6 +144,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             divider
             key={key}
             onClick={handleMail(row)}
+            selected={selectedMail?.["message-id"] === row["message-id"]}
           >
             <ListItemText
               primary={<div style={{ display: 'flex' }}>
