@@ -11,6 +11,7 @@ import { withStyles } from '@mui/styles';
 import { dateTimeFromUnix, dayTimeFromUnix } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { t } from 'i18next';
 
 
 const styles = {
@@ -136,21 +137,21 @@ const SpamHistory = ({ classes, setSnackbar }) => {
       <List className={classes.list}>
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
-            label="Since"
+            label={t("Since")}
             sx={{ mx: 1, mb: 1, width: 456 }}
             value={since}
             onChange={handleDate(setSince)}
             disableFuture
           />
           <DatePicker
-            label="Until"
+            label={t("Until")}
             sx={{ mx: 1, mb: 1, width: 456 }}
             value={until}
             onChange={handleDate(setUntil)}
           />
         </LocalizationProvider>
         <TextField
-          label="Search"
+          label={t("Search")}
           value={search}
           onChange={handleSearch}
           sx={{ mx: 1, width: 456 }}
@@ -158,13 +159,13 @@ const SpamHistory = ({ classes, setSnackbar }) => {
         <ListItem>
           <ListItemText
             primary={<div style={{ display: 'flex' }}>
-              <Typography sx={{ width: 200 }}>Sender</Typography>
+              <Typography sx={{ width: 200 }}>{t("Sender")}</Typography>
               <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography align='center' sx={{ width: 42 }}>Score</Typography>
+              <Typography sx={{ width: 42 }}>{t("Score")}</Typography>
               <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography align='center' sx={{ width: 72 }}>Size (KB)</Typography>
+              <Typography sx={{ width: 72 }}>{t("Size")}</Typography>
               <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography>Time</Typography>
+              <Typography>{t("Time")}</Typography>
             </div>}
           />
         </ListItem>
@@ -184,7 +185,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
                 <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
                 <Typography align='right' sx={{ width: 42 }}>{row.score}</Typography>
                 <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-                <Typography align="right" sx={{ width: 72 }}>{Math.ceil(row.size / 1000)}</Typography>
+                <Typography align="right" sx={{ width: 72 }}>{Math.ceil(row.size / 1000)} KB</Typography>
                 <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
                 <Typography>{dayTimeFromUnix(row.unix_time)}</Typography>
               </div>}
@@ -196,7 +197,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
       </List>
       <Divider orientation='vertical' />
       {selectedMail && <div className={classes.details}>
-        <Typography color="primary">Selected Mail</Typography>
+        <Typography color="primary">{t("Selected Mail")}</Typography>
         <Table size='small'>
           <TableHead>
             <TableRow>
@@ -211,7 +212,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
                     direction={orderBy === headCell.id ? order : 'asc'}
                     onClick={handleRequestSort(headCell.id)}
                   >
-                    {headCell.label}
+                    {t(headCell.label)}
                   </TableSortLabel>
                 </TableCell>
               )}

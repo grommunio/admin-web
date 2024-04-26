@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 import { useTheme } from '@emotion/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@mui/material';
@@ -22,6 +22,7 @@ const styles = theme => ({
 
 function SpamDonut(props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = props;
   const stat = useSelector(state => state.spam.stat);
@@ -42,7 +43,7 @@ function SpamDonut(props) {
     <div className={classes.root}>
       <div className={classes.chartTitle}>
         <Typography variant='h6'>
-          Rspamd filter stats
+          {t("Rspamd filter stats")}
         </Typography>
       </div>
       <Chart

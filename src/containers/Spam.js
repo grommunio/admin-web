@@ -18,13 +18,13 @@ const Spam = () => {
 
   return (
     <TableViewContainer
-      headline={t("Spam")}
+      headline={t("Spam Handling")}
       snackbar={snackbar}
       onSnackbarClose={() => setSnackbar("")}
     >
       <Tabs sx={{ ml: 2 }} value={tab} onChange={handleTabs}>
-        <Tab label="Status" />
-        <Tab label="History" />
+        <Tab label={t("Status")} />
+        <Tab label={t("History")} />
       </Tabs>
       {tab === 0 && <Paper>
         <SpamDonut setSnackbar={setSnackbar}/>
