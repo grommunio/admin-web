@@ -5,9 +5,12 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpamHistory } from '../actions/spam';
 import PropTypes from 'prop-types';
-import { Divider, List, ListItem, ListItemButton, ListItemText, Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Divider, List, ListItem, ListItemButton, ListItemText, Paper, Table, TableBody, TableCell, TableHead,
+  TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { dateTimeFromUnix, dayTimeFromUnix } from '../utils';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 
 const styles = {
@@ -41,10 +44,12 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   const dispatch = useDispatch();
   const { history } = useSelector(state => state.spam);
   const [selectedMail, setSelectedMail] = useState(null);
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('');
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('');
   const [sortedTable, setSortedTable] = useState([]);
   const [search, setSearch] = useState("");
+  const [until, setUntil] = useState(null);
+  const [since, setSince] = useState(null);
 
   const handleRequestSort = (property) => () => {
     const isAsc = orderBy === property && order === 'asc';
@@ -98,10 +103,20 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     setSearch(e.target.value);
   }
 
-  const filteredMails = useMemo(() => history.rows.filter(r => {
+  const handleDate = stateHandler => newVal => {
+    stateHandler(newVal);
+  }
+
+  const filteredMails = useMemo(() => {
     const s = search.toLowerCase();
-    return r.subject.toLowerCase().includes(s) || r.sender_smtp.toLowerCase().includes(s);
-  }), [history.rows, search]);
+    const midnightSince = since?.clone().set({ "hour": 0, "minute": 0 }).unix();
+    const midnightUntil = until?.clone().set({ "hour": 23, "minute": 59 }).unix();
+    return history.rows.filter(r => {
+      return (r.subject.toLowerCase().includes(s) || r.sender_smtp.toLowerCase().includes(s)) &&
+        (since ? r.unix_time - midnightSince >= 0 : true) &&
+        (until ? r.unix_time - midnightUntil < 0 : true);
+    })
+  }, [history.rows, search, since, until]);
 
   const generateSublists = useMemo(() => {
     const sublists = {};
@@ -119,6 +134,21 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   return (
     <Paper className={classes.paper}>
       <List className={classes.list}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <DatePicker
+            label="Since"
+            sx={{ mx: 1, mb: 1, width: 456 }}
+            value={since}
+            onChange={handleDate(setSince)}
+            disableFuture
+          />
+          <DatePicker
+            label="Until"
+            sx={{ mx: 1, mb: 1, width: 456 }}
+            value={until}
+            onChange={handleDate(setUntil)}
+          />
+        </LocalizationProvider>
         <TextField
           label="Search"
           value={search}
