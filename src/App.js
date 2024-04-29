@@ -4,8 +4,6 @@
 import React, { useEffect } from "react";
 import { withStyles } from "@mui/styles";
 import { connect } from "react-redux";
-import Loadable from "react-loadable";
-import Loader from "./components/Loading";
 import PropTypes from "prop-types";
 import background from "!file-loader!./res/background_light.svg";
 import backgroundDark from "!file-loader!./res/background_dark.svg";
@@ -16,6 +14,7 @@ import { SYSTEM_ADMIN_WRITE } from "./constants";
 import { fetchLicenseData } from "./actions/license";
 import './snow.css';
 import { checkHolidaySeason } from "./utils";
+import makeLoadableComponent from "./lazy";
 
 const styles = {
   root: {
@@ -36,13 +35,7 @@ const styles = {
   },
 };
 
-// Create async component with react-loadable
-const MainView = Loadable({
-  loader: () => import("./components/LoadableMainView"),
-  loading: Loader,
-  timeout: 20000,
-  delay: 100,
-});
+const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableMainView"));
 
 // Root class
 const App = ({classes, Domains, serverConfig, loading, authenticated, capabilities, changeSettings, fetchLicense}) => {
@@ -83,7 +76,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
         </div>
       )}
       <CapabilityContext.Provider value={capabilities}>
-        <MainView
+        <AsyncMainView
           classes={classes}
           authenticated={authenticated}
           capabilities={capabilities}

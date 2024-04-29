@@ -10,24 +10,10 @@ import AuthenticatedRoute from './components/AuthenticatedRoute';
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';
 import UnauthenticatedRoute from './components/UnauthenticatedRoute';
 import NotFound from "./containers/NotFound";
-import Loadable from 'react-loadable';
-import Loader from './components/Loading';
 import DefaultRedirect from "./components/DefaultRedirect";
 import { DOMAIN_ADMIN_READ, ORG_ADMIN, SYSTEM_ADMIN_READ } from "./constants";
+import makeLoadableComponent from "./lazy";
 
-/**
- * Creates an async component from an async import
- * 
- * @param {Function} loader Callback function, that imports a container.
- */
-function makeLoadableComponent(loader) {
-  return Loadable({
-    loader,
-    loading: Loader,
-    timeout: 20000,
-    delay: 300,
-  });
-}
 
 // Create async components
 const AsyncLogin = makeLoadableComponent(() => import("./containers/Login"));
