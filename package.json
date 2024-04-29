@@ -12,10 +12,10 @@
     "@mui/x-date-pickers": "^6.19.4",
     "@mui/x-tree-view": "^6.17.0",
     "@reduxjs/toolkit": "^2.2.1",
-    "@svgr/webpack": "8.1.0",
+    "@svgr/webpack": "^8.1.0",
     "apexcharts": "^3.35.4",
     "debounce": "^1.2.0",
-    "dompurify": "^3.0.3",
+    "dompurify": "^3.1.1",
     "i18next": "^23.9.0",
     "moment": "^2.29.4",
     "prop-types": "^15.8.1",
@@ -56,9 +56,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "@svgr/webpack": "6.2.1"
   },
   "devDependencies": {
     "eslint": "^8.0.1",
