@@ -188,3 +188,7 @@ pre code {
 .MuiTableRow-hover {
   cursor: pointer;
 }
+
+.MuiTablePagination-toolbar {
+  background-image: none;
+}

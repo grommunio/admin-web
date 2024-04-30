@@ -309,7 +309,7 @@ const NavigationLinks = props => {
             Icon={Dashboard}
           />
           {config?.["rspamdWebAddress"] && <ListElement
-            label={"Spam Handling"}
+            label={"Spam History"}
             path="spam"
             Icon={ReportGmailerrorred}
           />}

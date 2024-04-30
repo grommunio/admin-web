@@ -69,13 +69,6 @@ const styles = theme => ({
   burger: {
     color: 'white',
   },
-  divider: {
-    height: 40,
-    width: 2,
-    marginLeft: 16,
-    backgroundColor: '#000',
-    backgroundImage: `linear-gradient(rgba(250,250,250,1) 4%, rgba(120, 120, 120, 0.7), rgba(250,250,250,1) 96%)`,
-  },
   iconButton: {
     color: '#fff',
     cursor: 'pointer',

@@ -6,14 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpamHistory, getSpamData } from '../actions/spam';
 import PropTypes from 'prop-types';
 import { Chip, Divider, IconButton, Paper, Table, TableBody, TableCell, TableHead,
-  TableRow, TableSortLabel, TextField, Tooltip, Typography } from '@mui/material';
+  TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { copyToClipboard, parseUnixtime } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { t } from 'i18next';
 import { DataGrid } from '@mui/x-data-grid';
 import { Close, CopyAll } from '@mui/icons-material';
+import SearchTextfield from './SearchTextfield';
+import { useTranslation } from 'react-i18next';
 
 
 const styles = {
@@ -52,6 +53,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  bottomNavigation: {
+    backgroundImage: 'none !important',
   }
 }
 
@@ -64,27 +68,27 @@ const getActionColor = action => {
   }[action];
 }
 
-const columns = [
+const columns = t => [
   {
     field: 'ip',
-    headerName: 'IP',
+    headerName: t('IP'),
     width: 150,
   },
   { field: 'sender_smtp', headerName: 'From', width: 150 },
   {
     field: 'rcpt_smtp',
-    headerName: 'To',
+    headerName: t('To'),
     width: 150,
-    valueGetter: (value) => value.join(", "),
+    valueFormatter: (value) => value.join(", "),
   },
   {
     field: 'subject',
-    headerName: 'Subject',
+    headerName: t('Subject'),
     width: 150,
   },
   {
     field: 'action',
-    headerName: 'Action',
+    headerName: t('Action'),
     width: 100,
     renderCell: (params) => (
       <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
@@ -92,32 +96,33 @@ const columns = [
   },
   {
     field: 'time_real',
-    headerName: 'Time Real',
+    headerName: t('Time real'),
     type: 'number',
     width: 110,
   },
   {
     field: 'score',
-    headerName: 'Score',
+    headerName: t('Score'),
     type: 'number',
     width: 110,
   },
   {
     field: 'size',
-    headerName: 'Size',
+    headerName: t('Size'),
     type: 'number',
-    valueGetter: (value) => Math.ceil(value / 1000) + " KB",
+    valueFormatter: (value) => Math.ceil(value / 1000) + " KB",
   },
   {
     field: 'unix_time',
-    headerName: 'Time',
+    headerName: t('Time'),
     type: 'number',
     width: 200,
-    valueGetter: (value) => parseUnixtime(value),
+    valueFormatter: (value) => parseUnixtime(value),
   },
 ];
 
 const SpamHistory = ({ classes, setSnackbar }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { history } = useSelector(state => state.spam);
   const [selectedMail, setSelectedMail] = useState(null);
@@ -206,9 +211,9 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   return (
     <Paper className={classes.paper}>
       <div style={{ display: 'flex' }}>
-        <TextField
-          label={t("Search")}
+        <SearchTextfield
           value={search}
+          placeholder={t("Search")}
           onChange={handleSearch}
           sx={{ m: 1, width: 400 }}
         />
@@ -219,23 +224,31 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             value={since}
             onChange={handleDate(setSince)}
             disableFuture
+            slotProps={{
+              field: { clearable: true, onClear: () => setSince(null) },
+            }}
           />
           <DatePicker
             label={t("Until")}
             sx={{ m: 1, width: 200 }}
             value={until}
             onChange={handleDate(setUntil)}
+            slotProps={{
+              field: { clearable: true, onClear: () => setUntil(null) },
+            }}
           />
         </LocalizationProvider>
       </div>
       <div className={classes.flexContainer}>
         <DataGrid
           rows={filteredMails}
-          columns={columns}
+          columns={columns(t)}
           getRowId={(r) => r["message-id"]}
           onRowClick={handleMail}
           classes={{
-            virtualScrollerContent: classes.virtualList
+            virtualScrollerContent: classes.virtualList,
+            panelFooter: classes.bottomNavigation,
+            toolbarContainer: classes.bottomNavigation,
           }}
         />
         <Divider orientation='vertical'/>
