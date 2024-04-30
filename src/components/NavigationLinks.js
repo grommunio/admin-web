@@ -308,11 +308,11 @@ const NavigationLinks = props => {
             path=""
             Icon={Dashboard}
           />
-          <ListElement
+          {config?.["rspamdWebAddress"] && <ListElement
             label={"Spam Handling"}
             path="spam"
             Icon={ReportGmailerrorred}
-          />
+          />}
           <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
           <ListElement
             label={"Organizations"}

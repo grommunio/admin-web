@@ -1,24 +1,30 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { Fragment, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSpamHistory } from '../actions/spam';
+import { fetchSpamHistory, getSpamData } from '../actions/spam';
 import PropTypes from 'prop-types';
-import { Divider, List, ListItem, ListItemButton, ListItemText, Paper, Table, TableBody, TableCell, TableHead,
-  TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Chip, Divider, IconButton, Paper, Table, TableBody, TableCell, TableHead,
+  TableRow, TableSortLabel, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
-import { dateTimeFromUnix, dayTimeFromUnix } from '../utils';
+import { copyToClipboard, parseUnixtime } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { t } from 'i18next';
+import { DataGrid } from '@mui/x-data-grid';
+import { Close, CopyAll } from '@mui/icons-material';
 
 
 const styles = {
   paper: {
     flex: 1,
-    height: '100%',
     display: 'flex',
+    flexDirection: 'column',
+  },
+  flexContainer: {
+    display: 'flex',
+    flex: 1,
   },
   list: {
     maxWidth: 472,
@@ -38,8 +44,78 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
+  },
+  virtualList: {
+    height: `100% !important`,
+  },
+  selectedMailTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   }
 }
+
+const getActionColor = action => {
+  return {
+    "no action": "success",
+    "add header": "warning",
+    "greylist": "info",
+    "reject": "error",
+  }[action];
+}
+
+const columns = [
+  {
+    field: 'ip',
+    headerName: 'IP',
+    width: 150,
+  },
+  { field: 'sender_smtp', headerName: 'From', width: 150 },
+  {
+    field: 'rcpt_smtp',
+    headerName: 'To',
+    width: 150,
+    valueGetter: (value) => value.join(", "),
+  },
+  {
+    field: 'subject',
+    headerName: 'Subject',
+    width: 150,
+  },
+  {
+    field: 'action',
+    headerName: 'Action',
+    width: 100,
+    renderCell: (params) => (
+      <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
+    ),
+  },
+  {
+    field: 'time_real',
+    headerName: 'Time Real',
+    type: 'number',
+    width: 110,
+  },
+  {
+    field: 'score',
+    headerName: 'Score',
+    type: 'number',
+    width: 110,
+  },
+  {
+    field: 'size',
+    headerName: 'Size',
+    type: 'number',
+    valueGetter: (value) => Math.ceil(value / 1000) + " KB",
+  },
+  {
+    field: 'unix_time',
+    headerName: 'Time',
+    type: 'number',
+    width: 200,
+    valueGetter: (value) => parseUnixtime(value),
+  },
+];
 
 const SpamHistory = ({ classes, setSnackbar }) => {
   const dispatch = useDispatch();
@@ -71,11 +147,12 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   useEffect(() => {
     dispatch(fetchSpamHistory())
       .catch(setSnackbar);
+    dispatch(getSpamData()).catch(setSnackbar);
   }, []);
 
-  const handleMail = mail => () => {
+  const handleMail = e => {
     setSortedTable([]);
-    setSelectedMail(mail);
+    setSelectedMail(e.row);
   }
 
   const getScoreColor = score => {
@@ -108,6 +185,13 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     stateHandler(newVal);
   }
 
+  const handleCopy = () => {
+    const success = copyToClipboard(selectedMail["message-id"]);
+    if(success) {
+      setSnackbar("Success! Message-ID copied to clipboard");
+    }
+  }
+
   const filteredMails = useMemo(() => {
     const s = search.toLowerCase();
     const midnightSince = since?.clone().set({ "hour": 0, "minute": 0 }).unix();
@@ -119,120 +203,96 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     })
   }, [history.rows, search, since, until]);
 
-  const generateSublists = useMemo(() => {
-    const sublists = {};
-    for(let i = 0; i < filteredMails.length; i++) {
-      const date = dateTimeFromUnix(filteredMails[i].unix_time);
-      if(sublists[date]) {
-        sublists[date].push(filteredMails[i]);
-      } else {
-        sublists[date] = [filteredMails[i]];
-      }
-    }
-    return sublists;
-  }, [filteredMails]);
-
   return (
     <Paper className={classes.paper}>
-      <List className={classes.list}>
+      <div style={{ display: 'flex' }}>
+        <TextField
+          label={t("Search")}
+          value={search}
+          onChange={handleSearch}
+          sx={{ m: 1, width: 400 }}
+        />
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             label={t("Since")}
-            sx={{ mx: 1, mb: 1, width: 456 }}
+            sx={{ m: 1, width: 200 }}
             value={since}
             onChange={handleDate(setSince)}
             disableFuture
           />
           <DatePicker
             label={t("Until")}
-            sx={{ mx: 1, mb: 1, width: 456 }}
+            sx={{ m: 1, width: 200 }}
             value={until}
             onChange={handleDate(setUntil)}
           />
         </LocalizationProvider>
-        <TextField
-          label={t("Search")}
-          value={search}
-          onChange={handleSearch}
-          sx={{ mx: 1, width: 456 }}
+      </div>
+      <div className={classes.flexContainer}>
+        <DataGrid
+          rows={filteredMails}
+          columns={columns}
+          getRowId={(r) => r["message-id"]}
+          onRowClick={handleMail}
+          classes={{
+            virtualScrollerContent: classes.virtualList
+          }}
         />
-        <ListItem>
-          <ListItemText
-            primary={<div style={{ display: 'flex' }}>
-              <Typography sx={{ width: 200 }}>{t("Sender")}</Typography>
-              <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography sx={{ width: 42 }}>{t("Score")}</Typography>
-              <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography sx={{ width: 72 }}>{t("Size")}</Typography>
-              <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-              <Typography>{t("Time")}</Typography>
-            </div>}
-          />
-        </ListItem>
-        {Object.entries(generateSublists).map(([date, mails]) => <Fragment key={date}>
-          <Typography variant='h6' sx={{ mt: 1, ml: 1 }}>{date}</Typography>
-          {mails.map((row, key) => <ListItemButton
-            divider
-            key={key}
-            onClick={handleMail(row)}
-            selected={selectedMail?.["message-id"] === row["message-id"]}
-          >
-            <ListItemText
-              primary={<div style={{ display: 'flex' }}>
-                <Typography className={classes.dots} sx={{ width: 200 }}>
-                  {row.sender_smtp}
-                </Typography>
-                <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-                <Typography align='right' sx={{ width: 42 }}>{row.score}</Typography>
-                <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-                <Typography align="right" sx={{ width: 72 }}>{Math.ceil(row.size / 1000)} KB</Typography>
-                <Divider sx={{ mx: 1 }} orientation="vertical" flexItem />
-                <Typography>{dayTimeFromUnix(row.unix_time)}</Typography>
-              </div>}
-              secondary={row.subject}
-            />
-          </ListItemButton>)}
-        </Fragment>
-        )}  
-      </List>
-      <Divider orientation='vertical' />
-      {selectedMail && <div className={classes.details}>
-        <Typography color="primary">{t("Selected Mail")}</Typography>
-        <Table size='small'>
-          <TableHead>
-            <TableRow>
-              {headCells.map(headCell =>
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  sortDirection={orderBy === headCell.id ? order : false}
-                >
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={handleRequestSort(headCell.id)}
+        <Divider orientation='vertical'/>
+        {selectedMail && <div className={classes.details}>
+          <div className={classes.selectedMailTitle}>
+            <Typography color="primary" variant='h6'>
+              {t("Selected Mail")}
+            </Typography>
+            <IconButton onClick={() => setSelectedMail(null)}>
+              <Close />
+            </IconButton>
+          </div>
+          <Typography variant='caption'>
+            {selectedMail["message-id"]}
+            <Tooltip placement="top" title={t('Copy')}>
+              <IconButton onClick={handleCopy} size="large">
+                <CopyAll />
+              </IconButton>
+            </Tooltip>
+          </Typography>
+          <Table size='small'>
+            <TableHead>
+              <TableRow>
+                {headCells.map(headCell =>
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    sortDirection={orderBy === headCell.id ? order : false}
                   >
-                    {t(headCell.label)}
-                  </TableSortLabel>
-                </TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(sortedTable.length > 0 ? sortedTable : Object.values(selectedMail.symbols)).map((row, key) =>
-              <TableRow key={key}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell sx={{ backgroundColor: getScoreColor(row.score) }}>{row.score}</TableCell>
-                <TableCell>{row.description}</TableCell>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={handleRequestSort(headCell.id)}
+                    >
+                      {t(headCell.label)}
+                    </TableSortLabel>
+                  </TableCell>
+                )}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        {selectedMail && <Typography variant='h6' sx={{ ml: 1, mt: 1 }}>
-          Spamscore: {Object.values(selectedMail.symbols)
-            .reduce((partialSum, symbol) => partialSum + symbol.score, 0)}
-        </Typography>}
-      </div>}
+            </TableHead>
+            <TableBody>
+              {(sortedTable.length > 0 ? sortedTable : Object.values(selectedMail.symbols)).map((row, key) =>
+                <TableRow key={key}>
+                  <TableCell>{row.name}</TableCell>
+                  <TableCell sx={{ backgroundColor: getScoreColor(row.score) }}>{row.score}</TableCell>
+                  <TableCell>{row.description}</TableCell>
+                </TableRow>
+              )}
+              <TableRow>
+                <TableCell>Spamscore</TableCell>
+                <TableCell sx={{ fontWeight: 700 }}>{selectedMail.score}</TableCell>
+                <TableCell>Total spamscore</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>}
+      </div>
     </Paper>
   )
 };
