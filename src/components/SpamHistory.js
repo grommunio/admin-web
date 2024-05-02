@@ -5,14 +5,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpamHistory } from '../actions/spam';
 import PropTypes from 'prop-types';
-import { Chip, Divider, IconButton, Paper, Table, TableBody, TableCell, TableHead,
+import { Chip, Divider, FormControlLabel, Grid, IconButton, Paper, Switch, Table, TableBody, TableCell, TableHead,
   TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { copyToClipboard, parseUnixtime } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DataGrid } from '@mui/x-data-grid';
-import { Close, CopyAll } from '@mui/icons-material';
+import { Close, CopyAll, Refresh } from '@mui/icons-material';
 import SearchTextfield from './SearchTextfield';
 import { useTranslation } from 'react-i18next';
 
@@ -135,6 +135,8 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   const [search, setSearch] = useState("");
   const [until, setUntil] = useState(null);
   const [since, setSince] = useState(null);
+  const [autorefresh, setAutorefresh] = useState(false);
+
 
   const handleRequestSort = (property, explicitOrder) => () => {
     const isAsc = explicitOrder === "asc" || (orderBy === property && order === 'asc');
@@ -153,8 +155,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   };
   
   useEffect(() => {
-    dispatch(fetchSpamHistory())
-      .catch(setSnackbar);
+    handleRefresh();
   }, []);
 
   const handleMail = e => {
@@ -217,6 +218,28 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     })
   }, [history.rows, search, since, until]);
 
+  const handleAutoRefresh = ({ target: t }) => {
+    setAutorefresh(t.checked);
+  }
+
+  const handleRefresh = async () => {
+    dispatch(fetchSpamHistory())
+      .catch(setSnackbar);
+  }
+
+  useEffect(() => {
+    let fetchInterval;
+
+    if(autorefresh) fetchInterval = setInterval(() => {
+      handleRefresh();
+    }, 5000);
+    else clearInterval(fetchInterval);
+
+    return () => {
+      clearInterval(fetchInterval);
+    }
+  }, [autorefresh]);
+
   return (
     <Paper className={classes.paper}>
       <div style={{ display: 'flex' }}>
@@ -247,6 +270,22 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             }}
           />
         </LocalizationProvider>
+        {<Grid container justifyContent="flex-end">
+          <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
+            <Refresh />
+          </IconButton>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={autorefresh}
+                onChange={handleAutoRefresh}
+                name="autorefresh"
+                color="primary"
+              />
+            }
+            label={t("Autorefresh")}
+          />
+        </Grid>}
       </div>
       <div className={classes.flexContainer}>
         <DataGrid
