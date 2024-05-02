@@ -293,7 +293,12 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             <TableBody>
               {(sortedTable.length > 0 ? sortedTable : Object.values(selectedMail.symbols)).map((row, key) =>
                 <TableRow key={key}>
-                  <TableCell>{row.name}</TableCell>
+                  <TableCell>
+                    {row.name}
+                    {row.options && <span style={{ marginLeft: 4, fontStyle: "italic" }}>
+                      ({row.options.join(", ")})
+                    </span>}
+                  </TableCell>
                   <TableCell sx={{ backgroundColor: getScoreColor(row.score) }}>{row.score}</TableCell>
                   <TableCell>{row.description}</TableCell>
                 </TableRow>
