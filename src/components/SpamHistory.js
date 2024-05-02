@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSpamHistory, getSpamData } from '../actions/spam';
+import { fetchSpamHistory } from '../actions/spam';
 import PropTypes from 'prop-types';
 import { Chip, Divider, IconButton, Paper, Table, TableBody, TableCell, TableHead,
   TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
@@ -125,15 +125,15 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   const dispatch = useDispatch();
   const { history } = useSelector(state => state.spam);
   const [selectedMail, setSelectedMail] = useState(null);
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('');
   const [sortedTable, setSortedTable] = useState([]);
   const [search, setSearch] = useState("");
   const [until, setUntil] = useState(null);
   const [since, setSince] = useState(null);
 
-  const handleRequestSort = (property) => () => {
-    const isAsc = orderBy === property && order === 'asc';
+  const handleRequestSort = (property, explicitOrder) => () => {
+    const isAsc = explicitOrder === "asc" || (orderBy === property && order === 'asc');
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     
@@ -151,13 +151,16 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   useEffect(() => {
     dispatch(fetchSpamHistory())
       .catch(setSnackbar);
-    dispatch(getSpamData()).catch(setSnackbar);
   }, []);
 
   const handleMail = e => {
-    setSortedTable([]);
     setSelectedMail(e.row);
   }
+
+  // When selecting a mail, sort by score
+  useEffect(() => {
+    if(selectedMail) handleRequestSort("score", "asc")();
+  }, [selectedMail])
 
   const getScoreColor = score => {
     if(score <= 0) return "#2471a8";
