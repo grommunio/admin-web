@@ -97,6 +97,7 @@ function statusReducer(state = defaultState, action) {
       ...state,
       history: {
         ...action.data,
+        rows: action.data.rows?.map((r, id) => ({ id, ...r })) || [],
       }
     }
 

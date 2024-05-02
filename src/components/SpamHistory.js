@@ -243,7 +243,6 @@ const SpamHistory = ({ classes, setSnackbar }) => {
         <DataGrid
           rows={filteredMails}
           columns={columns(t)}
-          getRowId={(r) => r["message-id"]}
           onRowClick={handleMail}
           classes={{
             virtualScrollerContent: classes.virtualList,
@@ -262,7 +261,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             </IconButton>
           </div>
           <Typography variant='caption'>
-            {selectedMail["message-id"]}
+            Message ID: {selectedMail["message-id"]}
             <Tooltip placement="top" title={t('Copy')}>
               <IconButton onClick={handleCopy} size="large">
                 <CopyAll />
