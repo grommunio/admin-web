@@ -70,9 +70,18 @@ const getActionColor = action => {
 
 const columns = t => [
   {
-    field: 'ip',
-    headerName: t('IP'),
-    width: 150,
+    field: 'action',
+    headerName: t('Action'),
+    width: 100,
+    renderCell: (params) => (
+      <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
+    ),
+  },
+  {
+    field: 'unix_time',
+    headerName: t('Time'),
+    width: 200,
+    valueFormatter: (value) => parseUnixtime(value),
   },
   { field: 'sender_smtp', headerName: 'From', width: 150 },
   {
@@ -87,18 +96,9 @@ const columns = t => [
     width: 150,
   },
   {
-    field: 'action',
-    headerName: t('Action'),
-    width: 100,
-    renderCell: (params) => (
-      <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
-    ),
-  },
-  {
-    field: 'time_real',
-    headerName: t('Time real'),
-    type: 'number',
-    width: 110,
+    field: 'ip',
+    headerName: t('IP'),
+    width: 150,
   },
   {
     field: 'score',
@@ -113,12 +113,11 @@ const columns = t => [
     valueFormatter: (value) => Math.ceil(value / 1000) + " KB",
   },
   {
-    field: 'unix_time',
-    headerName: t('Time'),
+    field: 'time_real',
+    headerName: t('Time real'),
     type: 'number',
-    width: 200,
-    valueFormatter: (value) => parseUnixtime(value),
-  },
+    width: 110,
+  }
 ];
 
 const SpamHistory = ({ classes, setSnackbar }) => {
