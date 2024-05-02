@@ -25,11 +25,12 @@ import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
 import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
-import { Add, BackupTable, ContactMail, Dns, QueryBuilder, ReportGmailerrorred, TableChart, TaskAlt } from '@mui/icons-material';
+import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
 import { useNavigate } from 'react-router';
+import SpamIcon from './SpamIcon';
 
 const styles = theme => ({
   drawerHeader: {
@@ -311,7 +312,7 @@ const NavigationLinks = props => {
           {config?.["loadAntispamData"] !== false && <ListElement
             label={"Spam History"}
             path="spam"
-            Icon={ReportGmailerrorred}
+            Icon={SpamIcon}
           />}
           <Typography variant="inherit" className={classes.subheader}>{t('Management')}</Typography>
           <ListElement
