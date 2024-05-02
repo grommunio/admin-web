@@ -97,7 +97,11 @@ function statusReducer(state = defaultState, action) {
       ...state,
       history: {
         ...action.data,
-        rows: action.data.rows?.map((r, id) => ({ id, ...r })) || [],
+        rows: action.data.rows?.map((r, id) => ({
+          ...r,
+          id,
+          rcpt_smtp: r.rcpt_smtp?.join(", ") || "",
+        })) || [],
       }
     }
 

@@ -88,7 +88,6 @@ const columns = t => [
     field: 'rcpt_smtp',
     headerName: t('To'),
     width: 150,
-    valueFormatter: (value) => value.join(", "),
   },
   {
     field: 'subject',
@@ -117,6 +116,11 @@ const columns = t => [
     headerName: t('Time real'),
     type: 'number',
     width: 110,
+  },
+  {
+    field: 'message-id',
+    headerName: t('Message-ID'),
+    width: 250,
   }
 ];
 
@@ -204,7 +208,10 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     const midnightSince = since?.clone().set({ "hour": 0, "minute": 0 }).unix();
     const midnightUntil = until?.clone().set({ "hour": 23, "minute": 59 }).unix();
     return history.rows.filter(r => {
-      return (r.subject.toLowerCase().includes(s) || r.sender_smtp.toLowerCase().includes(s)) &&
+      return (r.subject.toLowerCase().includes(s)
+        || r.sender_smtp.toLowerCase().includes(s)
+        || r.rcpt_smtp.toLowerCase().includes(s)
+        || r["message-id"].toLowerCase().includes(s)) &&
         (since ? r.unix_time - midnightSince >= 0 : true) &&
         (until ? r.unix_time - midnightUntil < 0 : true);
     })
