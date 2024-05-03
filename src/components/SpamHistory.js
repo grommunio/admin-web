@@ -83,21 +83,21 @@ const columns = t => [
     width: 200,
     valueFormatter: (value) => parseUnixtime(value),
   },
-  { field: 'sender_smtp', headerName: 'From', width: 150 },
+  { field: 'sender_smtp', headerName: 'From', width: 200 },
   {
     field: 'rcpt_smtp',
     headerName: t('To'),
-    width: 150,
+    width: 200,
   },
   {
     field: 'subject',
     headerName: t('Subject'),
-    width: 150,
+    width: 200,
   },
   {
     field: 'ip',
     headerName: t('IP'),
-    width: 150,
+    width: 100,
   },
   {
     field: 'score',
@@ -116,6 +116,7 @@ const columns = t => [
     headerName: t('Time real'),
     type: 'number',
     width: 110,
+    valueFormatter: (value) => value.toFixed(3) + "s",
   },
   {
     field: 'message-id',
@@ -345,7 +346,9 @@ const SpamHistory = ({ classes, setSnackbar }) => {
                       ({row.options.join(", ")})
                     </span>}
                   </TableCell>
-                  <TableCell sx={{ backgroundColor: getScoreColor(row.score) }}>{row.score}</TableCell>
+                  <TableCell sx={{ backgroundColor: getScoreColor(row.score), color: "white" }}>
+                    {row.score}
+                  </TableCell>
                   <TableCell>{row.description}</TableCell>
                 </TableRow>
               )}
