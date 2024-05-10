@@ -7,9 +7,9 @@ import { AddCircleOutline, AssignmentTurnedInOutlined,
   EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
 import { IconButton, Tooltip, Typography } from '@mui/material';
 import { IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
-import { TreeItem, TreeView } from '@mui/x-tree-view';
+import { TreeItem, SimpleTreeView } from '@mui/x-tree-view';
 
 const styles = theme => ({
   richTree: {
@@ -74,14 +74,14 @@ const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, hand
   );
 
   return (
-    <TreeView
+    <SimpleTreeView
       className={classes.richTree}
       defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpanded={[IPM_SUBTREE_ID]}
+      defaultExpandedItems={[IPM_SUBTREE_ID]}
       defaultExpandIcon={<ChevronRightIcon />}
     >
       {Object.keys(data).length !== 0 && renderTree(data)}
-    </TreeView>
+    </SimpleTreeView>
   );
 }
 
@@ -96,4 +96,4 @@ FolderHierarchy.propTypes = {
   writable: PropTypes.bool,
 }
 
-export default withTranslation()(withStyles(styles)(FolderHierarchy));
+export default withTranslation()(withStyles(FolderHierarchy, styles));

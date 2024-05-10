@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
@@ -51,4 +51,4 @@ DetachDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(DetachDialog));
+export default withTranslation()(withStyles(DetachDialog, styles));

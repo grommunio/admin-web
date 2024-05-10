@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
   Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
 import { setDateTimeString } from '../../utils';
@@ -309,4 +309,4 @@ const mapDispatchToProps = dispatch => {
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(styles)(withTranslation()(LicenseTab)));
+  withStyles(withTranslation()(LicenseTab), styles));

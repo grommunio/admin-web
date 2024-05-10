@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
@@ -148,4 +148,4 @@ SyncPolicies.propTypes = {
   handleSlider: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(SyncPolicies));
+export default withTranslation()(withStyles(SyncPolicies, styles));

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import {
   TextField,
@@ -100,4 +100,4 @@ ChangeUserPassword.propTypes = {
 };
 
 export default withTranslation()(
-  withStyles(styles)(ChangeUserPassword));
+  withStyles(ChangeUserPassword, styles));

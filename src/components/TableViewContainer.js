@@ -4,10 +4,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { debounce, Fade, IconButton, LinearProgress, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
 import { HelpOutline } from '@mui/icons-material';
+
 
 const styles = theme => ({
   root: {
@@ -104,4 +105,4 @@ TableViewContainer.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default withTranslation()(withStyles(styles)(TableViewContainer));
+export default withTranslation()(withStyles(TableViewContainer, styles));

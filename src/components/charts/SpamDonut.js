@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -123,4 +123,4 @@ SpamDonut.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(styles)(SpamDonut));
+export default withTranslation()(withStyles(SpamDonut, styles));

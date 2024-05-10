@@ -3,10 +3,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
 import { Fade, LinearProgress } from '@mui/material';
+
 
 const styles = theme => ({
   root: {
@@ -71,4 +72,4 @@ ViewWrapper.propTypes = {
   loading: PropTypes.bool,
 };
 
-export default withTranslation()(withStyles(styles)(ViewWrapper));
+export default withTranslation()(withStyles(ViewWrapper, styles));

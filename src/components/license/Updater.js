@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-material';
 import { systemUpdate } from '../../actions/misc';
@@ -196,4 +196,4 @@ const mapDispatchToProps = dispatch => {
 
 
 export default connect(null, mapDispatchToProps)(withTranslation()(
-  withStyles(styles)(Updater)));
+  withStyles(Updater, styles)));

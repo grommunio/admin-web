@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import notActivatedLicense from '../res/notActivatedLicense.svg';
 import activatedLicense from '../res/activatedLicense.svg';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Box } from '@mui/system';
 import { useSelector } from 'react-redux';
 import { Tooltip } from '@mui/material';
@@ -52,4 +52,4 @@ LicenseIcon.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(LicenseIcon));
+export default withTranslation()(withStyles(LicenseIcon, styles));

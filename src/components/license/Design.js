@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { AddCircle, CopyAll } from '@mui/icons-material';
@@ -235,4 +235,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(
-  withTranslation()(withStyles(styles)(Design)));
+  withTranslation()(withStyles(Design, styles)));

@@ -6,14 +6,13 @@ import React, { useEffect, useState } from 'react';
 import { debounce } from 'debounce';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { defaultFetchLimit } from '../constants';
 import { useNavigate } from 'react-router';
 
 export default function withStyledReduxTable(mapState, mapDispatch, styles) {
   return (wrappedComponent, defaultState) => connect(mapState, mapDispatch)(
-    withTranslation()(withStyles(styles)(
-      withTable(wrappedComponent, defaultState))));
+    withTranslation()(withStyles(withTable(wrappedComponent, defaultState), styles)));
 }
 
 function withTable(WrappedComponent, defaultState={}) {

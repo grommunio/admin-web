@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import ViewWrapper from '../components/ViewWrapper';
@@ -168,4 +168,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(ContactDetails)));
+  withTranslation()(withStyles(ContactDetails, styles)));

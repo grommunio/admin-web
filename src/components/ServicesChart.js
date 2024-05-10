@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useState } from "react";
-import { withStyles } from "@mui/styles";
+import { withStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
   TableRow, TableCell, TableBody, Tooltip, Grid } from "@mui/material";
@@ -291,4 +291,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withTranslation()(withStyles(styles)(ServicesChart)));
+)(withTranslation()(withStyles(ServicesChart, styles)));

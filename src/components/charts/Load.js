@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Paper, Typography } from '@mui/material';
 import Chart from "react-apexcharts";
@@ -110,4 +110,4 @@ Load.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(styles)(Load));
+export default withTranslation()(withStyles(Load, styles));

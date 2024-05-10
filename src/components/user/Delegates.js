@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, FormControl, Grid, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -240,4 +240,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Delegates)));
+  withTranslation()(withStyles(Delegates, styles)));

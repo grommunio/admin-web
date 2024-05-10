@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Typography, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router';
 
@@ -16,7 +16,7 @@ const styles = {
   },
 };
 
-export default withStyles(styles)(function NotFound(props) {
+export default withStyles(function NotFound(props) {
   const { classes } = props;
   const navigate = useNavigate();
   const handleButton = () => navigate('/');
@@ -31,4 +31,4 @@ export default withStyles(styles)(function NotFound(props) {
       </Grid>
     </div>
   );
-});
+}, styles);

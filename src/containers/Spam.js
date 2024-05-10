@@ -17,7 +17,9 @@ const Spam = () => {
       snackbar={snackbar}
       onSnackbarClose={() => setSnackbar("")}
     >
-      <SpamHistory setSnackbar={setSnackbar}/>
+      <div style={{ flex: 1, display: 'flex' }}>
+        <SpamHistory setSnackbar={setSnackbar}/>
+      </div>
     </TableViewContainer>
   );
 }

@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField } from '@mui/material';
-import { withStyles, withTheme } from '@mui/styles';
+import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField, useTheme } from '@mui/material';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect as connecc } from 'react-redux';
@@ -31,6 +31,7 @@ import {
 import * as DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
 
+
 const styles = theme => ({
   form: {
     width: '100%',
@@ -51,10 +52,6 @@ const styles = theme => ({
   flexRow: {
     display: 'flex',
     margin: theme.spacing(1, 0),
-  },
-  datePicker: {
-    margin: theme.spacing(1),
-    minWidth: 200,
   },
   tabs: {
     margin: theme.spacing(1),
@@ -81,6 +78,7 @@ const Oof = props => {
     snackbar: '',
   });
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -142,7 +140,7 @@ const Oof = props => {
       .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
   }
 
-  const { classes, t, theme } = props;
+  const { classes, t } = props;
   const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = oof;
   const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
 
@@ -185,11 +183,18 @@ const Oof = props => {
           {...tfProps("Start time", "startTime")}
           onChange={handleDateInput('startTime')}
           className={classes.datePicker}
+          sx={{
+            margin: theme.spacing(1),
+            minWidth: 200,
+          }}
         />
         <CustomDateTimePicker
           {...tfProps("End time", "endTime")}
           onChange={handleDateInput('endTime')}
-          className={classes.datePicker}
+          sx={{
+            margin: theme.spacing(1),
+            minWidth: 200,
+          }}
         />
       </div>
       <Tabs
@@ -303,7 +308,6 @@ Oof.propTypes = {
   patchOof: PropTypes.func.isRequired,
   domainID: PropTypes.number.isRequired,
   userID: PropTypes.number.isRequired,
-  theme: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = dispatch => {
@@ -318,4 +322,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 export default connecc(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(withTheme(Oof))));
+  withTranslation()(withStyles(Oof, styles)));

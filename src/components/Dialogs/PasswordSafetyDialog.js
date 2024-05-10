@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2023 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
@@ -107,4 +107,4 @@ PasswordSafetyDialog.propTypes = {
   onConfirm: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(PasswordSafetyDialog));
+export default withTranslation()(withStyles(PasswordSafetyDialog, styles));

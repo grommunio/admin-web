@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Divider, FormControl, Grid, TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Warning } from '@mui/icons-material';
@@ -110,4 +110,4 @@ Contact.propTypes = {
   handlePropertyChange: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(Contact));
+export default withTranslation()(withStyles(Contact, styles));

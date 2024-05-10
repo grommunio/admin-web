@@ -3,7 +3,7 @@
 
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { AppBar, Toolbar, Typography, Hidden, IconButton,
   Box, 
   Menu,
@@ -366,4 +366,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(TopBar)));
+  withTranslation()(withStyles(TopBar, styles)));

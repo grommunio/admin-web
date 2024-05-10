@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect, useState } from "react";
-import { withStyles } from "@mui/styles";
+import { withStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
@@ -22,6 +22,7 @@ import MemoryLine from "../components/charts/MemoryLine";
 import MemoryPie from "../components/charts/MemoryPie";
 import Load from "../components/charts/Load";
 import Disks from "../components/charts/Disks";
+
 
 const styles = (theme) => ({
   root: {
@@ -327,4 +328,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withTranslation()(withStyles(styles)(Dashboard)));
+)(withTranslation()(withStyles(Dashboard, styles)));

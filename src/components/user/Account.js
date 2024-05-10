@@ -4,7 +4,7 @@
 import React, { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
   Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput, Alert } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
@@ -519,4 +519,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(withStyles(styles)(Account));
+export default connect(mapStateToProps)(withStyles(Account, styles));

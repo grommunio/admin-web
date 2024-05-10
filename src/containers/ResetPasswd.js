@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
 import {
   Paper,
@@ -123,4 +123,4 @@ ResetPasswd.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(ResetPasswd));
+export default withTranslation()(withStyles(ResetPasswd, styles));

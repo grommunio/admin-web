@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Typography } from '@mui/material';
 
 const styles = {
@@ -37,7 +37,7 @@ const styles = {
     backgroundColor: "#29b6f6",
     borderRadius: 8,
   }
-}
+};
 
 function DNSLegend({ classes }) {
   return <div className={classes.flexRow}>
@@ -56,4 +56,4 @@ DNSLegend.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(DNSLegend);
+export default withStyles(DNSLegend, styles);

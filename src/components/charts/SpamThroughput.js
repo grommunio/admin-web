@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { withTranslation } from 'react-i18next';
@@ -67,4 +67,4 @@ SpamThroughput.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(styles)(SpamThroughput));
+export default withTranslation()(withStyles(SpamThroughput, styles));

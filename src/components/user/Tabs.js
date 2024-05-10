@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key, MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
 import { withTranslation } from 'react-i18next';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 
 const styles = {
   scroller: {
     width: 0,
   },
-}
+};
 
 // eslint-disable-next-line react/prop-types
 const UserTab = ({ icon: Icon, ...props }) => <Tab
@@ -53,4 +53,4 @@ UserTabs.propTypes = {
   sysAdminReadPermissions: PropTypes.bool,
 }
 
-export default withStyles(styles)(withTranslation()(UserTabs));
+export default withStyles(withTranslation()(UserTabs), styles);

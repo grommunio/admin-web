@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { TextField } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 
 const styles = theme => ({
@@ -47,4 +47,4 @@ LdapTextfield.propTypes = {
   flex: PropTypes.bool,
 };
 
-export default withStyles(styles)(LdapTextfield);
+export default withStyles(LdapTextfield, styles);

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
@@ -40,4 +40,4 @@ Dmarc.propTypes = {
   domain: PropTypes.object,
 };
 
-export default withTranslation()(withStyles(styles)(Dmarc));
+export default withTranslation()(withStyles(Dmarc, styles));

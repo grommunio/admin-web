@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { Fragment, useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl,
   Button, DialogActions, Grid, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
@@ -401,4 +401,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(FolderPermissions)));
+  withTranslation()(withStyles(FolderPermissions, styles)));

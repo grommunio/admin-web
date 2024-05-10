@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
@@ -52,4 +52,4 @@ DefaultDavDialog.propTypes = {
   example: PropTypes.any,
 };
 
-export default withTranslation()(withStyles(styles)(DefaultDavDialog));
+export default withTranslation()(withStyles(DefaultDavDialog, styles));

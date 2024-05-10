@@ -9,7 +9,7 @@ import { FormControl, Grid, IconButton,
   TableHead,
   TableRow,
   Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { AddCircleOutline, Delete } from '@mui/icons-material';
@@ -92,4 +92,4 @@ FetchMail.propTypes = {
   handleDelete: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(FetchMail));
+export default withTranslation()(withStyles(FetchMail, styles));

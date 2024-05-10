@@ -13,7 +13,7 @@ import { Button, FormControl, Grid,
   Tooltip,
   Typography } from '@mui/material';
 import { CleaningServices, DoNotDisturbOn, Sync as SyncIcon, Delete } from '@mui/icons-material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { parseUnixtime } from '../../utils';
@@ -304,4 +304,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(Sync)));
+  withTranslation()(withStyles(Sync, styles)));

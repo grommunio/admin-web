@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 
 const styles = theme => ({
   buttonGrid: {
@@ -36,4 +36,4 @@ TableActionGrid.propTypes = {
   ]),
 }
 
-export default withStyles(styles)(TableActionGrid);
+export default withStyles(TableActionGrid, styles);

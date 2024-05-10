@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Paper, Typography} from '@mui/material';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -117,4 +117,4 @@ AntispamStatistics.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(AntispamStatistics));
+export default withTranslation()(withStyles(AntispamStatistics, styles));

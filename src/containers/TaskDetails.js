@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
 import {
   Typography,
@@ -217,4 +217,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(TaskDetails)));
+  withTranslation()(withStyles(TaskDetails, styles)));

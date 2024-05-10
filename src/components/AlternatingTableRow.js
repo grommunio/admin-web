@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import { TableRow } from "@mui/material";
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 
-const AlternatingTableRow = withStyles((theme) => ({
+const AlternatingTableRow = withStyles(TableRow, (theme) => ({
   root: {
     '&:nth-of-type(even)': {
       backgroundColor: theme.palette.action.hover,
     },
   },
-}))(TableRow);
+}));
 
 export default AlternatingTableRow;

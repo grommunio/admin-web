@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import world from '../../res/world.json';
@@ -179,4 +179,4 @@ User.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(styles)(User));
+export default withTranslation()(withStyles(User, styles));

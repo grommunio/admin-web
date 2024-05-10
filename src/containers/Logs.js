@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@mui/styles";
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from "react-i18next";
 import {
   FormControlLabel,
@@ -284,7 +284,7 @@ const Logs = props => {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 label={t("Search")}
-                style={{ marginRight: 8 }}
+                style={{ marginRight: 8, minWidth: 200 }}
                 InputProps={{
                   endAdornment: <InputAdornment position="end">
                     <IconButton onClick={() => setSearch("")}><Close /></IconButton>
@@ -414,4 +414,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withTranslation()(withStyles(styles)(Logs)));
+)(withTranslation()(withStyles(Logs, styles)));

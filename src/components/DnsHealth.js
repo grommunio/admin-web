@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Chip, CircularProgress } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore } from '@mui/icons-material';
@@ -34,7 +34,7 @@ const styles = {
     marginRight: "0px !important",
     marginLeft: "7px !important",  // This is fine-tuned
   },
-}
+};
 
 function getEquationValuesFromRequirementTypes(typeA, typeB) {
   return {
@@ -317,7 +317,7 @@ const DnsHealth = props => {
   </div>
 }
 
-const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label, color, icon: Icon, onInfo }) => {
+const DNSChip = withTranslation()(withStyles(({ classes, loading, label, color, icon: Icon, onInfo }) => {
   return <Chip
     className={classes.chip}
     style={{ backgroundColor: loading ? "#969696" : color }}
@@ -326,7 +326,7 @@ const DNSChip = withTranslation()(withStyles(styles)(({ classes, loading, label,
     color={"info"}  // Necessary for icon color
     onClick={onInfo}
   />
-}));
+}, styles));
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -343,4 +343,4 @@ DnsHealth.propTypes = {
 }
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DnsHealth)));
+  withTranslation()(withStyles(DnsHealth, styles)));

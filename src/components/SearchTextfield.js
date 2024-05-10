@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { InputAdornment, TextField } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Search } from '@mui/icons-material';
 
 const SearchTextfield = ({ ...childProps }) =>
@@ -19,4 +19,4 @@ const SearchTextfield = ({ ...childProps }) =>
     color="primary"
   />;
 
-export default withStyles({})(SearchTextfield);
+export default withStyles(SearchTextfield, {});

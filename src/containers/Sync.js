@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@mui/styles";
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from "react-i18next";
 import {
   Paper,
@@ -307,4 +307,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withTranslation()(withStyles(styles)(Sync)));
+)(withTranslation()(withStyles(Sync, styles)));

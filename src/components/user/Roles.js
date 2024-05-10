@@ -4,7 +4,7 @@
 import React, { useContext } from 'react';
 import { FormControl, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { CapabilityContext } from '../../CapabilityContext';
@@ -70,4 +70,4 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(
-  withTranslation()(withStyles(styles)(RolesTab)));
+  withTranslation()(withStyles(RolesTab, styles)));

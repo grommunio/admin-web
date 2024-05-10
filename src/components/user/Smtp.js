@@ -5,7 +5,7 @@ import React from 'react';
 import { Button, FormControl, Grid, IconButton, List, ListItem,
   MenuItem,
   TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { Delete, Warning } from '@mui/icons-material';
@@ -102,4 +102,4 @@ Smtp.propTypes = {
   forwardError: PropTypes.bool,
 };
 
-export default withTranslation()(withStyles(styles)(Smtp));
+export default withTranslation()(withStyles(Smtp, styles));

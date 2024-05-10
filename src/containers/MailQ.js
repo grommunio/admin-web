@@ -10,7 +10,7 @@ import { parseUnixtime } from "../utils";
 import { Delete, Replay, PlayForWork } from "@mui/icons-material";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
-import { withStyles } from "@mui/styles";
+import { withStyles } from 'tss-react/mui';
 
 const styles = (theme) => ({
   logViewer: {
@@ -228,4 +228,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(MailQ)));
+  withTranslation()(withStyles(MailQ, styles)));

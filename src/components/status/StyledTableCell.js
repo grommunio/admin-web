@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import { TableCell } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 
-const StyledTableCell = withStyles(theme => ({
+const StyledTableCell = withStyles(TableCell, theme => ({
   head: {
     backgroundColor: theme.palette.primary['100'],
     border: '1px solid white',
     color: 'black',
   },
-}))(TableCell);
+}));
 
 export default StyledTableCell;

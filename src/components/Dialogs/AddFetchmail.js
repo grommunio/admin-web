@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   FormControlLabel, Checkbox, Grid, MenuItem,
@@ -272,4 +272,4 @@ AddFetchmail.propTypes = {
   username: PropTypes.string.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(AddFetchmail));
+export default withTranslation()(withStyles(AddFetchmail, styles));

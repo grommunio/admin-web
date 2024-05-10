@@ -7,7 +7,7 @@ import { fetchSpamHistory } from '../actions/spam';
 import PropTypes from 'prop-types';
 import { Chip, Divider, FormControlLabel, Grid, IconButton, Paper, Switch, Table, TableBody, TableCell, TableHead,
   TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { copyToClipboard, parseUnixtime } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -27,27 +27,9 @@ const styles = {
     display: 'flex',
     flex: 1,
   },
-  list: {
-    maxWidth: 472,
-    flex: 1,
-    height: 0,
-    minHeight: '100%',
-    overflowY: 'auto',
-  },
-  tc: {
-    height: 24,
-  },
   details: {
     padding: 8,
     flex: 1,
-  },
-  dots: {
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-  },
-  virtualList: {
-    height: `100% !important`,
   },
   selectedMailTitle: {
     display: 'flex',
@@ -57,7 +39,7 @@ const styles = {
   bottomNavigation: {
     backgroundImage: 'none !important',
   }
-}
+};
 
 const getActionColor = action => {
   return {
@@ -253,7 +235,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             label={t("Since")}
-            sx={{ m: 1, width: 200 }}
+            sx={{ m: 1, minWidth: 200 }}
             value={since}
             onChange={handleDate(setSince)}
             disableFuture
@@ -263,7 +245,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
           />
           <DatePicker
             label={t("Until")}
-            sx={{ m: 1, width: 200 }}
+            sx={{ m: 1, minWidth: 200 }}
             value={until}
             onChange={handleDate(setUntil)}
             slotProps={{
@@ -370,4 +352,4 @@ SpamHistory.propTypes = {
   setSnackbar: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(SpamHistory);
+export default withStyles(SpamHistory, styles);

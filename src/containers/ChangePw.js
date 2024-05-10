@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
 import {
   Paper,
@@ -109,4 +109,4 @@ ChangePw.propTypes = {
   t: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(withStyles(styles)(ChangePw));
+export default withTranslation()(withStyles(ChangePw, styles));

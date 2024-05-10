@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { withStyles } from 'tss-react/mui';
 import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLabel,
   Checkbox, Select, MenuItem, Divider, Tooltip } from '@mui/material';
 import { withTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import DNSLegend from '../components/DNSLegend';
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import { fetchDrawerDomain } from '../actions/drawer';
 import { useNavigate } from 'react-router';
+
 
 const styles = theme => ({
   root: {
@@ -557,4 +558,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(styles)(DomainMenu)));
+  withTranslation()(withStyles(DomainMenu, styles)));
