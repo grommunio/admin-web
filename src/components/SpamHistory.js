@@ -159,12 +159,12 @@ const SpamHistory = ({ classes, setSnackbar }) => {
 
   const headCells = [
     {
-      id: 'name',
-      label: 'Name',
-    },
-    {
       id: 'score',
       label: 'Score',
+    },
+    {
+      id: 'name',
+      label: 'Name',
     },
     {
       id: 'description',
@@ -322,21 +322,21 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             <TableBody>
               {(sortedTable.length > 0 ? sortedTable : Object.values(selectedMail.symbols)).map((row, key) =>
                 <TableRow key={key}>
+                  <TableCell sx={{ backgroundColor: getScoreColor(row.score), color: "white" }}>
+                    {row.score}
+                  </TableCell>
                   <TableCell>
                     {row.name}
                     {row.options && <span style={{ marginLeft: 4, fontStyle: "italic" }}>
                       ({row.options.join(", ")})
                     </span>}
                   </TableCell>
-                  <TableCell sx={{ backgroundColor: getScoreColor(row.score), color: "white" }}>
-                    {row.score}
-                  </TableCell>
                   <TableCell>{row.description}</TableCell>
                 </TableRow>
               )}
               <TableRow>
-                <TableCell>Spamscore</TableCell>
                 <TableCell sx={{ fontWeight: 700 }}>{selectedMail.score}</TableCell>
+                <TableCell>Spamscore</TableCell>
                 <TableCell>Total spamscore</TableCell>
               </TableRow>
             </TableBody>
