@@ -112,23 +112,26 @@ const DomainMenu = props => {
     },
     createParams: {},
     dnsCheck: {}, // TODO: Think about moving this into the store
-    snackbar: '',
-    loading: true,
     dnsLoading: true,
   });
   const [langs, setLangs] = useState([]);
+  const [snackbar, setSnackbar] = useState("");
+  const [loading, setLoading] = useState(true);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     const inner = async () => {
       const { domain, fetch, fetchParams, storeLangs } = props;
-      fetch(domain.ID).catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      fetch(domain.ID).catch(msg => setSnackbar(msg || 'Unknown error'));
       fetchParams(null, { domain: domain.ID })
-        .then(() => setState({ ...state, loading: false }))
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error', loading: false }));
+        .then(() => setLoading(false))
+        .catch(message => {
+          setState(message || 'Unknown error');
+          setLoading(false);
+        });
       const langs = await storeLangs()
-        .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+        .catch(msg => setSnackbar(msg || 'Unknown error'));
       if(langs) setLangs(langs);
     };
 
@@ -148,7 +151,6 @@ const DomainMenu = props => {
         ...state.createParams,
         [field]: event.target.value,
       },
-      unsaved: true,
     });
   }
 
@@ -196,7 +198,7 @@ const DomainMenu = props => {
 
   const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  const handleDeleteError = (error) => setState({ ...state, snackbar: error });
+  const handleDeleteError = (error) => setSnackbar(error);
 
   const handleDeleteSuccess = () => {
     navigate('/');
@@ -227,12 +229,12 @@ const DomainMenu = props => {
         privChat, privVideo, privFiles, privArchive,
       },
     }, domain.ID)
-      .then(() => setState({ ...state, snackbar: 'Success!' }))
-      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      .then(() => setSnackbar('Success!'))
+      .catch(message => setSnackbar(message || 'Unknown error'));
   }
 
   const { classes, domain, t, capabilities } = props;
-  const { snackbar, deleting, sizeUnits, createParams, loading } = state;
+  const { deleting, sizeUnits, createParams } = state;
   const { prohibitsendquota, prohibitreceivequota, storagequotalimit,
     lang, privChat, privArchive, privFiles, privVideo,
     // eslint-disable-next-line camelcase
@@ -244,7 +246,7 @@ const DomainMenu = props => {
     <TableViewContainer
       headline={t("Domain overview")}
       snackbar={snackbar}
-      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      onSnackbarClose={() => setSnackbar('')}
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
