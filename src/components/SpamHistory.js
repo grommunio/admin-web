@@ -280,6 +280,14 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             panelFooter: classes.bottomNavigation,
             toolbarContainer: classes.bottomNavigation,
           }}
+          sx={{
+            "& .MuiDataGrid-virtualScrollerContent": {
+              height: "52px !important",
+            },
+            "& .MuiDataGrid-scrollbar--horizontal": {
+              height: 2,
+            }
+          }}
         />
         <Divider orientation='vertical'/>
         {selectedMail && <div className={classes.details}>
