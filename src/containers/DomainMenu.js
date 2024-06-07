@@ -21,7 +21,7 @@ import DnsHealth from '../components/DnsHealth';
 import DNSLegend from '../components/DNSLegend';
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import { fetchDrawerDomain } from '../actions/drawer';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 
 const styles = theme => ({
@@ -118,6 +118,7 @@ const DomainMenu = props => {
   const [snackbar, setSnackbar] = useState("");
   const [loading, setLoading] = useState(true);
   const context = useContext(CapabilityContext);
+  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -137,6 +138,16 @@ const DomainMenu = props => {
 
     inner();
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    props.fetchParams(null, { domain: domain.ID })
+        .then(() => setLoading(false))
+        .catch(message => {
+          setState(message || 'Unknown error');
+          setLoading(false);
+        });
+  }, [location.pathname])
 
   useEffect(() => {
     const { createParams } = props;
