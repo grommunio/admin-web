@@ -142,11 +142,11 @@ const DomainMenu = props => {
   useEffect(() => {
     setLoading(true);
     props.fetchParams(null, { domain: domain.ID })
-        .then(() => setLoading(false))
-        .catch(message => {
-          setState(message || 'Unknown error');
-          setLoading(false);
-        });
+      .then(() => setLoading(false))
+      .catch(message => {
+        setState(message || 'Unknown error');
+        setLoading(false);
+      });
   }, [location.pathname])
 
   useEffect(() => {
