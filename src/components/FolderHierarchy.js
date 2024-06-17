@@ -39,7 +39,7 @@ const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, hand
   const renderTree = ({ folderid, container, name, children }) => (
     <TreeItem
       key={folderid || -1}
-      nodeId={folderid || "-1"}
+      itemId={folderid || "-1"}
       label={<div className={classes.treeItemLabel}>
         {containerIcons[container || 'IPF.Note']}
         <Typography variant=''>{folderid === IPM_SUBTREE_ID ? t(IPM_SUBTREE_OBJECT.displayname) : name}</Typography>
