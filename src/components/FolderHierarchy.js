@@ -76,9 +76,7 @@ const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, hand
   return (
     <SimpleTreeView
       className={classes.richTree}
-      defaultCollapseIcon={<ExpandMoreIcon />}
       defaultExpandedItems={[IPM_SUBTREE_ID]}
-      defaultExpandIcon={<ChevronRightIcon />}
     >
       {Object.keys(data).length !== 0 && renderTree(data)}
     </SimpleTreeView>
