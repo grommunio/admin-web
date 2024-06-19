@@ -19,7 +19,6 @@ function withTable(WrappedComponent, defaultState={}) {
 
   return function inner(props) {
     const [state, setState] = useState({
-      offset: 0,
       orderBy: 'name',
       order: 'asc',
       snackbar: '',
@@ -28,6 +27,7 @@ function withTable(WrappedComponent, defaultState={}) {
       loading: true,
       ...defaultState,
     });
+    const [offset, setOffset] = useState(0);
     const [match, setMatch] = useState("");
     const navigate = useNavigate();
 
@@ -63,8 +63,8 @@ function withTable(WrappedComponent, defaultState={}) {
         ...state, 
         order: order,
         orderBy: orderBy,
-        offset: 0,
       });
+      setOffset(0);
     };
 
     const handleScroll = (data, count, loading) => {
@@ -76,13 +76,10 @@ function withTable(WrappedComponent, defaultState={}) {
         ) <=
         document.getElementById("scrollDiv").offsetHeight + 20
       ) {
-        const { orderBy, order, offset } = state;
+        const { orderBy, order } = state;
         if (!loading) {
           const newOffset = offset + defaultFetchLimit;
-          setState({
-            ...state, 
-            offset: newOffset,
-          });
+          setOffset(newOffset);
           fetchData({
             sort: orderBy + "," + order,
             offset: newOffset,
