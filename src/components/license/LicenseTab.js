@@ -57,7 +57,6 @@ const LicenseTab = props => {
     domainsExpanded: false,
     expandedDomainIdxs: [],
     domainUsers: {},
-    counts: {},
     dialogOpen: false,
     username: "",
     password: "",
@@ -132,7 +131,7 @@ const LicenseTab = props => {
 
   const { classes, t, license, Domains, counts } = props;
   const { domainsExpanded, expandedDomainIdxs, domainUsers, dialogOpen, username, password } = state;
-
+  
   return <>
     <Typography variant="caption" className={classes.subtitle}>
       {t("license_sub")}

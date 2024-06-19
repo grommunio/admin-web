@@ -50,22 +50,27 @@ const License = props => {
   useEffect(() => {
     const inner = async () => {
       props.fetchDomains()
-        .then(async () => {
-          const { Domains, fetchCount } = props;
-          const counts = {};
-          // Get user count of domains
-          Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
-          setState({
-            ...state,
-            loading: false,
-            counts,
-          });
-        })
         .catch(snackbar => setState({ ...state, snackbar, loading: false }));
     }
 
     inner();
   }, []);
+
+  useEffect(() => {
+    const inner = async () => {
+      const { Domains, fetchCount } = props;
+      const counts = {};
+      // Get user count of domains
+      Domains.forEach(async domain => counts[domain.domainname] = await fetchCount(domain.ID));
+      setState({
+        ...state,
+        loading: false,
+        counts,
+      });
+    };
+
+    inner();
+  }, [props.Domains]);
 
   const handleTab = (e, tab) => {
     setState({ ...state, tab });
@@ -96,7 +101,7 @@ const License = props => {
         />
         <IconTab label={t("Updates")} icon={<Update />}/>
       </Tabs>
-      {tab === 0 && <LicenseTab counts={{counts}} setSnackbar={setSnackbar}/>}
+      {tab === 0 && <LicenseTab counts={counts} setSnackbar={setSnackbar}/>}
       {tab === 1 && <Design />}
       {tab === 2 && <Updater setSnackbar={setSnackbar} setTabsDisabled={setTabsDisabled}/>}
       <div className={classes.about}>
