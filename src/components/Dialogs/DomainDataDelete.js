@@ -11,7 +11,8 @@ import { withTranslation } from 'react-i18next';
 const DomainDataDelete = props => {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { id, onSuccess, onError, domainID } = props;
     setLoading(true);
     props.delete(domainID, id)
@@ -46,6 +47,7 @@ const DomainDataDelete = props => {
           onClick={handleDelete}
           variant="contained"
           color="secondary"
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>

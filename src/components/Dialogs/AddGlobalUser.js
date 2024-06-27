@@ -125,7 +125,8 @@ const AddGlobalUser = props => {
 
   const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onError, onSuccess, createParams } = props;
     const { username, password, properties, domain, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
@@ -253,6 +254,7 @@ const AddGlobalUser = props => {
       TransitionProps={{
         onEnter: handleEnter,
       }}
+      component="form"
     >
       <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
       <DialogContent>
@@ -396,6 +398,7 @@ const AddGlobalUser = props => {
           variant="contained"
           color="primary"
           disabled={addDisabled}
+          type='submit'
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

@@ -65,7 +65,7 @@ function drawerReducer(state = defaultState, action) {
   case DOMAIN_DATA_DELETE:
     return {
       ...state,
-      Domains: state.Domains.filter(d => d.ID !== action.id),
+      Domains: [...state.Domains].filter(d => d.ID !== action.id),
     };
 
   case SELECT_DRAWER_DOMAIN:

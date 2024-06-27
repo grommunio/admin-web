@@ -28,7 +28,8 @@ const ChangeUserPassword = props => {
     checkPw: '',
   });
 
-  const handlePasswordChange = async () => {
+  const handlePasswordChange = async e => {
+    e.preventDefault();
     const { domain, onClose, onSuccess, onError, user } = props;
     const { newPw } = state;
     await changeUserPassword(domain.ID, user.ID, newPw)
@@ -80,6 +81,7 @@ const ChangeUserPassword = props => {
           color="primary"
           onClick={handlePasswordChange}
           disabled={checkPw !== newPw}
+          type="submit"
         >
           {t('Save')}
         </Button>

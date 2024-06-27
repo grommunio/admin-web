@@ -11,7 +11,8 @@ import { withTranslation } from 'react-i18next';
 const GeneralDelete = props => {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { id, onSuccess, onError } = props;
     setLoading(true);
     props.delete(id)
@@ -45,6 +46,8 @@ const GeneralDelete = props => {
           onClick={handleDelete}
           variant="contained"
           color="secondary"
+          type="submit"
+          autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>

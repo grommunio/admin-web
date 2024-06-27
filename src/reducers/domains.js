@@ -16,11 +16,11 @@ const defaultState = {
 };
 
 function deactivateDomain(arr, id) {
-  const domains = [...arr];
+  let domains = [...arr];
   const idx = domains.findIndex(d => d.ID === id);
-  if (idx === -1) return;
+  if (idx === -1) return domains;
   domains[idx].domainStatus = 3;
-  return domains;
+  return [...domains];
 }
 
 function domainsReducer(state = defaultState, action) {
@@ -48,8 +48,8 @@ function domainsReducer(state = defaultState, action) {
   case DOMAIN_DATA_DELETE:
     return {
       ...state,
-      Domains: action.purge ? state.Domains.filter(domain => domain.ID !== action.id)
-        : deactivateDomain(state.Domains, action.id),
+      Domains: action.purge ? [...state.Domains].filter(domain => domain.ID !== action.id)
+        : [...deactivateDomain([...state.Domains], action.id)],
       count: state.count - 1,
     };
 

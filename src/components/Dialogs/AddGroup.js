@@ -92,7 +92,8 @@ const AddGroup = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, domain, onSuccess, onError } = props;
     const { associations, specifieds } = group;
     setLoading(true);
@@ -239,6 +240,7 @@ const AddGroup = props => {
           variant="contained"
           color="primary"
           disabled={loading || !listname}
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

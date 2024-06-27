@@ -45,7 +45,8 @@ const AddOrg = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onSuccess, onError } = props;
     const { name, description, domains } = org;
     setLoading(true);
@@ -136,6 +137,7 @@ const AddOrg = props => {
           variant="contained"
           color="primary"
           disabled={loading || !nameAcceptable}
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

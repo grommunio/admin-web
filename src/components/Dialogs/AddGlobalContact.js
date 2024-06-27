@@ -61,7 +61,8 @@ const AddContact = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onError, onSuccess } = props;
     setLoading(true);
     add(domain?.ID || -1, {
@@ -201,6 +202,7 @@ const AddContact = props => {
           onClick={handleAdd}
           variant="contained"
           color="primary"
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

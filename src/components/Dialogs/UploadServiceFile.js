@@ -67,7 +67,8 @@ const UploadServiceFile = props => {
     setState({ ...state, data });
   }
 
-  const handleUpload = () => {
+  const handleUpload = (e) => {
+    e.preventDefault();
     const { upload } = props;
     const { service, filename, data } = state;
     setState({ ...state, loading: true });
@@ -161,7 +162,8 @@ const UploadServiceFile = props => {
           onClick={handleUpload}
           variant="contained"
           color="primary"
-          disabled={loading || !service}
+          disabled={loading || !service || !filename}
+          type='submit'
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

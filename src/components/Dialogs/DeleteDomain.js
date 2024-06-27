@@ -17,7 +17,8 @@ const DeleteDomain = props => {
     deleteFiles: false,
   });
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { id, onSuccess, onError } = props;
     const { purge, deleteFiles } = state;
     setState({ ...state, loading: true });
@@ -88,6 +89,8 @@ const DeleteDomain = props => {
           onClick={handleDelete}
           variant="contained"
           color="secondary"
+          type="submit"
+          autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>

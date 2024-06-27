@@ -63,7 +63,8 @@ const CreateDbconfFile = props => {
     setState({ ...state, data });
   }
 
-  const handleUpload = () => {
+  const handleUpload = e => {
+    e.preventDefault();
     const { upload, onError } = props;
     const { service, data } = state;
     setState({ ...state, loading: true });
@@ -165,6 +166,7 @@ const CreateDbconfFile = props => {
           variant="contained"
           color="primary"
           disabled={loading || !service}
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

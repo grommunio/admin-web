@@ -12,6 +12,9 @@ const defaultStyles = mode => ({
         backgroundImage: 'none',
       },
     },
+    defaultProps: {
+      component: "form",
+    },
   },
   MuiPaper: {
     styleOverrides: {

@@ -111,7 +111,6 @@ const DomainMenu = props => {
       prohibitsendquota: 1,
     },
     createParams: {},
-    dnsCheck: {}, // TODO: Think about moving this into the store
     dnsLoading: true,
   });
   const [langs, setLangs] = useState([]);

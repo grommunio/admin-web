@@ -55,7 +55,8 @@ const AddFolder = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onSuccess, onError, domain, parentID } = props;
     setLoading(true);
     add(domain.ID, {...folder, parentID})
@@ -143,13 +144,14 @@ const AddFolder = props => {
           onClick={onClose}
           color="secondary"
         >
-            Cancel
+          Cancel
         </Button>
         <Button
           onClick={handleAdd}
           variant="contained"
           color="primary"
           disabled={!displayname || loading}
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : 'Add'}
         </Button>

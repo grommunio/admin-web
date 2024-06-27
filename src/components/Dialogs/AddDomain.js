@@ -100,7 +100,8 @@ const AddDomain = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onError, onSuccess } = props;
     setLoading(true);
     add({
@@ -111,6 +112,7 @@ const AddDomain = props => {
     }, { createRole })
       .then(() => {
         setDomain({
+          ...domain,
           domainname: '',
           domainStatus: 0,
           maxUser: '',
@@ -179,7 +181,7 @@ const AddDomain = props => {
             ))}
           </TextField>
           <MagnitudeAutocomplete
-            value={orgID}
+            value={orgID || ""}
             filterAttribute={'name'}
             onChange={handleAutocomplete('orgID')}
             className={classes.input} 
@@ -260,6 +262,7 @@ const AddDomain = props => {
           {t('Cancel')}
         </Button>
         <Button
+          type='submit'
           onClick={handleAdd}
           variant="contained"
           color="primary"

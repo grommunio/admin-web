@@ -18,7 +18,8 @@ const DeleteUser = props => {
     loading: false,
   });
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { user, domainID, onSuccess, onError } = props;
     const { deleteFiles, deleteChatUser } = state;
     setState({ ...state, loading: true });
@@ -81,6 +82,8 @@ const DeleteUser = props => {
           onClick={handleDelete}
           variant="contained"
           color="secondary"
+          type="submit"
+          autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>

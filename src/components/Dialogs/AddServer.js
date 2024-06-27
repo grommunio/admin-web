@@ -38,7 +38,8 @@ const AddServer = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onSuccess, onError } = props;
     setLoading(true);
     add(server)
@@ -100,6 +101,7 @@ const AddServer = props => {
           variant="contained"
           color="primary"
           disabled={loading || !hostname || !extname}
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

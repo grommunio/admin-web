@@ -78,7 +78,8 @@ const AddRole = props => {
     });
   }
 
-  const handleAdd = () => {
+  const handleAdd = e => {
+    e.preventDefault();
     const { add, onSuccess, onError } = props;
     const { users, permissions } = role;
     setLoading(true);
@@ -269,6 +270,7 @@ const AddRole = props => {
               || permissions.length === 0
               || !checkProperPermissions()
           }
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : 'Add'}
         </Button>

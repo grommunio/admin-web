@@ -45,6 +45,7 @@ const AddOwner = props => {
       .then(() => {
         setOwners([]);
         onSuccess();
+        setLoading(false);
       })
       .catch(error => {
         onError(error);

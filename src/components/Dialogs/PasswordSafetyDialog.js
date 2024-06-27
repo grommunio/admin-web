@@ -33,7 +33,8 @@ const PasswordSafetyDialog = props => {
     props.onClose();
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = e => {
+    e.preventDefault();
     props.onConfirm(state);
     setState({ ...state, password: '', status: 16 });
   }
@@ -69,6 +70,7 @@ const PasswordSafetyDialog = props => {
           value={password}
           onChange={handleInput("password")}
           fullWidth
+          autoFocus
           type="password"
           autoComplete="new-password"
         />
@@ -89,7 +91,8 @@ const PasswordSafetyDialog = props => {
           color="error"
           onClick={handleConfirm}
           disabled={!password}
-          variant="contained" 
+          variant="contained"
+          type="submit"
         >
           {t('Confirm')}
         </Button>

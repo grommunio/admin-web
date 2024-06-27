@@ -237,6 +237,7 @@ const AddUser = props => {
       TransitionProps={{
         onEnter: handleEnter,
       }}
+      component="form"
     >
       <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
       <DialogContent>
@@ -363,6 +364,7 @@ const AddUser = props => {
           {loading ? <CircularProgress size={24}/> : t('Add and edit')}
         </Button>
         <Button
+          type='submit'
           onClick={handleAdd}
           variant="contained"
           color="primary"

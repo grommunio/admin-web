@@ -8,10 +8,11 @@ import { Dialog, DialogTitle, Button, DialogActions, CircularProgress,
 import { withTranslation } from 'react-i18next';
 
 
-const GeneralDelete = props => {
+const DeleteConfig = props => {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { orgID, onSuccess, onError } = this.props;
     setLoading(true);
     this.props.delete(orgID) // Optional, will just be ignored for global config
@@ -45,6 +46,7 @@ const GeneralDelete = props => {
           onClick={handleDelete}
           variant="contained"
           color="primary"
+          type="submit"
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>
@@ -53,7 +55,7 @@ const GeneralDelete = props => {
   );
 }
 
-GeneralDelete.propTypes = {
+DeleteConfig.propTypes = {
   t: PropTypes.func.isRequired,
   open: PropTypes.bool,
   onSuccess: PropTypes.func.isRequired,
@@ -64,4 +66,4 @@ GeneralDelete.propTypes = {
 };
 
 
-export default withTranslation()(GeneralDelete);
+export default withTranslation()(DeleteConfig);

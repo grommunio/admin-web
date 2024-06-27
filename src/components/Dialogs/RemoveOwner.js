@@ -12,7 +12,8 @@ import { connect } from 'react-redux';
 const RemoveOwner = props => {
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = e => {
+    e.preventDefault();
     const { folderID, memberID, onSuccess, onError, domainID } = props;
     setLoading(true);
     props.delete(domainID, folderID, memberID)
@@ -47,6 +48,8 @@ const RemoveOwner = props => {
           onClick={handleDelete}
           variant="contained"
           color="secondary"
+          type="submit"
+          autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>
