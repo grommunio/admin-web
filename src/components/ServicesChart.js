@@ -116,15 +116,19 @@ const ServicesChart = props => {
     starting: false,
     restarting: false,
     stoping: false,
-    service: null,
     action: '',
   });
+  const [service, setService] = useState(null);
 
-  const handleServiceAction = (service, action) => () => {
-    setState({ ...state, [action + "ing"]: service.name, service: null });
+  const handleServiceAction = (service, action) => (e) => {
+    e.preventDefault();
+    setState({ ...state, [action + "ing"]: service.name });
     props
       .serviceAction(service.unit, action)
-      .then(() => setState({ ...state, [action + "ing"]: false }))
+      .then(() => {
+        setState({ ...state, [action + "ing"]: false });
+        handleCloseDialog();
+      })
       .catch((msg) =>
         setState({ ...state, snackbar: msg, [action + "ing"]: false })
       );
@@ -134,12 +138,15 @@ const ServicesChart = props => {
     return props.classes[(state || "inactive") + "Chip"];
   }
 
-  const handleDialog = (service, action) => () => setState({ ...state, service, action });
+  const handleDialog = (service, action) => () => {
+    setState({ ...state, action });
+    setService(service);
+  }
 
-  const handleCloseDialog = () => setState({ ...state, service: null });
+  const handleCloseDialog = () => setService(null);
 
   const { classes, Services, t } = props;
-  const { starting, restarting, stoping, snackbar, service, action } = state;
+  const { starting, restarting, stoping, snackbar, action } = state;
 
   return (
     <div className={classes.root}>

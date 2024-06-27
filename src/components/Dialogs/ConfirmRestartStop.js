@@ -31,6 +31,8 @@ const ConfirmRestartStop = props => {
           onClick={handleConfirm}
           variant="contained"
           color="primary"
+          type="submit"
+          autoFocus
         >
           {t('Confirm')}
         </Button>
