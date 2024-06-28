@@ -215,6 +215,7 @@ const AddGroup = props => {
             options={Users || []}
             placeholder={t("Search users") +  "..."}
             label={t('Recipients')}
+            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
           />}
           {listPrivilege === 3 && <MagnitudeAutocomplete
             multiple
@@ -225,6 +226,7 @@ const AddGroup = props => {
             options={Users || []}
             placeholder={t("Search users") +  "..."}
             label={t('Senders')}
+            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
           />}
         </FormControl>
       </DialogContent>
