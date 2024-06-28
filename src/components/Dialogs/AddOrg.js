@@ -79,7 +79,7 @@ const AddOrg = props => {
 
   const { classes, t, open, onClose, Domains } = props;
   const { name, description, domains } = org;
-  const nameAcceptable = name.length < 33;
+  const nameAcceptable = name && name.length < 33;
 
   return (
     <Dialog
