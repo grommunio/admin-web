@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -58,16 +58,17 @@ const AddDomain = props => {
     fetch().catch(error => onError(error));
     fetchServers().catch(error => onError(error));
     fetchDefaults()
-      .then(() => {
-        const { createParams } = props;
-        // Update mask
-        setDomain({
-          ...domain,
-          ...(createParams.domain || {}),
-        });
-      })
       .catch(error => onError(error));
   }
+
+  useEffect(() => {
+    const { createParams } = props;
+    // Update mask
+    setDomain({
+      ...domain,
+      ...(createParams.domain || {}),
+    });
+  }, [props.createParams]);
 
   const handleInput = field => event => {
     const val = event.target.value;
