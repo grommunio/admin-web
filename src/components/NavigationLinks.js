@@ -263,6 +263,7 @@ const NavigationLinks = props => {
                       <Domains className={classes.icon}/>
                     </ListItemIcon>
                     <ListItemText
+                      sx={{ wordWrap: 'break-word' }}
                       primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}
                       primaryTypographyProps={{ className: selected ? classes.drawerItemLabel : null }}
                     />
