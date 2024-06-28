@@ -16,11 +16,13 @@ const defaultState = {
 };
 
 function deactivateDomain(arr, id) {
-  let domains = [...arr];
-  const idx = domains.findIndex(d => d.ID === id);
-  if (idx === -1) return domains;
-  domains[idx].domainStatus = 3;
-  return [...domains];
+  // Direct array access makes redux throw up, so use a mapper instead
+  const newArray = arr.map(domain => ({
+    ...domain,
+    domainStatus: domain.ID === id ? 3 : domain.domainStatus,
+  }));
+
+  return newArray;
 }
 
 function domainsReducer(state = defaultState, action) {
@@ -49,7 +51,7 @@ function domainsReducer(state = defaultState, action) {
     return {
       ...state,
       Domains: action.purge ? [...state.Domains].filter(domain => domain.ID !== action.id)
-        : [...deactivateDomain([...state.Domains], action.id)],
+        : deactivateDomain(state.Domains, action.id),
       count: state.count - 1,
     };
 

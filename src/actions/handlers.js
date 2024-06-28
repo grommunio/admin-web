@@ -56,7 +56,7 @@ export function defaultDeleteHandler(endpoint, deleteActionType, endpointParams)
     }
     try {
       const resp = await dispatch(endpoint(...Object.values(endpointParams)));
-      await dispatch({ type: deleteActionType, id: endpointParams.id });
+      await dispatch({ type: deleteActionType, ...endpointParams });
       return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
