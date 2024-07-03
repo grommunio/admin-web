@@ -41,13 +41,13 @@ const styles = theme => ({
 
 const Ldap = props => {
   const [state, setState] = useState({
-    search: '',
     loading: false,
     confirming: null,
     snackbar: '',
     searchInOrg: false,
     showAll: false,
   });
+  const [search, setSearch] = useState("");
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
@@ -61,6 +61,7 @@ const Ldap = props => {
     const { searchInOrg, showAll } = state;
     const { domain } = props;
     const query = t.value;
+    setSearch(query);
     if(query.length > 2) {
       debounceFetch({
         query,
@@ -69,19 +70,15 @@ const Ldap = props => {
         showAll,
       });
     }
-    setState({
-      ...state,
-      search: query,
-    });
   }
 
   const debounceFetch = debounce(params => {
     const { fetch } = props;
-    setState({ ...state,loading: true });
+    setState({ ...state, loading: true });
     fetch(params)
-      .then(() => setState({ ...state,loading: false }))
-      .catch(snackbar => setState({ ...state,snackbar, loading: false }));
-  }, 200)
+      .then(() => setState({ ...state, loading: false }))
+      .catch(snackbar => setState({ ...state, snackbar, loading: false }));
+  }, 200);
 
   const handleImport = user => () => setState({ ...state,confirming: user });
 
@@ -93,11 +90,10 @@ const Ldap = props => {
 
   const handleCheckbox = field => e => {
     const { checked } = e.target;
-    const { search } = state;
     const { domain } = props;
     setState({ ...state, [field]: checked });
     if(search.length > 2) debounceFetch({
-      query: state.search,
+      query: search,
       domain: checked ? undefined : domain.ID,
       organization: checked ? domain.orgID : undefined,
       showAll: checked,
@@ -105,7 +101,7 @@ const Ldap = props => {
   }
 
   const { classes, t, domain, ldapUsers } = props;
-  const { search, loading, snackbar, confirming, searchInOrg, showAll } = state;
+  const { loading, snackbar, confirming, searchInOrg, showAll } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
     <ViewWrapper
