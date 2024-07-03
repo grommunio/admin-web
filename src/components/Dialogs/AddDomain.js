@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -12,11 +12,11 @@ import { addDomainData } from '../../actions/domains';
 import { fetchOrgsData } from '../../actions/orgs';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { throttle } from 'lodash';
 
 const styles = theme => ({
   form: {
@@ -79,11 +79,11 @@ const AddDomain = props => {
     });
   }
 
-  const debounceFetch = debounce(async params => {
+  const debounceFetch = useCallback(throttle(async params => {
     const resp = await checkFormat(params)
       .catch(() => setLoading(false));
     setDomainError(!!resp?.domain);
-  }, 200)
+  }, 200), []);
 
   const handleCheckbox = field => event => {
     setDomain({

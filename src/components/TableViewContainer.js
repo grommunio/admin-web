@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { debounce, Fade, IconButton, LinearProgress, Typography } from '@mui/material';
+import { Fade, IconButton, LinearProgress, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
 import { withTranslation } from 'react-i18next';
 import { HelpOutline } from '@mui/icons-material';
+import { throttle } from 'lodash';
 
 
 const styles = theme => ({
@@ -45,10 +46,12 @@ const styles = theme => ({
 const TableViewContainer = ({classes, children, baseRef, handleScroll, headline, subtitle,
   snackbar, onSnackbarClose, href, loading }) => {
 
+  const debouncedScroll = useCallback(throttle(handleScroll || (() => null), 100), [handleScroll]);
+
   return (
     <div
       className={classes.root}
-      onScroll={debounce(handleScroll || (() => null), 100)}
+      onScroll={debouncedScroll}
       id="scrollDiv"
     >
       <div className={classes.toolbar}>

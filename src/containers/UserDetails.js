@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
@@ -38,13 +38,13 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
-import { debounce } from 'debounce';
 import { checkFormat } from '../api';
 import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
 import Tabs from '../components/user/Tabs';
 import Altnames from '../components/user/Altnames';
 import { useNavigate } from 'react-router';
+import { throttle } from 'lodash';
 
 const styles = theme => ({
   paper: {
@@ -224,7 +224,7 @@ const UserDetails = props => {
   }
 
   // When sanitizing user input, only check every 200ms
-  const debounceFetch = debounce(async params => {
+  const debounceFetch = useCallback(throttle(async params => {
     if(!params) {
       setForwardError(false);
     } else {
@@ -232,7 +232,7 @@ const UserDetails = props => {
         .catch();
       if(resp) setForwardError(!!resp.email);
     }
-  }, 200);
+  }, 500), []);
 
   const handleStatusInput = async event => {
     const { user } = state;

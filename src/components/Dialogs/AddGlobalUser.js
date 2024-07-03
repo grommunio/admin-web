@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { fetchDomainData, fetchDomainDetails } from '../../actions/domains';
 import { addUserData, getStoreLangs } from '../../actions/users';
-import { debounce } from 'debounce';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
+import { throttle } from 'lodash';
 
 const styles = theme => ({
   form: {
@@ -117,11 +117,11 @@ const AddGlobalUser = props => {
     });
   }
 
-  const debounceFetch = debounce(async params => {
+  const debounceFetch = useCallback(throttle(async params => {
     const resp = await checkFormat(params)
       .catch(snackbar => setState({ ...state, snackbar, loading: false }));
     setUsernameError(!!resp?.email);
-  }, 200)
+  }, 500), []);
 
   const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
 

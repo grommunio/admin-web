@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 /* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
-import { debounce } from 'debounce';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import { withStyles } from 'tss-react/mui';
 import { defaultFetchLimit } from '../constants';
 import { useNavigate } from 'react-router';
+import { throttle } from 'lodash';
 
 export default function withStyledReduxTable(mapState, mapDispatch, styles) {
   return (wrappedComponent, defaultState) => connect(mapState, mapDispatch)(
@@ -100,11 +100,11 @@ function withTable(WrappedComponent, defaultState={}) {
       debouceFetch(value);
     };
   
-    const debouceFetch = debounce((value) => {
+    const debouceFetch = useCallback(throttle((value) => {
       fetchData({
         match: value || undefined,
       });
-    }, 200);
+    }, 200), []);
 
     const handleAdd = () => setState({ ...state, adding: true });
 

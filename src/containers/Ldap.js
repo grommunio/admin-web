@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import Search from '@mui/icons-material/Search';
@@ -12,13 +12,13 @@ import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
-import { debounce } from 'debounce';
 import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { throttle } from 'lodash';
 
 const styles = theme => ({
   pageTitle: {
@@ -72,13 +72,13 @@ const Ldap = props => {
     }
   }
 
-  const debounceFetch = debounce(params => {
+  const debounceFetch = useCallback(throttle(params => {
     const { fetch } = props;
     setState({ ...state, loading: true });
     fetch(params)
       .then(() => setState({ ...state, loading: false }))
       .catch(snackbar => setState({ ...state, snackbar, loading: false }));
-  }, 200);
+  }, 500), []);
 
   const handleImport = user => () => setState({ ...state,confirming: user });
 
