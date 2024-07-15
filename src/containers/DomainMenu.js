@@ -322,7 +322,7 @@ const DomainMenu = props => {
           <Divider className={classes.divider}/>
           <div>
             <Typography variant='h6'>{t('DNS Health')}</Typography>
-            <DnsHealth domain={domain}/>
+            <DnsHealth setSnackbar={setSnackbar} domain={domain}/>
             <DNSLegend />
           </div>
           <Divider className={classes.divider}/>

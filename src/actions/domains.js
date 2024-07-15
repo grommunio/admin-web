@@ -8,7 +8,7 @@ import {
   DOMAIN_DATA_DELETE,
 } from '../actions/types';
 import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns } from '../api';
-import { defaultDeleteHandler, defaultDetailsHandler, defaultPatchHandler, defaultPostHandler } from './handlers';
+import { defaultDeleteHandler, defaultPatchHandler, defaultPostHandler } from './handlers';
 
 export function fetchDomainData(params) {
   return async dispatch => {
@@ -50,5 +50,12 @@ export function deleteDomainData(id, params) {
 }
 
 export function fetchDnsCheckData(...endpointParams) {
-  return defaultDetailsHandler(dns, ...endpointParams);
+  return async dispatch => {
+    try {
+      const resp = await dispatch(dns(...endpointParams));
+      return Promise.resolve(resp);
+    } catch(error) {
+      return Promise.reject(error.message);
+    }
+  };
 }

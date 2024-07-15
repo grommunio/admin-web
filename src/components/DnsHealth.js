@@ -61,17 +61,21 @@ const successColor = "#66bb6a";
 const DnsHealth = props => {
   const [state, setState] = useState({
     loading: true,
+    error: false,
     dnsCheck: {},
     InfoDialog: null,
   });
 
   useEffect(() => {
-    const { checkDns, domain } = props;
+    const { checkDns, domain, setSnackbar } = props;
     checkDns(domain.ID)
       .then(dnsCheck => {
-        setState({ ...state, dnsCheck, loading: false});
+        setState({ ...state, dnsCheck, loading: false, error: false });
       })
-      .catch(message => setState({ ...state, snackbar: message || 'Unknown error', loading: false }));
+      .catch(message => {
+        setSnackbar(message || 'Unknown error');
+        setState({ ...state, loading: false, error: true });
+      });
   }, []);
 
   const getReachabiltyColor = () => {
@@ -199,7 +203,7 @@ const DnsHealth = props => {
   const handleDialogClose = () => setState({ ...state, InfoDialog: null });
 
   const { classes, t, domain } = props;
-  const { loading, InfoDialog, dnsCheck } = state;
+  const { loading, InfoDialog, dnsCheck, error } = state;
   return <div className={classes.dnsChips}>
     <DNSChip
       title={t("external_ip_expl")}
@@ -208,6 +212,7 @@ const DnsHealth = props => {
       color={getReachabiltyColor()}
       loading={loading}
       onInfo={asyncDialogImport('Reachability')}
+      error={error}
     />
     <DNSChip
       title={t("mx_expl")}
@@ -216,6 +221,7 @@ const DnsHealth = props => {
       color={getMXColor()}
       loading={loading}
       onInfo={asyncDialogImport('MXRecords')}
+      error={error}
     />
     <DNSChip
       title={t("autodiscover_expl")}
@@ -224,6 +230,7 @@ const DnsHealth = props => {
       color={getAutodiscoverColor()}
       loading={loading}
       onInfo={asyncDialogImport('Autodiscover')}
+      error={error}
     />
     <DNSChip
       title={t("autodiscoverSrv_expl")}
@@ -232,6 +239,7 @@ const DnsHealth = props => {
       color={getAutodiscoverSrvColor()}
       loading={loading}
       onInfo={asyncDialogImport('AutodiscoverSrv')}
+      error={error}
     />
     <DNSChip
       title={t("autoconfig_expl")}
@@ -240,6 +248,7 @@ const DnsHealth = props => {
       color={getAutoconfigColor()}
       loading={loading}
       onInfo={asyncDialogImport('Autoconfig')}
+      error={error}
     />
     <DNSChip
       title={t("spf_expl")}
@@ -248,6 +257,7 @@ const DnsHealth = props => {
       color={getSpfColor()}
       loading={loading}
       onInfo={asyncDialogImport('Spf')}
+      error={error}
     />
     <DNSChip
       title={t("dkim_expl")}
@@ -256,6 +266,7 @@ const DnsHealth = props => {
       color={getDkimColor()}
       loading={loading}
       onInfo={asyncDialogImport('Dkim')}
+      error={error}
     />
     <DNSChip
       title={t("dmarc_expl")}
@@ -264,6 +275,7 @@ const DnsHealth = props => {
       color={getDmarcColor()}
       loading={loading}
       onInfo={asyncDialogImport('Dmarc')}
+      error={error}
     />
     <DNSChip
       title={t("caldav_expl")}
@@ -272,6 +284,7 @@ const DnsHealth = props => {
       color={getDavTxtColor("caldavTXT")}
       loading={loading}
       onInfo={asyncDialogImport('DavTxt')}
+      error={error}
     />
     <DNSChip
       title={t("caldav_expl")}
@@ -280,6 +293,7 @@ const DnsHealth = props => {
       color={getOptionalSrvColor(["caldavSRV", "caldavsSRV"])}
       loading={loading}
       onInfo={asyncDialogImport('Caldav')}
+      error={error}
     />
     <DNSChip
       title={t("carddav_expl")}
@@ -288,6 +302,7 @@ const DnsHealth = props => {
       color={getOptionalSrvColor(["carddavSRV", "carddavsSRV"])}
       loading={loading}
       onInfo={asyncDialogImport('Carddav')}
+      error={error}
     />
     <DNSChip
       title={t("imap_expl")}
@@ -296,6 +311,7 @@ const DnsHealth = props => {
       color={getOptionalSrvColor(["imapSRV", "imapsSRV"])}
       loading={loading}
       onInfo={asyncDialogImport('Imap')}
+      error={error}
     />
     <DNSChip
       title={t("pop3_expl")}
@@ -304,6 +320,7 @@ const DnsHealth = props => {
       color={getOptionalSrvColor(["pop3SRV", "pop3sSRV"])}
       loading={loading}
       onInfo={asyncDialogImport('Pop3')}
+      error={error}
     />
     <DNSChip
       title={t("submission_expl")}
@@ -312,26 +329,27 @@ const DnsHealth = props => {
       color={getOptionalSrvColor(["submissionSRV"])}
       loading={loading}
       onInfo={asyncDialogImport('Submission')}
+      error={error}
     />
     {InfoDialog && <InfoDialog onClose={handleDialogClose} dnsCheck={dnsCheck} domain={domain}/>}
   </div>
 }
 
-const DNSChip = withTranslation()(withStyles(({ classes, loading, label, color, icon: Icon, onInfo }) => {
+const DNSChip = withTranslation()(withStyles(({ classes, loading, label, color, icon: Icon, onInfo, error }) => {
   return <Chip
     className={classes.chip}
-    style={{ backgroundColor: loading ? "#969696" : color }}
+    style={{ backgroundColor: loading || error ? "#969696" : color }}
     label={label}
     icon={loading ? <CircularProgress size={20} className={classes.cp}/> : <Icon className={classes.chipIcon} />}
     color={"info"}  // Necessary for icon color
-    onClick={onInfo}
+    onClick={loading || error ? null : onInfo}
   />
 }, styles));
 
 const mapDispatchToProps = (dispatch) => {
   return {
     checkDns: async domainID =>
-      await dispatch(fetchDnsCheckData(domainID)).catch(msg => Promise.reject(msg)),
+      await dispatch(fetchDnsCheckData(domainID)),
   };
 }
 
@@ -340,6 +358,7 @@ DnsHealth.propTypes = {
   checkDns: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
+  setSnackbar: PropTypes.func.isRequired,
 }
 
 export default connect(null, mapDispatchToProps)(
