@@ -68,6 +68,7 @@ const DnsHealth = props => {
 
   useEffect(() => {
     const { checkDns, domain, setSnackbar } = props;
+    setState({ ...state, loading: true });
     checkDns(domain.ID)
       .then(dnsCheck => {
         setState({ ...state, dnsCheck, loading: false, error: false });
@@ -76,7 +77,7 @@ const DnsHealth = props => {
         setSnackbar(message || 'Unknown error');
         setState({ ...state, loading: false, error: true });
       });
-  }, []);
+  }, [location.pathname]);
 
   const getReachabiltyColor = () => {
     const { dnsCheck } = state;
