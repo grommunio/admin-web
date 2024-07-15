@@ -68,6 +68,7 @@ const DnsHealth = props => {
 
   useEffect(() => {
     const { checkDns, domain, setSnackbar } = props;
+    if(error) return;
     setState({ ...state, loading: true });
     checkDns(domain.ID)
       .then(dnsCheck => {
