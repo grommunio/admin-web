@@ -38,6 +38,7 @@ const styles = theme => ({
 });
 
 const Altnames = props => {
+  console.log("Mounted");
 
   const { classes, t, user, handleAltnameEdit } = props;
   const { altnames } = user;

@@ -103,11 +103,11 @@ const User = props => {
             {...tfProps("Address", "streetaddress")}
             fullWidth={false}
             multiline
-            rows={3}
-            inputProps={{
+            rows={4}
+            InputProps={{
               style: {
-                height: 95,
-              },
+                minHeight: 128,
+              }
             }}
           />
         </Grid>
