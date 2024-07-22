@@ -346,7 +346,7 @@ const LdapConfig = props => {
         aliases: 'mailAlternativeAddress',
         groupMemberAttr: "memberOf",
         groupaddr: "mailPrimaryAddress",
-        groupfilter: '(objectclass=posixgroup)'
+        groupfilter: '(objectclass=posixgroup)',
         groupname: "cn",
       });
     } else if(templates === '389ds') {
