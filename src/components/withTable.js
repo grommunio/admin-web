@@ -24,7 +24,6 @@ function withTable(WrappedComponent, defaultState={}) {
       snackbar: '',
       adding: false,
       deleting: false,
-      loading: true,
       ...defaultState,
     });
     const [offset, setOffset] = useState(0);
@@ -40,12 +39,14 @@ function withTable(WrappedComponent, defaultState={}) {
       const { order, orderBy } = state;
       if(domain?.ID) {
         fetchTableData(domain.ID, { sort: orderBy + "," + order, ...(params || {})})
-          .then(() => setState({ ...state, loading: false }))
-          .catch((msg) => setState({ ...state, snackbar: msg, loading: false }));
+          .catch((msg) => {
+            setState({ ...state, snackbar: msg });
+          });
       } else {
         fetchTableData({ sort: orderBy + "," + order, ...(params || {})})
-          .then(() => setState({ ...state, loading: false }))
-          .catch((msg) => setState({ ...state, snackbar: msg, loading: false }));
+          .catch((msg) => {
+            setState({ ...state, snackbar: msg });
+          });
       }
     }
 
@@ -67,7 +68,7 @@ function withTable(WrappedComponent, defaultState={}) {
       setOffset(0);
     };
 
-    const handleScroll = (data, count, loading) => {
+    const handleScroll = (data, count) => {
       if (data.length >= count) return;
       if (
         Math.floor(
@@ -77,15 +78,13 @@ function withTable(WrappedComponent, defaultState={}) {
         document.getElementById("scrollDiv").offsetHeight + 20
       ) {
         const { orderBy, order } = state;
-        if (!loading) {
-          const newOffset = offset + defaultFetchLimit;
-          setOffset(newOffset);
-          fetchData({
-            sort: orderBy + "," + order,
-            offset: newOffset,
-            match: match || undefined,
-          })
-        }
+        const newOffset = offset + defaultFetchLimit;
+        setOffset(newOffset);
+        fetchData({
+          sort: orderBy + "," + order,
+          offset: newOffset,
+          match: match || undefined,
+        });
       }
     };
 
@@ -95,6 +94,7 @@ function withTable(WrappedComponent, defaultState={}) {
     });
 
     const handleMatch = (e) => {
+      setOffset(0);
       const { value } = e.target;
       setMatch(value);
       debouceFetch(value);
