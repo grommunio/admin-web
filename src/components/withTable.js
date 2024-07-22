@@ -75,7 +75,7 @@ function withTable(WrappedComponent, defaultState={}) {
           document.getElementById("scrollDiv").scrollHeight -
             document.getElementById("scrollDiv").scrollTop
         ) <=
-        document.getElementById("scrollDiv").offsetHeight + 20
+        document.getElementById("scrollDiv").offsetHeight + 100
       ) {
         const { orderBy, order } = state;
         const newOffset = offset + defaultFetchLimit;

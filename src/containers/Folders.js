@@ -74,7 +74,7 @@ const Folders = props => {
         document.getElementById("scrollDiv").scrollHeight -
           document.getElementById("scrollDiv").scrollTop
       ) <=
-      document.getElementById("scrollDiv").offsetHeight + 20
+      document.getElementById("scrollDiv").offsetHeight + 100
     ) {
       const { offset } = state;
       if (!loading) { 

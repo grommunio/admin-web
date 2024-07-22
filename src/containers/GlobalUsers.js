@@ -69,8 +69,8 @@ const GlobalUsers = props => {
   ]
 
   const handleScroll = () => {
-    const { Users, count, loading } = props.users;
-    props.handleScroll(Users, count, loading);
+    const { Users, count } = props.users;
+    props.handleScroll(Users, count);
   };
 
   const handleCheckClose = () => setState({ ...state, checking: false });
@@ -104,7 +104,7 @@ const GlobalUsers = props => {
       shared: prev.shared + (shared && !isGroup ? 1 : 0),
     }
   }, { normal: 0, group: 0, shared: 0 });
-
+  
   return (
     <TableViewContainer
       handleScroll={handleScroll}
