@@ -54,6 +54,7 @@ const styles = theme => ({
     color: '#e6e6e6',
     overflowX: 'hidden',
     overflowY: 'auto',
+    border: 'none',
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
