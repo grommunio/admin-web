@@ -69,7 +69,6 @@ const Account = props => {
 
   const types = [
     { name: 'User', ID: 0 },
-    { name: 'Mail list', ID: 1 },
     { name: 'Room', ID: 7 },
     { name: 'Equipment', ID: 8 },
   ]
