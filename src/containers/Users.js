@@ -144,9 +144,7 @@ const Users = props => {
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { checking, taskMessage, taskID } = state;
 
-  const contactsRemoved = users.Users.filter(u => u.status !== 5 /* Remove contacts */);
-
-  const userCounts = contactsRemoved.reduce((prev, curr) => {
+  const userCounts = users.Users.reduce((prev, curr) => {
     const isGroup = curr.properties?.displaytypeex === 1;
     const shared = curr.status === 4;
     return {
@@ -231,7 +229,7 @@ const Users = props => {
         </Tooltip>
       </TableActionGrid>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: contactsRemoved.length })}
+        {t("showingUser", { count: users.Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
@@ -262,7 +260,7 @@ const Users = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {contactsRemoved.map((obj, idx) => {
+              {users.Users.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow
@@ -299,7 +297,7 @@ const Users = props => {
         </Hidden>
         <Hidden lgUp>
           <List>
-            {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
+            {users.Users.map((obj, idx) => 
               <ListItemButton
                 key={idx}
                 onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}
@@ -368,7 +366,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async (domainID, params) => {
-      await dispatch(fetchUsersData(domainID, {...params, mlist: ""})).catch(error => Promise.reject(error));
+      await dispatch(fetchUsersData(domainID, {...params, status: "0,1,4", mlist: ""})).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));

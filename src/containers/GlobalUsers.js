@@ -93,9 +93,7 @@ const GlobalUsers = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const { checking } = state;
 
-  const contactsRemoved = users.Users.filter(u => u.status !== 5 /* Remove contacts */);
-
-  const userCounts = contactsRemoved.reduce((prev, curr) => {
+  const userCounts = users.Users.reduce((prev, curr) => {
     const isGroup = curr.properties?.displaytypeex === 1;
     const shared = curr.status === 4;
     return {
@@ -133,7 +131,7 @@ const GlobalUsers = props => {
         </Button>
       </TableActionGrid>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: contactsRemoved.length })}
+        {t("showingUser", { count: users.Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.group} ${t("groups")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
@@ -160,7 +158,7 @@ const GlobalUsers = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {contactsRemoved.map((obj, idx) => {
+              {users.Users.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow key={idx} hover onClick={handleRedirect(obj)}>
@@ -192,7 +190,7 @@ const GlobalUsers = props => {
         </Hidden>
         <Hidden lgUp>
           <List>
-            {users.Users.filter(u => u.status !== 5 /* Remove contacts */).map((obj, idx) => 
+            {users.Users.map((obj, idx) => 
               <ListItemButton
                 key={idx}
                 onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
@@ -255,10 +253,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async params => {
-      await dispatch(fetchAllUsers(params)).catch(error => Promise.reject(error));
+      await dispatch(fetchAllUsers({ status: '0,1,4', ...params })).catch(error => Promise.reject(error));
     },
     fetchUserDetails: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
-      .then(user => user)
       .catch(msg => Promise.reject(msg)),
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
