@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
@@ -18,6 +18,8 @@ import { fetchDomainDetails } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
+import { CapabilityContext } from '../../CapabilityContext';
+import { SYSTEM_ADMIN_WRITE } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -51,6 +53,8 @@ const AddUser = props => {
   const [langs, setLangs] = useState([]);
   const [usernameError, setUsernameError] = useState(false);
   const navigate = useNavigate();
+  const context = useContext(CapabilityContext);
+  const isSystemAdmin = context.includes(SYSTEM_ADMIN_WRITE);
 
   const statuses = [
     { name: 'Normal', ID: 0 },
@@ -66,7 +70,7 @@ const AddUser = props => {
 
   const handleEnter = async () => {
     const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = props;
-    fetchServers().catch(error => props.onError(error));
+    if(isSystemAdmin) fetchServers().catch(error => props.onError(error));
     const domainDetails = await fetchDomainDetails(domain.ID);
     const langs = await storeLangs()
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
@@ -327,14 +331,14 @@ const AddUser = props => {
               </MenuItem>
             ))}
           </TextField>
-          <MagnitudeAutocomplete
+          {isSystemAdmin && <MagnitudeAutocomplete
             value={homeserver}
             filterAttribute={'hostname'}
             onChange={handleAutocomplete('homeserver')}
             className={classes.input} 
             options={servers}
             label={t('Homeserver')}
-          />
+          />}
           <FormControlLabel
             control={
               <Checkbox
