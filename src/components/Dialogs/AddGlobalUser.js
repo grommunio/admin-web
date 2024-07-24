@@ -8,7 +8,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import moment from 'moment';
 import { fetchDomainData, fetchDomainDetails } from '../../actions/domains';
 import { addUserData, getStoreLangs } from '../../actions/users';
@@ -53,6 +53,7 @@ const AddGlobalUser = props => {
     chatAvailable: false,
   });
   const [langs, setLangs] = useState([]);
+  const config = useSelector((state) => state.config);
   const [usernameError, setUsernameError] = useState(false);
   const navigate = useNavigate();
 
@@ -243,7 +244,7 @@ const AddGlobalUser = props => {
     domain, status, homeserver, lang, chat, chatAvailable } = state;
   const { displayname, displaytypeex } = properties;
   const addDisabled = !domain || usernameError || !username || loading ||
-      ((password !== repeatPw || password.length < 6) && status !== 4);
+      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
     
   return (
     <Dialog

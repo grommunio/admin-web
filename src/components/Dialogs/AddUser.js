@@ -8,7 +8,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import moment from 'moment';
 import { addUserData, getStoreLangs } from '../../actions/users';
 import { checkFormat } from '../../api';
@@ -50,6 +50,7 @@ const AddUser = props => {
     lang: '',
     chatAvailable: false,
   });
+  const config = useSelector((state) => state.config);
   const [langs, setLangs] = useState([]);
   const [usernameError, setUsernameError] = useState(false);
   const navigate = useNavigate();
@@ -231,7 +232,7 @@ const AddUser = props => {
     status, homeserver, lang, chat, chatAvailable } = state;
   const { displayname, displaytypeex } = properties;
   const addDisabled = usernameError || !username || loading || 
-      ((password !== repeatPw || password.length < 6) && status !== 4);
+      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
   return (
     <Dialog
       onClose={onClose}
