@@ -56,6 +56,7 @@ function MemoryLine(props) {
           yaxis: {
             tickAmount: 4,
             max: memory.total[0] || 4000000000,
+            min: 0,
             labels: {
               style: {
                 colors: theme.palette.text.primary,
