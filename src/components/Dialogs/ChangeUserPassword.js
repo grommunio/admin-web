@@ -80,7 +80,7 @@ const ChangeUserPassword = props => {
           variant="contained"
           color="primary"
           onClick={handlePasswordChange}
-          disabled={checkPw !== newPw}
+          disabled={checkPw !== newPw || newPw.length < 6}
           type="submit"
         >
           {t('Save')}
