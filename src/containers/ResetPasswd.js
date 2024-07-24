@@ -87,6 +87,7 @@ const ResetPasswd = props => {
           options={users || []}
           label={t('Users')}
           placeholder={t("Search users") +  "..."}
+          isOptionEqualToValue={(option, value) => option.ID === value.ID}
         />
         <FormControl className={classes.form}>
           <TextField 

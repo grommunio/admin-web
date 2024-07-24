@@ -132,6 +132,7 @@ const AddContact = props => {
               placeholder={t("Search domains")  + "..."}
               autoFocus
               autoSelect
+              isOptionEqualToValue={(option, value) => option.ID === value.ID}
             />
           </FormControl>
           <Grid item xs={12} className={classes.gridItem}>

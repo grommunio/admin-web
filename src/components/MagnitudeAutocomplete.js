@@ -17,7 +17,7 @@ const MagnitudeAutocomplete = props => {
   return <Autocomplete
     className={className}
     inputValue={inputValue}
-    value={value}
+    value={value || null}
     onChange={onChange}
     options={options || []}
     getOptionLabel={getOptionLabel || (o => {

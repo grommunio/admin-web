@@ -309,7 +309,7 @@ const AddUser = props => {
             className={classes.input}
             label={t("Language")}
             fullWidth
-            value={lang || 'en_US'}
+            value={lang || (langs.length ? 'en_US' : "")}
             onChange={handleInput('lang')}
           >
             {langs.map((l) => (
@@ -339,6 +339,7 @@ const AddUser = props => {
             className={classes.input} 
             options={servers}
             label={t('Homeserver')}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />}
           <FormControlLabel
             control={

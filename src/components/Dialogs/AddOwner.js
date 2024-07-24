@@ -77,6 +77,8 @@ const AddOwner = props => {
             options={Users || []}
             placeholder={t("Search users") +  "..."}
             label={t('Owners')}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
+            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
           />
         </FormControl>
       </DialogContent>

@@ -271,6 +271,7 @@ const DomainListDetails = props => {
             className={classes.input} 
             options={orgs}
             label={t('Organization')}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />}
           <TextField 
             className={classes.input} 
@@ -314,6 +315,7 @@ const DomainListDetails = props => {
             className={classes.input} 
             options={servers}
             label={t('Homeserver')}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />
           <FormControlLabel
             control={

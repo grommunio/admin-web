@@ -246,13 +246,14 @@ const Account = props => {
         options={servers}
         label={t('Homeserver')}
         disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
+        isOptionEqualToValue={(option, value) => option.ID === value.ID}
       />}
       <TextField
         select
         className={classes.input}
         label={t("Language")}
         fullWidth
-        value={lang || 'en_US'}
+        value={(langs.length ? lang || 'en_US' : "")}
         disabled
       >
         {langs.map((l) => (

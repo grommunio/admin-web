@@ -366,6 +366,7 @@ const GroupDetails = props => {
               }
             }}
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
           {listPrivilege === 3 && <MagnitudeAutocomplete
             multiple
@@ -386,6 +387,7 @@ const GroupDetails = props => {
               }
             }}
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
         </FormControl>}
         {tab === 1 && <User

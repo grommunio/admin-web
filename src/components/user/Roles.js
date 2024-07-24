@@ -38,11 +38,11 @@ const RolesTab = props => {
           value={roles || []}
           filterAttribute={'name'}
           getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
-          getOptionDisabled={option => roles.includes(option.ID)}
           onChange={handleAutocomplete('roles')}
           className={classes.input} 
           options={Roles || []}
           label={t('Roles')}
+          isOptionEqualToValue={(option, value) => option.ID === value}
           placeholder={t("Search roles") + "..."}
           renderOption={(props, option) => (
             <li {...props} key={option.ID}>

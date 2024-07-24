@@ -340,7 +340,7 @@ const DomainMenu = props => {
             className={classes.input}
             label={t("Language")}
             fullWidth
-            value={lang || ''}
+            value={(langs.length ? lang || 'en_US' : "")}
             onChange={handleInput('lang')}
           >
             {langs.map((l) => (

@@ -237,7 +237,8 @@ const RoleDetails = props => {
             options={Users || []}
             label={t('Users')}
             placeholder={t("Search users") + "..."}
-            isOptionEqualToValue={(option, value) => option.ID === value.ID}
+            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />
           {(permissions || []).map((permission, idx) =>
             <div key={idx} className={classes.row}>
@@ -268,6 +269,7 @@ const RoleDetails = props => {
                 variant="standard"
                 fullWidth
                 autoSelect
+                isOptionEqualToValue={(option, value) => option.ID === value.ID}
               />}
               {permission.permission === ORG_ADMIN && <MagnitudeAutocomplete
                 value={permission.params}
@@ -282,6 +284,7 @@ const RoleDetails = props => {
                 variant="standard"
                 fullWidth
                 autoSelect
+                isOptionEqualToValue={(option, value) => option.ID === value.ID}
               />}
               <IconButton size="small" onClick={removeRow(idx)}>
                 <Delete fontSize="small" color="error" />

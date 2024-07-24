@@ -122,6 +122,7 @@ const AddOrg = props => {
             label={t('Domains')}
             placeholder={t("Search domains") + "..."}
             multiple
+            isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />
         </FormControl>
       </DialogContent>

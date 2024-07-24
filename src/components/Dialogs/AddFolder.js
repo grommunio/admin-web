@@ -136,6 +136,7 @@ const AddFolder = props => {
             options={Users || []}
             label={t('Owners')}
             placeholder={t("Search domains")  + "..."}
+            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
           />
         </FormControl>
       </DialogContent>
