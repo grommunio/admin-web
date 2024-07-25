@@ -15,6 +15,7 @@ import { fetchLicenseData } from "./actions/license";
 import './snow.css';
 import { checkHolidaySeason } from "./utils";
 import makeLoadableComponent from "./lazy";
+import SilentRefresh from "./components/SilentRefresh";
 
 const styles = {
   root: {
@@ -75,6 +76,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
           <div className="inner">❅</div>
         </div>
       )}
+      {authenticated && <SilentRefresh />}
       <CapabilityContext.Provider value={capabilities}>
         <AsyncMainView
           classes={classes}

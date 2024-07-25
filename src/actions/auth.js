@@ -6,6 +6,7 @@ import {
   AUTH_ERROR,
   PROFILE_DATA_RECEIVED,
   DRAWER_DOMAINS_REVEICED,
+  TOKEN_REFRESH,
 } from '../actions/types';
 import { login, renewToken, profile, drawerDomains } from '../api';
 
@@ -38,6 +39,24 @@ export function authLogin(user, pass) {
       return Promise.reject(err);
     }
   };
+}
+
+export function refreshToken() {
+  return async dispatch => {
+    try {
+      const { grommunioAuthJwt: newToken, csrf } = await dispatch(renewToken());
+      if(newToken && csrf) {
+        document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
+          + (window.location.protocol === 'https:' ? ';secure' : '');
+        window.localStorage.setItem('grommunioAuthJwt', newToken);
+        await dispatch({ type: TOKEN_REFRESH, csrf });
+      }
+    } catch(err) {
+      clearStorage();
+      await dispatch(authError(err.message || "Failed to refresh token"));
+      return Promise.reject(err);
+    }
+  }
 }
 
 export function authLoginWithToken(token) {

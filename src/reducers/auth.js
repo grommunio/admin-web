@@ -4,6 +4,7 @@
 import {
   AUTH_AUTHENTICATED,
   AUTH_ERROR,
+  TOKEN_REFRESH,
 } from '../actions/types';
 
 const defaultState = {
@@ -32,6 +33,12 @@ function authReducer(state = defaultState, action) {
       error: action.error || true,
     };
   }
+
+  case TOKEN_REFRESH:
+    return {
+      ...state,
+      csrf: action.csrf,
+    }
 
   default:
     return state;
