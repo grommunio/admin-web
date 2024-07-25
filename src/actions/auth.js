@@ -63,7 +63,7 @@ export function authLoginWithToken(token) {
       }
     } catch(err) {
       clearStorage();
-      await dispatch(authError("No token received"));
+      await dispatch(authError(err.message || "Session expired. Please login again"));
       return Promise.reject(err);
     }
   };
