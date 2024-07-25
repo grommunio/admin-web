@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { refreshToken } from "../actions/auth";
 
 
 const SilentRefresh = ({ children }) => {
+  const config = useSelector((state) => state.config);
   const dispatch = useDispatch();
   let fetchInterval = null;
 
@@ -18,7 +19,7 @@ const SilentRefresh = ({ children }) => {
     fetchInterval = setInterval(() => {
       console.info("token refreshed");
       dispatch(refreshToken()).catch(() => console.info("Failed to refresh token"));
-    }, 1000 * 60 * 60 * 24); // Refresh every 24h
+    }, 1000 * (config.tokenRefreshInterval || 60 * 60 * 24)); // Default: 24h
   }
 
   return children;

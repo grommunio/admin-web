@@ -95,6 +95,8 @@ Following attributes are available:
 
 * `devMode:boolean` For development, enables redux logger (default: `false`)
 
+* `tokenRefreshInterval:int` Sets token refresh interval in seconds. (default: `86400` (24h))
+
 * `defaultDarkMode:boolean` If `true`, the app will be set to dark mode, if not explicitly set by the user/browser
 
 * `defaultTheme:string` Name of the default theme to use. Available themes: grommunio, green, purple, magenta (default: "grommunio")

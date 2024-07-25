@@ -14,6 +14,7 @@ const defaultState = {
   rspamdWebAddress: '',
   defaultDarkMode: false,
   defaultTheme: 'grommunio',
+  tokenRefreshInterval: 86400,
   customImages: {
     //localhost: {
     //  logo: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
