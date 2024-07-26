@@ -6,8 +6,9 @@ import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-
 import { systemUpdate } from '../../actions/misc';
 import { fetchUpdateLogData } from '../../actions/logs';
 import { copyToClipboard } from '../../utils';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
+import moment from 'moment';
 
 const styles = theme => ({
   data: {
@@ -39,6 +40,8 @@ const styles = theme => ({
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
 const Updater = props => {
+  const license = useSelector(state => state.license);
+  const supportedReposAvailable = license ? moment().isBefore(license?.notAfter) : false;
   const [state, setState] = useState({
     checkLoading: false,
     updateLoading: false,
@@ -46,7 +49,8 @@ const Updater = props => {
     copied: false,
   });
   const [updateLog, setUpdateLog] = useState([]);
-  const [repo, setRepo] = useState(localStorage.getItem("packageRepository") || "supported");
+  const [repo, setRepo] = useState(localStorage.getItem("packageRepository")
+    || (supportedReposAvailable ? "supported" : "community"));
 
   useEffect(() => {
     const listener = window.addEventListener('beforeunload', onBeforeUnload)
@@ -127,7 +131,11 @@ const Updater = props => {
         className={classes.select}
         size='small'
       >
-        <MenuItem value="supported">Supported</MenuItem>
+        {supportedReposAvailable ?
+          <MenuItem value="supported">Supported</MenuItem> : 
+          <Tooltip placement='top' title={t("License required to fetch supported repositories")}>
+            <span><MenuItem value="supported" disabled>Supported</MenuItem></span>
+          </Tooltip>}
         <MenuItem value="community">Community</MenuItem>
       </TextField>
       <Button
@@ -137,7 +145,7 @@ const Updater = props => {
         className={classes.updateButton}
         disabled={updating}
       >
-          Check for updates
+        Check for updates
       </Button>
       <Button
         variant='contained'
@@ -146,7 +154,7 @@ const Updater = props => {
         className={classes.updateButton}
         disabled={updating}
       >
-          Update
+        Update
       </Button>
       <Button
         variant='contained'
@@ -154,7 +162,7 @@ const Updater = props => {
         startIcon={upgradeLoading ? <Loader/> : <Upgrade />}
         disabled={updating}
       >
-          Upgrade
+        Upgrade
       </Button>
     </div>
     <Paper elevation={0} className={classes.logs}>
