@@ -9,7 +9,7 @@ import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLab
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
-import { deleteDomainData, fetchDnsCheckData } from '../actions/domains';
+import { fetchDnsCheckData } from '../actions/domains';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import { CapabilityContext } from '../CapabilityContext';
@@ -519,7 +519,6 @@ const DomainMenu = props => {
       </Paper>
       <DeleteDomain
         open={deleting}
-        delete={props.delete}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -535,7 +534,6 @@ DomainMenu.propTypes = {
   t: PropTypes.func.isRequired,
   domain: PropTypes.object,
   capabilities: PropTypes.array,
-  delete: PropTypes.func.isRequired,
   createParams: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchParams: PropTypes.func.isRequired,
@@ -553,11 +551,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    delete: async (id, params) => {
-      await dispatch(deleteDomainData(id, params)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
     fetch: async domainID => await dispatch(fetchDrawerDomain(domainID))
       .catch(message => Promise.reject(message)),
     edit: async (createParams, domainID) => await dispatch(editCreateParamsData(createParams, domainID))

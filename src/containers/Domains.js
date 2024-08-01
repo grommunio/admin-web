@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
-import { fetchDomainData, deleteDomainData } from "../actions/domains";
+import { fetchDomainData } from "../actions/domains";
 import AddDomain from "../components/Dialogs/AddDomain";
 import DeleteDomain from "../components/Dialogs/DeleteDomain";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
@@ -189,7 +189,6 @@ const Domains = props => {
       />
       <DeleteDomain
         open={!!deleting}
-        delete={props.delete}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -202,7 +201,6 @@ const Domains = props => {
 
 Domains.propTypes = {
   domains: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
   ...defaultTableProptypes,
 };
 
@@ -214,11 +212,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchTableData: async (params) => {
       await dispatch(fetchDomainData(params)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
-    delete: async (id, params) => {
-      await dispatch(deleteDomainData(id, params)).catch((error) =>
         Promise.reject(error)
       );
     },

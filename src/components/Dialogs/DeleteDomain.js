@@ -6,8 +6,9 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { DOMAIN_PURGE } from '../../constants';
+import { deleteDomainData } from '../../actions/domains';
 
 
 const DeleteDomain = props => {
@@ -16,13 +17,14 @@ const DeleteDomain = props => {
     purge: false,
     deleteFiles: false,
   });
+  const dispatch = useDispatch();
 
   const handleDelete = e => {
     e.preventDefault();
     const { id, onSuccess, onError } = props;
     const { purge, deleteFiles } = state;
     setState({ ...state, loading: true });
-    props.delete(id, { purge, deleteFiles })
+    dispatch(deleteDomainData(id, { purge, deleteFiles }))
       .then(() => {
         if(onSuccess) onSuccess();
         setState({ ...state, loading: false });
@@ -107,7 +109,6 @@ DeleteDomain.propTypes = {
   onSuccess: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
   capabilities: PropTypes.array.isRequired,
 };
 

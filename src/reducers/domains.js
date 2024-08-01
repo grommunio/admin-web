@@ -50,7 +50,7 @@ function domainsReducer(state = defaultState, action) {
   case DOMAIN_DATA_DELETE:
     return {
       ...state,
-      Domains: action.purge ? [...state.Domains].filter(domain => domain.ID !== action.id)
+      Domains: action.params?.purge ? [...state.Domains].filter(domain => domain.ID !== action.id)
         : deactivateDomain(state.Domains, action.id),
       count: state.count - 1,
     };

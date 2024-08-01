@@ -46,7 +46,7 @@ export function editDomainData(...endpointParams) {
 }
 
 export function deleteDomainData(id, params) {
-  return defaultDeleteHandler(deleteDomain, DOMAIN_DATA_DELETE, {id, ...params});
+  return defaultDeleteHandler(deleteDomain, DOMAIN_DATA_DELETE, {id, params});
 }
 
 export function fetchDnsCheckData(...endpointParams) {
