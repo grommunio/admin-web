@@ -270,6 +270,21 @@ const UserDetails = props => {
     });
   }
 
+  const handlePropertyCheckbox = field => event => {
+    const { user } = state;
+    setState({
+      ...state, 
+      user: {
+        ...user,
+        properties: {
+          ...user.properties,
+          [field]: event.target.checked,
+        },
+      },
+      unsaved: true,
+    });
+  }
+
   const handleIntPropertyChange = field => event => {
     const { user } = state;
     const value = event.target.value;
@@ -686,6 +701,7 @@ const UserDetails = props => {
           handleInput={handleInput}
           handleStatusInput={handleStatusInput}
           handlePropertyChange={handlePropertyChange}
+          handlePropertyCheckbox={handlePropertyCheckbox}
           handleIntPropertyChange={handleIntPropertyChange}
           handleCheckbox={handleCheckbox}
           handleUnitChange={handleUnitChange}

@@ -173,13 +173,14 @@ const Account = props => {
 
   const { classes, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
     handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
-    handlePasswordChange, handleChatUser, handleServer,
+    handlePasswordChange, handleChatUser, handleServer, handlePropertyCheckbox,
     servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
     const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
     ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
   const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
-    prohibitsendquota, attributehidden_gromox } = properties;
+    prohibitsendquota, attributehidden_gromox, scheduleinfoautoacceptappointments,
+    scheduleinfodisallowoverlappingappts, scheduleinfodisallowrecurringappts } = properties;
 
   return (
     <FormControl className={classes.form}>
@@ -382,11 +383,46 @@ const Account = props => {
         onChange={handlePropertyChange('creationtime')}
         disabled
       />
+      <Typography sx={{ mt: 1 }}>
+        Automatic processing of meeting requests
+      </Typography>
+      <Grid container direction="column" sx={{ p: 1 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={Boolean(scheduleinfodisallowrecurringappts) || false}
+              onChange={handlePropertyCheckbox("scheduleinfodisallowrecurringappts")}
+              color="primary"
+            />
+          }
+          label={t('Decline all recurring meeting requests.')}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={Boolean(scheduleinfodisallowoverlappingappts) || false}
+              onChange={handlePropertyCheckbox("scheduleinfodisallowoverlappingappts")}
+              color="primary"
+            />
+          }
+          label={t('Decline all meeting requests with scheduling conflicts.')}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={Boolean(scheduleinfoautoacceptappointments) || false}
+              onChange={handlePropertyCheckbox("scheduleinfoautoacceptappointments")}
+              color="primary"
+            />
+          }
+          label={t('Accept conflict-free meeting requests. (If unchecked, requests will be added to the calendar as tenative only, with no response towards the organizer.)')}
+        />
+      </Grid>
       {status !== 4 && <Tooltip
         placement="top-start"
         title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
       >
-        <Grid container className={classes.input}>
+        <Grid container>
           <FormControlLabel
             control={
               <Checkbox
@@ -411,7 +447,7 @@ const Account = props => {
           />
         </Grid>
       </Tooltip>}
-      <Grid container className={classes.input}>
+      <Grid container>
         {status !== 4 && <FormControlLabel
           control={
             <Checkbox
@@ -444,7 +480,7 @@ const Account = props => {
           label={t('Allow POP3/IMAP logins')}
         />}
       </Grid>
-      {status !== 4 && <Grid container className={classes.input}>
+      {status !== 4 && <Grid container>
         <FormControlLabel
           control={
             <Checkbox
@@ -506,6 +542,7 @@ Account.propTypes = {
   handlePasswordChange: PropTypes.func.isRequired,
   handleChatUser: PropTypes.func.isRequired,
   handleServer: PropTypes.func.isRequired,
+  handlePropertyCheckbox: PropTypes.func.isRequired,
   rawData: PropTypes.object,
   langs: PropTypes.array,
   servers: PropTypes.array.isRequired,
