@@ -178,7 +178,11 @@ const GroupDetails = props => {
       specifieds: specifieds.map(user => user.username),
     })
       .then(() => {
-        if(userDirty) editUser(domain.ID, user)
+        if(userDirty) editUser(domain.ID, {
+          ID: user.ID,
+          properties: user.properties,
+          aliases: user.aliases
+        })
           .then(() => setState({ ...state, snackbar: 'Success!' }))
           .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
         else setState({ ...state, snackbar: 'Success!' });
