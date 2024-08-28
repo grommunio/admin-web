@@ -129,8 +129,8 @@ const Oof = props => {
       state,
       externalAudience,
       // Only send dates when oof is scheduled
-      startTime: [0, 1].includes(state) ? undefined : moment(startTime).format('YYYY-MM-DD hh:mm') + ':00',
-      endTime: [0, 1].includes(state) ? undefined : moment(endTime).format('YYYY-MM-DD hh:mm') + ':00',
+      startTime: [0, 1].includes(state) || !startTime ? undefined : startTime.format('YYYY-MM-DD HH:mm') + ':00',
+      endTime: [0, 1].includes(state) || !endTime ? undefined : endTime.format('YYYY-MM-DD HH:mm') + ':00',
       internalSubject: DOMPurify.sanitize(internalSubject),
       internalReply,
       externalSubject: DOMPurify.sanitize(externalSubject),
@@ -146,7 +146,7 @@ const Oof = props => {
 
   const tfProps = (label, field) => ({
     fullWidth: true,
-    disabled: state === 0,
+    disabled: [0, 1].includes(state),
     label: t(label),
     value: oof[field],
     onChange: handleInput(field),

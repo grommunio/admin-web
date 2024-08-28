@@ -15,6 +15,7 @@ const CustomDateTimePicker = props => {
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <DateTimePicker
+        ampm={false}
         renderInput={(params) => <TextField
           fullWidth={fullWidth}
           InputProps={{
