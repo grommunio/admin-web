@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
@@ -10,7 +10,11 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   List,
   ListItemButton,
   ListItemIcon,
-  ListItemText} from '@mui/material';
+  ListItemText,
+  TextField,
+  MenuItem,
+  FormControlLabel,
+  Checkbox} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '../actions/users';
@@ -24,7 +28,7 @@ import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
-import { getUserTypeString } from '../utils';
+import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 
@@ -54,23 +58,56 @@ const styles = theme => ({
   icon: {
     marginRight: 8,
   },
+  filterRow: {
+    display: 'flex',
+    marginLeft: 16,
+  }
 });
 
 const GlobalUsers = props => {
   const [state, setState] = useState({
     checking: false,
   });
+  const [showDeactivated, setShowDeactivated] = useState(false);
+  const [mode, setMode] = useState(0);
+  const [type, setType] = useState(0);
   const context = useContext(CapabilityContext);
 
   const columns = [
     { label: 'Type', value: 'type' },
     { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
-  ]
+  ];
+
+  useEffect(() => {
+    const { fetchTableData } = props;
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    fetchTableData({ sort: orderBy + "," + order, filterProp, status: statuses })
+      .catch(err => err);
+  }, [showDeactivated, mode, type]);
 
   const handleScroll = () => {
     const { Users, count } = props.users;
-    props.handleScroll(Users, count);
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    props.handleScroll(Users, count, { filterProp, statuses });
   };
 
   const handleCheckClose = () => setState({ ...state, checking: false });
@@ -85,7 +122,26 @@ const GlobalUsers = props => {
     }
   }
 
-  const { classes, t, users, tableState, handleMatch, handleRequestSort,
+  const handleSort = orderBy => () => {
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    props.handleRequestSort(orderBy, { filterProp, status: statuses })();
+  }
+
+  const handleSelect = field => (e) => {
+    if(field === "mode") setMode(e.target.value);
+    else if(field === "type") setType(e.target.value);
+  };
+
+  const { classes, t, users, tableState, handleMatch,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
@@ -102,7 +158,7 @@ const GlobalUsers = props => {
       shared: prev.shared + (shared && !isGroup ? 1 : 0),
     }
   }, { normal: 0, group: 0, shared: 0 });
-  
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -130,6 +186,38 @@ const GlobalUsers = props => {
           {t('New user')}
         </Button>
       </TableActionGrid>
+      <div className={classes.filterRow}>
+        <TextField
+          label="Mode"
+          select
+          value={mode}
+          onChange={handleSelect("mode")}
+          size='small'
+          sx={{ width: 100, mr: 1 }}
+        >
+          <MenuItem value={0}>All</MenuItem>
+          <MenuItem value={1}>Normal</MenuItem>
+          <MenuItem value={4}>Shared</MenuItem>
+        </TextField>
+        <TextField
+          label="Mode"
+          select
+          value={type}
+          onChange={handleSelect("type")}
+          size='small'
+          sx={{ width: 100, mr: 1 }}
+        >
+          <MenuItem value={0}>Normal</MenuItem>
+          <MenuItem value={7}>Room</MenuItem>
+        </TextField>
+        <FormControlLabel
+          control={<Checkbox
+            checked={showDeactivated}
+            onChange={() => setShowDeactivated(!showDeactivated)}
+          />}
+          label="Show deactivated"
+        />
+      </div>
       <Typography className={classes.count} color="textPrimary">
         {t("showingUser", { count: users.Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.group} ${t("groups")}, ${userCounts.shared} ${t("shared")})`}
@@ -144,7 +232,7 @@ const GlobalUsers = props => {
                     active={orderBy === 'username'}
                     align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={handleRequestSort('username')}
+                    onClick={handleSort('username')}
                   >
                     {t('Username')}
                   </TableSortLabel>
@@ -174,6 +262,7 @@ const GlobalUsers = props => {
                     <TableCell>
                       {t(getUserTypeString(properties.displaytypeex))}
                       {obj.status === 4 && ` (${t("Shared")})`}
+                      {obj.status === 1 && ` (${t("Deactivated")})`}
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
@@ -211,6 +300,14 @@ const GlobalUsers = props => {
           </List>
         </Hidden>
         {(users.Users.length < users.count) && <Grid container justifyContent="center">
+          <Button
+            variant='outlined'
+            size='small'
+            sx={{ m: 1 }}
+            onClick={handleScroll}
+          >
+            Load more
+          </Button>
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid>}
       </Paper>
@@ -253,7 +350,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async params => {
-      await dispatch(fetchAllUsers({ status: '0,1,4', ...params })).catch(error => Promise.reject(error));
+      await dispatch(fetchAllUsers({ ...params })).catch(error => Promise.reject(error));
     },
     fetchUserDetails: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
       .catch(msg => Promise.reject(msg)),
@@ -268,4 +365,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(GlobalUsers, { orderBy: 'username'});
+  mapStateToProps, mapDispatchToProps, styles)(GlobalUsers, { orderBy: 'username', suppressFetch: true });

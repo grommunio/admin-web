@@ -81,8 +81,8 @@ const Servers = props => {
   }
 
   const handleScroll = () => {
-    const { Servers, count, loading } = props.servers;
-    props.handleScroll(Servers, count, loading);
+    const { Servers, count } = props.servers;
+    props.handleScroll(Servers, count);
   };
 
   const { classes, t, servers, tableState, handleMatch, handleRequestSort,

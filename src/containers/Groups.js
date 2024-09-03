@@ -62,8 +62,8 @@ const Groups = props => {
   const handleCheckClose = () => setState({ ...state, checking: false });
 
   const handleScroll = () => {
-    const { Groups, count, loading } = props.groups;
-    props.handleScroll(Groups, count, loading);
+    const { Groups, count } = props.groups;
+    props.handleScroll(Groups, count);
   };
 
   const handleNavigation = path => event => {

@@ -47,8 +47,8 @@ const Orgs = props => {
   ];
 
   const handleScroll = () => {
-    const { Orgs, count, loading } = props.orgs;
-    props.handleScroll(Orgs, count, loading);
+    const { Orgs, count } = props.orgs;
+    props.handleScroll(Orgs, count);
   };
 
   const { classes, t, orgs, tableState, handleMatch, handleRequestSort,

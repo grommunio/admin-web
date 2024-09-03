@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid, TableSortLabel,
-  CircularProgress, Tooltip, Hidden, List, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+  CircularProgress, Tooltip, Hidden, List, ListItemButton, ListItemText, ListItemIcon, 
+  TextField,
+  MenuItem,
+  FormControlLabel,
+  Checkbox} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
@@ -20,7 +24,7 @@ import TaskCreated from '../components/Dialogs/TaskCreated';
 import withStyledReduxTable from '../components/withTable';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
-import { getUserTypeString } from '../utils';
+import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { useNavigate } from 'react-router';
@@ -51,6 +55,10 @@ const styles = theme => ({
   icon: {
     marginRight: 8,
   },
+  filterRow: {
+    display: 'flex',
+    marginLeft: 16,
+  }
 });
 
 const Users = props => {
@@ -60,12 +68,25 @@ const Users = props => {
     taskMessage: '',
     taskID: null,
   });
+  const [showDeactivated, setShowDeactivated] = useState(false);
+  const [mode, setMode] = useState(0);
+  const [type, setType] = useState(0);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
   const handleScroll = () => {
-    const { Users, count, loading } = props.users;
-    props.handleScroll(Users, count, loading);
+    const { Users, count } = props.users;
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    props.handleScroll(Users, count, { filterProp, statuses });
   };
 
   const columns = [
@@ -73,7 +94,23 @@ const Users = props => {
     { label: 'Display name', value: 'displayname' },
     { label: 'LDAP ID', value: 'ldapID' },
     { label: 'Storage quota limit', value: 'storagequotalimit' },
-  ]
+  ];
+
+  useEffect(() => {
+    const { domain, fetchTableData } = props;
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    fetchTableData(domain.ID, { sort: orderBy + "," + order, filterProp, status: statuses })
+      .catch(err => err);
+  }, [showDeactivated, mode, type]);
 
   const handleNavigation = path => event => {
     event.preventDefault();
@@ -109,8 +146,23 @@ const Users = props => {
           // No task created -> Reload table data
           const { tableState } = props;
           const { order, orderBy, match } = tableState;
+          const statuses = [];
+          if(showDeactivated) statuses.push(1);
+          if(mode === 0) {
+            statuses.push(0, 4);
+          }
+          else if(mode === 4) statuses.push(4);
+          else statuses.push(0);
+          const filterProp = generatePropFilterString({
+            displaytypeex: type,
+          });
           setState({ ...state, snackbar: 'Success!' });
-          fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+          fetchTableData(domain.ID, {
+            match: match || undefined,
+            sort: orderBy + ',' + order,
+            filterProp,
+            status: statuses
+          })
             .catch(msg => setState({ ...state, ...state,snackbar: msg }));
         }
       })
@@ -136,7 +188,26 @@ const Users = props => {
     props.clearSnackbar();
   }
 
-  const { classes, t, users, domain, tableState, handleMatch, handleRequestSort,
+  const handleSort = orderBy => () => {
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    props.handleRequestSort(orderBy, { filterProp, status: statuses })();
+  }
+
+  const handleSelect = field => (e) => {
+    if(field === "mode") setMode(e.target.value);
+    else if(field === "type") setType(e.target.value);
+  };
+
+  const { classes, t, users, domain, tableState, handleMatch,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
@@ -228,6 +299,38 @@ const Users = props => {
           </Button>
         </Tooltip>
       </TableActionGrid>
+      <div className={classes.filterRow}>
+        <TextField
+          label="Mode"
+          select
+          value={mode}
+          onChange={handleSelect("mode")}
+          size='small'
+          sx={{ width: 100, mr: 1 }}
+        >
+          <MenuItem value={0}>All</MenuItem>
+          <MenuItem value={1}>Normal</MenuItem>
+          <MenuItem value={4}>Shared</MenuItem>
+        </TextField>
+        <TextField
+          label="Mode"
+          select
+          value={type}
+          onChange={handleSelect("type")}
+          size='small'
+          sx={{ width: 100, mr: 1 }}
+        >
+          <MenuItem value={0}>Normal</MenuItem>
+          <MenuItem value={7}>Room</MenuItem>
+        </TextField>
+        <FormControlLabel
+          control={<Checkbox
+            checked={showDeactivated}
+            onChange={() => setShowDeactivated(!showDeactivated)}
+          />}
+          label="Show deactivated"
+        />
+      </div>
       <Typography className={classes.count} color="textPrimary">
         {t("showingUser", { count: users.Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.shared} ${t("shared")})`}
@@ -242,7 +345,7 @@ const Users = props => {
                     active={orderBy === 'username'}
                     align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={handleRequestSort('username')}
+                    onClick={handleSort('username')}
                     color="primary"
                     sx={{
                       color: 'text.primary',
@@ -366,7 +469,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchTableData: async (domainID, params) => {
-      await dispatch(fetchUsersData(domainID, {...params, status: "0,1,4", mlist: ""})).catch(error => Promise.reject(error));
+      await dispatch(fetchUsersData(domainID, {...params })).catch(error => Promise.reject(error));
     },
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
@@ -379,4 +482,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(Users, { orderBy: 'username'});
+  mapStateToProps, mapDispatchToProps, styles)(Users, { orderBy: 'username', suppressFetch: true });

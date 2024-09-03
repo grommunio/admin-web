@@ -31,8 +31,8 @@ const Roles = props => {
   const context = useContext(CapabilityContext);
 
   const handleScroll = () => {
-    const { Roles, count, loading } = props.roles;
-    props.handleScroll(Roles, count, loading);
+    const { Roles, count } = props.roles;
+    props.handleScroll(Roles, count);
   };
 
   const { classes, t, roles, tableState, handleMatch, handleRequestSort,

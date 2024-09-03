@@ -405,6 +405,10 @@ export function formatCreateParams(createParams) {
   };
 }
 
+export function generatePropFilterString(filters) {
+  return Object.entries(filters).map(([key, value]) => `${key}:${value}`).join(";");
+}
+
 /**
  * Converts user type enum value to human-readable representation
  * @param {Number} status enum value of a user type

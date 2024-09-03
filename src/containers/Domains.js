@@ -59,8 +59,8 @@ const Domains = props => {
   ];
 
   const handleScroll = () => {
-    const { Domains, count, loading } = props.domains;
-    props.handleScroll(Domains, count, loading);
+    const { Domains, count } = props.domains;
+    props.handleScroll(Domains, count);
   };
 
   const handleCheckbox = (event) => setShowDeleted(event.target.checked);

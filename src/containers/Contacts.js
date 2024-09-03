@@ -59,8 +59,8 @@ const Contacts = props => {
   const navigate = useNavigate();
 
   const handleScroll = () => {
-    const { Users, count, loading } = props.users;
-    props.handleScroll(Users, count, loading);
+    const { Users, count } = props.users;
+    props.handleScroll(Users, count);
   };
 
   const columns = [

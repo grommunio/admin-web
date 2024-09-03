@@ -62,8 +62,8 @@ const GlobalContacts = props => {
   ]
 
   const handleScroll = () => {
-    const { Users, count, loading } = props.users;
-    props.handleScroll(Users, count, loading);
+    const { Users, count } = props.users;
+    props.handleScroll(Users, count);
   };
 
   const handleAddContact = () => setAddingContact(true);

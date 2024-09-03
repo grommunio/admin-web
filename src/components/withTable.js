@@ -31,26 +31,26 @@ function withTable(WrappedComponent, defaultState={}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-      fetchData();
+      if(!defaultState.suppressFetch) fetchData();
     }, []);
   
-    const fetchData = (params) => {
+    const fetchData = (params={}) => {
       const { domain, fetchTableData } = props;
       const { order, orderBy } = state;
       if(domain?.ID) {
-        fetchTableData(domain.ID, { sort: orderBy + "," + order, ...(params || {})})
+        fetchTableData(domain.ID, { sort: orderBy + "," + order, ...params})
           .catch((msg) => {
             setState({ ...state, snackbar: msg });
           });
       } else {
-        fetchTableData({ sort: orderBy + "," + order, ...(params || {})})
+        fetchTableData({ sort: orderBy + "," + order, ...params})
           .catch((msg) => {
             setState({ ...state, snackbar: msg });
           });
       }
     }
 
-    const handleRequestSort = (orderBy) => () => {
+    const handleRequestSort = (orderBy, additionalProps={}) => () => {
       const { order: stateOrder, orderBy: stateOrderBy } = state;
       const order =
         stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
@@ -58,6 +58,7 @@ function withTable(WrappedComponent, defaultState={}) {
       fetchData({
         sort: orderBy + "," + order,
         match: match || undefined,
+        ...additionalProps,
       });
   
       setState({
@@ -68,7 +69,7 @@ function withTable(WrappedComponent, defaultState={}) {
       setOffset(0);
     };
 
-    const handleScroll = (data, count) => {
+    const handleScroll = (data, count, additionalProps={}) => {
       if (data.length >= count) return;
       if (
         Math.floor(
@@ -84,6 +85,7 @@ function withTable(WrappedComponent, defaultState={}) {
           sort: orderBy + "," + order,
           offset: newOffset,
           match: match || undefined,
+          ...additionalProps,
         });
       }
     };
