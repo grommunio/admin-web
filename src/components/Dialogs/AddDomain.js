@@ -107,6 +107,7 @@ const AddDomain = props => {
     setLoading(true);
     add({
       ...domain,
+      domainname: domainname.trim(),
       orgID: orgID.ID,
       homeserver: homeserver?.ID || null,
       createRole: undefined,
