@@ -120,14 +120,14 @@ const DnsHealth = props => {
 
   const getAutodiscoverSrvColor = () => {
     const { dnsCheck } = state;
-    const { autodiscoverSRV, externalIp, localIp } = dnsCheck;
+    const { autodiscoverSRV } = dnsCheck;
     if(!autodiscoverSRV) return errorColor;
 
     // TODO: Check for port
     const score = scoreDNSResult(autodiscoverSRV.internalDNS, autodiscoverSRV.externalDNS, "rec", "rec");
     const matchScore = scoreDNSResult(
-      autodiscoverSRV.ip === externalIp,
-      [localIp, externalIp].includes(autodiscoverSRV.ip),
+      autodiscoverSRV.ip,
+      true,
       "opt",
       "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
