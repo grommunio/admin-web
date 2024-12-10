@@ -196,7 +196,7 @@ const TopBar = props => {
     colorContext.toggleColorMode();
     setToggleClasses(toggleClasses[0] === "moon" ? ["moon sun", "tdnn day"] : ["moon", "tdnn"]);
   }
-  console.log(colorContext);
+
   const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
   const { menuAnchorEl, langsAnchorEl } = state;
   const licenseVisible = context.includes(SYSTEM_ADMIN_WRITE);

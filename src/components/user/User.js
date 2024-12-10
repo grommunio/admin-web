@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import world from '../../res/world.json';
 import { Call, Warning } from '@mui/icons-material';
+import Map from './Map';
 
 const styles = theme => ({
   form: {
@@ -50,7 +51,7 @@ const styles = theme => ({
 const User = props => {
   const { classes, t, user, handlePropertyChange } = props;
   const { properties, ldapID } = user;
-  const { country } = properties;
+  const { country, streetaddress, locality } = properties;
 
   const tfProps = (label, field) => ({
     variant: ldapID ? "filled" : 'outlined',
@@ -60,6 +61,8 @@ const User = props => {
     label: t(label),
     className: classes.propertyInput,
   });
+
+  const mapLocation = streetaddress || locality || country ? `${streetaddress || ""} ${locality || ""} ${country || ""}` : "";
     
   return (
     <FormControl className={classes.form}>
@@ -98,7 +101,7 @@ const User = props => {
       </Grid>
       <Divider className={classes.divider} />
       <Grid container>
-        <Grid item xs={6} style={{ display: 'flex' }}>
+        <Grid item xs={mapLocation ? 3 : 6} style={{ display: 'flex' }}>
           <TextField 
             {...tfProps("Address", "streetaddress")}
             fullWidth={false}
@@ -111,6 +114,9 @@ const User = props => {
             }}
           />
         </Grid>
+        {mapLocation && <Grid xs={3} item>
+          <Map address={mapLocation}/>
+        </Grid>}
         <Grid item xs={6} style={{ paddingRight: 16 }}>
           <TextField
             {...tfProps("Position", "title")}
