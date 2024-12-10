@@ -384,9 +384,9 @@ const Account = props => {
         disabled
       />
       <Typography sx={{ mt: 1 }}>
-        Automatic processing of meeting requests
+        {t("Automatic processing of meeting requests")}
       </Typography>
-      <Grid container direction="column" sx={{ p: 1 }}>
+      <Grid container direction="column" sx={{ py: 1, px: 2 }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -415,115 +415,121 @@ const Account = props => {
               color="primary"
             />
           }
-          label={t('Accept conflict-free meeting requests. (If unchecked, requests will be added to the calendar as tenative only, with no response towards the organizer.)')}
+          label={`${t('Accept conflict-free meeting requests')}. (${t("If unchecked, requests will be added to the calendar as tenative only, with no response towards the organizer")})`}
         />
       </Grid>
-      {status !== 4 && <Tooltip
-        placement="top-start"
-        title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
-      >
+      <Typography sx={{ mt: 1 }}>
+        {t("Features")}
+      </Typography>
+      <Grid container direction="column" sx={{ py: 1, px: 2 }}>
+
+        {status !== 4 && <Tooltip
+          placement="top-start"
+          title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
+        >
+          <Grid container>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chat || false}
+                  onChange={handleChatUser}
+                  color="primary"
+                />
+              }
+              label={t('Create grommunio-chat User')}
+              disabled={!domain.chat}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={chatAdmin || false}
+                  onChange={handleCheckbox('chatAdmin')}
+                  color="primary"
+                />
+              }
+              disabled={!chat || !domain.chat}
+              label={t('grommunio-chat admin permissions')}
+            />
+          </Grid>
+        </Tooltip>}
         <Grid container>
-          <FormControlLabel
+          {status !== 4 && <FormControlLabel
             control={
               <Checkbox
-                checked={chat || false}
-                onChange={handleChatUser}
+                checked={smtp || false }
+                onChange={handleCheckbox('smtp')}
                 color="primary"
               />
             }
-            label={t('Create grommunio-chat User')}
-            disabled={!domain.chat}
-          />
-          <FormControlLabel
+            label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
+          />}
+          {status !== 4 && <FormControlLabel
             control={
               <Checkbox
-                checked={chatAdmin || false}
-                onChange={handleCheckbox('chatAdmin')}
+                checked={changePassword || false }
+                onChange={handleCheckbox('changePassword')}
                 color="primary"
               />
             }
-            disabled={!chat || !domain.chat}
-            label={t('grommunio-chat admin permissions')}
-          />
+            label={t('Allow password changes')}
+          />}
+          {status !== 4 && <FormControlLabel
+            control={
+              <Checkbox
+                  checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
+                onChange={handleCheckbox('pop3_imap')}
+                color="primary"
+                disabled={privArchive}
+              />
+            }
+            label={t('Allow POP3/IMAP logins')}
+          />}
         </Grid>
-      </Tooltip>}
-      <Grid container>
-        {status !== 4 && <FormControlLabel
-          control={
-            <Checkbox
-              checked={smtp || false }
-              onChange={handleCheckbox('smtp')}
-              color="primary"
-            />
-          }
-          label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
-        />}
-        {status !== 4 && <FormControlLabel
-          control={
-            <Checkbox
-              checked={changePassword || false }
-              onChange={handleCheckbox('changePassword')}
-              color="primary"
-            />
-          }
-          label={t('Allow password changes')}
-        />}
-        {status !== 4 && <FormControlLabel
-          control={
-            <Checkbox
-                checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
-              onChange={handleCheckbox('pop3_imap')}
-              color="primary"
-              disabled={privArchive}
-            />
-          }
-          label={t('Allow POP3/IMAP logins')}
-        />}
+        {status !== 4 && <Grid container>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privChat || false}
+                onChange={handleCheckbox('privChat')}
+                color="primary"
+              />
+            }
+            disabled={!chat}
+            label={t('Allow Chat')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privVideo || false }
+                onChange={handleCheckbox('privVideo')}
+                color="primary"
+              />
+            }
+            label={t('Allow Meet')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privFiles || false }
+                onChange={handleCheckbox('privFiles')}
+                color="primary"
+              />
+            }
+            label={t('Allow Files')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privArchive || false}
+                value={privFiles || false}
+                onChange={handleCheckbox('privArchive')}
+                color="primary"
+              />
+            }
+            label={t('Allow Archive')}
+          />
+        </Grid>}
       </Grid>
-      {status !== 4 && <Grid container>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={privChat || false}
-              onChange={handleCheckbox('privChat')}
-              color="primary"
-            />
-          }
-          disabled={!chat}
-          label={t('Allow Chat')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={privVideo || false }
-              onChange={handleCheckbox('privVideo')}
-              color="primary"
-            />
-          }
-          label={t('Allow Meet')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={privFiles || false }
-              onChange={handleCheckbox('privFiles')}
-              color="primary"
-            />
-          }
-          label={t('Allow Files')}
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={privArchive || false}
-              value={privFiles || false}
-              onChange={handleCheckbox('privArchive')}
-              color="primary"
-            />
-          }
-          label={t('Allow Archive')}
-        />
-      </Grid>}
     </FormControl>
   );
 }
