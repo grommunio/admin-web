@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { Divider, FormControl, Grid, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, IconButton, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import world from '../../res/world.json';
-import { Warning } from '@mui/icons-material';
+import { Call, Warning } from '@mui/icons-material';
 
 const styles = theme => ({
   form: {
@@ -164,6 +164,13 @@ const User = props => {
           </FormControl>
           <TextField
             {...tfProps("Telephone", "primarytelephonenumber")}
+            InputProps={{
+              endAdornment: properties.primarytelephonenumber ? <Tooltip title={"Call " + properties.primarytelephonenumber}>
+                <IconButton href={properties.primarytelephonenumber ? "tel:" + properties.primarytelephonenumber : ""}>
+                  <Call />
+                </IconButton>
+              </Tooltip> : null,
+            }}
           />
         </Grid>
       </Grid>
