@@ -33,7 +33,6 @@ const styles = theme => ({
   },
   flexRow: {
     display: 'flex',
-    margin: theme.spacing(0, 0, 2, 0),
   },
 });
 
@@ -49,6 +48,9 @@ const Altnames = props => {
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
+      <Typography variant='caption' sx={{ mb: 2 }}>
+        {`${t("Alternative usernames to log into the mail-client with")} (${t("Does not have to include the domainname")})`}
+      </Typography>
       <List className={classes.list}>
         {(altnames || []).map((alt, idx) => <ListItem key={idx} className={classes.listItem}>
           <TextField
