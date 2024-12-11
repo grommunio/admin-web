@@ -11,25 +11,9 @@ import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
 import moment from 'moment';
-import {
-  BtnBold,
-  BtnBulletList,
-  BtnClearFormatting,
-  BtnItalic,
-  BtnLink,
-  BtnNumberedList,
-  BtnRedo,
-  BtnStrikeThrough,
-  BtnStyles,
-  BtnUnderline,
-  BtnUndo,
-  HtmlButton,
-  Separator,
-  EditorProvider,
-  Editor,
-  Toolbar } from 'react-simple-wysiwyg';
 import * as DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
+import OofEditor from './OofEditor';
 
 
 const styles = theme => ({
@@ -79,6 +63,8 @@ const Oof = props => {
   });
   const navigate = useNavigate();
   const theme = useTheme();
+  const [tinyRef, setRef] = useState(null);
+  const [tinyRef2, setRef2] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,29 +110,28 @@ const Oof = props => {
 
   const handleSave = () => {
     const { domainID, userID, patchOof } = props;
-    const { state, externalAudience, startTime, endTime, internalSubject, internalReply, externalSubject, externalReply } = oof;
+    const { state, externalAudience, startTime, endTime, internalSubject, externalSubject, internalReply, externalReply } = oof;
+
     patchOof(domainID, userID, {
       state,
       externalAudience,
       // Only send dates when oof is scheduled
       startTime: [0, 1].includes(state) || !startTime ? undefined : startTime.format('YYYY-MM-DD HH:mm') + ':00',
       endTime: [0, 1].includes(state) || !endTime ? undefined : endTime.format('YYYY-MM-DD HH:mm') + ':00',
-      internalSubject: DOMPurify.sanitize(internalSubject),
-      internalReply,
-      externalSubject: DOMPurify.sanitize(externalSubject),
-      externalReply,
+      internalSubject: internalSubject,
+      internalReply: tinyRef?.current ? DOMPurify.sanitize(tinyRef?.current.getContent()) : internalReply,
+      externalSubject: externalSubject,
+      externalReply: tinyRef2?.current ? DOMPurify.sanitize(tinyRef2?.current.getContent()) : externalReply,
     })
       .then(() => setOof({ ...oof, snackbar: 'Success!' }))
       .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
   }
 
   const { classes, t } = props;
-  const { tab, state, startTime, endTime, snackbar, internalReply, externalReply } = oof;
-  const editorClass = theme.palette.mode === "dark" ? "wysiwyg" : "";
+  const { tab, startTime, endTime, snackbar, internalReply, externalReply } = oof;
 
   const tfProps = (label, field) => ({
     fullWidth: true,
-    disabled: [0, 1].includes(state),
     label: t(label),
     value: oof[field],
     onChange: handleInput(field),
@@ -206,75 +191,24 @@ const Oof = props => {
         <Tab label={t("Inside my organization")} />
         <Tab label={t("Outside my organization")} />
       </Tabs>
-      {tab === 0 && <div className={classes.tabs}>
+      <div className={classes.tabs} style={{ display: tab === 0 ? "block" : "none"}}>
         <TextField 
           {...tfProps("Internal subject", "internalSubject")}
           className={classes.mail}
         />
         <div className={classes.mail}>
-          <EditorProvider>
-            <Editor
-              style={{ minHeight: 100 }}
-              value={internalReply}
-              onChange={handleInput("internalReply")}
-            >
-              <Toolbar id={editorClass}>
-                <BtnUndo id={editorClass}/>
-                <BtnRedo id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnBold id={editorClass}/>
-                <BtnItalic id={editorClass}/>
-                <BtnUnderline id={editorClass}/>
-                <BtnStrikeThrough id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnNumberedList id={editorClass}/>
-                <BtnBulletList id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnLink id={editorClass}/>
-                <BtnClearFormatting id={editorClass}/>
-                <HtmlButton id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnStyles id={editorClass}/>
-              </Toolbar>
-            </Editor>
-          </EditorProvider>
+          <OofEditor setRef={setRef} initialValue={internalReply}/>
         </div>
-      </div>}
-      {tab === 1 && <div className={classes.tabs}>
+      </div>
+      <div className={classes.tabs} style={{ display: tab === 1 ? "block" : "none"}}>
         <TextField
           {...tfProps("External subject", "externalSubject")}
           className={classes.mail}
         />
         <div className={classes.mail}>
-          <EditorProvider>
-            <Editor
-              style={{ minHeight: 100 }}
-              value={externalReply}
-              onChange={handleInput("externalReply")}
-            >
-              <Toolbar id={editorClass}>
-                <BtnUndo id={editorClass}/>
-                <BtnRedo id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnBold id={editorClass}/>
-                <BtnItalic id={editorClass}/>
-                <BtnUnderline id={editorClass}/>
-                <BtnStrikeThrough id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnNumberedList id={editorClass}/>
-                <BtnBulletList id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnLink id={editorClass}/>
-                <BtnClearFormatting id={editorClass}/>
-                <HtmlButton id={editorClass}/>
-                <Separator id={editorClass}/>
-                <BtnStyles id={editorClass}/>
-              </Toolbar>
-            </Editor>
-          </EditorProvider>
-            
+          <OofEditor setRef={setRef2} initialValue={externalReply}/>
         </div>
-      </div>}
+      </div>
     </FormControl>
     <Grid container className={classes.buttonGrid}>
       <Button
