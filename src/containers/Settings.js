@@ -56,14 +56,12 @@ const Settings = props => {
   const context = useContext(ColorModeContext);
   const navigate = useNavigate();
 
-  const handleDarkModeChange = event => {
-    window.localStorage.setItem('darkMode', event.target.checked);
+  const handleDarkModeChange = () => {
     context.toggleColorMode();
   }
 
   const handleThemeSelect = e => {
     const { value: colorTheme } = e.target;
-    window.localStorage.setItem('colorTheme', colorTheme);
     context.setColorTheme(colorTheme);
   }
 

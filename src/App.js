@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { withStyles } from 'tss-react/mui';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -16,6 +16,7 @@ import './snow.css';
 import { checkHolidaySeason } from "./utils";
 import makeLoadableComponent from "./lazy";
 import SilentRefresh from "./components/SilentRefresh";
+import ColorModeContext from "./ColorContext";
 
 const styles = {
   root: {
@@ -40,12 +41,12 @@ const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableM
 
 // Root class
 const App = ({classes, Domains, serverConfig, loading, authenticated, capabilities, changeSettings, fetchLicense}) => {
+  const colorContext = useContext(ColorModeContext);
   const routesProps = {
     authenticated,
     loading,
   };
-  const darkModeStorage = window.localStorage.getItem("darkMode");
-  const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
+  const darkMode = colorContext.mode === "dark";
   const isHolidaySeason = React.useMemo(checkHolidaySeason, []);
 
   // componentDidMount()
@@ -66,7 +67,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     <div
       className={classes.root}
       style={{
-        backgroundImage: darkMode === "true" ?
+        backgroundImage: darkMode ?
           `url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
           `url(${serverConfig.customImages[window.location.hostname]?.background || background})`
       }}

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useTranslation } from 'react-i18next';
 import { withStyles } from 'tss-react/mui';
-import { useSelector } from "react-redux";
+import ColorModeContext from "../../ColorContext";
 
 
 const styles = () => ({
@@ -35,9 +35,8 @@ const styles = () => ({
 function OofEditor({ setRef, initialValue, disabled }) {
   const { i18n } = useTranslation();
   const editorRef = useRef(null);
-  const { config } = useSelector(state => state.config);
-  const darkModeStorage = window.localStorage.getItem("darkMode");
-  const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
+  const context = useContext(ColorModeContext);
+  const darkMode = context.mode === "dark";
 
   useEffect(() => {
     setRef(editorRef);

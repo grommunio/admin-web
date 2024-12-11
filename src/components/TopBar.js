@@ -12,7 +12,7 @@ import { AppBar, Toolbar, Typography, Hidden, IconButton,
   Autocomplete,
   TextField,
   InputAdornment} from '@mui/material';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
@@ -133,16 +133,13 @@ const styles = theme => ({
 
 const TopBar = props => {
   const context = useContext(CapabilityContext);
-  const { config: serverConfig } = useSelector(state => state.config);
+  const colorContext = useContext(ColorModeContext);
   const [state, setState] = useState({
     menuAnchorEl: null,
     langsAnchorEl: null,
     search: '',
   });
-  const colorContext = useContext(ColorModeContext);
-  const darkModeStorage = window.localStorage.getItem("darkMode");
-  const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
-  const [toggleClasses, setToggleClasses] = useState(darkMode === "true" ? ["moon", "tdnn"] : ["moon sun", "tdnn day"]);
+  const [toggleClasses, setToggleClasses] = useState(colorContext.mode === "dark" ? ["moon", "tdnn"] : ["moon sun", "tdnn day"]);
   const navigate = useNavigate();
 
   const links = [
@@ -196,11 +193,10 @@ const TopBar = props => {
   }
 
   const handleColorMode = () => {
-    window.localStorage.setItem('darkMode', darkMode === "false");
     colorContext.toggleColorMode();
     setToggleClasses(toggleClasses[0] === "moon" ? ["moon sun", "tdnn day"] : ["moon", "tdnn"]);
   }
-
+  console.log(colorContext);
   const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
   const { menuAnchorEl, langsAnchorEl } = state;
   const licenseVisible = context.includes(SYSTEM_ADMIN_WRITE);

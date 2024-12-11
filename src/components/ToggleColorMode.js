@@ -11,29 +11,41 @@ import { useSelector } from 'react-redux';
 
 export default function ToggleColorMode({ children }) {
   const config = useSelector(state => state.config);
-  const darkModeStorage = window.localStorage.getItem("darkMode");
-  const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
-  const [mode, setMode] = React.useState(darkMode === 'true' ? 'dark' : 'light');
+  const [mode, setMode] = React.useState('light');
 
+  // Theme
   const [colorTheme, setColorTheme] = React.useState(window.localStorage.getItem("colorTheme") || config.defaultTheme);
 
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode) => {
+          window.localStorage.setItem('darkMode', prevMode === 'light' ? 'true' : 'false');
+          return prevMode === 'light' ? 'dark' : 'light';
+        });
       },
       setColorTheme: colorTheme => {
+        window.localStorage.setItem('colorTheme', colorTheme);
         setColorTheme(colorTheme);
       },
+      mode,
     }),
-    [],
+    [mode],
   );
 
   useEffect(() => {
-    const darkModeStorage = window.localStorage.getItem("darkMode");
-    const darkMode = darkModeStorage === null ? config.defaultDarkMode.toString() : darkModeStorage;
-    setMode(darkMode === 'true' ? 'dark' : 'light');
+    // Theme
     setColorTheme(window.localStorage.getItem("colorTheme") || config.defaultTheme);
+    // Mode
+    if(window.localStorage.getItem("darkMode") !== null) {
+      setMode(window.localStorage.getItem("darkMode") === "true" ? "dark": "light");
+      return;
+    }
+    const serverDarkMode = config.defaultDarkMode;
+    const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const darkMode = serverDarkMode || systemDarkMode;
+    setMode(darkMode ? 'dark' : 'light');
+
   }, [config]);
 
   const theme = React.useMemo(
