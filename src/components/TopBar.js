@@ -12,7 +12,7 @@ import { AppBar, Toolbar, Typography, Hidden, IconButton,
   Autocomplete,
   TextField,
   InputAdornment} from '@mui/material';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { withTranslation } from 'react-i18next';
@@ -31,6 +31,7 @@ import { getLangs } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 import { useNavigate } from 'react-router';
+import ColorModeContext from '../ColorContext';
 
 
 const styles = theme => ({
@@ -132,11 +133,16 @@ const styles = theme => ({
 
 const TopBar = props => {
   const context = useContext(CapabilityContext);
+  const { config: serverConfig } = useSelector(state => state.config);
   const [state, setState] = useState({
     menuAnchorEl: null,
     langsAnchorEl: null,
     search: '',
   });
+  const colorContext = useContext(ColorModeContext);
+  const darkModeStorage = window.localStorage.getItem("darkMode");
+  const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
+  const [toggleClasses, setToggleClasses] = useState(darkMode === "true" ? ["moon", "tdnn"] : ["moon sun", "tdnn day"]);
   const navigate = useNavigate();
 
   const links = [
@@ -187,6 +193,12 @@ const TopBar = props => {
 
   const handleAutocomplete = (_, newVal) => {
     if(newVal?.route) navigate(newVal.route);
+  }
+
+  const handleColorMode = () => {
+    window.localStorage.setItem('darkMode', darkMode === "false");
+    colorContext.toggleColorMode();
+    setToggleClasses(toggleClasses[0] === "moon" ? ["moon sun", "tdnn day"] : ["moon", "tdnn"]);
   }
 
   const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
@@ -272,6 +284,10 @@ const TopBar = props => {
               <Translate color="inherit" className={classes.username}/>
             </IconButton>
           </Tooltip>
+          <div className={toggleClasses[1]} onClick={handleColorMode}>
+            <div className={toggleClasses[0]}>
+            </div>
+          </div>
           <Box className={classes.profileButton} onClick={handleMenuOpen('menuAnchorEl')}>
             <Typography className={classes.username}>{profile.Profile.user.username}</Typography>
             <AccountCircleIcon className={classes.profileIcon}></AccountCircleIcon>

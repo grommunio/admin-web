@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
+import './switch.css';
 import { store } from './store';
 import './i18n';
 import './config';
