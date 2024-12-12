@@ -44,7 +44,8 @@ const styles = theme => ({
   },
   flexRow: {
     display: 'flex',
-    margin: theme.spacing(0, 0, 2, 0),
+    justifyContent: 'space-between',
+    margin: theme.spacing(0, 0, 1, 0),
   },
 });
 
@@ -72,6 +73,7 @@ const User = props => {
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
+      <Typography alignSelf="flex-end" variant='caption'>*{t("Required for grommunio-auth")}</Typography>
       <Grid container>
         <Grid item xs={12} className={classes.gridItem}>
           <div className={classes.grid}>
@@ -79,6 +81,7 @@ const User = props => {
               {...tfProps("First name", "givenname")}
               className={classes.flexTextfield}
               fullWidth={false}
+              required
             />
             <TextField 
               {...tfProps("Initials", "initials")}
@@ -88,6 +91,7 @@ const User = props => {
           </div>
           <TextField
             {...tfProps("Surname", "surname")}
+            required
           />
         </Grid>
         <Grid item xs={12} className={classes.gridItem}>
@@ -107,9 +111,11 @@ const User = props => {
             fullWidth={false}
             multiline
             rows={4}
-            InputProps={{
-              style: {
-                minHeight: 128,
+            slotProps={{
+              input: {
+                style: {
+                  minHeight: 128,
+                }
               }
             }}
           />
@@ -170,12 +176,14 @@ const User = props => {
           </FormControl>
           <TextField
             {...tfProps("Telephone", "primarytelephonenumber")}
-            InputProps={{
-              endAdornment: properties.primarytelephonenumber ? <Tooltip title={"Call " + properties.primarytelephonenumber}>
-                <IconButton href={properties.primarytelephonenumber ? "tel:" + properties.primarytelephonenumber : ""}>
-                  <Call />
-                </IconButton>
-              </Tooltip> : null,
+            slotProps={{
+              input: {
+                endAdornment: properties.primarytelephonenumber ? <Tooltip title={"Call " + properties.primarytelephonenumber}>
+                  <IconButton href={properties.primarytelephonenumber ? "tel:" + properties.primarytelephonenumber : ""}>
+                    <Call />
+                  </IconButton>
+                </Tooltip> : null,
+              }
             }}
           />
         </Grid>
