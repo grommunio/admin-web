@@ -105,7 +105,7 @@ const Folders = props => {
   const getOffset = () => {
     const container = treeContainer.current;
     return {
-      x: container ? (container.clientWidth - 32 /* padding */) / 2 : 0,
+      x: container ? ((container.clientWidth - 32) /* padding */) / 2 : 0,
       y: 50,
     };
   }

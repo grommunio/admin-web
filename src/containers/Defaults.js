@@ -190,7 +190,7 @@ const Defaults = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
   return (
-    <ViewWrapper
+    (<ViewWrapper
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}
@@ -271,20 +271,22 @@ const Defaults = props => {
               }
               value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
               onChange={handleInput('prohibitsendquota')}
-              InputProps={{
-                endAdornment:
-                    <FormControl className={classes.adornment}>
-                      <Select
-                        onChange={handleUnitChange('prohibitsendquota')}
-                        value={sizeUnits.prohibitsendquota}
-                        className={classes.select}
-                        variant="standard"
-                      >
-                        <MenuItem value={1}>MB</MenuItem>
-                        <MenuItem value={2}>GB</MenuItem>
-                        <MenuItem value={3}>TB</MenuItem>
-                      </Select>
-                    </FormControl>,
+              slotProps={{
+                input: {
+                  endAdornment:
+                      <FormControl className={classes.adornment}>
+                        <Select
+                          onChange={handleUnitChange('prohibitsendquota')}
+                          value={sizeUnits.prohibitsendquota}
+                          className={classes.select}
+                          variant="standard"
+                        >
+                          <MenuItem value={1}>MB</MenuItem>
+                          <MenuItem value={2}>GB</MenuItem>
+                          <MenuItem value={3}>TB</MenuItem>
+                        </Select>
+                      </FormControl>,
+                }
               }}
             />
             <TextField 
@@ -297,20 +299,22 @@ const Defaults = props => {
               }
               value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
               onChange={handleInput('prohibitreceivequota')}
-              InputProps={{
-                endAdornment:
-                    <FormControl className={classes.adornment}>
-                      <Select
-                        onChange={handleUnitChange('prohibitreceivequota')}
-                        value={sizeUnits.prohibitreceivequota}
-                        className={classes.select}
-                        variant="standard"
-                      >
-                        <MenuItem value={1}>MB</MenuItem>
-                        <MenuItem value={2}>GB</MenuItem>
-                        <MenuItem value={3}>TB</MenuItem>
-                      </Select>
-                    </FormControl>,
+              slotProps={{
+                input: {
+                  endAdornment:
+                      <FormControl className={classes.adornment}>
+                        <Select
+                          onChange={handleUnitChange('prohibitreceivequota')}
+                          value={sizeUnits.prohibitreceivequota}
+                          className={classes.select}
+                          variant="standard"
+                        >
+                          <MenuItem value={1}>MB</MenuItem>
+                          <MenuItem value={2}>GB</MenuItem>
+                          <MenuItem value={3}>TB</MenuItem>
+                        </Select>
+                      </FormControl>,
+                }
               }}
             />
             <TextField 
@@ -324,20 +328,22 @@ const Defaults = props => {
               }
               value={storagequotalimit !== undefined ? storagequotalimit : ''}
               onChange={handleInput('storagequotalimit')}
-              InputProps={{
-                endAdornment:
-                    <FormControl className={classes.adornment}>
-                      <Select
-                        onChange={handleUnitChange('storagequotalimit')}
-                        value={sizeUnits.storagequotalimit}
-                        className={classes.select}
-                        variant="standard"
-                      >
-                        <MenuItem value={1}>MB</MenuItem>
-                        <MenuItem value={2}>GB</MenuItem>
-                        <MenuItem value={3}>TB</MenuItem>
-                      </Select>
-                    </FormControl>,
+              slotProps={{
+                input: {
+                  endAdornment:
+                      <FormControl className={classes.adornment}>
+                        <Select
+                          onChange={handleUnitChange('storagequotalimit')}
+                          value={sizeUnits.storagequotalimit}
+                          className={classes.select}
+                          variant="standard"
+                        >
+                          <MenuItem value={1}>MB</MenuItem>
+                          <MenuItem value={2}>GB</MenuItem>
+                          <MenuItem value={3}>TB</MenuItem>
+                        </Select>
+                      </FormControl>,
+                }
               }}
             />
           </Grid>
@@ -440,7 +446,7 @@ const Defaults = props => {
           </Button>
         </Grid>
       </Paper>
-    </ViewWrapper>
+    </ViewWrapper>)
   );
 }
 

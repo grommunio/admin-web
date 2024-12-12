@@ -23,7 +23,7 @@ import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
-import { Grid, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
+import { Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
@@ -190,8 +190,8 @@ const NavigationLinks = props => {
   const { filter, adding, snackbar } = state;
   const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
   const pathname = location.pathname;
-  return(
-    <React.Fragment>
+  return (
+    (<React.Fragment>
       <div className={classes.drawerHeader}>
         <img
           src={config.customImages[window.location.hostname]?.logoLight || logo}
@@ -218,23 +218,25 @@ const NavigationLinks = props => {
                 label={t('Search')}
                 value={filter}
                 onChange={handleTextInput}
-                InputLabelProps={{
-                  classes: {
-                    root: classes.input,
-                  },
-                  shrink: true,
-                }}
-                InputProps={{
-                  classes: { root: classes.input },
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search color="secondary" />
-                    </InputAdornment>
-                  ),
-                }}
                 color="primary"
                 className={classes.textfield}
-              />
+                slotProps={{
+                  input: {
+                    classes: { root: classes.input },
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search color="secondary" />
+                      </InputAdornment>
+                    ),
+                  },
+
+                  inputLabel: {
+                    classes: {
+                      root: classes.input,
+                    },
+                    shrink: true,
+                  }
+                }} />
             </Grid>}
       <List>
         {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
@@ -400,7 +402,7 @@ const NavigationLinks = props => {
         snackbar={snackbar}
         onClose={() => setState({ ...state, snackbar: "" })}
       />
-    </React.Fragment>
+    </React.Fragment>)
   );
 }
 

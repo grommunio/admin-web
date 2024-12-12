@@ -238,7 +238,7 @@ const Logs = props => {
   const { snackbar, autorefresh, clipboardMessage, loading } = state;
 
   return (
-    <TableViewContainer
+    (<TableViewContainer
       headline={t("Logging")}
       subtitle={t("logs_sub")}
       href="https://docs.grommunio.com/admin/administration.html#logs"
@@ -285,10 +285,12 @@ const Logs = props => {
                 onChange={e => setSearch(e.target.value)}
                 label={t("Search")}
                 style={{ marginRight: 8, minWidth: 200 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">
-                    <IconButton onClick={() => setSearch("")}><Close /></IconButton>
-                  </InputAdornment>,
+                slotProps={{
+                  input: {
+                    endAdornment: <InputAdornment position="end">
+                      <IconButton onClick={() => setSearch("")}><Close /></IconButton>
+                    </InputAdornment>,
+                  }
                 }}
               />
             </>}
@@ -304,12 +306,14 @@ const Logs = props => {
                 renderInput={(params) => <TextField
                   {...params}
                   size="small"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Clear color="secondary" />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <Clear color="secondary" />
+                        </InputAdornment>
+                      ),
+                    }
                   }}
                 />}
               />
@@ -381,7 +385,7 @@ const Logs = props => {
           </Alert>
         </Snackbar>
       </Portal>
-    </TableViewContainer>
+    </TableViewContainer>)
   );
 }
 

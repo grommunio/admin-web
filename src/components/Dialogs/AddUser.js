@@ -234,7 +234,7 @@ const AddUser = props => {
   const addDisabled = usernameError || !username || loading || 
       ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
   return (
-    <Dialog
+    (<Dialog
       onClose={onClose}
       open={open}
       maxWidth="sm"
@@ -266,12 +266,14 @@ const AddUser = props => {
             value={username || ''}
             autoFocus
             onChange={handleUsernameInput}
-            InputProps={{
-              endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
-            }}
             className={classes.input}
             required
             error={!!username && usernameError}
+            slotProps={{
+              input: {
+                endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
+              }
+            }}
           />
           {status !== 4 && <TextField 
             label={t("Password")}
@@ -280,11 +282,13 @@ const AddUser = props => {
             className={classes.input}
             type="password"
             required
-            FormHelperTextProps={{
-              error: true,
-            }}
             helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
             autoComplete="new-password"
+            slotProps={{
+              formHelperText: {
+                error: true,
+              }
+            }}
           />}
           {status !== 4 && <TextField 
             label={t("Repeat password")}
@@ -293,10 +297,12 @@ const AddUser = props => {
             className={classes.input}
             type="password"
             required
-            FormHelperTextProps={{
-              error: true,
-            }}
             helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
+            slotProps={{
+              formHelperText: {
+                error: true,
+              }
+            }}
           />}
           <TextField 
             label={t("Display name")}
@@ -379,7 +385,7 @@ const AddUser = props => {
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog>)
   );
 }
 

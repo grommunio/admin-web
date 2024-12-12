@@ -104,7 +104,7 @@ const Ldap = props => {
   const { loading, snackbar, confirming, searchInOrg, showAll } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
-    <ViewWrapper
+    (<ViewWrapper
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state,snackbar: '' })}
     >
@@ -123,12 +123,14 @@ const Ldap = props => {
           color="primary"
           fullWidth
           className={classes.searchTf}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search color="primary"/>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search color="primary"/>
+                </InputAdornment>
+              ),
+            }
           }}
         />
         <FormControlLabel
@@ -159,7 +161,7 @@ const Ldap = props => {
       {ldapUsers.length > 0 && <Paper elevation={1}>
         <List>
           {ldapUsers.map((user, idx) => <React.Fragment key={idx}>
-            <ListItem >
+            <ListItem>
               <ListItemAvatar>
                 {user.type === "contact" ?
                   <ContactMail /> : user.type === "group" ?
@@ -200,7 +202,7 @@ const Ldap = props => {
         onClose={handleClose}
         onError={handleError}
       />
-    </ViewWrapper>
+    </ViewWrapper>)
   );
 }
 

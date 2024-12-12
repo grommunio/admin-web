@@ -247,7 +247,7 @@ const AddGlobalUser = props => {
       ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
     
   return (
-    <Dialog
+    (<Dialog
       onClose={onClose}
       open={open}
       maxWidth="sm"
@@ -290,13 +290,15 @@ const AddGlobalUser = props => {
             value={username || ''}
             onChange={handleUsernameInput}
             fullWidth
-            InputProps={{
-              endAdornment: <div>@{domain?.domainname || '<select domain>'}</div>,
-              className: classes.noWrap,
-            }}
             className={classes.input}
             required
             error={!!username && usernameError}
+            slotProps={{
+              input: {
+                endAdornment: <div>@{domain?.domainname || '<select domain>'}</div>,
+                className: classes.noWrap,
+              }
+            }}
           />
           {status !== 4 && <TextField 
             label={t("Password")}
@@ -305,11 +307,13 @@ const AddGlobalUser = props => {
             className={classes.input}
             type="password"
             required
-            FormHelperTextProps={{
-              error: true,
-            }}
             helperText={(password && password.length < 6) ? t('Password must be at least 6 characters long') : ''}
             autoComplete="new-password"
+            slotProps={{
+              formHelperText: {
+                error: true,
+              }
+            }}
           />}
           {status !== 4 && <TextField 
             label={t("Repeat password")}
@@ -318,11 +322,13 @@ const AddGlobalUser = props => {
             className={classes.input}
             type="password"
             required
-            FormHelperTextProps={{
-              error: true,
-            }}
             autoComplete="off"
             helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
+            slotProps={{
+              formHelperText: {
+                error: true,
+              }
+            }}
           />}
           <TextField 
             label={t("Display name")}
@@ -405,7 +411,7 @@ const AddGlobalUser = props => {
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog>)
   );
 }
 

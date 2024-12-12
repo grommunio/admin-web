@@ -260,7 +260,7 @@ const GroupDetails = props => {
     loading, user } = state;
 
   return (
-    <ViewWrapper
+    (<ViewWrapper
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}
@@ -299,8 +299,10 @@ const GroupDetails = props => {
             value={listname}
             autoFocus
             required
-            inputProps={{
-              disabled: true,
+            slotProps={{
+              htmlInput: {
+                disabled: true,
+              }
             }}
           />
           <TextField 
@@ -327,8 +329,10 @@ const GroupDetails = props => {
             label={t("Type")}
             fullWidth
             value={listType}
-            inputProps={{
-              disabled: true,
+            slotProps={{
+              htmlInput: {
+                disabled: true,
+              }
             }}
           >
             {listTypes.map((status, key) => (
@@ -442,7 +446,7 @@ const GroupDetails = props => {
         snackbar={snackbar}
         onClose={() => setState({ ...state, snackbar: '' })}
       />
-    </ViewWrapper>
+    </ViewWrapper>)
   );
 }
 

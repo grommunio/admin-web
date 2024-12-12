@@ -183,16 +183,18 @@ const Account = props => {
     scheduleinfodisallowoverlappingappts, scheduleinfodisallowrecurringappts } = properties;
 
   return (
-    <FormControl className={classes.form}>
+    (<FormControl className={classes.form}>
       <Grid container className={classes.input}>
         <TextField
           label={t("Username")}
           value={username || ''}
           style={{ flex: 1, marginRight: 8 }}
-          InputProps={{
-            endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
-          }}
           onChange={handleInput('username')}
+          slotProps={{
+            input: {
+              endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain.domainname}</div>,
+            }
+          }}
         />
         {writable && status !== 4 && ldapID === null && <Button
           variant="contained"
@@ -276,20 +278,22 @@ const Account = props => {
             }
             value={prohibitsendquota !== undefined ? prohibitsendquota : ''}
             onChange={handleIntPropertyChange('prohibitsendquota')}
-            InputProps={{
-              endAdornment:
-                  <FormControl className={classes.adornment}>
-                    <Select
-                      onChange={handleUnitChange('prohibitsendquota')}
-                      value={sizeUnits.prohibitsendquota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
+            slotProps={{
+              input: {
+                endAdornment:
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitsendquota')}
+                        value={sizeUnits.prohibitsendquota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
+              }
             }}
           />
           <TextField 
@@ -302,20 +306,22 @@ const Account = props => {
             }
             value={prohibitreceivequota !== undefined ? prohibitreceivequota : ''}
             onChange={handleIntPropertyChange('prohibitreceivequota')}
-            InputProps={{
-              endAdornment:
-                  <FormControl className={classes.adornment}>
-                    <Select
-                      onChange={handleUnitChange('prohibitreceivequota')}
-                      value={sizeUnits.prohibitreceivequota}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
+            slotProps={{
+              input: {
+                endAdornment:
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitreceivequota')}
+                        value={sizeUnits.prohibitreceivequota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
+              }
             }}
           />
           <TextField 
@@ -330,20 +336,22 @@ const Account = props => {
             onChange={handleIntPropertyChange('storagequotalimit')}
             helperText={storageQuotaTooHigh ? "Mailbox size cannot exceed 3TiB" : ""}
             error={storageQuotaTooHigh}
-            InputProps={{
-              endAdornment:
-                  <FormControl className={classes.adornment}>
-                    <Select
-                      onChange={handleUnitChange('storagequotalimit')}
-                      value={sizeUnits.storagequotalimit}
-                      className={classes.select}
-                      variant="standard"
-                    >
-                      <MenuItem value={1}>MB</MenuItem>
-                      <MenuItem value={2}>GB</MenuItem>
-                      <MenuItem value={3}>TB</MenuItem>
-                    </Select>
-                  </FormControl>,
+            slotProps={{
+              input: {
+                endAdornment:
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('storagequotalimit')}
+                        value={sizeUnits.storagequotalimit}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
+              }
             }}
           />
           <div className={classes.graphContainer}>
@@ -530,7 +538,7 @@ const Account = props => {
           />
         </Grid>}
       </Grid>
-    </FormControl>
+    </FormControl>)
   );
 }
 

@@ -9,14 +9,16 @@ import { Search } from '@mui/icons-material';
 const SearchTextfield = ({ ...childProps }) =>
   <TextField
     {...childProps}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <Search color="secondary" />
-        </InputAdornment>
-      ),
-    }}
     color="primary"
+    slotProps={{
+      input: {
+        startAdornment: (
+          <InputAdornment position="start">
+            <Search color="secondary" />
+          </InputAdornment>
+        ),
+      }
+    }}
   />;
 
 export default withStyles(SearchTextfield, {});

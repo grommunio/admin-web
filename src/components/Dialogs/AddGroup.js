@@ -137,7 +137,7 @@ const AddGroup = props => {
   const { classes, t, open, onClose, Users, domain } = props;
   const { listname, displayname, hidden, listType, listPrivilege, associations, specifieds } = group;
   return (
-    <Dialog
+    (<Dialog
       onClose={onClose}
       open={open}
       maxWidth="md"
@@ -156,8 +156,10 @@ const AddGroup = props => {
             onChange={handleInput('listname')}
             autoFocus
             required
-            InputProps={{
-              endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain?.domainname}</div>,
+            slotProps={{
+              input: {
+                endAdornment: <div style={{ whiteSpace: 'nowrap' }}>@{domain?.domainname}</div>,
+              }
             }}
           />
           <TextField 
@@ -249,7 +251,7 @@ const AddGroup = props => {
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog>)
   );
 }
 

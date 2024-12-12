@@ -203,7 +203,7 @@ const TopBar = props => {
   const sysAdmRead = context.includes(SYSTEM_ADMIN_READ);
   
   return (
-    <AppBar color='inherit' position="fixed" className={classes.appbar}>
+    (<AppBar color='inherit' position="fixed" className={classes.appbar}>
       <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
         <Hidden lgUp>
           <IconButton color="inherit" onClick={handleMenuToggle} size="large">
@@ -255,17 +255,19 @@ const TopBar = props => {
                 className={classes.search}
                 placeholder={t("Search")}
                 variant="standard"
-                InputProps={{
-                  ...params.InputProps,
-                  style: { color: 'white' },
-                  startAdornment: (
-                    <>
-                      <InputAdornment position="start">
-                        <Search htmlColor='white' />
-                      </InputAdornment>
-                      {params.InputProps.startAdornment}
-                    </>
-                  ),
+                slotProps={{
+                  input: {
+                    ...params.InputProps,
+                    style: { color: 'white' },
+                    startAdornment: (
+                      <>
+                        <InputAdornment position="start">
+                          <Search htmlColor='white' />
+                        </InputAdornment>
+                        {params.InputProps.startAdornment}
+                      </>
+                    ),
+                  }
                 }}
               />
             )}
@@ -328,7 +330,7 @@ const TopBar = props => {
           </Menu>
         </div>
       </Toolbar>
-    </AppBar>
+    </AppBar>)
   );
 }
 

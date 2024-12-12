@@ -5,8 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.0.3",
-    "@mui/material": "^5.0.4",
+    "@mui/icons-material": "^6.0.0",
+    "@mui/material": "^6.0.0",
     "@mui/x-data-grid": "^7.3.1",
     "@mui/x-date-pickers": "^7.3.2",
     "@mui/x-tree-view": "^7.3.1",

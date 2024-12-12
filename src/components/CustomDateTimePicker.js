@@ -13,23 +13,24 @@ const CustomDateTimePicker = props => {
   const { fullWidth, ...childProps } = props;
 
   return (
-    <LocalizationProvider dateAdapter={AdapterMoment}>
+    (<LocalizationProvider dateAdapter={AdapterMoment}>
       <DateTimePicker
         ampm={false}
         renderInput={(params) => <TextField
           fullWidth={fullWidth}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Clear color="secondary" />
-              </InputAdornment>
-            ),
-          }}
           {...params}
-        />}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Clear color="secondary" />
+                </InputAdornment>
+              ),
+            }
+          }} />}
         {...childProps}
       />
-    </LocalizationProvider>
+    </LocalizationProvider>)
   );
 }
 
