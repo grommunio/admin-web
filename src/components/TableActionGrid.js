@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@mui/material';
+import { Grid2 } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
 const styles = theme => ({
@@ -16,12 +16,12 @@ const styles = theme => ({
 });
 
 function TableActionGrid({ classes, tf, children }) {
-  return <Grid container alignItems="flex-end" className={classes.buttonGrid}>
+  return <Grid2 container alignItems="flex-end" className={classes.buttonGrid}>
     {children || null}
     <div className={classes.actions}>
       {tf || null}
     </div>
-  </Grid>
+  </Grid2>
 }
 
 TableActionGrid.propTypes = {

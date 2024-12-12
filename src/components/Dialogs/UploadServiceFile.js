@@ -6,7 +6,7 @@ import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  Grid,
+  Grid2,
   Typography,
   IconButton, 
 } from '@mui/material';
@@ -126,7 +126,7 @@ const UploadServiceFile = props => {
             required
           />
           <Typography>{t("Data")}</Typography>
-          {data.map((pair, idx) => <Grid container key={idx}>
+          {data.map((pair, idx) => <Grid2 container key={idx}>
             <TextField
               label={t("Key")}
               value={pair.key}
@@ -142,13 +142,13 @@ const UploadServiceFile = props => {
             <IconButton onClick={handleRemoveRow(idx)} size="large">
               <Delete color="error"/>
             </IconButton>
-          </Grid>
+          </Grid2>
           )}
-          <Grid container justifyContent="center">
+          <Grid2 container justifyContent="center">
             <IconButton onClick={handleAddRow} size="large">
               <Add color="primary"/>
             </IconButton>
-          </Grid>
+          </Grid2>
         </FormControl>
       </DialogContent>
       <DialogActions>

@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   Button,
@@ -201,14 +201,14 @@ const RoleDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Role' })}
           </Typography>
-        </Grid>
+        </Grid2>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -291,11 +291,11 @@ const RoleDetails = props => {
               </IconButton>
             </div>
           )}
-          <Grid container justifyContent="center" className={classes.addButton}>
+          <Grid2 container justifyContent="center" className={classes.addButton}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid>
+          </Grid2>
         </FormControl>
         <Button
           color="secondary"

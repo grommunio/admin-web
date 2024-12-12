@@ -12,7 +12,7 @@ import {
   TableBody,
   Typography,
   Button,
-  Grid,
+  Grid2,
   TableSortLabel,
   CircularProgress,
 } from "@mui/material";
@@ -121,12 +121,12 @@ const Orgs = props => {
           </TableBody>
         </Table>
         {orgs.Orgs.length < orgs.count && (
-          <Grid container justifyContent="center">
+          <Grid2 container justifyContent="center">
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid>
+          </Grid2>
         )}
       </Paper>
       <AddOrg

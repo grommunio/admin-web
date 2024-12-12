@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
-import { Button, Dialog, DialogContent, DialogTitle, Grid, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { Button, Dialog, DialogContent, DialogTitle, Grid2, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { AddCircle, CopyAll } from '@mui/icons-material';
 import { Trans, withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -104,7 +104,7 @@ const Design = props => {
             onChange={handleImgInput("hostname", idx)}
           />
           <div className={classes.flexBox}>
-            <Grid container direction="column" alignItems="center" className={classes.grid}>
+            <Grid2 container direction="column" alignItems="center" className={classes.grid}>
               <TextField
                 label={t("Logo")}
                 value={logo || ''}
@@ -114,8 +114,8 @@ const Design = props => {
                 fullWidth
               />
               <img src={logo || ''} alt="" className={classes.imgPreview}/>
-            </Grid>
-            <Grid container direction="column"  alignItems="center" className={classes.grid}>
+            </Grid2>
+            <Grid2 container direction="column"  alignItems="center" className={classes.grid}>
               <TextField
                 label={t("Logo light")}
                 value={logoLight || ''}
@@ -125,8 +125,8 @@ const Design = props => {
                 fullWidth
               />
               <img src={logoLight || ''} alt="" className={classes.imgPreview}/>
-            </Grid>
-            <Grid container direction="column"  alignItems="center" className={classes.grid}>
+            </Grid2>
+            <Grid2 container direction="column"  alignItems="center" className={classes.grid}>
               <TextField
                 label={t("Icon")}
                 value={icon || ''}
@@ -136,8 +136,8 @@ const Design = props => {
                 fullWidth
               />
               <img src={icon || ''} alt="" className={classes.imgPreview}/>
-            </Grid>
-            <Grid container direction="column" alignItems="center" className={classes.grid}>
+            </Grid2>
+            <Grid2 container direction="column" alignItems="center" className={classes.grid}>
               <TextField
                 label={t("Background")}
                 value={background || ''}
@@ -147,8 +147,8 @@ const Design = props => {
                 fullWidth
               />
               <img src={background || ''} alt="" className={classes.imgPreview}/>
-            </Grid>
-            <Grid container direction="column" alignItems="center" className={classes.grid}>
+            </Grid2>
+            <Grid2 container direction="column" alignItems="center" className={classes.grid}>
               <TextField
                 label={t("Background dark")}
                 value={backgroundDark || ''}
@@ -158,7 +158,7 @@ const Design = props => {
                 fullWidth
               />
               <img src={backgroundDark || ''} alt="" className={classes.imgPreview}/>
-            </Grid>
+            </Grid2>
           </div>
         </div>
       )}
@@ -169,11 +169,11 @@ const Design = props => {
           </IconButton>
         </Tooltip>
       </div>
-      <Grid container>
+      <Grid2 container>
         <Button variant='contained' onClick={handleShowConfig}>
           {t("Show config")}
         </Button>
-      </Grid>
+      </Grid2>
     </Paper>
     <Dialog
       maxWidth="lg"

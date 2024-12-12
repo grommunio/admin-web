@@ -1,5 +1,5 @@
 import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
-  Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
+  Grid2, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
@@ -137,8 +137,8 @@ const LicenseTab = props => {
       {t("license_sub")}
     </Typography>
     <Paper className={classes.paper} elevation={1}>
-      <Grid container alignItems="center">
-        <Grid item className={classes.gridItem}>
+      <Grid2 container alignItems="center">
+        <Grid2 className={classes.gridItem}>
           <Button
             variant="contained"
             color="primary"
@@ -147,7 +147,7 @@ const LicenseTab = props => {
           >
             {t(license?.certificate ?'Reactivate license' : 'Reactivate license')}
           </Button>
-        </Grid>
+        </Grid2>
         {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
           <Button
             className={classes.buyNow}
@@ -159,8 +159,8 @@ const LicenseTab = props => {
           >
             {t('Buy now')}
           </Button></>}
-      </Grid>
-      <Grid container direction="column" className={classes.licenseContainer}>
+      </Grid2>
+      <Grid2 container direction="column" className={classes.licenseContainer}>
         <Typography className={classes.data}>
           <span className={classes.description}>{t('Product')}:</span>
           {license.product}
@@ -210,7 +210,7 @@ const LicenseTab = props => {
           <span className={classes.description}>{t('Max users')}:</span>
           {license.maxUsers}
         </Typography>
-      </Grid>
+      </Grid2>
       <input
         accept=".crt,.pem"
         style={{ display: 'none' }}

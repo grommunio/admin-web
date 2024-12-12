@@ -5,7 +5,7 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
-import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid } from '@mui/material';
+import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2 } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import TableViewContainer from '../components/TableViewContainer';
@@ -106,7 +106,7 @@ const Settings = props => {
             <MenuItem value="teal">teal</MenuItem>
           </TextField>
         </FormControl>
-        <Grid container className={classes.buttonGrid}>
+        <Grid2 container className={classes.buttonGrid}>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -114,7 +114,7 @@ const Settings = props => {
           >
             {t('Back')}
           </Button>
-        </Grid>
+        </Grid2>
       </Paper>
     </TableViewContainer>
   );

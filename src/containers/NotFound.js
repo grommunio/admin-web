@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { withStyles } from 'tss-react/mui';
-import { Typography, Button, Grid } from '@mui/material';
+import { Typography, Button, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router';
 
 const styles = {
@@ -23,12 +23,12 @@ export default withStyles(function NotFound(props) {
 
   return (
     <div className={classes.root}>
-      <Grid container justifyContent="center" direction="column" alignItems="center">
+      <Grid2 container justifyContent="center" direction="column" alignItems="center">
         <Typography variant="h1">
           Page not found
         </Typography>
         <Button onClick={handleButton}>Return to Menu</Button>
-      </Grid>
+      </Grid2>
     </div>
   );
 }, styles);

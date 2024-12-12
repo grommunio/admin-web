@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Typography, Button, Grid, TableSortLabel,
+  TableBody, Typography, Button, Grid2, TableSortLabel,
   CircularProgress, Tooltip, Hidden, List, ListItemButton, ListItemText, ListItemIcon, 
   TextField,
   MenuItem,
@@ -420,9 +420,9 @@ const Users = props => {
             )}
           </List>
         </Hidden>
-        {(users.Users.length < users.count) && <Grid container justifyContent="center">
+        {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <AddUser
         open={adding}

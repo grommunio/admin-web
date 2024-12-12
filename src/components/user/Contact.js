@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { Divider, FormControl, Grid, TextField, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControl, Grid2, TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -46,47 +46,47 @@ const Contact = props => {
   });
 
   return (
-    <FormControl className={classes.form}>
+    (<FormControl className={classes.form}>
       <div className={classes.flexRow}>
         <Typography variant="h6">{t('Telephone')}</Typography>
         {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
-      <Grid container>
-        <Grid item xs={12} className={classes.gridItem}>
+      <Grid2 container>
+        <Grid2 className={classes.gridItem} size={12}>
           <TextField 
             {...tfProps("Business 1", 'businesstelephonenumber')}
           />
           <TextField
             {...tfProps("Privat 1", 'hometelephonenumber')}
           />
-        </Grid>
-        <Grid item xs={12} className={classes.gridItem}>
+        </Grid2>
+        <Grid2 className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Business 2", 'business2telephonenumber')}
           />
           <TextField
             {...tfProps("Privat 2", 'home2telephonenumber')}
           />
-        </Grid>
-        <Grid item xs={12} className={classes.gridItem}>
+        </Grid2>
+        <Grid2 className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Fax", 'primaryfaxnumber')}
           />
           <TextField
             {...tfProps("Mobile", 'mobiletelephonenumber')}
           />
-        </Grid>
-        <Grid item xs={12} className={classes.gridItem}>
+        </Grid2>
+        <Grid2 className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Assistant", 'assistanttelephonenumber')}
           />
           <TextField
             {...tfProps("Pager", 'pagertelephonenumber')}
           />
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
       <Divider className={classes.divider}/>
       <div className={classes.flexRow}>
         <Typography variant="h6">{t('Annotation')}</Typography>
@@ -99,7 +99,7 @@ const Contact = props => {
         multiline
         rows={4}
       />
-    </FormControl>
+    </FormControl>)
   );
 }
 

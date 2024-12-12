@@ -3,7 +3,7 @@
 
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Paper, Typography, Button, Grid,
+import { Paper, Typography, Button, Grid2,
   CircularProgress, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton, Tooltip } from '@mui/material';
 import { fetchGroupsData, deleteGroupData } from '../actions/groups';
@@ -230,9 +230,9 @@ const Groups = props => {
             )}
           </TableBody>
         </Table>
-        {(groups.Groups.length < groups.count) && <Grid container justifyContent="center">
+        {(groups.Groups.length < groups.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <AddGroup
         open={adding}

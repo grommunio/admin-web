@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useContext, useMemo } from 'react';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
   Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput, Alert } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
@@ -184,7 +184,7 @@ const Account = props => {
 
   return (
     (<FormControl className={classes.form}>
-      <Grid container className={classes.input}>
+      <Grid2 container className={classes.input}>
         <TextField
           label={t("Username")}
           value={username || ''}
@@ -204,7 +204,7 @@ const Account = props => {
         >
           {t('Change password')}
         </Button>}
-      </Grid>
+      </Grid2>
       {ldapID && <TextField 
         label={t("LDAP ID")}
         className={classes.input}
@@ -267,7 +267,7 @@ const Account = props => {
       </TextField>
       <div className={classes.quota}>
         <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
-        <Grid container style={{ marginTop: 8 }}>
+        <Grid2 container style={{ marginTop: 8 }}>
           <TextField 
             className={classes.flexInput}
             label={
@@ -357,12 +357,12 @@ const Account = props => {
           <div className={classes.graphContainer}>
             {calculateGraph()}
           </div>
-        </Grid>
-        <Grid container>
+        </Grid2>
+        <Grid2 container>
           {quotaWarning && <Alert style={{ flex: 1, margin: 8 }} severity="warning">
             {quotaWarning}
           </Alert>}
-        </Grid>
+        </Grid2>
       </div>
       <FormControl className={classes.input} fullWidth>
         <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
@@ -394,7 +394,7 @@ const Account = props => {
       <Typography sx={{ mt: 1 }}>
         {t("Automatic processing of meeting requests")}
       </Typography>
-      <Grid container direction="column" sx={{ py: 1, px: 2 }}>
+      <Grid2 container direction="column" sx={{ py: 1, px: 2 }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -425,17 +425,17 @@ const Account = props => {
           }
           label={`${t('Accept conflict-free meeting requests')}. (${t("If unchecked, requests will be added to the calendar as tenative only, with no response towards the organizer")})`}
         />
-      </Grid>
+      </Grid2>
       <Typography sx={{ mt: 1 }}>
         {t("Features")}
       </Typography>
-      <Grid container direction="column" sx={{ py: 1, px: 2 }}>
+      <Grid2 container direction="column" sx={{ py: 1, px: 2 }}>
 
         {status !== 4 && <Tooltip
           placement="top-start"
           title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
         >
-          <Grid container>
+          <Grid2 container>
             <FormControlLabel
               control={
                 <Checkbox
@@ -458,9 +458,9 @@ const Account = props => {
               disabled={!chat || !domain.chat}
               label={t('grommunio-chat admin permissions')}
             />
-          </Grid>
+          </Grid2>
         </Tooltip>}
-        <Grid container>
+        <Grid2 container>
           {status !== 4 && <FormControlLabel
             control={
               <Checkbox
@@ -492,8 +492,8 @@ const Account = props => {
             }
             label={t('Allow POP3/IMAP logins')}
           />}
-        </Grid>
-        {status !== 4 && <Grid container>
+        </Grid2>
+        {status !== 4 && <Grid2 container>
           <FormControlLabel
             control={
               <Checkbox
@@ -536,8 +536,8 @@ const Account = props => {
             }
             label={t('Allow Archive')}
           />
-        </Grid>}
-      </Grid>
+        </Grid2>}
+      </Grid2>
     </FormControl>)
   );
 }

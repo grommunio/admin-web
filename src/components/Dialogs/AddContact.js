@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, TextField,
-  Button, DialogActions, CircularProgress, Grid,
+  Button, DialogActions, CircularProgress, Grid2,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -95,7 +95,7 @@ const AddContact = props => {
   const { classes, t, open, onClose } = props;
   const { smtpaddress, displayname, givenname, initials, surname, nickname } = contact;
   return (
-    <Dialog
+    (<Dialog
       onClose={onClose}
       open={open}
       maxWidth="lg"
@@ -103,8 +103,8 @@ const AddContact = props => {
     >
       <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
       <DialogContent>
-        <Grid container>
-          <Grid item xs={12} className={classes.gridItem}>
+        <Grid2 container>
+          <Grid2 className={classes.gridItem} size={12}>
             <TextField
               className={classes.propertyInput}
               fullWidth
@@ -112,8 +112,8 @@ const AddContact = props => {
               value={smtpaddress || ''}
               onChange={handlePropertyChange('smtpaddress')}
             />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
+          </Grid2>
+          <Grid2 className={classes.gridItem} size={12}>
             <div className={classes.grid}>
               <TextField 
                 className={classes.flexTextfield}
@@ -134,8 +134,8 @@ const AddContact = props => {
               value={surname || ''}
               onChange={handlePropertyChange('surname')}
             />
-          </Grid>
-          <Grid item xs={12} className={classes.gridItem}>
+          </Grid2>
+          <Grid2 className={classes.gridItem} size={12}>
             <TextField 
               className={classes.propertyInput}
               label={t("Display name")}
@@ -150,8 +150,8 @@ const AddContact = props => {
               value={nickname || ''}
               onChange={handlePropertyChange('nickname')}
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </DialogContent>
       <DialogActions>
         <Button
@@ -176,7 +176,7 @@ const AddContact = props => {
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>
       </DialogActions>
-    </Dialog>
+    </Dialog>)
   );
 }
 

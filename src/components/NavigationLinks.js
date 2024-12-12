@@ -23,7 +23,7 @@ import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_logo_light.svg';
-import { Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
+import { Grid2, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
@@ -212,7 +212,7 @@ const NavigationLinks = props => {
         <Tab className={classes.tab} label={t('Domains')} />
       </Tabs>}
       {(tab === 1 || !isSysAdmin) &&
-            <Grid container component="form" autoComplete="off">
+            <Grid2 container component="form" autoComplete="off">
               <TextField
                 variant="outlined"
                 label={t('Search')}
@@ -237,7 +237,7 @@ const NavigationLinks = props => {
                     shrink: true,
                   }
                 }} />
-            </Grid>}
+            </Grid2>}
       <List>
         {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
           <Button

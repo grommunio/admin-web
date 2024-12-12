@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   Button,
@@ -478,14 +478,14 @@ const OrgDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Organization' })}
           </Typography>
-        </Grid>
+        </Grid2>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -580,7 +580,7 @@ const OrgDetails = props => {
         <Typography variant="caption" className={classes.subtitle}>
           {t('ldap_sub')}
         </Typography>
-        <Grid container className={classes.category}>
+        <Grid2 container className={classes.category}>
           <FormControlLabel
             control={
               <Switch
@@ -629,7 +629,7 @@ const OrgDetails = props => {
               </Button>
             </Tooltip>
           </div>
-        </Grid>
+        </Grid2>
         <Typography
           color="inherit"
           variant="caption"
@@ -871,7 +871,7 @@ const OrgDetails = props => {
             </Tooltip>
           </Typography>
           {attributes.map((mapping, idx) =>
-            <Grid className={classes.attribute} container alignItems="center" key={idx}>
+            <Grid2 className={classes.attribute} container alignItems="center" key={idx}>
               <LdapTextfield
                 label={t('Name')}
                 flex
@@ -893,13 +893,13 @@ const OrgDetails = props => {
                 size="large">
                 <Delete color="error" />
               </IconButton>
-            </Grid>
+            </Grid2>
           )}
-          <Grid container justifyContent="center" className={classes.addButton}>
+          <Grid2 container justifyContent="center" className={classes.addButton}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid>
+          </Grid2>
         </Paper>
         <div className={classes.bottomRow}>
           <Button

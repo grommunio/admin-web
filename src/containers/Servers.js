@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
-  Typography, Button, Grid, TableSortLabel, CircularProgress,
+  Typography, Button, Grid2, TableSortLabel, CircularProgress,
   TextField, MenuItem, Chip, Tooltip, Alert } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
@@ -218,9 +218,9 @@ const Servers = props => {
             })}
           </TableBody>
         </Table>
-        {(servers.Servers.length < servers.count) && <Grid container justifyContent="center">
+        {(servers.Servers.length < servers.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <AddServer
         open={adding}

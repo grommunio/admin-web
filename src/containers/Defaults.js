@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   Button,
@@ -196,7 +196,7 @@ const Defaults = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
@@ -210,7 +210,7 @@ const Defaults = props => {
           >
             <HelpOutline fontSize="small"/>
           </IconButton>
-        </Grid>
+        </Grid2>
         <FormControl className={classes.form}>
           <Typography
             color="primary"
@@ -227,7 +227,7 @@ const Defaults = props => {
             value={maxUser || ''}
             autoFocus
           />
-          <Grid container className={classes.input}>
+          <Grid2 container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -238,7 +238,7 @@ const Defaults = props => {
               }
               label={t('Create chat team')}
             />
-          </Grid>
+          </Grid2>
           <Typography
             color="primary"
             variant="h6"
@@ -260,7 +260,7 @@ const Defaults = props => {
               </MenuItem>
             ))}
           </TextField>
-          <Grid container style={{ marginTop: 8 }}>
+          <Grid2 container style={{ marginTop: 8 }}>
             <TextField 
               className={classes.flexInput}
               label={
@@ -346,8 +346,8 @@ const Defaults = props => {
                 }
               }}
             />
-          </Grid>
-          <Grid container className={classes.checkboxes}>
+          </Grid2>
+          <Grid2 container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -379,8 +379,8 @@ const Defaults = props => {
               }
               label={t('Allow POP3/IMAP logins')}
             />
-          </Grid>
-          <Grid container className={classes.checkboxes}>
+          </Grid2>
+          <Grid2 container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -421,8 +421,8 @@ const Defaults = props => {
               }
               label={t('Allow Archive')}
             />
-          </Grid>
-          <Grid container className={classes.checkboxes}>
+          </Grid2>
+          <Grid2 container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -433,9 +433,9 @@ const Defaults = props => {
               }
               label={t('Create chat user')}
             />
-          </Grid>
+          </Grid2>
         </FormControl>
-        <Grid container className={classes.buttonGrid}>
+        <Grid2 container className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
@@ -444,7 +444,7 @@ const Defaults = props => {
           >
             {t('Save')}
           </Button>
-        </Grid>
+        </Grid2>
       </Paper>
     </ViewWrapper>)
   );

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpamHistory } from '../actions/spam';
 import PropTypes from 'prop-types';
-import { Chip, Divider, FormControlLabel, Grid, IconButton, Paper, Switch, Table, TableBody, TableCell, TableHead,
+import { Chip, Divider, FormControlLabel, Grid2, IconButton, Paper, Switch, Table, TableBody, TableCell, TableHead,
   TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import { copyToClipboard, parseUnixtime } from '../utils';
@@ -253,7 +253,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             }}
           />
         </LocalizationProvider>
-        {<Grid container justifyContent="flex-end">
+        {<Grid2 container justifyContent="flex-end">
           <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
             <Refresh />
           </IconButton>
@@ -268,7 +268,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
             }
             label={t("Autorefresh")}
           />
-        </Grid>}
+        </Grid2>}
       </div>
       <div className={classes.flexContainer}>
         <DataGrid

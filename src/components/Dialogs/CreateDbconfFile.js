@@ -6,7 +6,7 @@ import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  Grid,
+  Grid2,
   Typography,
   MenuItem, 
 } from '@mui/material';
@@ -133,7 +133,7 @@ const CreateDbconfFile = props => {
             required
           />
           <Typography variant="h6">Data</Typography>
-          {data.map((pair, idx) => <Grid key={idx} container alignItems="center">
+          {data.map((pair, idx) => <Grid2 key={idx} container alignItems="center">
             <Typography className={classes.gridTypo}>
               {pair.key}
             </Typography>
@@ -150,7 +150,7 @@ const CreateDbconfFile = props => {
                 </MenuItem>
               )}
             </TextField>
-          </Grid>
+          </Grid2>
           )}
         </FormControl>
       </DialogContent>

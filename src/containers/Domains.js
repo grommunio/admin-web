@@ -14,7 +14,7 @@ import {
   FormControlLabel,
   Typography,
   Button,
-  Grid,
+  Grid2,
   TableSortLabel,
   CircularProgress,
   Hidden,
@@ -173,12 +173,12 @@ const Domains = props => {
           </List>
         </Hidden>
         {domains.Domains.length < domains.count && (
-          <Grid container justifyContent="center">
+          <Grid2 container justifyContent="center">
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid>
+          </Grid2>
         )}
       </Paper>
       <AddDomain

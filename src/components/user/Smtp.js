@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { Button, FormControl, Grid, IconButton, List, ListItem,
+import { Button, FormControl, Grid2, IconButton, List, ListItem,
   MenuItem,
   TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
@@ -62,11 +62,11 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
         </ListItem>
         )}
       </List>
-      <Grid container justifyContent="center">
+      <Grid2 container justifyContent="center">
         <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-      </Grid>
+      </Grid2>
       <Typography variant="h6" className={classes.headline}>{t('E-Mail forward')}</Typography>
-      <Grid container className={classes.bottom} >
+      <Grid2 container className={classes.bottom} >
         <TextField
           className={classes.select}
           value={forward.forwardType === undefined ? '' : forward.forwardType}
@@ -84,7 +84,7 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
           label={t('Destination')}
           onChange={handleForwardInput('destination')}
         />
-      </Grid>
+      </Grid2>
     </FormControl>
   );
 }

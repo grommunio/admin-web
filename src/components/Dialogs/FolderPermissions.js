@@ -5,7 +5,7 @@ import React, { Fragment, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl,
-  Button, DialogActions, Grid, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
+  Button, DialogActions, Grid2, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
   ListItem, ListItemText, ListItemButton, Divider, MenuItem, InputLabel, Select, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
@@ -133,7 +133,7 @@ const FolderPermissions = props => {
   const { permissions, selected, adding, deleting } = state;
 
   return (
-    <Dialog
+    (<Dialog
       onClose={onCancel}
       open={open}
       maxWidth="sm"
@@ -191,8 +191,8 @@ const FolderPermissions = props => {
             )}
           </Select>
         </FormControl>
-        <Grid container>
-          <Grid item xs={6}>
+        <Grid2 container>
+          <Grid2 size={6}>
             <FormControl className={classes.form}>
               <FormLabel>{t("Read")}</FormLabel>
               <RadioGroup defaultValue={0} value={permissions & 1} onChange={handlePermissions}>
@@ -208,8 +208,8 @@ const FolderPermissions = props => {
                 />
               </RadioGroup>
             </FormControl>
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <FormControl className={classes.form}>
               <FormLabel>{t("Write")}</FormLabel>
               <FormControlLabel
@@ -261,10 +261,10 @@ const FolderPermissions = props => {
                 label={t('Edit all')}
               />
             </FormControl>
-          </Grid>
-        </Grid>
-        <Grid container style={{ marginTop: 16 }}>
-          <Grid item xs={6}>
+          </Grid2>
+        </Grid2>
+        <Grid2 container style={{ marginTop: 16 }}>
+          <Grid2 size={6}>
             <FormControl className={classes.form}>
               <FormLabel>{t("Delete items")}</FormLabel>
               <RadioGroup
@@ -288,8 +288,8 @@ const FolderPermissions = props => {
                 />
               </RadioGroup>
             </FormControl>
-          </Grid>
-          <Grid item xs={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <FormControl className={classes.form}>
               <FormLabel>{t("Other")}</FormLabel>
               <FormControlLabel
@@ -329,8 +329,8 @@ const FolderPermissions = props => {
                 label={t('Folder visible')}
               />
             </FormControl>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </DialogContent>
       <DialogActions>
         <Button
@@ -366,7 +366,7 @@ const FolderPermissions = props => {
         folderID={folderID}
         memberID={selected.memberID}
       />}
-    </Dialog>
+    </Dialog>)
   );
 }
 

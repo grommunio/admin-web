@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
-import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLabel,
+import { Paper, Typography, Grid2, Button, FormControl, TextField, FormControlLabel,
   Checkbox, Select, MenuItem, Divider, Tooltip } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -254,14 +254,14 @@ const DomainMenu = props => {
 
   return (
     (<TableViewContainer
-      headline={t("Domain overview")}
-      snackbar={snackbar}
-      onSnackbarClose={() => setSnackbar('')}
-      loading={loading}
-    >
+        headline={t("Domain overview")}
+        snackbar={snackbar}
+        onSnackbarClose={() => setSnackbar('')}
+        loading={loading}
+      >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container direction="column" className={classes.container}>
-          <Grid item className={classes.firstRow}>
+        <Grid2 container direction="column" className={classes.container}>
+          <Grid2 className={classes.firstRow}>
             <div className={classes.flexRow}>
               <Typography variant='h6' className={classes.description}>{t('Domain name')}:</Typography>
               {domain.domainname}
@@ -283,7 +283,7 @@ const DomainMenu = props => {
                 {t('Delete domain')}
               </Button>
             </div>}
-          </Grid>
+          </Grid2>
           <div className={classes.flexRow}>
             <Typography variant='h6' className={classes.description}>{t('Title')}:</Typography>
             {domain.title}
@@ -326,7 +326,7 @@ const DomainMenu = props => {
             <DNSLegend />
           </div>
           <Divider className={classes.divider}/>
-        </Grid>
+        </Grid2>
         <div className={classes.defaultsContainer}>
           <Typography
             color="primary"
@@ -349,7 +349,7 @@ const DomainMenu = props => {
               </MenuItem>
             ))}
           </TextField>
-          <Grid container className={classes.input}>
+          <Grid2 container className={classes.input}>
             <TextField 
               className={classes.flexInput}
               label={
@@ -435,8 +435,8 @@ const DomainMenu = props => {
                 }
               }}
             />
-          </Grid>
-          <Grid container className={classes.input}>
+          </Grid2>
+          <Grid2 container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -468,8 +468,8 @@ const DomainMenu = props => {
               }
               label={t('Allow POP3/IMAP logins')}
             />
-          </Grid>
-          <Grid container className={classes.input}>
+          </Grid2>
+          <Grid2 container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -510,9 +510,9 @@ const DomainMenu = props => {
               }
               label={t('Allow Archive')}
             />
-          </Grid>
+          </Grid2>
         </div>
-        <Grid container className={classes.buttonGrid}>
+        <Grid2 container className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
@@ -521,7 +521,7 @@ const DomainMenu = props => {
           >
             {t('Save')}
           </Button>
-        </Grid>
+        </Grid2>
       </Paper>
       <DeleteDomain
         open={deleting}

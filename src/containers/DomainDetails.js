@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   MenuItem,
@@ -228,20 +228,20 @@ const DomainListDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Domain' })}
           </Typography>
-        </Grid>
+        </Grid2>
         <Tabs className={classes.tabs} indicatorColor="primary" onChange={handleTab} value={tab}>
           <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
           <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
         </Tabs>
         {tab === 0 && <FormControl className={classes.form}>
-          <Grid container className={classes.input}>
+          <Grid2 container className={classes.input}>
             <TextField
               label={t("Domain")} 
               style={{ flex: 1, marginRight: 8 }} 
@@ -249,7 +249,7 @@ const DomainListDetails = props => {
               autoFocus
               disabled
             />
-          </Grid>
+          </Grid2>
           <TextField
             select
             className={classes.input}

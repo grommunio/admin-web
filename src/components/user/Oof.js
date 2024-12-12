@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField, useTheme } from '@mui/material';
+import { Button, FormControl, Grid2, MenuItem, Tab, Tabs, TextField, useTheme } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
@@ -210,7 +210,7 @@ const Oof = props => {
         </div>
       </div>
     </FormControl>
-    <Grid container className={classes.buttonGrid}>
+    <Grid2 container className={classes.buttonGrid}>
       <Button
         onClick={() => navigate(-1)}
         style={{ marginRight: 8 }}
@@ -226,7 +226,7 @@ const Oof = props => {
       >
         {t('Save')}
       </Button>
-    </Grid>
+    </Grid2>
     <Feedback
       snackbar={snackbar}
       onClose={() => setOof({ ...oof, snackbar: '' })}

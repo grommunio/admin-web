@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Grid, IconButton, 
+  MenuItem, Button, DialogActions, CircularProgress, Grid2, IconButton, 
 } from '@mui/material';
 import Delete from '@mui/icons-material/Close';
 import Add from '@mui/icons-material/AddCircle';
@@ -241,11 +241,11 @@ const AddRole = props => {
               </IconButton>
             </div>
           )}
-          <Grid container justifyContent="center" className={classes.addButton}>
+          <Grid2 container justifyContent="center" className={classes.addButton}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid>
+          </Grid2>
           <TextField 
             className={classes.input} 
             label={t("Description")} 

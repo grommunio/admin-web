@@ -4,7 +4,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
-  Typography, Button, Grid, TableSortLabel, CircularProgress } from '@mui/material';
+  Typography, Button, Grid2, TableSortLabel, CircularProgress } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import { fetchRolesData, deleteRolesData } from '../actions/roles';
 import AddRoles from '../components/Dialogs/AddRole';
@@ -114,9 +114,9 @@ const Roles = props => {
             )}
           </TableBody>
         </Table>
-        {(roles.Roles.length < roles.count) && <Grid container justifyContent="center">
+        {(roles.Roles.length < roles.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <AddRoles
         open={adding}

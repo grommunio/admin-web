@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Typography, Button, Grid, TableSortLabel,
+  TableBody, Typography, Button, Grid2, TableSortLabel,
   CircularProgress, 
   Hidden,
   List,
@@ -299,7 +299,7 @@ const GlobalUsers = props => {
             )}
           </List>
         </Hidden>
-        {(users.Users.length < users.count) && <Grid container justifyContent="center">
+        {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <Button
             variant='outlined'
             size='small'
@@ -309,7 +309,7 @@ const GlobalUsers = props => {
             Load more
           </Button>
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <AddGlobalUser
         open={adding}

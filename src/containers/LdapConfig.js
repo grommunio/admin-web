@@ -4,7 +4,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid2, IconButton, MenuItem, Paper,
   Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete, Fade, LinearProgress } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr, deleteLdapConfig } from '../actions/ldap';
@@ -517,7 +517,7 @@ const LdapConfig = props => {
         <Typography variant="caption" className={classes.subtitle}>
           {t('ldap_sub')}
         </Typography>
-        <Grid container className={classes.category}>
+        <Grid2 container className={classes.category}>
           <FormControlLabel
             control={
               <Switch
@@ -565,7 +565,7 @@ const LdapConfig = props => {
               </Button>
             </Tooltip>
           </div>
-        </Grid>
+        </Grid2>
         <Typography
           color="inherit"
           variant="caption"
@@ -830,7 +830,7 @@ const LdapConfig = props => {
             </Tooltip>
           </Typography>
           {attributes.map((mapping, idx) =>
-            <Grid className={classes.attribute} container alignItems="center" key={idx}>
+            <Grid2 className={classes.attribute} container alignItems="center" key={idx}>
               <LdapTextfield
                 label={t('Name')}
                 flex
@@ -852,13 +852,13 @@ const LdapConfig = props => {
                 size="large">
                 <Delete color="error" />
               </IconButton>
-            </Grid>
+            </Grid2>
           )}
-          <Grid container justifyContent="center" className={classes.addButton}>
+          <Grid2 container justifyContent="center" className={classes.addButton}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid>
+          </Grid2>
         </Paper>
         <div className={classes.bottomRow}>
           <Button

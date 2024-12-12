@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   Button,
   Tooltip,
 } from '@mui/material';
@@ -643,15 +643,15 @@ const UserDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container className={classes.header}>
+        <Grid2 container className={classes.header}>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
           </Typography>
-        </Grid>
-        {ldapID && <Grid container className={classes.syncButtons}>
+        </Grid2>
+        {ldapID && <Grid2 container className={classes.syncButtons}>
           <Tooltip title={t("Detach user from LDAP object")} placement="top">
             <Button
               variant="contained"
@@ -684,7 +684,7 @@ const UserDetails = props => {
               <Dump fontSize="small" className={classes.leftIcon}/> {t("LDAP Dump")}
             </Button>
           </Tooltip>
-        </Grid>}
+        </Grid2>}
         <div className={classes.tabsContainer}>
           <Tabs
             value={tab}
@@ -765,7 +765,7 @@ const UserDetails = props => {
           handleCheckbox={handleSyncCheckboxChange}
           handleSlider={handleSlider}
         />}
-        {tab !== 6 && tab !== 7 && <Grid container className={classes.buttonGrid}>
+        {tab !== 6 && tab !== 7 && <Grid2 container className={classes.buttonGrid}>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -781,7 +781,7 @@ const UserDetails = props => {
           >
             {t('Save')}
           </Button>
-        </Grid>}
+        </Grid2>}
       </Paper>
       <DetachDialog
         open={detaching}

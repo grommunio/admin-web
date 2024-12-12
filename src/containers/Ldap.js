@@ -7,7 +7,7 @@ import { withStyles } from 'tss-react/mui';
 import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
-import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
+import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
   Paper, TextField, Tooltip, Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
@@ -113,7 +113,7 @@ const Ldap = props => {
         <span className={classes.pageTitleSecondary}>| </span>
         {t("LDAP")}
       </Typography>
-      <Grid container justifyContent="center">
+      <Grid2 container justifyContent="center">
         <TextField
           autoFocus
           placeholder={t("Search LDAP")}
@@ -157,7 +157,7 @@ const Ldap = props => {
           label={t('Search in entire organisation')}
           className={classes.checkbox}
         />}
-      </Grid>
+      </Grid2>
       {ldapUsers.length > 0 && <Paper elevation={1}>
         <List>
           {ldapUsers.map((user, idx) => <React.Fragment key={idx}>
@@ -191,9 +191,9 @@ const Ldap = props => {
           )}
         </List>
       </Paper>}
-      {loading && <Grid container justifyContent="center">
+      {loading && <Grid2 container justifyContent="center">
         <CircularProgress color="primary" size={40}/>
-      </Grid>}
+      </Grid2>}
       <ImportDialog
         domainID={domain.ID}
         open={!!confirming}

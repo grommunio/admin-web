@@ -7,7 +7,7 @@ import { withStyles } from 'tss-react/mui';
 import { withTranslation } from "react-i18next";
 import {
   FormControlLabel,
-  Grid,
+  Grid2,
   IconButton,
   List,
   ListItem,
@@ -332,7 +332,7 @@ const Logs = props => {
             >
               {nOptions.map(c => <MenuItem value={c} key={c}>{c}</MenuItem>)}
             </TextField>}
-            {filename && <Grid container justifyContent="flex-end">
+            {filename && <Grid2 container justifyContent="flex-end">
               <IconButton disabled={!!date} onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
                 <Refresh />
               </IconButton>
@@ -348,7 +348,7 @@ const Logs = props => {
                 }
                 label={t("Autorefresh")}
               />
-            </Grid>}
+            </Grid2>}
           </div>
           {filename && filteredlogs.length ===  0 && <Typography>&lt;no logs&gt;</Typography>}
           <List className={classes.list} id="logsList" onScroll={handleScroll}>

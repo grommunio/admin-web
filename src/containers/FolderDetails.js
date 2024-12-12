@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   MenuItem,
@@ -145,14 +145,14 @@ const FolderDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('Folder details')}
           </Typography>
-        </Grid>
+        </Grid2>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -190,7 +190,7 @@ const FolderDetails = props => {
             disabled={readonly}
           />
         </FormControl>
-        <Grid container className={classes.grid} alignItems="center">
+        <Grid2 container className={classes.grid} alignItems="center">
           <Button
             onClick={handleAdd}
             disabled={!writable}
@@ -215,8 +215,8 @@ const FolderDetails = props => {
               </Tooltip>
             </span>}
           />
-        </Grid>
-        <Grid container>
+        </Grid2>
+        <Grid2 container>
           <Button
             color="secondary"
             onClick={() => navigate(-1)}
@@ -233,7 +233,7 @@ const FolderDetails = props => {
           >
             {t('Save')}
           </Button>
-        </Grid>
+        </Grid2>
       </Paper>
       {folder.folderid && <FolderPermissions
         open={adding}

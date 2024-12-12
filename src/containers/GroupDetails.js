@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   TextField,
   FormControl,
   Button,
@@ -266,14 +266,14 @@ const GroupDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container>
+        <Grid2 container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Group' })}
           </Typography>
-        </Grid>
+        </Grid2>
         <div className={classes.tabContainer}>
           <Tabs
             indicatorColor="primary"
@@ -422,9 +422,9 @@ const GroupDetails = props => {
             </ListItem>
             )}
           </List>
-          <Grid container justifyContent="center">
+          <Grid2 container justifyContent="center">
             <Button variant="contained" onClick={handleAliasEdit("add")}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-          </Grid>
+          </Grid2>
         </FormControl>}
         <Button
           color="secondary"

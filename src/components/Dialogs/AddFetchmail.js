@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
-  FormControlLabel, Checkbox, Grid, MenuItem,
+  FormControlLabel, Checkbox, Grid2, MenuItem,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 
@@ -188,7 +188,7 @@ const AddFetchmail = props => {
             value={extraOptions || ''}
             onChange={handleInput('extraOptions')}
           />
-          <Grid container>
+          <Grid2 container>
             <FormControlLabel
               control={
                 <Checkbox
@@ -240,7 +240,7 @@ const AddFetchmail = props => {
               }
               label={t("SSL certificate check")}
             />
-          </Grid>
+          </Grid2>
         </FormControl>
       </DialogContent>
       <DialogActions>

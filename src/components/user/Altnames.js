@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { Button, FormControl, Grid, IconButton, List, ListItem,
+import { Button, FormControl, Grid2, IconButton, List, ListItem,
   TextField, Tooltip, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
@@ -66,9 +66,9 @@ const Altnames = props => {
         </ListItem>
         )}
       </List>
-      <Grid container justifyContent="center">
+      <Grid2 container justifyContent="center">
         <Button variant="contained" onClick={handleAltnameEdit("add")}>{t('addHeadline', { item: 'Alternative name' })}</Button>
-      </Grid>
+      </Grid2>
     </FormControl>
   );
 }

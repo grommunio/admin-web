@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, Grid,
+import { Button, FormControl, Grid2,
   IconButton,
   Table,
   TableBody,
@@ -173,7 +173,7 @@ const Sync = props => {
 
   return (
     <FormControl className={classes.form}>
-      <Grid container alignItems="center"  className={classes.headline}>
+      <Grid2 container alignItems="center"  className={classes.headline}>
         <Typography variant="h6">{t('Mobile devices')}</Typography>
         <div className={classes.flexEndContainer}>
           <Button
@@ -186,7 +186,7 @@ const Sync = props => {
               Delete sync states
           </Button>
         </div>
-      </Grid>
+      </Grid2>
       <Table size="small">
         <TableHead>
           <TableRow>

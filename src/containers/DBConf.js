@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid, Tabs, Tab, IconButton } from '@mui/material';
+  Typography, Button, Grid2, Tabs, Tab, IconButton } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
@@ -129,7 +129,7 @@ const DBConf = props => {
           {t("Configure grommunio-dbconf")}
         </Button>
       </TableActionGrid>
-      <Grid container alignItems="flex-end" className={classes.tabs}>
+      <Grid2 container alignItems="flex-end" className={classes.tabs}>
         <Tabs
           textColor="primary" 
           indicatorColor="primary"
@@ -139,7 +139,7 @@ const DBConf = props => {
           <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
           <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
         </Tabs>
-      </Grid>
+      </Grid2>
       {tab === 0 ? <Paper elevation={1}>
         <Table size="small">
           <TableHead>

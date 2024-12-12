@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid,
+  Grid2,
   Button,
   Divider,
   Tooltip,
@@ -124,7 +124,7 @@ const TaskDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container direction="column" className={classes.container}>
+        <Grid2 container direction="column" className={classes.container}>
           <div className={classes.centerRow}>
             <Typography variant='h6' className={classes.description}>{t('Task ID')}:</Typography>
             {ID || t('Unknown')}
@@ -186,7 +186,7 @@ const TaskDetails = props => {
                 </div>
               </div>;
           })}
-        </Grid>
+        </Grid2>
         <Button
           color="secondary"
           onClick={handleNavigation('taskq')}

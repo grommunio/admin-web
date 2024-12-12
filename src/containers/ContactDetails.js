@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { withStyles } from 'tss-react/mui';
-import { Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Button, Divider, Grid2, Paper, TextField, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import ViewWrapper from '../components/ViewWrapper';
 import { withTranslation } from 'react-i18next';
@@ -101,14 +101,14 @@ const ContactDetails = props => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid container className={classes.header}>
+        <Grid2 container className={classes.header}>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Contact' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
           </Typography>
-        </Grid>
+        </Grid2>
         <div className={classes.flexRow}>
           <Typography variant="h6">{t('E-Mail')}</Typography>
         </div>
@@ -128,7 +128,7 @@ const ContactDetails = props => {
           user={user}
           handlePropertyChange={handlePropertyChange}
         />
-        <Grid container className={classes.buttonGrid}>
+        <Grid2 container className={classes.buttonGrid}>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -143,7 +143,7 @@ const ContactDetails = props => {
           >
             {t('Save')}
           </Button>
-        </Grid>
+        </Grid2>
       </Paper>
     </ViewWrapper>
   );

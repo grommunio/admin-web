@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
 import React from 'react';
-import { FormControl, Grid, IconButton,
+import { FormControl, Grid2, IconButton,
   Table,
   TableBody,
   TableCell,
@@ -41,12 +41,12 @@ const FetchMail = props => {
   const { classes, t, fetchmail, handleAdd, handleEdit, handleDelete } = props;
   return (
     <FormControl className={classes.form}>
-      <Grid container alignItems="center"  className={classes.headline}>
+      <Grid2 container alignItems="center"  className={classes.headline}>
         <Typography variant="h6">{t('Fetchmail')}</Typography>
         <IconButton onClick={handleAdd} size="large">
           <AddCircleOutline color="primary" fontSize="small"/>
         </IconButton>
-      </Grid>
+      </Grid2>
       <Table size="small">
         <TableHead>
           <TableRow>
