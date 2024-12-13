@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import {
-  Hidden,
   Drawer,
+  useMediaQuery,
 } from '@mui/material';
 import {
   setDrawerOpen,
@@ -66,22 +66,24 @@ function ResponsiveDrawer(props) {
   const { classes, domains, open, expanded } = props;
   const [ tab, setTab ] = useState(0);
 
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <nav className={expanded ? classes.drawerExpanded : classes.drawerCollapsed} aria-label="navigation">
-      <Hidden>
-        <Drawer
-          variant="temporary"
-          anchor={"left"}
-          open={open}
-          onClose={props.toggleOpen}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          <NavigationLinks domains={domains} tab={tab} setTab={setTab}/>
-        </Drawer>
-      </Hidden>
-      <Hidden lgDown>
+      {!lgUpHidden &&
+      <Drawer
+        variant="temporary"
+        anchor={"left"}
+        open={open}
+        onClose={props.toggleOpen}
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <NavigationLinks domains={domains} tab={tab} setTab={setTab}/>
+      </Drawer>}
+      {!lgDownHidden &&
         <Drawer
           classes={{
             paper: expanded ? classes.drawerPaper : classes.smallDrawerPaper,
@@ -92,8 +94,7 @@ function ResponsiveDrawer(props) {
           {expanded ?
             <NavigationLinks domains={domains} tab={tab} setTab={setTab}/> :
             <RetractedNavigationLinks domains={domains} tab={tab} setTab={setTab}/>}
-        </Drawer>
-      </Hidden>
+        </Drawer>}
     </nav>
   );
 }

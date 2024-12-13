@@ -17,10 +17,10 @@ import {
   Grid2,
   TableSortLabel,
   CircularProgress,
-  Hidden,
   List,
   ListItemButton,
   ListItemText,
+  useMediaQuery,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
@@ -73,6 +73,9 @@ const Domains = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const filteredDomains = domains.Domains.filter(d => d.domainStatus !== 3 || showDeleted);
 
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -112,7 +115,7 @@ const Domains = props => {
         {t("showingDomains", { count: filteredDomains.length })}
       </Typography>
       <Paper elevation={1}>
-        <Hidden lgDown>
+        {!lgDownHidden &&
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -153,9 +156,8 @@ const Domains = props => {
                 </TableRow>)
               }
             </TableBody>
-          </Table>
-        </Hidden>
-        <Hidden lgUp>
+          </Table>}
+        {!lgUpHidden &&
           <List>
             {filteredDomains.map((obj, idx) => 
               <ListItemButton
@@ -170,8 +172,7 @@ const Domains = props => {
                 />
               </ListItemButton>
             )}
-          </List>
-        </Hidden>
+          </List>}
         {domains.Domains.length < domains.count && (
           <Grid2 container justifyContent="center">
             <CircularProgress

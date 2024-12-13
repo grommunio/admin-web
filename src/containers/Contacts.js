@@ -5,7 +5,8 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2,
-  CircularProgress, Hidden, List, ListItemButton, ListItemText, ListItemIcon, Tooltip } from '@mui/material';
+  CircularProgress, List, ListItemButton, ListItemText, ListItemIcon, Tooltip, 
+  useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { checkLdapUsers, deleteUserData, fetchContactsData } from '../actions/users';
@@ -134,6 +135,10 @@ const Contacts = props => {
   const { loading, match, snackbar, deleting } = tableState;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { addingContact, checking, taskMessage, taskID } = state;
+
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -212,7 +217,7 @@ const Contacts = props => {
         {t("showingUser", { count: users.Users.length })}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
-        <Hidden lgDown>
+        {!lgDownHidden &&
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -249,9 +254,8 @@ const Contacts = props => {
                 );
               })}
             </TableBody>
-          </Table>
-        </Hidden>
-        <Hidden lgUp>
+          </Table>}
+        {!lgUpHidden &&
           <List>
             {users.Users.map((obj, idx) => 
               <ListItemButton
@@ -268,8 +272,7 @@ const Contacts = props => {
                 />
               </ListItemButton>
             )}
-          </List>
-        </Hidden>
+          </List>}
         {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid2>}

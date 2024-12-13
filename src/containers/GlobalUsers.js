@@ -5,8 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2, TableSortLabel,
-  CircularProgress, 
-  Hidden,
+  CircularProgress,
   List,
   ListItemButton,
   ListItemIcon,
@@ -14,7 +13,8 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   TextField,
   MenuItem,
   FormControlLabel,
-  Checkbox} from '@mui/material';
+  Checkbox,
+  useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '../actions/users';
@@ -159,6 +159,9 @@ const GlobalUsers = props => {
     }
   }, { normal: 0, group: 0, shared: 0 });
 
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -223,7 +226,7 @@ const GlobalUsers = props => {
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.group} ${t("groups")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
-        <Hidden lgDown>
+        {!lgDownHidden &&
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -275,9 +278,8 @@ const GlobalUsers = props => {
                 );
               })}
             </TableBody>
-          </Table>
-        </Hidden>
-        <Hidden lgUp>
+          </Table>}
+        {!lgUpHidden &&
           <List>
             {users.Users.map((obj, idx) => 
               <ListItemButton
@@ -297,8 +299,7 @@ const GlobalUsers = props => {
                 />
               </ListItemButton>
             )}
-          </List>
-        </Hidden>
+          </List>}
         {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <Button
             variant='outlined'

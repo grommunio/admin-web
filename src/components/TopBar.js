@@ -4,14 +4,15 @@
 import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
-import { AppBar, Toolbar, Typography, Hidden, IconButton,
+import { AppBar, Toolbar, Typography, IconButton,
   Box, 
   Menu,
   MenuItem,
   Tooltip,
   Autocomplete,
   TextField,
-  InputAdornment} from '@mui/material';
+  InputAdornment,
+  useMediaQuery} from '@mui/material';
 import { connect } from 'react-redux';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
@@ -201,41 +202,41 @@ const TopBar = props => {
   const { menuAnchorEl, langsAnchorEl } = state;
   const licenseVisible = context.includes(SYSTEM_ADMIN_WRITE);
   const sysAdmRead = context.includes(SYSTEM_ADMIN_READ);
+
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+  const mdDownHidden = useMediaQuery(theme => theme.breakpoints.down('md'));
   
   return (
     (<AppBar color='inherit' position="fixed" className={classes.appbar}>
       <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
-        <Hidden lgUp>
-          <IconButton color="inherit" onClick={handleMenuToggle} size="large">
+        {!lgUpHidden &&
+          <IconButton sx={{ display: { lg: 'none', md: 'block' } }}  color="inherit" onClick={handleMenuToggle} size="large">
             <Burger className={classes.burger}/>
-          </IconButton>
-        </Hidden>
-        <Hidden lgDown>
+          </IconButton>}
+        {!lgDownHidden &&
           <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
             {drawer.expanded ?
               <KeyboardArrowLeft className={classes.burger} /> :
               <KeyboardArrowRight className={classes.burger} />}
-          </IconButton>
-        </Hidden>
-        <Hidden mdDown>
-          {links.map((link, idx) =>
-            <Tooltip
-              placement="bottom"
-              title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
-            >
-              <span>
-                <IconButton
-                  href={config[link.key]}
-                  disabled={!config[link.key]}
-                  target="_blank"
-                  className={classes.iconButton}
-                  size="large">
-                  <link.icon />
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-        </Hidden>
+          </IconButton>}
+        {!mdDownHidden && links.map((link, idx) =>
+          <Tooltip
+            placement="bottom"
+            title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
+          >
+            <span>
+              <IconButton
+                href={config[link.key]}
+                disabled={!config[link.key]}
+                target="_blank"
+                className={classes.iconButton}
+                size="large">
+                <link.icon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
         <div className={classes.flexEndContainer}>
           {sysAdmRead && <Autocomplete
             onChange={handleAutocomplete}

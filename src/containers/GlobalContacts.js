@@ -5,12 +5,12 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2,
-  CircularProgress, 
-  Hidden,
+  CircularProgress,
   List,
   ListItemButton,
   ListItemIcon,
-  ListItemText} from '@mui/material';
+  ListItemText,
+  useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, fetchAllContacts } from '../actions/users';
@@ -77,6 +77,10 @@ const GlobalContacts = props => {
     handleDeleteSuccess, handleEdit } = props;
   const { loading, match, snackbar, deleting } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
+
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -107,7 +111,7 @@ const GlobalContacts = props => {
         {t("showingUser", { count: users.Users.length })}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
-        <Hidden lgDown>
+        {!lgDownHidden &&
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -144,9 +148,8 @@ const GlobalContacts = props => {
                 );
               })}
             </TableBody>
-          </Table>
-        </Hidden>
-        <Hidden lgUp>
+          </Table>}
+        {!lgUpHidden &&
           <List>
             {users.Users.map((obj, idx) => 
               <ListItemButton
@@ -163,8 +166,7 @@ const GlobalContacts = props => {
                 />
               </ListItemButton>
             )}
-          </List>
-        </Hidden>
+          </List>}
         {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid2>}

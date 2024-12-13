@@ -5,11 +5,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2, TableSortLabel,
-  CircularProgress, Tooltip, Hidden, List, ListItemButton, ListItemText, ListItemIcon, 
+  CircularProgress, Tooltip, List, ListItemButton, ListItemText, ListItemIcon, 
   TextField,
   MenuItem,
   FormControlLabel,
-  Checkbox} from '@mui/material';
+  Checkbox,
+  useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
 import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
@@ -225,6 +226,9 @@ const Users = props => {
     }
   }, { normal: 0, group: 0, shared: 0 });
 
+  const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
+  const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
   return (
     <TableViewContainer
       handleScroll={handleScroll}
@@ -336,7 +340,7 @@ const Users = props => {
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
-        <Hidden lgDown>
+        {!lgDownHidden &&
           <Table size="small">
             <TableHead>
               <TableRow>
@@ -396,9 +400,8 @@ const Users = props => {
                 );
               })}
             </TableBody>
-          </Table>
-        </Hidden>
-        <Hidden lgUp>
+          </Table>}
+        {!lgUpHidden &&
           <List>
             {users.Users.map((obj, idx) => 
               <ListItemButton
@@ -418,8 +421,7 @@ const Users = props => {
                 />
               </ListItemButton>
             )}
-          </List>
-        </Hidden>
+          </List>}
         {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid2>}
