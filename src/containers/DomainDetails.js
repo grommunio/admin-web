@@ -88,22 +88,20 @@ const DomainListDetails = props => {
   useEffect(() => {
     const inner = async () => {
       const { fetch, fetchOrgs, fetchServers, capabilities } = props;
+
       if(capabilities.includes(SYSTEM_ADMIN_READ)) {
-        await fetchOrgs()
-          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
         await fetchServers()
           .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       }
+
       const domain = await fetch(getStringAfterLastSlash())
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       const defaultPolicy = domain.defaultPolicy;
       domain.syncPolicy = domain.syncPolicy || {};
-      const domainOrg = props.orgs.find(o => o.ID === domain.orgID);
       setState({
         ...state, 
         loading: false,
         ...(domain || {}),
-        orgID: domainOrg,
         syncPolicy: {
           ...defaultPolicy,
           ...domain.syncPolicy,
@@ -111,10 +109,24 @@ const DomainListDetails = props => {
         },
         defaultPolicy,
       });
+
+      if(capabilities.includes(SYSTEM_ADMIN_READ)) {
+        fetchOrgs()
+          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      }
     };
 
     inner();
   }, []);
+
+  useEffect(() => {
+    const { orgID } = state;
+    const domainOrg = props.orgs.find(o => o.ID === orgID);
+    setState({
+      ...state, 
+      orgID: domainOrg || "",
+    });
+  }, [props.orgs]);
 
   const handleInput = field => event => {
     setState({
@@ -136,7 +148,7 @@ const DomainListDetails = props => {
       ID,
       domainname,
       domainStatus,
-      orgID: Number.isInteger(orgID) ? orgID : 0,
+      orgID: orgID ? orgID.ID : 0,
       maxUser: parseInt(maxUser) || null,
       title,
       address,
@@ -204,7 +216,7 @@ const DomainListDetails = props => {
   const handleAutocomplete = (field) => (e, newVal) => {
     setState({
       ...state, 
-      [field]: newVal?.ID || '',
+      [field]: newVal || '',
     });
   }
 
@@ -220,7 +232,7 @@ const DomainListDetails = props => {
   const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
     tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
     chat, homeserver, loading } = state;
-    
+
   return (
     <ViewWrapper
       snackbar={snackbar}
