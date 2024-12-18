@@ -55,12 +55,12 @@ const styles = theme => ({
 const LicenseTab = props => {
   const [state, setState] = useState({
     domainsExpanded: false,
-    expandedDomainIdxs: [],
     domainUsers: {},
     dialogOpen: false,
     username: "",
     password: "",
   });
+  const [expandedDomainIdxs, setExpandedDomainIdxs] = useState([]);
   const imageInputRef = useRef();
   const navigate = useNavigate();
 
@@ -76,7 +76,7 @@ const LicenseTab = props => {
   }, []);
 
   const handleExpansion = (ID, idx) => () => {
-    const { expandedDomainIdxs, domainUsers } = state;
+    const { domainUsers } = state;
     const copy = [...expandedDomainIdxs];
     if(copy.includes(idx)) {
       copy.splice(copy.findIndex(arrayIdx => arrayIdx === idx), 1);
@@ -84,7 +84,7 @@ const LicenseTab = props => {
       if(!domainUsers[ID]) fetchUsers(ID);
       copy.push(idx);
     }
-    setState({ ...state, expandedDomainIdxs: copy });
+    setExpandedDomainIdxs(copy);
   }
 
   const toggleDomainExpansion = () => setState({ ...state, domainsExpanded: !state.domainsExpanded });
@@ -130,7 +130,7 @@ const LicenseTab = props => {
   }
 
   const { classes, t, license, Domains, counts } = props;
-  const { domainsExpanded, expandedDomainIdxs, domainUsers, dialogOpen, username, password } = state;
+  const { domainsExpanded, domainUsers, dialogOpen, username, password } = state;
   
   return <>
     <Typography variant="caption" className={classes.subtitle}>
@@ -189,7 +189,7 @@ const LicenseTab = props => {
                 />
                 {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
-              <Collapse in={expandedDomainIdxs.includes(idx)} unmountOnExit>
+              <Collapse in={expandedDomainIdxs.includes(idx)}>
                 <List component="div" disablePadding>
                   {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
                     <ListItem key={idx} sx={{ pl: 4 }}>
