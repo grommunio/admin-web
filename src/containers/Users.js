@@ -305,7 +305,7 @@ const Users = props => {
       </TableActionGrid>
       <div className={classes.filterRow}>
         <TextField
-          label="Mode"
+          label={t("Mode")}
           select
           value={mode}
           onChange={handleSelect("mode")}
@@ -317,7 +317,7 @@ const Users = props => {
           <MenuItem value={4}>Shared</MenuItem>
         </TextField>
         <TextField
-          label="Mode"
+          label={t("Type")}
           select
           value={type}
           onChange={handleSelect("type")}
@@ -326,6 +326,7 @@ const Users = props => {
         >
           <MenuItem value={0}>Normal</MenuItem>
           <MenuItem value={7}>Room</MenuItem>
+          <MenuItem value={8}>Equipment</MenuItem>
         </TextField>
         <FormControlLabel
           control={<Checkbox

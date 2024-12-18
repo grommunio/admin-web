@@ -203,7 +203,7 @@ const GlobalUsers = props => {
           <MenuItem value={4}>Shared</MenuItem>
         </TextField>
         <TextField
-          label="Mode"
+          label="Type"
           select
           value={type}
           onChange={handleSelect("type")}
@@ -212,6 +212,7 @@ const GlobalUsers = props => {
         >
           <MenuItem value={0}>Normal</MenuItem>
           <MenuItem value={7}>Room</MenuItem>
+          <MenuItem value={8}>Equipment</MenuItem>
         </TextField>
         <FormControlLabel
           control={<Checkbox
