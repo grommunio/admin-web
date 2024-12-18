@@ -80,8 +80,8 @@ export const globalSearchOptions = [
     route: '/taskq'
   },
   {
-    label: 'Sync',
-    tags: ["synchronization", "states", 'mobiles', "mobile devices", "push connections"],
+    label: 'Mobile Devices',
+    tags: ["sync", "synchronization", "states", 'mobiles', "mobile devices", "push connections"],
     route: '/sync'
   },
   {
@@ -95,8 +95,18 @@ export const globalSearchOptions = [
     route: '/settings'
   },
   {
+    label: 'Design',
+    tags: ["design", "white", "label", "whitelabel"],
+    route: '/license'
+  },
+  {
+    label: 'Updates',
+    tags: ["updates", "update", "upgrade"],
+    route: '/license'
+  },
+  {
     label: 'License',
     tags: ["license", "product", "upload"],
-    route: '/settings'
+    route: '/license'
   }
 ]
