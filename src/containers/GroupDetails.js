@@ -356,6 +356,7 @@ const GroupDetails = props => {
             ))}
           </TextField>
           {listType === 0 && <MagnitudeAutocomplete
+            getOptionDisabled={option => option.username === listname}
             multiple
             value={associations || []}
             filterAttribute={'username'}
@@ -377,6 +378,7 @@ const GroupDetails = props => {
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
           {listPrivilege === 3 && <MagnitudeAutocomplete
+            getOptionDisabled={option => option.username === listname}
             multiple
             value={specifieds || []}
             filterAttribute={'username'}
