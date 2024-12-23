@@ -151,19 +151,23 @@ const NavigationLinks = props => {
   const ListElement = ({ label, path, Icon }) => {
     const { classes, t } = props;
     const selected = location.pathname.endsWith('/' + path);
-    return <ListItemButton
-      onClick={handleNavigation(path)}
-      classes={{ selected: classes.selected }}
-      selected={selected}
-    >
-      <ListItemIcon>
-        <Icon className={classes.icon}/>
-      </ListItemIcon>
-      <ListItemText
-        primary={t(label)}
-        primaryTypographyProps={{ className: selected ? classes.drawerItemLabel : null }}
-      />
-    </ListItemButton>;
+    return (
+      <ListItemButton
+        onClick={handleNavigation(path)}
+        classes={{ selected: classes.selected }}
+        selected={selected}
+      >
+        <ListItemIcon>
+          <Icon className={classes.icon}/>
+        </ListItemIcon>
+        <ListItemText
+          primary={t(label)}
+          slotProps={{
+            primary: { className: selected ? classes.drawerItemLabel : null }
+          }}
+        />
+      </ListItemButton>
+    );
   }
 
   // eslint-disable-next-line react/prop-types
@@ -171,19 +175,23 @@ const NavigationLinks = props => {
     const { classes, t, expandedDomain } = props;
     const selected = expandedDomain === ID &&
       location.pathname.startsWith('/' + ID + path);
-    return <ListItemButton
-      onClick={handleNavigation(ID + path)}
-      selected={selected}
-      classes={{ selected: classes.selected }}
-    >
-      <ListItemIcon>
-        <Icon className={classes.nestedIcon}/>
-      </ListItemIcon>
-      <ListItemText
-        primary={t(label)}
-        primaryTypographyProps={{ className: selected ? classes.nestedLabel : null }}
-      />
-    </ListItemButton>
+    return (
+      <ListItemButton
+        onClick={handleNavigation(ID + path)}
+        selected={selected}
+        classes={{ selected: classes.selected }}
+      >
+        <ListItemIcon>
+          <Icon className={classes.nestedIcon}/>
+        </ListItemIcon>
+        <ListItemText
+          primary={t(label)}
+          slotProps={{
+            primary: { className: selected ? classes.nestedLabel : null }
+          }}
+        />
+      </ListItemButton>
+    );
   }
 
   const { classes, t, tab, expandedDomain, domains, capabilities, config } = props;
@@ -255,50 +263,54 @@ const NavigationLinks = props => {
               .filter(({ domainname }) => domainname.includes(filter))
               .map(({ domainname: name, ID, domainStatus }) => {
                 const selected = expandedDomain === ID && pathname === '/' + ID;
-                return <React.Fragment key={name}>
-                  <ListItemButton
-                    onClick={handleDrawer(ID)}
-                    selected={selected}
-                    classes={{ selected: classes.selected }}
-                  >
-                    <ListItemIcon>
-                      <Domains className={classes.icon}/>
-                    </ListItemIcon>
-                    <ListItemText
-                      sx={{ wordWrap: 'break-word' }}
-                      primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}
-                      primaryTypographyProps={{ className: selected ? classes.drawerItemLabel : null }}
-                    />
-                  </ListItemButton>
-                  <Collapse in={expandedDomain === ID} unmountOnExit>
-                    <List component="div" disablePadding>
-                      <NestedListElement
-                        ID={ID}
-                        label={"Users"}
-                        path="/users"
-                        Icon={Person}
+                return (
+                  <React.Fragment key={name}>
+                    <ListItemButton
+                      onClick={handleDrawer(ID)}
+                      selected={selected}
+                      classes={{ selected: classes.selected }}
+                    >
+                      <ListItemIcon>
+                        <Domains className={classes.icon}/>
+                      </ListItemIcon>
+                      <ListItemText
+                        sx={{ wordWrap: 'break-word' }}
+                        primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}
+                        slotProps={{
+                          primary: { className: selected ? classes.drawerItemLabel : null }
+                        }}
                       />
-                      <NestedListElement
-                        ID={ID}
-                        label={"Contacts"}
-                        path="/contacts"
-                        Icon={ContactMail}
-                      />
-                      <NestedListElement
-                        ID={ID}
-                        label={"Groups"}
-                        path="/groups"
-                        Icon={Groups}
-                      />
-                      <NestedListElement
-                        ID={ID}
-                        label={"Public folders"}
-                        path="/folders"
-                        Icon={Topic}
-                      />
-                    </List>
-                  </Collapse>
-                </React.Fragment>
+                    </ListItemButton>
+                    <Collapse in={expandedDomain === ID} unmountOnExit>
+                      <List component="div" disablePadding>
+                        <NestedListElement
+                          ID={ID}
+                          label={"Users"}
+                          path="/users"
+                          Icon={Person}
+                        />
+                        <NestedListElement
+                          ID={ID}
+                          label={"Contacts"}
+                          path="/contacts"
+                          Icon={ContactMail}
+                        />
+                        <NestedListElement
+                          ID={ID}
+                          label={"Groups"}
+                          path="/groups"
+                          Icon={Groups}
+                        />
+                        <NestedListElement
+                          ID={ID}
+                          label={"Public folders"}
+                          path="/folders"
+                          Icon={Topic}
+                        />
+                      </List>
+                    </Collapse>
+                  </React.Fragment>
+                );
               })}
         {(tab === 0 && !isSysAdmin) && <ListElement
           label={"Task queue"}

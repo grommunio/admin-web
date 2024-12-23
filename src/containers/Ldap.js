@@ -171,8 +171,10 @@ const Ldap = props => {
               </ListItemAvatar>
               <ListItemText
                 primary={user.name}
-                primaryTypographyProps={{ color: 'primary' }}
                 secondary={user.email}
+                slotProps={{
+                  primary: { color: 'primary' }
+                }}
               />
               {writable && <Tooltip title={user.error || t("Import user")}>
                 <span>

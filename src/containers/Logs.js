@@ -238,7 +238,7 @@ const Logs = props => {
   const { snackbar, autorefresh, clipboardMessage, loading } = state;
 
   return (
-    (<TableViewContainer
+    <TableViewContainer
       headline={t("Logging")}
       subtitle={t("logs_sub")}
       href="https://docs.grommunio.com/admin/administration.html#logs"
@@ -251,7 +251,9 @@ const Logs = props => {
           <ListItem>
             <ListItemText
               primary={t("Log files")}
-              primaryTypographyProps={{ color: "primary", variant: 'h6' }}
+              slotProps={{
+                primary: { color: "primary", variant: 'h6' }
+              }}
             />
           </ListItem>
           {logs.Logs.map((log, idx) =>
@@ -264,7 +266,9 @@ const Logs = props => {
             >
               <ListItemText
                 primary={log}
-                primaryTypographyProps={{ color: "textPrimary" }}
+                slotProps={{
+                  primary: { color: "textPrimary" }
+                }}
               />
             </ListItemButton>
           )}
@@ -385,7 +389,7 @@ const Logs = props => {
           </Alert>
         </Snackbar>
       </Portal>
-    </TableViewContainer>)
+    </TableViewContainer>
   );
 }
 
