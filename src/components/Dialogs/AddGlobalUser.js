@@ -49,7 +49,7 @@ const AddGlobalUser = props => {
     repeatPw: '',
     domain: '',
     homeserver: '',
-    lang: '',
+    lang: 'en_US',
     chatAvailable: false,
   });
   const [langs, setLangs] = useState([]);
@@ -97,7 +97,7 @@ const AddGlobalUser = props => {
         prohibitreceivequota: properties?.prohibitreceivequota,
         prohibitsendquota: properties?.prohibitsendquota,
       },
-      lang: lang || '',
+      lang: lang || 'en_US',
     };
   }
 
@@ -154,6 +154,7 @@ const AddGlobalUser = props => {
     })
       .then(() => {
         setState({
+          ...state,
           username: '',
           properties: {
             displayname: '',
@@ -165,7 +166,6 @@ const AddGlobalUser = props => {
           password: '',
           repeatPw: '',
           usernameError: false,
-          lang: '',
         });
         onSuccess();
       })
@@ -341,7 +341,7 @@ const AddGlobalUser = props => {
             className={classes.input}
             label={t("Language")}
             fullWidth
-            value={lang || (langs.length ? 'en_US' : "")}
+            value={langs.length ? lang : ""}
             onChange={handleInput('lang')}
           >
             {langs.map((l) => (

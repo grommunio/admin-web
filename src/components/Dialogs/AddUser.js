@@ -47,7 +47,7 @@ const AddUser = props => {
     password: '',
     repeatPw: '',
     homeserver: '',
-    lang: '',
+    lang: 'en_US',
     chatAvailable: false,
   });
   const config = useSelector((state) => state.config);
@@ -100,7 +100,7 @@ const AddUser = props => {
         prohibitreceivequota: properties?.prohibitreceivequota,
         prohibitsendquota: properties?.prohibitsendquota,
       },
-      lang: lang || '',
+      lang: lang || 'en_US',
       chat: chatAvailable ? (createParams.domain.chat || false) : false,
     };
   }
@@ -166,7 +166,6 @@ const AddUser = props => {
           password: '',
           repeatPw: '',
           homeserver: '',
-          lang: '',
         });
         onSuccess();
       })
@@ -315,7 +314,7 @@ const AddUser = props => {
             className={classes.input}
             label={t("Language")}
             fullWidth
-            value={lang || (langs.length ? 'en_US' : "")}
+            value={langs.length ? lang : ""}
             onChange={handleInput('lang')}
           >
             {langs.map((l) => (
