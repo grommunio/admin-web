@@ -254,11 +254,11 @@ const DomainMenu = props => {
 
   return (
     (<TableViewContainer
-        headline={t("Domain overview")}
-        snackbar={snackbar}
-        onSnackbarClose={() => setSnackbar('')}
-        loading={loading}
-      >
+      headline={t("Domain overview")}
+      snackbar={snackbar}
+      onSnackbarClose={() => setSnackbar('')}
+      loading={loading}
+    >
       <Paper className={classes.paper} elevation={1}>
         <Grid2 container direction="column" className={classes.container}>
           <Grid2 className={classes.firstRow}>
