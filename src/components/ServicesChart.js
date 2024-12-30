@@ -10,11 +10,11 @@ import Stop from "@mui/icons-material/HighlightOff";
 import Restart from "@mui/icons-material/Replay";
 import Start from "@mui/icons-material/PlayCircleFilledOutlined";
 import Enable from "@mui/icons-material/PowerSettingsNew";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { withTranslation } from "react-i18next";
 import Feedback from "./Feedback";
 import ConfirmRestartStop from "./Dialogs/ConfirmRestartStop";
-import { serviceAction } from '../actions/services';
+import { fetchServicesData, serviceAction } from '../actions/services';
 import { setDateTimeString } from "../utils";
 
 const styles = (theme) => ({
@@ -111,6 +111,7 @@ const styles = (theme) => ({
 });
 
 const ServicesChart = props => {
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     snackbar: null,
     starting: false,
@@ -128,6 +129,9 @@ const ServicesChart = props => {
       .then(() => {
         setState({ ...state, [action + "ing"]: false });
         handleCloseDialog();
+        setTimeout(() => {
+          dispatch(fetchServicesData()).catch(e => e);
+        }, 3000);
       })
       .catch((msg) =>
         setState({ ...state, snackbar: msg, [action + "ing"]: false })
