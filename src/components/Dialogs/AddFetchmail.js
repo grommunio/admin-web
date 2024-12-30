@@ -70,6 +70,7 @@ const AddFetchmail = props => {
       extraOptions: extraOptions || null,
     });
     setFetchmail({
+      ...fetchmail,
       active: true,
       srcServer: '',
       srcUser: '',

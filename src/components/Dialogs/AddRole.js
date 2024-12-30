@@ -55,19 +55,19 @@ const AddRole = props => {
     const { fetch, fetchDomains, fetchUsers, fetchOrgs } = props;
     fetch()
       .catch(msg => {
-        setRole({ snackbar: msg || 'Unknown error' });
+        setRole({ ...role, snackbar: msg || 'Unknown error' });
       });
     fetchDomains()
       .catch(msg => {
-        setRole({ snackbar: msg || 'Unknown error' });
+        setRole({ ...role, snackbar: msg || 'Unknown error' });
       });
     fetchUsers()
       .catch(msg => {
-        setRole({ snackbar: msg || 'Unknown error' });
+        setRole({ ...role, snackbar: msg || 'Unknown error' });
       });
     fetchOrgs()
       .catch(msg => {
-        setRole({ snackbar: msg || 'Unknown error' });
+        setRole({ ...role, snackbar: msg || 'Unknown error' });
       });
   }, []);
 
