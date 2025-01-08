@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
 
-import { SERVER_CONFIG_SET } from "../actions/types";
+import { SERVER_CONFIG_ERROR, SERVER_CONFIG_SET } from "../actions/types";
 
 const defaultState = {
   devMode: false,
@@ -61,6 +61,7 @@ const defaultState = {
     'uid',
     'wWWHomePage',
   ],
+  error: false,
 };
 
 function configReducer(state = defaultState, action) {
@@ -69,6 +70,11 @@ function configReducer(state = defaultState, action) {
     return {
       ...state,
       ...action.data,
+    };
+  case SERVER_CONFIG_ERROR:
+    return {
+      ...state,
+      error: action.error,
     };
 
   default:

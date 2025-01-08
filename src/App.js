@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect } from "react";
 import { withStyles } from 'tss-react/mui';
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import background from "!file-loader!./res/background_light.svg";
 import backgroundDark from "!file-loader!./res/background_dark.svg";
@@ -17,6 +17,8 @@ import { checkHolidaySeason } from "./utils";
 import makeLoadableComponent from "./lazy";
 import SilentRefresh from "./components/SilentRefresh";
 import ColorModeContext from "./ColorContext";
+import Feedback from "./components/Feedback";
+import { SERVER_CONFIG_ERROR } from "./actions/types";
 
 const styles = {
   root: {
@@ -41,7 +43,9 @@ const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableM
 
 // Root class
 const App = ({classes, Domains, serverConfig, loading, authenticated, capabilities, changeSettings, fetchLicense}) => {
+  const dispatch = useDispatch();
   const colorContext = useContext(ColorModeContext);
+  const configError = useSelector(state => state.config.error);
   const routesProps = {
     authenticated,
     loading,
@@ -86,6 +90,10 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
           domains={Domains || []}
           routesProps={routesProps}
         />
+        {configError && <Feedback
+          snackbar={"Error parsing config.json"}
+          onClose={() => dispatch({ type: SERVER_CONFIG_ERROR, error: false })}
+        />}
       </CapabilityContext.Provider>
     </div>
   );
