@@ -75,7 +75,7 @@ export function parseParams(s) {
  */
 export function addItem(arr, item) {
   const copy = [...arr];
-  copy.push(item);
+  copy.unshift(item);
   return copy;
 }
 

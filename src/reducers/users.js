@@ -11,7 +11,7 @@ import {
   AUTH_AUTHENTICATED,
   USERS_SYNC_RECEIVED,
 } from '../actions/types';
-import { append } from '../utils';
+import { addItem, append } from '../utils';
 
 const defaultState = {
   count: 0,
@@ -19,12 +19,6 @@ const defaultState = {
   Orphaned: [],
   Sync: [],
 };
-
-function addUser(arr, user) {
-  let copy = [...arr];
-  copy.push(user);
-  return copy;
-}
 
 function deleteUser(arr, id) {
   let copy = [...arr];
@@ -51,7 +45,7 @@ function usersReducer(state=defaultState, action) {
   case USER_DATA_ADD:
     return {
       ...state,
-      Users: addUser(state.Users, action.data),
+      Users: addItem(state.Users, action.data),
     };
 
   case USER_DATA_DELETE:
