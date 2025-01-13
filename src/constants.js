@@ -17,6 +17,44 @@ export const IPM_SUBTREE_OBJECT = {
 };
 export const defaultFetchLimit = 50;
 
+export const ANSI_CODE_TO_JSS_CLASS = {
+  "0;30": {},
+  "0;31": { color: "red" },
+  "0;32": { color: "green" },
+  "0;33": { color: "yellow" },
+  "0;34": { color: "blue" },
+  "0;35": { color: "purple" },
+  "0;36": { color: "cyan" },
+  "0;37": {},
+
+  "1;30": { fontWeight: "bold" },
+  "1;31": { fontWeight: "bold", color: "red" },
+  "1;32": { fontWeight: "bold", color: "green" },
+  "1;33": { fontWeight: "bold", color: "yellow" },
+  "1;34": { fontWeight: "bold", color: "blue" },
+  "1;35": { fontWeight: "bold", color: "purple" },
+  "1;36": { fontWeight: "bold", color: "cyan" },
+  "1;37": { fontWeight: "bold" },
+
+  "4;30": { textDecoration: "underline" },
+  "4;31": { textDecoration: "underline", color: "red" },
+  "4;32": { textDecoration: "underline", color: "green" },
+  "4;33": { textDecoration: "underline", color: "yellow" },
+  "4;34": { textDecoration: "underline", color: "blue" },
+  "4;35": { textDecoration: "underline", color: "purple" },
+  "4;36": { textDecoration: "underline", color: "cyan" },
+  "4;37": { textDecoration: "underline" },
+
+  "40": { backgroundColor: "black", color: "white" },
+  "41": { backgroundColor: "red", color: "black" },
+  "42": { backgroundColor: "green", color: "black" },
+  "43": { backgroundColor: "yellow", color: "black" },
+  "44": { backgroundColor: "blue", color: "black" },
+  "45": { backgroundColor: "purple", color: "black" },
+  "46": { backgroundColor: "cyan", color: "black" },
+  "47": { backgroundColor: "white", color: "black" },
+};
+
 // Options used by the global search textfield
 export const globalSearchOptions = [
   {
