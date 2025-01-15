@@ -143,8 +143,8 @@ const Sync = props => {
     const { match, showPush, onlyActive } = state;
     const lcMatch = match.toLowerCase();
     const { user, devtype, devagent, ip } = row;
-    const stringMatch = user.toLowerCase().includes(lcMatch) || devtype.toLowerCase().includes(lcMatch) ||
-      devagent.toLowerCase().includes(lcMatch) || ip.toLowerCase().includes(lcMatch);
+    const stringMatch = (user || "").toLowerCase().includes(lcMatch) || (devtype || "").toLowerCase().includes(lcMatch) ||
+      (devagent || "").toLowerCase().includes(lcMatch) || (ip || "").toLowerCase().includes(lcMatch);
     return stringMatch && (!onlyActive || row.ended === 0) && (showPush || !row.push);
   }
 
