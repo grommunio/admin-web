@@ -7,7 +7,6 @@ import { BrowserRouter } from "react-router-dom";
 import { StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
 import './switch.css';
-//import './res/leaflet/leaflet.css';
 import { store } from './store';
 import './i18n';
 import './config';
