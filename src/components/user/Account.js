@@ -176,8 +176,9 @@ const Account = props => {
     handlePasswordChange, handleChatUser, handleServer, handlePropertyCheckbox,
     servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
-    const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
-    ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, homeserver } = user;
+  const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
+    ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, privWeb,
+    privEas, privDav, homeserver } = user;
   const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,
     prohibitsendquota, attributehidden_gromox, scheduleinfoautoacceptappointments,
     scheduleinfodisallowoverlappingappts, scheduleinfodisallowrecurringappts } = properties;
@@ -529,12 +530,41 @@ const Account = props => {
             control={
               <Checkbox
                 checked={privArchive || false}
-                value={privFiles || false}
                 onChange={handleCheckbox('privArchive')}
                 color="primary"
               />
             }
             label={t('Allow Archive')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privWeb || false}
+                onChange={handleCheckbox('privWeb')}
+                color="primary"
+              />
+            }
+            label={t('Allow web')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privEas || false}
+                onChange={handleCheckbox('privEas')}
+                color="primary"
+              />
+            }
+            label={t('Allow EAS')}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={privDav || false}
+                onChange={handleCheckbox('privDav')}
+                color="primary"
+              />
+            }
+            label={t('Allow DAV')}
           />
         </Grid2>}
       </Grid2>
