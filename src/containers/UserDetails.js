@@ -405,7 +405,7 @@ const UserDetails = props => {
   }
 
   const handleCheckbox = field => e => {
-    const { pop3_imap } = state.user;
+    const { pop3_imap, privDav } = state.user;
     const { checked } = e.target;
     
     if(field === "privArchive") {
@@ -415,6 +415,16 @@ const UserDetails = props => {
           ...state.user,
           // If archive is allowed, pop3 must be enabled
           "pop3_imap": checked || pop3_imap,
+          [field]: checked,
+        },
+      });
+    } else if(field === "privFiles") {
+      setState({
+        ...state, 
+        user: {
+          ...state.user,
+          // Files uses DAV for auth, activate it as well
+          "privDav": checked || privDav,
           [field]: checked,
         },
       });

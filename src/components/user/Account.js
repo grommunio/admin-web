@@ -562,6 +562,7 @@ const Account = props => {
                 checked={privDav || false}
                 onChange={handleCheckbox('privDav')}
                 color="primary"
+                disabled={privFiles}
               />
             }
             label={t('Allow DAV')}
