@@ -179,12 +179,7 @@ const AddUser = props => {
     const { domain, add, onError, createParams } = props;
     const { username, password, subType, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword,
-      privChat, privVideo, privFiles, privArchive } = createParams.user;
-    const checkboxes = status !== 4 ?
-    // eslint-disable-next-line camelcase
-      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
-      : {};
+    const checkboxes = status !== 4 ? createParams.user : {};
     setState({ ...state, loading: true });
     add(domain.ID, {
       username,

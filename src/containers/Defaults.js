@@ -119,9 +119,9 @@ const Defaults = props => {
     const { createParams, sizeUnits } = state;
     // eslint-disable-next-line camelcase
     const { maxUser, smtp, changePassword, pop3_imap, lang,
-      privChat, privVideo, privFiles, privArchive,
-      storagequotalimit, prohibitreceivequota, prohibitsendquota,
-      chatUser, chatTeam } = createParams;
+      privChat, privVideo, privFiles, privArchive, privWeb,
+      privEas, privDav, storagequotalimit, prohibitreceivequota,
+      prohibitsendquota, chatUser, chatTeam } = createParams;
 
     // Convert quotas from selected size unit to KiB
     const quotas = {
@@ -142,6 +142,7 @@ const Defaults = props => {
         // eslint-disable-next-line camelcase
         smtp, changePassword, lang, pop3_imap,
         privChat, privVideo, privFiles, privArchive,
+        privWeb, privEas, privDav,
         chat: chatUser,
       },
     })
@@ -184,7 +185,8 @@ const Defaults = props => {
   const { classes, t } = props;
   const { createParams, sizeUnits, snackbar, loading } = state;
   const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
-    lang, privChat, privArchive, privFiles, privVideo,
+    lang, privChat, privArchive, privFiles, privVideo, privWeb,
+    privEas, privDav,
     // eslint-disable-next-line camelcase
     smtp, changePassword, pop3_imap, chatTeam, chatUser } = createParams;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
@@ -420,6 +422,36 @@ const Defaults = props => {
                 />
               }
               label={t('Allow Archive')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={privWeb || false }
+                  onChange={handleCheckbox('privWeb')}
+                  color="primary"
+                />
+              }
+              label={t('Allow web')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={privEas || false }
+                  onChange={handleCheckbox('privEas')}
+                  color="primary"
+                />
+              }
+              label={t('Allow EAS')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={privDav || false }
+                  onChange={handleCheckbox('privDav')}
+                  color="primary"
+                />
+              }
+              label={t('Allow DAV')}
             />
           </Grid2>
           <Grid2 container className={classes.checkboxes}>
