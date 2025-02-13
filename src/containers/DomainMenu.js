@@ -9,7 +9,6 @@ import { Paper, Typography, Grid2, Button, FormControl, TextField, FormControlLa
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
-import { fetchDnsCheckData } from '../actions/domains';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import { CapabilityContext } from '../CapabilityContext';
@@ -543,7 +542,6 @@ DomainMenu.propTypes = {
   createParams: PropTypes.object.isRequired,
   fetch: PropTypes.func.isRequired,
   fetchParams: PropTypes.func.isRequired,
-  checkDns: PropTypes.func.isRequired,
   edit: PropTypes.func.isRequired,
   storeLangs: PropTypes.func.isRequired,
 };
@@ -564,7 +562,6 @@ const mapDispatchToProps = (dispatch) => {
     fetchParams: async (domainID, params) => await dispatch(fetchCreateParamsData(domainID, params))
       .catch(message => Promise.reject(message)),
     storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
-    checkDns: async domainID => await dispatch(fetchDnsCheckData(domainID)).catch(msg => Promise.reject(msg)),
   };
 };
 

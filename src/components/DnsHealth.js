@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
-import { Chip, CircularProgress } from '@mui/material';
+import { Alert, Chip, CircularProgress, Portal, Snackbar } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore } from '@mui/icons-material';
 import { getChipColorFromScore } from '../utils';
@@ -65,6 +65,7 @@ const DnsHealth = props => {
     dnsCheck: {},
     InfoDialog: null,
   });
+  const [warning, setWarning] = useState("");
 
   useEffect(() => {
     const { checkDns, domain, setSnackbar } = props;
@@ -75,7 +76,8 @@ const DnsHealth = props => {
         setState({ ...state, dnsCheck, loading: false, error: false });
       })
       .catch(message => {
-        setSnackbar(message || 'Unknown error');
+        if(message?.includes("disabled")) setWarning(message);
+        else setSnackbar(message || 'Unknown error');
         setState({ ...state, loading: false, error: true });
       });
   }, [location.pathname]);
@@ -333,6 +335,26 @@ const DnsHealth = props => {
       onInfo={asyncDialogImport('Submission')}
       error={error}
     />
+    <Portal>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        open={!!warning}
+        onClose={() => setWarning("")}
+        autoHideDuration={1000}
+      >
+        <Alert
+          onClose={() => setWarning("")}
+          severity={"warning"}
+          elevation={6}
+          variant="filled"
+        >
+          {warning}
+        </Alert>
+      </Snackbar>
+    </Portal>
     {InfoDialog && <InfoDialog onClose={handleDialogClose} dnsCheck={dnsCheck} domain={domain}/>}
   </div>
 }
