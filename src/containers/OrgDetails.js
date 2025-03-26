@@ -393,12 +393,12 @@ const OrgDetails = props => {
         username: 'mail',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "name", "displayName"],
-        filter: "objectClass=user",
-        contactFilter: "objectclass=contact",
+        filter: '(objectClass=user)',
+        contactFilter: '(objectclass=contact)',
         aliases: 'proxyAddresses',
         groupMemberAttr: "memberOf",
         groupaddr: "mail",
-        groupfilter: "(objectclass=group)",
+        groupfilter: '(objectclass=group)',
         groupname: "cn",
       });
     } else if(templates === 'OpenLDAP') {
@@ -409,12 +409,12 @@ const OrgDetails = props => {
         username: 'mail',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
-        filter: "objectClass=posixAccount",
+        filter: '(objectClass=posixAccount)',
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
         groupMemberAttr: "memberOf",
         groupaddr: "mailPrimaryAddress",
-        groupfilter: "(objectclass=posixgroup)",
+        groupfilter: '(objectclass=posixgroup)',
         groupname: "cn",
       });
     } else if(templates === 'Univention') {
@@ -425,12 +425,12 @@ const OrgDetails = props => {
         username: 'mailPrimaryAddress',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName", "gecos"],
-        filter: "objectClass=posixAccount",
+        filter: '(objectClass=posixAccount)',
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount))(!(objectclass=shadowAccount)))',
         aliases: 'mailAlternativeAddress',
         groupMemberAttr: "memberOf",
         groupaddr: "mailPrimaryAddress",
-        groupfilter: "(objectclass=posixgroup)",
+        groupfilter: '(objectclass=posixgroup)',
         groupname: "cn",
       });
     } else if(templates === '389ds') {
@@ -441,12 +441,12 @@ const OrgDetails = props => {
         username: 'mail',
         displayName: 'displayName',
         searchAttributes: ["mail", "givenName", "cn", "sn", "displayName"],
-        filter: "objectClass=posixAccount",
+        filter: '(objectClass=posixAccount)',
         contactFilter: '(&(|(objectclass=person)(objectclass=inetOrgPerson))(!(objectclass=posixAccount)))',
         aliases: 'mailAlternateAddress',
         groupMemberAttr: "memberOf",
         groupaddr: "mail",
-        groupfilter: "(objectclass=posixGroup)",
+        groupfilter: '(objectclass=posixGroup)',
         groupname: "cn",
       });
     } else {
