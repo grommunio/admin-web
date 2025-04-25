@@ -22,6 +22,10 @@ function CPULine(props) {
   const theme = useTheme();
   const { classes, t, cpuPercent } = props;
 
+  const formatYAxis = (value) => {
+    return value + '%';
+  };
+
   return (
     <div className={classes.root}>
       <Chart
@@ -55,6 +59,7 @@ function CPULine(props) {
             max: 100,
             tickAmount: 4,
             labels: {
+              formatter: formatYAxis,
               style: {
                 colors: theme.palette.text.primary,
               },

@@ -29,8 +29,7 @@ function Load(props) {
 
   const formatYAxis = (value) => {
     if(value === 0) return '0%';
-    if(value < 0.1) return value.toFixed(3) + '%';
-    if(value < 1) return value.toFixed(2) + '%';
+    if(value < 0.1) return value.toFixed(2) + '%';
     return value.toFixed(1) + '%';
   };
 
@@ -53,9 +52,14 @@ function Load(props) {
                 columnWidth: '60%',
                 distributed: true,
                 dataLabels: {
+                  enabled: true,
+                  formatter: (v) => v + "%",
                   orientation: "vertical",
                 },
               }
+            },
+            dataLabels: {
+              formatter: (v) => v + "%",
             },
             legend: {
               labels: {
@@ -85,11 +89,13 @@ function Load(props) {
               labels: {
                 style: {
                   colors: theme.palette.text.primary,
-                  formatter: formatYAxis,
                 },
+                formatter: formatYAxis,
               },
               tickAmount: 4,
             },
+            max: 100,
+            min: 0,
             colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
           }}
           series={[{

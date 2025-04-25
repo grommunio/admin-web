@@ -58,6 +58,8 @@ function Disks(props) {
               },
             },
             tickAmount: 4,
+            max: 100,
+            min: 0,
           },
           xaxis: {
             axisBorder: {
