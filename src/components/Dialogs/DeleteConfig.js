@@ -13,9 +13,9 @@ const DeleteConfig = props => {
 
   const handleDelete = e => {
     e.preventDefault();
-    const { orgID, onSuccess, onError } = this.props;
+    const { orgID, onSuccess, onError } = props;
     setLoading(true);
-    this.props.delete(orgID) // Optional, will just be ignored for global config
+    props.delete(orgID) // Optional, will just be ignored for global config
       .then(() => {
         if(onSuccess) onSuccess();
         setLoading(false);
