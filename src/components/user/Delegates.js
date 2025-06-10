@@ -149,6 +149,7 @@ const Delegates = props => {
             onChange={handleAutocomplete('delegates', 'dEdited')}
             onInputChange={handleInput('delegatesACInput')}
             label={t('Delegates')}
+            helperText={t("Users who may send mails on behalf of this mailbox")}
           />
           <MagnitudeAutocomplete
             {...defaultTfProps}
@@ -156,7 +157,8 @@ const Delegates = props => {
             inputValue={sendAsACInput}
             onChange={handleAutocomplete('sendAsUsers', 'sEdited')}
             onInputChange={handleInput('sendAsACInput')}
-            label={t('Send as')}
+            label={t('Send as / Impersonators')}
+            helperText={t("Users who may send mails as this mailbox")}
           />
           <MagnitudeAutocomplete
             {...defaultTfProps}
@@ -164,7 +166,8 @@ const Delegates = props => {
             inputValue={puACInput}
             onChange={handleAutocomplete('permittedUsers', 'puEdited')}
             onInputChange={handleInput('puACInput')}
-            label={t('Full permission users')}
+            label={t('Additional store owners')}
+            helperText={t("Users who get read-write access to all objects")}
           />
         </FormControl>
       </FormControl>

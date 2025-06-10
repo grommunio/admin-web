@@ -11,7 +11,7 @@ const MagnitudeAutocomplete = props => {
   const { t, className, value, filterAttribute, onChange, options, label, getOptionLabel,
     inputValue, onInputChange, freeSolo, multiple, calculateMagnitude, placeholder, renderOption,
     autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue, disableCloseOnSelect,
-    getOptionKey } = props;
+    getOptionKey, helperText } = props;
   const magnitude = calculateMagnitude === false ? 0 : Math.round(Math.log10(options.length) - 2);
 
   return <Autocomplete
@@ -39,6 +39,7 @@ const MagnitudeAutocomplete = props => {
         autoFocus={autoFocus}
         onChange={onInputChange}
         variant={variant || 'outlined'}
+        helperText={helperText}
       />
     )}
     renderOption={renderOption}
@@ -80,6 +81,7 @@ MagnitudeAutocomplete.propTypes = {
   getOptionDisabled: PropTypes.func,
   disableCloseOnSelect: PropTypes.bool,
   getOptionKey: PropTypes.func,
+  helperText: PropTypes.string,
 };
 
 export default withTranslation()(MagnitudeAutocomplete);
