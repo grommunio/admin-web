@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
-
+import React from 'react';
 import moment from "moment";
 import store from './store';
+import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 
 /**
  * Converts object to array of { key, value } objects
@@ -465,4 +466,39 @@ export function dayTimeFromUnix(unixT) {
 
 export function dateTimeFromUnix(unixT) {
   return moment.unix(unixT).format("YYYY-MM-DD");
+}
+
+export const generateFormattedLogLine = message => {
+  const parts = message.split("\u001b")
+  
+  // No formatting detected
+  if(parts.length === 1) return message;
+
+  const paragraphs = parts.map((part, idx) => {
+    // First part is always empty or plain message
+    if(idx === 0) return part;
+
+    // Outside formatting scope
+    if(idx % 0) {
+      // Cut "[0m"
+      return part.splice(3);
+    }
+
+    // Get formatting
+    const ansiEndIndex = part.search("m");
+    const formatting = part.slice(1, ansiEndIndex);
+    const formattingClass = ANSI_CODE_TO_JSS_CLASS[formatting] || { color: "#888" }
+
+    const plainMessage = part.slice(ansiEndIndex + 1);
+
+    return <p
+      key={idx}
+      style={{ margin: 0, display: "inline", ...formattingClass }}
+    >
+      {plainMessage}
+    </p>;
+  });
+
+
+  return paragraphs;
 }

@@ -5,7 +5,7 @@ import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Toolt
 import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-material';
 import { systemUpdate } from '../../actions/misc';
 import { fetchUpdateLogData } from '../../actions/logs';
-import { copyToClipboard } from '../../utils';
+import { copyToClipboard, generateFormattedLogLine } from '../../utils';
 import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -36,6 +36,7 @@ const styles = theme => ({
     marginRight: 8,
   },
 });
+
 
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
@@ -176,7 +177,7 @@ const Updater = props => {
           key={idx}
           className={classes.log}
         >
-          {log}
+          {generateFormattedLogLine(log)}
         </pre>
       ) : <Typography align='center'>--- no logs ---</Typography>}
     </Paper>

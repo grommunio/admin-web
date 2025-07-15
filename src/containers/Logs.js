@@ -28,10 +28,10 @@ import { connect } from "react-redux";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
 import { ArrowUpward, Clear, Close, CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
-import { copyToClipboard } from "../utils";
+import { copyToClipboard, generateFormattedLogLine } from "../utils";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { ANSI_CODE_TO_JSS_CLASS } from "../constants";
+
 
 const styles = (theme) => ({
   logViewer: {
@@ -84,41 +84,6 @@ const styles = (theme) => ({
   }
 });
 
-
-const generateFormattedLogLine = message => {
-  const parts = message.split("\u001b")
-  
-  // No formatting detected
-  if(parts.length === 1) return message;
-
-  const paragraphs = parts.map((part, idx) => {
-    // First part is always empty or plain message
-    if(idx === 0) return part;
-
-    // Outside formatting scope
-    if(idx % 0) {
-      // Cut "[0m"
-      return part.splice(3);
-    }
-
-    // Get formatting
-    const ansiEndIndex = part.search("m");
-    const formatting = part.slice(1, ansiEndIndex);
-    const formattingClass = ANSI_CODE_TO_JSS_CLASS[formatting] || { color: "#888" }
-
-    const plainMessage = part.slice(ansiEndIndex + 1);
-
-    return <p
-      key={idx}
-      style={{ margin: 0, display: "inline", ...formattingClass }}
-    >
-      {plainMessage}
-    </p>;
-  });
-
-
-  return paragraphs;
-}
 
 const Logs = props => {
   const [state, setState] = useState({
