@@ -95,16 +95,17 @@ function withTable(WrappedComponent, defaultState={}) {
       snackbar: '',
     });
 
-    const handleMatch = (e) => {
+    const handleMatch = (e, additionalProps={}) => {
       setOffset(0);
       const { value } = e.target;
       setMatch(value);
-      debouceFetch(value);
+      debouceFetch(value, additionalProps);
     };
   
-    const debouceFetch = useCallback(throttle((value) => {
+    const debouceFetch = useCallback(throttle((value, additionalProps={}) => {
       fetchData({
         match: value || undefined,
+        ...additionalProps,
       });
     }, 200), []);
 

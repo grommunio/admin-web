@@ -141,7 +141,21 @@ const GlobalUsers = props => {
     else if(field === "type") setType(e.target.value);
   };
 
-  const { classes, t, users, tableState, handleMatch,
+  const handleMatch = (e) => {
+    const statuses = [];
+    if(showDeactivated) statuses.push(1);
+    if(mode === 0) {
+      statuses.push(0, 4);
+    }
+    else if(mode === 4) statuses.push(4);
+    else statuses.push(0);
+    const filterProp = generatePropFilterString({
+      displaytypeex: type,
+    });
+    props.handleMatch(e, { filterProp, status: statuses })
+  };
+
+  const { classes, t, users, tableState,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
