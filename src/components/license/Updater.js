@@ -10,6 +10,7 @@ import { connect, useSelector } from 'react-redux';
 import { withTranslation } from 'react-i18next';
 import moment from 'moment';
 
+
 const styles = theme => ({
   data: {
     padding: '8px 0',
@@ -40,6 +41,7 @@ const styles = theme => ({
 
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
+
 const Updater = props => {
   const license = useSelector(state => state.license);
   const supportedReposAvailable = license ? moment().isBefore(license?.notAfter) : false;
@@ -54,7 +56,7 @@ const Updater = props => {
     || (supportedReposAvailable ? "supported" : "community"));
 
   useEffect(() => {
-    const listener = window.addEventListener('beforeunload', onBeforeUnload)
+    const listener = window.addEventListener('beforeunload', onBeforeUnload);
 
     return () => {
       clearInterval(fetchInterval);
@@ -111,7 +113,7 @@ const Updater = props => {
 
   const handleRepoChange = e => {
     const { value } = e.target;
-    localStorage.setItem("packageRepository", value);+
+    localStorage.setItem("packageRepository", value);
     setRepo(value);
   }
 

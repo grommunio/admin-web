@@ -122,12 +122,12 @@ const AddDomain = props => {
           address: '',
           adminName: '',
           tel: '',
-          loading: false,
           createRole: false,
           chat: false,
           homeserver: '',
         });
         onSuccess();
+        setLoading(false);
       })
       .catch(error => {
         onError(error);
