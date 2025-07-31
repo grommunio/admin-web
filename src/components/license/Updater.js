@@ -77,7 +77,9 @@ const Updater = props => {
   const handleRefresh = async pid => {
     const { setTabsDisabled, fetchLog } = props;
     const response = await fetchLog(pid).catch(snackbar => setState({ ...state, snackbar }));
-    setUpdateLog(response?.data || []);
+    if(response?.data) {
+      setUpdateLog(response?.data || []);
+    }
     if(response?.processRunning === false) {
       clearInterval(fetchInterval);
       setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
