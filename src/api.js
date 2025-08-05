@@ -16,9 +16,13 @@ async function handleErrors(response) {
     return await response.json();
   }
   let resp = '';
-  await response.json().then(json => {
-    resp = json.message;
-  });
+  try {
+    await response.json().then(json => {
+      resp = json.message;
+    });
+  } catch (err) {
+    resp = response.statusText;
+  }
   return Promise.reject(new Error(resp));
 }
 
@@ -38,9 +42,13 @@ async function handleLoginErrors(response) {
   if(status === 502) {
     return Promise.reject(new Error("Could not connect to backend"));
   }
-  await response.json().then(json => {
-    message = json.message;
-  });
+  try {
+    await response.json().then(json => {
+      message = json.message;
+    });
+  } catch (err) {
+    message = response.statusText;
+  }
   return Promise.reject(new Error(message));
 }
 
