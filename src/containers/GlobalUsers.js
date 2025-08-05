@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2025 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -65,9 +65,7 @@ const styles = theme => ({
 });
 
 const GlobalUsers = props => {
-  const [state, setState] = useState({
-    checking: false,
-  });
+  const [checking, setChecking] = useState(false);
   const [showDeactivated, setShowDeactivated] = useState(false);
   const [mode, setMode] = useState(0);
   const [type, setType] = useState(0);
@@ -79,8 +77,7 @@ const GlobalUsers = props => {
     { label: 'LDAP ID', value: 'ldapID' },
   ];
 
-  useEffect(() => {
-    const { fetchTableData } = props;
+  const getUserStatuses = () => {
     const statuses = [];
     if(showDeactivated) statuses.push(1);
     if(mode === 0) {
@@ -88,29 +85,23 @@ const GlobalUsers = props => {
     }
     else if(mode === 4) statuses.push(4);
     else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    fetchTableData({ sort: orderBy + "," + order, filterProp, status: statuses })
+    return statuses;
+  }
+
+  const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
+
+  useEffect(() => {
+    const { fetchTableData } = props;
+    fetchTableData({ sort: orderBy + "," + order, filterProp: getFilterProp(), status: getUserStatuses() })
       .catch(err => err);
   }, [showDeactivated, mode, type]);
 
   const handleScroll = () => {
     const { Users, count } = props.users;
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleScroll(Users, count, { filterProp, statuses });
+    props.handleScroll(Users, count, { filterProp: getFilterProp(), status: getUserStatuses() });
   };
 
-  const handleCheckClose = () => setState({ ...state, checking: false });
+  const handleCheckClose = () => setChecking(false);
 
   const handleRedirect = obj => async (e) => {
     // If user is a group
@@ -123,17 +114,7 @@ const GlobalUsers = props => {
   }
 
   const handleSort = orderBy => () => {
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleRequestSort(orderBy, { filterProp, status: statuses })();
+    props.handleRequestSort(orderBy, { filterProp: getFilterProp(), status: getUserStatuses() })();
   }
 
   const handleSelect = field => (e) => {
@@ -142,17 +123,7 @@ const GlobalUsers = props => {
   };
 
   const handleMatch = (e) => {
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleMatch(e, { filterProp, status: statuses })
+    props.handleMatch(e, { filterProp: getFilterProp(), status: getUserStatuses() })
   };
 
   const { classes, t, users, tableState,
@@ -161,7 +132,6 @@ const GlobalUsers = props => {
     handleDeleteSuccess, handleEdit } = props;
   const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
-  const { checking } = state;
 
   const userCounts = users.Users.reduce((prev, curr) => {
     const isGroup = curr.properties?.displaytypeex === 1;

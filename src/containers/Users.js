@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-2022 grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2025 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -75,21 +75,6 @@ const Users = props => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
-  const handleScroll = () => {
-    const { Users, count } = props.users;
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleScroll(Users, count, { filterProp, statuses });
-  };
-
   const columns = [
     { label: 'Type', value: 'type' },
     { label: 'Display name', value: 'displayname' },
@@ -97,8 +82,7 @@ const Users = props => {
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ];
 
-  useEffect(() => {
-    const { domain, fetchTableData } = props;
+  const getUserStatuses = () => {
     const statuses = [];
     if(showDeactivated) statuses.push(1);
     if(mode === 0) {
@@ -106,10 +90,19 @@ const Users = props => {
     }
     else if(mode === 4) statuses.push(4);
     else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    fetchTableData(domain.ID, { sort: orderBy + "," + order, filterProp, status: statuses })
+    return statuses;
+  }
+
+  const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
+
+  const handleScroll = () => {
+    const { Users, count } = props.users;
+    props.handleScroll(Users, count, { filterProp: getFilterProp(), status: getUserStatuses() });
+  };
+
+  useEffect(() => {
+    const { domain, fetchTableData } = props;
+    fetchTableData(domain.ID, { sort: orderBy + "," + order, filterProp: getFilterProp(), status: getUserStatuses()})
       .catch(err => err);
   }, [showDeactivated, mode, type]);
 
@@ -147,22 +140,12 @@ const Users = props => {
           // No task created -> Reload table data
           const { tableState } = props;
           const { order, orderBy, match } = tableState;
-          const statuses = [];
-          if(showDeactivated) statuses.push(1);
-          if(mode === 0) {
-            statuses.push(0, 4);
-          }
-          else if(mode === 4) statuses.push(4);
-          else statuses.push(0);
-          const filterProp = generatePropFilterString({
-            displaytypeex: type,
-          });
           setState({ ...state, snackbar: 'Success!' });
           fetchTableData(domain.ID, {
             match: match || undefined,
             sort: orderBy + ',' + order,
-            filterProp,
-            status: statuses
+            filterProp: getFilterProp(),
+            status: getUserStatuses()
           })
             .catch(msg => setState({ ...state, ...state,snackbar: msg }));
         }
@@ -190,17 +173,7 @@ const Users = props => {
   }
 
   const handleSort = orderBy => () => {
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleRequestSort(orderBy, { filterProp, status: statuses })();
+    props.handleRequestSort(orderBy, { filterProp: getFilterProp(), status: getUserStatuses() })();
   }
 
   const handleSelect = field => (e) => {
@@ -209,17 +182,7 @@ const Users = props => {
   };
 
   const handleMatch = (e) => {
-    const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
-    }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
-    const filterProp = generatePropFilterString({
-      displaytypeex: type,
-    });
-    props.handleMatch(e, { filterProp, status: statuses })
+    props.handleMatch(e, { filterProp: getFilterProp(), status: getUserStatuses() })
   };
 
   const { classes, t, users, domain, tableState,
