@@ -8,7 +8,8 @@ import {
   USERS_NEXT_SET,
   ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
-  USERS_SYNC_RECEIVED
+  USERS_SYNC_RECEIVED,
+  USERS_FILTER_STATE,
 } from './types';
 import { user, allUsers, users, addUser, editUser, editUserRole, deleteUser, defaultDomainSyncPolicy,
   ldapDump, checkLdap, deleteOrphans, userSync, removeUserSync, userList,
@@ -213,5 +214,14 @@ export function getStoreLangs() {
     } catch(err) {
       return Promise.reject(err.message);
     }
+  };
+}
+
+
+export function setFilterState(prop, value) {
+  return {
+    type: USERS_FILTER_STATE,
+    prop,
+    value
   };
 }

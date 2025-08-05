@@ -31,6 +31,9 @@ import SearchTextfield from '../components/SearchTextfield';
 import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilterState } from '../actions/globalUsers';
+
 
 const styles = theme => ({
   tablePaper: {
@@ -64,18 +67,19 @@ const styles = theme => ({
   }
 });
 
-const GlobalUsers = props => {
-  const [checking, setChecking] = useState(false);
-  const [showDeactivated, setShowDeactivated] = useState(false);
-  const [mode, setMode] = useState(0);
-  const [type, setType] = useState(0);
-  const context = useContext(CapabilityContext);
 
-  const columns = [
-    { label: 'Type', value: 'type' },
-    { label: 'Display name', value: 'displayname' },
-    { label: 'LDAP ID', value: 'ldapID' },
-  ];
+const columns = [
+  { label: 'Type', value: 'type' },
+  { label: 'Display name', value: 'displayname' },
+  { label: 'LDAP ID', value: 'ldapID' },
+];
+
+
+const GlobalUsers = props => {
+  const dispatch = useDispatch();
+  const { showDeactivated, match, mode, type } = useSelector(state => state.globalUsers);
+  const [checking, setChecking] = useState(false);
+  const context = useContext(CapabilityContext);
 
   const getUserStatuses = () => {
     const statuses = [];
@@ -92,13 +96,22 @@ const GlobalUsers = props => {
 
   useEffect(() => {
     const { fetchTableData } = props;
-    fetchTableData({ sort: orderBy + "," + order, filterProp: getFilterProp(), status: getUserStatuses() })
+    fetchTableData({
+      sort: orderBy + "," + order,
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    })
       .catch(err => err);
-  }, [showDeactivated, mode, type]);
+  }, [showDeactivated, mode, type, match]);
 
   const handleScroll = () => {
     const { Users, count } = props.users;
-    props.handleScroll(Users, count, { filterProp: getFilterProp(), status: getUserStatuses() });
+    props.handleScroll(Users, count, {
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    });
   };
 
   const handleCheckClose = () => setChecking(false);
@@ -114,23 +127,26 @@ const GlobalUsers = props => {
   }
 
   const handleSort = orderBy => () => {
-    props.handleRequestSort(orderBy, { filterProp: getFilterProp(), status: getUserStatuses() })();
+    props.handleRequestSort(orderBy, {
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    })();
   }
 
   const handleSelect = field => (e) => {
-    if(field === "mode") setMode(e.target.value);
-    else if(field === "type") setType(e.target.value);
+    dispatch(setFilterState(field, e.target.value));
   };
 
   const handleMatch = (e) => {
-    props.handleMatch(e, { filterProp: getFilterProp(), status: getUserStatuses() })
+    dispatch(setFilterState("match", e.target.value));
   };
 
   const { classes, t, users, tableState,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
-  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const { loading, order, orderBy, snackbar, adding, deleting } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
   const userCounts = users.Users.reduce((prev, curr) => {
@@ -201,7 +217,7 @@ const GlobalUsers = props => {
         <FormControlLabel
           control={<Checkbox
             checked={showDeactivated}
-            onChange={() => setShowDeactivated(!showDeactivated)}
+            onChange={() => dispatch(setFilterState("showDeactivated", !showDeactivated))}
           />}
           label="Show deactivated"
         />

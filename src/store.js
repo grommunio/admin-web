@@ -17,6 +17,7 @@ import foldersReducer from './reducers/folders';
 import ldapReducer from './reducers/ldap';
 import licenseReducer from './reducers/license';
 import logsReducer from './reducers/logs';
+import globalUsersReducer from './reducers/globalUsers';
 import groupsReducer from './reducers/groups';
 import orgsReducer from './reducers/orgs';
 import profileReducer from './reducers/profile';
@@ -54,6 +55,7 @@ export const store = configureStore({
     domains: domainsReducer,
     drawer: drawerReducer,
     folders: foldersReducer,
+    globalUsers: globalUsersReducer,
     groups: groupsReducer,
     ldap: ldapReducer,
     license: licenseReducer,

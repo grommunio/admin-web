@@ -13,7 +13,7 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { fetchUsersData, deleteUserData, checkLdapUsers } from '../actions/users';
+import { fetchUsersData, deleteUserData, checkLdapUsers, setFilterState } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
@@ -29,6 +29,8 @@ import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const styles = theme => ({
   tablePaper: {
@@ -62,6 +64,7 @@ const styles = theme => ({
   }
 });
 
+
 const Users = props => {
   const [state, setState] = useState({
     snackbar: '',
@@ -69,9 +72,8 @@ const Users = props => {
     taskMessage: '',
     taskID: null,
   });
-  const [showDeactivated, setShowDeactivated] = useState(false);
-  const [mode, setMode] = useState(0);
-  const [type, setType] = useState(0);
+  const dispatch = useDispatch();
+  const { showDeactivated, match, mode, type } = useSelector(state => state.users);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
@@ -97,14 +99,23 @@ const Users = props => {
 
   const handleScroll = () => {
     const { Users, count } = props.users;
-    props.handleScroll(Users, count, { filterProp: getFilterProp(), status: getUserStatuses() });
+    props.handleScroll(Users, count, {
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    });
   };
 
   useEffect(() => {
     const { domain, fetchTableData } = props;
-    fetchTableData(domain.ID, { sort: orderBy + "," + order, filterProp: getFilterProp(), status: getUserStatuses()})
+    fetchTableData(domain.ID, {
+      sort: orderBy + "," + order,
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    })
       .catch(err => err);
-  }, [showDeactivated, mode, type]);
+  }, [showDeactivated, mode, type, match]);
 
   const handleNavigation = path => event => {
     event.preventDefault();
@@ -142,10 +153,10 @@ const Users = props => {
           const { order, orderBy, match } = tableState;
           setState({ ...state, snackbar: 'Success!' });
           fetchTableData(domain.ID, {
-            match: match || undefined,
             sort: orderBy + ',' + order,
             filterProp: getFilterProp(),
-            status: getUserStatuses()
+            status: getUserStatuses(),
+            match: match || undefined,
           })
             .catch(msg => setState({ ...state, ...state,snackbar: msg }));
         }
@@ -173,23 +184,26 @@ const Users = props => {
   }
 
   const handleSort = orderBy => () => {
-    props.handleRequestSort(orderBy, { filterProp: getFilterProp(), status: getUserStatuses() })();
+    props.handleRequestSort(orderBy, {
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    })();
   }
 
   const handleSelect = field => (e) => {
-    if(field === "mode") setMode(e.target.value);
-    else if(field === "type") setType(e.target.value);
+    dispatch(setFilterState(field, e.target.value));
   };
 
   const handleMatch = (e) => {
-    props.handleMatch(e, { filterProp: getFilterProp(), status: getUserStatuses() })
+    dispatch(setFilterState("match", e.target.value));
   };
 
   const { classes, t, users, domain, tableState,
     handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
     handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
-  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
+  const { loading, order, orderBy, snackbar, adding, deleting } = tableState;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { checking, taskMessage, taskID } = state;
 
@@ -308,7 +322,7 @@ const Users = props => {
         <FormControlLabel
           control={<Checkbox
             checked={showDeactivated}
-            onChange={() => setShowDeactivated(!showDeactivated)}
+            onChange={() => dispatch(setFilterState("showDeactivated", !showDeactivated))}
           />}
           label="Show deactivated"
         />

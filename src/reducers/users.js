@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
+// SPDX-FileCopyrightText: 2020-2025 grommunio GmbH
 
 import {
   USERS_DATA_RECEIVED,
@@ -10,6 +10,7 @@ import {
   ORPHANS_DELETED,
   AUTH_AUTHENTICATED,
   USERS_SYNC_RECEIVED,
+  USERS_FILTER_STATE
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
@@ -18,6 +19,11 @@ const defaultState = {
   Users: [],
   Orphaned: [],
   Sync: [],
+
+  match: "",
+  showDeactivated: false,
+  mode: 0,
+  type: 0,
 };
 
 function deleteUser(arr, id) {
@@ -78,6 +84,12 @@ function usersReducer(state=defaultState, action) {
       ...state,
     } : {
       ...defaultState,
+    };
+
+  case USERS_FILTER_STATE:
+    return {
+      ...state,
+      [action.prop]: action.value,
     };
 
   default: return state;
