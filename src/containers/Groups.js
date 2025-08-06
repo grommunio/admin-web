@@ -61,6 +61,13 @@ const Groups = props => {
 
   const handleCheckClose = () => setState({ ...state, checking: false });
 
+  const handleCheckSuccess = () => {
+    const { order, orderBy, match } = tableState;
+    props.fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+      .then(() => setState({ ...state, checking: false }))
+      .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
+  };
+
   const handleScroll = () => {
     const { Groups, count } = props.groups;
     props.handleScroll(Groups, count);
@@ -255,6 +262,7 @@ const Groups = props => {
         open={checking}
         onClose={handleCheckClose}
         onError={handleDeleteError}
+        onSuccess={handleCheckSuccess}
       />
       <TaskCreated
         message={taskMessage}

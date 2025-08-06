@@ -129,6 +129,13 @@ const Contacts = props => {
 
   const handleCheckClose = () => setState({ ...state, checking: false });
 
+  const handleCheckSuccess = () => {
+    const { order, orderBy, match } = tableState;
+    props.fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+      .then(() => setState({ ...state, checking: false }))
+      .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
+  };
+
   const { classes, t, users, domain, tableState, handleMatch,
     handleDelete, handleDeleteClose, handleDeleteError,
     handleDeleteSuccess, handleEdit } = props;
@@ -302,6 +309,7 @@ const Contacts = props => {
       <CheckLdapDialog
         open={checking}
         onClose={handleCheckClose}
+        onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
       />
     </TableViewContainer>

@@ -178,6 +178,17 @@ const Users = props => {
 
   const handleCheckClose = () => setState({ ...state, checking: false });
 
+  const handleCheckSuccess = () => {
+    props.fetchTableData(domain.ID, {
+      sort: orderBy + ',' + order,
+      filterProp: getFilterProp(),
+      status: getUserStatuses(),
+      match: match || undefined,
+    })
+      .then(() => setState({ ...state, checking: false }))
+      .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
+  };
+
   const handleSnackbarClose = () => {
     setState({ ...state, snackbar: '' });
     props.clearSnackbar();
@@ -436,6 +447,7 @@ const Users = props => {
       <CheckLdapDialog
         open={checking}
         onClose={handleCheckClose}
+        onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
       />
       <TaskCreated

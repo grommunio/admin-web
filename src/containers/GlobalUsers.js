@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2025 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2, TableSortLabel,
@@ -20,7 +20,6 @@ import Delete from '@mui/icons-material/Delete';
 import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import DeleteUser from '../components/Dialogs/DeleteUser';
-import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -78,7 +77,6 @@ const columns = [
 const GlobalUsers = props => {
   const dispatch = useDispatch();
   const { showDeactivated, match, mode, type } = useSelector(state => state.globalUsers);
-  const [checking, setChecking] = useState(false);
   const context = useContext(CapabilityContext);
 
   const getUserStatuses = () => {
@@ -113,8 +111,6 @@ const GlobalUsers = props => {
       match: match || undefined,
     });
   };
-
-  const handleCheckClose = () => setChecking(false);
 
   const handleRedirect = obj => async (e) => {
     // If user is a group
@@ -326,11 +322,6 @@ const GlobalUsers = props => {
         onError={handleDeleteError}
         user={deleting}
         domainID={deleting.domainID || -1}
-      />
-      <CheckLdapDialog
-        open={checking}
-        onClose={handleCheckClose}
-        onError={handleDeleteError}
       />
     </TableViewContainer>
   );

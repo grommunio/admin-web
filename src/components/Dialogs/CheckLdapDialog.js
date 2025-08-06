@@ -10,11 +10,13 @@ import { Dialog, DialogTitle, DialogContent,Button,
   ListItem,
   ListItemText,
   Typography,
+  ListItemIcon,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deleteOrphanedUsers } from '../../actions/users';
 import { red } from '@mui/material/colors';
+import { AccountCircle, ContactMail } from '@mui/icons-material';
 
 const styles = {
   delete: {
@@ -28,8 +30,8 @@ const styles = {
 const CheckLdapDialog = props => {
 
   const handleDelete = deleteFiles => () => {
-    const { deleteUsers, onClose, onError } = props;
-    deleteUsers({ deleteFiles }).then(onClose).catch(onError);
+    const { deleteUsers, onSuccess, onError } = props;
+    deleteUsers({ deleteFiles }).then(() => onSuccess && onSuccess()).catch(onError);
   }
 
   const { classes, t, open, onClose, Orphaned } = props;
@@ -46,8 +48,14 @@ const CheckLdapDialog = props => {
         {Orphaned.length > 0 ? <List>
           {Orphaned.map(user => 
             <ListItem key={user.ID}>
+              <ListItemIcon>
+                {user.status === 5 ?
+                  <ContactMail className={classes.icon} fontSize='small'/> :
+                  <AccountCircle className={classes.icon} fontSize='small'/>
+                }
+              </ListItemIcon>
               <ListItemText
-                primary={user.username}
+                primary={(`${user.displayname} <${user.status === 5 ? user.smtpaddress : user.username}>`)}
               />
             </ListItem>  
           )}
@@ -90,6 +98,7 @@ CheckLdapDialog.propTypes = {
   Orphaned: PropTypes.array.isRequired,
   onClose: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
   deleteUsers: PropTypes.func.isRequired,
 };
 
