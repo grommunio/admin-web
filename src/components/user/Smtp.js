@@ -74,6 +74,7 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
           onChange={handleForwardInput('forwardType')}
           select
         >
+          <MenuItem value={""}></MenuItem>
           <MenuItem value={0}>{t('CC')}</MenuItem>
           <MenuItem value={1}>{t('Redirect')}</MenuItem>
         </TextField>

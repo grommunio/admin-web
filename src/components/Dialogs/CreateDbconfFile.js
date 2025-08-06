@@ -121,6 +121,7 @@ const CreateDbconfFile = props => {
             onChange={handleTemplate}
             select
           >
+            <MenuItem value={""}></MenuItem>
             <MenuItem value="postfix">postfix</MenuItem>
           </TextField>
           <TextField 
@@ -144,6 +145,7 @@ const CreateDbconfFile = props => {
               className={classes.flexTextfield}
               select
             >
+              <MenuItem value={""}></MenuItem>
               {commands[commandKeys[idx]].map((command, idx) =>
                 <MenuItem key={idx} value={command}>
                   {command}

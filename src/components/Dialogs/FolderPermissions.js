@@ -179,7 +179,6 @@ const FolderPermissions = props => {
         <FormControl fullWidth style={{ marginBottom: 4 }}>
           <InputLabel>{t('Profile')}</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
             value={permissionProfiles.findIndex(profile => profile.value === permissions) === -1 ? "" : permissions}
             label={t('Profile')}
             onChange={handleProfileSelect}
