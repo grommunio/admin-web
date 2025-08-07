@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
-import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
+import { DOMAIN_ADMIN_WRITE, LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN, USER_STATUS, USER_TYPE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editUserData, fetchAllUsers, fetchUsersData } from '../actions/users';
@@ -75,8 +75,8 @@ const GroupDetails = props => {
     listname: '',
     displayname: '',
     hidden: 0,
-    listType: 0,
-    listPrivilege: 0,
+    listType: LIST_TYPE.NORMAL,
+    listPrivilege: LIST_PRIVILEGE.ALL,
     associations: [],
     specifieds: [],
     tab: window.location.hash ?
@@ -133,17 +133,12 @@ const GroupDetails = props => {
     inner();
   }, [props.Users]);
 
-  const listTypes = [
-    { ID: 0, name: "Normal" },
-    { ID: 2, name: "Domain" },
-  ]
-
   const listPrivileges = [
-    { ID: 0, name: "All" },
-    { ID: 1, name: "Internal" },
-    { ID: 2, name: "Domain" },
-    { ID: 3, name: "Specific" },
-    { ID: 4, name: "Outgoing (deprecated)" },
+    { ID: LIST_PRIVILEGE.ALL, name: "All" },
+    { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
+    { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
+    { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
+    { ID: LIST_PRIVILEGE.OUTGOING, name: "Outgoing (deprecated)" },
   ]
 
   const handlePrivilegeChange = event => {
@@ -251,7 +246,7 @@ const GroupDetails = props => {
   }
 
   const filteredUserOptions = useMemo(() => {
-    return props.Users.filter(u => u.properties?.displaytypeex !== 7);
+    return props.Users.filter(u => u.properties?.displaytypeex !== USER_TYPE.ROOM);
   }, [props.Users]);
 
   const { classes, t, domain } = props;
@@ -355,7 +350,7 @@ const GroupDetails = props => {
               </MenuItem>
             ))}
           </TextField>
-          {listType === 0 && <MagnitudeAutocomplete
+          {listType === LIST_TYPE.NORMAL && <MagnitudeAutocomplete
             getOptionDisabled={option => option.username === listname}
             multiple
             value={associations || []}
@@ -367,7 +362,7 @@ const GroupDetails = props => {
             label={t('Recipients')}
             getOptionLabel={user => {
               // Contact
-              if(user.status === 5) {
+              if(user.status === USER_STATUS.CONTACT) {
                 const properties = user.properties || {};
                 return properties["smtpaddress"] || properties["displayname"] || "";
               } else {
@@ -377,7 +372,7 @@ const GroupDetails = props => {
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
-          {listPrivilege === 3 && <MagnitudeAutocomplete
+          {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <MagnitudeAutocomplete
             getOptionDisabled={option => option.username === listname}
             multiple
             value={specifieds || []}
@@ -389,7 +384,7 @@ const GroupDetails = props => {
             label={t('Senders')}
             getOptionLabel={user => {
               // Contact
-              if(user.status === 5) {
+              if(user.status === USER_STATUS.CONTACT) {
                 const properties = user.properties || {};
                 return properties["smtpaddress"] || properties["displayname"] || "";
               } else {

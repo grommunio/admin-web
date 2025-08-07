@@ -14,6 +14,7 @@ import { addUserData } from '../../actions/users';
 import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
+import { USER_STATUS } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -66,7 +67,7 @@ const AddContact = props => {
     const { add, onError, onSuccess } = props;
     setLoading(true);
     add(domain?.ID || -1, {
-      status: 5,
+      status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -87,7 +88,7 @@ const AddContact = props => {
     const { add, onError } = props;
     setLoading(true);
     add(domain?.ID || -1, {
-      status: 5,
+      status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),

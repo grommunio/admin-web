@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { connect } from 'react-redux';
 import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
-import { DOMAIN_ADMIN_WRITE, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
+import { DOMAIN_ADMIN_WRITE, folderTypes, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
@@ -65,14 +65,6 @@ const FolderDetails = props => {
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
-
-  const types = [
-    { name: 'Mail and post items', ID: 'IPF.Note' },
-    { name: 'Contact', ID: 'IPF.Contact' },
-    { name: 'Appointment', ID: 'IPF.Appointment' },
-    { name: 'Sticky note', ID: 'IPF.Stickynote' },
-    { name: 'Task', ID: 'IPF.Task' },
-  ]
 
   useEffect(() => {
     const inner = async () => {
@@ -172,7 +164,7 @@ const FolderDetails = props => {
             onChange={handleInput('container')}
             disabled={readonly}
           >
-            {types.map((type, key) => (
+            {folderTypes.map((type, key) => (
               <MenuItem key={key} value={type.ID}>
                 {t(type.name)}
               </MenuItem>

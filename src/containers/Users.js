@@ -19,7 +19,7 @@ import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { CapabilityContext } from '../CapabilityContext';
-import { DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import withStyledReduxTable from '../components/withTable';
@@ -86,12 +86,12 @@ const Users = props => {
 
   const getUserStatuses = () => {
     const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
+    if(showDeactivated) statuses.push(USER_STATUS.DEACTIVATED);
+    if(mode === USER_STATUS.NORMAL) {
+      statuses.push(USER_STATUS.NORMAL, USER_STATUS.SHARED);
     }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
+    else if(mode === USER_STATUS.SHARED) statuses.push(USER_STATUS.SHARED);
+    else statuses.push(USER_STATUS.NORMAL);
     return statuses;
   }
 
@@ -219,8 +219,8 @@ const Users = props => {
   const { checking, taskMessage, taskID } = state;
 
   const userCounts = users.Users.reduce((prev, curr) => {
-    const isGroup = curr.properties?.displaytypeex === 1;
-    const shared = curr.status === 4;
+    const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
+    const shared = curr.status === USER_STATUS.SHARED;
     return {
       normal: prev.normal + (!shared && !isGroup ? 1 : 0),
       group: prev.group + (isGroup ? 1 : 0),
@@ -380,7 +380,7 @@ const Users = props => {
                   >
                     <TableCell>
                       <div className={classes.flexRow}>
-                        {properties.displaytypeex === 1 ?
+                        {properties.displaytypeex === USER_TYPE.GROUP ?
                           <Groups className={classes.icon} fontSize='small'/> :
                           <AccountCircle className={classes.icon} fontSize='small'/>
                         }
@@ -389,7 +389,7 @@ const Users = props => {
                     </TableCell>
                     <TableCell>
                       {t(getUserTypeString(properties.displaytypeex))}
-                      {obj.status === 4 && ` (${t("Shared")})`}
+                      {obj.status === USER_STATUS.SHARED && ` (${t("Shared")})`}
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
@@ -413,7 +413,7 @@ const Users = props => {
                 divider
               >
                 <ListItemIcon>
-                  {obj.properties?.displaytypeex === 1 ?
+                  {obj.properties?.displaytypeex === USER_TYPE.GROUP ?
                     <Groups className={classes.icon} fontSize='small'/> :
                     <AccountCircle className={classes.icon} fontSize='small'/>
                   }

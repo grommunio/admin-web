@@ -16,6 +16,68 @@ export const IPM_SUBTREE_OBJECT = {
   creationtime: null,
 };
 export const defaultFetchLimit = 50;
+export const USER_STATUS = {  // pseudo enum
+  "NORMAL": 0,
+  "DEACTIVATED": 1,
+  "DELETED": 3,
+  "SHARED": 4,
+  "CONTACT": 5,
+}
+
+export const selectableUserStatuses = [
+  { name: 'Normal', ID: USER_STATUS.NORMAL },
+  { name: 'Deactivated', ID: USER_STATUS.DEACTIVATED },
+  { name: 'Shared', ID: USER_STATUS.SHARED },
+];
+
+export const USER_TYPE = {
+  "USER": 0,
+  "GROUP": 1,  // Deprecated
+  "ROOM": 7,
+  "EQUIPMENT": 8,
+}
+
+export const userTypes = [
+  { name: 'User', ID: USER_TYPE.USER },
+  { name: 'Room', ID: USER_TYPE.ROOM },
+  { name: 'Equipment', ID: USER_TYPE.EQUIPMENT },
+];
+
+export const DOMAIN_STATUS = {  // pseudo enum
+  "ACTIVATED": 0,
+  "DEACTIVATED": 3,
+}
+
+export const domainStatuses = [
+  { name: 'Activated', ID: DOMAIN_STATUS.ACTIVATED },
+  { name: 'Deactivated', ID: DOMAIN_STATUS.DEACTIVATED },
+];
+
+export const LIST_PRIVILEGE = {
+  "ALL": 0,
+  "INTERNAL": 1,
+  "DOMAIN": 2,
+  "SPECIFIC": 3,
+  "OUTGOING": 4,
+}
+
+export const LIST_TYPE = {
+  "NORMAL": 0,
+  "DOMAIN": 2,
+}
+
+export const listTypes = [
+  { ID: LIST_TYPE.NORMAL, name: "Normal" },
+  { ID: LIST_TYPE.DOMAIN, name: "Domain" },
+]
+
+export const folderTypes = [
+  { name: 'Mail and post items', ID: 'IPF.Note' },
+  { name: 'Contact', ID: 'IPF.Contact' },
+  { name: 'Appointment', ID: 'IPF.Appointment' },
+  { name: 'Sticky note', ID: 'IPF.Stickynote' },
+  { name: 'Task', ID: 'IPF.Task' },
+]
 
 export const ANSI_CODE_TO_JSS_CLASS = {
   "0;30": {},

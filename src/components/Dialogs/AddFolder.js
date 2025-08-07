@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
 import { fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { folderTypes } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -39,14 +40,6 @@ const AddFolder = props => {
     props.fetchUsers(props.domain.ID)
       .catch();
   }, []);
-
-  const types = [
-    { name: 'Mail and post items', ID: 'IPF.Note' },
-    { name: 'Contact', ID: 'IPF.Contact' },
-    { name: 'Appointment', ID: 'IPF.Appointment' },
-    { name: 'Sticky note', ID: 'IPF.Stickynote' },
-    { name: 'Task', ID: 'IPF.Task' },
-  ]
 
   const handleInput = field => event => {
     setFolder({
@@ -111,7 +104,7 @@ const AddFolder = props => {
             value={container || ''}
             onChange={handleInput('container')}
           >
-            {types.map((type, key) => (
+            {folderTypes.map((type, key) => (
               <MenuItem key={key} value={type.ID}>
                 {t(type.name)}
               </MenuItem>

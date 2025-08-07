@@ -35,7 +35,7 @@ import { getPolicyDiff } from '../utils';
 import SyncPolicies from '../components/SyncPolicies';
 import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
-import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ } from '../constants';
+import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, USER_STATUS } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchDomainDetails } from '../actions/domains';
 import { checkFormat } from '../api';
@@ -83,7 +83,7 @@ const UserDetails = props => {
       roles: [],
       properties: {},
       aliases: [],
-      status: 0,
+      status: USER_STATUS.NORMAL,
     },
     syncPolicy: {},
     defaultPolicy: {},
@@ -251,7 +251,7 @@ const UserDetails = props => {
         status: value,
       },
       unsaved: true,
-      changingPw: value === 0 && user.status === 4 && !user.ldapID,
+      changingPw: value === 0 && user.status === USER_STATUS.SHARED && !user.ldapID,
     });
   }
 

@@ -23,7 +23,7 @@ import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/ro
 import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
 import { fetchOrgsData } from '../actions/orgs';
-import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
+import { ORG_ADMIN, SYSTEM_ADMIN_WRITE, USER_STATUS } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
@@ -350,7 +350,7 @@ const mapDispatchToProps = dispatch => {
       await dispatch(editRoleData(role)).catch(message => Promise.reject(message));
     },
     fetchUser: async () => {
-      await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, status: 0 }))
+      await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, status: USER_STATUS.NORMAL }))
         .catch(message => Promise.reject(message));
     },
     fetchDomains: async () => {

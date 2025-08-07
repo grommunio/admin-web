@@ -21,7 +21,7 @@ import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '..
 import { syncLdapUsers } from '../actions/ldap';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
-import { SYSTEM_ADMIN_WRITE } from '../constants';
+import { SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import defaultTableProptypes from '../proptypes/defaultTableProptypes';
@@ -81,12 +81,12 @@ const GlobalUsers = props => {
 
   const getUserStatuses = () => {
     const statuses = [];
-    if(showDeactivated) statuses.push(1);
-    if(mode === 0) {
-      statuses.push(0, 4);
+    if(showDeactivated) statuses.push(USER_STATUS.DEACTIVATED);
+    if(mode === USER_STATUS.NORMAL) {
+      statuses.push(USER_STATUS.NORMAL, USER_STATUS.SHARED);
     }
-    else if(mode === 4) statuses.push(4);
-    else statuses.push(0);
+    else if(mode === USER_STATUS.SHARED) statuses.push(USER_STATUS.SHARED);
+    else statuses.push(USER_STATUS.NORMAL);
     return statuses;
   }
 
@@ -114,7 +114,7 @@ const GlobalUsers = props => {
 
   const handleRedirect = obj => async (e) => {
     // If user is a group
-    if(obj.properties?.displaytypeex === 1) {
+    if(obj.properties?.displaytypeex === USER_TYPE.GROUP) {
       const userDetails = await props.fetchUserDetails(obj.domainID, obj.ID);
       handleEdit('/' + obj.domainID +'/groups/' + userDetails.mlist)(e);
     } else {
@@ -146,8 +146,8 @@ const GlobalUsers = props => {
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
   const userCounts = users.Users.reduce((prev, curr) => {
-    const isGroup = curr.properties?.displaytypeex === 1;
-    const shared = curr.status === 4;
+    const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
+    const shared = curr.status === USER_STATUS.SHARED;
     return {
       normal: prev.normal + (!shared && !isGroup ? 1 : 0),
       group: prev.group + (isGroup ? 1 : 0),
@@ -252,7 +252,7 @@ const GlobalUsers = props => {
                   <TableRow key={idx} hover onClick={handleRedirect(obj)}>
                     <TableCell>
                       <div className={classes.flexRow}>
-                        {properties.displaytypeex === 1 ?
+                        {properties.displaytypeex === USER_TYPE.GROUP ?
                           <Groups className={classes.icon} fontSize='small'/> :
                           <AccountCircle className={classes.icon} fontSize='small'/>
                         }
@@ -261,8 +261,8 @@ const GlobalUsers = props => {
                     </TableCell>
                     <TableCell>
                       {t(getUserTypeString(properties.displaytypeex))}
-                      {obj.status === 4 && ` (${t("Shared")})`}
-                      {obj.status === 1 && ` (${t("Deactivated")})`}
+                      {obj.status === USER_STATUS.SHARED && ` (${t("Shared")})`}
+                      {obj.status === USER_STATUS.DEACTIVATED && ` (${t("Deactivated")})`}
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
@@ -285,7 +285,7 @@ const GlobalUsers = props => {
                 divider
               >
                 <ListItemIcon>
-                  {obj.properties?.displaytypeex === 1 ?
+                  {obj.properties?.displaytypeex === USER_TYPE.GROUP ?
                     <Groups className={classes.icon} fontSize='small'/> :
                     <AccountCircle className={classes.icon} fontSize='small'/>
                   }

@@ -55,7 +55,7 @@ const Groups = props => {
     { label: 'Privilege', value: 'listPrivilege' },
   ]
 
-  const listTypes = ['Normal', 'Domain', 'Group']
+  const listTypes = ['Normal', 'Group', 'Domain']
 
   const listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing (deprecated)']
 

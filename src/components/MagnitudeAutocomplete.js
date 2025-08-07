@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Autocomplete, TextField } from '@mui/material';
 import { getAutocompleteOptions } from '../utils';
 import { withTranslation } from 'react-i18next';
+import { USER_STATUS } from '../constants';
 
 const MagnitudeAutocomplete = props => {
   const { t, className, value, filterAttribute, onChange, options, label, getOptionLabel,
@@ -22,7 +23,7 @@ const MagnitudeAutocomplete = props => {
     options={options || []}
     getOptionLabel={getOptionLabel || (o => {
       // Contact
-      if(filterAttribute === "username" && o.status === 5) {
+      if(filterAttribute === "username" && o.status === USER_STATUS.CONTACT) {
         const properties = o.properties || {};
         return properties["smtpaddress"] || properties["displayname"] || "";
       }

@@ -80,11 +80,6 @@ const DomainListDetails = props => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
-  const statuses = [
-    { name: 'Activated', ID: 0 },
-    { name: 'Deactivated', ID: 3 },
-  ]
-
   useEffect(() => {
     const inner = async () => {
       const { fetch, fetchOrgs, fetchServers, capabilities } = props;
@@ -270,7 +265,7 @@ const DomainListDetails = props => {
             value={domainStatus || 0}
             onChange={handleInput('domainStatus')}
           >
-            {statuses.map((status, key) => (
+            {domainStatus.map((status, key) => (
               <MenuItem key={key} value={status.ID}>
                 {t(status.name)}
               </MenuItem>

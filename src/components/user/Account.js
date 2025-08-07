@@ -8,7 +8,7 @@ import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
-import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../../constants';
+import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 import { connect } from 'react-redux';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
@@ -66,18 +66,6 @@ const styles = theme => ({
 const Account = props => {
   const context = useContext(CapabilityContext);
   const { t } = useTranslation();
-
-  const types = [
-    { name: 'User', ID: 0 },
-    { name: 'Room', ID: 7 },
-    { name: 'Equipment', ID: 8 },
-  ]
-
-  const statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
-    { name: 'Shared', ID: 4 },
-  ]
 
   const hiddenFrom = [
     { ID: 1, name: 'Global Address List', value: 0x01 },
@@ -197,7 +185,7 @@ const Account = props => {
             }
           }}
         />
-        {writable && status !== 4 && ldapID === null && <Button
+        {writable && status !== USER_STATUS.SHARED && ldapID === null && <Button
           variant="contained"
           color="primary"
           onClick={handlePasswordChange}
@@ -218,10 +206,10 @@ const Account = props => {
         className={classes.input}
         label={t("Mode")}
         fullWidth
-        value={status || 0}
+        value={status || USER_STATUS.NORMAL}
         onChange={handleStatusInput}
       >
-        {statuses.map((status, key) => (
+        {selectableUserStatuses.map((status, key) => (
           <MenuItem key={key} value={status.ID}>
             {t(status.name)}
           </MenuItem>
@@ -232,11 +220,11 @@ const Account = props => {
         className={classes.input}
         label={t("Type")}
         fullWidth
-        disabled={displaytypeex === 1}
-        value={displaytypeex || 0}
+        disabled={displaytypeex === USER_TYPE.GROUP}
+        value={displaytypeex || USER_TYPE.NORMAL}
         onChange={handlePropertyChange('displaytypeex')}
       >
-        {types.map((type, key) => (
+        {userTypes.map((type, key) => (
           <MenuItem key={key} value={type.ID}>
             {t(type.name)}
           </MenuItem>
@@ -432,7 +420,7 @@ const Account = props => {
       </Typography>
       <Grid2 container direction="column" sx={{ py: 1, px: 2 }}>
 
-        {status !== 4 && <Tooltip
+        {status !== USER_STATUS.SHARED && <Tooltip
           placement="top-start"
           title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
         >
@@ -462,7 +450,7 @@ const Account = props => {
           </Grid2>
         </Tooltip>}
         <Grid2 container>
-          {status !== 4 && <FormControlLabel
+          {status !== USER_STATUS.SHARED && <FormControlLabel
             control={
               <Checkbox
                 checked={smtp || false }
@@ -472,7 +460,7 @@ const Account = props => {
             }
             label={t('Allow SMTP sending (used by POP3/IMAP clients)')}
           />}
-          {status !== 4 && <FormControlLabel
+          {status !== USER_STATUS.SHARED && <FormControlLabel
             control={
               <Checkbox
                 checked={changePassword || false }
@@ -482,7 +470,7 @@ const Account = props => {
             }
             label={t('Allow password changes')}
           />}
-          {status !== 4 && <FormControlLabel
+          {status !== USER_STATUS.SHARED && <FormControlLabel
             control={
               <Checkbox
                   checked={pop3_imap || privArchive || false /*eslint-disable-line*/}
@@ -494,7 +482,7 @@ const Account = props => {
             label={t('Allow POP3/IMAP logins')}
           />}
         </Grid2>
-        {status !== 4 && <Grid2 container>
+        {status !== USER_STATUS.SHARED && <Grid2 container>
           <FormControlLabel
             control={
               <Checkbox

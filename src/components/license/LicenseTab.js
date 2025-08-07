@@ -10,6 +10,7 @@ import { fetchPlainUsersData } from '../../actions/users';
 import { getLicenseCreds, submitLicenseCreds, uploadLicenseData } from '../../actions/license';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { USER_STATUS } from '../../constants';
 
 
 const styles = theme => ({
@@ -295,7 +296,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchUsers: async (domainID) => 
-      await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
+      await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
       .catch(err => Promise.reject(err)),

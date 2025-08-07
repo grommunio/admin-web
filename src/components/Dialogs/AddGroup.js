@@ -16,7 +16,7 @@ import { addGroupData } from '../../actions/groups';
 import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
-import { ORG_ADMIN } from '../../constants';
+import { LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -36,24 +36,19 @@ const AddGroup = props => {
     listname: '',
     displayname: '',
     hidden: 0,
-    listType: 0,
-    listPrivilege: 0,
+    listType: LIST_TYPE.NORMAL,
+    listPrivilege: LIST_PRIVILEGE.ALL,
     associations: [],
     specifieds: [],
   });
   const [loading, setLoading] = useState(false);
   const context = useContext(CapabilityContext);
 
-  const listTypes = [
-    { ID: 0, name: "Normal" },
-    { ID: 2, name: "Domain" },
-  ]
-
   const listPrivileges = [
-    { ID: 0, name: "All" },
-    { ID: 1, name: "Internal" },
-    { ID: 2, name: "Domain" },
-    { ID: 3, name: "Specific" },
+    { ID: LIST_PRIVILEGE.ALL, name: "All" },
+    { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
+    { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
+    { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
   ]
 
   const handleEnter = () => {
@@ -109,7 +104,7 @@ const AddGroup = props => {
           listType: 0,
           hidden: 0,
           displayname: '',
-          listPrivilege: 0,
+          listPrivilege: LIST_PRIVILEGE.ALL,
           associations: '',
           specifieds: '',
         });
@@ -199,7 +194,7 @@ const AddGroup = props => {
             className={classes.input}
             label={t("Privilege")}
             fullWidth
-            value={listPrivilege || 0}
+            value={listPrivilege || LIST_PRIVILEGE.ALL}
             onChange={handlePrivilegeChange}
           >
             {listPrivileges.map((status, key) => (
@@ -208,7 +203,7 @@ const AddGroup = props => {
               </MenuItem>
             ))}
           </TextField>
-          {listType === 0 && <MagnitudeAutocomplete
+          {listType === LIST_TYPE.NORMAL && <MagnitudeAutocomplete
             multiple
             value={associations || []}
             filterAttribute={'username'}
@@ -220,7 +215,7 @@ const AddGroup = props => {
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
-          {listPrivilege === 3 && <MagnitudeAutocomplete
+          {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <MagnitudeAutocomplete
             multiple
             value={specifieds || []}
             filterAttribute={'username'}

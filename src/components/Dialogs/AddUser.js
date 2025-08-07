@@ -19,7 +19,7 @@ import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
 import { CapabilityContext } from '../../CapabilityContext';
-import { SYSTEM_ADMIN_WRITE } from '../../constants';
+import { selectableUserStatuses, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -40,9 +40,9 @@ const AddUser = props => {
     properties: {
       displayname: '',
       storagequotalimit: '',
-      displaytypeex: 0,
+      displaytypeex: USER_TYPE.NORMAL,
     },
-    status: 0,
+    status: USER_STATUS.NORMAL,
     loading: false,
     password: '',
     repeatPw: '',
@@ -56,18 +56,6 @@ const AddUser = props => {
   const navigate = useNavigate();
   const context = useContext(CapabilityContext);
   const isSystemAdmin = context.includes(SYSTEM_ADMIN_WRITE);
-
-  const statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
-    { name: 'Shared', ID: 4 },
-  ]
-
-  const types = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Room', ID: 7 },
-    { name: 'Equipment', ID: 8 },
-  ]
 
   const handleEnter = async () => {
     const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = props;
@@ -136,14 +124,14 @@ const AddUser = props => {
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
-    const checkboxes = status !== 4 ?
+    const checkboxes = status !== USER_STATUS.SHARED ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
     setState({ ...state, loading: true });
     add(domain.ID, {
       username,
-      password: status === 4 ? undefined : password,
+      password: status === USER_STATUS.SHARED ? undefined : password,
       status,
       homeserver: homeserver?.ID || null,
       properties: {
@@ -160,7 +148,7 @@ const AddUser = props => {
           username: '',
           properties: {
             displayname: '',
-            displaytypeex: 0,
+            displaytypeex: USER_TYPE.NORMAL,
           },
           loading: false,
           password: '',
@@ -179,11 +167,11 @@ const AddUser = props => {
     const { domain, add, onError, createParams } = props;
     const { username, password, subType, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
-    const checkboxes = status !== 4 ? createParams.user : {};
+    const checkboxes = status !== USER_STATUS.SHARED ? createParams.user : {};
     setState({ ...state, loading: true });
     add(domain.ID, {
       username,
-      password: status === 4 ? undefined : password,
+      password: status === USER_STATUS.SHARED ? undefined : password,
       status,
       subType,
       homeserver: homeserver?.ID || null,
@@ -226,7 +214,7 @@ const AddUser = props => {
     status, homeserver, lang, chat, chatAvailable } = state;
   const { displayname, displaytypeex } = properties;
   const addDisabled = usernameError || !username || loading || 
-      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
+      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== USER_STATUS.SHARED);
   return (
     (<Dialog
       onClose={onClose}
@@ -246,10 +234,10 @@ const AddUser = props => {
             className={classes.input}
             label={t("Mode")}
             fullWidth
-            value={status || 0}
+            value={status || USER_STATUS.NORMAL}
             onChange={handleInput('status')}
           >
-            {statuses.map((status, key) => (
+            {selectableUserStatuses.map((status, key) => (
               <MenuItem key={key} value={status.ID}>
                 {t(status.name)}
               </MenuItem>
@@ -269,7 +257,7 @@ const AddUser = props => {
               }
             }}
           />
-          {status !== 4 && <TextField 
+          {status !== USER_STATUS.SHARED && <TextField 
             label={t("Password")}
             value={password || ''}
             onChange={handleInput('password')}
@@ -284,7 +272,7 @@ const AddUser = props => {
               }
             }}
           />}
-          {status !== 4 && <TextField 
+          {status !== USER_STATUS.SHARED && <TextField 
             label={t("Repeat password")}
             value={repeatPw || ''}
             onChange={handleInput('repeatPw')}
@@ -323,10 +311,10 @@ const AddUser = props => {
             className={classes.input}
             label={t("Type")}
             fullWidth
-            value={displaytypeex || 0}
+            value={displaytypeex || USER_TYPE.NORMAL}
             onChange={handlePropertyChange('displaytypeex')}
           >
-            {types.map((type, key) => (
+            {userTypes.map((type, key) => (
               <MenuItem key={key} value={type.ID}>
                 {t(type.name)}
               </MenuItem>

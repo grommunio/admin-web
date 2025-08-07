@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { addUserData } from '../../actions/users';
 import { useNavigate } from 'react-router';
+import { USER_STATUS } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -52,7 +53,7 @@ const AddContact = props => {
     const { domain, add, onError, onSuccess } = props;
     setLoading(true);
     add(domain.ID, {
-      status: 5,
+      status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
@@ -73,7 +74,7 @@ const AddContact = props => {
     const { domain, add, onError } = props;
     setLoading(true);
     add(domain.ID, {
-      status: 5,
+      status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),

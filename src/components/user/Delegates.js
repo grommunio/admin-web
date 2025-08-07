@@ -15,7 +15,7 @@ import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDe
 import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
-import { SYSTEM_ADMIN_WRITE } from '../../constants';
+import { SYSTEM_ADMIN_WRITE, USER_STATUS } from '../../constants';
 import { useNavigate } from 'react-router';
 
 const styles = theme => ({
@@ -226,9 +226,9 @@ const mapDispatchToProps = dispatch => {
       .catch(err => console.error(err)),
     fetchPermittedUsers: async (domainID, userID) => await dispatch(fetchPermittedUsers(domainID, userID, {}))
       .catch(err => console.error(err)),
-    fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
+    fetchUsers: async domainID => await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
       .catch(err => console.error(err)),
-    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0, status: 0}))
+    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0, status: USER_STATUS.NORMAL }))
       .catch(err => console.error(err)),
     setUserDelegates: async (domainID, userID, delegates) =>
       await dispatch(setUserDelegates(domainID, userID, delegates))

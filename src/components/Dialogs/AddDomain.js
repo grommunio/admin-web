@@ -17,6 +17,7 @@ import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { throttle } from 'lodash';
+import { domainStatuses } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -47,11 +48,6 @@ const AddDomain = props => {
   });
   const [loading, setLoading] = useState(false);
   const [domainError, setDomainError] = useState(false);
-
-  const statuses = [
-    { name: 'Activated', ID: 0 },
-    { name: 'Deactivated', ID: 3 },
-  ]
 
   const handleEnter = () => {
     const { fetch, fetchServers, fetchDefaults, onError } = props;
@@ -176,7 +172,7 @@ const AddDomain = props => {
             value={domainStatus || 0}
             onChange={handleInput('domainStatus')}
           >
-            {statuses.map((status, key) => (
+            {domainStatuses.map((status, key) => (
               <MenuItem key={key} value={status.ID}>
                 {t(status.name)}
               </MenuItem>

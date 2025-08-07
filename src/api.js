@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2024 grommunio GmbH
+import { USER_STATUS } from './constants';
 import store from './store';
 
 const baseUrl = '//' + window.location.host + '/api/v1';
@@ -338,7 +339,7 @@ export function allContacts(params) {
   return async () => {
     return await get(buildQuery('/system/users', {
       ...params,
-      status: 5,
+      status: USER_STATUS.CONTACT,
       matchProps: 'displayname,smtpaddress',
       properties: 'displayname,smtpaddress',
     }));
@@ -380,7 +381,7 @@ export function contacts(domainID, params) {
     return await get(buildQuery(
       '/domains/' + domainID + '/users', {
         ...params,
-        status: 5,
+        status: USER_STATUS.CONTACT,
         matchProps: 'displayname,smtpaddress',
         properties: 'displayname,smtpaddress',
       }));
@@ -389,7 +390,7 @@ export function contacts(domainID, params) {
 
 export function userCount(domainID) {
   return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/users', { limit: 0, status: 0 }));
+    return await get(buildQuery('/domains/' + domainID + '/users', { limit: 0, status: USER_STATUS.NORMAL }));
   };
 }
 

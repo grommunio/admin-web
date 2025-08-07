@@ -18,6 +18,7 @@ import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
+import { selectableUserStatuses, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
 
 const styles = theme => ({
   form: {
@@ -41,9 +42,9 @@ const AddGlobalUser = props => {
     properties: {
       displayname: '',
       storagequotalimit: '',
-      displaytypeex: 0,
+      displaytypeex: USER_TYPE.NORMAL,
     },
-    status: 0,
+    status: USER_STATUS.NORMAL,
     loading: false,
     password: '',
     repeatPw: '',
@@ -56,18 +57,6 @@ const AddGlobalUser = props => {
   const config = useSelector((state) => state.config);
   const [usernameError, setUsernameError] = useState(false);
   const navigate = useNavigate();
-
-  const types = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Room', ID: 7 },
-    { name: 'Equipment', ID: 8 },
-  ]
-
-  const statuses = [
-    { name: 'Normal', ID: 0 },
-    { name: 'Suspended', ID: 1 },
-    { name: 'Shared', ID: 4 },
-  ]
 
   const handleEnter = async () => {
     const { fetchDomains, fetchServers, fetchDefaults, storeLangs, onError } = props;
@@ -133,14 +122,14 @@ const AddGlobalUser = props => {
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
-    const checkboxes = status !== 4 ?
+    const checkboxes = status !== USER_STATUS.SHARED ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
     setState({ ...state, loading: true });
     add(domain?.ID || -1, {
       username,
-      password: status === 4 ? undefined : password,
+      password: status === USER_STATUS.SHARED ? undefined : password,
       status,
       homeserver: homeserver?.ID || null,
       properties: {
@@ -159,9 +148,9 @@ const AddGlobalUser = props => {
           properties: {
             displayname: '',
             storagequotalimit: '',
-            displaytypeex: 0,
+            displaytypeex: USER_TYPE.NORMAL,
           },
-          status: 0,
+          status: USER_STATUS.NORMAL,
           loading: false,
           password: '',
           repeatPw: '',
@@ -181,14 +170,14 @@ const AddGlobalUser = props => {
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
       privChat, privVideo, privFiles, privArchive } = createParams.user;
-    const checkboxes = status !== 4 ?
+    const checkboxes = status !== USER_STATUS.SHARED ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
     setState({ ...state, loading: true });
     add(domain?.ID || -1, {
       username,
-      password: status === 4 ? undefined : password,
+      password: status === USER_STATUS.SHARED ? undefined : password,
       subType,
       homeserver: homeserver?.ID || null,
       status,
@@ -244,7 +233,7 @@ const AddGlobalUser = props => {
     domain, status, homeserver, lang, chat, chatAvailable } = state;
   const { displayname, displaytypeex } = properties;
   const addDisabled = !domain || usernameError || !username || loading ||
-      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== 4);
+      ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== USER_STATUS.SHARED);
     
   return (
     (<Dialog
@@ -276,10 +265,10 @@ const AddGlobalUser = props => {
             className={classes.input}
             label={t("Mode")}
             fullWidth
-            value={status || 0}
+            value={status || USER_STATUS.NORMAL}
             onChange={handleInput('status')}
           >
-            {statuses.map((status, key) => (
+            {selectableUserStatuses.map((status, key) => (
               <MenuItem key={key} value={status.ID}>
                 {t(status.name)}
               </MenuItem>
@@ -300,7 +289,7 @@ const AddGlobalUser = props => {
               }
             }}
           />
-          {status !== 4 && <TextField 
+          {status !== USER_STATUS.SHARED && <TextField 
             label={t("Password")}
             value={password || ''}
             onChange={handleInput('password')}
@@ -315,7 +304,7 @@ const AddGlobalUser = props => {
               }
             }}
           />}
-          {status !== 4 && <TextField 
+          {status !== USER_STATUS.SHARED && <TextField 
             label={t("Repeat password")}
             value={repeatPw || ''}
             onChange={handleInput('repeatPw')}
@@ -355,10 +344,10 @@ const AddGlobalUser = props => {
             className={classes.input}
             label={t("Type")}
             fullWidth
-            value={displaytypeex || 0}
+            value={displaytypeex || USER_TYPE.NORMAL}
             onChange={handlePropertyChange('displaytypeex')}
           >
-            {types.map((type, key) => (
+            {userTypes.map((type, key) => (
               <MenuItem key={key} value={type.ID}>
                 {t(type.name)}
               </MenuItem>

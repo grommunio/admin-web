@@ -22,6 +22,7 @@ import { fetchUpdateLogData } from '../actions/logs';
 import LicenseTab from '../components/license/LicenseTab';
 import Design from '../components/license/Design';
 import Updater from '../components/license/Updater';
+import { USER_STATUS } from '../constants';
 
 
 const styles = theme => ({
@@ -157,7 +158,7 @@ const mapDispatchToProps = dispatch => {
     fetchCount: async domainID => await dispatch(fetchUserCount(domainID))
       .catch(error => Promise.reject(error)),
     fetchUsers: async (domainID) => 
-      await dispatch(fetchPlainUsersData(domainID, { status: 0 }))
+      await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
         .catch(error => Promise.reject(error)),
     upload: async license => await dispatch(uploadLicenseData(license))
       .catch(err => Promise.reject(err)),

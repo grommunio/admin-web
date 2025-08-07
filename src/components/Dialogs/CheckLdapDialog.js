@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { deleteOrphanedUsers } from '../../actions/users';
 import { red } from '@mui/material/colors';
 import { AccountCircle, ContactMail, Delete, DeleteForever } from '@mui/icons-material';
+import { USER_STATUS } from '../../constants';
 
 const styles = {
   delete: {
@@ -72,13 +73,13 @@ const CheckLdapDialog = props => {
               </div>}
             >
               <ListItemIcon>
-                {user.status === 5 ?
+                {user.status === USER_STATUS.CONTACT ?
                   <ContactMail className={classes.icon} fontSize='small'/> :
                   <AccountCircle className={classes.icon} fontSize='small'/>
                 }
               </ListItemIcon>
               <ListItemText
-                primary={(`${user.displayname} <${user.status === 5 ? user.smtpaddress : user.username}>`)}
+                primary={(`${user.displayname} <${user.status === USER_STATUS.CONTACT ? user.smtpaddress : user.username}>`)}
               />
             </ListItem>  
           )}
