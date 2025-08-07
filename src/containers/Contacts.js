@@ -311,6 +311,7 @@ const Contacts = props => {
         onClose={handleCheckClose}
         onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
+        checkUsers={checkUsers}
       />
     </TableViewContainer>
   );

@@ -449,6 +449,7 @@ const Users = props => {
         onClose={handleCheckClose}
         onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
+        checkUsers={checkUsers}
       />
       <TaskCreated
         message={taskMessage}

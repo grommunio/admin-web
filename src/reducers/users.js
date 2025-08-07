@@ -32,6 +32,14 @@ function deleteUser(arr, id) {
   return copy;
 }
 
+function deleteOrphanedUsers(arr, users) {
+  let copy = [...arr];
+  users.forEach(user => {
+    copy.splice(copy.findIndex(item => item.ID === user.ID), 1);
+  });
+  return copy;
+}
+
 function usersReducer(state=defaultState, action) {
   switch(action.type) {
   case USERS_DATA_RECEIVED: 
@@ -70,7 +78,9 @@ function usersReducer(state=defaultState, action) {
   case ORPHANS_DELETED:
     return {
       ...state,
-      Orphaned: [],
+      Orphaned: deleteOrphanedUsers(state.Orphaned, action.deletedIDs),
+      Users: deleteOrphanedUsers(state.Users, action.deletedIDs),
+      count: state.count - action.deletedIDs.length
     };
 
   case USERS_SYNC_RECEIVED:

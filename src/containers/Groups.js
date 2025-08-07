@@ -263,6 +263,7 @@ const Groups = props => {
         onClose={handleCheckClose}
         onError={handleDeleteError}
         onSuccess={handleCheckSuccess}
+        checkUsers={checkUsers}
       />
       <TaskCreated
         message={taskMessage}

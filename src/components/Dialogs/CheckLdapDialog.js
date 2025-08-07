@@ -11,12 +11,14 @@ import { Dialog, DialogTitle, DialogContent,Button,
   ListItemText,
   Typography,
   ListItemIcon,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { deleteOrphanedUsers } from '../../actions/users';
 import { red } from '@mui/material/colors';
-import { AccountCircle, ContactMail } from '@mui/icons-material';
+import { AccountCircle, ContactMail, Delete, DeleteForever } from '@mui/icons-material';
 
 const styles = {
   delete: {
@@ -34,6 +36,13 @@ const CheckLdapDialog = props => {
     deleteUsers({ deleteFiles }).then(() => onSuccess && onSuccess()).catch(onError);
   }
 
+  const handleSingleDelete = (userID, deleteFiles) => () => {
+    const { deleteUsers, checkUsers, onError } = props;
+    deleteUsers({ userID, deleteFiles })
+      .then(checkUsers)
+      .catch(onError);
+  }
+
   const { classes, t, open, onClose, Orphaned } = props;
 
   return (
@@ -47,7 +56,21 @@ const CheckLdapDialog = props => {
       <DialogContent style={{ minWidth: 400 }}>
         {Orphaned.length > 0 ? <List>
           {Orphaned.map(user => 
-            <ListItem key={user.ID}>
+            <ListItem
+              key={user.ID}
+              secondaryAction={<div style={{ display: "flex" }}>
+                <Tooltip title="Delete">
+                  <IconButton onClick={handleSingleDelete(user.ID, false)}>
+                    <Delete color='error' />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete with files">
+                  <IconButton onClick={handleSingleDelete(user.ID, true)}>
+                    <DeleteForever color='error' />
+                  </IconButton>
+                </Tooltip>
+              </div>}
+            >
               <ListItemIcon>
                 {user.status === 5 ?
                   <ContactMail className={classes.icon} fontSize='small'/> :
@@ -100,6 +123,7 @@ CheckLdapDialog.propTypes = {
   onError: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
   deleteUsers: PropTypes.func.isRequired,
+  checkUsers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

@@ -198,8 +198,8 @@ export function deleteUserData(domainID, id, params) {
 export function deleteOrphanedUsers(params) {
   return async dispatch => {
     try {
-      await dispatch(deleteOrphans(params));
-      await dispatch({ type: ORPHANS_DELETED });
+      const res = await dispatch(deleteOrphans(params));
+      await dispatch({ type: ORPHANS_DELETED, deletedIDs: res.deleted });
     } catch(err) {
       return Promise.reject(err.message);
     }
