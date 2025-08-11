@@ -61,8 +61,16 @@ const TasQ = props => {
   }, []);
 
   const handleStart = () => {
-    props.start()
-      .then(() => setState({ ...state, snackbar: 'Success!' }))
+    const { start, status } = props;
+    start()
+      .then(() => status().catch((msg) => setState({ ...state, snackbar: msg })))
+      .catch((msg) => setState({ ...state, snackbar: msg }));
+  }
+
+  const handleStop = () => {
+    const { stop, status } = props;
+    stop()
+      .then(() => status().catch((msg) => setState({ ...state, snackbar: msg })))
       .catch((msg) => setState({ ...state, snackbar: msg }));
   }
 
@@ -119,6 +127,15 @@ const TasQ = props => {
           disabled={!writable || taskq.running}
         >
           {t("Start server")}
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={handleStop}
+          disabled={!writable || !taskq.running}
+          sx={{ ml: 1 }}
+        >
+          {t("Stop server")}
         </Button>
       </TableActionGrid>
       <Typography className={classes.count} color="textPrimary">
