@@ -1168,6 +1168,18 @@ export function taskDetails(id) {
   };
 }
 
+export function taskDelete(id) {
+  return async () => {
+    return await yeet('/tasq/tasks/' + id);
+  };
+}
+
+export function taskCancel(id) {
+  return async () => {
+    return await post('/tasq/tasks/' + id + '/cancel');
+  };
+}
+
 export function createParams(domainID, params) {
   const path = '/defaults/createParams' + (domainID ? '/' + domainID : '');
   return async () => {

@@ -14,13 +14,13 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { getStringAfterLastSlash, getTaskState, setDateTimeString } from '../utils';
 import Feedback from '../components/Feedback';
 import ViewWrapper from '../components/ViewWrapper';
-import { fetchTaskDetails } from '../actions/taskq';
+import { cancelTask, deleteTask, fetchTaskDetails } from '../actions/taskq';
 import { green, red } from '@mui/material/colors';
-import { Refresh } from '@mui/icons-material';
+import { CancelOutlined, Delete, Refresh } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 
 const styles = theme => ({
@@ -89,6 +89,7 @@ const TaskDetails = props => {
     loading: false,
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     refresh();
@@ -107,6 +108,18 @@ const TaskDetails = props => {
         params: taskData.params || {},
       } : {})
     });
+  }
+
+  const handleDelete = () => {
+    dispatch(deleteTask(task.ID))
+      .then(() => navigate("/taskq"))
+      .catch(message => setTask({ ...task, snackbar: message || 'Unknown error' }));
+  }
+
+  const handleCancel= () => {
+    dispatch(cancelTask(task.ID))
+      .then(refresh)
+      .catch(message => setTask({ ...task, snackbar: message || 'Unknown error' }));
   }
 
   const handleNavigation = path => event => {
@@ -138,6 +151,12 @@ const TaskDetails = props => {
             {t(getTaskState(state)) || t('Unknown')}
             <IconButton onClick={refresh}>
               <Refresh color="primary"/>
+            </IconButton>
+            <IconButton onClick={handleCancel}>
+              <CancelOutlined color="error"/>
+            </IconButton>
+            <IconButton onClick={handleDelete}>
+              <Delete color="error"/>
             </IconButton>
           </div>
           <div className={classes.centerRow}>
