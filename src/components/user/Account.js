@@ -148,11 +148,11 @@ const Account = props => {
     const over100 = [rawSTQ, rawRQ, rawSQ].some(quota => quota > 104857600);
 
     if(over100) {
-      return rawMSE > 104857600 ? t("quotaWarning4") : t("quotaWarning3");
+      return rawMSE > 107374182400 ? t("quotaWarning4") : t("quotaWarning3");
     }
     const over50 = [rawSTQ, rawRQ, rawSQ].some(quota => quota > 52428800);
     if(over50) {
-      return rawMSE > 52428800 ? t("quotaWarning2") : t("quotaWarning1");
+      return rawMSE > 53687091200 ? t("quotaWarning2") : t("quotaWarning1");
     }
     return "";
   }
