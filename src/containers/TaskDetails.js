@@ -178,7 +178,7 @@ const TaskDetails = props => {
           </Typography>
           {Object.entries(params).map(([param, value], key) => {
             const displayValue = JSON.stringify(value);
-            return param !== 'result' ? <div className={classes.centerRow}>
+            return param !== 'result' ? <div className={classes.centerRow} key={key}>
               <Typography className={classes.description}>{param}:</Typography>
               {displayValue || t('Unknown')}
             </div> :
