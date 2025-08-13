@@ -28,7 +28,7 @@ import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SyncPolicies from '../components/SyncPolicies';
-import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
+import { domainStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
@@ -265,7 +265,7 @@ const DomainListDetails = props => {
             value={domainStatus || 0}
             onChange={handleInput('domainStatus')}
           >
-            {domainStatus.map((status, key) => (
+            {domainStatuses.map((status, key) => (
               <MenuItem key={key} value={status.ID}>
                 {t(status.name)}
               </MenuItem>
