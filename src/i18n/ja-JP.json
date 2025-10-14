@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "ユーザー検索に適用するLDAP検索フィルター",
     "LDAP settings": "LDAPの設定",
     "Language": "言語",
+    "Last connection": "",
     "Last ended (seconds)": "前回終了時（秒）",
     "Last update": "最終更新日",
     "Last updated (seconds)": "最終更新日（秒）",

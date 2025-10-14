@@ -61,7 +61,7 @@ const Sync = props => {
   }, []);
 
   useEffect(() => {
-    const { orderBy, type } = state; 
+    const { orderBy, type } = state;
     handleSort(orderBy, type, false)();
   }, [props.sync]);
 
@@ -70,7 +70,7 @@ const Sync = props => {
     { label: "Device user", value: "deviceuser" },
     { label: "Device Type / Agent", value: "devicetype" },
     { label: "First sync", value: "firstsynctime", type: 'int' },
-    { label: "Last update", value: "lastudpatetime", type: 'int' },
+    { label: "Last connection", value: "lastconnecttime", type: 'int' },
     { label: "AS version", value: "asversion" },
     { label: "Folders", value: "foldersSynced", type: 'int' },
     { label: "Wipe status", value: "wipeStatus", type: 'int' },
@@ -85,7 +85,7 @@ const Sync = props => {
         type !== 'int' ? a[attribute].localeCompare(b[attribute]) : a[attribute] - b[attribute]
       );
     } else {
-      devices.sort((a, b) => 
+      devices.sort((a, b) =>
         type !== 'int' ? b[attribute].localeCompare(a[attribute]) : b[attribute] - a[attribute]
       );
     }
@@ -115,7 +115,7 @@ const Sync = props => {
       .then(() => updateWipeStatus(request.status, wipingID))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
-  
+
   const handleRemoteWipeCancel = deviceID => () => {
     const { panicStopWiping, domainID, userID } = props;
     panicStopWiping(domainID, userID, deviceID)
@@ -153,7 +153,7 @@ const Sync = props => {
         const copy = [...sortedDevices];
         copy.splice(idx, 1);
         setState({
-          ...state, 
+          ...state,
           snackbar: 'Success! ' + (resp?.message || ''),
         });
         setSortedDevices(copy);
@@ -183,7 +183,7 @@ const Sync = props => {
             color="warning"
             onClick={handleRemoveSyncStates}
           >
-              Delete sync states
+            Delete sync states
           </Button>
         </div>
       </Grid2>
@@ -197,7 +197,7 @@ const Sync = props => {
               >
                 <TableSortLabel
                   active={orderBy === column.value}
-                  align="left" 
+                  align="left"
                   direction={order}
                   onClick={handleSort(column.value, column.type, true)}
                 >
@@ -215,7 +215,7 @@ const Sync = props => {
               <TableCell>{obj.deviceuser || ''}</TableCell>
               <TableCell>{(obj.devicetype || '') + ' / ' + (obj.useragent || '')}</TableCell>
               <TableCell>{obj.firstsynctime ? parseUnixtime(obj.firstsynctime) : ''}</TableCell>
-              <TableCell>{obj.lastupdatetime ? parseUnixtime(obj.lastupdatetime) : ''}</TableCell>
+              <TableCell>{obj.lastconnecttime ? parseUnixtime(obj.lastconnecttime) : ''}</TableCell>
               <TableCell>{obj.asversion || ''}</TableCell>
               <TableCell>{(obj.foldersSynced || '') + '/' + (obj.foldersSyncable || '')}</TableCell>
               <TableCell>{getWipeStatus(obj.wipeStatus)}</TableCell>

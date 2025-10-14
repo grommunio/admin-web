@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "应用于用户查询的LDAP搜索过滤器",
     "LDAP settings": "LDAP设置",
     "Language": "语言",
+    "Last connection": "",
     "Last ended (seconds)": "最后结束（秒）",
     "Last update": "最后更新",
     "Last updated (seconds)": "最后更新（秒）",

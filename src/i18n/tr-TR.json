@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "Kullanıcı aramaya uygulanacak LDAP arama filtresi",
     "LDAP settings": "LDAP ayarları",
     "Language": "Dil",
+    "Last connection": "",
     "Last ended (seconds)": "Son bitiş (saniye)",
     "Last update": "Son güncelleme",
     "Last updated (seconds)": "Son güncelleme (saniye)",

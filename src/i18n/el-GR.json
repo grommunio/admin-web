@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "Φίλτρο αναζήτησης LDAP για την αναζήτηση χρήστη",
     "LDAP settings": "Ρυθμίσεις LDAP",
     "Language": "Γλώσσα",
+    "Last connection": "",
     "Last ended (seconds)": "Τελευταίο τέλος (δευτερόλεπτα)",
     "Last update": "Τελευταία ενημέρωση",
     "Last updated (seconds)": "Τελευταία ενημέρωση (δευτερόλεπτα)",

@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "Iskalni filter LDAP, ki se uporabi pri iskanju uporabnika",
     "LDAP settings": "Nastavitve LDAP",
     "Language": "Jezik",
+    "Last connection": "",
     "Last ended (seconds)": "Zadnji zaključek (sekunde)",
     "Last update": "Zadnja posodobitev",
     "Last updated (seconds)": "Zadnja posodobitev (sekunde)",

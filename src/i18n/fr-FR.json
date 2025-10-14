@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "Filtre de recherche LDAP à appliquer à la recherche d'un utilisateur",
     "LDAP settings": "Paramètres LDAP",
     "Language": "Langue",
+    "Last connection": "",
     "Last ended (seconds)": "Dernière fin (secondes)",
     "Last update": "Dernière mise à jour",
     "Last updated (seconds)": "Dernière mise à jour (secondes)",

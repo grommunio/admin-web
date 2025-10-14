@@ -271,6 +271,7 @@
     "LDAP search filter to apply to user lookup": "LDAP-hakusuodatin, jota sovelletaan käyttäjähakuun",
     "LDAP settings": "LDAP-asetukset",
     "Language": "Kieli",
+    "Last connection": "",
     "Last ended (seconds)": "Viimeksi päättynyt (sekuntia)",
     "Last update": "Viimeisin päivitys",
     "Last updated (seconds)": "Viimeksi päivitetty (sekuntia)",
