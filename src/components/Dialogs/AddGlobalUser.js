@@ -77,7 +77,7 @@ const AddGlobalUser = props => {
   const getStateOverwrite = (createParams) => {
     if(!createParams) return state;
     const user = createParams.user;
-    const { lang, properties } = user || {};
+    const { lang, chat, properties } = user || {};
     return {
       ...state,
       properties: {
@@ -86,6 +86,7 @@ const AddGlobalUser = props => {
         prohibitreceivequota: properties?.prohibitreceivequota,
         prohibitsendquota: properties?.prohibitsendquota,
       },
+      chat: chat || false,
       lang: lang || 'en_US',
     };
   }

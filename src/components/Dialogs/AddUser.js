@@ -89,7 +89,7 @@ const AddUser = props => {
         prohibitsendquota: properties?.prohibitsendquota,
       },
       lang: lang || 'en_US',
-      chat: chatAvailable ? (createParams.domain.chat || false) : false,
+      chat: chatAvailable ? (createParams.domain.chat || createParams.user.chat || false) : false,
     };
   }
 
