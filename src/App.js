@@ -51,8 +51,7 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     loading,
   };
   const darkMode = colorContext.mode === "dark";
-  const { snowflakes } = useSelector(state => state.settings);
-  const isHolidaySeason = React.useMemo(checkHolidaySeason, [snowflakes]);
+  const isHolidaySeason = checkHolidaySeason();
 
   // componentDidMount()
   useEffect(() => {
