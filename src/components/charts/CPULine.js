@@ -47,7 +47,6 @@ function CPULine(props) {
             labels: {
               show: false,
             },
-            categories: [...cpuPercent.idle.keys()]
           },
           legend: {
             labels: {

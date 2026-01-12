@@ -86,7 +86,7 @@ function MemoryPie(props) {
               enabled: theme.palette.mode === 'dark',
             },
           },
-          colors: ['#66DA26', '#546E7A', '#E91E63', '#FF9800'],
+          colors: ['#546E7A', '#E91E63', '#FF9800', '#66DA26'],
         }}
         series={memoryPie.values}
         type="pie"

@@ -185,7 +185,7 @@ const Dashboard = props => {
   } = props;
   const { snackbar } = state;
 
-  const totalCpuUsage = cpuPie.values.slice(0, 4).reduce((pv, cv) => pv + cv, 0).toFixed(1);
+  const totalCpuUsage = cpuPie.values.slice(0, 5).reduce((prev, curr) => prev + curr, 0);
 
   return (
     <div className={classes.root}>
@@ -233,7 +233,7 @@ const Dashboard = props => {
           <Paper elevation={1} className={classes.donutAndLineChart}>
             <div className={classes.donutChart}>
               <Typography className={classes.chartTitle}>
-                {`${t("CPU")}: ${totalCpuUsage || 0}%`}
+                {`${t("CPU")}: ${(totalCpuUsage || 0).toFixed(1)}%`}
               </Typography>
               <CPUPie cpuPie={cpuPie} />
             </div>

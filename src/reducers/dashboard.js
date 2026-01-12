@@ -52,10 +52,10 @@ function addUsageData(currentState, values) {
 
 function getMemoryPieValues(data) {
   return [
-    data.free,
     data.used,
     data.buffer,
     data.cache,
+    data.free,
   ];
 }
 
@@ -63,25 +63,27 @@ function dashboardReducer(state = defaultState, action) {
   const timer = state.timer;
   switch (action.type) {
 
-  case DASHBOARD_DATA_RECEIVED:
+  case DASHBOARD_DATA_RECEIVED: {
+    const { cpuPercent, memory, disks, load } = action.data;
     return {
       ...state,
       Dashboard: {
-        cpuPercent: addUsageData(state.Dashboard.cpuPercent, action.data.cpuPercent),
+        cpuPercent: addUsageData(state.Dashboard.cpuPercent, cpuPercent),
         cpuPie: {
-          labels: Object.keys(action.data.cpuPercent),
-          values: Object.values(action.data.cpuPercent),
+          labels: ["User", "System", "Interrupt", "Steal", "IO", "Idle"],
+          values: ["user", "system", "interrupt", "steal", "io", "idle"].map(v => cpuPercent[v]),
         },
-        memory: addUsageData(state.Dashboard.memory, action.data.memory),
+        memory: addUsageData(state.Dashboard.memory, memory),
         memoryPie: {
-          labels: ["Free", "Used", "Buffer", "Cache"],
-          values: getMemoryPieValues(action.data.memory),
+          labels: ["Used", "Buffer", "Cache", "Free"],
+          values: getMemoryPieValues(memory),
         },
       },
-      disks:  action.data.disks || [],
-      load: action.data.load || [],
+      disks:  disks || [],
+      load: load || [],
       timer: (timer + 1) % 10,
     };
+  }
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {

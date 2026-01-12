@@ -86,7 +86,7 @@ function CPUPie(props) {
           tooltip: {
             enabled: false,
           },
-          colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
+          colors: ['#2E93fA', '#546E7A', '#FF9800', '#8e9eab', '#E91E63', '#66DA26'],
         }}
         series={cpuPie.values}
         type="pie"
