@@ -274,7 +274,7 @@ export function update(action, repo="supported") {
 
 export function drawerDomains() {
   return async () => {
-    return await get(buildQuery('/domains', { domainType: 0, sort: 'domainname,asc' }));
+    return await get(buildQuery('/domains', { domainType: 0, sort: 'domainname,asc', level: 0, limit: 1000000000 }));
   };
 }
 
