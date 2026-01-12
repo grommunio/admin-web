@@ -7,6 +7,7 @@ import {
 
 const defaultState = {
   language: 'en-US',
+  snowflakes: localStorage.getItem("snowflakes") ? localStorage.getItem("snowflakes") === "true" : true,
 };
 
 function settingsReducer(state = defaultState, action) {

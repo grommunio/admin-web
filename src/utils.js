@@ -443,6 +443,7 @@ export function getTaskState(state) {
 }
 
 export function checkHolidaySeason() {
+  if(localStorage.getItem("snowflakes") === "false") return false;
   const date = moment();
   const month = date.get('month');
   const day = date.get('date');
