@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { refreshToken } from "../actions/auth";

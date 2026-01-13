@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
+
 import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
   Grid2, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
 import { withStyles } from 'tss-react/mui';

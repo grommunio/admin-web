@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key, MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
