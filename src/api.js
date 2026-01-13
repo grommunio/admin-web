@@ -622,7 +622,7 @@ export function deleteOrgLdap(orgID) {
 
 export function roles(params) {
   return async () => {
-    return await get(buildQuery('/system/roles', { ...params, level: 2 }));
+    return await get(buildQuery('/system/roles', { level: 2 , ...params}));
   };
 }
 
