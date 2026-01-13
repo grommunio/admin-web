@@ -300,7 +300,7 @@ export const getAutocompleteOptions = (filterAttribute, magnitude) => (options, 
 
   return inputValue.length < magnitude ? []
     : options.filter(o => {
-      let compareValue = o[filterAttribute];
+      let compareValue = filterAttribute ? o[filterAttribute] : o;
       if(typeof compareValue === 'string') compareValue = compareValue.toLowerCase();
       return compareValue?.includes(inputValue.toLowerCase());
     });

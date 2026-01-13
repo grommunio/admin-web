@@ -29,7 +29,7 @@ const MagnitudeAutocomplete = props => {
       }
       return o[filterAttribute] || '';
     })}
-    filterOptions={inputValue ? getAutocompleteOptions(filterAttribute, magnitude) : undefined}
+    filterOptions={getAutocompleteOptions(filterAttribute, magnitude)}
     noOptionsText={inputValue && inputValue.length < magnitude ?
       t('Filter more precisely') + '...' : t('No options')}
     renderInput={(params) => (
