@@ -45,6 +45,7 @@ function domainsReducer(state = defaultState, action) {
     return {
       ...state,
       Domains: addItem(state.Domains, action.data),
+      count: state.count + 1,
     };
 
   case DOMAIN_DATA_DELETE:

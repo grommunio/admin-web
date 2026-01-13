@@ -60,6 +60,7 @@ function usersReducer(state=defaultState, action) {
     return {
       ...state,
       Users: addItem(state.Users, action.data),
+      count: state.count + 1,
     };
 
   case USER_DATA_DELETE:

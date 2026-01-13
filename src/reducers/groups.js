@@ -27,6 +27,7 @@ function groupsReducer(state = defaultState, action) {
     return {
       ...state,
       Groups: addItem(state.Groups, action.data),
+      count: state.count - 1,
     };
 
   case GROUP_DATA_DELETE:
