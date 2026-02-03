@@ -988,7 +988,7 @@ const mapDispatchToProps = dispatch => {
     fetch: async id => await dispatch(fetchOrgsDetails(id))
       .then(org => org)
       .catch(message => Promise.reject(message)),
-    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' })),
+    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' })),
     fetchLdap: async (orgID, params) => await dispatch(fetchOrgLdapConfig(orgID, params))
       .then(config => config)
       .catch(message => Promise.reject(message)),

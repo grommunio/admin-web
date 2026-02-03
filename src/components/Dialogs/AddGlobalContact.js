@@ -233,7 +233,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDomains: async () => await dispatch(fetchDomainData({ sort: 'domainname,asc' }))
+    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }))
       .catch(message => Promise.reject(message)),
     add: async (domainID, user) => 
       await dispatch(addUserData(domainID, user))

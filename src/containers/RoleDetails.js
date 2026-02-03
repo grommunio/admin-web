@@ -354,7 +354,7 @@ const mapDispatchToProps = dispatch => {
         .catch(message => Promise.reject(message));
     },
     fetchDomains: async () => {
-      await dispatch(fetchDomainData({ limit: 1000000, level: 0 })).catch(message => Promise.reject(message));
+      await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc'})).catch(message => Promise.reject(message));
     },
     fetchPermissions: async () => {
       await dispatch(fetchPermissionsData({})).catch(message => Promise.reject(message));
