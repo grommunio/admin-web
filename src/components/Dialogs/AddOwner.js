@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addOwnerData } from '../../actions/folders';
-import { fetchUsersData } from '../../actions/users';
+import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 
 const styles = theme => ({
@@ -31,11 +31,14 @@ const AddOwner = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const { fetchUsers, domain } = props;
-    fetchUsers(domain.ID)
-      .catch(() => {
-        setLoading(false);
-      });
+    const { domain, fetchUsers, fetchOrgUsers } = props;
+    if(domain.orgID) {
+      fetchOrgUsers(domain.orgID)
+        .catch();
+    } else {
+      fetchUsers(domain.ID)
+        .catch();
+    }
   }, []);
 
   const handleAdd = () => {
@@ -107,6 +110,7 @@ AddOwner.propTypes = {
   t: PropTypes.func.isRequired,
   domain: PropTypes.object.isRequired,
   fetchUsers: PropTypes.func.isRequired,
+  fetchOrgUsers: PropTypes.func.isRequired,
   Users: PropTypes.array.isRequired,
   folderID: PropTypes.string.isRequired,
   onError: PropTypes.func.isRequired,
@@ -127,6 +131,9 @@ const mapDispatchToProps = dispatch => {
     add: async (domainID, folderID, owners) => {
       await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg));
     },
+    fetchOrgUsers: async (orgID) =>
+      await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
+        .catch(message => Promise.reject(message)),
     fetchUsers: async (domainID) =>
       await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
         .catch(message => Promise.reject(message)),
