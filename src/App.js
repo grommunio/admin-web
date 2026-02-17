@@ -12,8 +12,6 @@ import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
 import { SYSTEM_ADMIN_WRITE } from "./constants";
 import { fetchLicenseData } from "./actions/license";
-import './snow.css';
-import { checkHolidaySeason } from "./utils";
 import makeLoadableComponent from "./lazy";
 import SilentRefresh from "./components/SilentRefresh";
 import ColorModeContext from "./ColorContext";
@@ -51,7 +49,6 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     loading,
   };
   const darkMode = colorContext.mode === "dark";
-  const isHolidaySeason = checkHolidaySeason();
 
   // componentDidMount()
   useEffect(() => {
@@ -76,11 +73,6 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
           `url(${serverConfig.customImages[window.location.hostname]?.background || background})`
       }}
     >
-      {isHolidaySeason && [...Array(50)].map((_, idx) => 
-        <div key={idx} className="snowflake">
-          <div className="inner">❅</div>
-        </div>
-      )}
       {authenticated && <SilentRefresh />}
       <CapabilityContext.Provider value={capabilities}>
         <AsyncMainView

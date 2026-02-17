@@ -443,14 +443,6 @@ export function getTaskState(state) {
   }[state] || "Unknown";
 }
 
-export function checkHolidaySeason() {
-  if(localStorage.getItem("snowflakes") === "false") return false;
-  const date = moment();
-  const month = date.get('month');
-  const day = date.get('date');
-  return month === 11 && day >= 24 && day <= 31;
-}
-
 export function validateAltname(s="") {
   if(!s) return true;
   if (s.length > 64)
