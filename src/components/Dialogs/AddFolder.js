@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
 import { addFolderData, addOwnerData } from '../../actions/folders';
-import { fetchUsersData } from '../../actions/users';
+import { fetchAllUsers } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { folderTypes } from '../../constants';
 
@@ -37,7 +37,7 @@ const AddFolder = props => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    props.fetchUsers(props.domain.ID)
+    props.fetchUsers(props.domain.orgID || props.domain.ID)
       .catch();
   }, []);
 
@@ -182,8 +182,8 @@ const mapDispatchToProps = dispatch => {
     addOwner: async (domainID, folderID, username) => {
       await dispatch(addOwnerData(domainID, folderID, username)).catch(msg => Promise.reject(msg));
     },
-    fetchUsers: async (domainID) =>
-      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
+    fetchUsers: async (orgID) =>
+      await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
         .catch(message => Promise.reject(message)),
   };
 };
