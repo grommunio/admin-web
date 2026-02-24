@@ -73,7 +73,7 @@ const Sync = props => {
     { label: "Last connection", value: "lastconnecttime", type: 'int' },
     { label: "AS version", value: "asversion" },
     { label: "Folders", value: "foldersSynced", type: 'int' },
-    { label: "Wipe status", value: "wipeStatus", type: 'int' },
+    { label: "Provisioning Status", value: "wipeStatus", type: 'int' },
   ];
 
   const handleSort = (attribute, type, switchOrder) => () => {
