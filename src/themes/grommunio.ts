@@ -1,8 +1,11 @@
+import { ThemeOptions } from "@mui/material";
 import blue from "../colors/blue";
 import grey from "../colors/grey";
 import defaultStyles from "./defaultStyles";
+import { ThemeMode } from "./types";
 
-const grommunioTheme = mode => ({
+
+const grommunioTheme = (mode: ThemeMode): ThemeOptions => ({
   components: {
     ...defaultStyles(mode),
     MuiAppBar: {

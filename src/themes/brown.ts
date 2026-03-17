@@ -1,21 +1,24 @@
-import { teal } from "@mui/material/colors";
+import { brown } from "@mui/material/colors";
 import grey from "../colors/grey";
 import defaultStyles from "./defaultStyles";
+import { ThemeMode } from "./types";
+import { ThemeOptions } from "@mui/material";
 
-const tealTheme = mode => ({
+
+const brownTheme = (mode: ThemeMode): ThemeOptions => ({
   components: {
     ...defaultStyles(mode),
     MuiToolbar: {
       styleOverrides: {
         root: {
-          backgroundImage: `linear-gradient(150deg, ${teal['500']}, ${teal['800']})`,
+          backgroundImage: `linear-gradient(150deg, ${brown['500']}, ${brown['800']})`,
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: mode === 'light' ? '#fff' : teal[600],
+          backgroundColor: mode === 'light' ? '#fff' : brown[600],
           color: mode === 'light' ? '#333' : '#fff',
           boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
         },
@@ -27,7 +30,7 @@ const tealTheme = mode => ({
           color: '#000',
         },
         colorPrimary: {
-          backgroundColor: teal['300'],
+          backgroundColor: brown['300'],
           color: '#000',
         },
       },
@@ -36,7 +39,7 @@ const tealTheme = mode => ({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            background: `linear-gradient(150deg, ${teal['500']}, ${teal['800']})`,
+            background: `linear-gradient(150deg, ${brown['500']}, ${brown['800']})`,
             color: '#fff',
           },
         },
@@ -60,7 +63,7 @@ const tealTheme = mode => ({
   },
   palette: {
     mode: mode,
-    primary: teal,
+    primary: brown,
     secondary: grey,
     ...(mode === 'light' ?
       {
@@ -76,4 +79,4 @@ const tealTheme = mode => ({
   },
 });
 
-export default tealTheme;
+export default brownTheme;

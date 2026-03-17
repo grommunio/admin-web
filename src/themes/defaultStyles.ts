@@ -1,4 +1,7 @@
-const defaultStyles = mode => ({
+import { ThemeMode } from "./types";
+
+
+const defaultStyles = (mode: ThemeMode) => ({
   MuiFormControlLabel: {
     styleOverrides: {
       root: {
@@ -11,9 +14,6 @@ const defaultStyles = mode => ({
       root: {
         backgroundImage: 'none',
       },
-    },
-    defaultProps: {
-      component: "form",
     },
   },
   MuiPaper: {

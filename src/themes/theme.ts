@@ -1,20 +1,20 @@
-/* eslint-disable max-len */
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { createTheme } from '@mui/material/styles';
 
-import grommunioTheme from './themes/grommunio';
-import greenTheme from './themes/green';
-import magentaTheme from './themes/magenta';
-import purpleTheme from './themes/purple';
-import tealTheme from './themes/teal';
-import orangeTheme from './themes/orange';
-import brownTheme from './themes/brown';
-import blueGreyTheme from './themes/blueGrey';
+import grommunioTheme from './grommunio';
+import greenTheme from './green';
+import magentaTheme from './magenta';
+import purpleTheme from './purple';
+import tealTheme from './teal';
+import orangeTheme from './orange';
+import brownTheme from './brown';
+import blueGreyTheme from './blueGrey';
+import { ColorThemeName, ThemeFactory, ThemeMode } from './types';
 
 // Define material-ui theme
-const createCustomTheme = (mode, colorTheme) => {
+const createCustomTheme = (mode: ThemeMode, colorTheme: ColorThemeName) => {
   return createTheme(getThemeFromName(colorTheme)(mode));
 };
 
@@ -23,7 +23,7 @@ const createCustomTheme = (mode, colorTheme) => {
  * @param {string} name Name of the MUI theme
  * @returns MUI theme
  */
-function getThemeFromName(name) {
+function getThemeFromName(name: ColorThemeName): ThemeFactory {
   switch(name) {
   case 'grommunio': return grommunioTheme;
   case 'green': return greenTheme;

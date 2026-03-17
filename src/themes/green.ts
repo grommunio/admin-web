@@ -1,21 +1,24 @@
-import { blueGrey } from "@mui/material/colors";
+import { green } from "@mui/material/colors";
 import grey from "../colors/grey";
 import defaultStyles from "./defaultStyles";
+import { ThemeMode } from "./types";
+import { ThemeOptions } from "@mui/material";
 
-const blueGreyTheme = mode => ({
+
+const greenTheme = (mode: ThemeMode): ThemeOptions => ({
   components: {
     ...defaultStyles(mode),
     MuiToolbar: {
       styleOverrides: {
         root: {
-          backgroundImage: `linear-gradient(150deg, ${blueGrey['500']}, ${blueGrey['800']})`,
+          backgroundImage: `linear-gradient(150deg, ${green['500']}, ${green['800']})`,
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: mode === 'light' ? '#fff' : blueGrey[600],
+          backgroundColor: mode === 'light' ? '#fff' : green[600],
           color: mode === 'light' ? '#333' : '#fff',
           boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
         },
@@ -27,7 +30,7 @@ const blueGreyTheme = mode => ({
           color: '#000',
         },
         colorPrimary: {
-          backgroundColor: blueGrey['300'],
+          backgroundColor: green['300'],
           color: '#000',
         },
       },
@@ -36,7 +39,7 @@ const blueGreyTheme = mode => ({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            background: `linear-gradient(150deg, ${blueGrey['500']}, ${blueGrey['800']})`,
+            background: `linear-gradient(150deg, ${green['500']}, ${green['800']})`,
             color: '#fff',
           },
         },
@@ -60,7 +63,7 @@ const blueGreyTheme = mode => ({
   },
   palette: {
     mode: mode,
-    primary: blueGrey,
+    primary: green,
     secondary: grey,
     ...(mode === 'light' ?
       {
@@ -76,4 +79,4 @@ const blueGreyTheme = mode => ({
   },
 });
 
-export default blueGreyTheme;
+export default greenTheme;

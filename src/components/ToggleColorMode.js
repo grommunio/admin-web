@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import ColorModeContext from '../ColorContext';
 import PropTypes from 'prop-types';
-import createCustomTheme from '../theme';
+import createCustomTheme from '../themes/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 

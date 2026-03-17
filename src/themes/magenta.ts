@@ -1,21 +1,24 @@
-import { orange } from "@mui/material/colors";
+import { ThemeOptions } from "@mui/material";
 import grey from "../colors/grey";
+import magenta from "../colors/magenta";
 import defaultStyles from "./defaultStyles";
+import { ThemeMode } from "./types";
 
-const orangeTheme = mode => ({
+
+const magentaTheme = (mode: ThemeMode): ThemeOptions => ({
   components: {
     ...defaultStyles(mode),
     MuiToolbar: {
       styleOverrides: {
         root: {
-          backgroundImage: `linear-gradient(150deg, ${orange['500']}, ${orange['800']})`,
+          backgroundImage: `linear-gradient(150deg, ${magenta['500']}, ${magenta['800']})`,
         },
       },
     },
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: mode === 'light' ? '#fff' : orange[600],
+          backgroundColor: mode === 'light' ? '#fff' : magenta[600],
           color: mode === 'light' ? '#333' : '#fff',
           boxShadow: '0px 5px 5px -3px rgba(0, 0, 0, 0.06),0px 8px 10px 1px rgba(0, 0, 0, 0.042),0px 3px 14px 2px rgba(0, 0, 0, 0.036)',
         },
@@ -27,7 +30,7 @@ const orangeTheme = mode => ({
           color: '#000',
         },
         colorPrimary: {
-          backgroundColor: orange['300'],
+          backgroundColor: magenta['300'],
           color: '#000',
         },
       },
@@ -36,7 +39,7 @@ const orangeTheme = mode => ({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            background: `linear-gradient(150deg, ${orange['500']}, ${orange['800']})`,
+            background: `linear-gradient(150deg, ${magenta['500']}, ${magenta['800']})`,
             color: '#fff',
           },
         },
@@ -60,7 +63,7 @@ const orangeTheme = mode => ({
   },
   palette: {
     mode: mode,
-    primary: orange,
+    primary: magenta,
     secondary: grey,
     ...(mode === 'light' ?
       {
@@ -76,4 +79,4 @@ const orangeTheme = mode => ({
   },
 });
 
-export default orangeTheme;
+export default magentaTheme;
