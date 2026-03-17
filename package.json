@@ -12,6 +12,8 @@
     "@mui/x-tree-view": "^7.3.1",
     "@reduxjs/toolkit": "^2.2.1",
     "@tinymce/tinymce-react": "^5.1.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "apexcharts": "^3.35.4",
     "dompurify": "3.1.7",
     "i18next": "^23.9.0",
@@ -34,7 +36,8 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^3.1.0",
     "tinymce": "^7.5.1",
-    "tss-react": "^4.9.10"
+    "tss-react": "^4.9.10",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "start": "react-scripts start",
