@@ -2,63 +2,43 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import moment from "moment";
+import moment, { Moment } from "moment";
 import store from './store';
 import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 
+import { KeyValuePair } from "@/types/common";
+
 /**
  * Converts object to array of { key, value } objects
- * @param {Object} obj 
- * @returns 
  */
-export function objectToArray(obj) {
-  const arr = [];
-  Object.entries(obj).forEach(([key, value]) => arr.push({ key, value }));
-  return arr;
+export function objectToArray<T>(obj: Record<string, T>): KeyValuePair<T>[] {
+  return Object.entries(obj).map(([key, value]) => ({ key, value }));
 }
+
 
 /**
  * Converts array of { key, value } objects to object
- * @param {Object} obj 
- * @returns 
- */
-export function arrayToObject(arr) {
-  const obj = {};
+*/
+export function arrayToObject<T>(arr: KeyValuePair<T>[]) {
+  const obj: Record<string, T> = {};
   arr.forEach(attr => obj[attr.key] = attr.value);
   return obj;
-}
-
-/**
- * Creates a timeout of `delay` milliseconds
- * 
- * @param {Number} delay delay in milliseconds (default: 100)
- * @returns {Promise} Promise to be resolved after `delay` milliseconds
- */
-export function later(delay) {
-  if (!delay) {
-    delay = 100;
-  }
-
-  return new Promise(function(resolve) {
-    setTimeout(resolve, delay);
-  });
 }
 
 /**
  * Parses URL parameters and returns them as object
  * 
  * @param {String} s delay in milliseconds (default: 100)
- * @returns {Object} key-value pairs of url parameters
+ * @returns key-value pairs of url parameters
  */
-export function parseParams(s) {
+export function parseParams(s: string): Record<string, string> {
   if (!s) {
     return {};
   }
-  let segments = s.split('&');
-  let data = {};
-  let parts;
+  const segments = s.split('&');
+  const data: Record<string, string> = {};
   for (let i = 0; i < segments.length; i++) {
-    parts = segments[i].split('=');
+    const parts = segments[i].split('=');
     if (parts.length < 2) {
       parts.push('');
     }
@@ -69,20 +49,24 @@ export function parseParams(s) {
 }
 
 /**
- * Pushes an item into an array
+ * Inserts item at the front of an array
  * 
  * @param {Array} arr array to push into
  * @param {any} item element to push into array
  * @returns {Array} `[...arr, item]`
  */
-export function addItem(arr, item) {
+export function addItem<T>(arr: T[], item: T): T[] {
   const copy = [...arr];
   copy.unshift(item);
   return copy;
 }
 
-
-export function getChipColorFromScore(score) {
+/**
+ * Returns the string after the last '/' in the current URL
+ * 
+ * @returns {String} The string after the last `/` in the current URL
+ */
+export function getChipColorFromScore(score: number): string {
   if(score >= 100) return "#66bb6a";
   if(score >= 80) return "#29b6f6";
   if(score >= 50) return "#ffa726";
@@ -90,45 +74,22 @@ export function getChipColorFromScore(score) {
 }
 
 
-/**
- * Returns the string after the last '/' in the current URL
- * 
- * @returns {String} The string after the last `/` in the current URL
- */
-export function getStringAfterLastSlash() {
+export function getStringAfterLastSlash(): string {
   return /[^/]*$/.exec(window.location.href)[0];
 }
 
 /**
- * Returns the current domain-id in the URL
- * 
- * @returns {number} the current domain-id in the URL
- */
-export function getDomainFromUrl() {
-  const first = window.location.pathname;
-  first.indexOf(1);
-  first.toLowerCase();
-  return parseInt(first.split("/")[1]);
-}
-
-/**
  * Formats a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
- * 
- * @param {Date} date date to be formatted into common format
- * @returns {String} formatted date
  */
-export function setDateTimeString(date) {
+export function setDateTimeString(date: string | Moment) {
   return moment(date, "YYYY-MM-DD hh:mm")
     .locale(store.getState().settings.language.slice(0, 2)).format('lll');
 }
 
 /**
  * Formats a date of format `YYYY-MM-DD` into the date format of the selected language (in settings)
- * 
- * @param {Date} date date to be formatted into common format
- * @returns {String} formatted date
  */
-export function setDateString(date) {
+export function setDateString(date: string | Moment) {
   return moment(date, "YYYY-MM-DD")
     .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }
@@ -136,11 +97,8 @@ export function setDateString(date) {
 
 /**
  * Formats a unixtime into a readable format
- * 
- * @param {number} time unixtime to be formatted
- * @returns {String} formatted unixtime (date)
  */
-export function parseUnixtime(time) {
+export function parseUnixtime(time: number): string {
   const parsedTime = moment.unix(time);
   return store.getState().settings.language === 'de-DE' ?
     parsedTime.format('DD.MM.YYYY HH:mm:ss') :
@@ -149,22 +107,16 @@ export function parseUnixtime(time) {
 
 /**
  * Calculates the time difference in milliseconds between `time` and `now()`
- * 
- * @param {number} time unixtime to compare current time to
- * @returns {number} time difference in milliseconds
  */
-export function getTimeDiff(time) {
+export function getTimeDiff(time: number): number {
   if(!time) return 0;
   return moment().unix() - time;
 }
 
 /**
- * Formats a timedifference in milliseconds into a readable format
- * 
- * @param {number} diff unix time difference
- * @returns {String} formatted time difference
+ * Formats a time difference in milliseconds into a readable format
  */
-export function getTimePast(diff) {
+export function getTimePast(diff: number): string {
   if(diff === null || diff === undefined) return "Unknown";
   
   const duration = moment.duration(diff * 1000);
@@ -175,41 +127,34 @@ export function getTimePast(diff) {
 
 /**
  * Concatenates 2 arrays
- * 
- * @param {Array} arr first array
- * @param {Array} newArr second array
- * @returns {String} concatenation of `arr` and `newArr`
  */
-export function append(arr, newArr) {
-  let copy = [...arr];
-  copy = copy.concat(newArr);
-  return copy;
+export function append<T>(arr: T[], newArr: T[]): T[] {
+  return arr.concat(newArr);
 }
 
 /**
  * Creates a deep copy of an object
- * 
- * @param {Object} obj the object to copy
- * @returns {Object} A deep copy of `obj`
  */
-export function cloneObject(obj) {
-  var clone = {};
-  for(var i in obj) {
-    if(obj[i] != null &&  typeof(obj[i])=="object")
-      clone[i] = cloneObject(obj[i]);
-    else
-      clone[i] = obj[i];
+export function cloneObject<T>(obj: T): T {
+  const clone = {} as T;
+
+  for (const key in obj) {
+    const value = obj[key];
+
+    if (value != null && typeof value === "object") {
+      clone[key] = cloneObject(value);
+    } else {
+      clone[key] = value;
+    }
   }
+
   return clone;
 }
 
 /**
  * Converts MDM command code to command name
- * 
- * @param {number} command command to parse
- * @returns {String} Command name
  */
-export function getStringFromCommand(command) {
+export function getStringFromCommand(command: number): string {
   switch (command) {
   case 0: return 'Sync';
   case 1: return 'SendMail';
@@ -244,21 +189,18 @@ export function getStringFromCommand(command) {
   }
 }
 
+// TODO: Properly type
 /**
  * Compares 2 sync policies and returns the different key-value pairs
- * 
- * @param {Object} defaultPolicy The default policy to compare to
- * @param {Object} syncPolicy the current policy of a domain or user
- * @returns {Object} Difference between the two policies
  */
-export function getPolicyDiff(defaultPolicy, syncPolicy) {
-  const formattedPolicy = {
+export function getPolicyDiff(defaultPolicy: Record<string, any>, syncPolicy: Record<string, any>) {
+  const formattedPolicy: Record<string, any> = {
     ...syncPolicy,
     devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
     devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
     maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
   };
-  const result = {};
+  const result: Record<string, any> = {};
   for(const [key, value] of Object.entries(defaultPolicy)) {
     if (formattedPolicy[key] !== value) {
       result[key] = formattedPolicy[key];
@@ -275,11 +217,8 @@ export function getPolicyDiff(defaultPolicy, syncPolicy) {
 
 /**
  * Capitalizes first letter of string
- * 
- * @param {String} string string to change
- * @returns {String} Changed string
  */
-export function capitalizeFirstLetter(string) {
+export function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
@@ -289,30 +228,35 @@ export function capitalizeFirstLetter(string) {
  * This can get very laggy and slow.
  * To prevent that, the necessary input length, before suggestions are shown is calculated
  * in this function (`magnitude`).
- * 
- * @param {String} filterAttribute attribute of an object (within an array of objects) to compare the input value to
- * @param {Array} options array of objects/options for the autocomplete (internal)
- * @param {Object} state state of the input (internal)
- * @returns {Array} Autocomplete options to be displayed
  */
-export const getAutocompleteOptions = (filterAttribute, magnitude) => (options, state) => {
-  const { inputValue } = state;
-  if(magnitude === undefined) magnitude = Math.round(Math.log10(options.length) - 2);
+export const getAutocompleteOptions = <T extends Record<string, string>>(
+  filterAttribute?: keyof T,
+  magnitude?: number
+) =>
+    (options: T[], state: { inputValue: string }): T[] => {
+      const { inputValue } = state;
 
-  return inputValue.length < magnitude ? []
-    : options.filter(o => {
-      let compareValue = filterAttribute ? o[filterAttribute] : o;
-      if(typeof compareValue === 'string') compareValue = compareValue.toLowerCase();
-      return compareValue?.includes(inputValue.toLowerCase());
-    });
-};
+      if (magnitude === undefined) {
+        magnitude = Math.round(Math.log10(options.length) - 2);
+      }
+
+      return inputValue.length < magnitude
+        ? []
+        : options.filter(o => {
+          let compareValue = (filterAttribute ? o[filterAttribute] : o).toString();
+
+          if (typeof compareValue === "string") {
+            compareValue = compareValue.toLowerCase();
+          }
+
+          return compareValue?.includes(inputValue.toLowerCase());
+        });
+    };
 
 /**
  * Copies a text into the clipboard
- * 
- * @param {String} text string to copy
  */
-export async function copyToClipboard(text) {
+export async function copyToClipboard(text: string) {
   return navigator.clipboard.writeText(text)
     .then(() => true)
     .catch(() => false);
@@ -320,10 +264,8 @@ export async function copyToClipboard(text) {
 
 /**
  * Returns the available languages
- * 
- * @returns {Array} array of language objects
  */
-export function getLangs() {
+export function getLangs(): KeyValuePair<string>[] {
   return [
     { key: 'ca-ES', value: 'ca_ES: català' },
     { key: 'cs-CZ', value: 'cs_CZ: Čeština' },
@@ -350,13 +292,11 @@ export function getLangs() {
   ];
 }
 
+// TODO: Properly type
 /**
  * Returns a formatted default create parameters object
- * 
- * @param {Object} createParams raw create parameters
- * @returns {Array} array of language objects
  */
-export function formatCreateParams(createParams) {
+export function formatCreateParams(createParams: Record<string, any>) {
   if(!createParams) return {};
   const domain = createParams.domain;
 
@@ -366,7 +306,7 @@ export function formatCreateParams(createParams) {
     ...(user.properties || {}),
   };
 
-  let sizeUnits = {
+  const sizeUnits = {
     storagequotalimit: 1,
     prohibitreceivequota: 1,
     prohibitsendquota: 1,
@@ -384,12 +324,12 @@ export function formatCreateParams(createParams) {
     The idea behind this loop is to find the highest devisor of the KiB value (1024^x)
     If the KiB value (quotaLimit) is divisible by, for exampe, 1024 but not by 1024^2, the sizeUnit must be MiB.
   */
-  for(let quotaLimit in sizeUnits) {
+  for(const quotaLimit in sizeUnits) {
     if(user[quotaLimit] === undefined) continue;
     user[quotaLimit] = user[quotaLimit] / 1024; // quotas are stored in KiB => Convert to MiB
     for(let i = 2; i >= 0; i--) {
       if(user[quotaLimit] === 0) break;
-      let r = user[quotaLimit] % 1024 ** i;
+      const r = user[quotaLimit] % 1024 ** i;
       if(r === 0) {
         sizeUnits[quotaLimit] = i + 1;
         user[quotaLimit] = user[quotaLimit] / 1024 ** i;
@@ -407,16 +347,14 @@ export function formatCreateParams(createParams) {
   };
 }
 
-export function generatePropFilterString(filters) {
+export function generatePropFilterString(filters: Record<string, string>): string {
   return Object.entries(filters).map(([key, value]) => `${key}:${value}`).join(";");
 }
 
 /**
  * Converts user type enum value to human-readable representation
- * @param {Number} status enum value of a user type
- * @returns String representation of the enum
  */
-export function getUserTypeString(type) {
+export function getUserTypeString(type: number): string {
   return {
     0: "User",
     1: "Group",
@@ -424,15 +362,13 @@ export function getUserTypeString(type) {
     7: "Room",
     8: "Equipment",
     1073741824: "Shared",
-  }[type] || "Unknown"
+  }[type] || "Unknown";
 }
 
 /**
  * Converts task state enum value to human-readable representation
- * @param {Number} status enum value of a task state
- * @returns String representation of the task state
  */
-export function getTaskState(state) {
+export function getTaskState(state: number): string {
   return {
     0: "Queued",
     1: "Loaded",
@@ -443,7 +379,7 @@ export function getTaskState(state) {
   }[state] || "Unknown";
 }
 
-export function validateAltname(s="") {
+export function validateAltname(s=""): boolean {
   if(!s) return true;
   if (s.length > 64)
     return false;
@@ -454,15 +390,15 @@ export function validateAltname(s="") {
 
 }
 
-export function dayTimeFromUnix(unixT) {
+export function dayTimeFromUnix(unixT: number): string {
   return moment.unix(unixT).format("HH:mm:ss");
 }
 
-export function dateTimeFromUnix(unixT) {
+export function dateTimeFromUnix(unixT: number): string {
   return moment.unix(unixT).format("YYYY-MM-DD");
 }
 
-export const generateFormattedLogLine = message => {
+export const generateFormattedLogLine = (message: string) => {
   const parts = message.split("\u001b")
   
   // No formatting detected
@@ -475,7 +411,7 @@ export const generateFormattedLogLine = message => {
     // Outside formatting scope
     if(idx % 0) {
       // Cut "[0m"
-      return part.splice(3);
+      return part.slice(3);
     }
 
     // Get formatting
