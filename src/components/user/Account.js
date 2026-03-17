@@ -3,7 +3,7 @@
 
 import React, { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
-  Select, TextField, Typography, Tooltip, InputLabel, OutlinedInput, Alert } from '@mui/material';
+  Select, TextField, Typography, Tooltip, Alert } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,7 @@ import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_A
 import { CapabilityContext } from '../../CapabilityContext';
 import { connect } from 'react-redux';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import HideFromSelect from '../HideFromSelect';
 
 const styles = theme => ({
   form: {
@@ -66,13 +67,6 @@ const styles = theme => ({
 const Account = props => {
   const context = useContext(CapabilityContext);
   const { t } = useTranslation();
-
-  const hiddenFrom = [
-    { ID: 1, name: 'Global Address List', value: 0x01 },
-    { ID: 2, name: 'Address/Member lists', value: 0x02 },
-    { ID: 3, name: 'Delegate lists', value: 0x04 },
-    { ID: 4, name: 'Ambiguous Name Resolution', value: 0x08 }
-  ]
 
   const formatMSE = (rawMSE) => {
     let exp = Math.log(rawMSE) / Math.log(1024) | 0;
@@ -162,7 +156,7 @@ const Account = props => {
   const { classes, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
     handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
     handlePasswordChange, handleChatUser, handleServer, handlePropertyCheckbox,
-    servers, handleInput, handleMultiselectChange, storageQuotaTooHigh } = props;
+    servers, handleInput, storageQuotaTooHigh, setState } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
     ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, privWeb,
@@ -353,25 +347,7 @@ const Account = props => {
           </Alert>}
         </Grid2>
       </div>
-      <FormControl className={classes.input} fullWidth>
-        <InputLabel id="demo-multiple-name-label">{t("Hide user from…")}</InputLabel>
-        <Select
-          multiple
-          // Transform bitmask to array elements
-          value={attributehidden_gromox ? [attributehidden_gromox & 1, attributehidden_gromox & 2, attributehidden_gromox & 4, attributehidden_gromox & 8] : []}
-          onChange={handleMultiselectChange('attributehidden_gromox')}
-          input={<OutlinedInput label={t("Hide user from…")}/>}
-        >
-          {hiddenFrom.map(({ ID, name, value }) => (
-            <MenuItem
-              key={ID}
-              value={value}
-            >
-              {name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <HideFromSelect attributehidden_gromox={attributehidden_gromox} setState={setState} />
       <TextField
         className={classes.input}
         label={t("Creation time")}
@@ -579,8 +555,8 @@ Account.propTypes = {
   rawData: PropTypes.object,
   langs: PropTypes.array,
   servers: PropTypes.array.isRequired,
-  handleMultiselectChange: PropTypes.func.isRequired,
   storageQuotaTooHigh: PropTypes.bool,
+  setState: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {

@@ -12,6 +12,7 @@ import Contact from '../components/user/Contact';
 import { editUserData, fetchUserData } from '../actions/users';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
+import HideFromSelect from '../components/HideFromSelect';
 
 const styles = theme => ({
   paper: {
@@ -28,10 +29,6 @@ const styles = theme => ({
   flexRow: {
     display: 'flex',
     margin: theme.spacing(0, 0, 2, 0),
-  },
-  propertyInput: {
-    margin: theme.spacing(1, 1, 1, 1),
-    flex: 1,
   },
 });
 
@@ -94,6 +91,8 @@ const ContactDetails = props => {
   const { snackbar, user, loading } = state;
   const { properties } = user;
 
+  const { displayname, smtpaddress, attributehidden_gromox } = properties;
+
   return (
     <ViewWrapper
       snackbar={snackbar}
@@ -106,19 +105,20 @@ const ContactDetails = props => {
             color="primary"
             variant="h5"
           >
-            {t('editHeadline', { item: 'Contact' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
+            {t('editHeadline', { item: 'Contact' })} {displayname ? ` - ${displayname}` : ''}
           </Typography>
         </Grid2>
         <div className={classes.flexRow}>
           <Typography variant="h6">{t('E-Mail')}</Typography>
         </div>
         <TextField
-          className={classes.propertyInput}
           fullWidth
           label={t("E-Mail Address")}
-          value={properties.smtpaddress || ''}
+          value={smtpaddress || ''}
           onChange={handlePropertyChange('smtpaddress')}
+          sx={{ mb: 1 }}
         />
+        <HideFromSelect attributehidden_gromox={attributehidden_gromox} setState={setState} />
         <User
           user={user}
           handlePropertyChange={handlePropertyChange}

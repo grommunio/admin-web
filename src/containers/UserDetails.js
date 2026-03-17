@@ -589,31 +589,6 @@ const UserDetails = props => {
     });
   }
 
-  /**
-   * This method is a bit obfuscated. MUI multiselects only work with arrays.
-   * However, the property `attributehidden_gromox` uses a bitmask. To merge these functionalities,
-   * the array of selected values is reduced to a bitmask by bitwise-OR-ing the elements.
-   * The properties state always holds this bitmask.
-   * The MUI component's state expands this bitmask into 3 explicitly defined array elements, that match the bits.
-   * For example, `attributehidden_gromox === 3` results in `[1, 2, 0]` for the component.
-   */
-  const handleMultiselectChange = field => event => {
-    const { user } = state;
-    const { value } = event.target;
-    const mask = (value || []).reduce((prev, next) => prev | next, 0)  // bitwise OR array elements
-    setState({
-      ...state, 
-      user: {
-        ...user,
-        properties: {
-          ...user.properties,
-          [field]: mask,
-        },
-      },
-      unsaved: true,
-    });
-  }
-
   const handleAltnameEdit = (action, idx=0) => e => {
     const altnames = [...state.user.altnames]
     switch(action) {
@@ -719,7 +694,7 @@ const UserDetails = props => {
           rawData={rawData}
           handleChatUser={handleChatUser}
           handleServer={handleServer}
-          handleMultiselectChange={handleMultiselectChange}
+          setState={setState}
           storageQuotaTooHigh={storageQuotaTooHigh}
         />}
         {tab === 1 && <Altnames
