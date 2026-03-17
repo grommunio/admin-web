@@ -1,4 +1,4 @@
-const schwarz= {
+const black = {
   //300:
   500: '#000000',
   //700:
@@ -7,4 +7,4 @@ const schwarz= {
   //A700:
 };
 
-export default schwarz;
+export default black;
