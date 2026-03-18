@@ -3,7 +3,7 @@
 
 import {
   SERVICES_DATA_RECEIVED,
-} from '../actions/types';
+} from './types';
 import { services, postServices } from '../api';
 import { defaultListHandler, defaultPatchHandler } from './handlers';
 
@@ -11,6 +11,6 @@ export function fetchServicesData() {
   return defaultListHandler(services, SERVICES_DATA_RECEIVED);
 }
 
-export function serviceAction(...endpointParams) {
-  return defaultPatchHandler(postServices, ...endpointParams);
+export function serviceAction(service: string, action: string) {
+  return defaultPatchHandler(postServices, service, action);
 }

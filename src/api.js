@@ -1090,21 +1090,19 @@ export function mailq() {
   };
 }
 
-export function flush(params) {
+export async function flush(params) {
+  return await post(buildQuery('/system/mailq/flush', params));
+}
+
+export function deleteMailq(queue) {
   return async () => {
-    return await post(buildQuery('/system/mailq/flush', params));
+    return await post(buildQuery('/system/mailq/delete', { queue }));
   };
 }
 
-export function deleteMailq(params) {
+export function requeueMailq(queue) {
   return async () => {
-    return await post(buildQuery('/system/mailq/delete', params));
-  };
-}
-
-export function requeueMailq(params) {
-  return async () => {
-    return await post(buildQuery('/system/mailq/requeue', params));
+    return await post(buildQuery('/system/mailq/requeue', { queue }));
   };
 }
 

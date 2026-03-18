@@ -9,6 +9,6 @@ export function fetchVhostsData() {
   return defaultListHandler(vhosts, VHOST_DATA_RECEIVED);
 }
 
-export function fetchVhostStatusData(...endpointParams) {
-  return defaultDetailsHandler(vhostStatus, ...endpointParams);
+export function fetchVhostStatusData(name: string) {
+  return defaultDetailsHandler(vhostStatus, name);
 }

@@ -8,11 +8,11 @@ export function fetchMailQData() {
   return defaultDetailsHandler(mailq);
 }
 
-export function flushMailQData(qIDs) {
-  return async dispatch => {
+export function flushMailQData(qIDs: number[]) {
+  return async () => {
     try {
       qIDs.forEach(async qID => {
-        await dispatch(flush({ queue: qID }));
+        await flush({ queue: qID });
       });
     } catch(error) {
       console.error(error);
@@ -21,10 +21,10 @@ export function flushMailQData(qIDs) {
   };
 }
 
-export function deleteMailQData(...endpointParams) {
-  return defaultDetailsHandler(deleteMailq, ...endpointParams);
+export function deleteMailQData(qID: number) {
+  return defaultDetailsHandler(deleteMailq, qID);
 }
 
-export function requeueMailQData(...endpointParams) {
-  return defaultDetailsHandler(requeueMailq, ...endpointParams);
+export function requeueMailQData(qID: number) {
+  return defaultDetailsHandler(requeueMailq, qID);
 }

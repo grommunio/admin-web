@@ -220,9 +220,9 @@ const mapDispatchToProps = (dispatch) => {
       .catch((error) => Promise.reject(error)),
     flush: async qIDs => await dispatch(flushMailQData(qIDs))
       .catch((error) => Promise.reject(error)),
-    deleteQ: async qID => await dispatch(deleteMailQData({ queue: qID }))
+    deleteQ: async qID => await dispatch(deleteMailQData(qID))
       .catch((error) => Promise.reject(error)),
-    requeue: async qID => await dispatch(requeueMailQData({ queue: qID }))
+    requeue: async qID => await dispatch(requeueMailQData(qID))
       .catch((error) => Promise.reject(error)),
   };
 };
