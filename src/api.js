@@ -388,10 +388,8 @@ export function userCount(domainID) {
   };
 }
 
-export function user(domainID, userID) {
-  return async () => {
-    return await get('/domains/' + domainID + '/users/'+ userID);
-  };
+export async function user(domainID, userID) {
+  return await get('/domains/' + domainID + '/users/'+ userID);
 }
 
 export function addUser(domainID, user) {
@@ -886,10 +884,8 @@ export function deleteForward(id) {
   GROUPS
 */
 
-export function groups(domainID, params) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/mlists', params));
-  };
+export async function groups(domainID, params) {
+  return await get(buildQuery('/domains/' + domainID + '/mlists', params));
 }
 
 export function addGroup(domainID, mlist) {
@@ -910,10 +906,8 @@ export function deleteGroup(domainID, id) {
   };
 }
 
-export function groupDetails(domainID, id) {
-  return async () => {
-    return await get('/domains/' + domainID + '/mlists/' + id);
-  };
+export async function groupDetails(domainID, id) {
+  return await get('/domains/' + domainID + '/mlists/' + id);
 }
 
 /*

@@ -83,7 +83,7 @@ export function fetchUserData(domainID, userID) {
   return async dispatch => {
     let userData = {};
     try {
-      userData = await dispatch(user(domainID, userID));
+      userData = await user(domainID, userID);
     } catch(err) {
       console.error('Failed to fetch users');
       return Promise.reject(err.message);
