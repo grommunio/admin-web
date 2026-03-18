@@ -2,16 +2,15 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Paper, Typography} from '@mui/material';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Paper, Theme, Typography} from '@mui/material';
+import { useTranslation, withTranslation } from 'react-i18next';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import StorageIcon from '@mui/icons-material/Storage';
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -57,10 +56,27 @@ const styles = theme => ({
   label: {
     color: '#777',
   },
-});
+}));
 
-const AntispamStatistics = props => {
-  const formatBytes = (bytes) => {
+type DataType = {
+  bytesAllocated: number,
+  learned: string,
+  scanned: string,
+  spamCount: string,
+};
+
+type AntispamStatisticsType = {
+  data: DataType
+};
+
+
+
+const AntispamStatistics = (props: AntispamStatisticsType) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const {data} = props;
+
+  const formatBytes = (bytes: number): (string | number) => {
     if (bytes > 10000) {
       return Math.round(bytes/1000) + "k";
     } 
@@ -68,7 +84,6 @@ const AntispamStatistics = props => {
     return bytes;
   }
 
-  const {classes, t, data} = props;
   return (
     <div className={classes.root}>
       <div className={classes.flexItem}>
@@ -111,10 +126,4 @@ const AntispamStatistics = props => {
   );
 }
 
-AntispamStatistics.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired,
-};
-
-export default withTranslation()(withStyles(AntispamStatistics, styles));
+export default withTranslation()(AntispamStatistics);

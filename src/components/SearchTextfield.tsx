@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { InputAdornment, TextField } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
-const SearchTextfield = ({ ...childProps }) =>
+
+const SearchTextfield = (childProps: TextFieldProps) => (
   <TextField
     {...childProps}
     color="primary"
@@ -17,8 +17,10 @@ const SearchTextfield = ({ ...childProps }) =>
             <Search color="secondary" />
           </InputAdornment>
         ),
-      }
+      },
+      ...childProps.slotProps,
     }}
-  />;
+  />
+);
 
-export default withStyles(SearchTextfield, {});
+export default SearchTextfield;

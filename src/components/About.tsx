@@ -3,15 +3,14 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Paper, Typography} from '@mui/material';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
+import { Paper, Theme, Typography} from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
 import { connect } from 'react-redux';
 import { Dashboard, Outlet, Power } from '@mui/icons-material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -50,19 +49,24 @@ const styles = theme => ({
   label: {
     color: '#777',
   },
-});
+}));
 
-const About = props => {
+type AboutAboutType = {
+  API: string,
+  backend: string,
+  schema: number,
+}
 
-  const formatBytes = (bytes) => {
-    if (bytes > 10000) {
-      return Math.round(bytes/1000) + "k";
-    } 
-    
-    return bytes;
-  }
+type AboutType = {
+  about: AboutAboutType
+}
 
-  const { classes, t, about } = props;
+
+const About = (props: AboutType) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+
+  const { about } = props;
   const { API, backend, schema } = about;
   return (
     <div className={classes.root}>
@@ -97,7 +101,7 @@ const About = props => {
         <Paper className={classes.paper}>
           <StorageIcon className={classes.icon}/>
           <div className={classes.labeledData}>
-            <Typography className={classes.data}>{formatBytes(schema)}</Typography>
+            <Typography className={classes.data}>{schema}</Typography>
             <Typography className={classes.label}>{t("Database")}</Typography>
           </div>
         </Paper>
@@ -112,11 +116,4 @@ const mapStateToProps = state => {
   };
 };
 
-
-About.propTypes = {
-  classes: PropTypes.object.isRequired,
-  about: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(connect(mapStateToProps)(withStyles(About, styles)));
+export default withTranslation()(connect(mapStateToProps)(About));
