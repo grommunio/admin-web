@@ -4,7 +4,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Tabs, Tab } from '@mui/material';
-import { deleteFolderData, fetchFolderTree } from '../actions/folders';
+import { deleteFolderData, fetchFolderTree } from '../actions/folders.ts';
 import AddFolder from '../components/Dialogs/AddFolder';
 import { defaultFetchLimit, DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';

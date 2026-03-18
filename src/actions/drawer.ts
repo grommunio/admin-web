@@ -7,7 +7,7 @@ import {
   DRAWER_DOMAINS_REVEICED,
   SELECT_DRAWER_DOMAIN,
   DOMAIN_DATA_EDIT
-} from '../actions/types';
+} from './types';
 import { domain, drawerDomains } from '../api';
 import { defaultListHandler } from './handlers';
 
@@ -15,7 +15,7 @@ export function fetchDrawerDomains() {
   return defaultListHandler(drawerDomains, DRAWER_DOMAINS_REVEICED);
 }
 
-export function fetchDrawerDomain(...endpointParams) {
+export function fetchDrawerDomain(...endpointParams: any[]) {
   return defaultListHandler(domain, DOMAIN_DATA_EDIT,...endpointParams);
 }
 
@@ -31,7 +31,7 @@ export function setDrawerOpen() {
   };
 }
 
-export function selectDrawerDomain(id) {
+export function selectDrawerDomain(id: number) {
   return {
     type: SELECT_DRAWER_DOMAIN,
     id,

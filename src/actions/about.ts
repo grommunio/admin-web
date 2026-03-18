@@ -3,7 +3,7 @@
 
 import {
   ABOUT_DATA_RECEIVED,
-} from '../actions/types';
+} from './types';
 import { about } from '../api';
 import { defaultListHandler } from './handlers';
 

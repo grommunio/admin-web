@@ -2,13 +2,25 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { Dispatch } from "redux";
-
-type Endpoint = (...args: any[]) => any;
+import { Endpoint } from "./types";
 
 export function defaultListHandler(endpoint: Endpoint, receivedActionType: string, ...endpointParams: any[]) {
   return async (dispatch: Dispatch)  => {
     try {
       const data = await dispatch(endpoint(...endpointParams));
+      dispatch({ type: receivedActionType, data });
+    } catch(error) {
+      console.error(error);
+      return Promise.reject(error.message);
+    }
+  };
+}
+
+// Migration code
+export function defaultListHandler2(endpoint: Endpoint, receivedActionType: string, ...endpointParams: any[]) {
+  return async (dispatch: Dispatch)  => {
+    try {
+      const data = await endpoint(...endpointParams);
       dispatch({ type: receivedActionType, data });
     } catch(error) {
       console.error(error);

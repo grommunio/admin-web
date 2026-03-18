@@ -692,10 +692,8 @@ export function putLicenseCreds(creds) {
   FOLDERS
 */
 
-export function folders(domainID, params) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/folders', params));
-  };
+export async function folders(domainID, params) {
+  return await get(buildQuery('/domains/' + domainID + '/folders', params));
 }
 
 export function folderTree(domainID, params) {
@@ -710,10 +708,8 @@ export function folderDetails(domainID, folderID) {
   };
 }
 
-export function addFolder(domainID, folder) {
-  return async () => {
-    return await post('/domains/' + domainID + '/folders', folder);
-  };
+export async function addFolder(domainID, folder) {
+  return await post('/domains/' + domainID + '/folders', folder);
 }
 
 export function editFolder(domainID, folder) {
@@ -722,38 +718,28 @@ export function editFolder(domainID, folder) {
   };
 }
 
-export function deleteFolder(domainID, id, params) {
-  return async () => {
-    return await yeet(buildQuery('/domains/' + domainID + '/folders/' + id, params));
-  };
+export async function deleteFolder(domainID, id, params) {
+  return await yeet(buildQuery('/domains/' + domainID + '/folders/' + id, params));
 }
 
 /*
   OWNERS
 */
 
-export function owners(domainID, folderID, params) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/folders/' + folderID + '/owners', params));
-  };
+export async function owners(domainID, folderID, params) {
+  return await get(buildQuery('/domains/' + domainID + '/folders/' + folderID + '/owners', params));
 }
 
-export function addOwner(domainID, folderID, username) {
-  return async () => {
-    return await post('/domains/' + domainID + '/folders/' + folderID + '/owners', username);
-  };
+export async function addOwner(domainID, folderID, username) {
+  return await post('/domains/' + domainID + '/folders/' + folderID + '/owners', username);
 }
 
-export function deleteOwner(domainID, folderID, memberID) {
-  return async () => {
-    return await yeet('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID);
-  };
+export async function deleteOwner(domainID, folderID, memberID) {
+  return await yeet('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID);
 }
 
-export function putFolderPermissions(domainID, folderID, memberID, permissions) {
-  return async () => {
-    return await put('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID, permissions);
-  };
+export async function putFolderPermissions(domainID, folderID, memberID, permissions) {
+  return await put('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID, permissions);
 }
 
 /*

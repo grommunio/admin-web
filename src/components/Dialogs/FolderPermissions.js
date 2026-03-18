@@ -10,7 +10,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { addOwnerData, setFolderPermissions } from '../../actions/folders';
+import { addOwnerData, setFolderPermissions } from '../../actions/folders.ts';
 import AddOwner from './AddOwner';
 import RemoveOwner from './RemoveOwner';
 import { permissionProfiles } from '../../mapi/rights';

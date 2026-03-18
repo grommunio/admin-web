@@ -9,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import { addOwnerData } from '../../actions/folders';
+import { addOwnerData } from '../../actions/folders.ts';
 import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 

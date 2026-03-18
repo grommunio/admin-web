@@ -7,10 +7,10 @@ import {
 import { createParams, editCreateParams } from '../api';
 import { defaultListHandler, defaultPatchHandler } from './handlers';
 
-export function fetchCreateParamsData(...endpointParams) {
+export function fetchCreateParamsData(...endpointParams: any[]) {
   return defaultListHandler(createParams, CREATE_PARAMS_DATA_RECEIVED, ...endpointParams);
 }
 
-export function editCreateParamsData(...endpointParams) {
+export function editCreateParamsData(...endpointParams: any[]) {
   return defaultPatchHandler(editCreateParams, ...endpointParams);
 }

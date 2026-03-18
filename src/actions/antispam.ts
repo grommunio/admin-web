@@ -3,7 +3,7 @@
 
 import {
   ANTISPAM_DATA_RECEIVED,
-} from '../actions/types';
+} from './types';
 import { antispam } from '../api';
 import { defaultListHandler } from './handlers';
 

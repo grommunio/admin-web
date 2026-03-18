@@ -3,7 +3,7 @@
 
 import {
   DASHBOARD_DATA_RECEIVED,
-} from '../actions/types';
+} from './types';
 import { dashboard } from '../api';
 import { defaultListHandler } from './handlers';
 

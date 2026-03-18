@@ -18,7 +18,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { connect } from 'react-redux';
-import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders';
+import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders.ts';
 import { DOMAIN_ADMIN_WRITE, folderTypes, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';

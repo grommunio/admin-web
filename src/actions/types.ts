@@ -114,3 +114,13 @@ export const USERS_SYNC_RECEIVED = 'USERS_SYNC_RECEIVED';
 export const USERS_FILTER_STATE = "USERS_FILTER_STATE";
 
 export const VHOST_DATA_RECEIVED = 'VHOST_DATA_RECEIVED';
+
+export type URLParams = {
+  offset?: number,
+  limit?: number
+  match?: string,
+  sort?: string,
+  level?: number,
+}
+
+export type Endpoint = (...args: any[]) => any;

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { deleteOwnerData } from '../../actions/folders';
+import { deleteOwnerData } from '../../actions/folders.ts';
 import { connect } from 'react-redux';
 
 const RemoveOwner = props => {
