@@ -4,16 +4,11 @@
 import {
   DRAWER_EXPAND,
   DRAWER_OPEN,
-  DRAWER_DOMAINS_REVEICED,
   SELECT_DRAWER_DOMAIN,
   DOMAIN_DATA_EDIT
 } from './types';
-import { domain, drawerDomains } from '../api';
+import { domain } from '../api';
 import { defaultListHandler } from './handlers';
-
-export function fetchDrawerDomains() {
-  return defaultListHandler(drawerDomains, DRAWER_DOMAINS_REVEICED);
-}
 
 export function fetchDrawerDomain(...endpointParams: any[]) {
   return defaultListHandler(domain, DOMAIN_DATA_EDIT,...endpointParams);

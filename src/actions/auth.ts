@@ -7,82 +7,85 @@ import {
   PROFILE_DATA_RECEIVED,
   DRAWER_DOMAINS_REVEICED,
   TOKEN_REFRESH,
-} from '../actions/types';
+} from './types';
 import { login, renewToken, profile, drawerDomains } from '../api';
+import { Dispatch } from 'redux';
 
-export function authLogin(user, pass) {
-  return async dispatch => {
+
+export function authLogin(user: string, pass: string) {
+  return async (dispatch: Dispatch) => {
     try {
-      const { grommunioAuthJwt: token, csrf } = await dispatch(login(user, pass));
+      const { grommunioAuthJwt: token, csrf } = await login(user, pass);
       if(token) {
         document.cookie = "grommunioAuthJwt=" + token + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grommunioAuthJwt', token);
-        const profileData = await dispatch(profile());
-        await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
+        const profileData = await profile();
+        dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
         if(profileData) {
-          const domains = await dispatch(drawerDomains());
-          await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-          await dispatch(authAuthenticated(true, profileData.capabilities, csrf));
+          const domains = await drawerDomains();
+          dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
+          dispatch(authAuthenticated(true, profileData.capabilities, csrf));
         } else {
           clearStorage();
-          await dispatch(authError("No profile data received"));
+          dispatch(authError("No profile data received"));
         }
       } else {
         clearStorage();
-        await dispatch(authError("No token received"));
+        dispatch(authError("No token received"));
       }
     } catch(err) {
       clearStorage();
       console.error(err.message);
-      await dispatch(authError(err.message));
+      dispatch(authError(err.message));
       return Promise.reject(err);
     }
   };
 }
 
 export function refreshToken() {
-  return async dispatch => {
+  return async (dispatch: Dispatch) => {
     try {
-      const { grommunioAuthJwt: newToken, csrf } = await dispatch(renewToken());
+      const { grommunioAuthJwt: newToken, csrf } = await renewToken();
       if(newToken && csrf) {
         document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grommunioAuthJwt', newToken);
-        await dispatch({ type: TOKEN_REFRESH, csrf });
+        dispatch({ type: TOKEN_REFRESH, csrf });
       }
     } catch(err) {
       clearStorage();
-      await dispatch(authError(err.message || "Failed to refresh token"));
+      dispatch(authError(err.message || "Failed to refresh token"));
       return Promise.reject(err);
     }
   }
 }
 
+// TODO: Deduplicate
 export function authLoginWithToken(token) {
-  return async dispatch => {
+  return async (dispatch: Dispatch) => {
     document.cookie = "grommunioAuthJwt=" + token + ';path=/'
       + (window.location.protocol === 'https:' ? ';secure' : '');
     try {
-      const { grommunioAuthJwt: newToken, csrf } = await dispatch(renewToken());
+      const { grommunioAuthJwt: newToken, csrf } = await renewToken();
       if(newToken) {
         document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
           + (window.location.protocol === 'https:' ? ';secure' : '');
         window.localStorage.setItem('grommunioAuthJwt', newToken);
       }
-      const profileData = await dispatch(profile());
-      await dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
+      const profileData = await profile();
+      dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
       if(profileData) {
-        const domains = await dispatch(drawerDomains());
-        await dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-        await dispatch(authAuthenticated(true, profileData.capabilities, csrf));
+        const domains = await drawerDomains();
+        dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
+        dispatch(authAuthenticated(true, profileData.capabilities, csrf));
       } else {
         clearStorage();
-        await dispatch(authError("No profile data received"));
+        dispatch(authError("No profile data received"));
       }
     } catch(err) {
       clearStorage();
-      await dispatch(authError(err.message || "Session expired. Please login again"));
+      dispatch(authError(err.message || "Session expired. Please login again"));
       return Promise.reject(err);
     }
   };
@@ -102,7 +105,7 @@ export function authAuthenticated(authenticated = true, capabilities=[], csrf=''
   };
 }
 
-function authError(error) {
+function authError(error: string) {
   return {
     type: AUTH_ERROR,
     error,

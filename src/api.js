@@ -212,22 +212,16 @@ function buildQuery(endpoint, params={}) {
   LOGIN
 */
 
-export function login(user, pass) {
-  return async () => {
-    return await loginPost('/login', `user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
-  };
+export async function login(user, pass) {
+  return await loginPost('/login', `user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
 }
 
-export function renewToken() {
-  return async () => {
-    return await renew();
-  };
+export async function renewToken() {
+  return await renew();
 }
 
-export function profile() {
-  return async () => {
-    return await get('/profile');
-  };
+export async function profile() {
+  return await get('/profile');
 }
 
 /*
@@ -272,10 +266,8 @@ export function update(action, repo="supported") {
   DOMAINS
 */
 
-export function drawerDomains() {
-  return async () => {
-    return await get(buildQuery('/domains', { domainType: 0, sort: 'domainname,asc', level: 1, limit: 1000000000 }));
-  };
+export async function drawerDomains() {
+  return await get(buildQuery('/domains', { domainType: 0, sort: 'domainname,asc', level: 1, limit: 1000000000 }));
 }
 
 export async function domains(params) {
