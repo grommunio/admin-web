@@ -9,7 +9,6 @@ import {
   Tabs,
   Typography } from '@mui/material';
 import { withTranslation } from 'react-i18next';
-import { uploadLicenseData } from '../actions/license';
 import { connect } from 'react-redux';
 import TableViewContainer from '../components/TableViewContainer';
 import { fetchDomainData } from '../actions/domains';
@@ -130,7 +129,6 @@ License.propTypes = {
   classes: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   license: PropTypes.object.isRequired,
-  upload: PropTypes.func.isRequired,
   fetchDomains: PropTypes.func.isRequired,
   fetchUsers: PropTypes.func.isRequired,
   fetchCount: PropTypes.func.isRequired,
@@ -160,8 +158,6 @@ const mapDispatchToProps = dispatch => {
     fetchUsers: async (domainID) => 
       await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
         .catch(error => Promise.reject(error)),
-    upload: async license => await dispatch(uploadLicenseData(license))
-      .catch(err => Promise.reject(err)),
     systemUpdate: async action => await dispatch(systemUpdate(action))
       .catch(err => Promise.reject(err)),
     fetchLog: async (pid) =>
