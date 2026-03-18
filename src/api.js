@@ -946,22 +946,16 @@ export function classDetails(domainID, id) {
   DBCONF
 */
 
-export function dbconf(params) {
-  return async () => {
-    return await get(buildQuery('/system/dbconf/', params));
-  };
+export async function dbconf(params) {
+  return await get(buildQuery('/system/dbconf/', params));
 }
 
-export function commands(params) {
-  return async () => {
-    return await get(buildQuery('/system/dbconf/commands', params));
-  };
+export async function commands(params) {
+  return await get(buildQuery('/system/dbconf/commands', params));
 }
 
-export function uploadFile(service, filename, file) {
-  return async () => {
-    return await put('/system/dbconf/' + service + '/' + filename + '/',  { data: file });
-  };
+export async function uploadFile(service, filename, file) {
+  return await put('/system/dbconf/' + service + '/' + filename + '/',  { data: file });
 }
 
 export function renameService(oldName, name) {
@@ -988,16 +982,12 @@ export function editFile(service, filename, file) {
   };
 }
 
-export function deleteService(service) {
-  return async () => {
-    return await yeet('/system/dbconf/' + service + '/');
-  };
+export async function deleteService(service) {
+  return await yeet('/system/dbconf/' + service + '/');
 }
 
-export function deleteFile(service, file) {
-  return async () => {
-    return await yeet('/system/dbconf/' + service + '/' + file + '/');
-  };
+export async function deleteFile(service, file) {
+  return await yeet('/system/dbconf/' + service + '/' + file + '/');
 }
 
 /*
