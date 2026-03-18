@@ -32,15 +32,10 @@ import taskqReducer from './reducers/taskq';
 import usersReducer from './reducers/users';
 import { configureStore } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useStore } from 'react-redux';
 
-const getMiddleware = getDefaultMiddleware => {
-  const middleware = getDefaultMiddleware();
-  // eslint-disable-next-line no-undef
-  if (process.env.NODE_ENV === 'development') {
-    middleware.push(logger);
-  }
-  return middleware;
-}
 
 // Create redux store
 export const store = configureStore({
@@ -72,7 +67,19 @@ export const store = configureStore({
     taskq: taskqReducer,
     users: usersReducer,
   }),
-  middleware: getMiddleware,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(
+      process.env.NODE_ENV === 'development' ? logger : []
+    ),
 });
+
+export type AppStore = typeof store;
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
+
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+export const useAppSelector = useSelector.withTypes<RootState>();
+export const useAppStore = useStore.withTypes<AppStore>();
+
 
 export default store;

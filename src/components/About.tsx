@@ -6,9 +6,10 @@ import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Paper, Theme, Typography} from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
-import { connect } from 'react-redux';
 import { Dashboard, Outlet, Power } from '@mui/icons-material';
 import { useTranslation, withTranslation } from 'react-i18next';
+import { useAppSelector } from '../store';
+
 
 const useStyles = makeStyles()((theme: Theme) => ({
   root: {
@@ -51,22 +52,12 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
-type AboutAboutType = {
-  API: string,
-  backend: string,
-  schema: number,
-}
 
-type AboutType = {
-  about: AboutAboutType
-}
-
-
-const About = (props: AboutType) => {
+const About = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
 
-  const { about } = props;
+  const about = useAppSelector(state => state.about);
   const { API, backend, schema } = about;
   return (
     <div className={classes.root}>
@@ -110,10 +101,5 @@ const About = (props: AboutType) => {
   );
 }
 
-const mapStateToProps = state => {
-  return {
-    about: state.about,
-  };
-};
 
-export default withTranslation()(connect(mapStateToProps)(About));
+export default withTranslation()(About);
