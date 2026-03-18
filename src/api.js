@@ -278,16 +278,12 @@ export function drawerDomains() {
   };
 }
 
-export function domains(params) {
-  return async () => {
-    return await get(buildQuery('/system/domains', { ...params, domainType: 0 }));
-  };
+export async function domains(params) {
+  return await get(buildQuery('/system/domains', { ...params, domainType: 0 }));
 }
 
-export function domain(id) {
-  return async () => {
-    return await get('/system/domains/' + id);
-  };
+export async function domain(id) {
+  return await get('/system/domains/' + id);
 }
 
 export function addDomain(domain, params) {
@@ -314,10 +310,8 @@ export async function changeDomainPassword(id, newPw) {
   } catch(err) { console.error(err); }
 }
 
-export function dns(domainId) {
-  return async () => {
-    return await get('/domains/' + domainId + '/dnsCheck');
-  };
+export async function dns(domainId) {
+  return await get('/domains/' + domainId + '/dnsCheck');
 }
 
 /*
@@ -1216,10 +1210,8 @@ export async function checkFormat(params) {
   } catch(err) { return Promise.reject(err); }
 }
 
-export function defaultSyncPolicy() {
-  return async () => {
-    return await get('/service/syncPolicy/default');
-  };
+export async function defaultSyncPolicy() {
+  return await get('/service/syncPolicy/default');
 }
 
 export function defaultDomainSyncPolicy(domainID) {
