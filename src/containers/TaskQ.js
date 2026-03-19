@@ -200,11 +200,11 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchTableData: async (params) => await dispatch(fetchTaskqData({ limit: 200, ...params }))
       .catch((error) => Promise.reject(error)),
-    status: async (params) => await dispatch(fetchTaskqStatus(params))
+    status: async () => await dispatch(fetchTaskqStatus())
       .catch((error) => Promise.reject(error)),
-    start: async params => await dispatch(startTaskqServer(params))
+    start: async () => await dispatch(startTaskqServer())
       .catch((error) => Promise.reject(error)),
-    stop: async params => await dispatch(stopTaskqServer(params))
+    stop: async () => await dispatch(stopTaskqServer())
       .catch((error) => Promise.reject(error)),
   };
 };

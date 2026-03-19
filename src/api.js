@@ -820,10 +820,8 @@ export function updateLog(pid) {
   SYNC
 */
 
-export function grommunioSync(params) {
-  return async () => {
-    return await get(buildQuery('/system/sync/top', params));
-  };
+export async function grommunioSync(params) {
+  return await get(buildQuery('/system/sync/top', params));
 }
 
 /*
@@ -1080,21 +1078,21 @@ export function taskq(params) {
   };
 }
 
-export function startTaskq(params) {
+export function startTaskq() {
   return async () => {
-    return await post(buildQuery('/tasq/start', params));
+    return await post('/tasq/start');
   };
 }
 
-export function stopTaskq(params) {
+export function stopTaskq() {
   return async () => {
-    return await post(buildQuery('/tasq/stop', params));
+    return await post('/tasq/stop');
   };
 }
 
-export function taskqStatus(params) {
+export function taskqStatus() {
   return async () => {
-    return await get(buildQuery('/tasq/status', params));
+    return await get('/tasq/status');
   };
 }
 
