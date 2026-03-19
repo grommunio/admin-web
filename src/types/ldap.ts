@@ -46,14 +46,23 @@ export type FetchLdapParams = {
   domain?: number,
   organization?: number,
   showAll?: boolean,
-}
+};
 
 export type ImportLdapParams = {
   ID: number,
   force: boolean,
   domain: number,
-}
+};
 
 export type SyncLdapParams = {
   import: boolean
-}
+};
+
+export type LdapDumpParams = {
+  ID: string,
+  organization: number,
+};
+
+export type CheckLdapUsersParams = {
+  domain: number
+};

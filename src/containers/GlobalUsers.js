@@ -17,7 +17,7 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   useMediaQuery} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { deleteUserData, checkLdapUsers, fetchAllUsers, fetchUserData } from '../actions/users';
+import { deleteUserData, fetchAllUsers, fetchUserData } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
@@ -330,7 +330,6 @@ const GlobalUsers = props => {
 GlobalUsers.propTypes = {
   users: PropTypes.object.isRequired,
   delete: PropTypes.func.isRequired,
-  check: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
   fetchUserDetails: PropTypes.func.isRequired,
   ...defaultTableProptypes,
@@ -350,8 +349,6 @@ const mapDispatchToProps = dispatch => {
     delete: async (domainID, id) => {
       await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
     },
-    check: async params => await dispatch(checkLdapUsers(params))
-      .catch(error => Promise.reject(error)),
     sync: async (params, domainID) => await dispatch(syncLdapUsers(params, domainID))
       .catch(error => Promise.reject(error)),
   };

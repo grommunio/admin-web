@@ -310,50 +310,42 @@ export async function dns(domainId) {
   USERS
 */
 
-export function allUsers(params) {
-  return async () => {
-    return await get(buildQuery('/system/users', {
+export async function allUsers(params) {
+  return await get(buildQuery('/system/users', {
+    ...params,
+    addressType: 0,
+    matchProps: 'displayname',
+    properties: 'displayname,displaytypeex',
+  }));
+}
+
+export async function allContacts(params) {
+  return await get(buildQuery('/system/users', {
+    ...params,
+    status: USER_STATUS.CONTACT,
+    matchProps: 'displayname,smtpaddress',
+    properties: 'displayname,smtpaddress',
+  }));
+}
+
+export async function users(domainID, params) {
+  return await get(buildQuery(
+    '/domains/' + domainID + '/users', {
       ...params,
-      addressType: 0,
       matchProps: 'displayname',
-      properties: 'displayname,displaytypeex',
+      properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex',
+      addressType: 0,
     }));
-  };
 }
 
-export function allContacts(params) {
-  return async () => {
-    return await get(buildQuery('/system/users', {
+export async function usersPlain(domainID, params={}) {
+  return await get(buildQuery(
+    '/domains/' + domainID + '/users', {
+      level: 0,
+      limit: 1000000,
+      sort: 'username,asc',
       ...params,
-      status: USER_STATUS.CONTACT,
-      matchProps: 'displayname,smtpaddress',
-      properties: 'displayname,smtpaddress',
     }));
-  };
-}
-
-export function users(domainID, params) {
-  return async () => {
-    return await get(buildQuery(
-      '/domains/' + domainID + '/users', {
-        ...params,
-        matchProps: 'displayname',
-        properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex',
-        addressType: 0,
-      }));
-  };
-}
-
-export function usersPlain(domainID, params={}) {
-  return async () => {
-    return await get(buildQuery(
-      '/domains/' + domainID + '/users', {
-        level: 0,
-        limit: 1000000,
-        sort: 'username,asc',
-        ...params,
-      }));
-  };
 }
 
 export function userList() {
@@ -362,22 +354,18 @@ export function userList() {
   };
 }
 
-export function contacts(domainID, params) {
-  return async () => {
-    return await get(buildQuery(
-      '/domains/' + domainID + '/users', {
-        ...params,
-        status: USER_STATUS.CONTACT,
-        matchProps: 'displayname,smtpaddress',
-        properties: 'displayname,smtpaddress',
-      }));
-  };
+export async function contacts(domainID, params) {
+  return await get(buildQuery(
+    '/domains/' + domainID + '/users', {
+      ...params,
+      status: USER_STATUS.CONTACT,
+      matchProps: 'displayname,smtpaddress',
+      properties: 'displayname,smtpaddress',
+    }));
 }
 
-export function userCount(domainID) {
-  return async () => {
-    return await get(buildQuery('/domains/' + domainID + '/users', { limit: 0, status: USER_STATUS.NORMAL }));
-  };
+export async function userCount(domainID) {
+  return await get(buildQuery('/domains/' + domainID + '/users', { limit: 0, status: USER_STATUS.NORMAL }));
 }
 
 export async function user(domainID, userID) {
@@ -469,9 +457,9 @@ export function userSendAs(domainID, userID) {
   };
 }
 
-export function editUserSendAs(domainID, userID, delegates) {
+export function editUserSendAs(domainID, userID, sendAs) {
   return async () => {
-    return await put('/domains/' + domainID + '/users/'+ userID + '/sendas', delegates);
+    return await put('/domains/' + domainID + '/users/'+ userID + '/sendas', sendAs);
   };
 }
 
@@ -542,10 +530,8 @@ export function checkLdap(params) {
   };
 }
 
-export function deleteOrphans(params) {
-  return async () => {
-    return await yeet(buildQuery('/domains/ldap/check', { organization: 0, ...params }));
-  };
+export async function deleteOrphans(params) {
+  return await yeet(buildQuery('/domains/ldap/check', { organization: 0, ...params }));
 }
 
 export function ldapConfig() {
@@ -1168,16 +1154,12 @@ export async function defaultSyncPolicy() {
   return await get('/service/syncPolicy/default');
 }
 
-export function defaultDomainSyncPolicy(domainID) {
-  return async () => {
-    return await get(`/domains/${domainID}/syncPolicy`);
-  };
+export async function defaultDomainSyncPolicy(domainID) {
+  return await get(`/domains/${domainID}/syncPolicy`);
 }
 
-export function storeLangs() {
-  return async () => {
-    return await get('/defaults/storeLangs');
-  };
+export async function storeLangs() {
+  return await get('/defaults/storeLangs');
 }
 
 
