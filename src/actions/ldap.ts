@@ -4,19 +4,22 @@
 import {
   LDAP_DATA_RECEIVED,
   LDAP_DATA_CLEAR,
+  URLParams,
 } from './types';
 import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLdap, setAuthmgr,
   authmgr, orgLdapConfig, orgSyncAll, updateOrgLdap, deleteOrgLdap } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
+import { FetchLdapParams, ImportLdapParams, LdapConfigData, SyncLdapParams } from '@/types/ldap';
+
 
 export function fetchLdapConfig() {
   return defaultDetailsHandler(ldapConfig);
 }
 
-export function updateLdapConfig(config, params) {
-  return async dispatch => {
+export function updateLdapConfig(config: LdapConfigData, params: {force?: boolean & URLParams }) {
+  return async () => {
     try {
-      const resp = await dispatch(updateLdap(config, params));
+      const resp = await updateLdap(config, params);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
@@ -29,9 +32,9 @@ export function fetchAuthMgr() {
 }
 
 export function updateAuthMgr(config) {
-  return async dispatch => {
+  return async () => {
     try {
-      const resp = await dispatch(setAuthmgr(config));
+      const resp = await setAuthmgr(config);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
@@ -40,32 +43,32 @@ export function updateAuthMgr(config) {
 }
 
 export function deleteLdapConfig() {
-  return async dispatch => {
+  return async () => {
     try {
-      await dispatch(deleteLdap());
+      await deleteLdap();
     } catch (err) {
       return Promise.reject(err.message);
     }
   };
 }
 
-export function fetchLdapData(...endpointParams) {
-  return defaultListHandler(searchLdap, LDAP_DATA_RECEIVED, ...endpointParams);
+export function fetchLdapData(params: FetchLdapParams) {
+  return defaultListHandler(searchLdap, LDAP_DATA_RECEIVED, params);
 }
 
-export function importLdapData(...endpointParams) {
+export function importLdapData(params: ImportLdapParams) {
   // Somewhat misleading, but the imported data isn't used in the list
-  return defaultPatchHandler(importUser, ...endpointParams);
+  return defaultPatchHandler(importUser, params);
 }
 
-export function syncLdapData(...endpointParams) {
-  return defaultDetailsHandler(sync, ...endpointParams);
+export function syncLdapData(domainID: number, userID: number) {
+  return defaultDetailsHandler(sync, domainID, userID);
 }
 
-export function syncLdapUsers(params, domainID) {
-  return async dispatch => {
+export function syncLdapUsers(params: SyncLdapParams, domainID: number) {
+  return async () => {
     try {
-      const resp = await dispatch(syncAll(params, domainID));
+      const resp = await syncAll(params, domainID);
       return resp;
     } catch (err) {
       return Promise.reject(err.message);
@@ -81,14 +84,14 @@ export function clearLdapSearch() {
 
 /* ORGANIZATION LDAP */
 
-export function fetchOrgLdapConfig(...endpointParams) {
-  return defaultDetailsHandler(orgLdapConfig, ...endpointParams);
+export function fetchOrgLdapConfig(orgID: number) {
+  return defaultDetailsHandler(orgLdapConfig, orgID);
 }
 
-export function syncOrgLdapUsers(orgID, params) {
-  return async dispatch => {
+export function syncOrgLdapUsers(orgID: number, params: SyncLdapParams) {
+  return async () => {
     try {
-      const resp = await dispatch(orgSyncAll(orgID, params));
+      const resp = await orgSyncAll(orgID, params);
       return resp;
     } catch (err) {
       return Promise.reject(err.message);
@@ -96,10 +99,10 @@ export function syncOrgLdapUsers(orgID, params) {
   };
 }
 
-export function updateOrgLdapConfig(orgID, config, params) {
-  return async dispatch => {
+export function updateOrgLdapConfig(orgID: number, config: LdapConfigData, params: { force: boolean }) {
+  return async () => {
     try {
-      const resp = await dispatch(updateOrgLdap(orgID, config, params));
+      const resp = await updateOrgLdap(orgID, config, params);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
       return Promise.reject(err.message);
@@ -107,10 +110,10 @@ export function updateOrgLdapConfig(orgID, config, params) {
   };
 }
 
-export function deleteOrgLdapConfig(orgID) {
-  return async dispatch => {
+export function deleteOrgLdapConfig(orgID: number) {
+  return async () => {
     try {
-      await dispatch(deleteOrgLdap(orgID));
+      await deleteOrgLdap(orgID);
     } catch (err) {
       return Promise.reject(err.message);
     }
