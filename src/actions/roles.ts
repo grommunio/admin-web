@@ -12,6 +12,7 @@ import { roles, editRole, permissions, addRole, deleteRole, role } from '../api'
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
+import { NewRole, UpdateRole } from '@/types/roles';
 
 
 export function fetchRolesData(params) {
@@ -35,14 +36,14 @@ export function fetchPermissionsData() {
   return defaultListHandler(permissions, PERMISSIONS_DATA_RECEIVED);
 }
 
-export function addRolesData(...endpointParams) {
-  return defaultPostHandler(addRole, ROLE_DATA_ADD, ...endpointParams);
+export function addRolesData(role: NewRole) {
+  return defaultPostHandler(addRole, ROLE_DATA_ADD, role);
 }
 
-export function editRoleData(...endpointParams) {
-  return defaultPatchHandler(editRole, ...endpointParams);
+export function editRoleData(role: UpdateRole) {
+  return defaultPatchHandler(editRole, role);
 }
 
-export function deleteRolesData(id) {
+export function deleteRolesData(id: number) {
   return defaultDeleteHandler(deleteRole, ROLE_DATA_DELETE, {id});
 }

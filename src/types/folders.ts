@@ -1,3 +1,4 @@
+import { PartialWithRequired } from "./common"
 import { BaseUser } from "./users"
 
 export type Folder = {
@@ -11,3 +12,13 @@ export type Folder = {
   comment: string,
   syncMobile: boolean,
 }
+
+export type NewFolder = Pick<Folder,
+  'comment' |
+  'container' |
+  'displayname' |
+  'parentID' |
+  'owners'
+>
+
+export type UpdateFolder = PartialWithRequired<Folder, 'folderid'>;

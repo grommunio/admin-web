@@ -11,20 +11,20 @@ import {
 import { folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
   putFolderPermissions, deleteOwner, folderTree } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultListHandler2, defaultPatchHandler } from './handlers';
-import { Folder } from '@/types/folders';
+import { NewFolder, UpdateFolder } from '@/types/folders';
 import { Dispatch } from 'redux';
 import { BaseUser } from '@/types/users';
 
 
-export function fetchFolderTree(...endpointParams: any[]) {
-  return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, ...endpointParams);
+export function fetchFolderTree(domainID: number, params?: URLParams) {
+  return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, domainID, params);
 }
 
-export function fetchFolderDetails(...endpointParams: any[]) {
-  return defaultDetailsHandler(folderDetails, ...endpointParams);
+export function fetchFolderDetails(domainID: number, folderID: number) {
+  return defaultDetailsHandler(folderDetails, domainID, folderID);
 }
 
-export function addFolderData(domainID: number, folder: Folder) {
+export function addFolderData(domainID: number, folder: NewFolder) {
   return async (dispatch: Dispatch) => {
     const owners = folder.owners;
     delete folder.owners;
@@ -41,11 +41,11 @@ export function addFolderData(domainID: number, folder: Folder) {
   };
 }
 
-export function editFolderData(...endpointParams: any[]) {
-  return defaultPatchHandler(editFolder, ...endpointParams);
+export function editFolderData(domainID, folder: UpdateFolder) {
+  return defaultPatchHandler(editFolder, domainID, folder);
 }
 
-export function deleteFolderData(domainID: number, folderID: string, params: URLParams) {
+export function deleteFolderData(domainID: number, folderID: string, params: { clear: boolean }) {
   return async (dispatch: Dispatch) => {
     try {
       const resp = await deleteFolder(domainID, folderID, params);
@@ -58,8 +58,8 @@ export function deleteFolderData(domainID: number, folderID: string, params: URL
   };
 }
 
-export function fetchOwnersData(...endpointParams: any[]) {
-  return defaultListHandler2(owners, OWNERS_DATA_RECEIVED, ...endpointParams);
+export function fetchOwnersData(domainID: number, folderID: string, params?: URLParams) {
+  return defaultListHandler2(owners, OWNERS_DATA_RECEIVED, domainID, folderID, params);
 }
 
 export function addOwnerData(domainID: number, folderID: string, ownersData: BaseUser[]) {

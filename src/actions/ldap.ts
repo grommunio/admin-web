@@ -31,7 +31,7 @@ export function fetchAuthMgr() {
   return defaultDetailsHandler(authmgr);
 }
 
-export function updateAuthMgr(config) {
+export function updateAuthMgr(config: { authBackendSelection: string }) {
   return async () => {
     try {
       const resp = await setAuthmgr(config);

@@ -29,5 +29,5 @@ export type Role = BaseRole & {
 }
 
 export type DomainListItem = Omit<Role, 'domains'>;
-export type NewOrg = Omit<Role, 'ID'>;
-export type UpdateOrg = PartialWithRequired<Role, "ID">;
+export type NewRole = Omit<Role, 'ID'>;
+export type UpdateRole = PartialWithRequired<Role, "ID">;
