@@ -13,7 +13,7 @@ import { folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
 import { defaultDetailsHandler, defaultListHandler, defaultListHandler2, defaultPatchHandler } from './handlers';
 import { Folder } from '@/types/folders';
 import { Dispatch } from 'redux';
-import { User } from '@/types/users';
+import { BaseUser } from '@/types/users';
 
 
 export function fetchFolderTree(...endpointParams: any[]) {
@@ -62,7 +62,7 @@ export function fetchOwnersData(...endpointParams: any[]) {
   return defaultListHandler2(owners, OWNERS_DATA_RECEIVED, ...endpointParams);
 }
 
-export function addOwnerData(domainID: number, folderID: string, ownersData: User[]) {
+export function addOwnerData(domainID: number, folderID: string, ownersData: BaseUser[]) {
   return async (dispatch: Dispatch) => {
     try {
       for(let i = 0; i < ownersData.length; i++) {

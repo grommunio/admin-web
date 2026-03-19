@@ -594,10 +594,8 @@ export async function deleteOrgLdap(orgID) {
   ROLES
 */
 
-export function roles(params) {
-  return async () => {
-    return await get(buildQuery('/system/roles', { level: 2 , ...params}));
-  };
+export async function roles(params) {
+  return await get(buildQuery('/system/roles', { level: 2 , ...params}));
 }
 
 export function role(id) {
@@ -628,9 +626,9 @@ export function deleteRole(id) {
   PERMISSIONS
 */
 
-export function permissions(params) {
+export function permissions() {
   return async () => {
-    return await get(buildQuery('/system/roles/permissions', params));
+    return await get('/system/roles/permissions');
   };
 }
 
@@ -720,10 +718,8 @@ export async function putFolderPermissions(domainID, folderID, memberID, permiss
   ORGS
 */
 
-export function orgs(params) {
-  return async () => {
-    return await get(buildQuery('/system/orgs', params));
-  };
+export async function orgs(params) {
+  return await get(buildQuery('/system/orgs', params));
 }
 
 export function orgDetails(id) {
@@ -754,10 +750,8 @@ export function deleteOrg(id) {
   SERVERS
 */
 
-export function servers(params) {
-  return async () => {
-    return await get(buildQuery('/system/servers', params));
-  };
+export async function servers(params) {
+  return await get(buildQuery('/system/servers', params));
 }
 
 export function serverDetails(id) {
@@ -790,10 +784,8 @@ export function serversPolicy() {
   };
 }
 
-export function editServerPolicy(data) {
-  return async () => {
-    return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
-  };
+export async function editServerPolicy(data) {
+  return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
 }
 
 export function serverDnsCheck() {

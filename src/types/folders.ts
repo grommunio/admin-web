@@ -1,9 +1,9 @@
-import { User } from "./users"
+import { BaseUser } from "./users"
 
 export type Folder = {
   folderid: string,
   name: string,
-  owners: User[],
+  owners: BaseUser[],
   children: Folder[],
   parentID: number,
   displayname: string,

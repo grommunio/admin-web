@@ -23,3 +23,8 @@ export type Domain = {
 export type DomainListItem = Omit<Domain, 'homeserver' | 'syncPolicy'>
 export type NewDomain = Omit<Domain, 'ID'>;
 export type UpdateDomain = PartialWithRequired<Domain, "ID">;
+
+export type BaseDomain = Pick<
+  Domain,
+  "ID" | "displayname" | "domainname"
+>

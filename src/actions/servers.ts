@@ -7,16 +7,20 @@ import {
   SERVERS_DATA_RECEIVED,
   SERVERS_POLICY_RECEIVED,
   SERVER_DNS_CHECK,
-} from '../actions/types';
+  URLParams,
+} from './types';
 import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy, serverDnsCheck } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
+import { Dispatch } from 'redux';
+import { NewServer, ServerPolicy, UpdateServer } from '@/types/servers';
 
-export function fetchServersData(params) {
-  return async dispatch => {
+
+export function fetchServersData(params: URLParams) {
+  return async (dispatch: Dispatch) => {
     try {
-      const serversData = await dispatch(servers(params));
-      await dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });
+      const serversData = await servers(params);
+      dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);
@@ -24,19 +28,19 @@ export function fetchServersData(params) {
   };
 }
 
-export function fetchServerDetails(...endpointParams) {
-  return defaultDetailsHandler(serverDetails, ...endpointParams);
+export function fetchServerDetails(serverID: number) {
+  return defaultDetailsHandler(serverDetails, serverID);
 }
 
-export function addServerData(...endpointParams) {
-  return defaultPostHandler(addServer, SERVERS_DATA_ADD, ...endpointParams);
+export function addServerData(server: NewServer) {
+  return defaultPostHandler(addServer, SERVERS_DATA_ADD, server);
 }
 
-export function editServerData(...endpointParams) {
-  return defaultPatchHandler(editServer, ...endpointParams);
+export function editServerData(server: UpdateServer) {
+  return defaultPatchHandler(editServer, server);
 }
 
-export function deleteServerData(id) {
+export function deleteServerData(id: number) {
   return defaultDeleteHandler(deleteServer, SERVERS_DATA_DELETE, {id});
 }
 
@@ -48,11 +52,11 @@ export function fetchServerDnsCheck() {
   return defaultListHandler(serverDnsCheck, SERVER_DNS_CHECK);
 }
 
-export function patchServerPolicy(data) {
-  return async dispatch => {
+export function patchServerPolicy(data: { data: ServerPolicy }) {
+  return async (dispatch: Dispatch) => {
     try {
-      await dispatch(editServerPolicy(data));
-      await dispatch({ type: SERVERS_POLICY_RECEIVED, data: data });
+      await editServerPolicy(data);
+      dispatch({ type: SERVERS_POLICY_RECEIVED, data: data });
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);

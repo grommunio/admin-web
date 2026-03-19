@@ -7,17 +7,19 @@ import {
   ROLE_DATA_DELETE,
   PERMISSIONS_DATA_RECEIVED,
   ROLES_NEXT_SET,
-} from '../actions/types';
+} from './types';
 import { roles, editRole, permissions, addRole, deleteRole, role } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
+import { Dispatch } from 'redux';
+
 
 export function fetchRolesData(params) {
-  return async dispatch => {
+  return async (dispatch: Dispatch) => {
     try {
-      const response = await dispatch(roles(params));
-      if(!params?.offset) await dispatch({ type: ROLES_DATA_RECEIVED, data: response });
-      else await dispatch({ type: ROLES_NEXT_SET, data: response });
+      const response = await roles(params);
+      if(!params?.offset) dispatch({ type: ROLES_DATA_RECEIVED, data: response });
+      else dispatch({ type: ROLES_NEXT_SET, data: response });
     } catch(error) {
       console.error(error);
       return Promise.reject(error.message);
@@ -25,12 +27,12 @@ export function fetchRolesData(params) {
   };
 }
 
-export function fetchRoleData(...endpointParams) {
-  return defaultDetailsHandler(role, ...endpointParams);
+export function fetchRoleData(roleID: number) {
+  return defaultDetailsHandler(role, roleID);
 }
 
-export function fetchPermissionsData(...endpointParams) {
-  return defaultListHandler(permissions, PERMISSIONS_DATA_RECEIVED, ...endpointParams);
+export function fetchPermissionsData() {
+  return defaultListHandler(permissions, PERMISSIONS_DATA_RECEIVED);
 }
 
 export function addRolesData(...endpointParams) {
