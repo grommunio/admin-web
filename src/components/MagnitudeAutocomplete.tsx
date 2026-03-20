@@ -1,18 +1,46 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Autocomplete, TextField } from '@mui/material';
+import React, { ReactNode } from 'react';
+import { Autocomplete, TextField, TextFieldVariants } from '@mui/material';
 import { getAutocompleteOptions } from '../utils';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { USER_STATUS } from '../constants';
 
-const MagnitudeAutocomplete = props => {
-  const { t, className, value, filterAttribute, onChange, options, label, getOptionLabel,
+
+type MagnitudeAutocompleteProps = {
+  className: string;
+  value?: any; // TODO: Improve definition
+  filterAttribute: string;
+  onChange: () => void;
+  options?: any[]; // Improve
+  label?: string;
+  getOptionLabel?: (option: any) => string;
+  inputValue?: string;
+  onInputChange?: () => void;
+  freeSolo?: boolean;
+  multiple?: boolean;
+  calculateMagnitude?: boolean;
+  placeholder?: string;
+  renderOption: (props: any, option: any) => ReactNode;
+  autoFocus?: boolean;
+  autoSelect?: boolean;
+  variant?: TextFieldVariants;
+  fullWidth?: boolean;
+  disabled?: boolean;
+  getOptionDisabled?: (option: any) => boolean;
+  isOptionEqualToValue?: <T>(option: T, value: T) => boolean;
+  disableCloseOnSelect?: boolean;
+  getOptionKey?: (option: any) => string | number;
+  helperText?: string;
+}
+
+const MagnitudeAutocomplete = (props: MagnitudeAutocompleteProps) => {
+  const { className, value, filterAttribute, onChange, options, label, getOptionLabel,
     inputValue, onInputChange, freeSolo, multiple, calculateMagnitude, placeholder, renderOption,
-    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue, disableCloseOnSelect,
-    getOptionKey, helperText } = props;
+    autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue,
+    disableCloseOnSelect, getOptionKey, helperText } = props;
+  const { t } = useTranslation();
   const magnitude = calculateMagnitude === false ? 0 : Math.round(Math.log10(options.length) - 2);
 
   return <Autocomplete
@@ -57,32 +85,5 @@ const MagnitudeAutocomplete = props => {
   />;
 };
 
-MagnitudeAutocomplete.propTypes = {
-  t: PropTypes.func.isRequired,
-  className: PropTypes.string,
-  value: PropTypes.any,
-  filterAttribute: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onInputChange: PropTypes.func,
-  getOptionLabel: PropTypes.func,
-  renderOption: PropTypes.func,
-  options: PropTypes.array,
-  label: PropTypes.string,
-  inputValue: PropTypes.string,
-  freeSolo: PropTypes.bool,
-  multiple: PropTypes.bool,
-  calculateMagnitude: PropTypes.bool,
-  placeholder: PropTypes.string,
-  autoFocus: PropTypes.bool,
-  autoSelect: PropTypes.bool,
-  variant: PropTypes.string,
-  fullWidth: PropTypes.bool,
-  disabled: PropTypes.bool,
-  isOptionEqualToValue: PropTypes.func,
-  getOptionDisabled: PropTypes.func,
-  disableCloseOnSelect: PropTypes.bool,
-  getOptionKey: PropTypes.func,
-  helperText: PropTypes.string,
-};
 
-export default withTranslation()(MagnitudeAutocomplete);
+export default MagnitudeAutocomplete;

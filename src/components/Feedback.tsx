@@ -3,13 +3,19 @@
 
 import React from 'react';
 import { Portal, Snackbar, Alert } from '@mui/material';
-import PropTypes from 'prop-types';
 import PANIK from '../res/panik.png';
-import { withTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useTranslation, withTranslation } from 'react-i18next';
+import { useAppSelector } from '../store';
 
-const Feedback = ({ snackbar, t, onClose }) => {
-  const config = useSelector((state) => state.config);
+
+type FeedbackProps = {
+  snackbar?: string;
+  onClose: () => void;
+}
+
+const Feedback = ({ snackbar, onClose }: FeedbackProps) => {
+  const { t } = useTranslation();
+  const config = useAppSelector((state) => state.config);
   const msg = (snackbar || '').toString();
   return (
     <Portal>
@@ -21,7 +27,7 @@ const Feedback = ({ snackbar, t, onClose }) => {
         open={!!snackbar}
         onClose={onClose}
         autoHideDuration={(msg || '').includes('Success!') ? 2000 : 6000}
-        transitionDuration={{ in: 0, appear: 250, enter: 250, exit: 0 }}
+        transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
       >
         <Alert
           onClose={onClose}
@@ -38,10 +44,5 @@ const Feedback = ({ snackbar, t, onClose }) => {
   );
 }
 
-Feedback.propTypes = {
-  snackbar: PropTypes.string,
-  onClose: PropTypes.func,
-  t: PropTypes.func.isRequired,
-};
 
 export default withTranslation()(Feedback);

@@ -173,12 +173,10 @@ const Dashboard = props => {
   const {
     classes,
     t,
-    cpuPercent,
     cpuPie,
     memory,
     memoryPie,
     disks,
-    load,
     timer,
     statistics,
     config,
@@ -235,10 +233,10 @@ const Dashboard = props => {
               <Typography className={classes.chartTitle}>
                 {`${t("CPU")}: ${(totalCpuUsage || 0).toFixed(1)}%`}
               </Typography>
-              <CPUPie cpuPie={cpuPie} />
+              <CPUPie />
             </div>
             <div className={classes.lineChart}>
-              <CPULine cpuPercent={cpuPercent}/>
+              <CPULine />
             </div>
           </Paper>
         </div>
@@ -263,7 +261,7 @@ const Dashboard = props => {
           </Paper>
         </div>
         <div className={classes.disk}>
-          <Load load={load}/>
+          <Load />
         </div>
       </div>
       <Typography variant="h2" className={classes.pageTitle}>

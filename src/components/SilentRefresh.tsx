@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { refreshToken } from "../actions/auth";
+import { useAppSelector, useAppDispatch } from "../store";
 
 
-const SilentRefresh = ({ children }) => {
-  const config = useSelector((state) => state.config);
-  const dispatch = useDispatch();
+const SilentRefresh = () => {
+  const config = useAppSelector((state) => state.config);
+  const dispatch = useAppDispatch();
   let fetchInterval = null;
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const SilentRefresh = ({ children }) => {
     }, 1000 * (config.tokenRefreshInterval || 60 * 60 * 24)); // Default: 24h
   }
 
-  return children;
+  return null;
 }
 
 export default SilentRefresh;

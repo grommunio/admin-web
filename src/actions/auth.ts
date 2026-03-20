@@ -53,6 +53,7 @@ export function refreshToken() {
         window.localStorage.setItem('grommunioAuthJwt', newToken);
         dispatch({ type: TOKEN_REFRESH, csrf });
       }
+      return Promise.resolve();
     } catch(err) {
       clearStorage();
       dispatch(authError(err.message || "Failed to refresh token"));

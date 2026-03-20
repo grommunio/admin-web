@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import notActivatedLicense from '../res/notActivatedLicense.svg';
 import activatedLicense from '../res/activatedLicense.svg';
-import { withStyles } from 'tss-react/mui';
 import { Box } from '@mui/system';
-import { useSelector } from 'react-redux';
 import { Tooltip } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useAppSelector } from '../store';
 
-const styles = {
+
+const useStyles = makeStyles()({
   root: {
     display: 'flex',
     justifyContent: 'center',
@@ -26,10 +26,13 @@ const styles = {
     marginRight: 8,
     cursor: 'pointer',
   },
-};
+});
 
-function LicenseIcon({ classes, t }) {
-  const license = useSelector(state => state.license);
+
+function LicenseIcon() {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const license = useAppSelector(state => state.license);
   const activated = license.product && license.product !== "Community"
 
   return (
@@ -47,9 +50,4 @@ function LicenseIcon({ classes, t }) {
   );
 }
 
-LicenseIcon.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(withStyles(LicenseIcon, styles));
+export default LicenseIcon;

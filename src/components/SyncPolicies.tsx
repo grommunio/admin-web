@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
-  Slider, TextField, Typography } from '@mui/material';
+  Slider, SliderTypeMap, TextField, TextFieldVariants, Theme, Typography } from '@mui/material';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     margin: '12px 0px 0px 8px',
@@ -29,14 +29,25 @@ const styles = theme => ({
   blueCheckbox: {
     color: theme.palette.primary['500'],
   },
-});
+}));
 
-const SyncPolicies = props => {
-  const { classes, t, syncPolicy, defaultPolicy, handleChange, handleSlider, handleCheckbox } = props;
+
+type SyncPoliciesProps = {
+  syncPolicy: any; // TODO Properly type sync policies
+  defaultPolicy: any; // TODO Properly type sync policies
+  handleChange: (field: string) => (() => void);
+  handleSlider: (field: string) => (() => void);
+  handleCheckbox: (field: string) => (() => void);
+}
+
+const SyncPolicies = (props: SyncPoliciesProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation()
+  const { syncPolicy, defaultPolicy, handleChange, handleSlider, handleCheckbox } = props;
 
   const { maxdevpwfailedattempts, mindevpwlenngth, mindevcomplexchars } = syncPolicy;
 
-  const defaultCheckboxProps = (label, field) => {
+  const defaultCheckboxProps = (label: string, field: string) => {
     const valueIsDefault = syncPolicy[field] === defaultPolicy[field];
     return {
       control: <Checkbox
@@ -49,7 +60,7 @@ const SyncPolicies = props => {
     }
   };
 
-  const defaultTfProps = (label, field) => ({
+  const defaultTfProps = (label: string, field: string) => ({
     className: classes.slider,
     style: { marginBottom: 8 },
     label: t(label),
@@ -58,16 +69,16 @@ const SyncPolicies = props => {
       className: syncPolicy[field] === defaultPolicy[field] ? "" : classes.blueCheckbox,
     },
     onChange: handleChange(field),
-    variant: "standard"
+    variant: "standard" as TextFieldVariants
   });
 
-  const defaultSliderProps = field => ({
-    color: syncPolicy[field] === defaultPolicy[field] ? "secondary" : "primary",
+  const defaultSliderProps = (field: string) => ({
+    color: (syncPolicy[field] === defaultPolicy[field] ? "secondary" : "primary") as SliderTypeMap["props"]["color"],
     marks: true,
     className: classes.slider,
     onChange: handleSlider(field),
     step: 1,
-    valueLabelDisplay: "auto",
+    valueLabelDisplay: "auto" as SliderTypeMap["props"]["valueLabelDisplay"],
   });
 
   return (
@@ -138,14 +149,4 @@ const SyncPolicies = props => {
   );
 }
 
-SyncPolicies.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  syncPolicy: PropTypes.object.isRequired,
-  defaultPolicy: PropTypes.object.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleCheckbox: PropTypes.func.isRequired,
-  handleSlider: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(withStyles(SyncPolicies, styles));
+export default SyncPolicies;
