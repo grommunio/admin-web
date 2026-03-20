@@ -2,25 +2,30 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
-import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
+import { Theme, useTheme } from '@mui/material';
+import { useAppSelector } from '../../store';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2),
   },
-});
+}));
 
-function CPUPie(props) {
+
+function CPUPie() {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { cpuPie }  = useAppSelector(state => state.dashboard.Dashboard);
   const theme = useTheme();
-  const { classes, t, cpuPie } = props;
   const translatedLabels = cpuPie.labels.map(l => t(l));
 
   return (
@@ -103,4 +108,4 @@ CPUPie.propTypes = {
 };
 
 
-export default withTranslation()(withStyles(CPUPie, styles));
+export default CPUPie;

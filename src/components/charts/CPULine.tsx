@@ -2,27 +2,31 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
-import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
+import { Theme, useTheme } from '@mui/material';
+import { useAppSelector } from '../../store';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     width: 0,
   },
   chartTitle: {
-    margin: theme.spacing(2, 2, 2, 2),
+    margin: theme.spacing(2),
   },
-});
+}));
 
-function CPULine(props) {
+
+function CPULine() {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { cpuPercent }  = useAppSelector(state => state.dashboard.Dashboard);
   const theme = useTheme();
-  const { classes, t, cpuPercent } = props;
 
-  const formatYAxis = (value) => {
+  const formatYAxis = (value: number) => {
     return value + '%';
   };
 
@@ -94,11 +98,5 @@ function CPULine(props) {
   );
 }
 
-CPULine.propTypes = {
-  classes: PropTypes.object.isRequired,
-  cpuPercent: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-
-export default withTranslation()(withStyles(CPULine, styles));
+export default CPULine;

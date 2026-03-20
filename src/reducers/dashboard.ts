@@ -1,40 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { CPUPercent, Disk, Memory } from '@/types/dashboard';
 import {
   DASHBOARD_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { LegacyAction } from './types';
-
-type Disk = {
-  device: string;
-  filesystem: string;
-  free: number;
-  mountpoint: string;
-  percent: number;
-  total: number;
-  used: number;
-}
-
-type CPUPercent = {
-  idle: number[];
-  interrupt: number[];
-  io: number[];
-  steal: number[];
-  system: number[];
-  user: number[];
-};
-
-type Memory = {
-  used: number[];
-  free: number[];
-  buffer: number[];
-  cache: number[];
-  percent: number[];
-  total: number[];
-  available: number[];
-}
 
 export type DashboardState = {
   timer: number;

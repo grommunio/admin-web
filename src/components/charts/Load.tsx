@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { Paper, Typography } from '@mui/material';
+import React, { useCallback } from 'react';
+import { makeStyles } from 'tss-react/mui';
+import { Paper, Theme, Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
-import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../../store';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     width: 0,
@@ -21,17 +21,20 @@ const styles = theme => ({
     paddingTop: 1,
     display: 'flex',
   },
-});
+}));
 
-function Load(props) {
+
+function Load() {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { load } = useAppSelector(state => state.dashboard);
   const theme = useTheme();
-  const { classes, t, load } = props;
 
-  const formatYAxis = (value) => {
+  const formatYAxis = useCallback((value: number) => {
     if(value === 0) return '0%';
     if(value < 0.1) return value.toFixed(2) + '%';
     return value.toFixed(1) + '%';
-  };
+  }, []);
 
   return (
     <Paper className={classes.paper}>
@@ -52,8 +55,9 @@ function Load(props) {
                 columnWidth: '60%',
                 distributed: true,
                 dataLabels: {
-                  enabled: true,
-                  formatter: (v) => v + "%",
+                  total: {
+                    formatter: (v) => v + "%",
+                  },
                   orientation: "vertical",
                 },
               }
@@ -93,9 +97,9 @@ function Load(props) {
                 formatter: formatYAxis,
               },
               tickAmount: 4,
+              max: 100,
+              min: 0,
             },
-            max: 100,
-            min: 0,
             colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
           }}
           series={[{
@@ -109,11 +113,5 @@ function Load(props) {
   );
 }
 
-Load.propTypes = {
-  classes: PropTypes.object.isRequired,
-  load: PropTypes.array.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-
-export default withTranslation()(withStyles(Load, styles));
+export default Load;

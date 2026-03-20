@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
-import { useTheme } from '@emotion/react';
+import { useTranslation } from 'react-i18next';
+import { Theme, useTheme } from '@mui/material';
+import { useAppSelector } from '../../store';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     width: 0,
@@ -16,17 +17,19 @@ const styles = theme => ({
   chartTitle: {
     margin: theme.spacing(2),
   },
-});
+}));
 
-function MemoryLine(props) {
+function MemoryLine() {
+  const { classes } = useStyles();
   const theme = useTheme();
-  const { classes, t, memory } = props;
+  const { t } = useTranslation();
+  const { memory } = useAppSelector(state => state.dashboard.Dashboard);
 
-  const formatYAxis = (value) => {
+  const formatYAxis = (value: number) => {
     return (value / 1000000000).toFixed(0) + 'GB';
   };
 
-  const formatLabel = (value) => {
+  const formatLabel = (value: number) => {
     if (value > 1000000000) return (value / 1000000000).toFixed(2) + 'GB';
     if (value > 1000000) return (value / 1000000).toFixed(2) + 'MB';
     if (value > 1000) return (value / 1000).toFixed(2) + 'KB';
@@ -102,11 +105,5 @@ function MemoryLine(props) {
   );
 }
 
-MemoryLine.propTypes = {
-  classes: PropTypes.object.isRequired,
-  memory: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-
-export default withTranslation()(withStyles(MemoryLine, styles));
+export default MemoryLine;

@@ -2,23 +2,30 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
-import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 import { withTheme } from '@emotion/react';
+import { Disk } from '@/types/dashboard';
 
-const shouldComponentUpdate = (_prevProps, nextProps) => {
+
+type DisksProps = {
+  timer: number;
+  disks: Disk[];
+}
+
+const shouldComponentUpdate = (_, nextProps: DisksProps) => {
   return nextProps.timer % 10 !== 0;
 }
 
-function Disks(props) {
+function Disks({ disks }: DisksProps) {
+  const { t } = useTranslation();
+  const theme = useTheme();
 
-  const formatYAxis = (value) => {
+  const formatYAxis = (value: number) => {
     return value + '%';
   };
   
-  const { disks, t, theme } = props;
   return (
     <div style={{ flex: 1, width: 0 }}>
       <Typography style={{ margin: '8px 0 0 16px'}}>{t("Disks")}</Typography>
@@ -84,16 +91,13 @@ function Disks(props) {
           },
           tooltip: {
             y: {
-              formatter: function(value, { dataPointIndex: i }) {
+              formatter: function(_, { dataPointIndex: i }) {
                 const { percent, filesystem, device } = disks[i];
                 return percent + '% on ' + device + " (" + filesystem + ")"
               },
               title: {
                 formatter: () => "",
               }
-            },
-            style: {
-              color: '#000',
             },
           },
           colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
@@ -107,13 +111,6 @@ function Disks(props) {
     </div>
   );
 }
-
-Disks.propTypes = {
-  disks: PropTypes.array.isRequired,
-  timer: PropTypes.number,
-  t: PropTypes.func.isRequired,
-  theme: PropTypes.object.isRequired,
-};
 
 const MemorizedDisk = memo(Disks, shouldComponentUpdate);
 
