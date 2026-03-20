@@ -2,15 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { ServerZones as ServerZonesType } from '@/types/status';
 
-function UpstreamConnection(props) {
-  const { t, uri, serverZones } = props;
+type UpstreamConnectionProps = {
+  uri: string;
+  serverZones: ServerZonesType;
+}
 
-  const toArray = obj => Object.entries(obj)
+function UpstreamConnection(props: UpstreamConnectionProps) {
+  const { t } = useTranslation();
+  const { uri, serverZones } = props;
+
+  const toArray = (obj: ServerZonesType) => Object.entries(obj)
     .map(([server, values]) => ({ server, values }));
 
   return (
@@ -21,10 +27,5 @@ function UpstreamConnection(props) {
   );
 }
 
-UpstreamConnection.propTypes = {
-  uri: PropTypes.string.isRequired,
-  serverZones: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(UpstreamConnection);
+export default UpstreamConnection;

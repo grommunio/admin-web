@@ -2,16 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Paper, Typography} from '@mui/material';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Paper, Theme, Typography} from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { CallReceived, CheckCircle, Functions } from '@mui/icons-material';
+import { Connections } from '@/types/status';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateColumns: '1fr 1fr 1fr 1fr',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -48,10 +49,16 @@ const styles = theme => ({
   label: {
     color: '#777',
   },
-});
+}));
 
-const Requests = props => {
-  const { classes, t, data } = props;
+type RequestsProps = {
+  data: Connections;
+}
+
+const Requests = (props: RequestsProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { data } = props;
 
   return (
     <div className={classes.root}>
@@ -86,10 +93,5 @@ const Requests = props => {
   );
 }
 
-Requests.propTypes = {
-  classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(Requests, styles));
+export default Requests;

@@ -2,14 +2,18 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import ClientConnection from './ClientConnection';
 import UpstreamConnection from './UpstreamConnection';
 import PathConnection from './PathConnection';
 import AgentConnection from './AgentConnection';
+import { FilterZones as FilterZonesType } from '@/types/status';
 
 
-function FilterZones(props) {
+type FilterZonesProps = {
+  filterZones: FilterZonesType;
+}
+
+function FilterZones(props: FilterZonesProps) {
   const { filterZones } = props;
 
   return (
@@ -23,9 +27,5 @@ function FilterZones(props) {
     </div>
   );
 }
-
-FilterZones.propTypes = {
-  filterZones: PropTypes.object.isRequired,
-};
 
 export default FilterZones;

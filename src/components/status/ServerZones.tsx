@@ -1,19 +1,28 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import StyledTableCell from './StyledTableCell';
 import AlternatingTableRow from '../AlternatingTableRow';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { ServerZone as ServerZoneType } from '@/types/status';
 
-function ServerZones(props) {
-  const { serverZones, t } = props;
+type ServerZonesProps = {
+  serverZones: {
+    agent?: string;
+    server: string | ReactNode;
+    values: ServerZoneType;
+  }[];
+}
 
-  const formatBytes = bytes => {
-    let exp = Math.log(bytes) / Math.log(1024) | 0;
-    let res = (bytes / Math.pow(1024, exp)).toFixed(1);
+function ServerZones(props: ServerZonesProps) {
+  const { t } = useTranslation();
+  const { serverZones } = props;
+
+  const formatBytes = (bytes: number) => {
+    const exp = Math.log(bytes) / Math.log(1024) | 0;
+    const res = (bytes / Math.pow(1024, exp)).toFixed(1);
 
     return res + '' + (exp === 0 ? ' bytes' : ' ' + 'KMGTPEZY'[exp - 1] + 'B');
   };
@@ -71,9 +80,4 @@ function ServerZones(props) {
   );
 }
 
-ServerZones.propTypes = {
-  serverZones: PropTypes.array.isRequired,
-  t: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(ServerZones);
+export default ServerZones;

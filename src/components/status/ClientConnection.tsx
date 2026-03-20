@@ -2,15 +2,22 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { ServerZones as ServerZonesType } from '@/types/status';
 
-function ClientConnection(props) {
-  const { t, uri, serverZones } = props;
 
-  const toSortedArray = obj => Object.entries(obj)
+type ClientConnectionProps = {
+  uri: string;
+  serverZones: ServerZonesType;
+}
+
+function ClientConnection(props: ClientConnectionProps) {
+  const { t } = useTranslation();
+  const { uri, serverZones } = props;
+
+  const toSortedArray = (obj: ServerZonesType) => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => {
       const num1 = Number(a.server.split(".").map((num) => (`000${num}`).slice(-3) ).join(""));
@@ -28,10 +35,5 @@ function ClientConnection(props) {
   );
 }
 
-ClientConnection.propTypes = {
-  uri: PropTypes.string.isRequired,
-  serverZones: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(ClientConnection);
+export default ClientConnection;

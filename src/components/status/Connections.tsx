@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Paper, Typography} from '@mui/material';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { Paper, Theme, Typography} from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Create, HourglassEmpty, Router, Scanner } from '@mui/icons-material';
+import { Connections as ConnectionsType } from '@/types/status';
+import { makeStyles } from 'tss-react/mui';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -48,10 +49,16 @@ const styles = theme => ({
   label: {
     color: '#777',
   },
-});
+}));
 
-const Connections = props => {
-  const { classes, t, data } = props;
+type ConnectionsProps = {
+  data: ConnectionsType;
+}
+
+const Connections = (props: ConnectionsProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { data } = props;
 
   return (
     <div className={classes.root}>
@@ -95,10 +102,4 @@ const Connections = props => {
   );
 }
 
-Connections.propTypes = {
-  classes: PropTypes.object.isRequired,
-  data: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(withStyles(Connections, styles));
+export default Connections;

@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import ServerZones from './ServerZones';
 import { Typography } from '@mui/material';
 import windowsLogo from '../../res/windows.svg';
@@ -13,11 +12,17 @@ import bsd from '../../res/bsd.svg';
 import android from '../../res/android.svg';
 import { capitalizeFirstLetter } from '../../utils';
 import { HelpOutline } from '@mui/icons-material';
+import { ServerZones as ServerZonesType } from '@/types/status';
 
-function AgentConnection(props) {
+
+type AgentConnectionProps = {
+  serverZones: ServerZonesType;
+}
+
+function AgentConnection(props: AgentConnectionProps) {
   const { serverZones } = props;
 
-  const getIcon = server => {
+  const getIcon = (server: string) => {
     switch(server) {
     case 'windows': return <img src={windowsLogo} width="16" height="16" alt=""/>;
     case 'ios': return <img src={macos} width="16" height="16" alt=""/>;
@@ -30,7 +35,7 @@ function AgentConnection(props) {
     }
   };
 
-  const toArray = obj => Object.entries(obj)
+  const toArray = (obj: ServerZonesType) => Object.entries(obj)
     .map(([agent, values]) => ({
       agent,
       server: <Typography>
@@ -48,8 +53,5 @@ function AgentConnection(props) {
   );
 }
 
-AgentConnection.propTypes = {
-  serverZones: PropTypes.object.isRequired,
-};
 
 export default AgentConnection;
