@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import DefaultDavDialog from './DefaultDavDialog';
+import { DNSDialogProps } from './types';
 
 
-function DavTxt({ onClose, dnsCheck={}, domain={} }) {
+function DavTxt({ onClose, dnsCheck, domain }: DNSDialogProps) {
   const domainname = domain.domainname || "example.at";
   return (
     <DefaultDavDialog
@@ -28,10 +28,5 @@ _carddav._tcp.${domainname}.    1    IN    TXT    "path=/dav"`}
   );
 }
 
-DavTxt.propTypes = {
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
 export default DavTxt;

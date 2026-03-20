@@ -2,35 +2,30 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import DefaultDNSDialog from './DefaultDNSDialog';
+import { DNSDialogProps } from './types';
 
 
-function Autoconfig({ onClose, dnsCheck={}, domain={} }) {
+function Autodiscover({ onClose, dnsCheck, domain }: DNSDialogProps) {
   const mxDomain = dnsCheck.mxRecords.mxDomain?.length > 1 ? dnsCheck.mxRecords.mxDomain : ("mail." + domain.domainname + ".");
   return (
     <DefaultDNSDialog
       onClose={onClose}
       dnsCheck={dnsCheck}
-      label="Autoconfig"
-      field='autoconfig'
-      subtitle="autoconfig_expl"
+      label="Autodiscover"
+      field='autodiscover'
+      subtitle="autodiscover_expl"
       example={<>
         <pre>
           {`${mxDomain}    1    IN    A    ${dnsCheck.externalIp}`}
         </pre>
         <pre>
-          {`autoconfig.${domain.domainname || "example.at"}.    1    IN    CNAME    ${mxDomain}`}
+          {`autodiscover.${domain.domainname || "example.at"}.    1    IN    CNAME    ${mxDomain}`}
         </pre>
       </>}
     />
   );
 }
 
-Autoconfig.propTypes = {
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
-export default Autoconfig;
+export default Autodiscover;

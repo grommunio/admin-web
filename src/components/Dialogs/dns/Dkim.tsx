@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Dialog, DialogContent, DialogTitle, Divider, Theme, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { DNSDialogProps } from './types';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   divider: {
     margin: theme.spacing(2, 0, 1, 0),
   },
@@ -18,9 +18,11 @@ const styles = theme => ({
   res: {
     wordWrap: 'break-word',
   }
-});
+}));
 
-function Dkim({ classes, t, onClose, dnsCheck={}, domain }) {
+function Dkim({ onClose, dnsCheck, domain }: DNSDialogProps) {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
       <DialogTitle>{t("DKIM")}</DialogTitle>
@@ -38,12 +40,5 @@ function Dkim({ classes, t, onClose, dnsCheck={}, domain }) {
   );
 }
 
-Dkim.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
-export default withTranslation()(withStyles(Dkim, styles));
+export default Dkim;

@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import DefaultDNSDialog from './DefaultDNSDialog';
+import { DNSDialogProps } from './types';
 
 
-function Submission({ onClose, dnsCheck={}, domain={} }) {
+function Submission({ onClose, dnsCheck, domain }: DNSDialogProps) {
   const mxDomain = dnsCheck.mxRecords.mxDomain?.length > 1 ? dnsCheck.mxRecords.mxDomain : ("mail." + domain.domainname + ".");
   return <DefaultDNSDialog
     onClose={onClose}
@@ -23,14 +23,8 @@ function Submission({ onClose, dnsCheck={}, domain={} }) {
         {`_submission._tcp.${domain.domainname || "example.at"}.    1    IN    SRV    0 0 587 ${mxDomain}`}
       </pre>
     </>}
-    domain={domain}
   />;
 }
 
-Submission.propTypes = {
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object.isRequired,
-};
 
 export default Submission;

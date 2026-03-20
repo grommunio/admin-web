@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import DefaultDavDialog from './DefaultDavDialog';
+import { DNSDialogProps } from './types';
 
 
-function Imap({ onClose, dnsCheck={}, domain }) {
+function Imap({ onClose, dnsCheck, domain }: DNSDialogProps) {
   const mxDomain = dnsCheck.mxRecords.mxDomain?.length > 1 ? dnsCheck.mxRecords.mxDomain : ("mail." + domain.domainname + ".");
   return (
     <DefaultDavDialog
@@ -32,10 +32,5 @@ _imap._tcp.${domain.domainname || "example.at"}.     1    IN    SRV    0 0 143 $
   );
 }
 
-Imap.propTypes = {
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
 export default Imap;

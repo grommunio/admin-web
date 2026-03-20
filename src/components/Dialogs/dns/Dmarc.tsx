@@ -2,22 +2,25 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Dialog, DialogContent, DialogTitle, Divider, Theme, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { DNSDialogProps } from './types';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   divider: {
     margin: theme.spacing(2, 0, 1, 0),
   },
   result: {
     marginBottom: 16,
   },
-});
+}));
 
-function Dmarc({ classes, t, onClose, dnsCheck={}, domain={domain} }) {
+function Dmarc({ onClose, dnsCheck, domain }: DNSDialogProps) {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
       <DialogTitle>{t("DMARC")}</DialogTitle>
@@ -35,12 +38,5 @@ function Dmarc({ classes, t, onClose, dnsCheck={}, domain={domain} }) {
   );
 }
 
-Dmarc.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
-export default withTranslation()(withStyles(Dmarc, styles));
+export default Dmarc;

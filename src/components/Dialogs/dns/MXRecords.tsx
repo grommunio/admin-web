@@ -2,14 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Dialog, DialogContent, DialogTitle, Divider, Theme, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { ArrowForward } from '@mui/icons-material';
+import { DNSDialogProps } from './types';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   divider: {
     margin: theme.spacing(2, 0, 1, 0),
   },
@@ -22,9 +22,11 @@ const styles = theme => ({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-});
+}));
 
-function MXRecords({ classes, t, onClose, dnsCheck={}, domain }) {
+function MXRecords({ onClose, dnsCheck, domain }: DNSDialogProps) {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   const { internalDNS = "", externalDNS = "", mxDomain = "", reverseLookup = "" } = dnsCheck.mxRecords || {};
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
@@ -62,12 +64,5 @@ function MXRecords({ classes, t, onClose, dnsCheck={}, domain }) {
   );
 }
 
-MXRecords.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-  domain: PropTypes.object,
-};
 
-export default withTranslation()(withStyles(MXRecords, styles));
+export default MXRecords;

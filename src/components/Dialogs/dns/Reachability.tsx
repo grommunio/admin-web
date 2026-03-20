@@ -2,19 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Dialog, DialogContent, DialogTitle, Divider, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Dialog, DialogContent, DialogTitle, Divider, Theme, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { DNSDialogProps } from './types';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   divider: {
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(2, 0, 1, 0),
   },
-});
+}));
 
-function Reachability({ classes, t, onClose, dnsCheck={} }) {
+function Reachability({ onClose, dnsCheck }: DNSDialogProps) {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   return (
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
       <DialogTitle>{t("Reachability")}</DialogTitle>
@@ -29,11 +31,5 @@ function Reachability({ classes, t, onClose, dnsCheck={} }) {
   );
 }
 
-Reachability.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  onClose: PropTypes.func,
-  dnsCheck: PropTypes.object,
-};
 
-export default withTranslation()(withStyles(Reachability, styles));
+export default Reachability;
