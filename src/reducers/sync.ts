@@ -5,12 +5,31 @@ import {
   SYNC_DATA_RECEIVED,
 } from '../actions/types';
 
-const defaultState = {
+type Sync = {
+  devtype: string;
+  devagent: string;
+  diff: string;
+  pid: string;
+  ip: string;
+  user: string;
+  command: string;
+  devid: string;
+  asversion: string;
+  addinfo: string;
+  push: boolean;
+}
+
+type SyncState = {
+  Sync: Sync[];
+  count: number;
+}
+
+const defaultState: SyncState = {
   count: 0,
   Sync: [],
 };
 
-function syncReducer(state = defaultState, action) {
+function syncReducer(state: SyncState = defaultState, action) {
   switch (action.type) {
   case SYNC_DATA_RECEIVED:
     return {

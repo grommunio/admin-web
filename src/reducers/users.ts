@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { BaseUser, UserListItem } from '@/types/users';
 import {
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
@@ -14,7 +15,18 @@ import {
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
-const defaultState = {
+type UsersState = {
+  count: number;
+  Users: UserListItem[];
+  Orphaned: BaseUser[]; // TODO: Might require new type
+  Sync: string[];
+  match: string;
+  showDeactivated: boolean;
+  mode: number;
+  type: number;
+}
+
+const defaultState: UsersState = {
   count: 0,
   Users: [],
   Orphaned: [],
@@ -26,14 +38,14 @@ const defaultState = {
   type: 0,
 };
 
-function deleteUser(arr, id) {
-  let copy = [...arr];
+function deleteUser(arr: UserListItem[], id: number) {
+  const copy = [...arr];
   copy.splice(copy.findIndex(item => item.ID === id), 1);
   return copy;
 }
 
-function deleteOrphanedUsers(arr, users) {
-  let copy = [...arr];
+function deleteOrphanedUsers(arr: (BaseUser | UserListItem)[], users: BaseUser[]) {
+  const copy = [...arr];
   users.forEach(user => {
     copy.splice(copy.findIndex(item => item.ID === user.ID), 1);
   });

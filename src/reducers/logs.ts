@@ -2,20 +2,24 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import {
-  SERVICES_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
+  LOGS_DATA_RECEIVED,
 } from '../actions/types';
 
-const defaultState = {
-  Services: [],
+type LogsState = {
+  Logs: string[];
+}
+
+const defaultState: LogsState = {
+  Logs: [],
 };
 
-function domainsReducer(state = defaultState, action) {
+function membersReducer(state: LogsState = defaultState, action) {
   switch (action.type) {
-  case SERVICES_DATA_RECEIVED:
+  case LOGS_DATA_RECEIVED:
     return {
       ...state,
-      Services: action.data.services,
+      Logs: action.data.data,
     };
 
   case AUTH_AUTHENTICATED:
@@ -30,4 +34,4 @@ function domainsReducer(state = defaultState, action) {
   }
 }
 
-export default domainsReducer;
+export default membersReducer;

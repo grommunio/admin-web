@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { Permission, RoleListItem } from '@/types/roles';
 import {
   ROLES_DATA_RECEIVED,
   PERMISSIONS_DATA_RECEIVED,
@@ -11,13 +12,19 @@ import {
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
-const defaultState = {
+type RolesState = {
+  Roles: RoleListItem[];
+  Permissions: Permission[];
+  count: number;
+}
+
+const defaultState: RolesState = {
   Roles: [],
   Permissions: [],
   count: 0,
 };
 
-function rolesReducer(state = defaultState, action) {
+function rolesReducer(state: RolesState = defaultState, action) {
   switch (action.type) {
   case ROLES_DATA_RECEIVED:
     return {

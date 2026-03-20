@@ -51,13 +51,15 @@ export type User = BaseUser & {
   privFiles: boolean;
   privVideo: boolean;
   privWeb: boolean;
-  properties: UserProperties;
+  properties: Partial<UserProperties>;
   publicAddress: boolean;
   roles: BaseRole[];
   smtp: boolean;
   status: number;
   syncPolicy: Record<string, unknown>; // TODO: Create sync policy type
 };
+
+export type UserListItem = Pick<User, 'ID' | 'domainID' | 'ldapID' | 'properties' | 'status' | 'username'>
 
 export type NewUser = Pick<User,
   'chat' |
@@ -93,3 +95,10 @@ export type OofSettings = {
   tab: number;
   snackbar: string;
 };
+
+export type Owner = {
+  displayName: string;
+  memberID: number;
+  permissions: number;
+  username: string;
+}

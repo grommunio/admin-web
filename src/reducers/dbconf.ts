@@ -9,7 +9,16 @@ import {
 } from '../actions/types';
 import { addItem } from '../utils';
 
-const defaultState = {
+type DBConfState = {
+  services: string[];
+  commands: {
+    key: string[];
+    file: string[];
+    service: string[];
+  }
+}
+
+const defaultState: DBConfState = {
   services: [],
   commands: {
     key: [],
@@ -18,7 +27,19 @@ const defaultState = {
   },
 };
 
-function dbconfReducer(state = defaultState, action) {
+type DBConfAction = {
+  type: string;
+  service?: string;
+  services?: string[];
+  commands?: {
+    key: string[];
+    file: string[];
+    service: string[];
+  };
+  authenticated?: boolean;
+}
+
+function dbconfReducer(state: DBConfState = defaultState, action: DBConfAction) {
   switch (action.type) {
   case DBCONF_DATA_RECEIVED:
     return {

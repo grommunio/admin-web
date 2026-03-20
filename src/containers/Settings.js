@@ -5,7 +5,7 @@ import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import { withTranslation } from 'react-i18next';
-import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2, FormHelperText } from '@mui/material';
+import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2 } from '@mui/material';
 import { connect } from 'react-redux';
 import { changeSettings } from '../actions/settings';
 import TableViewContainer from '../components/TableViewContainer';
@@ -65,12 +65,7 @@ const Settings = props => {
     context.setColorTheme(colorTheme);
   }
 
-  const handleSnowflakesChange = (e) => {
-    changeSettings("snowflakes", e.target.checked);
-    localStorage.setItem("snowflakes", e.target.checked);
-  }
-
-  const { classes, t, serverConfig, settings, changeSettings } = props;
+  const { classes, t, serverConfig } = props;
   const { snackbar } = state;
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
@@ -94,15 +89,6 @@ const Settings = props => {
               onChange={handleDarkModeChange}
               color="primary"
             />
-          </FormControl>
-          <FormControl className={classes.input}>
-            <FormLabel component="legend">{t('Snowflakes')}</FormLabel>
-            <Switch
-              checked={settings.snowflakes}
-              onChange={handleSnowflakesChange}
-              color="primary"
-            />
-            <FormHelperText>Enable snowflakes during holiday season</FormHelperText>
           </FormControl>
           <TextField
             label={t("Theme")}

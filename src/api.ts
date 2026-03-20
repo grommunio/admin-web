@@ -75,7 +75,7 @@ async function patch(path: string, data: Record<string, any>) {
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': csrf,
-    },
+    } as HeadersInit,
   }).then(handleErrors);
 }
 
@@ -90,7 +90,7 @@ async function post(path: string, data?: Record<string, any>) {
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': csrf,
-    },
+    } as HeadersInit,
   }).then(handleErrors);
 }
 
@@ -105,7 +105,7 @@ async function put(path: string, data?: Record<string, any>) {
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-TOKEN': csrf,
-    },
+    } as HeadersInit,
   }).then(handleErrors);
 }
 
@@ -118,7 +118,7 @@ async function yeet(path: string) {
     method: 'DELETE',
     headers: {
       'X-CSRF-TOKEN': csrf,
-    },
+    } as HeadersInit,
   }).then(handleErrors);
 }
 
@@ -132,7 +132,7 @@ async function uploadPut(path: string, data: BodyInit) {
     body: data,
     headers: {
       'X-CSRF-TOKEN': csrf,
-    },
+    } as HeadersInit,
   }).then(handleErrors);
 }
 

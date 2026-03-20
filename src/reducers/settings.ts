@@ -5,12 +5,15 @@ import {
   CHANGE_SETTINGS,
 } from '../actions/types';
 
-const defaultState = {
+type SettingsState = {
+  language: string;
+}
+
+const defaultState: SettingsState = {
   language: 'en-US',
-  snowflakes: localStorage.getItem("snowflakes") ? localStorage.getItem("snowflakes") === "true" : true,
 };
 
-function settingsReducer(state = defaultState, action) {
+function settingsReducer(state: SettingsState = defaultState, action) {
   switch(action.type) {
   case CHANGE_SETTINGS:
     return {

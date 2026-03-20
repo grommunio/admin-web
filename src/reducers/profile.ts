@@ -1,19 +1,27 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { User } from '@/types/users';
 import {
   PROFILE_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 
-const defaultState = {
+type ProfileState = {
+  Profile: {
+    capabilities: string[];
+    user: User;
+  }
+}
+
+const defaultState: ProfileState = {
   Profile: {
     capabilities: [],
-    user: {},
+    user: {} as User,
   },
 };
 
-function profileReducer(state = defaultState, action) {
+function profileReducer(state: ProfileState = defaultState, action) {
   switch (action.type) {
   case PROFILE_DATA_RECEIVED:
     return {

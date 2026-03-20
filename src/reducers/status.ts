@@ -2,21 +2,26 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import {
+  VHOST_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
-  FORWARDS_DATA_RECEIVED,
 } from '../actions/types';
 
-const defaultState = {
-  Forwards: [],
+type StatusState = {
+  vhosts: string[];
+}
+
+const defaultState: StatusState = {
+  vhosts: [],
 };
 
-function forwardsReducer(state = defaultState, action) {
+function statusReducer(state: StatusState = defaultState, action) {
   switch (action.type) {
-  case FORWARDS_DATA_RECEIVED:
+  case VHOST_DATA_RECEIVED:
     return {
       ...state,
-      Forwards: action.data.data,
+      vhosts: action.data.data,
     };
+
 
   case AUTH_AUTHENTICATED:
     return action.authenticated ? {
@@ -30,4 +35,4 @@ function forwardsReducer(state = defaultState, action) {
   }
 }
 
-export default forwardsReducer;
+export default statusReducer;

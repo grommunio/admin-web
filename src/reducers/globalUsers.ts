@@ -5,7 +5,14 @@ import {
   GLOBAL_USERS_FILTER_STATE
 } from '../actions/types';
 
-const defaultState = {
+type GlobalUsersState = {
+  match: string;
+  showDeactivated: boolean;
+  mode: number;
+  type: number;
+}
+
+const defaultState: GlobalUsersState = {
   match: "",
   showDeactivated: false,
   mode: 0,
@@ -14,7 +21,7 @@ const defaultState = {
 
 
 // Only used for filterstate
-function globalUsersReducer(state=defaultState, action) {
+function globalUsersReducer(state: GlobalUsersState = defaultState, action) {
   switch(action.type) {
 
   case GLOBAL_USERS_FILTER_STATE:

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { GroupListItem } from '@/types/groups';
 import {
   AUTH_AUTHENTICATED,
   GROUPS_DATA_RECEIVED,
@@ -9,12 +10,17 @@ import {
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
-const defaultState = {
+type GroupsState = {
+  Groups: GroupListItem[];
+  count: number;
+}
+
+const defaultState: GroupsState = {
   Groups: [],
   count: 0,
 };
 
-function groupsReducer(state = defaultState, action) {
+function groupsReducer(state: GroupsState = defaultState, action) {
   switch (action.type) {
   case GROUPS_DATA_RECEIVED:
     return {

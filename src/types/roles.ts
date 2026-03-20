@@ -1,7 +1,7 @@
 import { PartialWithRequired } from "./common";
 import { BaseUser } from "./users";
 
-type Permission =
+export type Permission =
   "SystemAdmin" |
   "ResetPasswd" |
   "DomainAdminRO" |
@@ -28,6 +28,6 @@ export type Role = BaseRole & {
   users: BaseUser[];
 }
 
-export type DomainListItem = Omit<Role, 'domains'>;
+export type RoleListItem = Omit<Role, 'domains'>;
 export type NewRole = Omit<Role, 'ID'>;
 export type UpdateRole = PartialWithRequired<Role, "ID">;

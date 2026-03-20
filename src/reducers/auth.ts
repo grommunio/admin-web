@@ -7,14 +7,29 @@ import {
   TOKEN_REFRESH,
 } from '../actions/types';
 
-const defaultState = {
+type AuthState = {
+  error: boolean;
+  authenticated: boolean;
+  capabilities: string[];
+  csrf: string;
+}
+
+const defaultState: AuthState = {
   error: false,
   authenticated: false,
   capabilities: [],
   csrf: '',
 };
 
-function authReducer(state = defaultState, action) {
+export type AuthAction = {
+  type: string;
+  authenticated?: false;
+  capabilities?: string[];
+  csrf?: string;
+  error?: boolean;
+}
+
+function authReducer(state: AuthState = defaultState, action: AuthAction) {
   switch (action.type) {
 
   case AUTH_AUTHENTICATED:

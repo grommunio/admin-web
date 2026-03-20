@@ -1,28 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { Folder } from '@/types/folders';
 import {
-  FOLDERS_DATA_RECEIVED,
   FOLDER_DATA_ADD,
   FOLDER_DATA_DELETE,
   OWNERS_DATA_RECEIVED,
   OWNER_DATA_ADD,
-  FOLDERS_NEXT_SET,
   AUTH_AUTHENTICATED,
   OWNER_DATA_DELETE,
   FOLDERS_TREE_RECEIVED,
 } from '../actions/types';
-import { defaultFetchLimit, IPM_SUBTREE_ID } from '../constants';
-import { addItem, append } from '../utils';
+import { IPM_SUBTREE_ID } from '../constants';
+import { addItem } from '../utils';
+import { Owner } from '@/types/users';
 
-const defaultState = {
+
+type FoldersState = {
+  moreDataAvailable: boolean;
+  Tree: Folder;
+  Owners: Owner[];
+};
+
+
+const defaultState: FoldersState = {
   moreDataAvailable: true,
-  Folders: [],
-  Tree: {},
+  Tree: {} as Folder,
   Owners: [],
 };
 
-function addTreeItem(node, folder, parentID) {
+function addTreeItem(node: Folder, folder: Folder, parentID: string) {
   if(node.folderid === parentID) {
     if(node.children) {
       node.children.push({
@@ -43,12 +50,12 @@ function addTreeItem(node, folder, parentID) {
   return node;
 }
 
-function removeFolder(tree, folderid) {
+function removeFolder(tree: Folder, folderid: string) {
   cutOffSubtree(tree, folderid);
   return structuredClone(tree);
 }
 
-function cutOffSubtree(node, folderid) {
+function cutOffSubtree(node: Folder, folderid: string) {
   const children = [...(node.children || [])]
   for(let i = 0; i < children.length; i++) {
     if(node.children[i].folderid === folderid) {
@@ -60,39 +67,24 @@ function cutOffSubtree(node, folderid) {
   return false;
 }
 
-function foldersReducer(state = defaultState, action) {
+function foldersReducer(state: FoldersState = defaultState, action) {
   switch (action.type) {
-  case FOLDERS_DATA_RECEIVED:
-    return {
-      ...state,
-      Folders: action.data.data,
-      moreDataAvailable: action.data.data.length == defaultFetchLimit,
-    };
 
   case FOLDERS_TREE_RECEIVED:
     return {
       ...state,
       Tree: action.data,
     };
-    
-  case FOLDERS_NEXT_SET:
-    return {
-      ...state,
-      Folders: append(state.Folders, action.data.data),
-      moreDataAvailable: action.data.data.length == defaultFetchLimit,
-    };
 
   case FOLDER_DATA_ADD:
     return {
       ...state,
-      Folders: addItem(state.Folders, action.data),
       Tree: addTreeItem(structuredClone(state.Tree), action.data, action.parentID),
     };
 
   case FOLDER_DATA_DELETE:
     return {
       ...state,
-      Folders: state.Folders.filter(folder => folder.folderid !== action.id),
       Tree: removeFolder(structuredClone(state.Tree), action.id),
     };
 

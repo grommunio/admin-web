@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { OrgListItem } from '@/types/orgs';
 import {
   AUTH_AUTHENTICATED,
   ORGS_DATA_RECEIVED,
@@ -9,12 +10,17 @@ import {
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
-const defaultState = {
+type OrgsState = {
+  Orgs: OrgListItem[];
+  count: number;
+}
+
+const defaultState: OrgsState = {
   Orgs: [],
   count: 0,
 };
 
-function orgsReducer(state = defaultState, action) {
+function orgsReducer(state: OrgsState = defaultState, action) {
   switch (action.type) {
   case ORGS_DATA_RECEIVED:
     return {

@@ -5,8 +5,19 @@ import {
   ANTISPAM_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
+import { LegacyAction } from './types';
 
-const defaultState = {
+type AntispamState = {
+  statistics: {
+    scanned: number;
+    learned: number;
+    spamCount: number;
+    hamCount: number;
+    bytesAllocated: number;
+  }
+}
+
+const defaultState: AntispamState = {
   statistics: {
     scanned: 0,
     learned: 0,
@@ -16,7 +27,7 @@ const defaultState = {
   },
 };
 
-function antispamReducer(state = defaultState, action) {
+function antispamReducer(state = defaultState, action: LegacyAction) {
   switch (action.type) {
   case ANTISPAM_DATA_RECEIVED:
     return {

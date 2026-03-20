@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { DomainListItem } from '@/types/domains';
 import {
   DOMAIN_DATA_RECEIVED,
   DOMAIN_DATA_ADD,
@@ -9,13 +10,19 @@ import {
   AUTH_AUTHENTICATED,
 } from '../actions/types';
 import { addItem, append } from '../utils';
+import { LegacyAction } from './types';
 
-const defaultState = {
+type DomainsState = {
+  count: number;
+  Domains: DomainListItem[]
+}
+
+const defaultState: DomainsState = {
   count: 0,
   Domains: [],
 };
 
-function deactivateDomain(arr, id) {
+function deactivateDomain(arr: DomainListItem[], id: number) {
   // Direct array access makes redux throw up, so use a mapper instead
   const newArray = arr.map(domain => ({
     ...domain,
@@ -25,7 +32,12 @@ function deactivateDomain(arr, id) {
   return newArray;
 }
 
-function domainsReducer(state = defaultState, action) {
+type DomainsAction = LegacyAction & {
+  params?: Record<string, string | number | boolean>;
+  id: number;
+}
+
+function domainsReducer(state: DomainsState = defaultState, action: DomainsAction) {
   switch (action.type) {
   case DOMAIN_DATA_RECEIVED:
     return {

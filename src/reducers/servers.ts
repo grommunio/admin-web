@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { ServerListItem, ServerPolicy } from '@/types/servers';
 import {
   AUTH_AUTHENTICATED,
   SERVERS_DATA_ADD,
@@ -11,7 +12,17 @@ import {
 } from '../actions/types';
 import { addItem, append } from '../utils';
 
-const defaultState = {
+type ServersState = {
+  Servers: ServerListItem[];
+  DnsCheck: {
+    host: any; // Define properly
+    ext: any; // Define properly
+  }
+  policy: ServerPolicy;
+  count: number;
+}
+
+const defaultState: ServersState = {
   Servers: [],
   DnsCheck: {
     host: {},
@@ -21,7 +32,7 @@ const defaultState = {
   count: 0,
 };
 
-function serversReducer(state = defaultState, action) {
+function serversReducer(state: ServersState = defaultState, action) {
   switch (action.type) {
   case SERVERS_DATA_RECEIVED:
     return {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { DomainListItem } from '@/types/domains';
 import {
   DRAWER_EXPAND,
   DRAWER_OPEN,
@@ -13,7 +14,15 @@ import {
 } from '../actions/types';
 import { addItem } from '../utils';
 
-const defaultState = {
+type DrawerState = {
+  selectedDomain: number;
+  Domains: DomainListItem[];
+  loading: boolean;
+  expanded: boolean;
+  open: boolean;
+}
+
+const defaultState: DrawerState = {
   selectedDomain: -1,
   Domains: [],
   loading: true,
@@ -21,7 +30,7 @@ const defaultState = {
   open: false,
 };
 
-function editDomain(arr, item) {
+function editDomain(arr: DomainListItem[], item: DomainListItem) {
   const domains = [...arr];
   const idx = domains.findIndex(d => d.ID === item.ID);
   if (idx === -1) return;
@@ -29,7 +38,7 @@ function editDomain(arr, item) {
   return domains;
 }
 
-function drawerReducer(state = defaultState, action) {
+function drawerReducer(state: DrawerState = defaultState, action) {
   switch (action.type) {
   case DRAWER_OPEN:
     return {

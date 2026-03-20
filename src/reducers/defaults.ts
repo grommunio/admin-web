@@ -5,15 +5,23 @@ import {
   AUTH_AUTHENTICATED,
   CREATE_PARAMS_DATA_RECEIVED,
 } from '../actions/types';
+import { LegacyAction } from './types';
 
-const defaultState = {
+type DefaultState = {
+  CreateParams: {
+    user: Record<string, any>;
+    domain: Record<string, any>;
+  }
+}
+
+const defaultState: DefaultState = {
   CreateParams: {
     user: {},
     domain: {},
   },
 };
 
-function defaultsReducer(state = defaultState, action) {
+function defaultsReducer(state: DefaultState = defaultState, action: LegacyAction) {
   switch (action.type) {
   case CREATE_PARAMS_DATA_RECEIVED:
     return {

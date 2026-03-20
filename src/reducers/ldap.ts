@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { UserListItem } from '@/types/users';
 import {
   AUTH_AUTHENTICATED,
   LDAP_DATA_RECEIVED,
   LDAP_DATA_CLEAR,
 } from '../actions/types';
 
-const defaultState = {
+type LdapState = {
+  Users: UserListItem[];
+}
+
+const defaultState: LdapState = {
   Users: [],
 };
 
-function ldapReducer(state=defaultState, action) {
+function ldapReducer(state: LdapState = defaultState, action) {
   switch(action.type) { 
   case LDAP_DATA_RECEIVED:
     return {

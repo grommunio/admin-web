@@ -3,7 +3,24 @@
 
 import { SERVER_CONFIG_ERROR, SERVER_CONFIG_SET } from "../actions/types";
 
-const defaultState = {
+type ConfigState = {
+  devMode: boolean;
+  loadAntispamData: boolean;
+  mailWebAddress: string;
+  chatWebAddress: string;
+  videoWebAddress: string;
+  fileWebAddress: string;
+  archiveWebAddress: string;
+  rspamdWebAddress: string;
+  defaultDarkMode: boolean;
+  defaultTheme: string;
+  tokenRefreshInterval: number;
+  customImages: Record<string, unknown>;
+  searchAttributes: string[];
+  error: boolean;
+}
+
+const defaultState: ConfigState = {
   devMode: false,
   loadAntispamData: true,
   mailWebAddress: '',
@@ -16,13 +33,6 @@ const defaultState = {
   defaultTheme: 'grommunio',
   tokenRefreshInterval: 86400,
   customImages: {
-    //localhost: {
-    //  logo: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  logoLight: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  icon: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  background: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //  backgroundDark: 'https://pbs.twimg.com/media/Edv4Ne2XYAA-Vem.jpg',
-    //},
   },
   searchAttributes: [
     'assistant',
@@ -64,7 +74,13 @@ const defaultState = {
   error: false,
 };
 
-function configReducer(state = defaultState, action) {
+type ConfigAction = {
+  type: string;
+  data?: any;
+  error?: boolean,
+}
+
+function configReducer(state: ConfigState = defaultState, action: ConfigAction) {
   switch(action.type) {
   case SERVER_CONFIG_SET:
     return {
@@ -74,7 +90,7 @@ function configReducer(state = defaultState, action) {
   case SERVER_CONFIG_ERROR:
     return {
       ...state,
-      error: action.error,
+      error: action.error || false,
     };
 
   default:

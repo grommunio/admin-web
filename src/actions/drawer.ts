@@ -8,10 +8,11 @@ import {
   DOMAIN_DATA_EDIT
 } from './types';
 import { domain } from '../api';
-import { defaultListHandler } from './handlers';
+import { defaultListHandler2 } from './handlers';
 
-export function fetchDrawerDomain(...endpointParams: any[]) {
-  return defaultListHandler(domain, DOMAIN_DATA_EDIT,...endpointParams);
+
+export function fetchDrawerDomain(domainID: number) {
+  return defaultListHandler2(domain, DOMAIN_DATA_EDIT, domainID);
 }
 
 export function setDrawerExpansion() {

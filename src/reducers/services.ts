@@ -1,21 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { Service } from '@/types/dashboard';
 import {
+  SERVICES_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
-  LICENSE_DATA_RECEIVED,
 } from '../actions/types';
 
+type ServicesState = {
+  Services: Service[];
+}
 
-const defaultState = {
+const defaultState: ServicesState = {
+  Services: [],
 };
 
-function licenseReducer(state = defaultState, action) {
+function domainsReducer(state: ServicesState = defaultState, action) {
   switch (action.type) {
-  case LICENSE_DATA_RECEIVED:
+  case SERVICES_DATA_RECEIVED:
     return {
       ...state,
-      ...action.data,
+      Services: action.data.services,
     };
 
   case AUTH_AUTHENTICATED:
@@ -30,4 +35,4 @@ function licenseReducer(state = defaultState, action) {
   }
 }
 
-export default licenseReducer;
+export default domainsReducer;

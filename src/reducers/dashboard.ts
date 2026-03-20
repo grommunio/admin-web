@@ -5,8 +5,57 @@ import {
   DASHBOARD_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
+import { LegacyAction } from './types';
 
-const defaultState = {
+type Disk = {
+  device: string;
+  filesystem: string;
+  free: number;
+  mountpoint: string;
+  percent: number;
+  total: number;
+  used: number;
+}
+
+type CPUPercent = {
+  idle: number[];
+  interrupt: number[];
+  io: number[];
+  steal: number[];
+  system: number[];
+  user: number[];
+};
+
+type Memory = {
+  used: number[];
+  free: number[];
+  buffer: number[];
+  cache: number[];
+  percent: number[];
+  total: number[];
+  available: number[];
+}
+
+export type DashboardState = {
+  timer: number;
+  Dashboard: {
+    cpuPercent: CPUPercent;
+    cpuPie: {
+      labels: string[];
+      values: number[];
+    };
+    memory: Memory;
+    memoryPie: {
+      labels: string[];
+      values: number[];
+    };
+    booted: string;
+  };
+  disks: Disk[];
+  load: number[];
+};
+
+const defaultState: DashboardState = {
   timer: -1,
   Dashboard: {
     cpuPercent: {
@@ -40,8 +89,8 @@ const defaultState = {
   load: [],
 };
 
-function addUsageData(currentState, values) {
-  const state = structuredClone({...currentState});
+function addUsageData<T extends Record<string, number[]>>(currentState: T, values: Record<string, number>): T {
+  const state: T = structuredClone({...currentState});
   Object.keys(values).forEach(key => {
     const usage = state[key];
     usage.push(values[key]);
@@ -50,7 +99,7 @@ function addUsageData(currentState, values) {
   return state;
 }
 
-function getMemoryPieValues(data) {
+function getMemoryPieValues(data: { used: number, buffer: number, cache: number, free: number }) {
   return [
     data.used,
     data.buffer,
@@ -59,7 +108,7 @@ function getMemoryPieValues(data) {
   ];
 }
 
-function dashboardReducer(state = defaultState, action) {
+function dashboardReducer(state: DashboardState = defaultState, action: LegacyAction) {
   const timer = state.timer;
   switch (action.type) {
 
