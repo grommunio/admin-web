@@ -28,7 +28,7 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CheckLdapUsersParams, LdapDumpParams } from '@/types/ldap';
-import { DeleteOrphanedUsersType, DeleteUserParams, NewUser, OofSettings, UpdateUser } from '@/types/users';
+import { DeleteOrphanedUsersParams, DeleteUserParams, NewUser, OofSettings, UpdateUser } from '@/types/users';
 
 
 export function fetchUsersData(domainID: number, params: URLParams) {
@@ -200,7 +200,7 @@ export function deleteUserData(domainID: number, id: number, params?: DeleteUser
   return defaultDeleteHandler(deleteUser, USER_DATA_DELETE, { domainID, id, params });
 }
 
-export function deleteOrphanedUsers(params: DeleteOrphanedUsersType) {
+export function deleteOrphanedUsers(params: DeleteOrphanedUsersParams) {
   return async (dispatch: Dispatch) => {
     try {
       const res = await deleteOrphans(params);

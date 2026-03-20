@@ -78,7 +78,7 @@ export type DeleteUserParams = {
   deleteChatUser: boolean;
 }
 
-export type DeleteOrphanedUsersType = {
+export type DeleteOrphanedUsersParams = {
   userID?: number;
   deleteFiles: boolean;
 }

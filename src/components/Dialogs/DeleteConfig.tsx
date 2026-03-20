@@ -2,16 +2,26 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 
-const DeleteConfig = props => {
+type DeleteConfigProps = {
+  open: boolean;
+  orgID: number;
+  onSuccess: () => void;
+  onError: (err: string) => void;
+  onClose: () => void;
+  delete: (orgID: number) => Promise<any>;
+}
+
+
+const DeleteConfig = (props: DeleteConfigProps) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = e => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     const { orgID, onSuccess, onError } = props;
     setLoading(true);
@@ -26,7 +36,7 @@ const DeleteConfig = props => {
       });
   }
 
-  const { t, open, onClose } = props;
+  const { open, onClose } = props;
   return (
     <Dialog
       onClose={onClose}
@@ -55,15 +65,5 @@ const DeleteConfig = props => {
   );
 }
 
-DeleteConfig.propTypes = {
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-  orgID: PropTypes.number,
-};
 
-
-export default withTranslation()(DeleteConfig);
+export default DeleteConfig;

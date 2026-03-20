@@ -2,22 +2,33 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { DOMAIN_PURGE } from '../../constants';
 import { deleteDomainData } from '../../actions/domains';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 
-const DeleteDomain = props => {
+type DeleteDomainProps = {
+  id: number;
+  open: boolean;
+  item: string;
+  onClose: () => void;
+  onSuccess: () => void;
+  onError: (err: string) => void;
+}
+
+
+const DeleteDomain = (props: DeleteDomainProps) => {
   const [state, setState] = useState({
     loading: false,
     purge: false,
     deleteFiles: false,
   });
-  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { capabilities } = useAppSelector(state => state.auth);
 
   const handleDelete = e => {
     e.preventDefault();
@@ -35,16 +46,15 @@ const DeleteDomain = props => {
       });
   }
 
-  const handlePurge = e => {
-    const val = e.target.checked;
+  const handlePurge = (_: any, checked: boolean) => {
     setState({
       ...state,
-      purge: val,
+      purge: checked,
       deleteFiles: false,
     });
   }
 
-  const { t, open, item, onClose, capabilities } = props;
+  const { open, item, onClose } = props;
   const { loading, purge, deleteFiles } = state;
   const canPurge = capabilities.includes(DOMAIN_PURGE);
   return (
@@ -101,22 +111,5 @@ const DeleteDomain = props => {
   );
 }
 
-DeleteDomain.propTypes = {
-  t: PropTypes.func.isRequired,
-  item: PropTypes.string,
-  id: PropTypes.number,
-  open: PropTypes.bool,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  capabilities: PropTypes.array.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    capabilities: state.auth.capabilities,
-  };
-};
-
-export default connect(mapStateToProps)(
-  withTranslation()(DeleteDomain)); 
+export default DeleteDomain;

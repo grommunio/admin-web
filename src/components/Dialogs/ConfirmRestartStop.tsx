@@ -2,15 +2,24 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { Service } from '@/types/dashboard';
 
 
-const ConfirmRestartStop = props => {
+type ConfirmRestartStopProps = {
+  open: boolean;
+  handleConfirm: () => void;
+  onClose: () => void;
+  action: string;
+  service: Pick<Service, 'name'>;
+};
 
-  const { t, open, handleConfirm, onClose, action, service } = props;
+
+const ConfirmRestartStop = (props: ConfirmRestartStopProps) => {
+  const { t } = useTranslation();
+  const { open, handleConfirm, onClose, action, service } = props;
 
   return (
     <Dialog
@@ -41,13 +50,5 @@ const ConfirmRestartStop = props => {
   );
 }
 
-ConfirmRestartStop.propTypes = {
-  t: PropTypes.func.isRequired,
-  handleConfirm: PropTypes.func,
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool,
-  action: PropTypes.string,
-  service: PropTypes.object,
-};
 
-export default withTranslation()(ConfirmRestartStop);
+export default ConfirmRestartStop;

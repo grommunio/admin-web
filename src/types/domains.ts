@@ -28,3 +28,8 @@ export type BaseDomain = Pick<
   Domain,
   "ID" | "displayname" | "domainname"
 >
+
+export type DeleteDomainProps = {
+  purge: boolean;
+  deleteFiles: boolean;
+}

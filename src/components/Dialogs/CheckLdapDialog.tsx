@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions,
   List,
@@ -14,37 +13,50 @@ import { Dialog, DialogTitle, DialogContent,Button,
   IconButton,
   Tooltip,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { deleteOrphanedUsers } from '../../actions/users';
+import { useTranslation } from 'react-i18next';
 import { red } from '@mui/material/colors';
 import { AccountCircle, ContactMail, Delete, DeleteForever } from '@mui/icons-material';
 import { USER_STATUS } from '../../constants';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { deleteOrphanedUsers } from '../../actions/users';
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   delete: {
     backgroundColor: red['500'],
     '&:hover': {
       backgroundColor: red['700'],
     },
   },
-};
+}));
 
-const CheckLdapDialog = props => {
+type CheckLdapDialogProps = {
+  open: boolean;
+  checkUsers: () => void;
+  onClose: () => void;
+  onSuccess: () => void;
+  onError: () => void;
+}
 
-  const handleDelete = deleteFiles => () => {
-    const { deleteUsers, onSuccess, onError } = props;
-    deleteUsers({ deleteFiles }).then(() => onSuccess && onSuccess()).catch(onError);
+const CheckLdapDialog = (props: CheckLdapDialogProps) => {
+  const dispatch = useAppDispatch();
+  const { Orphaned } = useAppSelector(state => state.users);
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { open, onClose } = props;
+
+  const handleDelete = (deleteFiles: boolean) => () => {
+    const { onSuccess, onError } = props;
+    dispatch(deleteOrphanedUsers({ deleteFiles }))
+      .then(() => onSuccess && onSuccess()).catch(onError);
   }
 
-  const handleSingleDelete = (userID, deleteFiles) => () => {
-    const { deleteUsers, checkUsers, onError } = props;
-    deleteUsers({ userID, deleteFiles })
+  const handleSingleDelete = (userID: number, deleteFiles: boolean) => () => {
+    const { checkUsers, onError } = props;
+    dispatch(deleteOrphanedUsers({ userID, deleteFiles }))
       .then(checkUsers)
       .catch(onError);
   }
-
-  const { classes, t, open, onClose, Orphaned } = props;
 
   return (
     <Dialog
@@ -74,8 +86,8 @@ const CheckLdapDialog = props => {
             >
               <ListItemIcon>
                 {user.status === USER_STATUS.CONTACT ?
-                  <ContactMail className={classes.icon} fontSize='small'/> :
-                  <AccountCircle className={classes.icon} fontSize='small'/>
+                  <ContactMail fontSize='small'/> :
+                  <AccountCircle fontSize='small'/>
                 }
               </ListItemIcon>
               <ListItemText
@@ -115,30 +127,5 @@ const CheckLdapDialog = props => {
   );
 }
 
-CheckLdapDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool,
-  Orphaned: PropTypes.array.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  deleteUsers: PropTypes.func.isRequired,
-  checkUsers: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Orphaned: state.users.Orphaned,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    deleteUsers: async params => await dispatch(deleteOrphanedUsers(params))
-      .catch(err => Promise.reject(err)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(CheckLdapDialog, styles)));
+export default CheckLdapDialog;

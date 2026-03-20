@@ -12,7 +12,7 @@ import { NewOrg, UpdateOrg } from './types/orgs';
 import { NewRole, UpdateRole } from './types/roles';
 import { NewServer, ServerPolicy, UpdateServer } from './types/servers';
 import { FetchSyncParams, RemoteWipeParams } from './types/sync';
-import { DeleteOrphanedUsersType, NewUser, OofSettings, UpdateUser } from './types/users';
+import { DeleteOrphanedUsersParams, NewUser, OofSettings, UpdateUser } from './types/users';
 
 const baseUrl = '//' + window.location.host + '/api/v1';
 
@@ -499,7 +499,7 @@ export function checkLdap(params: CheckLdapUsersParams) {
   };
 }
 
-export async function deleteOrphans(params: DeleteOrphanedUsersType) {
+export async function deleteOrphans(params: DeleteOrphanedUsersParams) {
   return await yeet(buildQuery('/domains/ldap/check', { organization: 0, ...params }));
 }
 
