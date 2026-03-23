@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { USER_STATUS } from '../constants';
 
 
-type MagnitudeAutocompleteProps = {
+type MagnitudeAutocompleteProps<T> = {
   className: string;
   value?: any; // TODO: Improve definition
   filterAttribute: string;
-  onChange: () => void;
+  onChange: (_: any, newVal: T) => void;
   options?: any[]; // Improve
   label?: string;
   getOptionLabel?: (option: any) => string;
@@ -22,20 +22,20 @@ type MagnitudeAutocompleteProps = {
   multiple?: boolean;
   calculateMagnitude?: boolean;
   placeholder?: string;
-  renderOption: (props: any, option: any) => ReactNode;
+  renderOption?: (props: any, option: any) => ReactNode;
   autoFocus?: boolean;
   autoSelect?: boolean;
   variant?: TextFieldVariants;
   fullWidth?: boolean;
   disabled?: boolean;
   getOptionDisabled?: (option: any) => boolean;
-  isOptionEqualToValue?: <T>(option: T, value: T) => boolean;
+  isOptionEqualToValue?: (option: T, value: T) => boolean;
   disableCloseOnSelect?: boolean;
   getOptionKey?: (option: any) => string | number;
   helperText?: string;
 }
 
-const MagnitudeAutocomplete = (props: MagnitudeAutocompleteProps) => {
+function MagnitudeAutocomplete<T>(props: MagnitudeAutocompleteProps<T>) {
   const { className, value, filterAttribute, onChange, options, label, getOptionLabel,
     inputValue, onInputChange, freeSolo, multiple, calculateMagnitude, placeholder, renderOption,
     autoFocus, autoSelect, variant, fullWidth, disabled, getOptionDisabled, isOptionEqualToValue,
@@ -83,7 +83,7 @@ const MagnitudeAutocomplete = (props: MagnitudeAutocompleteProps) => {
     isOptionEqualToValue={isOptionEqualToValue}
     disableCloseOnSelect={disableCloseOnSelect || multiple || false}
   />;
-};
+}
 
 
 export default MagnitudeAutocomplete;

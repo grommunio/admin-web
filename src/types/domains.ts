@@ -1,18 +1,21 @@
 import { PartialWithRequired } from "./common";
 
-
-export type Domain = {
+export type BaseDomain = {
   ID: number;
+  displayname: string;
+  domainname: string;
+}
+
+export type Domain = BaseDomain & {
   name: string;
   activeUsers: number;
-  address: "",
+  adminName: string;
+  address: string,
   chat: boolean,
-  displayname: string,
   domainStatus: number,
-  domainname: string,
   homeserver?: number,
   inactiveUsers: number,
-  maxUsers: number,
+  maxUser: number,
   orgID: number,
   syncPolicy: any, // TODO: Create sync policy type
   tel: string,
@@ -21,15 +24,26 @@ export type Domain = {
 };
 
 export type DomainListItem = Omit<Domain, 'homeserver' | 'syncPolicy'>
-export type NewDomain = Omit<Domain, 'ID'>;
-export type UpdateDomain = PartialWithRequired<Domain, "ID">;
-
-export type BaseDomain = Pick<
-  Domain,
-  "ID" | "displayname" | "domainname"
+export type NewDomain = Pick<Domain,
+  'domainname' |
+  'domainStatus' |
+  'maxUser' |
+  'title' |
+  'address' |
+  'adminName' |
+  'tel' |
+  'chat' |
+  'homeserver' |
+  'orgID'|
+  'maxUser'
 >
+export type UpdateDomain = PartialWithRequired<Domain, "ID">;
 
 export type DeleteDomainProps = {
   purge: boolean;
   deleteFiles: boolean;
+}
+
+export type CreateDomainParams = {
+  createRole?: boolean;
 }

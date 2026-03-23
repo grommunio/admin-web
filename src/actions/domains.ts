@@ -11,7 +11,7 @@ import {
 import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns } from '../api';
 import { defaultDeleteHandler, defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
-import { DeleteDomainProps, NewDomain, UpdateDomain } from '@/types/domains';
+import { CreateDomainParams, DeleteDomainProps, NewDomain, UpdateDomain } from '@/types/domains';
 
 
 export function fetchDomainData(params: URLParams) {
@@ -41,7 +41,7 @@ export function fetchDomainDetails(id: number) {
   };
 }
 
-export function addDomainData(domain: NewDomain, params: URLParams) {
+export function addDomainData(domain: NewDomain, params: CreateDomainParams) {
   return defaultPostHandler(addDomain, DOMAIN_DATA_ADD, domain, params);
 }
 

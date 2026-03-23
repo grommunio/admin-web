@@ -2,19 +2,23 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, TextField,
   Button, DialogActions, CircularProgress, Grid2,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { addUserData } from '../../actions/users';
+import { addContactData } from '../../actions/users';
 import { useNavigate } from 'react-router';
 import { USER_STATUS } from '../../constants';
+import { BaseDomain } from '@/types/domains';
+import { useAppDispatch } from '../../store';
+import { UserProperties } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -38,27 +42,48 @@ const styles = theme => ({
     flex: 1,
     marginRight: 8,
   },
-});
+}));
 
-const AddContact = props => {
-  const [contact, setContact] = useState({
-    displayname: '',
-  });
+
+type AddContactProps = {
+  domain: BaseDomain;
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+const defaultState: Partial<UserProperties> = {
+  smtpaddress: '',
+  displayname: '',
+  givenname: '',
+  initials: '',
+  surname: '',
+  nickname: '',
+}
+
+const AddContact = (props: AddContactProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const [contact, setContact] = useState(defaultState);
+  const { open, onClose } = props;
+  const { smtpaddress, displayname, givenname, initials, surname, nickname } = contact;
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(false);
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { domain, add, onError, onSuccess } = props;
+    const { domain, onError, onSuccess } = props;
     setLoading(true);
-    add(domain.ID, {
+    dispatch(addContactData(domain.ID, {
       status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
-    })
+    }))
       .then(() => {
         setContact({ displayname: '' })
         setLoading(false);
@@ -71,15 +96,15 @@ const AddContact = props => {
   }
 
   const handleAddAndEdit = () => {
-    const { domain, add, onError } = props;
+    const { domain, onError } = props;
     setLoading(true);
-    add(domain.ID, {
+    dispatch(addContactData(domain.ID, {
       status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
-    })
+    }))
       .then(user => {
         navigate('/' + domain.ID + '/contacts/' + user.ID);
       })
@@ -89,12 +114,10 @@ const AddContact = props => {
       });
   }
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     setContact(contact => ({ ...contact, [field]: event.target.value }));
   }
 
-  const { classes, t, open, onClose } = props;
-  const { smtpaddress, displayname, givenname, initials, surname, nickname } = contact;
   return (
     (<Dialog
       onClose={onClose}
@@ -181,26 +204,5 @@ const AddContact = props => {
   );
 }
 
-AddContact.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-};
 
-
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domainID, user) => 
-      await dispatch(addUserData(domainID, user))
-        .then(user => Promise.resolve(user))
-        .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(AddContact, styles)));
+export default AddContact;

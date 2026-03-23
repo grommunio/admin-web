@@ -7,6 +7,11 @@ export type BaseUser = {
 }
 
 export type UserProperties = {
+  displayname: string;
+  initials: string;
+  nickname: string;
+  smtpaddress: string;
+  surname: string;
   assocmessagesizeextended: number;
   attributehidden_gromox: number;
   businesstelephonenumber: string;
@@ -80,6 +85,11 @@ export type LdapUser = {
   error: string | null;
   name: string;
   type: LdapUserType;
+}
+
+export type NewContact = {
+  status: number;
+  properties: Partial<UserProperties>;
 }
 
 export type DeleteUserParams = {

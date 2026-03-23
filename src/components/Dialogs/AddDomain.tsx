@@ -2,24 +2,29 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions,
   CircularProgress, FormControlLabel, Checkbox,
+  Theme,
 } from '@mui/material';
 import { addDomainData } from '../../actions/domains';
 import { fetchOrgsData } from '../../actions/orgs';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { checkFormat } from '../../api';
 import { fetchServersData } from '../../actions/servers';
 import { fetchCreateParamsData } from '../../actions/defaults';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { throttle } from 'lodash';
 import { domainStatuses } from '../../constants';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { NewDomain } from '@/types/domains';
+import { Server } from '@/types/servers';
+import { Org } from '@/types/orgs';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -30,9 +35,21 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddDomain = props => {
+
+type AddDomainProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+const AddDomain = (props: AddDomainProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+
   const [domain, setDomain] = useState({
     domainname: '',
     domainStatus: 0,
@@ -41,30 +58,39 @@ const AddDomain = props => {
     address: '',
     adminName: '',
     tel: '',
-    orgID: '',
-    homeserver: '',
-    createRole: false,
     chat: false,
   });
+  const [homeserver, setHomeserver] = useState(null);
+  const [org, setOrg] = useState(null);
+  const [createRole, setCreateRole] = useState(false);
+
+  const { Orgs: orgs } = useAppSelector(state => state.orgs);
+  const { Servers: servers } = useAppSelector(state => state.servers);
+  const { CreateParams } = useAppSelector(state => state.defaults);
+
+  const { open, onClose } = props;
+  const { domainname, domainStatus, chat,
+    maxUser, title, address, adminName, tel } = domain;
   const [loading, setLoading] = useState(false);
   const [domainError, setDomainError] = useState(false);
 
   const handleEnter = () => {
-    const { fetch, fetchServers, fetchDefaults, onError } = props;
-    fetch().catch(error => onError(error));
-    fetchServers().catch(error => onError(error));
-    fetchDefaults()
+    const { onError } = props;
+    dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
+      .catch(error => onError(error));
+    dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(error => onError(error));
+    dispatch(fetchCreateParamsData())
       .catch(error => onError(error));
   }
 
   useEffect(() => {
-    const { createParams } = props;
     // Update mask
     setDomain({
       ...domain,
-      ...(createParams.domain || {}),
+      ...(CreateParams.domain || {}),
     });
-  }, [props.createParams]);
+  }, [CreateParams]);
 
   const handleInput = field => event => {
     const val = event.target.value;
@@ -81,33 +107,45 @@ const AddDomain = props => {
     setDomainError(!!resp?.domain);
   }, 200), []);
 
-  const handleCheckbox = field => event => {
+  const handleCheckbox = (field: keyof NewDomain) => (event: ChangeEvent) => {
     setDomain({
       ...domain,
       [field]: event.target.checked,
     });
   }
 
-  const handleNumberInput = field => event => {
-    let input = event.target.value;
-    if(input && input.match("^\\d*?$")) input = parseInt(input);
-    setDomain({
-      ...domain,
-      [field]: input,
-    });
+  const handleNumberInput = (event: ChangeEvent) => {
+    const input: string = event.target.value;
+    if(input === "") {
+      setDomain({
+        ...domain,
+        maxUser: "",
+      });
+    }
+    if(input && input.match("^\\d*?$")) {
+      setDomain({
+        ...domain,
+        maxUser: input,
+      });
+    }
   }
 
   const handleAdd = e => {
     e.preventDefault();
-    const { add, onError, onSuccess } = props;
+    const { onError, onSuccess } = props;
     setLoading(true);
-    add({
-      ...domain,
+    dispatch(addDomainData({
+      domainStatus: domain.domainStatus,
+      maxUser: parseInt(domain.maxUser),
+      title: domain.title,
+      address: domain.address,
+      adminName: domain.adminName,
+      tel: domain.tel,
+      chat: domain.chat,
       domainname: domainname.trim(),
-      orgID: orgID.ID,
+      orgID: org.ID,
       homeserver: homeserver?.ID || null,
-      createRole: undefined,
-    }, { createRole })
+    }, { createRole }))
       .then(() => {
         setDomain({
           ...domain,
@@ -118,10 +156,11 @@ const AddDomain = props => {
           address: '',
           adminName: '',
           tel: '',
-          createRole: false,
           chat: false,
-          homeserver: '',
         });
+        setCreateRole(false);
+        setHomeserver(null);
+        setOrg(null);
         onSuccess();
         setLoading(false);
       })
@@ -131,16 +170,13 @@ const AddDomain = props => {
       });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
-    setDomain({
-      ...domain,
-      [field]: newVal || '',
-    });
-  }
+  const handleOrg = (_: any, newVal: Org) => {
+    setOrg(newVal || '');
+  } 
 
-  const { classes, t, open, onClose, orgs, servers } = props;
-  const { domainname, domainStatus, orgID, chat, homeserver,
-    maxUser, title, address, adminName, tel, createRole } = domain;
+  const handleHomeserver = (_: any, newVal: Server) => {
+    setHomeserver(newVal || '');
+  }
 
   return (
     <Dialog
@@ -179,9 +215,9 @@ const AddDomain = props => {
             ))}
           </TextField>
           <MagnitudeAutocomplete
-            value={orgID || ""}
+            value={org || ""}
             filterAttribute={'name'}
-            onChange={handleAutocomplete('orgID')}
+            onChange={handleOrg}
             className={classes.input} 
             options={orgs}
             label={t('Organization')}
@@ -192,7 +228,7 @@ const AddDomain = props => {
             label={t("Maximum users")} 
             fullWidth 
             value={maxUser || ''}
-            onChange={handleNumberInput('maxUser')}
+            onChange={handleNumberInput}
             required
           />
           <TextField 
@@ -223,20 +259,20 @@ const AddDomain = props => {
             value={tel || ''}
             onChange={handleInput('tel')}
           />
-          <MagnitudeAutocomplete
+          <MagnitudeAutocomplete<Server>
             value={homeserver}
             filterAttribute={'hostname'}
-            onChange={handleAutocomplete('homeserver')}
+            onChange={handleHomeserver}
             className={classes.input} 
             options={servers}
             label={t('Homeserver')}
-            isOptionEqualToValue={(option, value) => option.ID === value.ID}
+            isOptionEqualToValue={(option: Server, value: Server) => option.ID === value.ID}
           />
           <FormControlLabel
             control={
               <Checkbox
                 checked={createRole}
-                onChange={handleCheckbox('createRole')}
+                onChange={(e: ChangeEvent) => setCreateRole(e.target.checked)}
                 color="primary"
               />
             }
@@ -275,43 +311,5 @@ const AddDomain = props => {
   );
 }
 
-AddDomain.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchServers: PropTypes.func.isRequired,
-  fetchDefaults: PropTypes.func.isRequired,
-  orgs: PropTypes.array.isRequired,
-  servers: PropTypes.array.isRequired,
-  createParams: PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    orgs: state.orgs.Orgs,
-    servers: state.servers.Servers,
-    createParams: state.defaults.CreateParams,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domain, params) => {
-      await dispatch(addDomainData(domain, params)).catch(message => Promise.reject(message));
-    },
-    fetch: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-    fetchDefaults: async () => await dispatch(fetchCreateParamsData())
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddDomain, styles)));
+export default AddDomain;

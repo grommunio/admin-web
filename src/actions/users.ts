@@ -28,7 +28,7 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CheckLdapUsersParams, LdapDumpParams } from '@/types/ldap';
-import { DeleteOrphanedUsersParams, DeleteUserParams, NewUser, OofSettings, UpdateUser } from '@/types/users';
+import { DeleteOrphanedUsersParams, DeleteUserParams, NewContact, NewUser, OofSettings, UpdateUser } from '@/types/users';
 
 
 export function fetchUsersData(domainID: number, params: URLParams) {
@@ -181,6 +181,10 @@ export function checkLdapUsers(params: CheckLdapUsersParams) {
 }
 
 export function addUserData(domainID: number, user: NewUser) {
+  return defaultPostHandler(addUser, USER_DATA_ADD, domainID, user);
+}
+
+export function addContactData(domainID: number, user: NewContact) {
   return defaultPostHandler(addUser, USER_DATA_ADD, domainID, user);
 }
 
