@@ -24,10 +24,8 @@ export function fetchFolderDetails(domainID: number, folderID: number) {
   return defaultDetailsHandler(folderDetails, domainID, folderID);
 }
 
-export function addFolderData(domainID: number, folder: NewFolder) {
+export function addFolderData(domainID: number, folder: NewFolder, owners: BaseUser[]) {
   return async (dispatch: Dispatch) => {
-    const owners = folder.owners;
-    delete folder.owners;
     try {
       const folderData = await addFolder(domainID, folder);
       dispatch({ type: FOLDER_DATA_ADD, data: folderData, parentID: folder.parentID });
@@ -41,7 +39,7 @@ export function addFolderData(domainID: number, folder: NewFolder) {
   };
 }
 
-export function editFolderData(domainID, folder: UpdateFolder) {
+export function editFolderData(domainID: number, folder: UpdateFolder) {
   return defaultPatchHandler(editFolder, domainID, folder);
 }
 

@@ -92,7 +92,7 @@ const AddDomain = (props: AddDomainProps) => {
     });
   }, [CreateParams]);
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof NewDomain) => (event: ChangeEvent) => {
     const val = event.target.value;
     if(val && field === 'domainname') debounceFetch({ domain: val });
     setDomain({
@@ -101,7 +101,7 @@ const AddDomain = (props: AddDomainProps) => {
     });
   }
 
-  const debounceFetch = useCallback(throttle(async params => {
+  const debounceFetch = useCallback(throttle(async (params: { domain: string }) => {
     const resp = await checkFormat(params)
       .catch(() => setLoading(false));
     setDomainError(!!resp?.domain);
@@ -130,7 +130,7 @@ const AddDomain = (props: AddDomainProps) => {
     }
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     const { onError, onSuccess } = props;
     setLoading(true);
@@ -266,7 +266,7 @@ const AddDomain = (props: AddDomainProps) => {
             className={classes.input} 
             options={servers}
             label={t('Homeserver')}
-            isOptionEqualToValue={(option: Server, value: Server) => option.ID === value.ID}
+            isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />
           <FormControlLabel
             control={

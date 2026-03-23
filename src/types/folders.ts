@@ -1,12 +1,16 @@
 import { PartialWithRequired } from "./common"
-import { BaseUser } from "./users"
+
+export type FolderOwner = {
+  username: string;
+  permissions: number;
+}
 
 export type Folder = {
   folderid: string,
   name: string,
-  owners: BaseUser[],
+  owners: FolderOwner[],
   children: Folder[],
-  parentID: number,
+  parentID: string,
   displayname: string,
   container: string, // TODO: Make enum
   comment: string,
