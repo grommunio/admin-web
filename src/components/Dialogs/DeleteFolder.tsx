@@ -5,11 +5,23 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation, withTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { ChangeEvent } from '@/types/common';
 
 
-const DeleteFolder = props => {
+type DeleteFolderProps = {
+  id: number;
+  open: boolean;
+  item: string;
+  domainID: number;
+  onSuccess: () => void;
+  onClose: () => void;
+  onError: (msg: string) => void;
+  delete: (domainID: number, id: number, props: { clear: boolean }) => Promise<any>;
+}
+
+const DeleteFolder = (props: DeleteFolderProps) => {
   const [state, setState] = useState({
     loading: false,
     clear: false,
@@ -17,6 +29,7 @@ const DeleteFolder = props => {
     taskID: null,
   });
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
 
   const handleDelete = () => {
@@ -43,7 +56,8 @@ const DeleteFolder = props => {
       });
   }
 
-  const handleCheckbox = e => setState({ ...state, clear: e.target.checked })
+  const handleCheckbox = (e: ChangeEvent) =>
+    setState({ ...state, clear: e.target.checked })
 
   const handleViewTask = () => {
     navigate('/taskq/' + state.taskID);
@@ -54,7 +68,7 @@ const DeleteFolder = props => {
     props.onClose();
   }
 
-  const { t, open, item, onClose } = props;
+  const { open, item, onClose } = props;
   const { loading, clear, taskMessage, taskID } = state;
 
   return (

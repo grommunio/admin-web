@@ -817,7 +817,7 @@ export async function commands(params: URLParams={}) {
   return await get(buildQuery('/system/dbconf/commands', params));
 }
 
-export async function uploadFile(service: string, filename: string, file: string) {
+export async function uploadFile(service: string, filename: string, file: Record<string, any>) {
   return await put('/system/dbconf/' + service + '/' + filename + '/',  { data: file });
 }
 

@@ -73,6 +73,15 @@ export type NewUser = Pick<User,
 
 export type UpdateUser = PartialWithRequired<User, "ID">;
 
+type LdapUserType = "user" | "contact" | "group";
+export type LdapUser = {
+  ID: string;
+  email: string;
+  error: string | null;
+  name: string;
+  type: LdapUserType;
+}
+
 export type DeleteUserParams = {
   deleteFiles: boolean;
   deleteChatUser: boolean;
@@ -102,3 +111,25 @@ export type Owner = {
   permissions: number;
   username: string;
 }
+
+type Protocol = "POP3" | "IMAP" | "POP2" | "ETRN" | "AUTO";
+type AuthType = "password" | "kerberos_v5" | "kerberos" | "kerberos_v4" | "gssapi" |
+    "cram-md5" | "otp" | "ntlm" | "msn" | "ssh" | "any";
+
+export type FetchmailConfig = {
+  ID: number;
+  active: boolean;
+  srcServer: string;
+  srcUser: string;
+  srcPassword: string;
+  srcAuth: AuthType;
+  srcFolder: string;
+  fetchall: boolean;
+  keep: boolean;
+  protocol: Protocol;
+  useSSL: boolean;
+  sslCertCheck: boolean;
+  sslCertPath: string;
+  sslFingerprint: string;
+  extraOptions: string;
+};

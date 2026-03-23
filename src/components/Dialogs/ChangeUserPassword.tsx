@@ -14,6 +14,7 @@ import { changeUserPassword } from '../../api';
 import { useTranslation } from 'react-i18next';
 import { BaseDomain } from '@/types/domains';
 import { BaseUser } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -55,7 +56,7 @@ const ChangeUserPassword = (props: ChangeUserPasswordProps) => {
     onClose();
   }
 
-  const handleInput = (field: keyof typeof state) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (field: keyof typeof state) => (e: ChangeEvent) => {
     setState({ ...state, [field]: e.target.value });
   }
 

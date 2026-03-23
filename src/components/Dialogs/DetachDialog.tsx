@@ -2,18 +2,22 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
-const styles = {
-};
 
-const DetachDialog = props => {
+type DetachDialogProps = {
+  open: boolean;
+  loading: boolean;
+  onClose: () => void;
+  onDetach: () => void;
+}
 
-  const { t, open, loading, onClose, onDetach } = props;
+
+const DetachDialog = (props: DetachDialogProps) => {
+  const { t } = useTranslation();
+  const { open, loading, onClose, onDetach } = props;
 
   return (
     <Dialog
@@ -42,13 +46,4 @@ const DetachDialog = props => {
   );
 }
 
-DetachDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool,
-  loading: PropTypes.bool,
-  onDetach: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
-
-export default withTranslation()(withStyles(DetachDialog, styles));
+export default DetachDialog;

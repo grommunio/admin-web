@@ -2,29 +2,41 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, Checkbox, FormControlLabel, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { importLdapData } from '../../actions/ldap';
-import { connect } from 'react-redux';
+import { LdapUser } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
+import { useAppDispatch } from '../../store';
 
 
-const ImportDialog = props => {
+type ImportDialogProps = {
+  open: boolean;
+  user: LdapUser;
+  domainID: number;
+  onSuccess: () => void;
+  onClose: () => void;
+  onError: (msg: string) => void;
+}
+
+const ImportDialog = (props: ImportDialogProps) => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     loading: false,
     force: false,
   });
 
-  const handleChange = event => {
+  const handleChange = (event: ChangeEvent) => {
     setState({ ...state, force: event.target.checked });
   };
 
   const handleImport = () => {
-    const { importUser, onSuccess, onError, user, domainID } = props;
+    const { onSuccess, onError, user, domainID } = props;
     const { force } = state;
     setState({ ...state, loading: true });
-    importUser({ ID: user.ID, force, domain: domainID })
+    dispatch(importLdapData({ ID: user.ID, force, domain: domainID }))
       .then(() => {
         if(onSuccess) onSuccess();
         setState({ ...state, loading: false });
@@ -35,7 +47,7 @@ const ImportDialog = props => {
       });
   }
 
-  const { t, open, user, onClose } = props;
+  const { open, user, onClose } = props;
   const { loading, force } = state;
 
   return (
@@ -77,23 +89,5 @@ const ImportDialog = props => {
   );
 }
 
-ImportDialog.propTypes = {
-  t: PropTypes.func.isRequired,
-  user: PropTypes.object,
-  open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  importUser: PropTypes.func.isRequired,
-  domainID: PropTypes.number,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    importUser: async params => await dispatch(importLdapData(params))
-      .catch(err => Promise.reject(err)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(ImportDialog));
+export default ImportDialog;

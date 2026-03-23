@@ -2,32 +2,41 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 
-const DomainDataDelete = props => {
+type GeneralDeleteProps = {
+  id: number;
+  open: boolean;
+  item: string;
+  onSuccess: (msg: string) => void;
+  onError: (msg: string) => void;
+  onClose: () => void;
+  delete: (id: number) => Promise<any>;
+}
+
+const GeneralDelete = (props: GeneralDeleteProps) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = e => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { id, onSuccess, onError, domainID } = props;
+    const { id, onSuccess, onError } = props;
     setLoading(true);
-    props.delete(domainID, id)
+    props.delete(id)
       .then(msg => {
         if(onSuccess) onSuccess(msg);
         setLoading(false);
       })
-      .catch(error => {
-        if(onError) onError(error);
+      .catch(err => {
+        if(onError) onError(err);
         setLoading(false);
       });
   }
 
-  const { t, open, item, onClose } = props;
-
+  const { open, item, onClose } = props;
   return (
     <Dialog
       onClose={onClose}
@@ -35,7 +44,7 @@ const DomainDataDelete = props => {
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Are you sure you want to delete {item}?</DialogTitle>
+      <DialogTitle>{t('deleteDialog', { item })}?</DialogTitle>
       <DialogActions>
         <Button
           onClick={onClose}
@@ -48,6 +57,7 @@ const DomainDataDelete = props => {
           variant="contained"
           color="secondary"
           type="submit"
+          autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
         </Button>
@@ -56,16 +66,5 @@ const DomainDataDelete = props => {
   );
 }
 
-DomainDataDelete.propTypes = {
-  t: PropTypes.func.isRequired,
-  item: PropTypes.string,
-  id: PropTypes.number,
-  domainID: PropTypes.number,
-  open: PropTypes.bool,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(DomainDataDelete);
+export default GeneralDelete;

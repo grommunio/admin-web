@@ -2,13 +2,15 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Radio, RadioGroup, TextField, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Warning } from '@mui/icons-material';
+import { ChangeEvent } from '@/types/common';
+import { RemoteWipeParams } from '@/types/sync';
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   iconContainer: {
     display: 'flex',
     justifyContent: 'center',
@@ -20,10 +22,20 @@ const styles = {
   radios: {
     marginTop: 16,
   },
-};
+}));
 
-const PasswordSafetyDialog = props => {
-  const [state, setState] = useState({
+
+type PasswordSafetyDialogProps = {
+  deviceID: string;
+  open: boolean;
+  onConfirm: (state: RemoteWipeParams) => void;
+  onClose: () => void;
+}
+
+const PasswordSafetyDialog = (props: PasswordSafetyDialogProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const [state, setState] = useState<RemoteWipeParams>({
     password: '',
     status: 16,
   });
@@ -39,11 +51,13 @@ const PasswordSafetyDialog = props => {
     setState({ ...state, password: '', status: 16 });
   }
 
-  const handleInput = field => e => setState({ ...state, [field]: e.target.value });
+  const handleInput = (field: keyof typeof state) => (e: ChangeEvent) =>
+    setState({ ...state, [field]: e.target.value });
 
-  const handleRadio = field => e => setState({ ...state, [field]: parseInt(e.target.value) });
+  const handleRadio = (field: keyof typeof state) => (e: ChangeEvent) =>
+    setState({ ...state, [field]: parseInt(e.target.value) });
 
-  const { classes, t, deviceID, open } = props;
+  const { deviceID, open } = props;
   const { status, password } = state;
 
   return (
@@ -101,13 +115,5 @@ const PasswordSafetyDialog = props => {
   );
 }
 
-PasswordSafetyDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  deviceID: PropTypes.string,
-  open: PropTypes.bool,
-  onClose: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(PasswordSafetyDialog, styles));
+export default PasswordSafetyDialog;

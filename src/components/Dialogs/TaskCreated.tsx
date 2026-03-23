@@ -2,21 +2,28 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
 
-const TaskCreated = props => {
+type TaskCreatedProps = {
+  taskID: number;
+  message: string;
+  onClose: () => void;
+}
+
+
+const TaskCreated = (props: TaskCreatedProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleViewTask = () => {
     navigate('/taskq/' + props.taskID);
   }
 
-  const { t, message, taskID, onClose } = props;
+  const { message, taskID, onClose } = props;
 
   return (
     <Dialog
@@ -42,11 +49,5 @@ const TaskCreated = props => {
   );
 }
 
-TaskCreated.propTypes = {
-  t: PropTypes.func.isRequired,
-  message: PropTypes.string,
-  taskID: PropTypes.number,
-  onClose: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(TaskCreated);
+export default TaskCreated;

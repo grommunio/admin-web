@@ -2,16 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 
-const DeleteUser = props => {
+type DumpDialogProps = {
+  open: boolean;
+  dump: string;
+  onClose: () => void;
+}
 
-  const { t, open, dump, onClose } = props;
+const DumpDialog = (props: DumpDialogProps) => {
+  const { t } = useTranslation();
+  const { open, dump, onClose } = props;
 
   return (
     <Dialog
@@ -34,13 +39,7 @@ const DeleteUser = props => {
       </DialogActions>
     </Dialog>
   );
-}
-
-DeleteUser.propTypes = {
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool,
-  dump: PropTypes.string,
-  onClose: PropTypes.func.isRequired,
 };
 
-export default withTranslation()(DeleteUser);
+
+export default DumpDialog;

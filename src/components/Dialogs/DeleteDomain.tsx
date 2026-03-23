@@ -30,7 +30,7 @@ const DeleteDomain = (props: DeleteDomainProps) => {
   const dispatch = useAppDispatch();
   const { capabilities } = useAppSelector(state => state.auth);
 
-  const handleDelete = e => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     const { id, onSuccess, onError } = props;
     const { purge, deleteFiles } = state;

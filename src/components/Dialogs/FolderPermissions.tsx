@@ -2,20 +2,24 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { Fragment, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl,
   Button, DialogActions, Grid2, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
-  ListItem, ListItemText, ListItemButton, Divider, MenuItem, InputLabel, Select, 
+  ListItem, ListItemText, ListItemButton, Divider, MenuItem, InputLabel, Select,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { addOwnerData, setFolderPermissions } from '../../actions/folders.ts';
-import AddOwner from './AddOwner';
+import { useTranslation } from 'react-i18next';
+import { setFolderPermissions } from '../../actions/folders';
+import AddOwner from './AddOwner.js';
 import RemoveOwner from './RemoveOwner';
 import { permissionProfiles } from '../../mapi/rights';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { BaseDomain } from '@/types/domains';
+import { ChangeEvent } from '@/types/common';
+import { Owner } from '@/types/users.js';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
   },
@@ -47,18 +51,34 @@ const styles = theme => ({
     marginBottom: 8,
     padding: 8,
   },
-});
+}));
 
-const FolderPermissions = props => {
+
+type FolderPermissionsProps = {
+  open: boolean;
+  domain: BaseDomain;
+  folderID: string;
+  onCancel: () => void;
+  onSuccess: () => void;
+  onError: () => void;
+}
+
+const FolderPermissions = (props: FolderPermissionsProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const owners = useAppSelector(state => state.folders.Owners);
   const [state, setState] = useState({
     adding: false,
     deleting: false,
     permissions: 0,
     selected: null,
+    snackbar: "",
   });
+  const { open, onCancel, domain, folderID } = props;
+  const { permissions, selected, adding, deleting } = state;
 
   const handleEnter = () => {
-    const { owners } = props;
     if(owners.length > 0) {
       setState({
         ...state,
@@ -72,11 +92,11 @@ const FolderPermissions = props => {
 
   const handleAddingSuccess = () => setState({ ...state, adding: false });
 
-  const handleAddingError = error => setState({ ...state, snackbar: error });
+  const handleAddingError = (error: string) => setState({ ...state, snackbar: error });
 
   const handleAddingCancel = () => setState({ ...state, adding: false });
 
-  const handlePermissions = e => {
+  const handlePermissions = (e: ChangeEvent) => {
     const value = parseInt(e.target.value); // Input value (1 bit is 1, rest 0)
     const mask = state.permissions ^ (value || 1); // Toggle nth bit or at least the 0th
     setState({
@@ -85,7 +105,7 @@ const FolderPermissions = props => {
     });
   }
 
-  const handleRadioPermissions = e => {
+  const handleRadioPermissions = (e: ChangeEvent) => {
     const { value } = e.target;
     let mask = state.permissions;
     const intValue = parseInt(value);
@@ -105,14 +125,14 @@ const FolderPermissions = props => {
     setState({ ...state, permissions: mask });
   }
 
-  const handleUserSelect = user => () => {
+  const handleUserSelect = (user: Owner) => () => {
     setState({ ...state, selected: user, permissions: user.permissions });
   }
 
   const handleSave = () => {
-    const { domain, folderID, save, onSuccess, onError } = props;
+    const { domain, folderID, onSuccess, onError } = props;
     const { selected, permissions } = state;
-    save(domain.ID, folderID, selected.memberID, { permissions })
+    dispatch(setFolderPermissions(domain.ID, folderID, selected.memberID, { permissions }))
       .then(onSuccess)
       .catch(onError);
   }
@@ -125,12 +145,10 @@ const FolderPermissions = props => {
     setState({ ...state, deleting: false, snackbar: 'Success!' });
   }
 
-  const handleDeleteError = error => setState({ ...state, snackbar: error });
+  const handleDeleteError = (error: string) => setState({ ...state, snackbar: error });
 
-  const handleProfileSelect = e => setState({ ...state, permissions: e.target.value });
-
-  const { classes, t, open, onCancel, owners, domain, folderID } = props;
-  const { permissions, selected, adding, deleting } = state;
+  const handleProfileSelect = (e: ChangeEvent) =>
+    setState({ ...state, permissions: parseInt(e.target.value) });
 
   return (
     (<Dialog
@@ -145,7 +163,7 @@ const FolderPermissions = props => {
       <DialogTitle>{t('Permissions')}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         {owners.length > 0 ? <List className={classes.list}>
-          {owners.map((user, idx) => <Fragment key={idx}>
+          {owners.map((user: Owner, idx: number) => <Fragment key={idx}>
             <ListItem disablePadding>
               <ListItemButton
                 selected={user.memberID === selected?.memberID}
@@ -369,35 +387,5 @@ const FolderPermissions = props => {
   );
 }
 
-FolderPermissions.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  owners: PropTypes.array.isRequired,
-  folderID: PropTypes.string.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  save: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    owners: state.folders.Owners,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domainID, folderID, owners) =>
-      await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg)),
-    save: async (domainID, folderID, memberID, permissions) =>
-      await dispatch(setFolderPermissions(domainID, folderID, memberID, permissions))
-        .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(FolderPermissions, styles)));
+export default FolderPermissions;

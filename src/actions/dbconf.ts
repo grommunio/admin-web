@@ -26,7 +26,7 @@ export function fetchDBConfData(params: URLParams) {
   };
 }
 
-export function uploadServiceFile(service: string, filename: string, file: string) {
+export function uploadServiceFile(service: string, filename: string, file: Record<string, any>) {
   return async (dispatch: Dispatch) => {
     try {
       await uploadFile(service, filename, file);

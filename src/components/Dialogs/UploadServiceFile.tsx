@@ -2,20 +2,22 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   Grid2,
   Typography,
-  IconButton, 
+  IconButton,
+  Theme, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { uploadServiceFile } from '../../actions/dbconf';
 import { Add, Delete } from '@mui/icons-material';
+import { useAppDispatch } from '../../store';
+import { ChangeEvent, KeyValuePair } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -30,9 +32,21 @@ const styles = theme => ({
     flex: 1,
     margin: theme.spacing(0, 1, 0, 1),
   },
-});
+}));
 
-const UploadServiceFile = props => {
+
+type UploadServiceFileProps = {
+  open: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  onError: (err: string) => void;
+}
+
+
+const UploadServiceFile = (props: UploadServiceFileProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     data: [
       { key: '', value: '' },
@@ -42,14 +56,14 @@ const UploadServiceFile = props => {
     loading: false,
   });
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state,
       [field]: event.target.value,
     });
   }
 
-  const handleDataInput = (field, idx) => e => {
+  const handleDataInput = (field: 'key' | 'value', idx: number) => (e) => {
     const data = [...state.data];
     data[idx][field] = e.target.value;
     setState({ ...state, data });
@@ -61,18 +75,17 @@ const UploadServiceFile = props => {
     setState({ ...state, data });
   }
 
-  const handleRemoveRow = idx => () => {
+  const handleRemoveRow = (idx: number) => () => {
     const data = [...state.data];
     data.splice(idx, 1);
     setState({ ...state, data });
   }
 
-  const handleUpload = (e) => {
+  const handleUpload = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { upload } = props;
     const { service, filename, data } = state;
     setState({ ...state, loading: true });
-    upload(service, filename, formatData(data))
+    dispatch(uploadServiceFile(service, filename, formatData(data)))
       .then(() => {
         setState({
           ...state, 
@@ -89,13 +102,13 @@ const UploadServiceFile = props => {
       });
   }
 
-  const formatData = (data) => {
+  const formatData = (data: KeyValuePair<string>[]) => {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value);
     return obj;
   }
 
-  const { classes, t, open, onClose } = props;
+  const { open, onClose } = props;
   const { service, filename, data, loading } = state;
 
   return (
@@ -172,24 +185,5 @@ const UploadServiceFile = props => {
   );
 }
 
-UploadServiceFile.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  upload: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    upload: async (service, filename, file) => {
-      await dispatch(uploadServiceFile(service, filename, file))
-        .catch(message => Promise.reject(message));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(UploadServiceFile, styles)));
+export default UploadServiceFile;

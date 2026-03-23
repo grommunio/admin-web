@@ -2,14 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   FormControlLabel, Checkbox, Grid2, MenuItem,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
+import { FetchmailConfig } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -20,10 +23,25 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const EditFetchmail = props => {
-  const [fetchmail, setFetchmail] = useState({
+
+type EditFetchmailProps = {
+  open: boolean;
+  onClose: () => void;
+  username: string;
+  entry: FetchmailConfig;
+  edit: (config: FetchmailConfig) => void;
+}
+
+const protocols = ["POP3", "IMAP", "POP2", "ETRN", "AUTO"];
+const authTypes = ["password", "kerberos_v5", "kerberos", "kerberos_v4", "gssapi",
+  "cram-md5", "otp", "ntlm", "msn", "ssh", "any"];
+
+const EditFetchmail = (props: EditFetchmailProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const [fetchmail, setFetchmail] = useState<FetchmailConfig>({
     ID: -1,
     active: true,
     srcServer: '',
@@ -40,25 +58,21 @@ const EditFetchmail = props => {
     sslFingerprint: '',
     extraOptions: '',
   });
-
-  const protocols = ["POP3", "IMAP", "POP2", "ETRN", "AUTO"]
-
-  const authTypes = ["password", "kerberos_v5", "kerberos", "kerberos_v4", "gssapi",
-    "cram-md5", "otp", "ntlm", "msn", "ssh", "any"]
+  const { open, edit, onClose, username } = props;
 
   const handleEnter = () => {
     const { entry } = props;
     setFetchmail({ ...entry });
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof FetchmailConfig) => (event: ChangeEvent) => {
     setFetchmail({
       ...fetchmail,
       [field]: event.target.value,
     });
   }
 
-  const handleCheckbox = field => event => {
+  const handleCheckbox = (field: keyof FetchmailConfig) => (event: ChangeEvent) => {
     setFetchmail({
       ...fetchmail,
       [field]: event.target.checked,
@@ -66,7 +80,6 @@ const EditFetchmail = props => {
   }
 
   const handleAdd = () => {
-    const { edit } = props;
     const { sslCertPath, sslFingerprint, extraOptions } = fetchmail;
     edit({
       ...fetchmail,
@@ -76,7 +89,6 @@ const EditFetchmail = props => {
     });
   }
 
-  const { classes, t, open, onClose, username } = props;
   const { active, srcServer, srcUser, srcPassword, srcFolder, srcAuth, fetchall, keep, protocol,
     useSSL, sslCertCheck, sslCertPath, sslFingerprint, extraOptions } = fetchmail;
   const disabled = [srcServer, srcUser, srcPassword, protocol].includes('');
@@ -92,7 +104,7 @@ const EditFetchmail = props => {
       }}>
       <DialogTitle>{t('editEntry', { username: username })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
-        <FormControl className={classes.form} noValidate autoComplete="off">
+        <FormControl className={classes.form}>
           <TextField 
             className={classes.input}
             label={t("Source server") + " (host[:port])"} 
@@ -254,14 +266,5 @@ const EditFetchmail = props => {
   );
 }
 
-EditFetchmail.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  entry: PropTypes.object,
-  edit: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-};
 
-export default withTranslation()(withStyles(EditFetchmail, styles));
+export default EditFetchmail;

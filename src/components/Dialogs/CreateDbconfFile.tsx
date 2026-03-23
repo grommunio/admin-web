@@ -2,20 +2,22 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   Grid2,
   Typography,
-  MenuItem, 
+  MenuItem,
+  Theme, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { uploadServiceFile } from '../../actions/dbconf';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { ChangeEvent, KeyValuePair } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -34,9 +36,16 @@ const styles = theme => ({
     minWidth: 120,
     marginBottom: 2,
   },
-});
+}));
 
-const CreateDbconfFile = props => {
+
+type CreateDbconfFileProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (err: string) => void;
+}
+
+const CreateDbconfFile = (props: CreateDbconfFileProps) => {
   const [state, setState] = useState({
     data: [
       { key: 'commit_key', value: '' },
@@ -47,10 +56,14 @@ const CreateDbconfFile = props => {
     loading: false,
   });
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { t } = useTranslation();
+  const { classes } = useStyles();
+  const { commands } = useAppSelector(state => state.dbconf);
 
   const commandKeys = ['key', 'file', 'service'];
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => event => {
     setState({
       ...state,
       [field]: event.target.value,
@@ -65,11 +78,11 @@ const CreateDbconfFile = props => {
 
   const handleUpload = e => {
     e.preventDefault();
-    const { upload, onError } = props;
+    const { onError } = props;
     const { service, data } = state;
     setState({ ...state, loading: true });
     // Create service
-    upload('grommunio-dbconf', service, formatData(data))
+    dispatch(uploadServiceFile('grommunio-dbconf', service, formatData(data)))
       .then(() => {
         // Create service file
         navigate('/dbconf/grommunio-dbconf/' + service);
@@ -80,13 +93,13 @@ const CreateDbconfFile = props => {
       });
   }
 
-  const formatData = (data) => {
+  const formatData = (data: KeyValuePair<string>[]): CreateDbconfFileProps => {
     const obj = {};
     data.forEach(pair => obj[pair.key] = pair.value || undefined);
-    return obj;
+    return obj as CreateDbconfFileProps;
   }
 
-  const handleTemplate = e => {
+  const handleTemplate = (e: ChangeEvent) => {
     const { value } = e.target;
     if (value === "postfix") {
       setState({
@@ -101,7 +114,7 @@ const CreateDbconfFile = props => {
     }
   }
 
-  const { classes, t, open, onClose, commands } = props;
+  const { open, onClose } = props;
   const { service, data, loading } = state;
 
   return (
@@ -177,31 +190,5 @@ const CreateDbconfFile = props => {
   );
 }
 
-CreateDbconfFile.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  upload: PropTypes.func.isRequired,
-  commands: PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    commands: state.dbconf.commands,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    upload: async (service, filename, file) => {
-      await dispatch(uploadServiceFile(service, filename, file))
-        .catch(message => Promise.reject(message));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(CreateDbconfFile, styles)));
+export default CreateDbconfFile;

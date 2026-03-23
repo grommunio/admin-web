@@ -2,28 +2,41 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions, FormControlLabel, Checkbox, CircularProgress, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { deleteUserData } from '../../actions/users';
+import { User } from '@/types/users';
+import { useAppDispatch } from '../../store';
 
 
-const DeleteUser = props => {
+type DeleteUserProps = {
+  user: User;
+  open: boolean;
+  domainID: number;
+  onSuccess: () => void;
+  onError: () => void;
+  onClose: () => void;
+}
+
+
+const DeleteUser = (props: DeleteUserProps) => {
   const [state, setState] = useState({
     deleteFiles: false,
     deleteChatUser: false,
     loading: false,
   });
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { open, user, onClose, domainID, onSuccess, onError } = props;
+  const { deleteFiles, deleteChatUser, loading } = state;
 
-  const handleDelete = e => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { user, domainID, onSuccess, onError } = props;
     const { deleteFiles, deleteChatUser } = state;
     setState({ ...state, loading: true });
-    props.delete(domainID, user.ID, { deleteFiles, deleteChatUser })
+    dispatch(deleteUserData(domainID, user.ID, { deleteFiles, deleteChatUser }))
       .then(() => {
         if(onSuccess) onSuccess();
         setState({ ...state, loading: false });
@@ -34,10 +47,8 @@ const DeleteUser = props => {
       });
   }
 
-  const handleCheckbox = field => () => setState({ ...state, [field]: !state[field] });
-
-  const { t, open, user, onClose } = props;
-  const { deleteFiles, deleteChatUser, loading } = state;
+  const handleCheckbox = (field: keyof typeof state) => () =>
+    setState({ ...state, [field]: !state[field] });
 
   return (
     <Dialog
@@ -92,25 +103,5 @@ const DeleteUser = props => {
   );
 }
 
-DeleteUser.propTypes = {
-  t: PropTypes.func.isRequired,
-  user: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]).isRequired,
-  open: PropTypes.bool,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  domainID: PropTypes.number.isRequired,
-  delete: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    delete: async (domainID, id, params) => {
-      await dispatch(deleteUserData(domainID, id, params))
-        .catch(error => Promise.reject(error));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(DeleteUser));
+export default DeleteUser;

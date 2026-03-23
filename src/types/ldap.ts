@@ -49,7 +49,7 @@ export type FetchLdapParams = {
 };
 
 export type ImportLdapParams = {
-  ID: number,
+  ID: string,
   force: boolean,
   domain: number,
 };

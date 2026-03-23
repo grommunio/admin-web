@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
 import Chart from "react-apexcharts";
 import { useTranslation } from 'react-i18next';
 import { Theme, useTheme } from '@mui/material';
@@ -100,12 +99,6 @@ function CPUPie() {
     </div>
   );
 }
-
-CPUPie.propTypes = {
-  classes: PropTypes.object.isRequired,
-  cpuPie: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
 
 export default CPUPie;
