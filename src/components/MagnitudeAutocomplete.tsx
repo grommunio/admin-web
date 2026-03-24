@@ -9,7 +9,7 @@ import { USER_STATUS } from '../constants';
 
 
 type MagnitudeAutocompleteProps<T> = {
-  className: string;
+  className?: string;
   value: T | null;
   filterAttribute: string;
   onChange: (_: any, newVal: T) => void;

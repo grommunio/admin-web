@@ -2,24 +2,28 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, TextField,
   Button, DialogActions, CircularProgress, Grid2, FormControl,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
-import { addUserData } from '../../actions/users';
+import { addContactData } from '../../actions/users';
 import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
 import { USER_STATUS } from '../../constants';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { UserProperties } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
+import { BaseDomain } from '@/types/domains';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
-    margin: theme.spacing(3, 1, 1, 1),
+    marginTop: theme.spacing(4),
   },
   grid: {
     display: 'flex',
@@ -40,39 +44,58 @@ const styles = theme => ({
     flex: 1,
     marginRight: 8,
   },
-});
+}));
 
-const AddContact = props => {
-  const [contact, setContact] = useState({
-    displayname: '',
-  });
-  const [domain, setDomain] = useState("");
+type AddGlobalContactProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+const defaultState: Partial<UserProperties> = {
+  smtpaddress: '',
+  displayname: '',
+  givenname: '',
+  initials: '',
+  surname: '',
+  nickname: '',
+}
+
+const AddGlobalContact = (props: AddGlobalContactProps) => {
+  const [contact, setContact] = useState(defaultState);
+  const [domain, setDomain] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Domains } = useAppSelector(state => state.domains);
 
-  const handleEnter = async () => {
-    const { fetchDomains, onError } = props;
-    fetchDomains().catch(error => onError(error));
+  const handleEnter = () => {
+    const { onError } = props;
+    dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }))
+      .catch(error => onError(error));
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof defaultState) => (event: ChangeEvent) => {
     setContact({
       ...contact,
       [field]: event.target.value,
     });
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { add, onError, onSuccess } = props;
+    const { onError, onSuccess } = props;
     setLoading(true);
-    add(domain?.ID || -1, {
+    dispatch(addContactData(domain?.ID || -1, {
       status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
-    })
+    }))
       .then(() => {
         setContact({ displayname: '' });
         setLoading(false);
@@ -85,15 +108,15 @@ const AddContact = props => {
   }
 
   const handleAddAndEdit = () => {
-    const { add, onError } = props;
+    const { onError } = props;
     setLoading(true);
-    add(domain?.ID || -1, {
+    dispatch(addContactData(domain?.ID || -1, {
       status: USER_STATUS.CONTACT,
       properties: {
         ...contact,
         creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
       },
-    })
+    }))
       .then(user => {
         navigate('/' + domain?.ID + '/contacts/' + user.ID);
       })
@@ -103,11 +126,11 @@ const AddContact = props => {
       });
   }
 
-  const handleAutocomplete = (e, newVal) => {
+  const handleAutocomplete = (_: unknown, newVal: BaseDomain) => {
     setDomain(newVal || '');
   }
 
-  const { classes, t, open, onClose, Domains } = props;
+  const { open, onClose } = props;
   const { smtpaddress, displayname, givenname, initials, surname, nickname } = contact;
 
   return (
@@ -124,7 +147,7 @@ const AddContact = props => {
       <DialogContent>
         <Grid2 container>
           <FormControl className={classes.form}>
-            <MagnitudeAutocomplete
+            <MagnitudeAutocomplete<BaseDomain>
               value={domain}
               filterAttribute={'domainname'}
               onChange={handleAutocomplete}
@@ -213,34 +236,5 @@ const AddContact = props => {
   );
 }
 
-AddContact.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  fetchDomains: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  Domains: PropTypes.array.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Domains: state.domains.Domains,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }))
-      .catch(message => Promise.reject(message)),
-    add: async (domainID, user) => 
-      await dispatch(addUserData(domainID, user))
-        .then(user => Promise.resolve(user))
-        .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddContact, styles)));
+export default AddGlobalContact;
