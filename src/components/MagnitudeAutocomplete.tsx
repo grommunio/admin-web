@@ -10,10 +10,10 @@ import { USER_STATUS } from '../constants';
 
 type MagnitudeAutocompleteProps<T> = {
   className?: string;
-  value: T | null;
+  value: T | T[];
   filterAttribute: string;
-  onChange: (_: any, newVal: T) => void;
-  options?: any[]; // Improve
+  onChange: (_: never, newVal: T | T[]) => void;
+  options?: T[];
   label?: string;
   getOptionLabel?: (option: any) => string;
   inputValue?: string;

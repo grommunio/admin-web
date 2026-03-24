@@ -99,7 +99,7 @@ const AddFolder = (props: AddFolderProps) => {
       });
   }
 
-  const handleAutocomplete = (_: any, newVal: UserListItem[]) => {
+  const handleAutocomplete = (_: never, newVal: UserListItem[]) => {
     setOwners(newVal);
   }
 

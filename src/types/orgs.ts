@@ -1,14 +1,13 @@
 import { PartialWithRequired } from "./common";
-import { BaseDomain } from "./domains"
 
 export type Org = {
   ID: number,
   description: string,
   domainCount: number,
-  domains: BaseDomain[],
+  domains: number[],
   name: string,
 }
 
 export type OrgListItem = Omit<Org, 'domains'>
-export type NewOrg = Omit<Org, 'ID'>;
+export type NewOrg = Omit<Org, 'ID' | 'domainCount'>;
 export type UpdateOrg = PartialWithRequired<Org, "ID">;

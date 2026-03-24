@@ -2,18 +2,22 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { addOrgData } from '../../actions/orgs';
 import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { NewOrg } from '@/types/orgs';
+import { ChangeEvent } from '@/types/common';
+import { BaseDomain } from '@/types/domains';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -24,9 +28,23 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddOrg = props => {
+
+type AddOrgProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+
+const AddOrg = (props: AddOrgProps) => {
+  const { open, onClose } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { Domains } = useAppSelector(state => state.domains);
+  const dispatch = useAppDispatch();
   const [org, setOrg] = useState({
     name: '',
     description: '',
@@ -35,26 +53,26 @@ const AddOrg = props => {
   const [loading, setLoading] = useState(false);
 
   const handleEnter = () => {
-    props.fetch();
+    dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }));
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof NewOrg) => (event: ChangeEvent) => {
     setOrg({
       ...org,
       [field]: event.target.value,
     });
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { add, onSuccess, onError } = props;
+    const { onSuccess, onError } = props;
     const { name, description, domains } = org;
     setLoading(true);
-    add({
+    dispatch(addOrgData({
       name,
       description,
       domains: domains.map(d => d.ID),
-    })
+    }))
       .then(() => {
         setOrg({
           name: '',
@@ -70,14 +88,13 @@ const AddOrg = props => {
       });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: keyof NewOrg) => (_: never, newVal: BaseDomain[]) => {
     setOrg({
       ...org,
       [field]: newVal,
     });
   }
 
-  const { classes, t, open, onClose, Domains } = props;
   const { name, description, domains } = org;
   const nameAcceptable = name && name.length < 33;
 
@@ -113,8 +130,8 @@ const AddOrg = props => {
             rows={4}
             variant="outlined"
           />
-          <MagnitudeAutocomplete
-            value={domains || []}
+          <MagnitudeAutocomplete<BaseDomain>
+            value={domains}
             filterAttribute={'domainname'}
             onChange={handleAutocomplete('domains')}
             className={classes.input} 
@@ -147,34 +164,5 @@ const AddOrg = props => {
   );
 }
 
-AddOrg.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  Domains: PropTypes.array.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Domains: state.domains.Domains,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async () =>
-      await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' })),
-    add: async org => {
-      await dispatch(addOrgData(org))
-        .catch(message => Promise.reject(message));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddOrg, styles)));
+export default AddOrg;

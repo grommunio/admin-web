@@ -46,7 +46,7 @@ const DeleteDomain = (props: DeleteDomainProps) => {
       });
   }
 
-  const handlePurge = (_: any, checked: boolean) => {
+  const handlePurge = (_: never, checked: boolean) => {
     setState({
       ...state,
       purge: checked,
