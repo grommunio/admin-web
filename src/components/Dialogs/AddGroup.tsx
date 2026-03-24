@@ -89,7 +89,6 @@ const AddGroup = (props: AddGroupProps) => {
   const handleTypeChange = (event: ChangeEvent) => {
     const { associations } = group;
     const val = event.target.value;
-    console.log(val);
     setGroup({
       ...group,
       listType: parseInt(val),

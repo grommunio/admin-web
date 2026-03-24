@@ -10,7 +10,6 @@ export type Permission =
   "OrgAdmin" |
   "DomainPurge";
 
-
 type RolePermission = {
   ID: number;
   params: number;
@@ -29,5 +28,10 @@ export type Role = BaseRole & {
 }
 
 export type RoleListItem = Omit<Role, 'domains'>;
-export type NewRole = Omit<Role, 'ID'>;
+export type NewRole = {
+  name: string;
+  description: string;
+  users: number[];
+  permissions: { permission: Permission, params: string | number }[];
+}
 export type UpdateRole = PartialWithRequired<Role, "ID">;

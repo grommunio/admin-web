@@ -106,7 +106,7 @@ export function fetchUserData(domainID: number, userID: number) {
   };
 }
 
-export function fetchAllUsers(params: URLParams & { orgID?: number }) {
+export function fetchAllUsers(params: URLParams & { orgID?: number, status?: number }) {
   return async (dispatch: Dispatch) => {
     try {
       const data = await allUsers(params);

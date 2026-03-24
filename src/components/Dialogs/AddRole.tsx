@@ -2,23 +2,27 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
-  MenuItem, Button, DialogActions, CircularProgress, Grid2, IconButton, 
+  MenuItem, Button, DialogActions, CircularProgress, Grid2, IconButton,
+  Theme, 
 } from '@mui/material';
 import Delete from '@mui/icons-material/Close';
 import Add from '@mui/icons-material/AddCircle';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { fetchDomainData } from '../../actions/domains';
 import { fetchAllUsers } from '../../actions/users';
 import { addRolesData, fetchPermissionsData } from '../../actions/roles';
 import { fetchOrgsData } from '../../actions/orgs';
 import { ORG_ADMIN } from '../../constants';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { NewRole, Permission } from '@/types/roles';
+import { User } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -40,35 +44,42 @@ const styles = theme => ({
   addButton: {
     marginTop: 8,
   },
-});
+}));
 
-const AddRole = props => {
+
+type AddRoleProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+
+const AddRole = (props: AddRoleProps) => {
+  const { open, onClose, onSuccess, onError } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Permissions } = useAppSelector(state => state.roles);
+  const { Users } = useAppSelector(state => state.users);
+  const { Domains } = useAppSelector(state => state.domains);
+  const { Orgs } = useAppSelector(state => state.orgs);
   const [role, setRole] = useState({
     name: '',
     description: '',
-    permissions: [{ permission: '', params: '' }],
+    permissions: [{ permission: '', params: null }],
     users: [],
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const { fetch, fetchDomains, fetchUsers, fetchOrgs } = props;
-    fetch()
-      .catch(msg => {
-        setRole({ ...role, snackbar: msg || 'Unknown error' });
-      });
-    fetchDomains()
-      .catch(msg => {
-        setRole({ ...role, snackbar: msg || 'Unknown error' });
-      });
-    fetchUsers()
-      .catch(msg => {
-        setRole({ ...role, snackbar: msg || 'Unknown error' });
-      });
-    fetchOrgs()
-      .catch(msg => {
-        setRole({ ...role, snackbar: msg || 'Unknown error' });
-      });
+    dispatch(fetchPermissionsData()).catch(err => Promise.reject(err));
+    dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }))
+      .catch(err => Promise.reject(err));
+    dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, status: 0 }))
+      .catch(err => Promise.reject(err));
+    dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
+      .catch(err => Promise.reject(err));
   }, []);
 
   const handleInput = field => event => {
@@ -78,27 +89,27 @@ const AddRole = props => {
     });
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { add, onSuccess, onError } = props;
     const { users, permissions } = role;
     setLoading(true);
-    add({
+    dispatch(addRolesData({
       ...role,
       users: users.map(u => u.ID),
       permissions: permissions.map(permission => {
         const params = permission.params;
         return {
-          ...permission,
-          params: params.ID,
+          permission: permission.permission as Permission,
+          params: params ? params.ID : "",
         };
       }),
-    })
+    }))
       .then(() => {
         setRole({
+          ...role,
           name: '',
           description: '',
-          permissions: [{ permission: '', params: '' }],
+          permissions: [{ permission: '', params: null }],
         });
         setLoading(false);
         onSuccess();
@@ -109,14 +120,14 @@ const AddRole = props => {
       });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: keyof NewRole) => (_: never, newVal: User) => {
     setRole({
       ...role,
       [field]: newVal,
     });
   }
 
-  const handleSelectPermission = idx => event => {
+  const handleSelectPermission = (idx: number) => (event: ChangeEvent) => {
     const copy = [...role.permissions];
     const input = event.target.value;
     copy[idx].permission = input;
@@ -126,7 +137,7 @@ const AddRole = props => {
     setRole({ ...role, permissions: copy });
   }
 
-  const handleSetParams = idx => (e, newVal) => {
+  const handleSetParams = (idx: number) => (_: never, newVal: { ID: number, domainname?: string, name?: string }) => {
     const copy = [...role.permissions];
     copy[idx].params = newVal;
     setRole({ ...role, permissions: copy });
@@ -138,7 +149,7 @@ const AddRole = props => {
     setRole({ ...role, permissions: copy });
   }
 
-  const removeRow = idx => () => {
+  const removeRow = (idx: number) => () => {
     const copy = [...role.permissions];
     copy.splice(idx, 1);
     setRole({ ...role, permissions: copy });
@@ -157,7 +168,6 @@ const AddRole = props => {
     return every;
   }
 
-  const { classes, t, open, onClose, Permissions, Users, Domains, Orgs } = props;
   const { name, permissions, description, users } = role;
   const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
   const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
@@ -283,49 +293,6 @@ const AddRole = props => {
   );
 }
 
-AddRole.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  Permissions: PropTypes.array.isRequired,
-  fetch: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  Domains: PropTypes.array.isRequired,
-  Orgs: PropTypes.array.isRequired,
-  Users: PropTypes.array.isRequired,
-  fetchDomains: PropTypes.func.isRequired,
-  fetchUsers: PropTypes.func.isRequired,
-  fetchOrgs: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Permissions: state.roles.Permissions,
-    Domains: state.domains.Domains,
-    Users: state.users.Users,
-    Orgs: state.orgs.Orgs,
-  };
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async () => {
-      await dispatch(fetchPermissionsData()).catch(err => Promise.reject(err));
-    },
-    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }))
-      .catch(err => Promise.reject(err)),
-    fetchUsers: async () => await dispatch(fetchAllUsers({ sort: 'username,asc', limit: 1000000, status: 0 }))
-      .catch(err => Promise.reject(err)),
-    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
-      .catch(err => Promise.reject(err)),
-    add: async role => {
-      await dispatch(addRolesData(role)).catch(err => Promise.reject(err));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddRole, styles)));
+export default AddRole;
