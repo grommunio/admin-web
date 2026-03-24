@@ -11,7 +11,7 @@ import {
 import { folderDetails, addFolder, editFolder, deleteFolder, owners, addOwner,
   putFolderPermissions, deleteOwner, folderTree } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultListHandler2, defaultPatchHandler } from './handlers';
-import { NewFolder, UpdateFolder } from '@/types/folders';
+import { NewFolder, NewFolderOwner, UpdateFolder } from '@/types/folders';
 import { Dispatch } from 'redux';
 import { BaseUser } from '@/types/users';
 
@@ -60,7 +60,7 @@ export function fetchOwnersData(domainID: number, folderID: string, params?: URL
   return defaultListHandler2(owners, OWNERS_DATA_RECEIVED, domainID, folderID, params);
 }
 
-export function addOwnerData(domainID: number, folderID: string, ownersData: BaseUser[]) {
+export function addOwnerData(domainID: number, folderID: string, ownersData: NewFolderOwner[]) {
   return async (dispatch: Dispatch) => {
     try {
       for(let i = 0; i < ownersData.length; i++) {

@@ -10,11 +10,11 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { setFolderPermissions } from '../../actions/folders';
-import AddOwner from './AddOwner.js';
+import AddOwner from './AddOwner';
 import RemoveOwner from './RemoveOwner';
 import { permissionProfiles } from '../../mapi/rights';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { BaseDomain } from '@/types/domains';
+import { Domain } from '@/types/domains';
 import { ChangeEvent } from '@/types/common';
 import { Owner } from '@/types/users.js';
 
@@ -56,7 +56,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 type FolderPermissionsProps = {
   open: boolean;
-  domain: BaseDomain;
+  domain: Domain;
   folderID: string;
   onCancel: () => void;
   onSuccess: () => void;

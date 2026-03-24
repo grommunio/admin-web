@@ -5,6 +5,8 @@ export type FolderOwner = {
   permissions: number;
 }
 
+export type NewFolderOwner = Omit<FolderOwner, 'permissions'>;
+
 export type Folder = {
   folderid: string,
   name: string,

@@ -2,18 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl,
-  Button, DialogActions, CircularProgress, 
+  Button, DialogActions, CircularProgress,
+  Theme, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
-import { addOwnerData } from '../../actions/folders.ts';
+import { useTranslation } from 'react-i18next';
+import { addOwnerData } from '../../actions/folders';
 import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { Domain } from '@/types/domains';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { User } from '@/types/users';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -24,27 +27,39 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddOwner = props => {
-  const [owners, setOwners] = useState([]);
+type AddOwnerProps = {
+  open: boolean;
+  folderID: string;
+  domain: Domain;
+  onSuccess: () => void;
+  onCancel: () => void;
+  onError: (error: string) => void;
+}
+
+const AddOwner = (props: AddOwnerProps) => {
+  const { open, domain, folderID, onSuccess, onError, onCancel } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Users } = useAppSelector(state => state.users);
+  const [owners, setOwners] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const { domain, fetchUsers, fetchOrgUsers } = props;
     if(domain.orgID) {
-      fetchOrgUsers(domain.orgID)
+      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID }))
         .catch();
     } else {
-      fetchUsers(domain.ID)
+      dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" }))
         .catch();
     }
   }, []);
 
   const handleAdd = () => {
-    const { add, onSuccess, onError, domain, folderID } = props;
     setLoading(true);
-    add(domain.ID, folderID, owners)
+    dispatch(addOwnerData(domain.ID, folderID, owners))
       .then(() => {
         setOwners([]);
         onSuccess();
@@ -56,11 +71,10 @@ const AddOwner = props => {
       });
   }
 
-  const handleAutocomplete = (e, newVal) => {
+  const handleAutocomplete = (_: never, newVal: User[]) => {
     setOwners(newVal);
   }
 
-  const { classes, t, open, onCancel, Users } = props;
   return (
     <Dialog
       onClose={onCancel}
@@ -71,7 +85,7 @@ const AddOwner = props => {
       <DialogTitle>{t('addHeadline', { item: 'Owner' })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl className={classes.form}>
-          <MagnitudeAutocomplete
+          <MagnitudeAutocomplete<User>
             multiple
             value={owners || []}
             filterAttribute={'username'}
@@ -105,40 +119,4 @@ const AddOwner = props => {
   );
 }
 
-AddOwner.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  fetchUsers: PropTypes.func.isRequired,
-  fetchOrgUsers: PropTypes.func.isRequired,
-  Users: PropTypes.array.isRequired,
-  folderID: PropTypes.string.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    Users: state.users.Users,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domainID, folderID, owners) => {
-      await dispatch(addOwnerData(domainID, folderID, owners)).catch(msg => Promise.reject(msg));
-    },
-    fetchOrgUsers: async (orgID) =>
-      await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
-        .catch(message => Promise.reject(message)),
-    fetchUsers: async (domainID) =>
-      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
-        .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddOwner, styles)));
+export default AddOwner;
