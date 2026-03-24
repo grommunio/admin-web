@@ -70,7 +70,7 @@ export type NewUser = Pick<User,
   'chat' |
   'homeserver' |
   'lang' |
-  'privChat' |
+  'chat' |
   'properties' |
   'status' |
   'username'

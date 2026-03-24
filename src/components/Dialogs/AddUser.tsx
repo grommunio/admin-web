@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useCallback, useContext, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
+import {
+  Dialog, DialogTitle, DialogContent, FormControl, TextField,
   MenuItem, Button, DialogActions, CircularProgress, FormControlLabel, Checkbox,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { addUserData, getStoreLangs } from '../../actions/users';
 import { checkFormat } from '../../api';
@@ -20,8 +20,12 @@ import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
 import { CapabilityContext } from '../../CapabilityContext';
 import { selectableUserStatuses, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
+import { Domain } from '@/types/domains';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { Server } from '@/types/servers';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -32,54 +36,72 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddUser = props => {
+
+type AddUserProps = {
+  domain: Domain;
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+
+const AddUser = (props: AddUserProps) => {
+  const { domain, open, onClose, onError, onSuccess } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     username: '',
     properties: {
       displayname: '',
       storagequotalimit: '',
-      displaytypeex: USER_TYPE.NORMAL,
+      displaytypeex: USER_TYPE.USER,
     },
     status: USER_STATUS.NORMAL,
     loading: false,
     password: '',
     repeatPw: '',
-    homeserver: '',
+    homeserver: null,
     lang: 'en_US',
     chatAvailable: false,
+    chat: false,
   });
-  const config = useSelector((state) => state.config);
   const [langs, setLangs] = useState([]);
+  const config = useAppSelector((state) => state.config);
+  const { Servers } = useAppSelector(state => state.servers);
+  const { CreateParams } = useAppSelector(state => state.defaults);
   const [usernameError, setUsernameError] = useState(false);
   const navigate = useNavigate();
   const context = useContext(CapabilityContext);
   const isSystemAdmin = context.includes(SYSTEM_ADMIN_WRITE);
 
   const handleEnter = async () => {
-    const { fetchServers, fetchDefaults, domain, storeLangs, fetchDomainDetails } = props;
-    if(isSystemAdmin) fetchServers().catch(error => props.onError(error));
-    const domainDetails = await fetchDomainDetails(domain.ID);
-    const langs = await storeLangs()
-      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+    if(isSystemAdmin) dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
+      .catch(error => props.onError(error));
+    const langs = await dispatch(getStoreLangs())
+      .catch();
     if(langs) setLangs(langs);
-    fetchDefaults(null, {domain: domain.ID})
-      .then(() => {
-        const { createParams } = props;
-        // Update mask
-        setState({
-          ...state,
-          chatAvailable: domainDetails.chat || false,
-          ...getStateOverwrite(createParams, domainDetails.chat),
-        });
-      })
+    dispatch(fetchCreateParamsData(null, {domain: domain.ID}))
       .catch(error => props.onError(error));
   }
 
-  const getStateOverwrite = (createParams, chatAvailable) => {
-    if(!createParams) return {};
-    const user = createParams.user;
+  useEffect(() => {
+    (async () => {
+      const domainDetails = await dispatch(fetchDomainDetails(domain.ID));
+      setState({
+        ...state,
+        chatAvailable: domainDetails.chat || false,
+        ...getStateOverwrite(domainDetails.chat),
+      });
+    })();
+  }, [CreateParams]);
+
+  const getStateOverwrite = (chatAvailable) => {
+    if(!CreateParams) return {};
+    const user = CreateParams.user;
     const { lang, properties } = user || {};
     return {
       properties: {
@@ -89,7 +111,7 @@ const AddUser = props => {
         prohibitsendquota: properties?.prohibitsendquota,
       },
       lang: lang || 'en_US',
-      chat: chatAvailable ? (createParams.domain.chat || createParams.user.chat || false) : false,
+      chat: chatAvailable ? (CreateParams.domain.chat || CreateParams.user.chat || false) : false,
     };
   }
 
@@ -112,24 +134,23 @@ const AddUser = props => {
 
   const debounceFetch = useCallback(throttle(async params => {
     const resp = await checkFormat(params)
-      .catch(snackbar => setState({ ...state, snackbar, loading: false }));
+      .catch(() => setState({ ...state, loading: false }));
     setUsernameError(!!resp?.email);
   }, 500), []);
 
   const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
 
   const handleAdd = () => {
-    const { domain, add, onError, onSuccess, createParams } = props;
     const { username, password, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
-      privChat, privVideo, privFiles, privArchive } = createParams.user;
+      privChat, privVideo, privFiles, privArchive } = CreateParams.user;
     const checkboxes = status !== USER_STATUS.SHARED ?
     // eslint-disable-next-line camelcase
       { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
       : {};
     setState({ ...state, loading: true });
-    add(domain.ID, {
+    dispatch(addUserData(domain.ID, {
       username,
       password: status === USER_STATUS.SHARED ? undefined : password,
       status,
@@ -141,14 +162,15 @@ const AddUser = props => {
       ...checkboxes,
       lang,
       chat,
-    })
+    }))
       .then(() => {
         setState({
           ...state,
           username: '',
           properties: {
             displayname: '',
-            displaytypeex: USER_TYPE.NORMAL,
+            storagequotalimit: '',
+            displaytypeex: USER_TYPE.USER,
           },
           loading: false,
           password: '',
@@ -164,16 +186,14 @@ const AddUser = props => {
   }
 
   const handleAddAndEdit = () => {
-    const { domain, add, onError, createParams } = props;
-    const { username, password, subType, properties, status, homeserver, chat, lang } = state;
+    const { username, password, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
-    const checkboxes = status !== USER_STATUS.SHARED ? createParams.user : {};
+    const checkboxes = status !== USER_STATUS.SHARED ? CreateParams.user : {};
     setState({ ...state, loading: true });
-    add(domain.ID, {
+    dispatch(addUserData(domain.ID, {
       username,
       password: status === USER_STATUS.SHARED ? undefined : password,
       status,
-      subType,
       homeserver: homeserver?.ID || null,
       properties: {
         ...properties,
@@ -182,7 +202,7 @@ const AddUser = props => {
       ...checkboxes,
       lang,
       chat,
-    })
+    }))
       .then(user => {
         navigate('/' + domain.ID + '/users/' + user.ID);
       })
@@ -209,7 +229,6 @@ const AddUser = props => {
     });
   }
 
-  const { classes, t, domain, open, onClose, servers } = props;
   const { username, loading, properties, password, repeatPw,
     status, homeserver, lang, chat, chatAvailable } = state;
   const { displayname, displaytypeex } = properties;
@@ -311,7 +330,7 @@ const AddUser = props => {
             className={classes.input}
             label={t("Type")}
             fullWidth
-            value={displaytypeex || USER_TYPE.NORMAL}
+            value={displaytypeex || USER_TYPE.USER}
             onChange={handlePropertyChange('displaytypeex')}
           >
             {userTypes.map((type, key) => (
@@ -320,12 +339,12 @@ const AddUser = props => {
               </MenuItem>
             ))}
           </TextField>
-          {isSystemAdmin && <MagnitudeAutocomplete
+          {isSystemAdmin && <MagnitudeAutocomplete<Server>
             value={homeserver}
             filterAttribute={'hostname'}
             onChange={handleAutocomplete('homeserver')}
             className={classes.input} 
-            options={servers}
+            options={Servers}
             label={t('Homeserver')}
             isOptionEqualToValue={(option, value) => option.ID === value.ID}
           />}
@@ -371,46 +390,5 @@ const AddUser = props => {
   );
 }
 
-AddUser.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  onError: PropTypes.func.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  servers: PropTypes.array.isRequired,
-  fetchServers: PropTypes.func.isRequired,
-  fetchDefaults: PropTypes.func.isRequired,
-  fetchDomainDetails: PropTypes.func.isRequired,
-  createParams: PropTypes.object.isRequired,
-  storeLangs: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    servers: state.servers.Servers,
-    createParams: state.defaults.CreateParams,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domainID, user) => 
-      await dispatch(addUserData(domainID, user))
-        .then(user => Promise.resolve(user))
-        .catch(msg => Promise.reject(msg)),
-    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-    fetchDefaults: async (domainId, params) => await dispatch(fetchCreateParamsData(domainId, params))
-      .catch(message => Promise.reject(message)),
-    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
-    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
-      .then(domain => domain)
-      .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddUser, styles)));
+export default AddUser;
