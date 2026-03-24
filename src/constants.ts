@@ -61,6 +61,13 @@ export const LIST_PRIVILEGE = {
   "OUTGOING": 4,
 }
 
+export const listPrivileges = [
+  { ID: LIST_PRIVILEGE.ALL, name: "All" },
+  { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
+  { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
+  { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
+];
+
 export const LIST_TYPE = {
   "NORMAL": 0,
   "DOMAIN": 2,

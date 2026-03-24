@@ -1,24 +1,28 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
   MenuItem,
   FormControlLabel,
-  Checkbox, 
+  Checkbox,
+  Theme, 
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { addGroupData } from '../../actions/groups';
 import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
-import { LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN } from '../../constants';
+import { LIST_PRIVILEGE, LIST_TYPE, listPrivileges, listTypes, ORG_ADMIN } from '../../constants';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { Domain } from '@/types/domains';
+import { NewGroup } from '@/types/groups';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -29,9 +33,24 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddGroup = props => {
+
+type AddGroupProps = {
+  domain: Domain;
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+
+const AddGroup = (props: AddGroupProps) => {
+  const { open, onClose, domain, onSuccess, onError } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Users } = useAppSelector(state => state.users);
   const [group, setGroup] = useState({
     listname: '',
     displayname: '',
@@ -40,40 +59,41 @@ const AddGroup = props => {
     listPrivilege: LIST_PRIVILEGE.ALL,
     associations: [],
     specifieds: [],
+    domainID: domain.ID,
   });
   const [loading, setLoading] = useState(false);
   const context = useContext(CapabilityContext);
 
-  const listPrivileges = [
-    { ID: LIST_PRIVILEGE.ALL, name: "All" },
-    { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
-    { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
-    { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
-  ]
+  useEffect(() => {
+    setGroup({ ...group, domainID: domain.ID });
+  }, [domain]);
 
   const handleEnter = () => {
-    const { fetch, onError, domain, fetchOrgUsers } = props;
-    (context.includes(ORG_ADMIN) ? fetchOrgUsers(domain.orgID) : fetch(domain.ID))
+    const { onError, domain } = props;
+    (context.includes(ORG_ADMIN) ?
+      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID })) :
+      dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" })))
       .catch(error => {
         onError(error);
         setLoading(false);
       });
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof NewGroup) => (event: ChangeEvent) => {
     setGroup({
       ...group,
       [field]: event.target.value,
     });
   }
 
-  const handleTypeChange = event => {
+  const handleTypeChange = (event: ChangeEvent) => {
     const { associations } = group;
     const val = event.target.value;
+    console.log(val);
     setGroup({
       ...group,
-      listType: val,
-      associations: val === 0 ? associations : [], /* Associations only available if type "all" */
+      listType: parseInt(val),
+      associations: parseInt(val) === 0 ? associations : [], /* Associations only available if type "all" */
     });
   }
 
@@ -89,24 +109,24 @@ const AddGroup = props => {
 
   const handleAdd = e => {
     e.preventDefault();
-    const { add, domain, onSuccess, onError } = props;
     const { associations, specifieds } = group;
     setLoading(true);
-    add(domain.ID, {
+    dispatch(addGroupData(domain.ID, {
       ...group,
       /* Strip whitespaces and split on ',' */
       associations: associations.length > 0 ? associations.map(user => user.username) : undefined, 
       specifieds: specifieds.length > 0 ? specifieds.map(user => user.username) : undefined,
-    })
+    }))
       .then(() => {
         setGroup({
+          ...group,
           listname: '',
           listType: 0,
           hidden: 0,
           displayname: '',
           listPrivilege: LIST_PRIVILEGE.ALL,
-          associations: '',
-          specifieds: '',
+          associations: [],
+          specifieds: [],
         });
         setLoading(false);
         onSuccess();
@@ -129,7 +149,6 @@ const AddGroup = props => {
     });
   }
 
-  const { classes, t, open, onClose, Users, domain } = props;
   const { listname, displayname, hidden, listType, listPrivilege, associations, specifieds } = group;
   return (
     (<Dialog
@@ -250,39 +269,6 @@ const AddGroup = props => {
   );
 }
 
-AddGroup.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  domain: PropTypes.object.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  fetchOrgUsers: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-  Users: PropTypes.array.isRequired,
-  fetch: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Users: state.users.Users,
-  };
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async (domainID, group) => {
-      await dispatch(addGroupData(domainID, group))
-        .catch(message => Promise.reject(message));
-    },
-    fetch: async (domainID) =>
-      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
-        .catch(message => Promise.reject(message)),
-    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(AddGroup, styles)));
+export default AddGroup;

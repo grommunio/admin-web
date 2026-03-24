@@ -139,7 +139,7 @@ const GroupDetails = props => {
     { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
     { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
     { ID: LIST_PRIVILEGE.OUTGOING, name: "Outgoing (deprecated)" },
-  ]
+  ];
 
   const handlePrivilegeChange = event => {
     const { specifieds } = state;

@@ -17,5 +17,5 @@ export type GroupListItem = Pick<
   Group,
   "ID" | "domainID" | "listPrivilege" | "listType" | "listname"
 >;
-export type NewGroup = Omit<Group, 'ID'>;
+export type NewGroup = Omit<Group, 'ID' | 'user'>;
 export type UpdateGroup = PartialWithRequired<Group, "ID">;
