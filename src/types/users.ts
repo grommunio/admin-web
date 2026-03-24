@@ -143,3 +143,5 @@ export type FetchmailConfig = {
   sslFingerprint: string;
   extraOptions: string;
 };
+
+export type NewFetchmailConfig = Omit<FetchmailConfig, "ID">;

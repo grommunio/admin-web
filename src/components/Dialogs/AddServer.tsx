@@ -2,16 +2,19 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
+  Theme,
 } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { addServerData } from '../../actions/servers';
+import { useAppDispatch } from '../../store';
+import { NewServer } from '@/types/servers';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -22,27 +25,38 @@ const styles = theme => ({
   select: {
     minWidth: 60,
   },
-});
+}));
 
-const AddServer = props => {
-  const [server, setServer] = useState({
+
+type AddServerProps = {
+  open: boolean;
+  onClose: () => void;
+  onError: (error: string) => void;
+  onSuccess: () => void;
+}
+
+const AddServer = (props: AddServerProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const [server, setServer] = useState<NewServer>({
     hostname: '',
     extname: '',
   });
   const [loading, setLoading] = useState(false);
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof NewServer) => (event: ChangeEvent) => {
     setServer({
       ...server,
       [field]: event.target.value,
     });
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    const { add, onSuccess, onError } = props;
+    const { onSuccess, onError } = props;
     setLoading(true);
-    add(server)
+    dispatch(addServerData(server))
       .then(() => {
         setServer({
           hostname: '',
@@ -57,7 +71,7 @@ const AddServer = props => {
       });
   }
 
-  const { classes, t, open, onClose } = props;
+  const { open, onClose } = props;
   const { hostname, extname } = server;
 
   return (
@@ -110,24 +124,5 @@ const AddServer = props => {
   );
 }
 
-AddServer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  add: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    add: async server => {
-      await dispatch(addServerData(server))
-        .catch(message => Promise.reject(message));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(AddServer, styles)));
+export default AddServer;
