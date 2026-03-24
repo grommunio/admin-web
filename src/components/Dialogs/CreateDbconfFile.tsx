@@ -61,22 +61,22 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
   const { classes } = useStyles();
   const { commands } = useAppSelector(state => state.dbconf);
 
-  const commandKeys = ['key', 'file', 'service'];
+  const commandKeys = ['key', 'file', 'service'] as (keyof typeof commands)[];
 
-  const handleInput = (field: keyof typeof state) => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state,
       [field]: event.target.value,
     });
   }
 
-  const handleDataInput = idx => e => {
+  const handleDataInput = (idx: number) => (e: ChangeEvent) => {
     const data = [...state.data];
     data[idx].value = e.target.value;
     setState({ ...state, data });
   }
 
-  const handleUpload = e => {
+  const handleUpload = (e: React.MouseEvent) => {
     e.preventDefault();
     const { onError } = props;
     const { service, data } = state;
@@ -93,10 +93,10 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
       });
   }
 
-  const formatData = (data: KeyValuePair<string>[]): CreateDbconfFileProps => {
-    const obj = {};
+  const formatData = (data: KeyValuePair<string>[]): Record<string, any> => {
+    const obj: Record<string, string> = {};
     data.forEach(pair => obj[pair.key] = pair.value || undefined);
-    return obj as CreateDbconfFileProps;
+    return obj;
   }
 
   const handleTemplate = (e: ChangeEvent) => {
@@ -147,7 +147,7 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
             required
           />
           <Typography variant="h6">Data</Typography>
-          {data.map((pair, idx) => <Grid2 key={idx} container alignItems="center">
+          {data.map((pair: KeyValuePair<string>, idx: number) => <Grid2 key={idx} container alignItems="center">
             <Typography className={classes.gridTypo}>
               {pair.key}
             </Typography>

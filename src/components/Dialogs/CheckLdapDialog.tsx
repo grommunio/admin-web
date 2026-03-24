@@ -19,6 +19,7 @@ import { AccountCircle, ContactMail, Delete, DeleteForever } from '@mui/icons-ma
 import { USER_STATUS } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { deleteOrphanedUsers } from '../../actions/users';
+import { OrphanedUser } from '@/types/users';
 
 
 const useStyles = makeStyles()(() => ({
@@ -68,7 +69,7 @@ const CheckLdapDialog = (props: CheckLdapDialogProps) => {
       <DialogTitle>{t('Orphaned users')}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         {Orphaned.length > 0 ? <List>
-          {Orphaned.map(user => 
+          {Orphaned.map((user: OrphanedUser) => 
             <ListItem
               key={user.ID}
               secondaryAction={<div style={{ display: "flex" }}>

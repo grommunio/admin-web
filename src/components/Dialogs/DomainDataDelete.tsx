@@ -22,7 +22,7 @@ const DomainDataDelete = (props: DomainDataDeleteProps) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
-  const handleDelete = e => {
+  const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     const { id, onSuccess, onError, domainID } = props;
     setLoading(true);

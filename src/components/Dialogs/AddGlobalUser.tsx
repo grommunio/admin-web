@@ -20,6 +20,9 @@ import { throttle } from 'lodash';
 import { selectableUserStatuses, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Server } from '@/types/servers';
+import { NewUser, UserProperties } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
+import { Domain } from '@/types/domains';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -110,14 +113,14 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     };
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state,
       [field]: event.target.value,
     });
   }
 
-  const handleUsernameInput = event => {
+  const handleUsernameInput = (event: ChangeEvent) => {
     const { domain } = state;
     const val = event.target.value;
     if(val && domain) debounceFetch({ email: encodeURIComponent(val + '@' + domain?.domainname) });
@@ -127,15 +130,16 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const debounceFetch = useCallback(throttle(async params => {
+  const debounceFetch = useCallback(throttle(async (params: { email: string }) => {
     const resp = await checkFormat(params)
       .catch(() => setState({ ...state, loading: false }));
     setUsernameError(!!resp?.email);
   }, 500), []);
 
-  const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
+  const handleCheckbox = (field: keyof NewUser) => (event: ChangeEvent) =>
+    setState({ ...state, [field]: event.target.checked });
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     const { username, password, properties, domain, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
@@ -215,7 +219,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
       });
   }
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     setState({
       ...state,
       properties: {
@@ -225,7 +229,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleAutocomplete = async (e, domain) => {
+  const handleAutocomplete = async (_: never, domain: Domain) => {
     const { username, chat } = state;
     if(!domain) return;
     const domainDetails = await dispatch(fetchDomainDetails(domain.ID));
@@ -238,7 +242,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleServer = (e, newVal) => {
+  const handleServer = (_: never, newVal: Server) => {
     setState({
       ...state,
       homeserver: newVal || '',

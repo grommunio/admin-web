@@ -6,7 +6,7 @@ import { withStyles } from 'tss-react/mui';
 
 const StyledTableCell = withStyles(TableCell, theme => ({
   head: {
-    backgroundColor: theme.palette.primary['100'],
+    backgroundColor: theme.palette.primary.light,
     border: '1px solid white',
     color: 'black',
   },

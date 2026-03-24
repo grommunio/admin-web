@@ -63,7 +63,7 @@ const UploadServiceFile = (props: UploadServiceFileProps) => {
     });
   }
 
-  const handleDataInput = (field: 'key' | 'value', idx: number) => (e) => {
+  const handleDataInput = (field: 'key' | 'value', idx: number) => (e: ChangeEvent) => {
     const data = [...state.data];
     data[idx][field] = e.target.value;
     setState({ ...state, data });
@@ -103,7 +103,7 @@ const UploadServiceFile = (props: UploadServiceFileProps) => {
   }
 
   const formatData = (data: KeyValuePair<string>[]) => {
-    const obj = {};
+    const obj: Record<string, string> = {};
     data.forEach(pair => obj[pair.key] = pair.value);
     return obj;
   }

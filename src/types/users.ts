@@ -87,6 +87,13 @@ export type LdapUser = {
   type: LdapUserType;
 }
 
+export type OrphanedUser = BaseUser & {
+  status: number;
+  displayname: string;
+  smtpaddress?: string;
+  username?: string;
+}
+
 export type NewContact = {
   status: number;
   properties: Partial<UserProperties>;

@@ -14,7 +14,7 @@ type DisksProps = {
   disks: Disk[];
 }
 
-const shouldComponentUpdate = (_, nextProps: DisksProps) => {
+const shouldComponentUpdate = (_: never, nextProps: DisksProps) => {
   return nextProps.timer % 10 !== 0;
 }
 

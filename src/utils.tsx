@@ -331,7 +331,7 @@ export function formatCreateParams(createParams: Record<string, any>) {
       if(user[quotaLimit] === 0) break;
       const r = user[quotaLimit] % 1024 ** i;
       if(r === 0) {
-        sizeUnits[quotaLimit] = i + 1;
+        sizeUnits[quotaLimit as keyof typeof sizeUnits] = i + 1;
         user[quotaLimit] = user[quotaLimit] / 1024 ** i;
         break;
       }
@@ -417,7 +417,7 @@ export const generateFormattedLogLine = (message: string) => {
     // Get formatting
     const ansiEndIndex = part.search("m");
     const formatting = part.slice(1, ansiEndIndex);
-    const formattingClass = ANSI_CODE_TO_JSS_CLASS[formatting] || { color: "#888" }
+    const formattingClass = ANSI_CODE_TO_JSS_CLASS[formatting as keyof typeof ANSI_CODE_TO_JSS_CLASS] || { color: "#888" }
 
     const plainMessage = part.slice(ansiEndIndex + 1);
 

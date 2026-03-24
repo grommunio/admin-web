@@ -67,10 +67,13 @@ export const store = configureStore({
     taskq: taskqReducer,
     users: usersReducer,
   }),
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      process.env.NODE_ENV === 'development' ? logger : []
-    ),
+  middleware: (getDefaultMiddleware) => {
+    const defaultMiddleware = getDefaultMiddleware();
+    if (process.env.NODE_ENV === 'development') {
+      defaultMiddleware.push(logger);
+    }
+    return defaultMiddleware;
+  }
 });
 
 export type AppStore = typeof store;

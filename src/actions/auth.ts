@@ -63,7 +63,7 @@ export function refreshToken() {
 }
 
 // TODO: Deduplicate
-export function authLoginWithToken(token) {
+export function authLoginWithToken(token: string) {
   return async (dispatch: Dispatch) => {
     document.cookie = "grommunioAuthJwt=" + token + ';path=/'
       + (window.location.protocol === 'https:' ? ';secure' : '');
@@ -97,7 +97,7 @@ export function authLogout() {
   return authAuthenticated(false);
 }
 
-export function authAuthenticated(authenticated = true, capabilities=[], csrf='') {
+export function authAuthenticated(authenticated = true, capabilities: string[]=[], csrf='') {
   return {
     type: AUTH_AUTHENTICATED,
     authenticated,

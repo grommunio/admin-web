@@ -27,7 +27,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: 8,
   },
   blueCheckbox: {
-    color: theme.palette.primary['500'],
+    color: theme.palette.primary.main,
   },
 }));
 

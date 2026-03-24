@@ -7,6 +7,7 @@ import {
   ROLE_DATA_DELETE,
   PERMISSIONS_DATA_RECEIVED,
   ROLES_NEXT_SET,
+  URLParams,
 } from './types';
 import { roles, editRole, permissions, addRole, deleteRole, role } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
@@ -15,7 +16,7 @@ import { Dispatch } from 'redux';
 import { NewRole, UpdateRole } from '@/types/roles';
 
 
-export function fetchRolesData(params) {
+export function fetchRolesData(params: URLParams) {
   return async (dispatch: Dispatch) => {
     try {
       const response = await roles(params);

@@ -9,7 +9,7 @@ import { getTimeDiff } from '../utils';
 import store from '../store';
 import { defaultDetailsHandler, defaultPatchHandler } from './handlers';
 import { Dispatch } from 'redux';
-import { FetchSyncParams, RemoteWipeParams } from '@/types/sync';
+import { ActiveSyncSession, FetchSyncParams, RemoteWipeParams } from '@/types/sync';
 
 
 export function fetchSyncData(params: FetchSyncParams) {
@@ -19,7 +19,7 @@ export function fetchSyncData(params: FetchSyncParams) {
       const currentState = store.getState().sync.Sync;
       const currentLength = currentState.length;
       syncData = syncData.data;
-      syncData = syncData.map((r, idx) => {
+      syncData = syncData.map((r: ActiveSyncSession, idx: number) => {
         return {
           ...r,
           diff: getTimeDiff(r.update),

@@ -23,6 +23,8 @@ import { selectableUserStatuses, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, use
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Server } from '@/types/servers';
+import { UserProperties } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -99,7 +101,7 @@ const AddUser = (props: AddUserProps) => {
     })();
   }, [CreateParams]);
 
-  const getStateOverwrite = (chatAvailable) => {
+  const getStateOverwrite = (chatAvailable: boolean) => {
     if(!CreateParams) return {};
     const user = CreateParams.user;
     const { lang, properties } = user || {};
@@ -115,14 +117,14 @@ const AddUser = (props: AddUserProps) => {
     };
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state, 
       [field]: event.target.value,
     });
   }
 
-  const handleUsernameInput = event => {
+  const handleUsernameInput = (event: ChangeEvent) => {
     const { domain } = props;
     const val = event.target.value;
     if(val) debounceFetch({ email: encodeURIComponent(val + '@' + domain.domainname) });
@@ -132,13 +134,14 @@ const AddUser = (props: AddUserProps) => {
     });
   }
 
-  const debounceFetch = useCallback(throttle(async params => {
+  const debounceFetch = useCallback(throttle(async (params: { email: string }) => {
     const resp = await checkFormat(params)
       .catch(() => setState({ ...state, loading: false }));
     setUsernameError(!!resp?.email);
   }, 500), []);
 
-  const handleCheckbox = field => event => setState({ ...state, [field]: event.target.checked });
+  const handleCheckbox = (field: keyof typeof state) => (event: ChangeEvent) =>
+    setState({ ...state, [field]: event.target.checked });
 
   const handleAdd = () => {
     const { username, password, properties, status, homeserver, chat, lang } = state;
@@ -212,7 +215,7 @@ const AddUser = (props: AddUserProps) => {
       });
   }
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     setState({
       ...state, 
       properties: {
@@ -222,10 +225,10 @@ const AddUser = (props: AddUserProps) => {
     });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (_: never, newVal: Server) => {
     setState({
       ...state, 
-      [field]: newVal || '',
+      homeserver: newVal || '',
     });
   }
 
@@ -342,7 +345,7 @@ const AddUser = (props: AddUserProps) => {
           {isSystemAdmin && <MagnitudeAutocomplete<Server>
             value={homeserver}
             filterAttribute={'hostname'}
-            onChange={handleAutocomplete('homeserver')}
+            onChange={handleAutocomplete}
             className={classes.input} 
             options={Servers}
             label={t('Homeserver')}

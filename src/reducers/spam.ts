@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { AntiSpamResponse } from '@/types/antispam';
 import {
   SPAM_DATA_RECEIVED,
   SPAM_HISTORY_RECEIVED,
@@ -36,7 +37,7 @@ function spamReducer(state = defaultState, action) {
       ...state,
       history: {
         ...action.data,
-        rows: action.data.rows?.map((r, id) => ({
+        rows: action.data.rows?.map((r: AntiSpamResponse, id: string) => ({
           ...r,
           id,
           rcpt_smtp: r.rcpt_smtp?.join(", ") || "",

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { Moment } from "moment";
+
 export const DOMAIN_ADMIN_WRITE = 'DomainAdminWrite';
 export const DOMAIN_ADMIN_READ = 'DomainAdminRead';
 export const SYSTEM_ADMIN_READ = 'SystemAdminRead';
@@ -8,7 +10,14 @@ export const SYSTEM_ADMIN_WRITE = 'SystemAdminWrite';
 export const DOMAIN_PURGE = 'DomainPurge';
 export const ORG_ADMIN = 'OrgAdmin';
 export const IPM_SUBTREE_ID = "144115188075855873";
-export const IPM_SUBTREE_OBJECT = {
+type IPM_SUBTREE_OBJECT_TYPE = {
+  folderid: string;
+  displayname: string;
+  comment: string;
+  container: string;
+  creationtime: Moment | null;
+}
+export const IPM_SUBTREE_OBJECT: IPM_SUBTREE_OBJECT_TYPE = {
   folderid: IPM_SUBTREE_ID,
   displayname: 'Public Folders',
   comment: 'All Public Folders (root)',

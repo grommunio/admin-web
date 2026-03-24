@@ -82,7 +82,7 @@ const AddRole = (props: AddRoleProps) => {
       .catch(err => Promise.reject(err));
   }, []);
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof NewRole) => (event: ChangeEvent) => {
     setRole({
       ...role,
       [field]: event.target.value,
@@ -212,7 +212,7 @@ const AddRole = (props: AddRoleProps) => {
                 fullWidth
                 variant="standard"
               >
-                {Permissions.map((name, key) => (
+                {Permissions.map((name: string, key: number) => (
                   <MenuItem key={key} value={name}>
                     {name}
                   </MenuItem>

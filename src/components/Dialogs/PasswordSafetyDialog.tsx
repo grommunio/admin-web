@@ -45,7 +45,7 @@ const PasswordSafetyDialog = (props: PasswordSafetyDialogProps) => {
     props.onClose();
   }
 
-  const handleConfirm = e => {
+  const handleConfirm = (e: React.MouseEvent) => {
     e.preventDefault();
     props.onConfirm(state);
     setState({ ...state, password: '', status: 16 });

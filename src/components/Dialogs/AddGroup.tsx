@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Domain } from '@/types/domains';
 import { NewGroup } from '@/types/groups';
 import { ChangeEvent } from '@/types/common';
+import { User } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -96,17 +97,17 @@ const AddGroup = (props: AddGroupProps) => {
     });
   }
 
-  const handlePrivilegeChange = event => {
+  const handlePrivilegeChange = (event: ChangeEvent) => {
     const { specifieds } = group;
     const val = event.target.value;
     setGroup({
       ...group,
-      listPrivilege: val,
-      specifieds: val === 3 ? specifieds : [], /* Specifieds only available if privilege "specific" */
+      listPrivilege: parseInt(val),
+      specifieds: parseInt(val) === 3 ? specifieds : [], /* Specifieds only available if privilege "specific" */
     });
   }
 
-  const handleAdd = e => {
+  const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     const { associations, specifieds } = group;
     setLoading(true);
@@ -136,12 +137,12 @@ const AddGroup = (props: AddGroupProps) => {
       });
   }
 
-  const handleCheckbox = field => (e) => setGroup({
+  const handleCheckbox = (field: keyof NewGroup) => (e: ChangeEvent) => setGroup({
     ...group,
     [field]: e.target.checked ? 1 : 0
   });
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: keyof NewGroup) => (_: never, newVal: User) => {
     setGroup({
       ...group,
       [field]: newVal || '',
@@ -221,7 +222,7 @@ const AddGroup = (props: AddGroupProps) => {
               </MenuItem>
             ))}
           </TextField>
-          {listType === LIST_TYPE.NORMAL && <MagnitudeAutocomplete
+          {listType === LIST_TYPE.NORMAL && <MagnitudeAutocomplete<User>
             multiple
             value={associations || []}
             filterAttribute={'username'}
@@ -233,7 +234,7 @@ const AddGroup = (props: AddGroupProps) => {
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
-          {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <MagnitudeAutocomplete
+          {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <MagnitudeAutocomplete<User>
             multiple
             value={specifieds || []}
             filterAttribute={'username'}
