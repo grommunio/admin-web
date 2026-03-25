@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { Fade, IconButton, LinearProgress, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
+import React, { ReactNode, Ref, useCallback } from 'react';
+import { Fade, IconButton, LinearProgress, Theme, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
-import { withTranslation } from 'react-i18next';
 import { HelpOutline } from '@mui/icons-material';
 import { throttle } from 'lodash';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     overflow: "auto",
@@ -29,7 +27,6 @@ const styles = theme => ({
     flex: 1,
     display: "flex",
   },
-  toolbar: theme.mixins.toolbar,
   pageTitle: {
     margin: theme.spacing(2, 2, 1, 2),
   },
@@ -41,10 +38,24 @@ const styles = theme => ({
     top: 64,
     width: '100%',
   },
-});
+}));
 
-const TableViewContainer = ({classes, children, baseRef, handleScroll, headline, subtitle,
-  snackbar, onSnackbarClose, href, loading }) => {
+
+type TableViewContainerProps = {
+  children: ReactNode;
+  baseRef: Ref<HTMLDivElement>;
+  handleScroll: () => void;
+  headline: string;
+  subtitle?: string;
+  snackbar?: string;
+  onSnackbarClose: () => void;
+  href?: string;
+  loading?: boolean;
+}
+
+const TableViewContainer = ({ children, baseRef, handleScroll, headline, subtitle,
+  snackbar, onSnackbarClose, href, loading }: TableViewContainerProps) => {
+  const { classes } = useStyles();
 
   const debouncedScroll = useCallback(throttle(handleScroll || (() => null), 100), [handleScroll]);
 
@@ -54,7 +65,7 @@ const TableViewContainer = ({classes, children, baseRef, handleScroll, headline,
       onScroll={debouncedScroll}
       id="scrollDiv"
     >
-      <div className={classes.toolbar}>
+      <div>
         <Fade
           in={loading}
           style={{
@@ -88,24 +99,5 @@ const TableViewContainer = ({classes, children, baseRef, handleScroll, headline,
   );
 }
 
-TableViewContainer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-    PropTypes.string,
-  ]).isRequired,
-  baseRef: PropTypes.any,
-  handleScroll: PropTypes.func,
-  headline: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
-  snackbar: PropTypes.string,
-  onSnackbarClose: PropTypes.func,
-  subtitle: PropTypes.string,
-  href: PropTypes.string,
-  loading: PropTypes.bool,
-};
 
-export default withTranslation()(withStyles(TableViewContainer, styles));
+export default TableViewContainer;

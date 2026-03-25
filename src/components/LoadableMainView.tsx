@@ -2,12 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import Drawer from './Drawer';
 import AppRoutes from '../Routes';
 import TopBar from './TopBar';
+import { Domain } from '@/types/domains';
 
-export default function LoadableMainView(props) {
+
+type LoadableMainViewProps = {
+  classes: Record<string, string>;
+  authenticated: boolean;
+  capabilities: string[];
+  domains: Domain[];
+  routesProps: any;
+}
+
+export default function LoadableMainView(props: LoadableMainViewProps) {
   const { classes, authenticated, capabilities, domains, routesProps } = props;
   return (
     <div className={classes.mainView}>
@@ -18,11 +27,3 @@ export default function LoadableMainView(props) {
     </div>
   );
 }
-
-LoadableMainView.propTypes = {
-  classes: PropTypes.object.isRequired,
-  authenticated: PropTypes.bool.isRequired,
-  capabilities: PropTypes.array.isRequired,
-  domains: PropTypes.array.isRequired,
-  routesProps: PropTypes.object.isRequired,
-};

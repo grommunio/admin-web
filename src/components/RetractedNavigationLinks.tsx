@@ -2,10 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
 import Collapse from '@mui/material/Collapse';
 import Dashboard from '@mui/icons-material/Dashboard';
@@ -19,21 +17,23 @@ import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
-import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon } from '@mui/material';
-import { selectDrawerDomain, setDrawerExpansion } from '../actions/drawer';
+import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon, Theme } from '@mui/material';
+import { selectDrawerDomain } from '../actions/drawer';
 import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBuilder, ReportGmailerrorred, TableChart,
   TaskAlt, Topic } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../store';
+import { Domain } from '@/types/domains';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   drawerHeader: {
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 2, 0, 2),
-    ...theme.mixins.toolbar,
     justifyContent: 'center',
     height: 64,
   },
@@ -122,9 +122,22 @@ const styles = theme => ({
   selected: {
     background: `${theme.palette.primary.main} !important`,
   },
-});
+}));
 
-const RetractedNavigationLinks = props => {
+type NavigationLinksProps = {
+  domains: Domain[];
+  tab: number;
+  setTab: (tab: number) => void;
+}
+
+const RetractedNavigationLinks = (props: NavigationLinksProps) => {
+  const { domains, tab, setTab } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { capabilities } = useAppSelector(state => state.auth);
+  const expandedDomain = useAppSelector(state => state.drawer.selectedDomain);
+  const config = useAppSelector(state => state.config);
   const [state, setState] = useState({
     filter: '',
     defaultsIn: false,
@@ -133,14 +146,14 @@ const RetractedNavigationLinks = props => {
   });
   const navigate = useNavigate();
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string | number) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const handleDrawer = domain => event => {
+  const handleDrawer = (domain: number) => (event: React.MouseEvent) => {
     event.preventDefault();
-    props.selectDomain(domain);
+    dispatch(selectDrawerDomain(domain));
     navigate(`/${domain}`);
   }
 
@@ -150,16 +163,14 @@ const RetractedNavigationLinks = props => {
 
   const handleAddingSuccess = () => setState({ ...state, adding: false, snackbar: 'Success!' });
 
-  const handleAddingError = (error) => setState({ ...state, snackbar: error });
+  const handleAddingError = (error: string) => setState({ ...state, snackbar: error });
 
   const toggleTab = () => {
-    const { tab, setTab } = props;
     setTab(tab === 0 ? 1 : 0);
   }
 
   // eslint-disable-next-line react/prop-types
   const ListElement = ({ label="", path, Icon, ...rest }) => {
-    const { classes, t } = props;
     const selected = location.pathname.endsWith('/' + path);
     return <Tooltip title={t(label)} placement="right">
       <ListItemButton
@@ -177,7 +188,6 @@ const RetractedNavigationLinks = props => {
 
   // eslint-disable-next-line react/prop-types
   const NestedListElement = ({ ID, label="", path, Icon }) => {
-    const { classes, t, expandedDomain } = props;
     const selected = expandedDomain === ID &&
       location.pathname.startsWith('/' + ID + path);
     return <Tooltip title={t(label)} placement="right">
@@ -193,7 +203,6 @@ const RetractedNavigationLinks = props => {
     </Tooltip>;
   }
 
-  const { classes, t, expandedDomain, domains, capabilities, tab, config } = props;
   const { filter, adding, snackbar } = state;
   const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
   const pathname = location.pathname;
@@ -215,7 +224,7 @@ const RetractedNavigationLinks = props => {
           </IconButton>
         </Tooltip>
       </div>}
-      <List className={classes.list}>
+      <List>
         {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
           <IconButton
             color="primary"
@@ -375,34 +384,5 @@ const RetractedNavigationLinks = props => {
   );
 }
 
-RetractedNavigationLinks.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domains: PropTypes.array,
-  capabilities: PropTypes.array.isRequired,
-  expandedDomain: PropTypes.number,
-  selectDomain: PropTypes.func.isRequired,
-  toggleExpansion: PropTypes.func.isRequired,
-  tab: PropTypes.number.isRequired,
-  setTab: PropTypes.func.isRequired,
-  config:  PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  const { auth, drawer, config } = state;
-  return {
-    capabilities: auth.capabilities,
-    expandedDomain: drawer.selectedDomain,
-    config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    selectDomain: id => dispatch(selectDrawerDomain(id)),
-    toggleExpansion: () => dispatch(setDrawerExpansion())
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(RetractedNavigationLinks, styles)));
+export default RetractedNavigationLinks;

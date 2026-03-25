@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchSpamHistory } from '../actions/spam';
-import PropTypes from 'prop-types';
-import { Chip, Divider, FormControlLabel, Grid2, IconButton, Paper, Switch, Table, TableBody, TableCell, TableHead,
-  TableRow, TableSortLabel, Tooltip, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
+import { Chip, ChipTypeMap, Divider, FormControlLabel, Grid2, IconButton, Paper, SortDirection, Switch, Table, TableBody, TableCell, TableHead,
+  TableRow, TableSortLabel, TableSortLabelTypeMap, Tooltip, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import { copyToClipboard, parseUnixtime } from '../utils';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -15,9 +13,13 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Close, CopyAll, Refresh } from '@mui/icons-material';
 import SearchTextfield from './SearchTextfield';
 import { useTranslation } from 'react-i18next';
+import { useAppDispatch, useAppSelector } from '../store';
+import { ChangeEvent } from '@/types/common';
+import { Moment } from 'moment';
+import { AntiSpamResponse } from '@/types/antispam';
 
 
-const styles = {
+const useStyles = makeStyles()(() => ({
   paper: {
     flex: 1,
     display: 'flex',
@@ -39,78 +41,34 @@ const styles = {
   bottomNavigation: {
     backgroundImage: 'none !important',
   }
-};
+}));
 
-const getActionColor = action => {
+const getActionColor = (action: "no action" | "add header" | "greylist" | "reject") => {
   return {
     "no action": "success",
     "add header": "warning",
     "greylist": "info",
     "reject": "error",
-  }[action];
+  }[action] as ChipTypeMap["props"]["color"];
 }
 
-const columns = t => [
-  {
-    field: 'action',
-    headerName: t('Action'),
-    width: 100,
-    renderCell: (params) => (
-      <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
-    ),
-  },
-  {
-    field: 'unix_time',
-    headerName: t('Time'),
-    width: 200,
-    valueFormatter: (value) => parseUnixtime(value),
-  },
-  { field: 'sender_smtp', headerName: 'From', width: 200 },
-  {
-    field: 'rcpt_smtp',
-    headerName: t('To'),
-    width: 200,
-  },
-  {
-    field: 'subject',
-    headerName: t('Subject'),
-    width: 200,
-  },
-  {
-    field: 'ip',
-    headerName: t('IP'),
-    width: 100,
-  },
-  {
-    field: 'score',
-    headerName: t('Score'),
-    type: 'number',
-    width: 110,
-  },
-  {
-    field: 'size',
-    headerName: t('Size'),
-    type: 'number',
-    valueFormatter: (value) => Math.ceil(value / 1000) + " KB",
-  },
-  {
-    field: 'time_real',
-    headerName: t('Time real'),
-    type: 'number',
-    width: 110,
-    valueFormatter: (value) => value.toFixed(3) + "s",
-  },
-  {
-    field: 'message-id',
-    headerName: t('Message-ID'),
-    width: 250,
-  }
-];
+type SpamHistoryType = {
+  setSnackbar: (msg: string) => void;
+}
 
-const SpamHistory = ({ classes, setSnackbar }) => {
+type SpamHistoryRow = AntiSpamResponse & {
+  action: string;
+  score: number;
+  ip: string;
+  size: number;
+  time_real: number;
+}
+
+const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
+  const { classes } = useStyles();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const { history } = useSelector(state => state.spam);
+  const dispatch = useAppDispatch();
+  const { history } = useAppSelector(state => state.spam);
   const [selectedMail, setSelectedMail] = useState(null);
   const [order, setOrder] = useState('desc');
   const [orderBy, setOrderBy] = useState('');
@@ -120,13 +78,68 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   const [since, setSince] = useState(null);
   const [autorefresh, setAutorefresh] = useState(false);
 
+  const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const handleRequestSort = (property, explicitOrder) => () => {
+  const columns = useMemo(() => [
+    {
+      field: 'action',
+      headerName: t('Action'),
+      width: 100,
+      renderCell: (params) => (
+        <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
+      ),
+    },
+    {
+      field: 'unix_time',
+      headerName: t('Time'),
+      width: 200,
+      valueFormatter: (value: number) => parseUnixtime(value),
+    },
+    { field: 'sender_smtp', headerName: 'From', width: 200 },
+    {
+      field: 'rcpt_smtp',
+      headerName: t('To'),
+      width: 200,
+    },
+    {
+      field: 'subject',
+      headerName: t('Subject'),
+      width: 200,
+    },
+    {
+      field: 'ip',
+      headerName: t('IP'),
+      width: 100,
+    },
+    {
+      field: 'score',
+      headerName: t('Score'),
+      width: 110,
+    },
+    {
+      field: 'size',
+      headerName: t('Size'),
+      valueFormatter: (value: number) => Math.ceil(value / 1000) + " KB",
+    },
+    {
+      field: 'time_real',
+      headerName: t('Time real'),
+      width: 110,
+      valueFormatter: (value: number) => value.toFixed(3) + "s",
+    },
+    {
+      field: 'message-id',
+      headerName: t('Message-ID'),
+      width: 250,
+    }
+  ], []);
+
+  const handleRequestSort = (property: string, explicitOrder?: string) => () => {
     const isAsc = explicitOrder === "asc" || (orderBy === property && order === 'asc');
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     
-    const sorted = [...Object.values(selectedMail.symbols)];
+    const sorted = [...Object.values(selectedMail.symbols)] as SpamHistoryRow[];
     if(property === 'score') {
       sorted.sort((a, b) => isAsc ? b.score - a.score : a.score - b.score);
     } else {
@@ -141,7 +154,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     handleRefresh();
   }, []);
 
-  const handleMail = e => {
+  const handleMail = (e: { row: SpamHistoryRow }) => {
     setSelectedMail(e.row);
   }
 
@@ -150,7 +163,7 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     if(selectedMail) handleRequestSort("score", "asc")();
   }, [selectedMail])
 
-  const getScoreColor = score => {
+  const getScoreColor = (score: number) => {
     if(score <= 0) return "#2471a8";
     if(score <= 0.1) return "#9e2e2e";
     if(score <= 3) return "#772222";
@@ -161,22 +174,25 @@ const SpamHistory = ({ classes, setSnackbar }) => {
     {
       id: 'score',
       label: 'Score',
+      numeric: true,
     },
     {
       id: 'name',
       label: 'Name',
+      numeric: false,
     },
     {
       id: 'description',
       label: 'Description',
+      numeric: false,
     },
   ];
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: ChangeEvent) => {
     setSearch(e.target.value);
   }
 
-  const handleDate = stateHandler => newVal => {
+  const handleDate = (stateHandler: React.Dispatch<React.SetStateAction<Moment>>) => (newVal: Moment) => {
     stateHandler(newVal);
   }
 
@@ -211,15 +227,13 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   }
 
   useEffect(() => {
-    let fetchInterval;
-
-    if(autorefresh) fetchInterval = setInterval(() => {
+    if(autorefresh) fetchInterval.current = setInterval(() => {
       handleRefresh();
     }, 5000);
-    else clearInterval(fetchInterval);
+    else clearInterval(fetchInterval.current);
 
     return () => {
-      clearInterval(fetchInterval);
+      clearInterval(fetchInterval.current);
     }
   }, [autorefresh]);
 
@@ -273,10 +287,9 @@ const SpamHistory = ({ classes, setSnackbar }) => {
       <div className={classes.flexContainer}>
         <DataGrid
           rows={filteredMails}
-          columns={columns(t)}
+          columns={columns}
           onRowClick={handleMail}
           classes={{
-            virtualScrollerContent: classes.virtualList,
             panelFooter: classes.bottomNavigation,
             toolbarContainer: classes.bottomNavigation,
           }}
@@ -314,11 +327,11 @@ const SpamHistory = ({ classes, setSnackbar }) => {
                   <TableCell
                     key={headCell.id}
                     align={headCell.numeric ? 'right' : 'left'}
-                    sortDirection={orderBy === headCell.id ? order : false}
+                    sortDirection={orderBy === headCell.id ? order as SortDirection : false}
                   >
                     <TableSortLabel
                       active={orderBy === headCell.id}
-                      direction={orderBy === headCell.id ? order : 'asc'}
+                      direction={orderBy === headCell.id ? order as TableSortLabelTypeMap["props"]["direction"] : 'asc'}
                       onClick={handleRequestSort(headCell.id)}
                     >
                       {t(headCell.label)}
@@ -355,9 +368,5 @@ const SpamHistory = ({ classes, setSnackbar }) => {
   )
 };
 
-SpamHistory.propTypes = {
-  classes: PropTypes.object.isRequired,
-  setSnackbar: PropTypes.func.isRequired,
-}
 
-export default withStyles(SpamHistory, styles);
+export default SpamHistory;

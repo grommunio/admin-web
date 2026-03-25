@@ -2,22 +2,24 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from "react";
-import { withStyles } from 'tss-react/mui';
-import PropTypes from "prop-types";
+import { makeStyles } from 'tss-react/mui';
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
-  TableRow, TableCell, TableBody, Tooltip, Grid2 } from "@mui/material";
+  TableRow, TableCell, TableBody, Tooltip, Grid2, 
+  Theme} from "@mui/material";
 import Stop from "@mui/icons-material/HighlightOff";
 import Restart from "@mui/icons-material/Replay";
 import Start from "@mui/icons-material/PlayCircleFilledOutlined";
 import Enable from "@mui/icons-material/PowerSettingsNew";
-import { connect, useDispatch } from "react-redux";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Feedback from "./Feedback";
 import ConfirmRestartStop from "./Dialogs/ConfirmRestartStop";
 import { fetchServicesData, serviceAction } from '../actions/services';
 import { setDateTimeString } from "../utils";
+import { useAppDispatch, useAppSelector } from "../store";
+import { Service } from "@/types/dashboard";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -108,10 +110,13 @@ const styles = (theme) => ({
   serviceName: {
     fontWeight: 400,
   },
-});
+}));
 
-const ServicesChart = props => {
-  const dispatch = useDispatch();
+const ServicesChart = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Services } = useAppSelector(state => state.services);
   const [state, setState] = useState({
     snackbar: null,
     starting: false,
@@ -121,11 +126,10 @@ const ServicesChart = props => {
   });
   const [service, setService] = useState(null);
 
-  const handleServiceAction = (service, action) => (e) => {
+  const handleServiceAction = (service: Service, action: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     setState({ ...state, [action + "ing"]: service.name });
-    props
-      .serviceAction(service.unit, action)
+    dispatch(serviceAction(service.unit, action))
       .then(() => {
         setState({ ...state, [action + "ing"]: false });
         handleCloseDialog();
@@ -138,20 +142,18 @@ const ServicesChart = props => {
       );
   };
 
-  const getChipColor = (state) => {
-    return props.classes[(state || "inactive") + "Chip"];
+  const getChipColor = (state: string) => {
+    return classes[(state || "inactive") + "Chip"];
   }
 
-  const handleDialog = (service, action) => () => {
+  const handleDialog = (service: Service, action: string) => () => {
     setState({ ...state, action });
     setService(service);
   }
 
   const handleCloseDialog = () => setService(null);
 
-  const { classes, Services, t } = props;
   const { starting, restarting, stoping, snackbar, action } = state;
-
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -208,7 +210,7 @@ const ServicesChart = props => {
                         "disable" : "enable")}
                       className={classes.chipIcon}
                       size="large">
-                      <Enable className={classes.iconButton} fontSize="small" />
+                      <Enable fontSize="small" />
                     </IconButton>
                   </Tooltip>
                   {stoping !== service.name ? (
@@ -217,7 +219,7 @@ const ServicesChart = props => {
                         onClick={handleDialog(service, "stop")}
                         className={classes.chipIcon}
                         size="large">
-                        <Stop className={classes.iconButton} fontSize="small" />
+                        <Stop  fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   ) : (
@@ -232,7 +234,6 @@ const ServicesChart = props => {
                         className={classes.chipIcon}
                         size="large">
                         <Restart
-                          className={classes.iconButton}
                           fontSize="small"
                         />
                       </IconButton>
@@ -248,7 +249,7 @@ const ServicesChart = props => {
                         onClick={handleServiceAction(service, "start")}
                         className={classes.chipIcon}
                         size="large">
-                        <Start className={classes.iconButton} fontSize="small" />
+                        <Start fontSize="small" />
                       </IconButton>
                     </Tooltip>
                   ) : (
@@ -277,29 +278,5 @@ const ServicesChart = props => {
   );
 }
 
-ServicesChart.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  Services: PropTypes.array.isRequired,
-  serviceAction: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = (state) => {
-  return {
-    Services: state.services.Services,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    serviceAction: async (service, action) =>
-      await dispatch(serviceAction(service, action)).catch((error) =>
-        Promise.reject(error)
-      ),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTranslation()(withStyles(ServicesChart, styles)));
+export default ServicesChart;

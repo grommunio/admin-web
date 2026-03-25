@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from "react";
-import { PropTypes } from "prop-types";
 import { Navigate } from "react-router-dom";
 
 import { parseParams } from '../utils';
@@ -10,12 +9,16 @@ import { parseParams } from '../utils';
 /**
  * react-router <Route> which can be accessed if not authenticated
  * 
- * @param {Object} props
  */
-// eslint-disable-next-line react/prop-types
-const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
+
+type UnauthenticatedRouteProps = {
+  component: keyof JSX.IntrinsicElements;
+  props: any;
+}
+
+const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }: UnauthenticatedRouteProps) => {
   // Get redirect url parameter
-  const query = parseParams(window.location.search.substr(1));
+  const query = parseParams(window.location.search.slice(1));
   const redirect = query.redirect;
   const hash = window.location.hash;
 
@@ -28,8 +31,5 @@ const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
   );
 };
 
-UnauthenticatedRoute.propTypes = {
-  props: PropTypes.object,
-}
 
 export default UnauthenticatedRoute;

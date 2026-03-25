@@ -133,8 +133,14 @@ export const ANSI_CODE_TO_JSS_CLASS = {
   "47": { backgroundColor: "white", color: "black" },
 };
 
+export type GlobalSearchOption = {
+  label: string;
+  tags: string[];
+  route: string;
+}
+
 // Options used by the global search textfield
-export const globalSearchOptions = [
+export const globalSearchOptions: GlobalSearchOption[] = [
   {
     label: 'Users',
     tags: ['users'],

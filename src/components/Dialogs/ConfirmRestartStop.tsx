@@ -10,7 +10,7 @@ import { Service } from '@/types/dashboard';
 
 type ConfirmRestartStopProps = {
   open: boolean;
-  handleConfirm: () => void;
+  handleConfirm: (_: React.MouseEvent) => void;
   onClose: () => void;
   action: string;
   service: Pick<Service, 'name'>;

@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import { AppBar, Toolbar, Typography, IconButton,
   Box, 
   Menu,
@@ -12,11 +11,11 @@ import { AppBar, Toolbar, Typography, IconButton,
   Autocomplete,
   TextField,
   InputAdornment,
-  useMediaQuery} from '@mui/material';
-import { connect } from 'react-redux';
+  useMediaQuery,
+  Theme} from '@mui/material';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import Duo from '@mui/icons-material/Duo';
 import Chat from '@mui/icons-material/Chat';
@@ -26,16 +25,18 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { authLogout } from '../actions/auth';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
-import { SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
+import { GlobalSearchOption, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import { getLangs } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
+import { useAppSelector } from '../store';
+import { useDispatch } from 'react-redux';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   appbar: {
     height: 64,
     border: "none",
@@ -130,11 +131,16 @@ const styles = theme => ({
   menu: {
     margin: 10,
   }
-});
+}));
 
-const TopBar = props => {
+
+const TopBar = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
   const context = useContext(CapabilityContext);
   const colorContext = useContext(ColorModeContext);
+  const { profile, settings, drawer, config } = useAppSelector(state => state);
   const [state, setState] = useState({
     menuAnchorEl: null,
     langsAnchorEl: null,
@@ -153,35 +159,33 @@ const TopBar = props => {
   ]
 
   const handleMenuToggle = () => {
-    const { setDrawerOpen } = props;
-    setDrawerOpen();
+    dispatch(setDrawerOpen());
   }
 
-  const handleMenuOpen = menu => e => setState({
-    ...state, 
-    [menu]: e.currentTarget,
-  });
+  const handleMenuOpen = (menu: 'menuAnchorEl' | 'langsAnchorEl') =>
+    (e: React.MouseEvent<any>) => setState({
+      ...state, 
+      [menu]: e.currentTarget,
+    });
 
-  const handleMenuClose = menu => () => setState({
+  const handleMenuClose = (menu: 'menuAnchorEl' | 'langsAnchorEl') => () => setState({
     ...state, 
     [menu]: null,
   });
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string | number) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
   const handleLogout = () => {
-    const { authLogout } = props;
     navigate('/');
-    authLogout();
+    dispatch(authLogout());
   }
 
-  const handleLangChange = lang => () => {
-    const { changeSettings } = props;
+  const handleLangChange = (lang: string) => () => {
     i18n.changeLanguage(lang);
-    changeSettings('language', lang);
+    dispatch(changeSettings('language', lang));
     window.localStorage.setItem('lang', lang);
     setState({
       ...state, 
@@ -189,7 +193,7 @@ const TopBar = props => {
     });
   }
 
-  const handleAutocomplete = (_, newVal) => {
+  const handleAutocomplete = (_: never, newVal: GlobalSearchOption) => {
     if(newVal?.route) navigate(newVal.route);
   }
 
@@ -198,7 +202,6 @@ const TopBar = props => {
     setToggleClasses(toggleClasses[0] === "moon" ? ["moon sun", "tdnn day"] : ["moon", "tdnn"]);
   }
 
-  const { classes, t, profile, settings, drawer, setDrawerExpansion, config } = props;
   const { menuAnchorEl, langsAnchorEl } = state;
   const licenseVisible = context.includes(SYSTEM_ADMIN_WRITE);
   const sysAdmRead = context.includes(SYSTEM_ADMIN_READ);
@@ -247,7 +250,7 @@ const TopBar = props => {
             fullWidth
             filterOptions={(options, state) => {
               const input = state.inputValue.toLowerCase();
-              return options.filter(o => o.tags.some(tag =>
+              return options.filter(o => o.tags.some((tag: string) =>
                 tag.includes(input) || t(tag).includes(input)))
             }}
             renderInput={(params) => (
@@ -315,8 +318,10 @@ const TopBar = props => {
             keepMounted
             open={Boolean(menuAnchorEl)}
             onClose={handleMenuClose('menuAnchorEl')}
-            PaperProps={{
-              className: classes.menu
+            slotProps={{
+              paper: {
+                className: classes.menu
+              }
             }}
           >
             <MenuItem onClick={handleNavigation('settings')}>
@@ -335,50 +340,5 @@ const TopBar = props => {
   );
 }
 
-TopBar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
-  title: PropTypes.string,
-  setDrawerExpansion: PropTypes.func.isRequired,
-  setDrawerOpen: PropTypes.func.isRequired,
-  Domains: PropTypes.array.isRequired,
-  drawer: PropTypes.object.isRequired,
-  onAdd: PropTypes.func,
-  loading: PropTypes.bool,
-  authLogout: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
-  changeSettings: PropTypes.func.isRequired,
-  config: PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  const { drawer, settings, config } = state;
-  return {
-    Domains: state.domains.Domains,
-    profile: state.profile,
-    settings,
-    drawer,
-    config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    setDrawerExpansion: () => {
-      dispatch(setDrawerExpansion());
-    },
-    setDrawerOpen: () => {
-      dispatch(setDrawerOpen());
-    },
-    authLogout: async () => {
-      await dispatch(authLogout());
-    },
-    changeSettings: async (field, value) => {
-      await dispatch(changeSettings(field, value));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(TopBar, styles)));
+export default TopBar;

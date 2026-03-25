@@ -2,13 +2,14 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Paper, Typography} from '@mui/material';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Paper, Theme, Typography} from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Devices, Notifications, Person, Router, TapAndPlay } from '@mui/icons-material';
+import { ActiveSyncSession } from '@/types/sync';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
@@ -48,10 +49,17 @@ const styles = theme => ({
   label: {
     color: '#777',
   },
-});
+}));
 
-const SyncStatistics = props => {
-  const {classes, t, data} = props;
+
+type SyncStatisticsProps = {
+  data: ActiveSyncSession[];
+}
+
+const SyncStatistics = (props: SyncStatisticsProps) => {
+  const { classes }= useStyles();
+  const { t } = useTranslation();
+  const { data }  = props;
   const openConnections = data.length || 0;
   const pushConnections = data.filter(e => e.push).length || 0;
   const users = new Set(data.map(e => e.user)).size || 0;
@@ -109,10 +117,5 @@ const SyncStatistics = props => {
   );
 }
 
-SyncStatistics.propTypes = {
-  classes: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(SyncStatistics, styles));
+export default SyncStatistics;
