@@ -2,17 +2,18 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Alert, Chip, CircularProgress, Portal, Snackbar } from '@mui/material';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { Alert, Chip, CircularProgress, Portal, Snackbar, SvgIconTypeMap } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore } from '@mui/icons-material';
 import { getChipColorFromScore } from '../utils';
-import { connect } from 'react-redux';
 import { fetchDnsCheckData } from '../actions/domains';
+import { Domain } from '@/types/domains';
+import { useAppDispatch } from '../store';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 
-const styles = {
+const useStyles = makeStyles()(() => ({
   dnsChips: {
     marginTop: 8,
     display: 'flex',
@@ -37,9 +38,11 @@ const styles = {
     marginRight: "0px !important",
     marginLeft: "7px !important",  // This is fine-tuned
   },
-};
+}));
 
-function getEquationValuesFromRequirementTypes(typeA, typeB) {
+type RequirementType = 'req' | 'rec' | 'opt';
+
+function getEquationValuesFromRequirementTypes(typeA: RequirementType, typeB: RequirementType) {
   return {
     "reqreq": [-10, 55, 55],
     "reqrec": [15, 55, 30],
@@ -50,7 +53,7 @@ function getEquationValuesFromRequirementTypes(typeA, typeB) {
   }[typeA+typeB];
 }
 
-function scoreDNSResult(valueA, valueB, reqAType="opt", reqBType="opt") {
+function scoreDNSResult(valueA: boolean, valueB: boolean, reqAType: RequirementType="opt", reqBType: RequirementType="opt") {
   const equationValues = getEquationValuesFromRequirementTypes(reqAType, reqBType);
   const valueMultiplier = [1, valueA ? 1 : 0, valueB ? 1 : 0];
   const res = equationValues.map((val, idx) => val * valueMultiplier[idx])
@@ -61,20 +64,38 @@ function scoreDNSResult(valueA, valueB, reqAType="opt", reqBType="opt") {
 const errorColor = "#d32f2f";
 const successColor = "#66bb6a";
 
-const DnsHealth = props => {
+type DnsHealthProps = {
+  domain: Domain;
+  setSnackbar: (message: string) => void;
+}
+
+const DnsHealth = (props: DnsHealthProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { domain, setSnackbar } = props;
   const [state, setState] = useState({
     loading: true,
     error: false,
-    dnsCheck: {},
+    dnsCheck: {
+      externalIp: "",
+      localIp: "",
+      mxRecords: null,
+      autodiscover: null,
+      autodiscoverSRV: null,
+      autoconfig: null,
+      txt: null,
+      dcim: null,
+      dkim: null,
+    },
     InfoDialog: null,
   });
   const [warning, setWarning] = useState("");
 
   useEffect(() => {
-    const { checkDns, domain, setSnackbar } = props;
     if(error) return;
     setState({ ...state, loading: true });
-    checkDns(domain.ID)
+    dispatch(fetchDnsCheckData(domain.ID))
       .then(dnsCheck => {
         setState({ ...state, dnsCheck, loading: false, error: false });
       })
@@ -180,18 +201,16 @@ const DnsHealth = props => {
     return getChipColorFromScore(score);
   }
 
-  const getOptionalSrvColor = (records=[]) => {
+  const getOptionalSrvColor = (records: string[]=[]) => {
     const { dnsCheck } = state;
-
+    if(records.some(record => !dnsCheck[record])) return errorColor;
     const scores = records.map(record => {
-      if(!dnsCheck[record]) return errorColor;
-  
       return scoreDNSResult(dnsCheck[record].externalDNS, dnsCheck[record].internalDNS, "opt", "opt");
     });
     return getChipColorFromScore(Math.min(...scores));
   }
 
-  const getDavTxtColor = (record) => {
+  const getDavTxtColor = (record: string) => {
     const { dnsCheck } = state;
     if(!dnsCheck[record]) return errorColor;
 
@@ -200,7 +219,7 @@ const DnsHealth = props => {
     return getChipColorFromScore(score);
   }
 
-  const asyncDialogImport = path => async () => {
+  const asyncDialogImport = (path: string) => async () => {
     const InfoDialog = await import("./Dialogs/dns/" + path)
       .then(component => component.default)
       .catch(() => console.log("Failed to import dialog"));
@@ -209,7 +228,6 @@ const DnsHealth = props => {
 
   const handleDialogClose = () => setState({ ...state, InfoDialog: null });
 
-  const { classes, t, domain } = props;
   const { loading, InfoDialog, dnsCheck, error } = state;
   return <div className={classes.dnsChips}>
     <DNSChip
@@ -362,7 +380,18 @@ const DnsHealth = props => {
   </div>
 }
 
-const DNSChip = withTranslation()(withStyles(({ classes, loading, label, color, icon: Icon, onInfo, error }) => {
+type DNSChipProps = {
+  title: string;
+  loading: boolean;
+  label: string;
+  color: string;
+  icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; }
+  onInfo: () => void;
+  error: boolean;
+};
+
+const DNSChip = ({ loading, label, color, icon: Icon, onInfo, error }: DNSChipProps) => {
+  const { classes } = useStyles();
   return <Chip
     className={classes.chip}
     style={{ backgroundColor: loading || error ? "#969696" : color }}
@@ -371,22 +400,7 @@ const DNSChip = withTranslation()(withStyles(({ classes, loading, label, color, 
     color={"info"}  // Necessary for icon color
     onClick={loading || error ? null : onInfo}
   />
-}, styles));
+};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    checkDns: async domainID =>
-      await dispatch(fetchDnsCheckData(domainID)),
-  };
-}
 
-DnsHealth.propTypes = {
-  classes: PropTypes.object.isRequired,
-  checkDns: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  setSnackbar: PropTypes.func.isRequired,
-}
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(DnsHealth, styles)));
+export default DnsHealth;
