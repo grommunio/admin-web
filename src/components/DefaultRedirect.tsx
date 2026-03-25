@@ -6,8 +6,6 @@ import { Navigate } from "react-router-dom";
 
 /**
  * Default route, which the user is redirected to, if the url does not match any specified route
- * 
- * @param {Object} props
  */
 const DefaultRedirect = () => {
   return <Navigate

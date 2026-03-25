@@ -4,13 +4,18 @@
 import React from "react";
 import {Navigate, useLocation } from "react-router-dom";
 
+type AuthenticatedRouteProps = {
+  component: keyof JSX.IntrinsicElements;
+  props: any;
+}
+
 /**
  * react-router <Route> which can only be accessed if authenticated,
  * otherwise redirected to /login
  * 
  * @param {Object} props
  */
-const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }) => {
+const AuthenticatedRoute = ({ component: C, props: childProps, ...rest }: AuthenticatedRouteProps) => {
   const location = useLocation();
   if(!childProps.authenticated) {
     return <Navigate to={`/login?redirect=${location.pathname}${location

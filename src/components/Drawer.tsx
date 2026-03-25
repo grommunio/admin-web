@@ -2,12 +2,10 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 import {
   Drawer,
+  Theme,
   useMediaQuery,
 } from '@mui/material';
 import {
@@ -15,11 +13,14 @@ import {
 } from '../actions/drawer';
 import NavigationLinks from './NavigationLinks';
 import RetractedNavigationLinks from './RetractedNavigationLinks';
+import { useAppDispatch, useAppSelector } from '../store';
+import { Domain } from '@/types/domains';
+
 
 const drawerWidth = 260;
 const smallDrawerWidth = 75;
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   /* || Side Bar */
   drawerExpanded: {
     [theme.breakpoints.up('lg')]: {
@@ -60,14 +61,24 @@ const styles = theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
-});
+}));
 
-function ResponsiveDrawer(props) {
-  const { classes, domains, open, expanded } = props;
+type ResponsiveDrawerProps = {
+  domains: Domain[];
+}
+
+function ResponsiveDrawer({ domains }: ResponsiveDrawerProps) {
+  const { classes } = useStyles();
+  const { open, expanded } = useAppSelector(state => state.drawer);
   const [ tab, setTab ] = useState(0);
+  const dispatch = useAppDispatch();
 
   const lgUpHidden = useMediaQuery(theme => theme.breakpoints.up('lg'));
   const lgDownHidden = useMediaQuery(theme => theme.breakpoints.down('lg'));
+
+  const handleToggle = () => {
+    dispatch(setDrawerOpen())
+  }
 
   return (
     <nav className={expanded ? classes.drawerExpanded : classes.drawerCollapsed} aria-label="navigation">
@@ -76,7 +87,7 @@ function ResponsiveDrawer(props) {
         variant="temporary"
         anchor={"left"}
         open={open}
-        onClose={props.toggleOpen}
+        onClose={handleToggle}
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -99,30 +110,5 @@ function ResponsiveDrawer(props) {
   );
 }
 
-ResponsiveDrawer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  toggleOpen: PropTypes.func.isRequired,
-  domains: PropTypes.array.isRequired,
-  expanded: PropTypes.bool,
-  open: PropTypes.bool,
-};
 
-const mapStateToProps = state => {
-  const { drawer } = state;
-
-  return {
-    ...drawer,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    toggleOpen: async () => {
-      await dispatch(setDrawerOpen());
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(ResponsiveDrawer, styles)));
+export default ResponsiveDrawer;

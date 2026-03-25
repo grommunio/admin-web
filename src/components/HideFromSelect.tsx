@@ -2,11 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
+import { UserProperties } from '@/types/users';
 
-const HideFromSelect = ({ attributehidden_gromox, setState }) => {
+type HideFromSelectProps = {
+  attributehidden_gromox: number;
+  setState: (prevState: any) => (_: any) => void; // TODO: Improve typing
+}
+
+const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProps) => {
   const { t } = useTranslation();
 
   const hiddenFrom = [
@@ -24,9 +30,10 @@ const HideFromSelect = ({ attributehidden_gromox, setState }) => {
      * The MUI component's state expands this bitmask into 3 explicitly defined array elements, that match the bits.
      * For example, `attributehidden_gromox === 3` results in `[1, 2, 0]` for the component.
      */
-  const handleMultiselectChange = field => event => {
+  const handleMultiselectChange = (field: keyof UserProperties) => (event: SelectChangeEvent<number[]>)=> {
     const { value } = event.target;
-    const mask = (value || []).reduce((prev, next) => prev | next, 0);  // bitwise OR array elements
+    const mask = (typeof value === 'string' ? value.split(',').map(el => parseInt(el)) : value)
+      .reduce((prev, next) => prev | next, 0);  // bitwise OR array elements
     setState(state => ({
       ...state,
       user: {

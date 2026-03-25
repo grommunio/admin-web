@@ -2,17 +2,18 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { AddCircleOutline, AssignmentTurnedInOutlined,
   ContactsOutlined as Contacts, Delete, StickyNote2Outlined as StickyNote, Edit,
   EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import { IconButton, Theme, Tooltip, Typography } from '@mui/material';
 import { IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { TreeItem, SimpleTreeView } from '@mui/x-tree-view';
+import { Folder } from '@/types/folders';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   richTree: {
     padding: theme.spacing(1, 3, 1, 1),
   },
@@ -25,9 +26,20 @@ const styles = theme => ({
   folderTypeIcon: {
     marginRight: 8,
   },
-});
+}));
 
-const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, handleEdit, handleDelete }) => {
+type FolderHierarchyProps = {
+  writable: boolean;
+  data: Folder;
+  domainID: number;
+  handleAdd: (folderid: string) => () => void;
+  handleEdit: (redirect: string) => () => void;
+  handleDelete: (folderDeleteProps: { folderid: string, name: string }) => () => void;
+}
+
+const FolderHierarchy = ({ writable, data, domainID, handleAdd, handleEdit, handleDelete }: FolderHierarchyProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
 
   const containerIcons = {
     'IPF.Note': <Email fontSize='small' className={classes.folderTypeIcon}/>,
@@ -43,7 +55,7 @@ const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, hand
       itemId={folderid || "-1"}
       label={<div className={classes.treeItemLabel}>
         {containerIcons[container || 'IPF.Note']}
-        <Typography variant=''>{folderid === IPM_SUBTREE_ID ? t(IPM_SUBTREE_OBJECT.displayname) : name}</Typography>
+        <Typography>{folderid === IPM_SUBTREE_ID ? t(IPM_SUBTREE_OBJECT.displayname) : name}</Typography>
         <IconButton
           size='small'
           onClick={handleAdd(folderid)}
@@ -84,15 +96,4 @@ const FolderHierarchy = ({ classes, t, writable, data, domainID, handleAdd, hand
   );
 }
 
-FolderHierarchy.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domainID: PropTypes.number.isRequired,
-  data: PropTypes.object.isRequired,
-  handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-  handleAdd: PropTypes.func.isRequired,
-  writable: PropTypes.bool,
-}
-
-export default withTranslation()(withStyles(FolderHierarchy, styles));
+export default FolderHierarchy;
