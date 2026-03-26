@@ -15,11 +15,10 @@ import FolderHierarchy from '../components/FolderHierarchy';
 import TableActionGrid from '../components/TableActionGrid';
 import { AccountTree, List } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
-import { Domain } from '@/types/domains';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../store';
-import { ChangeEvent } from '@/types/common';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { URLParams } from '@/actions/types';
 import { useTable } from '../hooks/useTable';
 
@@ -60,11 +59,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
-type FoldersProps = {
-  domain: Domain;
-}
-
-const Folders = ({ domain }: FoldersProps) => {
+const Folders = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();

@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../store';
 import { useTable } from '../hooks/useTable';
 import { GroupListItem } from '@/types/groups';
-import { Domain } from '@/types/domains';
+import { DomainViewProps } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -44,11 +44,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
-type GroupProps = {
-  domain: Domain;
-}
 
-const Groups = ({ domain }: GroupProps) => {
+const Groups = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();

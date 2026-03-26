@@ -33,7 +33,7 @@ import { useTable } from '../hooks/useTable';
 import { FetchUserParams, UserListItem } from '@/types/users';
 import { makeStyles } from 'tss-react/mui';
 import { CheckLdapUsersParams, SyncLdapParams } from '@/types/ldap';
-import { Domain } from '@/types/domains';
+import { DomainViewProps } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -69,11 +69,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
-type UsersProps = {
-  domain: Domain;
-}
-
-const Users = ({ domain }: UsersProps) => {
+const Users = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();

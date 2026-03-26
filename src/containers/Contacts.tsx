@@ -48,10 +48,9 @@ import TableViewContainer from "../components/TableViewContainer";
 import SearchTextfield from "../components/SearchTextfield";
 import TableActionGrid from "../components/TableActionGrid";
 import { makeStyles } from "tss-react/mui";
-
 import { URLParams } from "@/actions/types";
-import { Domain } from "@/types/domains";
 import { ContactListItem } from "@/types/users";
+import { DomainViewProps } from "@/types/common";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -77,11 +76,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
-type ContactsProps = {
-  domain: Domain;
-}
 
-const Contacts = ({ domain }: ContactsProps) => {
+const Contacts = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const navigate = useNavigate();

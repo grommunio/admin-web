@@ -1,3 +1,5 @@
+import { Domain } from "./domains";
+
 export type KeyValuePair<T> = {
   key: string;
   value: T;
@@ -10,3 +12,7 @@ export type ChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 export type BoolNumber = 0 | 1;
 export type TriState = 0 | 1 | 2;
+
+export type DomainViewProps = {
+  domain: Domain;
+}

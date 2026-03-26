@@ -2,19 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Paper,
   TextField,
   FormControl,
   Button,
+  Theme,
 } from '@mui/material';
 import { changePw } from '../api';
 import TableViewContainer from '../components/TableViewContainer';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -27,9 +29,11 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(2),
   },
-});
+}));
 
-const ChangePw = props => {
+const ChangePw = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   const [state, setState] = useState({
     oldPw: '',
     newPw: '',
@@ -37,7 +41,7 @@ const ChangePw = props => {
     snackbar: '',
   });
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state,
       [field]: event.target.value,
@@ -48,7 +52,6 @@ const ChangePw = props => {
     .then(() => setState({ ...state, snackbar: 'Success!' }))
     .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
 
-  const { classes, t } = props;
   const { oldPw, newPw, reType, snackbar } = state;
 
   return (
@@ -104,9 +107,5 @@ const ChangePw = props => {
   );
 }
 
-ChangePw.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(ChangePw, styles));
+export default ChangePw;

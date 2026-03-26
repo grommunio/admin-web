@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { CreateParams } from '@/types/defaults';
 import {
   AUTH_AUTHENTICATED,
   CREATE_PARAMS_DATA_RECEIVED,
@@ -9,8 +10,8 @@ import { LegacyAction } from './types';
 
 type DefaultState = {
   CreateParams: {
-    user: Record<string, any>;
-    domain: Record<string, any>;
+    user: CreateParams;
+    domain: CreateParams;
   }
 }
 

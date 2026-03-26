@@ -2,12 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import { Paper, Typography, Grid2, Button, FormControl, TextField, FormControlLabel,
-  Checkbox, Select, MenuItem, Divider, Tooltip } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+  Checkbox, Select, MenuItem, Divider, Tooltip, 
+  Theme} from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -21,9 +20,12 @@ import DNSLegend from '../components/DNSLegend';
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import { fetchDrawerDomain } from '../actions/drawer';
 import { useLocation, useNavigate } from 'react-router';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
+import { useAppDispatch, useAppSelector } from '../store';
+import { CreateParams } from '@/types/defaults';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
     flex: 1,
@@ -36,7 +38,9 @@ const styles = theme => ({
     display: 'flex',
     overflow: 'auto',
   }, 
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    ...theme.mixins.toolbar as any,
+  },
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -99,9 +103,12 @@ const styles = theme => ({
   divider: {
     margin: theme.spacing(2, 0),
   },
-});
+}));
 
-const DomainMenu = props => {
+const DomainMenu = ({ domain }: DomainViewProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     deleting: false,
     sizeUnits: {
@@ -109,7 +116,7 @@ const DomainMenu = props => {
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     },
-    createParams: {},
+    createParams: {} as any, // TODO: Fix
     dnsLoading: true,
   });
   const [langs, setLangs] = useState([]);
@@ -119,9 +126,18 @@ const DomainMenu = props => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { CreateParams } = useAppSelector(state => state.defaults);
+  const { capabilities } = useAppSelector(state => state.auth);
+
+  const fetch = async (domainID: number) => await dispatch(fetchDrawerDomain(domainID));
+  const edit = async (createParams: { user: CreateParams }, domainID: number) =>
+    await dispatch(editCreateParamsData(createParams, domainID));
+  const fetchParams = async (domainID: number, params: { domain: number }) => 
+    await dispatch(fetchCreateParamsData(domainID, params));
+  const storeLangs = async () => await dispatch(getStoreLangs());
+
   useEffect(() => {
     const inner = async () => {
-      const { domain, fetch, fetchParams, storeLangs } = props;
       fetch(domain.ID).catch(msg => setSnackbar(msg || 'Unknown error'));
       fetchParams(null, { domain: domain.ID })
         .then(() => setLoading(false))
@@ -139,7 +155,7 @@ const DomainMenu = props => {
 
   useEffect(() => {
     setLoading(true);
-    props.fetchParams(null, { domain: domain.ID })
+    fetchParams(null, { domain: domain.ID })
       .then(() => setLoading(false))
       .catch(message => {
         setState(message || 'Unknown error');
@@ -148,12 +164,11 @@ const DomainMenu = props => {
   }, [location.pathname])
 
   useEffect(() => {
-    const { createParams } = props;
     // Update mask
-    setState({ ...state, ...formatCreateParams(structuredClone(createParams)) });
-  }, [props.createParams]);
+    setState({ ...state, ...formatCreateParams(structuredClone(CreateParams)) });
+  }, [CreateParams]);
 
-  const handleInput = field => event => {
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       createParams: {
@@ -163,7 +178,7 @@ const DomainMenu = props => {
     });
   }
 
-  const handleUnitChange = unit => event => setState({
+  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -171,7 +186,8 @@ const DomainMenu = props => {
     },
   });
 
-  const handleCheckbox = field => e => {
+  // TODO: Not perfect
+  const handleCheckbox = (field: keyof CreateParams) => (e: ChangeEvent) => {
     const checked = e.target.checked;
     if(field === "privArchive") {
       setState({
@@ -196,30 +212,28 @@ const DomainMenu = props => {
     
 
   const handleNav = () => {
-    const { domain } = props;
     navigate('/domains/' + domain.ID);
   };
 
-  const handleDelete = (event) => {
+  const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation();
     setState({ ...state, deleting: true });
   };
 
   const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  const handleDeleteError = (error) => setSnackbar(error);
+  const handleDeleteError = (error: string) => setSnackbar(error);
 
   const handleDeleteSuccess = () => {
     navigate('/');
   };
 
   const handleEdit = () => {
-    const { edit, domain } = props;
     const { createParams, sizeUnits } = state;
     // eslint-disable-next-line camelcase
-    const { smtp, changePassword, pop3_imap, lang,
-      privChat, privVideo, privFiles, privArchive, privWeb,
-      privEas, privDav, storagequotalimit, prohibitreceivequota, prohibitsendquota } = createParams;
+    const { storagequotalimit, prohibitreceivequota, prohibitsendquota,
+      lang, privChat, privArchive, privFiles, privVideo, privWeb,
+      privEas, privDav, smtp, changePassword, pop3_imap } = createParams;
 
     // Convert quotas from selected size unit to KiB
     const quotas = {
@@ -233,17 +247,14 @@ const DomainMenu = props => {
         properties: {
           ...quotas,
         },
-        // eslint-disable-next-line camelcase
-        smtp, changePassword, lang, pop3_imap,
-        privChat, privVideo, privFiles, privArchive,
-        privWeb, privEas, privDav
+        lang, privChat, privArchive, privFiles, privVideo, privWeb,
+        privEas, privDav, smtp, changePassword, pop3_imap
       },
     }, domain.ID)
       .then(() => setSnackbar('Success!'))
       .catch(message => setSnackbar(message || 'Unknown error'));
   }
 
-  const { classes, domain, t, capabilities } = props;
   const { deleting, sizeUnits, createParams } = state;
   const { prohibitsendquota, prohibitreceivequota, storagequotalimit,
     lang, privChat, privArchive, privFiles, privVideo, privWeb,
@@ -364,18 +375,18 @@ const DomainMenu = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                        <FormControl className={classes.adornment}>
-                          <Select
-                            onChange={handleUnitChange('prohibitsendquota')}
-                            value={sizeUnits.prohibitsendquota}
-                            className={classes.select}
-                            variant="standard"
-                          >
-                            <MenuItem value={1}>MB</MenuItem>
-                            <MenuItem value={2}>GB</MenuItem>
-                            <MenuItem value={3}>TB</MenuItem>
-                          </Select>
-                        </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitsendquota')}
+                        value={sizeUnits.prohibitsendquota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -392,18 +403,18 @@ const DomainMenu = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                        <FormControl className={classes.adornment}>
-                          <Select
-                            onChange={handleUnitChange('prohibitreceivequota')}
-                            value={sizeUnits.prohibitreceivequota}
-                            className={classes.select}
-                            variant="standard"
-                          >
-                            <MenuItem value={1}>MB</MenuItem>
-                            <MenuItem value={2}>GB</MenuItem>
-                            <MenuItem value={3}>TB</MenuItem>
-                          </Select>
-                        </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitreceivequota')}
+                        value={sizeUnits.prohibitreceivequota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -421,18 +432,18 @@ const DomainMenu = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                        <FormControl className={classes.adornment}>
-                          <Select
-                            onChange={handleUnitChange('storagequotalimit')}
-                            value={sizeUnits.storagequotalimit}
-                            className={classes.select}
-                            variant="standard"
-                          >
-                            <MenuItem value={1}>MB</MenuItem>
-                            <MenuItem value={2}>GB</MenuItem>
-                            <MenuItem value={3}>TB</MenuItem>
-                          </Select>
-                        </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('storagequotalimit')}
+                        value={sizeUnits.storagequotalimit}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -566,36 +577,5 @@ const DomainMenu = props => {
   );
 }
 
-DomainMenu.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object,
-  capabilities: PropTypes.array,
-  createParams: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchParams: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  storeLangs: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    capabilities: state.auth.capabilities,
-    createParams: state.defaults.CreateParams,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async domainID => await dispatch(fetchDrawerDomain(domainID))
-      .catch(message => Promise.reject(message)),
-    edit: async (createParams, domainID) => await dispatch(editCreateParamsData(createParams, domainID))
-      .catch(message => Promise.reject(message)),
-    fetchParams: async (domainID, params) => await dispatch(fetchCreateParamsData(domainID, params))
-      .catch(message => Promise.reject(message)),
-    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(DomainMenu, styles)));
+export default DomainMenu;
