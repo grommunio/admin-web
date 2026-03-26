@@ -735,7 +735,7 @@ export function serversPolicy() {
   };
 }
 
-export async function editServerPolicy(data: { data: ServerPolicy }) {
+export async function editServerPolicy(data: { data: { policy: ServerPolicy } }) {
   return await patch('/system/dbconf/grommunio-admin/multi-server/', data);
 }
 

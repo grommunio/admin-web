@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { useTranslation } from 'react-i18next';
+import { useTable } from '../hooks/useTable';
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
   Typography, Button, Grid2, TableSortLabel, CircularProgress,
-  TextField, MenuItem, Chip, Tooltip, Alert } from '@mui/material';
+  TextField, MenuItem, Chip, Tooltip, Alert, 
+  Theme,
+  TableSortLabelTypeMap} from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { Dns, HelpOutline, Warning } from '@mui/icons-material';
@@ -14,12 +17,15 @@ import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddServer from '../components/Dialogs/AddServer';
 import { deleteServerData, fetchServerDnsCheck, fetchServerPolicy, fetchServersData, patchServerPolicy } from '../actions/servers';
-import withStyledReduxTable from '../components/withTable';
-import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import TableActionGrid from '../components/TableActionGrid';
+import { makeStyles } from 'tss-react/mui';
+import { useAppDispatch, useAppSelector } from '../store';
+import { URLParams } from '@/actions/types';
+import { ServerPolicy } from '@/types/servers';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
   },
@@ -35,18 +41,57 @@ const styles = theme => ({
   chip: {
     marginRight: 8,
   },
-});
+}));
 
-const Servers = props => {
+
+const Servers = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   const [state, setState] = useState({
     snackbar: '',
     dnsLoading: true,
   });
+  const { Servers, count, DnsCheck, policy } = useAppSelector(state => state.servers);
   const context = useContext(CapabilityContext);
+  const dispatch = useAppDispatch();
+  const fetchTableData = async (params: URLParams) =>
+    dispatch(fetchServersData(params));
+
+  const fetchPolicy = async () =>
+    dispatch(fetchServerPolicy());
+
+  const fetchDns = async () =>
+    dispatch(fetchServerDnsCheck());
+
+  const setPolicy = async (data: { data: { policy: ServerPolicy } }) =>
+    dispatch(patchServerPolicy(data));
+
+  const deleteItem = async (id: number) =>
+    dispatch(deleteServerData(id));
+
+  const table = useTable({
+    fetchTableData,
+    defaultState: { orderBy: 'hostname' },
+  });
+
+  const {
+    tableState,
+    handleMatch,
+    handleRequestSort,
+    handleAdd,
+    handleAddingSuccess,
+    handleAddingClose,
+    handleAddingError,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+    handleEdit,
+    clearSnackbar,
+  } = table;
 
   useEffect(() => {
     const inner = async () => {
-      const { fetchPolicy, fetchDns } = props;
       fetchPolicy()
         .catch(msg => {
           setState({ ...state, snackbar: msg || 'Unknown error' });
@@ -65,7 +110,7 @@ const Servers = props => {
   ];
 
   const handlePolicyChange = e => {
-    props.setPolicy({ data: { policy: e.target.value }})
+    setPolicy({ data: { policy: e.target.value }})
       .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => {
         setState({ ...state, snackbar: msg || 'Unknown error' });
@@ -73,7 +118,7 @@ const Servers = props => {
   }
 
   const handleSnackbarClose = () => {
-    props.clearSnackbar();
+    clearSnackbar();
     setState({
       ...state, 
       snackbar: '',
@@ -81,18 +126,13 @@ const Servers = props => {
   }
 
   const handleScroll = () => {
-    const { Servers, count } = props.servers;
-    props.handleScroll(Servers, count);
+    table.handleScroll(Servers, count);
   };
 
-  const { classes, t, servers, tableState, handleMatch, handleRequestSort,
-    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-    handleDelete, handleDeleteClose, handleDeleteError,
-    handleDeleteSuccess, handleEdit } = props;
   const { loading, order, orderBy, match, adding, snackbar, deleting } = tableState;
   const { dnsLoading } = state;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
-  const { host, ext } = servers.DnsCheck;
+  const { host, ext } = DnsCheck;
 
   return (
     <TableViewContainer
@@ -119,8 +159,8 @@ const Servers = props => {
         icon={<Warning />}
         sx={{ my: 0, mx: 2 }}
       >
-          Disclaimer! Be sure to know what you are doing.
-          If your grommunio is hosted on a single server, there is no configuration necessary.
+        Disclaimer! Be sure to know what you are doing.
+        If your grommunio is hosted on a single server, there is no configuration necessary.
       </Alert>
       <TableActionGrid
         tf={<SearchTextfield
@@ -140,7 +180,7 @@ const Servers = props => {
       </TableActionGrid>
       <div>
         <TextField
-          value={servers.policy || 'round-robin'}
+          value={policy || 'round-robin'}
           onChange={handlePolicyChange}
           select
           label={t("Selection policy")}
@@ -155,7 +195,7 @@ const Servers = props => {
         </TextField>
       </div>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingServers", { count: servers.Servers.length })}
+        {t("showingServers", { count: Servers.length })}
       </Typography>
       <Paper elevation={1}>
         <Table size="small">
@@ -165,8 +205,7 @@ const Servers = props => {
                 <TableCell key={column.value}>
                   <TableSortLabel
                     active={orderBy === column.value}
-                    align="left"
-                    direction={orderBy === column.value ? order : "asc"}
+                    direction={orderBy === column.value ? order as TableSortLabelTypeMap["props"]["direction"] : "asc"}
                     onClick={handleRequestSort(column.value)}
                   >
                     {t(column.label)}
@@ -177,7 +216,7 @@ const Servers = props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {servers.Servers.map((obj, idx) => {
+            {Servers.map((obj, idx) => {
               const hostnameResolved = !!host[obj.hostname];
               const extResolved = !!ext[obj.extname];
               return <TableRow key={idx} hover onClick={handleEdit('/servers/' + obj.ID)}>
@@ -218,7 +257,7 @@ const Servers = props => {
             })}
           </TableBody>
         </Table>
-        {(servers.Servers.length < servers.count) && <Grid2 container justifyContent="center">
+        {(Servers.length < count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid2>}
       </Paper>
@@ -230,7 +269,7 @@ const Servers = props => {
       />
       <GeneralDelete
         open={!!deleting}
-        delete={props.delete}
+        delete={deleteItem}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -241,35 +280,5 @@ const Servers = props => {
   );
 }
 
-Servers.propTypes = {
-  servers: PropTypes.object.isRequired,
-  fetchPolicy: PropTypes.func.isRequired,
-  fetchDns: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-  setPolicy: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
-};
 
-const mapStateToProps = state => {
-  return {
-    servers: state.servers,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchTableData: async params => 
-      await dispatch(fetchServersData(params)).catch(msg => Promise.reject(msg)),
-    fetchPolicy: async () =>
-      await dispatch(fetchServerPolicy()).catch(msg => Promise.reject(msg)),
-    fetchDns: async () =>
-      await dispatch(fetchServerDnsCheck()).catch(msg => Promise.reject(msg)),
-    delete: async id =>
-      await dispatch(deleteServerData(id)).catch(msg => Promise.reject(msg)),
-    setPolicy: async data => 
-      await dispatch(patchServerPolicy(data)).catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(Servers, { orderBy: 'hostname'});
+export default Servers;

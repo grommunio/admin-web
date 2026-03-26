@@ -15,6 +15,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     overflow: "auto",
     display: 'flex',
     flexDirection: 'column',
+    marginTop: 64,
   },
   base: {
     flexDirection: "column",
@@ -45,7 +46,7 @@ type TableViewContainerProps = {
   children: ReactNode;
   baseRef?: Ref<HTMLDivElement>;
   handleScroll?: () => void;
-  headline: string;
+  headline: string | ReactNode;
   subtitle?: string;
   snackbar?: string;
   onSnackbarClose: () => void;

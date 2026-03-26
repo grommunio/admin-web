@@ -52,7 +52,7 @@ export function fetchServerDnsCheck() {
   return defaultListHandler(serverDnsCheck, SERVER_DNS_CHECK);
 }
 
-export function patchServerPolicy(data: { data: ServerPolicy }) {
+export function patchServerPolicy(data: { data: { policy: ServerPolicy } }) {
   return async (dispatch: Dispatch) => {
     try {
       await editServerPolicy(data);
