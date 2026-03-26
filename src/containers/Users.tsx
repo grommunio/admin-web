@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2, TableSortLabel,
   CircularProgress, Tooltip, List, ListItemButton, ListItemText, ListItemIcon, 
@@ -10,10 +9,11 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   MenuItem,
   FormControlLabel,
   Checkbox,
-  useMediaQuery} from '@mui/material';
+  useMediaQuery,
+  Theme} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { fetchUsersData, deleteUserData, checkLdapUsers, setFilterState } from '../actions/users';
+import { fetchUsersData, checkLdapUsers, setFilterState } from '../actions/users';
 import { syncLdapUsers } from '../actions/ldap';
 import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
@@ -22,17 +22,21 @@ import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
-import withStyledReduxTable from '../components/withTable';
-import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { useNavigate } from 'react-router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useTranslation } from 'react-i18next';
+import { useTable } from '../hooks/useTable';
+import { FetchUserParams, UserListItem } from '@/types/users';
+import { makeStyles } from 'tss-react/mui';
+import { CheckLdapUsersParams, SyncLdapParams } from '@/types/ldap';
+import { Domain } from '@/types/domains';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   tablePaper: {
     margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
@@ -62,20 +66,51 @@ const styles = theme => ({
     display: 'flex',
     marginLeft: 16,
   }
-});
+}));
 
 
-const Users = props => {
+type UsersProps = {
+  domain: Domain;
+}
+
+const Users = ({ domain }: UsersProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     snackbar: '',
     checking: false,
     taskMessage: '',
     taskID: null,
   });
-  const dispatch = useDispatch();
-  const { showDeactivated, match, mode, type } = useSelector(state => state.users);
+  const { Users, count, showDeactivated, match, mode, type } = useAppSelector(state => state.users);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+
+  const fetchTableData = async (domainID: number, params: FetchUserParams) =>
+    await dispatch(fetchUsersData(domainID, {...params }));
+  const check = async (params: CheckLdapUsersParams) => await dispatch(checkLdapUsers(params));
+  const sync = async (params: SyncLdapParams, domainID: number) => await dispatch(syncLdapUsers(params, domainID));
+
+  const table = useTable<UserListItem>({
+    fetchTableData,
+    defaultState: { orderBy: 'username', suppressFetch: true },
+  });
+
+  const {
+    tableState,
+    clearSnackbar,
+    handleAdd,
+    handleAddingSuccess,
+    handleAddingClose,
+    handleAddingError,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+    handleEdit,
+    handleRequestSort,
+  } = table;
 
   const columns = [
     { label: 'Type', value: 'type' },
@@ -84,7 +119,7 @@ const Users = props => {
     { label: 'Storage quota limit', value: 'storagequotalimit' },
   ];
 
-  const getUserStatuses = () => {
+  const getUserStatuses = (): number[] => {
     const statuses = [];
     if(showDeactivated) statuses.push(USER_STATUS.DEACTIVATED);
     if(mode === USER_STATUS.NORMAL) {
@@ -98,8 +133,7 @@ const Users = props => {
   const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
 
   const handleScroll = () => {
-    const { Users, count } = props.users;
-    props.handleScroll(Users, count, {
+    table.handleScroll(Users, count, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
       match: match || undefined,
@@ -107,7 +141,6 @@ const Users = props => {
   };
 
   useEffect(() => {
-    const { domain, fetchTableData } = props;
     fetchTableData(domain.ID, {
       sort: orderBy + "," + order,
       filterProp: getFilterProp(),
@@ -117,12 +150,12 @@ const Users = props => {
       .catch(err => err);
   }, [showDeactivated, mode, type, match]);
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const getMaxSizeFormatting = (size) => {
+  const getMaxSizeFormatting = (size: number) => {
     if(!size) return '';
     if(size % 1073741824 === 0) {
       return size / 1073741824 + ' TB';
@@ -135,8 +168,7 @@ const Users = props => {
     }
   }
 
-  const handleUserSync = importUsers => () => {
-    const { sync, domain, fetchTableData } = props;
+  const handleUserSync = (importUsers: boolean) => () => {
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {
@@ -144,12 +176,10 @@ const Users = props => {
           setState({
             ...state,
             taskMessage: response.message || 'Task created',
-            loading: false,
             taskID: response.taskID,
           });
         } else {
           // No task created -> Reload table data
-          const { tableState } = props;
           const { order, orderBy, match } = tableState;
           setState({ ...state, snackbar: 'Success!' });
           fetchTableData(domain.ID, {
@@ -171,7 +201,7 @@ const Users = props => {
   })
 
   const checkUsers = () => {
-    props.check({ domain: props.domain.ID })
+    check({ domain: domain.ID })
       .catch(msg => setState({ ...state, snackbar: msg }));
     setState({ ...state, checking: true });
   }
@@ -179,7 +209,7 @@ const Users = props => {
   const handleCheckClose = () => setState({ ...state, checking: false });
 
   const handleCheckSuccess = () => {
-    props.fetchTableData(domain.ID, {
+    fetchTableData(domain.ID, {
       sort: orderBy + ',' + order,
       filterProp: getFilterProp(),
       status: getUserStatuses(),
@@ -191,11 +221,11 @@ const Users = props => {
 
   const handleSnackbarClose = () => {
     setState({ ...state, snackbar: '' });
-    props.clearSnackbar();
+    clearSnackbar();
   }
 
   const handleSort = orderBy => () => {
-    props.handleRequestSort(orderBy, {
+    handleRequestSort(orderBy, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
       match: match || undefined,
@@ -210,15 +240,11 @@ const Users = props => {
     dispatch(setFilterState("match", e.target.value));
   };
 
-  const { classes, t, users, domain, tableState,
-    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-    handleDelete, handleDeleteClose, handleDeleteError,
-    handleDeleteSuccess, handleEdit } = props;
   const { loading, order, orderBy, snackbar, adding, deleting } = tableState;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { checking, taskMessage, taskID } = state;
 
-  const userCounts = users.Users.reduce((prev, curr) => {
+  const userCounts = Users.reduce((prev, curr) => {
     const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
     const shared = curr.status === USER_STATUS.SHARED;
     return {
@@ -339,7 +365,7 @@ const Users = props => {
         />
       </div>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: users.Users.length })}
+        {t("showingUser", { count: Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
@@ -350,7 +376,6 @@ const Users = props => {
                 <TableCell>
                   <TableSortLabel
                     active={orderBy === 'username'}
-                    align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
                     onClick={handleSort('username')}
                     color="primary"
@@ -370,7 +395,7 @@ const Users = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.Users.map((obj, idx) => {
+              {Users.map((obj, idx) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow
@@ -406,7 +431,7 @@ const Users = props => {
           </Table>}
         {!lgUpHidden &&
           <List>
-            {users.Users.map((obj, idx) => 
+            {Users.map((obj, idx) => 
               <ListItemButton
                 key={idx}
                 onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}
@@ -425,7 +450,7 @@ const Users = props => {
               </ListItemButton>
             )}
           </List>}
-        {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
+        {(Users.length < count) && <Grid2 container justifyContent="center">
           <CircularProgress color="primary" className={classes.circularProgress}/>
         </Grid2>}
       </Paper>
@@ -460,33 +485,5 @@ const Users = props => {
   );
 }
 
-Users.propTypes = {
-  users: PropTypes.object.isRequired,
-  domain: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
-  check: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
-};
 
-const mapStateToProps = state => {
-  return { users: state.users };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchTableData: async (domainID, params) => {
-      await dispatch(fetchUsersData(domainID, {...params })).catch(error => Promise.reject(error));
-    },
-    delete: async (domainID, id) => {
-      await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
-    },
-    check: async params => await dispatch(checkLdapUsers(params))
-      .catch(error => Promise.reject(error)),
-    sync: async (params, domainID) => await dispatch(syncLdapUsers(params, domainID))
-      .catch(error => Promise.reject(error)),
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(Users, { orderBy: 'username', suppressFetch: true });
+export default Users;

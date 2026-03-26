@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import {
   Paper,
   Table,
@@ -16,18 +15,24 @@ import {
   TableSortLabel,
   CircularProgress,
   Chip,
+  Theme,
+  TableSortLabelTypeMap,
 } from "@mui/material";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
 import { fetchTaskqData, fetchTaskqStatus, startTaskqServer, stopTaskqServer } from "../actions/taskq";
 import { getTaskState, setDateTimeString } from "../utils";
-import withStyledReduxTable from "../components/withTable";
-import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 import SearchTextfield from "../components/SearchTextfield";
 import TableActionGrid from "../components/TableActionGrid";
+import { useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "../store";
+import { makeStyles } from "tss-react/mui";
+import { useTable } from "../hooks/useTable";
+import { TaskListItem } from "@/types/tasks";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
   },
@@ -40,13 +45,37 @@ const styles = (theme) => ({
   chip: {
     margin: theme.spacing(0, 0.5),
   },
-});
+}));
 
-const TasQ = props => {
+const TasQ = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     snackbar: '',
   });
   const context = useContext(CapabilityContext);
+  const taskq = useAppSelector(state => state.taskq);
+
+  const fetchTableData = async (params) =>
+    await dispatch(fetchTaskqData({ limit: 200, ...params }));
+
+  const status = async () => await dispatch(fetchTaskqStatus());
+  const start = async () => await dispatch(startTaskqServer());
+  const stop = async () => await dispatch(stopTaskqServer());
+
+  const table = useTable<TaskListItem>({
+    fetchTableData,
+    defaultState: { orderBy: 'created', order: 'desc' }
+  });
+
+  const {
+    tableState,
+    handleMatch,
+    handleRequestSort,
+    handleEdit,
+    clearSnackbar
+  } = table;
 
   const columns = [
     { label: "Command", value: "command" },
@@ -57,18 +86,16 @@ const TasQ = props => {
   ];
 
   useEffect(() => {
-    props.status().catch((msg) => setState({ ...state, snackbar: msg }));
+    status().catch((msg) => setState({ ...state, snackbar: msg }));
   }, []);
 
   const handleStart = () => {
-    const { start, status } = props;
     start()
       .then(() => status().catch((msg) => setState({ ...state, snackbar: msg })))
       .catch((msg) => setState({ ...state, snackbar: msg }));
   }
 
   const handleStop = () => {
-    const { stop, status } = props;
     stop()
       .then(() => status().catch((msg) => setState({ ...state, snackbar: msg })))
       .catch((msg) => setState({ ...state, snackbar: msg }));
@@ -79,11 +106,9 @@ const TasQ = props => {
       ...state, 
       snackbar: '',
     });
-    props.clearSnackbar();
+    clearSnackbar();
   }
 
-  const { classes, t, taskq, tableState, handleMatch, handleRequestSort,
-    handleEdit } = props;
   const { loading, order, orderBy, match, snackbar } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
@@ -149,8 +174,7 @@ const TasQ = props => {
                 <TableCell key={column.value}>
                   <TableSortLabel
                     active={orderBy === column.value}
-                    align="left"
-                    direction={orderBy === column.value ? order : "asc"}
+                    direction={orderBy === column.value ? order as TableSortLabelTypeMap["props"]["direction"] : "asc"}
                     onClick={handleRequestSort(column.value)}
                   >
                     {t(column.label)}
@@ -184,30 +208,5 @@ const TasQ = props => {
   );
 }
 
-TasQ.propTypes = {
-  taskq: PropTypes.object.isRequired,
-  status: PropTypes.func.isRequired,
-  start: PropTypes.func.isRequired,
-  stop: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
-};
 
-const mapStateToProps = (state) => {
-  return { taskq: state.taskq };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchTableData: async (params) => await dispatch(fetchTaskqData({ limit: 200, ...params }))
-      .catch((error) => Promise.reject(error)),
-    status: async () => await dispatch(fetchTaskqStatus())
-      .catch((error) => Promise.reject(error)),
-    start: async () => await dispatch(startTaskqServer())
-      .catch((error) => Promise.reject(error)),
-    stop: async () => await dispatch(stopTaskqServer())
-      .catch((error) => Promise.reject(error)),
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(TasQ, { orderBy: 'created', order: 'desc' });
+export default TasQ;

@@ -22,7 +22,7 @@ import TableActionGrid from '../components/TableActionGrid';
 import { makeStyles } from 'tss-react/mui';
 import { useAppDispatch, useAppSelector } from '../store';
 import { URLParams } from '@/actions/types';
-import { ServerPolicy } from '@/types/servers';
+import { ServerListItem, ServerPolicy } from '@/types/servers';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -69,7 +69,7 @@ const Servers = () => {
   const deleteItem = async (id: number) =>
     dispatch(deleteServerData(id));
 
-  const table = useTable({
+  const table = useTable<ServerListItem>({
     fetchTableData,
     defaultState: { orderBy: 'hostname' },
   });

@@ -1,26 +1,28 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import React, { useContext, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid2, Tabs, Tab, IconButton } from '@mui/material';
-import { connect } from 'react-redux';
+  Typography, Button, Grid2, Tabs, Tab, IconButton, 
+  Theme} from '@mui/material';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
 import { Delete, MiscellaneousServices, SmartButton } from '@mui/icons-material';
 import CreateDbconfFile from '../components/Dialogs/CreateDbconfFile';
-import { defaultFetchLimit, SYSTEM_ADMIN_WRITE } from '../constants';
+import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import SearchTextfield from '../components/SearchTextfield';
 import TableActionGrid from '../components/TableActionGrid';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useTable } from '../hooks/useTable';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     padding: theme.spacing(2, 2, 2, 2),
   },
@@ -36,63 +38,50 @@ const styles = theme => ({
   tabs: {
     marginLeft: 16,
   },
-});
+}));
 
-const DBConf = props => {
+const DBConf = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
-    snackbar: '',
-    match: '',
-    adding: false,
-    deleting: false,
-    configuring: false,
-    offset: defaultFetchLimit,
     tab: 0,
-    loading: true,
+    configuring: false,
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+  const { commands, services } = useAppSelector(state => state.dbconf);
 
-  useEffect(() => {
-    props.fetch()
-      .then(() => setState({ ...state, loading: false }))
-      .catch(msg => {
-        setState({ ...state, snackbar: msg || 'Unknown error', loading: false });
-      });
-  }, []);
+  const fetchTableData = async () => await dispatch(fetchDBConfData({}));
+  const deleteItem = async (service: string) => await dispatch(deleteDBService(service));
 
-  const handleAddingSuccess = () => setState({ ...state, adding: false, configuring: false, snackbar: 'Success!' });
+  const table = useTable({
+    fetchTableData,
+    defaultState: { orderBy: "domainname" },
+  });
 
-  const handleAddingClose = () => setState({ ...state, adding: false, configuring: false });
+  const {
+    tableState,
+    handleMatch,
+    handleAdd,
+    handleAddingSuccess,
+    handleAddingClose,
+    handleAddingError,
+    clearSnackbar,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+  } = table;
 
-  const handleAddingError = error => setState({ ...state, snackbar: error });
-
-  const handleDelete = service => event => {
-    event.stopPropagation();
-    setState({ ...state, deleting: service });
-  }
-
-  const handleDeleteSuccess = resp => {
-    setState({ ...state, deleting: false, snackbar: 'Success! ' + (resp?.message || '')});
-  }
-
-  const handleDeleteClose = () => setState({ ...state, deleting: false });
-
-  const handleDeleteError = error => setState({ ...state, snackbar: error });
-
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const handleMatch = e => {
-    const { value } = e.target;
-    setState({ ...state, match: value });
-  }
+  const handleTab = (_: never, tab: number) => setState({ ...state, tab });
 
-  const handleTab = (e, tab) => setState({ ...state,tab });
-
-  const { classes, t, services, commands } = props;
-  const { adding, configuring, snackbar, match, tab, deleting, loading } = state;
+  const { adding, snackbar, match, deleting, loading } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   return (
     <TableViewContainer
@@ -100,7 +89,7 @@ const DBConf = props => {
       href="https://docs.grommunio.com/admin/administration.html#db-configuration"
       subtitle={t('dbconf_sub')}
       snackbar={snackbar}
-      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      onSnackbarClose={clearSnackbar}
       loading={loading}
     >
       <TableActionGrid
@@ -108,13 +97,12 @@ const DBConf = props => {
           value={match}
           onChange={handleMatch}
           placeholder={t("Search services")}
-          className={classes.textfield}
         />}
       >
         <Button
           variant="contained"
           color="primary"
-          onClick={() => setState({ ...state, adding: true })}
+          onClick={handleAdd}
           disabled={!writable}
         >
           {t("Create file")}
@@ -133,14 +121,14 @@ const DBConf = props => {
         <Tabs
           textColor="primary" 
           indicatorColor="primary"
-          value={tab}
+          value={state.tab}
           onChange={handleTab}
         >
           <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
           <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
         </Tabs>
       </Grid2>
-      {tab === 0 ? <Paper elevation={1}>
+      {state.tab === 0 ? <Paper elevation={1}>
         <Table size="small">
           <TableHead>
             <TableRow>
@@ -185,7 +173,7 @@ const DBConf = props => {
       </Paper>}
       <GeneralDelete
         open={!!deleting}
-        delete={props.delete}
+        delete={deleteItem}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -199,42 +187,13 @@ const DBConf = props => {
         onSuccess={handleAddingSuccess}
       />
       <CreateDbconfFile
-        open={configuring}
+        open={state.configuring}
         onClose={handleAddingClose}
         onError={handleAddingError}
-        onSuccess={handleAddingSuccess}
       />
     </TableViewContainer>
   );
 }
 
-DBConf.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  services: PropTypes.array.isRequired,
-  commands: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  const { dbconf } = state;
-  return {
-    services: dbconf.services,
-    commands: dbconf.commands,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async () => {
-      await dispatch(fetchDBConfData({})).catch(msg => Promise.reject(msg));
-    },
-    delete: async service => await dispatch(deleteDBService(service))
-      .then(msg => msg)
-      .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(DBConf, styles)));
+export default DBConf;

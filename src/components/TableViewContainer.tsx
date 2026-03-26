@@ -15,7 +15,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
     overflow: "auto",
     display: 'flex',
     flexDirection: 'column',
-    marginTop: 64,
   },
   base: {
     flexDirection: "column",
@@ -39,6 +38,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
     top: 64,
     width: '100%',
   },
+  toolbar: {
+    ...(theme.mixins.toolbar as any),
+  }
 }));
 
 
@@ -66,6 +68,7 @@ const TableViewContainer = ({ children, baseRef, handleScroll, headline, subtitl
       onScroll={debouncedScroll}
       id="scrollDiv"
     >
+      <div className={classes.toolbar} />
       <div>
         <Fade
           in={loading}

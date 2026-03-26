@@ -36,7 +36,7 @@ type CheckLdapDialogProps = {
   checkUsers: () => void;
   onClose: () => void;
   onSuccess: () => void;
-  onError: () => void;
+  onError: (err: string) => void;
 }
 
 const CheckLdapDialog = (props: CheckLdapDialogProps) => {

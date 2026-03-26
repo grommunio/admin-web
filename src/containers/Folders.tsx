@@ -2,24 +2,29 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Paper, Tabs, Tab } from '@mui/material';
-import { deleteFolderData, fetchFolderTree } from '../actions/folders.ts';
+import { Paper, Tabs, Tab, Theme } from '@mui/material';
+import { deleteFolderData, fetchFolderTree } from '../actions/folders';
 import AddFolder from '../components/Dialogs/AddFolder';
-import { defaultFetchLimit, DOMAIN_ADMIN_WRITE } from '../constants';
+import { DOMAIN_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TableViewContainer from '../components/TableViewContainer';
 import DeleteFolder from '../components/Dialogs/DeleteFolder';
-import withStyledReduxTable from '../components/withTable';
-import defaultTableProptypes from '../proptypes/defaultTableProptypes';
 import SearchTextfield from '../components/SearchTextfield';
 import Tree from 'react-d3-tree';
 import FolderHierarchy from '../components/FolderHierarchy';
 import TableActionGrid from '../components/TableActionGrid';
 import { AccountTree, List } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { Domain } from '@/types/domains';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
+import { useAppDispatch, useAppSelector } from '../store';
+import { ChangeEvent } from '@/types/common';
+import { URLParams } from '@/actions/types';
+import { useTable } from '../hooks/useTable';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   tablePaper: {
     margin: theme.spacing(1, 2, 3, 2),
     borderRadius: 6,
@@ -52,9 +57,18 @@ const styles = theme => ({
   treeNode: {
     stroke: theme.palette.primary.main,
   },
-});
+}));
 
-const Folders = props => {
+
+type FoldersProps = {
+  domain: Domain;
+}
+
+const Folders = ({ domain }: FoldersProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { folders } = useAppSelector(state => state);
   const [state, setState] = useState({
     offset: 0,
     tab: 0,
@@ -63,37 +77,33 @@ const Folders = props => {
     filteredTree: null,
   });
   const context = useContext(CapabilityContext);
-  const treeContainer = useRef();
+  const treeContainer = useRef(null);
   const navigate = useNavigate();
 
-  const handleScroll = () => {
-    const { domain, folders, fetchTableData, tableState } = props;
-    const { moreDataAvailable, loading } = folders;
-    if (moreDataAvailable &&
-      Math.floor(
-        document.getElementById("scrollDiv").scrollHeight -
-          document.getElementById("scrollDiv").scrollTop
-      ) <=
-      document.getElementById("scrollDiv").offsetHeight + 100
-    ) {
-      const { offset } = state;
-      if (!loading) { 
-        setState({
-          ...state,
-          offset: offset + defaultFetchLimit,
-        });
-        fetchTableData(domain.ID, {
-          offset: defaultFetchLimit + offset,
-          match: tableState.match || undefined,
-        })
-      }
-    }
-  };
+  const fetchTableData = async (domainID: number, params: URLParams) => 
+    await dispatch(fetchFolderTree(domainID, params));
+  const deleteItem = async (domainID: number, id: string, params: { clear: boolean }) =>
+    await dispatch(deleteFolderData(domainID, id, params));
 
-  const handleTab = (_, tab) => setState({ ...state, tab });
+  const table = useTable({
+    fetchTableData,
+    defaultState: { orderBy: 'displayname' },
+  });
+
+  const {
+    tableState,
+    clearSnackbar,
+    handleAddingError,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+    handleEdit,
+  } = table;
+
+  const handleTab = (_: never, tab: number) => setState({ ...state, tab });
 
   const renderNode = ({ nodeDatum, toggleNode }) => {
-    const { classes } = props;
     return <g onClick={handleNodeClicked(nodeDatum?.folderid)}>
       <rect className={classes.treeNode} width="20" height="20" x="-10" onClick={toggleNode} />
       <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
@@ -110,12 +120,11 @@ const Folders = props => {
     };
   }
 
-  const handleNodeClicked = id => () => {
-    const { domain } = props;
+  const handleNodeClicked = (id: any) => () => {
     navigate('/' + domain.ID + '/folders/' + id);
   }
 
-  const handleAdd = parentID => e => {
+  const handleAdd = (parentID: string) => (e: React.MouseEvent) => {
     e.stopPropagation();
     setState({ ...state, adding: parentID });
   }
@@ -125,13 +134,13 @@ const Folders = props => {
   }
 
   const handleAddingSuccess = () => {
-    props.handleAddingSuccess();
+    handleAddingSuccess();
     setState({ ...state, adding: null });
   }
 
-  const handleMatch = e => {
+  const handleMatch = (e: ChangeEvent) => {
     const { value } = e.target;
-    const Tree = structuredClone(props.folders.Tree);
+    const Tree = structuredClone(folders.Tree);
     const filteredTree = prune(Tree, value);
     setState({ ...state, filteredTree });
   }
@@ -149,16 +158,12 @@ const Folders = props => {
   }
 
 
-  const { classes, t, folders, domain, tableState, handleAddingError,
-    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-    handleDeleteSuccess, handleEdit } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { loading, snackbar, deleting } = tableState;
   const { adding, tab, filteredTree } = state;
 
   return (
     <TableViewContainer
-      handleScroll={handleScroll}
       headline={t("Folders")}
       subtitle={t('folders_sub')}
       href="https://docs.grommunio.com/admin/administration.html#folders"
@@ -228,7 +233,7 @@ const Folders = props => {
       />
       <DeleteFolder
         open={!!deleting}
-        delete={props.delete}
+        delete={deleteItem}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -240,27 +245,5 @@ const Folders = props => {
   );
 }
 
-Folders.propTypes = {
-  domain: PropTypes.object.isRequired,
-  folders: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
-};
 
-const mapStateToProps = state => {
-  return { folders: state.folders };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchTableData: async (domainID, params) => 
-      await dispatch(fetchFolderTree(domainID, params))
-        .catch(msg => Promise.reject(msg)),
-    delete: async (domainID, id, params) =>
-      await dispatch(deleteFolderData(domainID, id, params))
-        .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(Folders, { orderBy: 'displayname' });
+export default Folders;

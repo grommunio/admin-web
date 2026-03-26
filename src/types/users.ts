@@ -1,3 +1,4 @@
+import { URLParams } from "@/actions/types";
 import { PartialWithRequired } from "./common";
 import { BaseRole } from "./roles";
 
@@ -94,6 +95,15 @@ export type OrphanedUser = BaseUser & {
   username?: string;
 }
 
+export type ContactListItem = {
+  ID: number;
+  domainID: number;
+  ldapID: string;
+  username: string;
+  status: number;
+  properties: Partial<UserProperties>;
+}
+
 export type NewContact = {
   status: number;
   properties: Partial<UserProperties>;
@@ -152,3 +162,8 @@ export type FetchmailConfig = {
 };
 
 export type NewFetchmailConfig = Omit<FetchmailConfig, "ID">;
+
+export type FetchUserParams = {
+  filterProp?: string;
+  status?: number[];
+} & URLParams;

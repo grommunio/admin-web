@@ -32,9 +32,9 @@ type FolderHierarchyProps = {
   writable: boolean;
   data: Folder;
   domainID: number;
-  handleAdd: (folderid: string) => () => void;
-  handleEdit: (redirect: string) => () => void;
-  handleDelete: (folderDeleteProps: { folderid: string, name: string }) => () => void;
+  handleAdd: (folderid: string) => (e: React.MouseEvent) => void;
+  handleEdit: (redirect: string) => (e: React.MouseEvent) => void;
+  handleDelete: (folderDeleteProps: { folderid: string, name: string }) => (e: React.MouseEvent) => void;
 }
 
 const FolderHierarchy = ({ writable, data, domainID, handleAdd, handleEdit, handleDelete }: FolderHierarchyProps) => {

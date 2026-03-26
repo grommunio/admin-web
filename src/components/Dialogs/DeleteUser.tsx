@@ -16,7 +16,7 @@ type DeleteUserProps = {
   open: boolean;
   domainID: number;
   onSuccess: () => void;
-  onError: () => void;
+  onError: (err: string) => void;
   onClose: () => void;
 }
 
@@ -41,8 +41,8 @@ const DeleteUser = (props: DeleteUserProps) => {
         if(onSuccess) onSuccess();
         setState({ ...state, loading: false });
       })
-      .catch(() => {
-        if(onError) onError();
+      .catch((err: string) => {
+        if(onError) onError(err);
         setState({ ...state, loading: false });
       });
   }

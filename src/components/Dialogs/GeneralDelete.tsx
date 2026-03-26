@@ -14,7 +14,7 @@ type GeneralDeleteProps = {
   onSuccess: (msg: string) => void;
   onError: (msg: string) => void;
   onClose: () => void;
-  delete: (id: number) => Promise<any>;
+  delete: (id: number | string) => Promise<any>;
 }
 
 const GeneralDelete = (props: GeneralDeleteProps) => {

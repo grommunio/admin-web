@@ -10,10 +10,10 @@ export type Permission =
   "OrgAdmin" |
   "DomainPurge";
 
-type RolePermission = {
+export type RolePermission = {
   ID: number;
   params: number;
-  permissions: Permission;
+  permission: Permission;
 }
 
 export type BaseRole = {

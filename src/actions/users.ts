@@ -28,10 +28,10 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CheckLdapUsersParams, LdapDumpParams } from '@/types/ldap';
-import { DeleteOrphanedUsersParams, DeleteUserParams, NewContact, NewUser, OofSettings, UpdateUser } from '@/types/users';
+import { DeleteOrphanedUsersParams, DeleteUserParams, FetchUserParams, NewContact, NewUser, OofSettings, UpdateUser, User } from '@/types/users';
 
 
-export function fetchUsersData(domainID: number, params: URLParams) {
+export function fetchUsersData(domainID: number, params: FetchUserParams) {
   return async (dispatch: Dispatch) => {
     try {
       const data = await users(domainID, params);
@@ -102,7 +102,7 @@ export function fetchUserData(domainID: number, userID: number) {
     } catch(err) {
       // ignore error
     }
-    return Promise.resolve(userData);
+    return Promise.resolve(userData as User);
   };
 }
 

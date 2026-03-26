@@ -11,14 +11,14 @@ import { ChangeEvent } from '@/types/common';
 
 
 type DeleteFolderProps = {
-  id: number;
+  id: string;
   open: boolean;
   item: string;
   domainID: number;
   onSuccess: () => void;
   onClose: () => void;
   onError: (msg: string) => void;
-  delete: (domainID: number, id: number, props: { clear: boolean }) => Promise<any>;
+  delete: (domainID: number, id: string, props: { clear: boolean }) => Promise<any>;
 }
 
 const DeleteFolder = (props: DeleteFolderProps) => {

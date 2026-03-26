@@ -27,6 +27,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
     top: 64,
     width: '100%',
   },
+  toolbar: {
+    ...(theme.mixins.toolbar as any),
+  }
 }));
 
 type ViewWrapperProps = {
@@ -41,6 +44,7 @@ function ViewWrapper ({ children, snackbar, onSnackbarClose, loading }: ViewWrap
 
   return (
     <div className={classes.root}>
+      <div className={classes.toolbar} />
       <div>
         <Fade
           in={loading}

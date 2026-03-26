@@ -347,7 +347,7 @@ export function formatCreateParams(createParams: Record<string, any>) {
   };
 }
 
-export function generatePropFilterString(filters: Record<string, string>): string {
+export function generatePropFilterString(filters: Record<string, string | number>): string {
   return Object.entries(filters).map(([key, value]) => `${key}:${value}`).join(";");
 }
 

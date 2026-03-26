@@ -22,7 +22,7 @@ interface TableState {
   [key: string]: any;
 }
 
-export function useTable({
+export function useTable<T>({
   fetchTableData,
   domain,
   defaultState = {},
@@ -78,7 +78,7 @@ export function useTable({
       };
 
   const handleScroll = (
-    data: any[],
+    data: T[],
     count: number,
     additionalProps: object = {}
   ) => {
@@ -144,11 +144,10 @@ export function useTable({
   const handleAddingError = (error: string) =>
     setState((prev) => ({ ...prev, snackbar: error }));
 
-  const handleDelete =
-    (item: any) => (event: React.MouseEvent) => {
-      event.stopPropagation();
-      setState((prev) => ({ ...prev, deleting: item }));
-    };
+  const handleDelete = (item: T) => (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setState((prev) => ({ ...prev, deleting: item }));
+  };
 
   const handleDeleteSuccess = () =>
     setState((prev) => ({

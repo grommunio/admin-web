@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext } from "react";
-import PropTypes from "prop-types";
 import {
   Paper,
   Table,
@@ -15,52 +14,92 @@ import {
   Grid2,
   TableSortLabel,
   CircularProgress,
+  Theme
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
+
+import { useTranslation } from "react-i18next";
+import { useTable } from "../hooks/useTable";
+import { useAppDispatch, useAppSelector } from "../store";
+
 import AddOrg from "../components/Dialogs/AddOrg";
 import GeneralDelete from "../components/Dialogs/GeneralDelete";
 import { deleteOrgData, fetchOrgsData } from "../actions/orgs";
 import { SYSTEM_ADMIN_WRITE } from "../constants";
 import { CapabilityContext } from "../CapabilityContext";
 import TableViewContainer from "../components/TableViewContainer";
-import withStyledReduxTable from "../components/withTable";
-import defaultTableProptypes from "../proptypes/defaultTableProptypes";
 import SearchTextfield from "../components/SearchTextfield";
 import TableActionGrid from "../components/TableActionGrid";
+import { makeStyles } from "tss-react/mui";
+import { URLParams } from "@/actions/types";
+import { OrgListItem } from "@/types/orgs";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   circularProgress: {
     margin: theme.spacing(1, 0, 1, 0),
   },
   count: {
     marginLeft: 16,
   },
-});
+}));
 
-const Orgs = props => {
+
+const Orgs = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const context = useContext(CapabilityContext);
+
+  const { Orgs: orgList, count } = useAppSelector(
+    (state) => state.orgs
+  );
+
+  const fetchTableData = async (params: URLParams) =>
+    dispatch(fetchOrgsData(params));
+
+  const deleteItem = async (id: number) =>
+    dispatch(deleteOrgData(id));
+
+  const table = useTable<OrgListItem>({
+    fetchTableData,
+  });
+
+  const {
+    tableState,
+    handleMatch,
+    handleRequestSort,
+    handleAdd,
+    handleAddingSuccess,
+    handleAddingClose,
+    handleAddingError,
+    clearSnackbar,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+    handleEdit,
+    handleScroll,
+  } = table;
+
+  const { loading, order, orderBy, match, snackbar, adding, deleting } =
+    tableState;
+
+  const writable = context.includes(SYSTEM_ADMIN_WRITE);
+
+  const onScroll = () => {
+    handleScroll(orgList, count);
+  };
 
   const columns = [
     { label: "Name", value: "name" },
     { label: "Description", value: "description" },
   ];
 
-  const handleScroll = () => {
-    const { Orgs, count } = props.orgs;
-    props.handleScroll(Orgs, count);
-  };
-
-  const { classes, t, orgs, tableState, handleMatch, handleRequestSort,
-    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-    handleDeleteSuccess, handleEdit } = props;
-  const { loading, order, orderBy, match, snackbar, adding, deleting } = tableState;
-  const writable = context.includes(SYSTEM_ADMIN_WRITE);
-
   return (
     <TableViewContainer
-      handleScroll={handleScroll}
+      handleScroll={onScroll}
       headline={t("Organizations")}
       href="https://docs.grommunio.com/admin/administration.html#organizations"
       subtitle={t("orgs_sub")}
@@ -69,24 +108,27 @@ const Orgs = props => {
       loading={loading}
     >
       <TableActionGrid
-        tf={<SearchTextfield
-          value={match}
-          onChange={handleMatch}
-          placeholder={t("Search organizations")}
-        />}
+        tf={
+          <SearchTextfield
+            value={match}
+            onChange={handleMatch}
+            placeholder={t("Search organizations")}
+          />
+        }
       >
         <Button
           variant="contained"
-          color="primary"
           onClick={handleAdd}
           disabled={!writable}
         >
           {t("New organization")}
         </Button>
       </TableActionGrid>
+
       <Typography className={classes.count} color="textPrimary">
-        {t("showingOrgs", { count: orgs.Orgs.length })}
+        {t("showingOrgs", { count: orgList.length })}
       </Typography>
+
       <Paper elevation={1}>
         <Table size="small">
           <TableHead>
@@ -95,8 +137,9 @@ const Orgs = props => {
                 <TableCell key={column.value}>
                   <TableSortLabel
                     active={orderBy === column.value}
-                    align="left"
-                    direction={orderBy === column.value ? order : "asc"}
+                    direction={
+                      orderBy === column.value ? order : "asc"
+                    }
                     onClick={handleRequestSort(column.value)}
                   >
                     {t(column.label)}
@@ -106,21 +149,32 @@ const Orgs = props => {
               <TableCell padding="checkbox" />
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {orgs.Orgs.map((obj, idx) => 
-              <TableRow key={idx} hover onClick={handleEdit('/orgs/' + obj.ID)}>
+            {orgList.map((obj: OrgListItem) => (
+              <TableRow
+                key={obj.ID}
+                hover
+                onClick={handleEdit("/orgs/" + obj.ID)}
+              >
                 <TableCell>{obj.name}</TableCell>
                 <TableCell>{obj.description}</TableCell>
                 <TableCell align="right">
-                  {writable && <IconButton onClick={handleDelete(obj)} size="small">
-                    <Delete color="error" fontSize="small"/>
-                  </IconButton>}
+                  {writable && (
+                    <IconButton
+                      onClick={handleDelete(obj)}
+                      size="small"
+                    >
+                      <Delete color="error" fontSize="small" />
+                    </IconButton>
+                  )}
                 </TableCell>
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
-        {orgs.Orgs.length < orgs.count && (
+
+        {orgList.length < count && (
           <Grid2 container justifyContent="center">
             <CircularProgress
               color="primary"
@@ -129,49 +183,26 @@ const Orgs = props => {
           </Grid2>
         )}
       </Paper>
+
       <AddOrg
         open={adding}
         onSuccess={handleAddingSuccess}
         onError={handleAddingError}
         onClose={handleAddingClose}
       />
+
       <GeneralDelete
         open={!!deleting}
-        delete={props.delete}
+        delete={deleteItem}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
-        item={deleting.name}
-        id={deleting.ID}
+        item={deleting?.name}
+        id={deleting?.ID}
       />
     </TableViewContainer>
   );
-}
-
-Orgs.propTypes = {
-  orgs: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
 };
 
-const mapStateToProps = (state) => {
-  return { orgs: state.orgs };
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchTableData: async (params) => {
-      await dispatch(fetchOrgsData(params)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
-    delete: async id => {
-      await dispatch(deleteOrgData(id)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(Orgs);
+export default Orgs;

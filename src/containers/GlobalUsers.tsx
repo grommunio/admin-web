@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { Paper, Table, TableHead, TableRow, TableCell,
   TableBody, Typography, Button, Grid2, TableSortLabel,
   CircularProgress,
@@ -14,27 +13,29 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   MenuItem,
   FormControlLabel,
   Checkbox,
-  useMediaQuery} from '@mui/material';
+  useMediaQuery,
+  Theme} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { deleteUserData, fetchAllUsers, fetchUserData } from '../actions/users';
-import { syncLdapUsers } from '../actions/ldap';
+import { fetchAllUsers, fetchUserData } from '../actions/users';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
-import defaultTableProptypes from '../proptypes/defaultTableProptypes';
-import withStyledReduxTable from '../components/withTable';
 import SearchTextfield from '../components/SearchTextfield';
 import { generatePropFilterString, getUserTypeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
-import { useDispatch, useSelector } from 'react-redux';
 import { setFilterState } from '../actions/globalUsers';
+import { useAppDispatch, useAppSelector } from '../store';
+import { useTable } from '../hooks/useTable';
+import { UserListItem } from '@/types/users';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   tablePaper: {
     margin: theme.spacing(3, 2, 3, 2),
     borderRadius: 6,
@@ -64,8 +65,7 @@ const styles = theme => ({
     display: 'flex',
     marginLeft: 16,
   }
-});
-
+}));
 
 const columns = [
   { label: 'Type', value: 'type' },
@@ -74,10 +74,39 @@ const columns = [
 ];
 
 
-const GlobalUsers = props => {
-  const dispatch = useDispatch();
-  const { showDeactivated, match, mode, type } = useSelector(state => state.globalUsers);
+const GlobalUsers = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { showDeactivated, match, mode, type } = useAppSelector(state => state.globalUsers);
+  const { Users, count } = useAppSelector(state => state.users);
   const context = useContext(CapabilityContext);
+
+  const fetchTableData = async params => {
+    await dispatch(fetchAllUsers({ ...params }));
+  };
+
+  const fetchUserDetails = async (domainID, userID) =>
+    await dispatch(fetchUserData(domainID, userID));
+
+  const table = useTable<UserListItem>({
+    fetchTableData,
+    defaultState: { orderBy: 'username', suppressFetch: true },
+  });
+
+  const {
+    tableState,
+    clearSnackbar,
+    handleAdd,
+    handleAddingSuccess,
+    handleAddingClose,
+    handleAddingError,
+    handleDelete,
+    handleDeleteClose,
+    handleDeleteError,
+    handleDeleteSuccess,
+    handleEdit,
+  } = table;
 
   const getUserStatuses = () => {
     const statuses = [];
@@ -93,7 +122,6 @@ const GlobalUsers = props => {
   const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
 
   useEffect(() => {
-    const { fetchTableData } = props;
     fetchTableData({
       sort: orderBy + "," + order,
       filterProp: getFilterProp(),
@@ -104,8 +132,7 @@ const GlobalUsers = props => {
   }, [showDeactivated, mode, type, match]);
 
   const handleScroll = () => {
-    const { Users, count } = props.users;
-    props.handleScroll(Users, count, {
+    table.handleScroll(Users, count, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
       match: match || undefined,
@@ -115,7 +142,7 @@ const GlobalUsers = props => {
   const handleRedirect = obj => async (e) => {
     // If user is a group
     if(obj.properties?.displaytypeex === USER_TYPE.GROUP) {
-      const userDetails = await props.fetchUserDetails(obj.domainID, obj.ID);
+      const userDetails = await fetchUserDetails(obj.domainID, obj.ID);
       handleEdit('/' + obj.domainID +'/groups/' + userDetails.mlist)(e);
     } else {
       handleEdit('/' + obj.domainID +'/users/' + obj.ID)(e);
@@ -123,7 +150,7 @@ const GlobalUsers = props => {
   }
 
   const handleSort = orderBy => () => {
-    props.handleRequestSort(orderBy, {
+    table.handleRequestSort(orderBy, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
       match: match || undefined,
@@ -138,14 +165,10 @@ const GlobalUsers = props => {
     dispatch(setFilterState("match", e.target.value));
   };
 
-  const { classes, t, users, tableState,
-    handleAdd, handleAddingSuccess, handleAddingClose, handleAddingError,
-    clearSnackbar, handleDelete, handleDeleteClose, handleDeleteError,
-    handleDeleteSuccess, handleEdit } = props;
   const { loading, order, orderBy, snackbar, adding, deleting } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-  const userCounts = users.Users.reduce((prev, curr) => {
+  const userCounts = Users.reduce((prev, curr) => {
     const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
     const shared = curr.status === USER_STATUS.SHARED;
     return {
@@ -219,7 +242,7 @@ const GlobalUsers = props => {
         />
       </div>
       <Typography className={classes.count} color="textPrimary">
-        {t("showingUser", { count: users.Users.length })}
+        {t("showingUser", { count: Users.length })}
         {` (${userCounts.normal} ${t("normal")}, ${userCounts.group} ${t("groups")}, ${userCounts.shared} ${t("shared")})`}
       </Typography>
       <Paper className={classes.tablePaper} elevation={1}>
@@ -230,7 +253,6 @@ const GlobalUsers = props => {
                 <TableCell>
                   <TableSortLabel
                     active={orderBy === 'username'}
-                    align="left" 
                     direction={orderBy === 'username' ? order : 'asc'}
                     onClick={handleSort('username')}
                   >
@@ -246,7 +268,7 @@ const GlobalUsers = props => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.Users.map((obj, idx) => {
+              {Users.map((obj: UserListItem, idx: number) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow key={idx} hover onClick={handleRedirect(obj)}>
@@ -278,7 +300,7 @@ const GlobalUsers = props => {
           </Table>}
         {!lgUpHidden &&
           <List>
-            {users.Users.map((obj, idx) => 
+            {Users.map((obj: UserListItem, idx: number) => 
               <ListItemButton
                 key={idx}
                 onClick={handleEdit('/' + obj.domainID + '/users/' +  obj.ID)}
@@ -297,7 +319,7 @@ const GlobalUsers = props => {
               </ListItemButton>
             )}
           </List>}
-        {(users.Users.length < users.count) && <Grid2 container justifyContent="center">
+        {(Users.length < count) && <Grid2 container justifyContent="center">
           <Button
             variant='outlined'
             size='small'
@@ -327,32 +349,5 @@ const GlobalUsers = props => {
   );
 }
 
-GlobalUsers.propTypes = {
-  users: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
-  fetchUserDetails: PropTypes.func.isRequired,
-  ...defaultTableProptypes,
-};
 
-const mapStateToProps = state => {
-  return { users: state.users };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchTableData: async params => {
-      await dispatch(fetchAllUsers({ ...params })).catch(error => Promise.reject(error));
-    },
-    fetchUserDetails: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
-      .catch(msg => Promise.reject(msg)),
-    delete: async (domainID, id) => {
-      await dispatch(deleteUserData(domainID, id)).catch(error => Promise.reject(error));
-    },
-    sync: async (params, domainID) => await dispatch(syncLdapUsers(params, domainID))
-      .catch(error => Promise.reject(error)),
-  };
-};
-
-export default withStyledReduxTable(
-  mapStateToProps, mapDispatchToProps, styles)(GlobalUsers, { orderBy: 'username', suppressFetch: true });
+export default GlobalUsers;
