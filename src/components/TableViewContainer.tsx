@@ -43,8 +43,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 type TableViewContainerProps = {
   children: ReactNode;
-  baseRef: Ref<HTMLDivElement>;
-  handleScroll: () => void;
+  baseRef?: Ref<HTMLDivElement>;
+  handleScroll?: () => void;
   headline: string;
   subtitle?: string;
   snackbar?: string;

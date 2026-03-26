@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { StoredCustomImages } from "@/types/config";
 import { SERVER_CONFIG_ERROR, SERVER_CONFIG_SET } from "../actions/types";
 
 type ConfigState = {
@@ -15,7 +16,7 @@ type ConfigState = {
   defaultDarkMode: boolean;
   defaultTheme: string;
   tokenRefreshInterval: number;
-  customImages: Record<string, unknown>;
+  customImages: StoredCustomImages;
   searchAttributes: string[];
   error: boolean;
 }
@@ -76,7 +77,7 @@ const defaultState: ConfigState = {
 
 type ConfigAction = {
   type: string;
-  data?: any;
+  data?: Partial<ConfigState>;
   error?: boolean,
 }
 

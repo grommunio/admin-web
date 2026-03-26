@@ -25,7 +25,7 @@ export const IPM_SUBTREE_OBJECT: IPM_SUBTREE_OBJECT_TYPE = {
   creationtime: null,
 };
 export const defaultFetchLimit = 50;
-export const USER_STATUS = {  // pseudo enum
+export const USER_STATUS = {  // TODO: Make proper enum with ts
   "NORMAL": 0,
   "DEACTIVATED": 1,
   "DELETED": 3,

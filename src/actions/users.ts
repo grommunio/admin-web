@@ -59,7 +59,7 @@ export function fetchContactsData(domainID: number, params: URLParams) {
   };
 }
 
-export function fetchPlainUsersData(domainID: number, params:URLParams) {
+export function fetchPlainUsersData(domainID: number, params: { status?: number } & URLParams) {
   return async (dispatch: Dispatch) => {
     try {
       const data = await usersPlain(domainID, params);

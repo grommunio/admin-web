@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { makeStyles } from 'tss-react/mui';
+import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Theme, Tooltip, Typography } from '@mui/material';
 import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-material';
 import { systemUpdate } from '../../actions/misc';
 import { fetchUpdateLogData } from '../../actions/logs';
 import { copyToClipboard, generateFormattedLogLine } from '../../utils';
-import { connect, useSelector } from 'react-redux';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   data: {
     padding: '8px 0',
   },
@@ -39,14 +38,24 @@ const styles = theme => ({
     width: 200,
     marginRight: 8,
   },
-});
+}));
 
 
 const Loader = () => <CircularProgress color='inherit' size={20}/>;
 
 
-const Updater = props => {
-  const license = useSelector(state => state.license);
+type UpdaterProps = {
+  setSnackbar: (msg: string) => void;
+  setTabsDisabled: (disabled: boolean) => void;
+}
+
+
+const Updater = (props: UpdaterProps) => {
+  const { setSnackbar, setTabsDisabled } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const license = useAppSelector(state => state.license);
   const supportedReposAvailable = license ? moment().isBefore(license?.notAfter) : false;
   const [state, setState] = useState({
     checkLoading: false,
@@ -57,17 +66,18 @@ const Updater = props => {
   const [updateLog, setUpdateLog] = useState([]);
   const [repo, setRepo] = useState(localStorage.getItem("packageRepository")
     || (supportedReposAvailable ? "supported" : "community"));
+  const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    const listener = window.addEventListener('beforeunload', onBeforeUnload);
+    window.addEventListener('beforeunload', onBeforeUnload);
 
     return () => {
-      clearInterval(fetchInterval);
-      window.removeEventListener("beforeunload", listener);
+      clearInterval(fetchInterval.current);
+      window.removeEventListener("beforeunload", onBeforeUnload);
     }
   }, []);
 
-  const onBeforeUnload = (e) => {
+  const onBeforeUnload = (e: BeforeUnloadEvent) => {
     const { checkLoading, updateLoading, upgradeLoading } = state;
     if (checkLoading || updateLoading || upgradeLoading) {
       e.preventDefault();
@@ -77,37 +87,33 @@ const Updater = props => {
     delete e['returnValue'];
   }
 
-  let fetchInterval = null;
-
-  const handleRefresh = async pid => {
-    const { setTabsDisabled, fetchLog } = props;
-    const response = await fetchLog(pid).catch(snackbar => setState({ ...state, snackbar }));
+  const handleRefresh = async (pid: string) => {
+    const response = await dispatch(fetchUpdateLogData(pid)).catch(snackbar => setSnackbar(snackbar));
     if(response?.data) {
       setUpdateLog(response?.data || []);
     }
     if(response?.processRunning === false) {
-      clearInterval(fetchInterval);
+      clearInterval(fetchInterval.current);
       setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       setTabsDisabled(false);
     }
   }
 
-  const handleUpdate = action => async () => {
-    const { systemUpdate, setSnackbar, setTabsDisabled } = props;
+  const handleUpdate = (action: string) => async () => {
     setUpdateLog([]);
     setState({ ...state, [action + "Loading"]: true, copied: false });
     setTabsDisabled(true);
-    const response = await systemUpdate(action, repo)
+    const response = await dispatch(systemUpdate(action, repo))
       .catch(snackbar => {
         setSnackbar(snackbar);
         setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       });
-    if(response?.pid) fetchInterval = setInterval(() => {
+    if(response?.pid) fetchInterval.current = setInterval(() => {
       handleRefresh(response.pid);
     }, 1000);
   }
 
-  const handleCopyLogs = msg => async () => {
+  const handleCopyLogs = (msg: string) => async () => {
     const success = await copyToClipboard(msg).catch(err => err);
     if(success) {
       setState({ ...state, copied: true });
@@ -120,7 +126,6 @@ const Updater = props => {
     setRepo(value);
   }
 
-  const { classes, t } = props;
   const { checkLoading, updateLoading, upgradeLoading, copied } = state;
   const updating = checkLoading || updateLoading || upgradeLoading;
 
@@ -191,25 +196,5 @@ const Updater = props => {
   </div>
 }
 
-Updater.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  systemUpdate: PropTypes.func.isRequired,
-  fetchLog: PropTypes.func.isRequired,
-  setSnackbar: PropTypes.func.isRequired,
-  setTabsDisabled: PropTypes.func.isRequired,
-}
 
-const mapDispatchToProps = dispatch => {
-  return {
-    systemUpdate: async (action, repo) => await dispatch(systemUpdate(action, repo))
-      .catch(err => Promise.reject(err)),
-    fetchLog: async (pid) =>
-      await dispatch(fetchUpdateLogData(pid))
-        .catch(error => Promise.reject(error)),
-  };
-};
-
-
-export default connect(null, mapDispatchToProps)(withTranslation()(
-  withStyles(Updater, styles)));
+export default Updater;

@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
-  Grid2, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
 import React, { useEffect, useRef, useState } from 'react';
+import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
+  Grid2, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Theme, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import { setDateTimeString } from '../../utils';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { fetchPlainUsersData } from '../../actions/users';
 import { getLicenseCreds, submitLicenseCreds, uploadLicenseData } from '../../actions/license';
-import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { USER_STATUS } from '../../constants';
+import { ChangeEvent } from '@/types/common';
+import { useAppDispatch, useAppSelector } from '../../store';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -53,10 +53,22 @@ const styles = theme => ({
   tf: {
     marginTop: 8,
   }
-});
+}));
 
 
-const LicenseTab = props => {
+type LicenseTabProps = {
+  counts: Record<string, number>;
+  setSnackbar: (msg: string) => void;
+}
+
+
+const LicenseTab = (props: LicenseTabProps) => {
+  const { counts, setSnackbar } = props;
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { license } = useAppSelector(state => state);
+  const { Domains } = useAppSelector(state => state.domains);
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     domainsExpanded: false,
     domainUsers: {},
@@ -65,12 +77,12 @@ const LicenseTab = props => {
     password: "",
   });
   const [expandedDomainIdxs, setExpandedDomainIdxs] = useState([]);
-  const imageInputRef = useRef();
+  const imageInputRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const creds = await props.getCreds().catch();
+      const creds = await dispatch(getLicenseCreds()).catch();
       if(creds?.username) {
         setState({ ...state, ...creds });
       }
@@ -79,7 +91,7 @@ const LicenseTab = props => {
     fetchData();
   }, []);
 
-  const handleExpansion = (ID, idx) => () => {
+  const handleExpansion = (ID: number, idx: number) => () => {
     const { domainUsers } = state;
     const copy = [...expandedDomainIdxs];
     if(copy.includes(idx)) {
@@ -97,43 +109,42 @@ const LicenseTab = props => {
     imageInputRef.current.click();
   }
 
-  const handleUploadConfirm = event => {
-    const { upload, setSnackbar } = props;
-    upload(event.target.files[0])
+  const handleUploadConfirm = (event: ChangeEvent) => {
+    const { setSnackbar } = props;
+    dispatch(uploadLicenseData(event.target.files[0]))
       .then(() => setSnackbar("Success!"))
       .catch(setSnackbar);
   }
 
-  const handleNavigation = domainID => () => {
+  const handleNavigation = (domainID: number) => () => {
     navigate(`/${domainID}/users`);
   }
 
-  const fetchUsers = async id => {
-    const { fetchUsers, setSnackbar } = props;
-    const users = await fetchUsers(id)
+  const fetchUsers = async domainID => {
+    const { setSnackbar } = props;
+    const users = await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
       .catch(setSnackbar);
     setState({
       ...state, 
       domainUsers: {
         ...state.domainUsers,
-        [id]: users.data,
+        [domainID]: users.data,
       },
     });
   }
 
-  const handleDialog = dialogOpen => () => setState({ ...state, dialogOpen });
+  const handleDialog = (dialogOpen: boolean) => () => setState({ ...state, dialogOpen });
 
-  const handleInput = field => e => setState({ ...state, [field]: e.target.value });
+  const handleInput = (field: keyof typeof state) => (e: ChangeEvent) =>
+    setState({ ...state, [field]: e.target.value });
 
   const handleSubmit = () => {
-    const { setSnackbar } = props;
     const { username, password } = state;
-    props.submitLicenseCreds({ username, password })
+    dispatch(submitLicenseCreds({ username, password }))
       .then(() => setSnackbar("Success!"))
       .catch(setSnackbar);
   }
 
-  const { classes, t, license, Domains, counts } = props;
   const { domainsExpanded, domainUsers, dialogOpen, username, password } = state;
   
   return <>
@@ -275,41 +286,5 @@ const LicenseTab = props => {
   </>;
 }
 
-LicenseTab.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  license: PropTypes.object.isRequired,
-  Domains: PropTypes.array.isRequired,
-  counts: PropTypes.object.isRequired,
-  fetchUsers: PropTypes.func.isRequired,
-  upload: PropTypes.func.isRequired,
-  setSnackbar: PropTypes.func.isRequired,
-  submitLicenseCreds: PropTypes.func.isRequired,
-  getCreds: PropTypes.func.isRequired,
-}
 
-const mapStateToProps = state => {
-  const { license, domains } = state;
-  return {
-    license: license,
-    Domains: domains.Domains,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchUsers: async (domainID) => 
-      await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
-        .catch(error => Promise.reject(error)),
-    upload: async license => await dispatch(uploadLicenseData(license))
-      .catch(err => Promise.reject(err)),
-    submitLicenseCreds: async creds => await dispatch(submitLicenseCreds(creds))
-      .catch(error => Promise.reject(error)),
-    getCreds: async () => await dispatch(getLicenseCreds())
-      .catch(error => Promise.reject(error)),
-  };
-};
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withStyles(withTranslation()(LicenseTab), styles));
+export default LicenseTab;

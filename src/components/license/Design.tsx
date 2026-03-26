@@ -2,15 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { Button, Dialog, DialogContent, DialogTitle, Grid2, IconButton, Paper, TextField, Tooltip, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { Button, Dialog, DialogContent, DialogTitle, Grid2, IconButton, Paper, TextField, Theme, Tooltip, Typography } from '@mui/material';
 import { AddCircle, CopyAll } from '@mui/icons-material';
-import { Trans, withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import { addItem, copyToClipboard } from '../../utils';
+import { useAppSelector } from '../../store';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -45,9 +46,13 @@ const styles = theme => ({
   subtitle: {
     margin: theme.spacing(2, 0, 0, 2),
   }
-});
+}));
 
-const Design = props => {
+
+const Design = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { customImages: storedImages } = useAppSelector(state => state.config);
   const [state, setState] = useState({
     customImages: [],
     configOpen: false,
@@ -56,7 +61,7 @@ const Design = props => {
   useEffect(() => {
     setState({
       ...state,
-      customImages: Object.entries(props.customImages)
+      customImages: Object.entries(storedImages)
         .map(([hostname, images]) => ({ hostname, ...images})),
     });
   }, []);
@@ -66,7 +71,7 @@ const Design = props => {
     customImages: addItem(state.customImages, {}),
   });
 
-  const handleImgInput = (field, idx) => e => {
+  const handleImgInput = (field: string, idx: number) => (e: ChangeEvent) => {
     const copy = [...state.customImages];
     copy[idx][field] = e.target.value;
     setState({ ...state, customImages: copy });
@@ -89,7 +94,6 @@ const Design = props => {
 
   const handleConfigClose = () => setState({ ...state, configOpen: false });
 
-  const { classes, t } = props;
   const { customImages, configOpen } = state;
   return <>
     <Typography variant="caption" className={classes.subtitle}>
@@ -111,7 +115,6 @@ const Design = props => {
               <TextField
                 label={t("Logo")}
                 value={logo || ''}
-                className={classes.iconInput}
                 variant="standard"
                 onChange={handleImgInput("logo", idx)}
                 fullWidth
@@ -122,7 +125,6 @@ const Design = props => {
               <TextField
                 label={t("Logo light")}
                 value={logoLight || ''}
-                className={classes.iconInput}
                 variant="standard"
                 onChange={handleImgInput("logoLight", idx)}
                 fullWidth
@@ -133,7 +135,6 @@ const Design = props => {
               <TextField
                 label={t("Icon")}
                 value={icon || ''}
-                className={classes.iconInput}
                 variant="standard"
                 onChange={handleImgInput("icon", idx)}
                 fullWidth
@@ -144,7 +145,6 @@ const Design = props => {
               <TextField
                 label={t("Background")}
                 value={background || ''}
-                className={classes.iconInput}
                 variant="standard"
                 onChange={handleImgInput("background", idx)}
                 fullWidth
@@ -155,7 +155,6 @@ const Design = props => {
               <TextField
                 label={t("Background dark")}
                 value={backgroundDark || ''}
-                className={classes.iconInput}
                 variant="standard"
                 onChange={handleImgInput("backgroundDark", idx)}
                 fullWidth
@@ -204,7 +203,7 @@ const Design = props => {
             }), {}), null, 4)}
           </code>
         </pre>
-        <Typography className={classes.typography}>
+        <Typography>
           <Trans i18nKey="configInstructions1">
               Copy these lines into
             <pre className={classes.pre}>
@@ -224,18 +223,5 @@ const Design = props => {
   </>
 }
 
-Design.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  customImages: PropTypes.object,
-}
 
-const mapStateToProps = state => {
-  const { config } = state;
-  return {
-    customImages: config.customImages,
-  };
-};
-
-export default connect(mapStateToProps)(
-  withTranslation()(withStyles(Design, styles)));
+export default Design;
