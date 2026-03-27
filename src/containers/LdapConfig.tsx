@@ -238,7 +238,6 @@ const LdapConfig = () => {
     const inner = async () => {
       const resp = await fetch()
         .catch(snackbar => setState({ ...state, snackbar }));
-      console.log(resp);
       const authResp = await fetchAuthManager()
         .catch(snackbar => setState({ ...state, snackbar }));
       const config = resp?.data;

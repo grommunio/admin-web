@@ -207,7 +207,7 @@ export function getPolicyDiff(defaultPolicy: Partial<SyncPolicy>, syncPolicy: Pa
       result[key] = formattedPolicy[key];
     }
   }
-  if (formattedPolicy.approvedapplist.toString() === defaultPolicy.approvedapplist.toString()) {
+  if (formattedPolicy.approvedapplist?.toString() === defaultPolicy.approvedapplist?.toString()) {
     result.approvedapplist = undefined;
   }
   if (formattedPolicy.unapprovedinromapplist.toString() === defaultPolicy.unapprovedinromapplist.toString()) {

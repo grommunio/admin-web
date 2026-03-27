@@ -10,20 +10,23 @@ import { Button, FormControl, Grid2,
   TableHead,
   TableRow,
   TableSortLabel,
+  TableSortLabelProps,
+  Theme,
   Tooltip,
   Typography } from '@mui/material';
 import { CleaningServices, DoNotDisturbOn, Sync as SyncIcon, Delete } from '@mui/icons-material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { parseUnixtime } from '../../utils';
 import { deleteUserSync, fetchUserSync } from '../../actions/users';
-import { connect } from 'react-redux';
 import PasswordSafetyDialog from '../Dialogs/PasswordSafetyDialog';
 import { cancelRemoteWipe, engageRemoteDelete, engageRemoteWipe, engageResync } from '../../actions/sync';
 import Feedback from '../Feedback';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { DeviceSyncInfo, RemoteWipeParams } from '@/types/sync';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -42,9 +45,18 @@ const styles = theme => ({
     flex: 1,
     justifyContent: 'flex-end',
   },
-});
+}));
 
-const Sync = props => {
+type SyncProps = {
+  domainID: number;
+  userID: number;
+}
+
+const Sync = ({ domainID, userID }: SyncProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const sync = useAppSelector(state => state.sync.Sync);
   const [state, setState] = useState({
     snackbar: '',
     order: 'asc',
@@ -54,8 +66,18 @@ const Sync = props => {
   });
   const [sortedDevices, setSortedDevices] = useState([]);
 
+  const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserSync(domainID, userID));
+  const deleteStates = async (domainID: number, userID: number) => await dispatch(deleteUserSync(domainID, userID));
+  const wipeItOffTheFaceOfEarth = async (domainID, userID: number, deviceID: string, request: RemoteWipeParams) =>
+    await dispatch(engageRemoteWipe(domainID, userID, deviceID, request));
+  const resync = async (domainID: number, userID: number, deviceID) =>
+    await dispatch(engageResync(domainID, userID, deviceID));
+  const deleteDevice = async (domainID: number, userID: number, deviceID) =>
+    await dispatch(engageRemoteDelete(domainID, userID, deviceID));
+  const panicStopWiping = async (domainID: number, userID: number, deviceID) =>
+    await dispatch(cancelRemoteWipe(domainID, userID, deviceID));
+
   useEffect(() => {
-    const { fetch, domainID, userID } = props;
     fetch(domainID, userID)
       .catch(snackbar => setState({ ...state, snackbar }));
   }, []);
@@ -63,7 +85,7 @@ const Sync = props => {
   useEffect(() => {
     const { orderBy, type } = state;
     handleSort(orderBy, type, false)();
-  }, [props.sync]);
+  }, [sync]);
 
   const columns = [
     { label: "Device ID", value: "deviceid" },
@@ -76,8 +98,8 @@ const Sync = props => {
     { label: "Provisioning Status", value: "wipeStatus", type: 'int' },
   ];
 
-  const handleSort = (attribute, type, switchOrder) => () => {
-    const devices = [...props.sync];
+  const handleSort = (attribute: string, type: string, switchOrder: boolean) => () => {
+    const devices = [...sync];
     const { order: stateOrder, orderBy } = state;
     const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
     if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
@@ -93,9 +115,9 @@ const Sync = props => {
     setState({ ...state, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
-  const handlePasswordDialog = (wipingID) => () => setState({ ...state, wipingID });
+  const handlePasswordDialog = (wipingID: string) => () => setState({ ...state, wipingID });
 
-  const getWipeStatus = (status) => {
+  const getWipeStatus = (status: number) => {
     switch(status) {
     case 0: return 'Unknown';
     case 1: return 'OK';
@@ -107,8 +129,7 @@ const Sync = props => {
     }
   }
 
-  const handleRemoteWipeConfirm = request => {
-    const { wipeItOffTheFaceOfEarth, domainID, userID } = props;
+  const handleRemoteWipeConfirm = (request: RemoteWipeParams) => {
     const { wipingID } = state;
 
     wipeItOffTheFaceOfEarth(domainID, userID, wipingID, request)
@@ -116,14 +137,13 @@ const Sync = props => {
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const handleRemoteWipeCancel = deviceID => () => {
-    const { panicStopWiping, domainID, userID } = props;
+  const handleRemoteWipeCancel = (deviceID: string) => () => {
     panicStopWiping(domainID, userID, deviceID)
       .then(() => updateWipeStatus(1, deviceID))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const updateWipeStatus = (status, deviceID) => {
+  const updateWipeStatus = (status: number, deviceID: string) => {
     const idx = sortedDevices.findIndex(d => d.deviceid === deviceID);
     const copy = [...sortedDevices];
     if(idx !== -1) copy[idx].wipeStatus = status;
@@ -136,16 +156,14 @@ const Sync = props => {
     return true;
   }
 
-  const handleResync = deviceID => () => {
-    const { resync, domainID, userID } = props;
+  const handleResync = (deviceID: string) => () => {
 
     resync(domainID, userID, deviceID)
       .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const handleRemoteDelete = deviceID => () => {
-    const { deleteDevice, domainID, userID } = props;
+  const handleRemoteDelete = (deviceID: string) => () => {
 
     deleteDevice(domainID, userID, deviceID)
       .then(resp => {
@@ -162,13 +180,11 @@ const Sync = props => {
   }
 
   const handleRemoveSyncStates = () => {
-    const { deleteStates, domainID, userID } = props;
     deleteStates(domainID, userID)
       .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const { classes, t, sync } = props;
   const { order, orderBy, wipingID, snackbar } = state;
 
   return (
@@ -193,12 +209,10 @@ const Sync = props => {
             {columns.map((column, key) =>
               <TableCell
                 key={key}
-                padding={column.padding || 'normal'}
               >
                 <TableSortLabel
                   active={orderBy === column.value}
-                  align="left"
-                  direction={order}
+                  direction={order as TableSortLabelProps["direction"]}
                   onClick={handleSort(column.value, column.type, true)}
                 >
                   {t(column.label)}
@@ -209,7 +223,7 @@ const Sync = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {(sortedDevices || sync).map((obj, idx) =>
+          {(sortedDevices || sync).map((obj: DeviceSyncInfo, idx: number) =>
             <TableRow key={idx}>
               <TableCell>{obj.deviceid || ''}</TableCell>
               <TableCell>{obj.deviceuser || ''}</TableCell>
@@ -259,49 +273,5 @@ const Sync = props => {
   );
 }
 
-Sync.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  sync: PropTypes.array.isRequired,
-  domainID: PropTypes.number,
-  userID: PropTypes.number,
-  wipeItOffTheFaceOfEarth: PropTypes.func.isRequired,
-  resync: PropTypes.func.isRequired,
-  deleteDevice: PropTypes.func.isRequired,
-  panicStopWiping: PropTypes.func.isRequired,
-  deleteStates: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    sync: state.users.Sync || [],
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (domainID, userID) => await dispatch(fetchUserSync(domainID, userID))
-      .catch(err => Promise.reject(err)),
-    deleteStates: async (domainID, userID) => await dispatch(deleteUserSync(domainID, userID))
-      .catch(err => Promise.reject(err)),
-    wipeItOffTheFaceOfEarth: async (domainID, userID, deviceID, request) =>
-      await dispatch(engageRemoteWipe(domainID, userID, deviceID, request))
-        .catch(err => Promise.reject(err)),
-    resync: async (domainID, userID, deviceID) =>
-      await dispatch(engageResync(domainID, userID, deviceID))
-        .then(resp => resp)
-        .catch(err => Promise.reject(err)),
-    deleteDevice: async (domainID, userID, deviceID) =>
-      await dispatch(engageRemoteDelete(domainID, userID, deviceID))
-        .then(resp => resp)
-        .catch(err => Promise.reject(err)),
-    panicStopWiping: async (domainID, userID, deviceID) =>
-      await dispatch(cancelRemoteWipe(domainID, userID, deviceID))
-        .then(resp => resp)
-        .catch(err => Promise.reject(err)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(Sync, styles)));
+export default Sync;

@@ -2,15 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { Divider, FormControl, Grid2, IconButton, InputLabel, NativeSelect, TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { Divider, FormControl, Grid2, IconButton, InputLabel, NativeSelect, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import world from '../../res/world.json';
 import { Call, Warning } from '@mui/icons-material';
 import Map from './Map';
+import { UserProperties } from '@/types/users';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -46,15 +47,22 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
-});
+}));
 
-const User = props => {
-  const { classes, t, user, handlePropertyChange } = props;
+type UserProps = {
+  user: any; // TODO: Improve typing
+  handlePropertyChange: (field: keyof UserProperties) => (event: any) => void
+}
+
+const User = (props: UserProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { user, handlePropertyChange } = props;
   const { properties, ldapID } = user;
   const { country, streetaddress, locality } = properties;
 
   const tfProps = (label, field) => ({
-    variant: ldapID ? "filled" : 'outlined',
+    variant: (ldapID ? "filled" : 'outlined') as TextFieldProps["variant"],
     fullWidth: true,
     onChange: handlePropertyChange(field),
     value: properties[field] || '',
@@ -191,12 +199,5 @@ const User = props => {
   );
 }
 
-User.propTypes = {
-  classes: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  handlePropertyChange: PropTypes.func.isRequired,
-};
 
-
-export default withTranslation()(withStyles(User, styles));
+export default User;

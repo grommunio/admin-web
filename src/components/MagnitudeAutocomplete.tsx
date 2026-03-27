@@ -6,6 +6,7 @@ import { Autocomplete, TextField, TextFieldVariants } from '@mui/material';
 import { getAutocompleteOptions } from '../utils';
 import { useTranslation } from 'react-i18next';
 import { USER_STATUS } from '../constants';
+import { ChangeEvent } from '@/types/common';
 
 
 type MagnitudeAutocompleteProps<T> = {
@@ -17,7 +18,7 @@ type MagnitudeAutocompleteProps<T> = {
   label?: string;
   getOptionLabel?: (option: any) => string;
   inputValue?: string;
-  onInputChange?: () => void;
+  onInputChange?: (e: ChangeEvent) => void;
   freeSolo?: boolean;
   multiple?: boolean;
   calculateMagnitude?: boolean;

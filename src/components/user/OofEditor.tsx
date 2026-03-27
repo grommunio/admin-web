@@ -2,37 +2,20 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect } from "react";
-import PropTypes from 'prop-types';
 import { useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { useTranslation } from 'react-i18next';
-import { withStyles } from 'tss-react/mui';
 import ColorModeContext from "../../ColorContext";
 
 
-const styles = () => ({
-  content: {
-    display: 'flex',
-    minHeight: '100%',
-    height: 0,
-    flexDirection: 'column',
-    overflow: "auto",
-  },
-  tinyMceContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    padding: 16,
-  },
-  attachments: {
-    display: 'flex',
-    alignItems: 'center',
-  }
-});
-
+type OofEditorProps = {
+  setRef: React.Dispatch<any>;
+  initialValue: string;
+  disabled?: boolean;
+}
 
 // eslint-disable-next-line react/prop-types
-function OofEditor({ setRef, initialValue, disabled }) {
+function OofEditor({ setRef, initialValue, disabled }: OofEditorProps) {
   const { i18n } = useTranslation();
   const editorRef = useRef(null);
   const context = useContext(ColorModeContext);
@@ -74,8 +57,8 @@ function OofEditor({ setRef, initialValue, disabled }) {
         menubar: false,
         contextmenu: false,
         statusbar: false,
-        skin: darkMode === "true" ? "oxide-dark" : "oxide",
-        content_css: darkMode === "true" ? "dark" : "default",
+        skin: darkMode  ? "oxide-dark" : "oxide",
+        content_css: darkMode ? "dark" : "default",
         branding: false,
         relative_urls: false,
         remove_script_host: false,
@@ -85,9 +68,5 @@ function OofEditor({ setRef, initialValue, disabled }) {
   );
 }
 
-OofEditor.propTypes = {
-  initialValue: PropTypes.string,
-  disabled: PropTypes.bool,
-}
 
-export default withStyles(OofEditor, styles);
+export default OofEditor;

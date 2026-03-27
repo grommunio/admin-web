@@ -4,13 +4,15 @@
 import React from 'react';
 import { Button, FormControl, Grid2, IconButton, List, ListItem,
   MenuItem,
-  TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+  TextField, Theme, Tooltip, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { Delete, Warning } from '@mui/icons-material';
+import { Forward } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -35,10 +37,24 @@ const styles = theme => ({
     display: 'flex',
     margin: theme.spacing(0, 0, 2, 0),
   },
-});
+}));
 
-const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardInput, handleAliasEdit,
-  handleRemoveAlias, handleAddAlias }) => {
+
+type SmtpProps = {
+  user: any; // TODO: Improve
+  aliases: string[];
+  forward: Forward;
+  forwardError: boolean;
+  handleForwardInput: (field: string) => (e: ChangeEvent) => void
+  handleAliasEdit: (idx: number) => (event: ChangeEvent) => void
+  handleAddAlias: () => void
+  handleRemoveAlias: (idx: number) => () => void
+}
+
+const Smtp = ({ user, aliases, forward, forwardError, handleForwardInput, handleAliasEdit,
+  handleRemoveAlias, handleAddAlias }: SmtpProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
 
   return (
     <FormControl className={classes.form}>
@@ -48,7 +64,7 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
-      <List className={classes.list}>
+      <List>
         {(aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
           <TextField
             className={classes.listTextfield}
@@ -69,7 +85,7 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
       <Grid2 container className={classes.bottom} >
         <TextField
           className={classes.select}
-          value={forward.forwardType === undefined ? '' : forward.forwardType}
+          value={forward?.forwardType === undefined ? '' : forward.forwardType}
           label={t('Forward type')}
           onChange={handleForwardInput('forwardType')}
           select
@@ -81,7 +97,7 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
         <TextField
           error={forwardError}
           className={classes.listTextfield}
-          value={forward.destination || ''}
+          value={forward?.destination || ''}
           label={t('Destination')}
           onChange={handleForwardInput('destination')}
         />
@@ -90,17 +106,5 @@ const Smtp = ({ classes, t, user, aliases, forward, forwardError, handleForwardI
   );
 }
 
-Smtp.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  aliases: PropTypes.array.isRequired,
-  forward: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
-  handleAliasEdit: PropTypes.func.isRequired,
-  handleAddAlias: PropTypes.func.isRequired,
-  handleRemoveAlias: PropTypes.func.isRequired,
-  handleForwardInput: PropTypes.func.isRequired,
-  forwardError: PropTypes.bool,
-};
 
-export default withTranslation()(withStyles(Smtp, styles));
+export default Smtp;

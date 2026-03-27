@@ -3,18 +3,23 @@
 
 import React, { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
-  Select, TextField, Typography, Tooltip, Alert } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+  Select, TextField, Typography, Tooltip, Alert, 
+  Theme} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
 import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
-import { connect } from 'react-redux';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import HideFromSelect from '../HideFromSelect';
+import { useAppSelector } from '../../store';
+import { makeStyles } from 'tss-react/mui';
+import { Domain } from '@/types/domains';
+import { UserProperties } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
+import { Server } from '@/types/servers';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -62,21 +67,47 @@ const styles = theme => ({
   adornment: {
     display: 'contents',
   },
-});
+}));
 
-const Account = props => {
+type AccountProps = {
+  domain: Domain;
+  user: Record<string, any>; // TODO: Replace with proper user response type
+  sizeUnits: {
+    storagequotalimit: number,
+    prohibitreceivequota: number,
+    prohibitsendquota: number,
+  }
+  langs: { code: string, name: string }[];
+  handleInput: (field: string) => (event: ChangeEvent) => void;
+  handleStatusInput: (event: ChangeEvent) => Promise<void>
+  handlePropertyChange: (field: keyof UserProperties) => (event: ChangeEvent) => void
+  handlePropertyCheckbox: (field: keyof UserProperties) => (event: ChangeEvent) => void
+  handleIntPropertyChange: (field: keyof UserProperties) => (event: ChangeEvent) => void
+  handleCheckbox: (field: string) => (e: ChangeEvent) => void
+  handleUnitChange: (unit: string) => (event: ChangeEvent) => void
+  handlePasswordChange: () => void;
+  rawData: any; // TODO: Improve typing
+  handleChatUser: (e: ChangeEvent) => void
+  handleServer: (_: never, newVal: Server) => void
+  setState: any; // TODO: Fix typing
+  storageQuotaTooHigh: boolean;
+}
+
+const Account = (props: AccountProps) => {
+  const { classes } = useStyles();
   const context = useContext(CapabilityContext);
   const { t } = useTranslation();
+  const { Servers } = useAppSelector(state => state.servers);
 
   const formatMSE = (rawMSE) => {
-    let exp = Math.log(rawMSE) / Math.log(1024) | 0;
-    let res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
+    const exp = Math.log(rawMSE) / Math.log(1024) | 0;
+    const res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
 
     return res + '' + (exp === 0 ? 'bytes' : 'kMGTPEZYRQ'[exp - 1] + 'B');
   }
 
   const calculateGraph = () => {
-    const { classes, rawData } = props;
+    const { rawData } = props;
     const {
       messagesizeextended: rawMSE,
       storagequotalimit: rawSTQ,
@@ -153,10 +184,10 @@ const Account = props => {
 
   const quotaWarning = useMemo(getQuotaWarning, [props.rawData]);
 
-  const { classes, user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
+  const { user, domain, sizeUnits, handleStatusInput, handlePropertyChange,
     handleIntPropertyChange, handleCheckbox, handleUnitChange, langs,
     handlePasswordChange, handleChatUser, handleServer, handlePropertyCheckbox,
-    servers, handleInput, storageQuotaTooHigh, setState } = props;
+    handleInput, storageQuotaTooHigh, setState } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
     ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, privWeb,
@@ -215,7 +246,7 @@ const Account = props => {
         label={t("Type")}
         fullWidth
         disabled={displaytypeex === USER_TYPE.GROUP}
-        value={displaytypeex || USER_TYPE.NORMAL}
+        value={displaytypeex || USER_TYPE.USER}
         onChange={handlePropertyChange('displaytypeex')}
       >
         {userTypes.map((type, key) => (
@@ -229,7 +260,7 @@ const Account = props => {
         filterAttribute={'hostname'}
         onChange={handleServer}
         className={classes.input} 
-        options={servers}
+        options={Servers}
         label={t('Homeserver')}
         disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
         isOptionEqualToValue={(option, value) => option.ID === value.ID}
@@ -537,32 +568,5 @@ const Account = props => {
   );
 }
 
-Account.propTypes = {
-  classes: PropTypes.object.isRequired,
-  domain: PropTypes.object,
-  user: PropTypes.object.isRequired,
-  sizeUnits: PropTypes.object.isRequired,
-  handleInput: PropTypes.func.isRequired,
-  handleStatusInput: PropTypes.func.isRequired,
-  handlePropertyChange: PropTypes.func.isRequired,
-  handleIntPropertyChange: PropTypes.func.isRequired,
-  handleCheckbox: PropTypes.func.isRequired,
-  handleUnitChange: PropTypes.func.isRequired,
-  handlePasswordChange: PropTypes.func.isRequired,
-  handleChatUser: PropTypes.func.isRequired,
-  handleServer: PropTypes.func.isRequired,
-  handlePropertyCheckbox: PropTypes.func.isRequired,
-  rawData: PropTypes.object,
-  langs: PropTypes.array,
-  servers: PropTypes.array.isRequired,
-  storageQuotaTooHigh: PropTypes.bool,
-  setState: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    servers: state.servers.Servers,
-  };
-};
-
-export default connect(mapStateToProps)(withStyles(Account, styles));
+export default Account;

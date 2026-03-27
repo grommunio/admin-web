@@ -178,9 +178,6 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     // Ignore domain part of username (which is an email)
     const username = user.username.slice(0, user.username.indexOf('@'));
 
-    // Only role IDs are important
-    const roles = (user.roles && user.roles.map(role => role.ID)) || [];
-
     /* Calculate sizeUnits (MiB, GiB, TiB) based on KiB value for every quota 
       The idea behind this loop is to find the highest devisor of the KiB value (1024^x)
       If the KiB value (quotaLimit) is divisible by, for exampe, 1024 but not by 1024^2, the sizeUnit must be MiB.
@@ -212,7 +209,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         ...state.user,
         ...user,
         username,
-        roles,
+        roles: user.roles || [],
         properties,
         syncPolicy: undefined,
         defaultPolicy: undefined,
@@ -225,8 +222,6 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       defaultPolicy,
     };
   }
-
-  console.log(state.user);
 
   const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
@@ -375,10 +370,11 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         ...storePayload
       },
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
-      forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
+      forward: forward?.forwardType !== undefined && forward?.destination ? forward : null,
       altnames: altnames.map(({ altname }: Altname) => ({ altname })),
       roles: undefined,
       ldapID: undefined,
+      mlist: undefined,
     }).then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
@@ -405,9 +401,8 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   }
 
   const handleSaveRoles = () => {
-  
     const { ID, roles } = state.user;
-    editRoles(domain.ID, ID, { roles: roles })
+    editRoles(domain.ID, ID, { roles: roles.map(role => role.ID) })
       .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
@@ -502,7 +497,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleCloseDump = () => setState({ ...state, dump: '' });
 
-  const handlePasswordDialogToggle = changingPw => () => setState({ ...state, changingPw });
+  const handlePasswordDialogToggle = (changingPw: boolean) => () => setState({ ...state, changingPw });
 
   const handleSuccess = () => setState({ ...state, snackbar: 'Success!' });
 
@@ -513,7 +508,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       ...state, 
       user: {
         ...state.user,
-        [field]: newVal.map(r => r.ID ? r.ID : r),
+        [field]: newVal,
       },
       unsaved: true,
     });
@@ -521,7 +516,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleFetchmailDialog = (open: boolean) => () => setState({ ...state, adding: open })
 
-  const handleFetchmailEditDialog = (open: boolean) => () => setState({ ...state, editing: open })
+  const handleFetchmailEditDialog = (open: number) => () => setState({ ...state, editing: open })
 
   const addFetchmail = (entry: FetchmailConfig) => {
     const { user } = state;
@@ -551,7 +546,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleFetchmailDelete = (idx: number) => (e: ChangeEvent) => {
+  const handleFetchmailDelete = (idx: number) => (e: React.MouseEvent) => {
     const { user } = state;
     const fetchmail = [...user.fetchmail];
     e.stopPropagation();
@@ -749,7 +744,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         {tab === 5 && <Smtp
           user={user}
           aliases={aliases}
-          forward={forward || {}}
+          forward={forward}
           forwardError={forwardError}
           handleForwardInput={handleForwardInput}
           handleAliasEdit={handleAliasEdit}

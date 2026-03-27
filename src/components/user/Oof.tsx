@@ -2,11 +2,9 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { Button, FormControl, Grid2, MenuItem, Tab, Tabs, TextField, useTheme } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
-import { connect as connecc } from 'react-redux';
+import { Button, FormControl, Grid2, MenuItem, Tab, Tabs, TextField, Theme, useTheme } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
@@ -14,9 +12,10 @@ import moment from 'moment';
 import * as DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
 import OofEditor from './OofEditor';
+import { useAppDispatch } from '../../store';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -46,9 +45,18 @@ const styles = theme => ({
   editor: {
     backgroundColor: '#f0f !important',
   },
-});
+}));
 
-const Oof = props => {
+
+type OofProps = {
+  domainID: number;
+  userID: number;
+}
+
+const Oof = ({ domainID, userID }: OofProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [oof, setOof] = useState({
     state: 0,
     externalAudience: 0,
@@ -66,9 +74,13 @@ const Oof = props => {
   const [tinyRef, setRef] = useState(null);
   const [tinyRef2, setRef2] = useState(null);
 
+  const fetchOof = async (domainID, userID) => 
+    await dispatch(fetchUserOof(domainID, userID))
+  const patchOof = async (domainID, userID, oofSettings) => 
+    await dispatch(setUserOof(domainID, userID, oofSettings));
+
   useEffect(() => {
     const fetchData = async () => {
-      const { domainID, userID, fetchOof } = props;
       const oofData = await fetchOof(domainID, userID)
         .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
       if(oofData.startTime) {
@@ -109,7 +121,6 @@ const Oof = props => {
   const handleTabChange = (e, tab) => setOof({ ...oof, tab });
 
   const handleSave = () => {
-    const { domainID, userID, patchOof } = props;
     const { state, externalAudience, startTime, endTime, internalSubject, externalSubject, internalReply, externalReply } = oof;
 
     patchOof(domainID, userID, {
@@ -127,7 +138,6 @@ const Oof = props => {
       .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
   }
 
-  const { classes, t } = props;
   const { tab, startTime, endTime, snackbar, internalReply, externalReply } = oof;
 
   const tfProps = (label, field) => ({
@@ -167,7 +177,6 @@ const Oof = props => {
         <CustomDateTimePicker
           {...tfProps("Start time", "startTime")}
           onChange={handleDateInput('startTime')}
-          className={classes.datePicker}
           sx={{
             margin: theme.spacing(1),
             minWidth: 200,
@@ -210,7 +219,7 @@ const Oof = props => {
         </div>
       </div>
     </FormControl>
-    <Grid2 container className={classes.buttonGrid}>
+    <Grid2 container>
       <Button
         onClick={() => navigate(-1)}
         style={{ marginRight: 8 }}
@@ -235,25 +244,5 @@ const Oof = props => {
   );
 }
 
-Oof.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetchOof: PropTypes.func.isRequired,
-  patchOof: PropTypes.func.isRequired,
-  domainID: PropTypes.number.isRequired,
-  userID: PropTypes.number.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchOof: async (domainID, userID) => 
-      await dispatch(fetchUserOof(domainID, userID))
-        .catch(err => Promise.reject(err)),
-    patchOof: async (domainID, userID, oofSettings) => 
-      await dispatch(setUserOof(domainID, userID, oofSettings))
-        .catch(err => Promise.reject(err)),
-  };
-}
-
-export default connecc(null, mapDispatchToProps)(
-  withTranslation()(withStyles(Oof, styles)));
+export default Oof;

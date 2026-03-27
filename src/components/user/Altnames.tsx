@@ -3,14 +3,14 @@
 
 import React from 'react';
 import { Button, FormControl, Grid2, IconButton, List, ListItem,
-  TextField, Tooltip, Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+  TextField, Theme, Tooltip, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { Delete, Warning } from '@mui/icons-material';
 import { validateAltname } from '../../utils';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -34,10 +34,17 @@ const styles = theme => ({
   flexRow: {
     display: 'flex',
   },
-});
+}));
 
-const Altnames = props => {
-  const { classes, t, user, handleAltnameEdit } = props;
+type AltnamesProps = {
+  user: any; // TODO: Improve typing
+  handleAltnameEdit: (action: "add" | "edit" | "delete", idx?: number) => (e: any) => void;
+}
+
+const Altnames = (props: AltnamesProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { user, handleAltnameEdit } = props;
   const { altnames } = user;
 
   return (
@@ -51,7 +58,7 @@ const Altnames = props => {
       <Typography variant='caption' sx={{ mb: 2 }}>
         {`${t("Alternative usernames to log into the mail-client with")} (${t("Does not have to include the domainname")})`}
       </Typography>
-      <List className={classes.list}>
+      <List>
         {(altnames || []).map((alt, idx) => <ListItem key={idx} className={classes.listItem}>
           <TextField
             className={classes.listTextfield}
@@ -73,11 +80,5 @@ const Altnames = props => {
   );
 }
 
-Altnames.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
-  handleAltnameEdit: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(Altnames, styles));
+export default Altnames;

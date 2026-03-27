@@ -2,47 +2,52 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext } from 'react';
-import { FormControl, Typography } from '@mui/material';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { FormControl, Theme, Typography } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 import { CapabilityContext } from '../../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../../constants';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
+import { useAppSelector } from '../../store';
+import { Role } from '@/types/roles';
+import { useTranslation } from 'react-i18next';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
   },
-  input: {
-    margin: theme.spacing(1, 1, 1, 1),
-  },
   headline: {
     margin: theme.spacing(0, 0, 2, 0),
   },
-});
+}));
 
-const RolesTab = props => {
-  const { classes, t, roles, Roles, handleAutocomplete } = props;
+type RolesTabProps = {
+  roles: Role[];
+  handleAutocomplete: (field: string) => (_: never, newVal: Role[]) => void
+}
+
+const RolesTab = (props: RolesTabProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const { Roles } = useAppSelector(state => state.roles);
+  const { roles, handleAutocomplete } = props;
   const context = useContext(CapabilityContext);    
 
   return (
     <FormControl className={classes.form}>
       <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
-      <FormControl className={classes.input}>
-        <MagnitudeAutocomplete
+      <FormControl>
+        <MagnitudeAutocomplete<Role>
           multiple
           disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
           value={roles || []}
           filterAttribute={'name'}
-          getOptionLabel={(roleID) => Roles.find(r => r.ID === roleID)?.name || ''}
+          getOptionLabel={(role) => role.name}
           onChange={handleAutocomplete('roles')}
-          className={classes.input} 
           options={Roles || []}
           label={t('Roles')}
-          isOptionEqualToValue={(option, value) => option.ID === value}
+          isOptionEqualToValue={(option, value) => option.ID === value.ID}
           placeholder={t("Search roles") + "..."}
           renderOption={(props, option) => (
             <li {...props} key={option.ID}>
@@ -55,19 +60,5 @@ const RolesTab = props => {
   );
 }
 
-RolesTab.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  roles: PropTypes.array.isRequired,
-  Roles: PropTypes.array.isRequired,
-  handleAutocomplete: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Roles: state.roles.Roles || [],
-  };
-};
-
-export default connect(mapStateToProps)(
-  withTranslation()(withStyles(RolesTab, styles)));
+export default RolesTab;

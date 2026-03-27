@@ -2,22 +2,23 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { throttle } from 'lodash';
+import { LatLngTuple } from 'leaflet';
 
 
-const styles = {
+const useStyles = makeStyles()(() => ({
   root: {
     marginTop: 8,
     marginRight: 8,
     height: 128,
   },
-};
+}));
 
-function Map({ classes, address="" }) {
-  const [coords, setCoords] = useState([]);
+function Map({ address="" }: { address: string }) {
+  const { classes } = useStyles();
+  const [coords, setCoords] = useState<LatLngTuple>([-1, -1]);
 
   const debounceFetch = useCallback(throttle(async (address) => {
 
@@ -30,7 +31,7 @@ function Map({ classes, address="" }) {
     debounceFetch(address);
   }, [address]);
 
-  return (coords.length === 2 && address ?
+  return (coords.length === 2 && coords[0] !== -1 && address ?
     <MapContainer
       center={coords}
       zoom={9}
@@ -43,7 +44,7 @@ function Map({ classes, address="" }) {
         className='map-tiles'
       />
       {coords.length === 2 && <Marker
-        position={coords}
+        position={coords as LatLngTuple}
         riseOnHover
         zIndexOffset={1000}
       >
@@ -52,9 +53,4 @@ function Map({ classes, address="" }) {
   );
 }
 
-Map.propTypes = {
-  classes: PropTypes.object.isRequired,
-  address: PropTypes.string,
-};
-
-export default withStyles(Map, styles);
+export default Map;

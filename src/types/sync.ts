@@ -11,6 +11,10 @@ export type RemoteWipeParams = {
 }
 
 export type DeviceSyncInfo = {
+  deviceid: string;
+  deviceuser: string;
+  lastconnecttime: number;
+  wipeStatus: number;
   devicetype: string;
   useragent: string;
   firstsynctime: number;

@@ -23,6 +23,18 @@ export type UserProperties = {
   messagesizeextended: number;
   normalmessagesizeextended: number;
   outofofficestate: number;
+  scheduleinfodisallowrecurringappts: boolean;
+  scheduleinfodisallowoverlappingappts: boolean;
+  scheduleinfoautoacceptappointments: boolean;
+  country: string;
+  hometelephonenumber: string;
+  business2telephonenumber: string;
+  home2telephonenumber: string;
+  primaryfaxnumber: string;
+  mobiletelephonenumber: string;
+  assistanttelephonenumber: string;
+  pagertelephonenumber: string;
+  comment: string;
 
   // This should probably be removed
   storagequotalimit: number,

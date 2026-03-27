@@ -8,9 +8,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { Moment } from 'moment';
 
 type CustomDateTimePickerProps = {
-  onChange: () => void;
+  onChange: (newVal: Moment) => void;
   label: string;
   value: Moment;
+  sx?: any;
 }
 
 const CustomDateTimePicker = (props: CustomDateTimePickerProps) => {

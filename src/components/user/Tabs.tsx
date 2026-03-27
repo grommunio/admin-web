@@ -2,17 +2,18 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key, MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
+import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key,
+  MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
-import { withTranslation } from 'react-i18next';
-import { withStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   scroller: {
     width: 0,
   },
-};
+}));
 
 // eslint-disable-next-line react/prop-types
 const UserTab = ({ icon: Icon, ...props }) => <Tab
@@ -22,7 +23,16 @@ const UserTab = ({ icon: Icon, ...props }) => <Tab
   icon={<Icon fontSize="small"/>}
 />
 
-function UserTabs({ t, ID, value, classes, handleTabChange, sysAdminReadPermissions }) {
+type UserTabsProps = {
+  ID: number;
+  value: number;
+  handleTabChange: (_: never, tab: number) => void;
+  sysAdminReadPermissions: boolean;
+}
+
+function UserTabs({ ID, value, handleTabChange, sysAdminReadPermissions }: UserTabsProps) {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   return <Tabs
     indicatorColor="primary"
     value={value}
@@ -47,13 +57,5 @@ function UserTabs({ t, ID, value, classes, handleTabChange, sysAdminReadPermissi
   </Tabs>;
 }
 
-UserTabs.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  ID: PropTypes.any,
-  value: PropTypes.number.isRequired,
-  handleTabChange: PropTypes.func.isRequired,
-  sysAdminReadPermissions: PropTypes.bool,
-}
 
-export default withStyles(withTranslation()(UserTabs), styles);
+export default UserTabs;

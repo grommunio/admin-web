@@ -8,13 +8,15 @@ import { FormControl, Grid2, IconButton,
   TableCell,
   TableHead,
   TableRow,
+  Theme,
   Typography } from '@mui/material';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import { AddCircleOutline, Delete } from '@mui/icons-material';
+import { FetchmailConfig } from '@/types/users';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
     marginTop: theme.spacing(4),
@@ -28,17 +30,25 @@ const styles = theme => ({
   listTextfield: {
     flex: 1,
   },
-});
+}));
 
-const FetchMail = props => {
+type FetchMailProps = {
+  fetchmail: FetchmailConfig[];
+  handleAdd: () => void
+  handleEdit: (open: number) => () => void
+  handleDelete: (idx: number) => (e: React.MouseEvent) => void
+}
 
+const FetchMail = (props: FetchMailProps) => {
+  const { classes } = useStyles();
+  const { fetchmail, handleAdd, handleEdit, handleDelete } = props;
+  const { t } = useTranslation();
   const columns = [
     { value: 'srcUser', label: "Source user" },
     { value: 'srcServer', label: "Source server" },
     { value: 'srcFolder', label: "Source folder" },
   ]
 
-  const { classes, t, fetchmail, handleAdd, handleEdit, handleDelete } = props;
   return (
     <FormControl className={classes.form}>
       <Grid2 container alignItems="center"  className={classes.headline}>
@@ -83,13 +93,5 @@ const FetchMail = props => {
   );
 }
 
-FetchMail.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetchmail: PropTypes.array.isRequired,
-  handleAdd: PropTypes.func.isRequired,
-  handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(FetchMail, styles));
+export default FetchMail;
