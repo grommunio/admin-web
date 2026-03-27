@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
   Grid2,
   Button,
   Tooltip,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, getStoreLangs} from '../actions/users';
 import { fetchRolesData } from '../actions/roles';
 import Sync from '@mui/icons-material/Sync';
@@ -37,7 +36,6 @@ import Delegates from '../components/user/Delegates';
 import { CapabilityContext } from '../CapabilityContext';
 import { DOMAIN_ADMIN_WRITE, SYSTEM_ADMIN_READ, USER_STATUS } from '../constants';
 import ViewWrapper from '../components/ViewWrapper';
-import { fetchDomainDetails } from '../actions/domains';
 import { checkFormat } from '../api';
 import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
@@ -45,8 +43,17 @@ import Tabs from '../components/user/Tabs';
 import Altnames from '../components/user/Altnames';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
+import { useAppDispatch } from '../store';
+import { Altname, FetchmailConfig, Forward, UpdateUser, UserProperties } from '@/types/users';
+import { Domain } from '@/types/domains';
+import { SyncPolicy } from '@/types/sync';
+import { Role } from '@/types/roles';
+import { Server } from '@/types/servers';
+import { fetchDomainDetails } from '../actions/domains';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -67,23 +74,37 @@ const styles = theme => ({
   tabsContainer: {
     flex: 1,
   },
-});
+}));
 
 /**
  * This is by far the biggest component in the app, tread with caution
  */
-const UserDetails = props => {
+const UserDetails = ({ domain }: DomainViewProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     adding: false,
     editing: null,
     user: {
+      ID: 0,
+      username: "",
       altnames: [],
-      fetchmail: [],
-      forward: {},
+      fetchmail: [] as FetchmailConfig[],
+      forward: {} as Forward,
       roles: [],
-      properties: {},
+      properties: {} as UserProperties,
       aliases: [],
+      ldapID: "",
       status: USER_STATUS.NORMAL,
+      homeserver: null,
+      chat: false,
+      chatAdmin: false,
+      privChat: false,
+      privDav: false,
+      privArchive: false,
+      privFiles: false,
+      pop3_imap: false,
     },
     syncPolicy: {},
     defaultPolicy: {},
@@ -101,22 +122,34 @@ const UserDetails = props => {
     detaching: false,
     detachLoading: false,
     loading: true,
+    unsaved: false,
   });
   const [langs, setLangs] = useState([]);
-  const [domainDetails, setDomainDetails] = useState({});
+  const [domainDetails, setDomainDetails] = useState({} as Domain);
   const [forwardError, setForwardError] = useState(false);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserData(domainID, userID));
+  const fetchRoles = async () => await dispatch(fetchRolesData({ sort: 'name,asc', level: 0, limit: 100000 }))
+  const fetchServers = async () =>
+    await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
+  const fetchDomain = async (id: number) => await dispatch(fetchDomainDetails(id));
+  const edit = async (domainID: number, user: UpdateUser) => await dispatch(editUserData(domainID, user));
+  const editRoles = async (domainID: number, userID: number, roles: { roles: number[] }) => await dispatch(editUserRoles(domainID, userID, roles));
+  const storeLangs = async () => await dispatch(getStoreLangs());
+  const sync = async (domainID: number, userID: number) => await dispatch(syncLdapData(domainID, userID));
+  const dumpLdap = async params => await dispatch(fetchLdapDump(params));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch, fetchRoles, fetchDomainDetails, domain, storeLangs, fetchServers } = props;
       const splits = window.location.pathname.split('/');
-      const user = await fetch(splits[1], splits[3])
+      const user = await fetch(parseInt(splits[1]), parseInt(splits[3]))
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      if(!user) return;
       const defaultPolicy = user.defaultPolicy || {};
-      user.syncPolicy = user.syncPolicy || {};
-      setState({ ...state, ...getStateOverwrite(user, defaultPolicy), loading: false });
+      user.syncPolicy = user.syncPolicy || {} as SyncPolicy;
+      setState({ ...state, ...getStateOverwrite(user, defaultPolicy) as any, loading: false });
       const langs = await storeLangs()
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
       if(langs) setLangs(langs);
@@ -127,7 +160,7 @@ const UserDetails = props => {
         fetchServers()
           .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
       }
-      const domainDetails = await fetchDomainDetails(domain.ID);
+      const domainDetails = await fetchDomain(domain.ID);
       if(domainDetails) setDomainDetails(domainDetails);
     };
 
@@ -135,7 +168,8 @@ const UserDetails = props => {
   }, []);
 
   // Transformes backend json object to useable component state object
-  const getStateOverwrite = (user, defaultPolicy) => {
+  // TODO: Create User response object.
+  const getStateOverwrite = (user: any, defaultPolicy: Partial<SyncPolicy>) => {
     if(!user) return {};
     const properties = {
       ...user.properties,
@@ -151,17 +185,17 @@ const UserDetails = props => {
       The idea behind this loop is to find the highest devisor of the KiB value (1024^x)
       If the KiB value (quotaLimit) is divisible by, for exampe, 1024 but not by 1024^2, the sizeUnit must be MiB.
     */    
-    let sizeUnits = {
+    const sizeUnits = {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     };
-    for(let quotaLimit in sizeUnits) {
+    for(const quotaLimit in sizeUnits) {
       if(properties[quotaLimit] === undefined) continue;
       properties[quotaLimit] = properties[quotaLimit] / 1024;
       for(let i = 2; i >= 0; i--) {
         if(properties[quotaLimit] === 0) break;
-        let r = properties[quotaLimit] % 1024 ** i;
+        const r = properties[quotaLimit] % 1024 ** i;
         if(r === 0) {
           sizeUnits[quotaLimit] = i + 1;
           properties[quotaLimit] = properties[quotaLimit] / 1024 ** i;
@@ -175,6 +209,7 @@ const UserDetails = props => {
       sizeUnits,
       rawData: user,
       user: {
+        ...state.user,
         ...user,
         username,
         roles,
@@ -185,13 +220,15 @@ const UserDetails = props => {
       syncPolicy: {
         ...defaultPolicy,
         ...user.syncPolicy,
-        maxattsize: (user.syncPolicy.maxattsize || defaultPolicy.maxattsize) / 1048576 || '',
+        maxattsize: (user.syncPolicy.maxattsize ?? defaultPolicy.maxattsize) / 1048576 || undefined,
       },
       defaultPolicy,
     };
   }
 
-  const handleInput = field => event => {
+  console.log(state.user);
+
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       user: {
@@ -202,7 +239,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleForwardInput = field => e => {
+  const handleForwardInput = (field: string) => (e: ChangeEvent) => {
     const { user } = state;
     setState({
       ...state, 
@@ -234,28 +271,28 @@ const UserDetails = props => {
     }
   }, 500), []);
 
-  const handleStatusInput = async event => {
+  const handleStatusInput = async (event: ChangeEvent) => {
     const { user } = state;
     const { value } = event.target;
-    const { edit, domain } = props;
+    const intValue = parseInt(value);
     // Immediately write user status to DB
     await edit(domain.ID, {
       ID: user.ID,
-      status: value,
+      status: intValue,
     }).then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
     setState({
       ...state, 
       user: {
         ...user,
-        status: value,
+        status: intValue,
       },
       unsaved: true,
-      changingPw: value === 0 && user.status === USER_STATUS.SHARED && !user.ldapID,
+      changingPw: intValue === 0 && user.status === USER_STATUS.SHARED && !user.ldapID,
     });
   }
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     const { user } = state;
     setState({
       ...state, 
@@ -270,7 +307,7 @@ const UserDetails = props => {
     });
   }
 
-  const handlePropertyCheckbox = field => event => {
+  const handlePropertyCheckbox = (field: keyof UserProperties) => (event: ChangeEvent) => {
     const { user } = state;
     setState({
       ...state, 
@@ -285,7 +322,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleIntPropertyChange = field => event => {
+  const handleIntPropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     const { user } = state;
     const value = event.target.value;
     const int = parseInt(value);
@@ -309,18 +346,17 @@ const UserDetails = props => {
    * Before sending the user state object to the backend it needs to be transformed according to the API spec
    */
   const handleEdit = () => {
-    const { edit, domain } = props;
     const { user, sizeUnits, defaultPolicy, syncPolicy } = state;
     const { username, aliases, fetchmail, forward, properties, homeserver, altnames } = user;
-    const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
+    const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties as any;
 
     // Convert quota (MiB, GiB or TiB) into KiB
     const storePayload = {
       messagesizeextended: undefined, // MSE is read-only
-      storagequotalimit: [null, undefined, ""].includes(storagequotalimit) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
-      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota) ? null : prohibitreceivequota * 2
+      storagequotalimit: [null, undefined, ""].includes(storagequotalimit?.toString()) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
+      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota?.toString()) ? null : prohibitreceivequota * 2
         ** (10 * sizeUnits.prohibitreceivequota),
-      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota) ? null : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
+      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota?.toString()) ? null : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
     };
 
     edit(domain.ID, {
@@ -340,7 +376,7 @@ const UserDetails = props => {
       },
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy), // Merge sync policies
       forward: forward?.forwardType !== undefined && forward.destination ? forward : null,
-      altnames: altnames.map(({ altname }) => ({ altname })),
+      altnames: altnames.map(({ altname }: Altname) => ({ altname })),
       roles: undefined,
       ldapID: undefined,
     }).then(() => setState({ ...state, snackbar: 'Success!' }))
@@ -348,7 +384,6 @@ const UserDetails = props => {
   }
 
   const handleSync = () => {
-    const { sync, domain } = props;
     const { user } = state;
     sync(domain.ID, user.ID)
       .then(user => {
@@ -358,32 +393,31 @@ const UserDetails = props => {
           ...state, 
           ...getStateOverwrite(user, defaultPolicy), // New backend user object received -> convert to state objects
           snackbar: 'Success!',
-        });
+        } as any);
       }).catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
   const handleDump = () => {
-    const { dump, domain } = props;
     const { ldapID } = state.user;
-    dump({ ID: ldapID, organization: domain.orgID || 0 })
+    dumpLdap({ ID: ldapID, organization: domain.orgID || 0 })
       .then(data => setState({ ...state, dump: data.data }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
   const handleSaveRoles = () => {
-    const { editUserRoles, domain } = props;
+  
     const { ID, roles } = state.user;
-    editUserRoles(domain.ID, ID, { roles: roles })
+    editRoles(domain.ID, ID, { roles: roles })
       .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  const handleTabChange = (_, tab) => {
+  const handleTabChange = (_: never, tab: number) => {
     location.hash = '#' + tab;
     setState({ ...state, tab });
   }
 
-  const handleAliasEdit = idx => event => {
+  const handleAliasEdit = (idx: number) => (event: ChangeEvent) => {
     const { user } = state;
     const copy = [...user.aliases];
     copy[idx] = event.target.value;
@@ -397,14 +431,14 @@ const UserDetails = props => {
     setState({ ...state, user: { ...user, aliases: copy } });
   }
 
-  const handleRemoveAlias = idx => () => {
+  const handleRemoveAlias = (idx: number) => () => {
     const { user } = state;
     const copy = [...user.aliases];
     copy.splice(idx, 1);
     setState({ ...state, user: { ...user, aliases: copy } });
   }
 
-  const handleCheckbox = field => e => {
+  const handleCheckbox = (field: string) => (e: ChangeEvent) => {
     const { pop3_imap, privDav } = state.user;
     const { checked } = e.target;
     
@@ -424,7 +458,7 @@ const UserDetails = props => {
         user: {
           ...state.user,
           // Files uses DAV for auth, activate it as well
-          "privDav": checked || privDav,
+          privDav: checked || privDav,
           [field]: checked,
         },
       });
@@ -439,7 +473,7 @@ const UserDetails = props => {
     }
   }
 
-  const handleUnitChange = unit => event => setState({
+  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -447,11 +481,10 @@ const UserDetails = props => {
     },
   });
 
-  const handleDetachDialog = detaching => () => setState({ ...state, detaching });
+  const handleDetachDialog = (detaching: boolean) => () => setState({ ...state, detaching });
   
   const handleDetach = () => {
     const { user } = state;
-    const { domain, edit } = props;
     setState({ ...state, detachLoading: true });
     edit(domain.ID, { ID: user.ID, ldapID: null })
       .then(() => setState({
@@ -473,9 +506,9 @@ const UserDetails = props => {
 
   const handleSuccess = () => setState({ ...state, snackbar: 'Success!' });
 
-  const handleError = msg => setState({ ...state, snackbar: msg.message || 'Unknown error' });
+  const handleError = (msg: string) => setState({ ...state, snackbar: msg || 'Unknown error' });
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: Role[]) => {
     setState({
       ...state, 
       user: {
@@ -486,11 +519,11 @@ const UserDetails = props => {
     });
   }
 
-  const handleFetchmailDialog = open => () => setState({ ...state, adding: open })
+  const handleFetchmailDialog = (open: boolean) => () => setState({ ...state, adding: open })
 
-  const handleFetchmailEditDialog = open => () => setState({ ...state, editing: open })
+  const handleFetchmailEditDialog = (open: boolean) => () => setState({ ...state, editing: open })
 
-  const addFetchmail = entry => {
+  const addFetchmail = (entry: FetchmailConfig) => {
     const { user } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail.push(entry);
@@ -504,7 +537,7 @@ const UserDetails = props => {
     });
   }
 
-  const editFetchmail = entry => {
+  const editFetchmail = (entry: FetchmailConfig) => {
     const { user, editing } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail[editing] = entry;
@@ -518,7 +551,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleFetchmailDelete = idx => e => {
+  const handleFetchmailDelete = (idx: number) => (e: ChangeEvent) => {
     const { user } = state;
     const fetchmail = [...user.fetchmail];
     e.stopPropagation();
@@ -532,7 +565,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleSyncChange = field => event => {
+  const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -543,7 +576,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleSyncCheckboxChange = field => (event, newVal) => {
+  const handleSyncCheckboxChange = (field: string) => (_: never, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -554,7 +587,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleSlider = field => (event, newVal) => {
+  const handleSlider = (field: string) => (_: never, newVal: number) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -565,7 +598,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleChatUser = e => {
+  const handleChatUser = (e: ChangeEvent) => {
     const { checked } = e.target;
     const { user } = state;
     setState({
@@ -579,7 +612,7 @@ const UserDetails = props => {
     });
   }
 
-  const handleServer =(e, newVal) => {
+  const handleServer =(_: never, newVal: Server) => {
     setState({
       ...state, 
       user: {
@@ -589,7 +622,8 @@ const UserDetails = props => {
     });
   }
 
-  const handleAltnameEdit = (action, idx=0) => e => {
+  // TODO: Fix type
+  const handleAltnameEdit = (action: 'add' | 'edit' | 'delete', idx=0) => (e: any) => {
     const altnames = [...state.user.altnames]
     switch(action) {
     case "add": {
@@ -613,13 +647,12 @@ const UserDetails = props => {
     })
   }
 
-  const { classes, t, domain } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const sysAdminReadPermissions = context.includes(SYSTEM_ADMIN_READ);
   const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
     detaching, adding, editing, dump, rawData, syncPolicy } = state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
-  const storageQuotaTooHigh = parseInt(properties.storagequotalimit) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
+  const storageQuotaTooHigh = parseInt(properties.storagequotalimit?.toString()) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
 
   return (
     <ViewWrapper
@@ -800,51 +833,4 @@ const UserDetails = props => {
   );
 }
 
-UserDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  sync: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchRoles: PropTypes.func.isRequired,
-  editUserRoles: PropTypes.func.isRequired,
-  fetchDomainDetails: PropTypes.func.isRequired,
-  storeLangs: PropTypes.func.isRequired,
-  dump: PropTypes.func.isRequired,
-  fetchServers: PropTypes.func.isRequired,
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID))
-      .then(user => user)
-      .catch(msg => Promise.reject(msg)),
-    fetchRoles: async () => {
-      await dispatch(fetchRolesData({ sort: 'name,asc', level: 0, limit: 100000 }))
-        .catch(msg => Promise.reject(msg));
-    },
-    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-    fetchDomainDetails: async id => await dispatch(fetchDomainDetails(id))
-      .then(domain => domain)
-      .catch(msg => Promise.reject(msg)),
-    edit: async (domainID, user) => {
-      await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg));
-    },
-    editUserRoles: async (domainID, userID, roles) => {
-      await dispatch(editUserRoles(domainID, userID, roles)).catch(msg => Promise.reject(msg));
-    },
-    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
-    sync: async (domainID, userID) =>
-      await dispatch(syncLdapData(domainID, userID))
-        .then(user => Promise.resolve(user))
-        .catch(msg => Promise.reject(msg)),
-    dump: async params => await dispatch(fetchLdapDump(params))
-      .then(data => Promise.resolve(data))
-      .catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(UserDetails, styles)));
+export default UserDetails;

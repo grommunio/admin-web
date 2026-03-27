@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -18,9 +17,9 @@ import {
   Switch,
   Checkbox,
   MenuItem,
-  Autocomplete
+  Autocomplete,
+  Theme
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { arrayToObject, getStringAfterLastSlash, objectToArray } from '../utils';
 import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
@@ -35,8 +34,14 @@ import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import { deleteOrgLdapConfig, fetchOrgLdapConfig, syncOrgLdapUsers, updateOrgLdapConfig } from '../actions/ldap';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../store';
+import { UpdateOrg } from '@/types/orgs';
+import { LdapConfigData, LdapTemplate, SyncLdapParams } from '@/types/ldap';
+import { ChangeEvent } from '@/types/common';
+import { Domain } from '@/types/domains';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -121,9 +126,14 @@ const styles = theme => ({
   ldapSwitch: {
     marginLeft: 8,
   },
-});
+}));
 
-const OrgDetails = props => {
+const OrgDetails = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const adminConfig = useAppSelector(state => state.config);
+  const { Domains } = useAppSelector(state => state.domains);
   const [state, setState] = useState({
     // Org
     ID: -1,
@@ -167,11 +177,22 @@ const OrgDetails = props => {
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+  const [available, setAvailable] = useState<boolean>(false);
+
+  const edit = async (org: UpdateOrg) => await dispatch(editOrgData(org));
+  const fetch = async (id: number) => await dispatch(fetchOrgsDetails(id));
+  const fetchDomains = async () =>
+    await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' }));
+  const fetchLdap = async (orgID: number) => await dispatch(fetchOrgLdapConfig(orgID));
+  const put = async (orgID: number, config: LdapConfigData, params: { force: boolean }) =>
+    await dispatch(updateOrgLdapConfig(orgID, config, params));
+  const sync = async (orgID: number, params: SyncLdapParams) =>
+    await dispatch(syncOrgLdapUsers(orgID, params));
+  const deleteItem = async (orgID: number) => await dispatch(deleteOrgLdapConfig(orgID));
 
   useEffect(() => {
     const inner = async () => {
-      const { fetch, fetchLdap, fetchDomains } = props;
-      const orgID = getStringAfterLastSlash();
+      const orgID = parseInt(getStringAfterLastSlash());
       fetchDomains();
       const org = await fetch(orgID)
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
@@ -180,7 +201,7 @@ const OrgDetails = props => {
       const ldap = await fetchLdap(orgID)
         .catch(snackbar => setState({ ...state, snackbar }));
       const config = ldap?.data;
-      const available = ldap?.ldapAvailable || false;
+      setAvailable(ldap?.ldapAvailable || false);
       const connection = config?.connection || {};
       const groups = config?.groups || {};
       const users = config?.users || {};
@@ -188,7 +209,6 @@ const OrgDetails = props => {
         ...state,
         ...(org || {}),
         loading: false,
-        available,
         baseDn: config.baseDn || '',
         disabled: config.disabled === undefined ? true : config.disabled,
         objectID: config.objectID || '',
@@ -215,7 +235,7 @@ const OrgDetails = props => {
     inner();
   }, []);
 
-  const handleInput = field => event => {
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       [field]: event.target.value,
@@ -224,7 +244,6 @@ const OrgDetails = props => {
   }
 
   const handleEdit = () => {
-    const { edit } = props;
     const { ID, name, domains, description } = state;
     edit({
       ID,
@@ -236,12 +255,12 @@ const OrgDetails = props => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: Domain[] | string[]) => {
     setState({
       ...state, 
       [field]: newVal,
@@ -253,45 +272,45 @@ const OrgDetails = props => {
 
   /* Formats state to new config object for backend */
   const formatData = () => {
-    // Create a deep copy of the object
     const copy = structuredClone(state);
-    // New, in the end formatted, object
-    const formatted = {};
-    // Defaults
-    formatted.baseDn = copy.baseDn;
-    formatted.objectID  = copy.objectID;
-    formatted.disabled = copy.disabled;
-    // Format connection
-    formatted.connection = {};
-    formatted.connection.server = copy.server;
-    formatted.connection.bindUser = copy.bindUser;
-    formatted.connection.bindPass = copy.bindPass;
-    formatted.connection.starttls = copy.starttls;
 
-    // Format groups
-    formatted.groups = {};
-    formatted.groups.groupMemberAttr = copy.groupMemberAttr;
-    formatted.groups.groupaddr = copy.groupaddr;
-    formatted.groups.groupfilter = copy.groupfilter;
-    formatted.groups.groupname = copy.groupname;
+    return {
+      baseDn: copy.baseDn,
+      objectID: copy.objectID,
+      disabled: copy.disabled,
 
-    //Format users
-    formatted.users = {};
-    formatted.users.username = copy.username;
-    formatted.users.displayName = copy.displayName;
-    formatted.users.attributes = arrayToObject([...state.attributes]);
-    formatted.users.defaultQuota = parseInt(copy.defaultQuota) || undefined;
-    formatted.users.filter = copy.filter; // Put single string in array (necessary)
-    formatted.users.contactFilter = copy.contactFilter;
-    formatted.users.templates = copy.templates === 'none' ?
-      [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
-    formatted.users.searchAttributes = [...state.searchAttributes];
-    formatted.users.aliases = copy.aliases;
+      connection: {
+        server: copy.server,
+        bindUser: copy.bindUser,
+        bindPass: copy.bindPass,
+        starttls: copy.starttls,
+      },
 
-    return formatted;
-  }
+      groups: {
+        groupMemberAttr: copy.groupMemberAttr,
+        groupaddr: copy.groupaddr,
+        groupfilter: copy.groupfilter,
+        groupname: copy.groupname,
+      },
 
-  const handleAttributeInput = (objectPart, idx) => ({ target: t }) => {
+      users: {
+        username: copy.username,
+        displayName: copy.displayName,
+        attributes: arrayToObject<string>([...state.attributes]),
+        defaultQuota: parseInt(copy.defaultQuota) || undefined,
+        filter: copy.filter,
+        contactFilter: copy.contactFilter,
+        templates:
+        copy.templates === 'none'
+          ? []
+          : ['common', copy.templates],
+        searchAttributes: [...state.searchAttributes],
+        aliases: copy.aliases,
+      },
+    };
+  };
+
+  const handleAttributeInput = (objectPart: string, idx: number) => ({ target: t }: ChangeEvent) => {
     const copy = [...state.attributes];
     copy[idx][objectPart] = t.value;
     setState({
@@ -309,7 +328,7 @@ const OrgDetails = props => {
     });
   }
 
-  const removeRow = idx => () => {
+  const removeRow = (idx: number) => () => {
     const copy = [...state.attributes];
     copy.splice(idx, 1);
     setState({ ...state, attributes: copy });
@@ -351,22 +370,23 @@ const OrgDetails = props => {
 
   const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  const handleDeleteError = error => setState({ ...state, snackbar: error });
+  const handleDeleteError = (error: string) => setState({ ...state, snackbar: error });
 
-  const handleSync = importUser => () => props.sync(getStringAfterLastSlash(), { import: importUser })
-    .then(response => {
-      if(response?.taskID) {
-        setState({
-          ...state, 
-          taskMessage: response.message || 'Task created',
-          loading: false,
-          taskID: response.taskID,
-        });
-      } else {
-        setState({ ...state, snackbar: 'Success! ' + (response?.message || '') });
-      }
-    })
-    .catch(snackbar => setState({ ...state, snackbar }));
+  const handleSync = (importUser: boolean) => () =>
+    sync(parseInt(getStringAfterLastSlash()), { import: importUser })
+      .then(response => {
+        if(response?.taskID) {
+          setState({
+            ...state, 
+            taskMessage: response.message || 'Task created',
+            loading: false,
+            taskID: response.taskID,
+          });
+        } else {
+          setState({ ...state, snackbar: 'Success! ' + (response?.message || '') });
+        }
+      })
+      .catch(snackbar => setState({ ...state, snackbar }));
 
   const handleTaskClose = () => setState({
     ...state, 
@@ -374,17 +394,17 @@ const OrgDetails = props => {
     taskID: null,
   })
 
-  const handleCheckbox = field => () => setState({
+  const handleCheckbox = (field: string) => () => setState({
     ...state, 
     [field]: !state[field],
   });
 
-  const handleOverride = e => {
+  const handleOverride = (e: ChangeEvent) => {
     setState({ ...state, overridingLdap: e.target.checked });
   }
 
-  const handleTemplate = ({ target: t }) => {
-    const templates = t.value;
+  const handleTemplate = ({ target: t }: ChangeEvent) => {
+    const templates = t.value as LdapTemplate;
     if(templates === 'ActiveDirectory') {
       setState({
         ...state, 
@@ -455,16 +475,14 @@ const OrgDetails = props => {
   }
 
   const handleSaveLdap = e => {
-    const { put } = props;
     const { force } = state;
     e.preventDefault();
-    put(getStringAfterLastSlash(), formatData(), { force: force })
+    put(parseInt(getStringAfterLastSlash()), formatData(), { force: force })
       .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const { classes, t, Domains, adminConfig } = props;
-  const { ID, name, description, domains, snackbar, available, force, deleting, server, bindUser,
+  const { ID, name, description, domains, snackbar, force, deleting, server, bindUser,
     bindPass, starttls, baseDn, objectID, disabled, groupMemberAttr, groupaddr, groupfilter, groupname,
     username, filter, contactFilter, templates, attributes, defaultQuota, displayName, searchAttributes,
     aliases, taskMessage, taskID, overridingLdap, loading } = state;
@@ -946,7 +964,7 @@ const OrgDetails = props => {
       </form>}
       <DeleteConfig
         orgID={ID}
-        delete={props.delete}
+        delete={deleteItem}
         open={deleting}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
@@ -961,45 +979,5 @@ const OrgDetails = props => {
   );
 }
 
-OrgDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  Domains: PropTypes.array.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchDomains: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  adminConfig: PropTypes.object.isRequired,
-  put: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
-  fetchLdap: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Domains: state.domains.Domains,
-    adminConfig: state.config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    edit: async org => await dispatch(editOrgData(org)).catch(message => Promise.reject(message)),
-    fetch: async id => await dispatch(fetchOrgsDetails(id))
-      .then(org => org)
-      .catch(message => Promise.reject(message)),
-    fetchDomains: async () => await dispatch(fetchDomainData({ limit: 1000000, level: 0, sort: 'domainname,asc' })),
-    fetchLdap: async (orgID) => await dispatch(fetchOrgLdapConfig(orgID))
-      .then(config => config)
-      .catch(message => Promise.reject(message)),
-    put: async (orgID, config, params) => await dispatch(updateOrgLdapConfig(orgID, config, params))
-      .then(msg => msg)
-      .catch(message => Promise.reject(message)),
-    sync: async (orgID, params) => await dispatch(syncOrgLdapUsers(orgID, params))
-      .catch(message => Promise.reject(message)),
-    delete: async orgID => await dispatch(deleteOrgLdapConfig(orgID)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(OrgDetails, styles)));
+export default OrgDetails;

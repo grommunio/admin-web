@@ -4,6 +4,7 @@
 import React, { ReactNode } from 'react';
 import { TextField, Theme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -21,11 +22,20 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 type LdapTextfieldProps = {
-  children: ReactNode;
+  autoFocus?: boolean;
+  children?: ReactNode;
   value: string;
   label: string;
   desc: string;
-  flex: boolean;
+  flex?: boolean;
+  placeholder?: string;
+  onChange?: (e: ChangeEvent) => void;
+  id?: string;
+  name?: string;
+  autoComplete?: string;
+  InputLabelProps?: any,
+  type?: string;
+  select?: boolean;
 }
 
 const LdapTextfield = (props: LdapTextfieldProps) => {

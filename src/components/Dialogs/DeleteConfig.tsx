@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 type DeleteConfigProps = {
   open: boolean;
-  orgID: number;
+  orgID?: number;
   onSuccess: () => void;
   onError: (err: string) => void;
   onClose: () => void;

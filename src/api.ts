@@ -482,7 +482,7 @@ export function sync(domainID: number, userID: number) {
   };
 }
 
-export async function syncAll(params: SyncLdapParams, domainID: number) {
+export async function syncAll(params: SyncLdapParams, domainID?: number) {
   return await post(buildQuery('/domains/' + (domainID !== undefined ? domainID + '/' : '')
     + 'ldap/downsync', { ...params }));
 }

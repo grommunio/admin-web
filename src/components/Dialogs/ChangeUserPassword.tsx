@@ -30,7 +30,7 @@ type ChangeUserPasswordProps = {
   domain: BaseDomain;
   onClose: () => void;
   onSuccess: () => void;
-  onError: () => void;
+  onError: (err: string) => void;
   user: BaseUser;
   changingPw: boolean;
 }

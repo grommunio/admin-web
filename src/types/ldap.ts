@@ -1,3 +1,5 @@
+export type LdapTemplate = 'ActiveDirectory' | 'OpenLDAP' | 'Univention' | '389ds';
+
 type LdapConnection = {
   bindPass: string;
   bindUser: string;
@@ -5,7 +7,7 @@ type LdapConnection = {
   starttls: boolean;
 };
 
-type LdapGroupsConfig = {
+export type LdapGroupsConfig = {
   groupMemberAttr: string;
   groupaddr: string;
   groupfilter: string;
@@ -14,23 +16,20 @@ type LdapGroupsConfig = {
 
 type LdapUsersConfig = {
   aliases: string;
-  attributes: {
-    kopanoQuotaHard: string;
-  };
+  attributes: Record<string, string>;
   contactFilter: string;
-  contactname: string;
   displayName: string;
   filter: string;
   searchAttributes: string[];
   templates: string[];
   username: string;
+  defaultQuota?: number;
 };
 
 export type LdapConfigData = {
   baseDn: string;
   connection: LdapConnection;
   disabled: boolean;
-  enableContacts: boolean;
   groups: LdapGroupsConfig;
   objectID: string;
   users: LdapUsersConfig;

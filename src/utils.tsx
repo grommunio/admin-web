@@ -7,6 +7,7 @@ import store from './store';
 import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 
 import { KeyValuePair } from "@/types/common";
+import { SyncPolicy } from './types/sync';
 
 /**
  * Converts object to array of { key, value } objects
@@ -193,12 +194,12 @@ export function getStringFromCommand(command: number): string {
 /**
  * Compares 2 sync policies and returns the different key-value pairs
  */
-export function getPolicyDiff(defaultPolicy: Record<string, any>, syncPolicy: Record<string, any>) {
-  const formattedPolicy: Record<string, any> = {
+export function getPolicyDiff(defaultPolicy: Partial<SyncPolicy>, syncPolicy: Partial<SyncPolicy>): Partial<SyncPolicy> {
+  const formattedPolicy: Partial<SyncPolicy> = {
     ...syncPolicy,
-    devpwhistory: parseInt(syncPolicy.devpwhistory) || 0,
-    devpwexpiration: parseInt(syncPolicy.devpwexpiration) || 0,
-    maxinacttimedevlock: parseInt(syncPolicy.maxinacttimedevlock) || 0,
+    devpwhistory: syncPolicy.devpwhistory || 0,
+    devpwexpiration: syncPolicy.devpwexpiration || 0,
+    maxinacttimedevlock: syncPolicy.maxinacttimedevlock || 0,
   };
   const result: Record<string, any> = {};
   for(const [key, value] of Object.entries(defaultPolicy)) {

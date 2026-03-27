@@ -67,7 +67,7 @@ export type SyncPolicy = {
   devpwenabled: number;
   devpwexpiration: number;
   devpwhistory: number;
-  maxattsize: string;
+  maxattsize: number;
   maxcalagefilter: number;
   maxdevpwfailedattempts: number;
   maxemailagefilter: number;

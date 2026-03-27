@@ -1,6 +1,6 @@
 import { URLParams } from "@/actions/types";
 import { PartialWithRequired } from "./common";
-import { BaseRole } from "./roles";
+import { SyncPolicy } from "./sync";
 
 export type BaseUser = {
   ID: number;
@@ -32,12 +32,12 @@ export type UserProperties = {
 
 export type Altname = {
   altname: string;
-  magic: number;
+  magic?: number;
 }
 
 export type Forward = {
   destination: string;
-  forwardType: number;
+  forwardType?: number;
 }
 
 export type User = BaseUser & {
@@ -64,10 +64,11 @@ export type User = BaseUser & {
   privWeb: boolean;
   properties: Partial<UserProperties>;
   publicAddress: boolean;
-  roles: BaseRole[];
+  roles: number[];
   smtp: boolean;
   status: number;
-  syncPolicy: Record<string, unknown>; // TODO: Create sync policy type
+  syncPolicy: Partial<SyncPolicy>;
+  defaultPolicy: Partial<SyncPolicy>;
 };
 
 export type UserListItem = Pick<User, 'ID' | 'domainID' | 'ldapID' | 'properties' | 'status' | 'username'>
@@ -172,3 +173,4 @@ export type FetchUserParams = {
   filterProp?: string;
   status?: number[];
 } & URLParams;
+

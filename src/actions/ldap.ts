@@ -65,7 +65,7 @@ export function syncLdapData(domainID: number, userID: number) {
   return defaultDetailsHandler(sync, domainID, userID);
 }
 
-export function syncLdapUsers(params: SyncLdapParams, domainID: number) {
+export function syncLdapUsers(params: SyncLdapParams, domainID?: number) {
   return async () => {
     try {
       const resp = await syncAll(params, domainID);

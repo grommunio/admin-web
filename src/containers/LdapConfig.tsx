@@ -2,13 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid2, IconButton, MenuItem, Paper,
-  Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete, Fade, LinearProgress } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, fetchAuthMgr, deleteLdapConfig } from '../actions/ldap';
-import { connect } from 'react-redux';
+  Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete, Fade, LinearProgress, 
+  Theme} from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { fetchLdapConfig, syncLdapUsers, updateLdapConfig, updateAuthMgr, deleteLdapConfig, fetchAuthMgr } from '../actions/ldap';
 import { arrayToObject, cloneObject, objectToArray } from '../utils';
 import DeleteConfig from '../components/Dialogs/DeleteConfig';
 import Add from '@mui/icons-material/Add';
@@ -20,9 +19,12 @@ import Feedback from '../components/Feedback';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';
+import { useAppDispatch, useAppSelector } from '../store';
+import { LdapConfigData, LdapGroupsConfig, LdapTemplate, SyncLdapParams } from '@/types/ldap';
+import { ChangeEvent } from '@/types/common';
 
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
     flex: 1,
@@ -33,7 +35,9 @@ const styles = theme => ({
     overflowY: 'auto',
     overflowX: 'hidden',
   }, 
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    ...theme.mixins.toolbar as any,
+  },
   pageTitle: {
     margin: theme.spacing(2, 2, 1, 2),
   },
@@ -106,9 +110,9 @@ const styles = theme => ({
     top: 64,
     width: '100%',
   },
-});
+}));
 
-function getDefaultGroupValuesOfTemplate(template, attribute) {
+function getDefaultGroupValuesOfTemplate(template: LdapTemplate, attribute: keyof LdapGroupsConfig) {
   if(template === 'ActiveDirectory') {
     return {
       groupMemberAttr: "memberOf",
@@ -141,7 +145,11 @@ function getDefaultGroupValuesOfTemplate(template, attribute) {
   return "";
 }
 
-const LdapConfig = props => {
+const LdapConfig = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const adminConfig = useAppSelector(state => state.config);
   const [state, setState] = useState({
     baseDn: '',
     objectID: '',
@@ -175,58 +183,67 @@ const LdapConfig = props => {
     snackbar: '',
     loading: true,
   });
+  const [available, setAvailable] = useState<boolean>(false);
   const context = useContext(CapabilityContext);
+
+  const fetch = async () => await dispatch(fetchLdapConfig());
+  const fetchAuthManager = async () => await dispatch(fetchAuthMgr());
+  const put = async (config: LdapConfigData, params: { force: boolean }) => await dispatch(updateLdapConfig(config, params));
+  const authMgr = async (config: { authBackendSelection: string }) => await dispatch(updateAuthMgr(config));
+  const sync = async (params: SyncLdapParams) => await dispatch(syncLdapUsers(params));
+  const deleteItem = async () => await dispatch(deleteLdapConfig());
 
   /* Formats state to new config object for backend */
   const formatData = () => {
     // Create a deep copy of the object
     const copy = cloneObject(state);
     // New, in the end formatted, object
-    const formatted = {};
-    // Defaults
-    formatted.baseDn = copy.baseDn;
-    formatted.objectID  = copy.objectID;
-    formatted.disabled = copy.disabled;
-    // Format connection
-    formatted.connection = {};
-    formatted.connection.server = copy.server;
-    formatted.connection.bindUser = copy.bindUser;
-    formatted.connection.bindPass = copy.bindPass;
-    formatted.connection.starttls = copy.starttls;
+    const formatted: LdapConfigData = {
+      baseDn: copy.baseDn,
+      objectID: copy.objectID,
+      disabled: copy.disabled,
 
-    // Format groups
-    formatted.groups = {};
-    formatted.groups.groupMemberAttr = copy.groupMemberAttr;
-    formatted.groups.groupaddr = copy.groupaddr;
-    formatted.groups.groupfilter = copy.groupfilter;
-    formatted.groups.groupname = copy.groupname;
+      connection: {
+        server: copy.server,
+        bindUser: copy.bindUser,
+        bindPass: copy.bindPass,
+        starttls: copy.starttls,
+      },
 
-    //Format users
-    formatted.users = {};
-    formatted.users.username = copy.username;
-    formatted.users.displayName = copy.displayName;
-    formatted.users.attributes = arrayToObject([...state.attributes]);
-    formatted.users.defaultQuota = parseInt(copy.defaultQuota) || undefined;
-    formatted.users.filter = copy.filter; // Put single string in array (necessary)
-    formatted.users.contactFilter = copy.contactFilter;
-    formatted.users.templates = copy.templates === 'none' ?
-      [] : ['common', copy.templates]; // ['common', 'ActiveDirectory']
-    formatted.users.searchAttributes = [...state.searchAttributes];
-    formatted.users.aliases = copy.aliases;
+      groups: {
+        groupMemberAttr: copy.groupMemberAttr,
+        groupaddr: copy.groupaddr,
+        groupfilter: copy.groupfilter,
+        groupname: copy.groupname,
+      },
 
+      users: {
+        username: copy.username,
+        displayName: copy.displayName,
+        attributes: arrayToObject([...state.attributes]),
+        defaultQuota: parseInt(copy.defaultQuota) || undefined,
+        filter: copy.filter,
+        contactFilter: copy.contactFilter,
+        templates: copy.templates === 'none'
+          ? []
+          : ['common', copy.templates],
+        searchAttributes: [...state.searchAttributes],
+        aliases: copy.aliases,
+      },
+    };
     return formatted;
   }
 
   useEffect(() => {
     const inner = async () => {
-      const { fetch, put, fetchAuthMgr } = props;
       const resp = await fetch()
         .catch(snackbar => setState({ ...state, snackbar }));
-      const authResp = await fetchAuthMgr()
+      console.log(resp);
+      const authResp = await fetchAuthManager()
         .catch(snackbar => setState({ ...state, snackbar }));
       const config = resp?.data;
       if(!config) return;
-      const available = resp?.ldapAvailable || false;
+      setAvailable(resp?.ldapAvailable || false)
       const connection = config?.connection || {};
       const users = config?.users || {};
   
@@ -241,7 +258,7 @@ const LdapConfig = props => {
       }
       const groups = config.groups;
       if(users.templates && users.templates.length > 0 && !config.disabled) {
-        ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach(att => {
+        ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach((att: keyof LdapGroupsConfig) => {
           if(!groups[att]) {
             groups[att] = getDefaultGroupValuesOfTemplate(users.templates[1], att);
             requestNecessary = true;
@@ -260,7 +277,6 @@ const LdapConfig = props => {
         ...state, 
         loading: false,
         authBackendSelection: authResp?.data?.authBackendSelection || 'always_mysql',
-        available,
         baseDn: config.baseDn || '',
         disabled: config.disabled === undefined ? true : config.disabled,
         objectID: config.objectID || '',
@@ -287,12 +303,12 @@ const LdapConfig = props => {
     inner();
   }, []);
 
-  const handleInput = field => ({ target: t }) => setState({
+  const handleInput = (field: string) => ({ target: t }: ChangeEvent) => setState({
     ...state, 
     [field]: t.value,
   });
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: string[]) => {
     setState({
       ...state, 
       [field]: newVal,
@@ -370,7 +386,7 @@ const LdapConfig = props => {
     }
   }
 
-  const handleAttributeInput = (objectPart, idx) => ({ target: t }) => {
+  const handleAttributeInput = (objectPart: string, idx: number) => ({ target: t }: ChangeEvent) => {
     const copy = [...state.attributes];
     copy[idx][objectPart] = t.value;
     setState({
@@ -388,13 +404,13 @@ const LdapConfig = props => {
     });
   }
 
-  const removeRow = idx => () => {
+  const removeRow = (idx: number) => () => {
     const copy = [...state.attributes];
     copy.splice(idx, 1);
     setState({ ...state, attributes: copy });
   }
 
-  const handleCheckbox = field => () => setState({
+  const handleCheckbox = (field: string) => () => setState({
     ...state, 
     [field]: !state[field],
   });
@@ -408,15 +424,14 @@ const LdapConfig = props => {
     });
   }
 
-  const handleSave = e => {
-    const { put, authMgr } = props;
+  const handleSave = (e: React.MouseEvent | React.SubmitEvent) => {
     const { force, authBackendSelection } = state;
     e.preventDefault();
     Promise.all([
       put(formatData(), { force: force }),
       authMgr({ authBackendSelection }),
     ])
-      .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '') }))
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
@@ -458,7 +473,7 @@ const LdapConfig = props => {
 
   const handleDeleteError = error => setState({ ...state, snackbar: error });
 
-  const handleSync = importUser => () => props.sync({ import: importUser })
+  const handleSync = importUser => () => sync({ import: importUser })
     .then(response => {
       if(response?.taskID) {
         // Background task created -> Show task dialog
@@ -480,9 +495,8 @@ const LdapConfig = props => {
     taskID: null,
   })
 
-  const { classes, t, adminConfig } = props;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
-  const { available, force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
+  const { force, deleting, snackbar, server, bindUser, bindPass, starttls, baseDn, objectID, disabled,
     username, filter, contactFilter, templates, attributes, defaultQuota, displayName, searchAttributes,
     authBackendSelection, groupMemberAttr, groupaddr, groupfilter, groupname, aliases, taskMessage, taskID, loading } = state;
   return (
@@ -905,7 +919,7 @@ const LdapConfig = props => {
       </form>
       <DeleteConfig
         open={deleting}
-        delete={props.delete}
+        delete={deleteItem}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
@@ -923,43 +937,4 @@ const LdapConfig = props => {
   );
 }
 
-LdapConfig.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  put: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
-  authMgr: PropTypes.func.isRequired,
-  fetchAuthMgr: PropTypes.func.isRequired,
-  adminConfig: PropTypes.object.isRequired,
-  delete: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = state => {
-  return {
-    adminConfig: state.config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async () => await dispatch(fetchLdapConfig())
-      .then(config => config)
-      .catch(message => Promise.reject(message)),
-    fetchAuthMgr: async () => await dispatch(fetchAuthMgr())
-      .then(config => config)
-      .catch(message => Promise.reject(message)),
-    put: async (config, params) => await dispatch(updateLdapConfig(config, params))
-      .then(msg => msg)
-      .catch(message => Promise.reject(message)),
-    authMgr: async (config) => await dispatch(updateAuthMgr(config))
-      .then(msg => msg)
-      .catch(message => Promise.reject(message)),
-    sync: async params => await dispatch(syncLdapUsers(params))
-      .catch(message => Promise.reject(message)),
-    delete: async () => await dispatch(deleteLdapConfig()),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(LdapConfig, styles)));
+export default LdapConfig;
