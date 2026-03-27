@@ -59,7 +59,6 @@ const AddUser = (props: AddUserProps) => {
     username: '',
     properties: {
       displayname: '',
-      storagequotalimit: '',
       displaytypeex: USER_TYPE.USER,
     },
     status: USER_STATUS.NORMAL,
@@ -172,7 +171,6 @@ const AddUser = (props: AddUserProps) => {
           username: '',
           properties: {
             displayname: '',
-            storagequotalimit: '',
             displaytypeex: USER_TYPE.USER,
           },
           loading: false,

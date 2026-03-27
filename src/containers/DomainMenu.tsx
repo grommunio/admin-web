@@ -22,7 +22,7 @@ import { fetchDrawerDomain } from '../actions/drawer';
 import { useLocation, useNavigate } from 'react-router';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
-import { CreateParams } from '@/types/defaults';
+import { CreateParamProperty, CreateParams } from '@/types/defaults';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -168,7 +168,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
     setState({ ...state, ...formatCreateParams(structuredClone(CreateParams)) });
   }, [CreateParams]);
 
-  const handleInput = (field: string) => (event: ChangeEvent) => {
+  const handleInput = (field: (keyof CreateParams) | CreateParamProperty) => (event: ChangeEvent) => {
     setState({
       ...state, 
       createParams: {

@@ -17,6 +17,7 @@ export type Folder = {
   container: string, // TODO: Make enum
   comment: string,
   syncMobile: boolean,
+  creationtime?: string | null;
 }
 
 export type NewFolder = Pick<Folder,

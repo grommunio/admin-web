@@ -59,7 +59,6 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     username: '',
     properties: {
       displayname: '',
-      storagequotalimit: '',
       displaytypeex: USER_TYPE.USER,
     },
     status: USER_STATUS.NORMAL,
@@ -170,7 +169,6 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
           username: '',
           properties: {
             displayname: '',
-            storagequotalimit: '',
             displaytypeex: USER_TYPE.USER,
           },
           status: USER_STATUS.NORMAL,

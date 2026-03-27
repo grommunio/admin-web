@@ -10,7 +10,7 @@ export const SYSTEM_ADMIN_WRITE = 'SystemAdminWrite';
 export const DOMAIN_PURGE = 'DomainPurge';
 export const ORG_ADMIN = 'OrgAdmin';
 export const IPM_SUBTREE_ID = "144115188075855873";
-type IPM_SUBTREE_OBJECT_TYPE = {
+export type IPM_SUBTREE_OBJECT_TYPE = {
   folderid: string;
   displayname: string;
   comment: string;

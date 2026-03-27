@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -17,8 +16,8 @@ import {
   FormControlLabel,
   Checkbox,
   IconButton,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { getStoreLangs } from '../actions/users';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -27,8 +26,12 @@ import { editCreateParamsData, fetchCreateParamsData } from '../actions/defaults
 import { red, yellow } from '@mui/material/colors';
 import { formatCreateParams } from '../utils';
 import { HelpOutline } from '@mui/icons-material';
+import { useAppDispatch, useAppSelector } from '../store';
+import { CreateParamProperty, CreateParams } from '@/types/defaults';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -64,29 +67,39 @@ const styles = theme => ({
   checkboxes: {
     margin: theme.spacing(1, 0, 0, 0),
   },
-});
+}));
 
-const Defaults = props => {
+
+const Defaults = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { CreateParams } = useAppSelector(state => state.defaults);
+  
   const [state, setState] = useState({
     createParams: {
-      maxUser: '',
-      prohibitsendquota: '',
-      prohibitreceivequota: '',
-      storagequotalimit: '',
-    },
+      prohibitsendquota: undefined,
+      prohibitreceivequota: undefined,
+      storagequotalimit: undefined,
+    } as any, // TODO: Fix
     sizeUnits: {
       storagequotalimit: 1,
       prohibitreceivequota: 1,
       prohibitsendquota: 1,
     },
     loading: true,
+    snackbar: "",
   });
   const [langs, setLangs] = useState([]);
   const context = useContext(CapabilityContext);
 
+  const fetch = async () => await dispatch(fetchCreateParamsData());
+  const edit = async (createParams: { user: CreateParams, domain: CreateParams }) =>
+    await dispatch(editCreateParamsData(createParams))
+  const storeLangs = async () => await dispatch(getStoreLangs());
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch, storeLangs } = props;
       const langs = await storeLangs()
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
       if(langs) setLangs(langs);
@@ -99,12 +112,11 @@ const Defaults = props => {
   }, []);
 
   useEffect(() => {
-    const { createParams } = props;
     // Update mask
-    setState({ ...state, ...formatCreateParams(structuredClone(createParams)), loading: false });
-  }, [props.createParams]);
+    setState({ ...state, ...formatCreateParams(structuredClone(CreateParams)), loading: false });
+  }, [CreateParams]);
 
-  const handleInput = field => event => {
+  const handleInput = (field: (keyof CreateParams) | CreateParamProperty) => (event: ChangeEvent) => {
     setState({
       ...state,
       createParams: {
@@ -115,7 +127,6 @@ const Defaults = props => {
   }
 
   const handleEdit = () => {
-    const { edit } = props;
     const { createParams, sizeUnits } = state;
     // eslint-disable-next-line camelcase
     const { maxUser, smtp, changePassword, pop3_imap, lang,
@@ -150,7 +161,7 @@ const Defaults = props => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handleUnitChange = unit => event => setState({
+  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -158,7 +169,8 @@ const Defaults = props => {
     },
   });
 
-  const handleCheckbox = field => e => {
+  // TODO: Not perfect
+  const handleCheckbox = (field: keyof CreateParams) => (e: ChangeEvent) => {
     const checked = e.target.checked;
     if(field === "privArchive") {
       setState({
@@ -182,7 +194,6 @@ const Defaults = props => {
     
   } 
 
-  const { classes, t } = props;
   const { createParams, sizeUnits, snackbar, loading } = state;
   const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
     lang, privChat, privArchive, privFiles, privVideo, privWeb,
@@ -276,18 +287,18 @@ const Defaults = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                      <FormControl className={classes.adornment}>
-                        <Select
-                          onChange={handleUnitChange('prohibitsendquota')}
-                          value={sizeUnits.prohibitsendquota}
-                          className={classes.select}
-                          variant="standard"
-                        >
-                          <MenuItem value={1}>MB</MenuItem>
-                          <MenuItem value={2}>GB</MenuItem>
-                          <MenuItem value={3}>TB</MenuItem>
-                        </Select>
-                      </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitsendquota')}
+                        value={sizeUnits.prohibitsendquota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -304,18 +315,18 @@ const Defaults = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                      <FormControl className={classes.adornment}>
-                        <Select
-                          onChange={handleUnitChange('prohibitreceivequota')}
-                          value={sizeUnits.prohibitreceivequota}
-                          className={classes.select}
-                          variant="standard"
-                        >
-                          <MenuItem value={1}>MB</MenuItem>
-                          <MenuItem value={2}>GB</MenuItem>
-                          <MenuItem value={3}>TB</MenuItem>
-                        </Select>
-                      </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('prohibitreceivequota')}
+                        value={sizeUnits.prohibitreceivequota}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -333,18 +344,18 @@ const Defaults = props => {
               slotProps={{
                 input: {
                   endAdornment:
-                      <FormControl className={classes.adornment}>
-                        <Select
-                          onChange={handleUnitChange('storagequotalimit')}
-                          value={sizeUnits.storagequotalimit}
-                          className={classes.select}
-                          variant="standard"
-                        >
-                          <MenuItem value={1}>MB</MenuItem>
-                          <MenuItem value={2}>GB</MenuItem>
-                          <MenuItem value={3}>TB</MenuItem>
-                        </Select>
-                      </FormControl>,
+                    <FormControl className={classes.adornment}>
+                      <Select
+                        onChange={handleUnitChange('storagequotalimit')}
+                        value={sizeUnits.storagequotalimit}
+                        className={classes.select}
+                        variant="standard"
+                      >
+                        <MenuItem value={1}>MB</MenuItem>
+                        <MenuItem value={2}>GB</MenuItem>
+                        <MenuItem value={3}>TB</MenuItem>
+                      </Select>
+                    </FormControl>,
                 }
               }}
             />
@@ -482,30 +493,5 @@ const Defaults = props => {
   );
 }
 
-Defaults.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  createParams: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  storeLangs: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    createParams: state.defaults.CreateParams,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    edit: async createParams => await dispatch(editCreateParamsData(createParams))
-      .catch(message => Promise.reject(message)),
-    fetch: async () => await dispatch(fetchCreateParamsData())
-      .catch(message => Promise.reject(message)),
-    storeLangs: async () => await dispatch(getStoreLangs()).catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(Defaults, styles)));
+export default Defaults;

@@ -75,8 +75,8 @@ const Folders = ({ domain }: DomainViewProps) => {
   const treeContainer = useRef(null);
   const navigate = useNavigate();
 
-  const fetchTableData = async (domainID: number, params: URLParams) => 
-    await dispatch(fetchFolderTree(domainID, params));
+  const fetchTableData = async (params: URLParams) => 
+    await dispatch(fetchFolderTree(domain.ID, params));
   const deleteItem = async (domainID: number, id: string, params: { clear: boolean }) =>
     await dispatch(deleteFolderData(domainID, id, params));
 

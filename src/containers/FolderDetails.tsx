@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -16,17 +15,21 @@ import {
   FormControlLabel,
   Checkbox,
   Tooltip,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
-import { fetchFolderDetails, addFolderData, fetchOwnersData, editFolderData } from '../actions/folders.ts';
-import { DOMAIN_ADMIN_WRITE, folderTypes, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
+import { fetchFolderDetails, fetchOwnersData, editFolderData } from '../actions/folders';
+import { DOMAIN_ADMIN_WRITE, folderTypes, IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT, IPM_SUBTREE_OBJECT_TYPE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
 import { Info } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../store';
+import { DomainViewProps } from '@/types/common';
+import { Folder, UpdateFolder } from '@/types/folders';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -53,32 +56,40 @@ const styles = theme => ({
   infoIcon: {
     marginLeft: 8,
   }
-});
+}));
 
-const FolderDetails = props => {
+const FolderDetails = ({ domain }: DomainViewProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
-    folder: {},
+    folder: {} as Folder | IPM_SUBTREE_OBJECT_TYPE,
     readonly: true,
     adding: false,
     snackbar: '',
     loading: true,
+    unsaved: false,
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const fetch = async (domainID: number, folderID: string) => await dispatch(fetchFolderDetails(domainID, folderID));
+  const edit = async (domainID: number, folder: UpdateFolder) => await dispatch(editFolderData(domainID, folder));
+  const fetchOwners = async (domainID: number, folderID: string) =>
+    await dispatch(fetchOwnersData(domainID, folderID, { limit: 1000000, level: 0 }));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch, fetchOwners } = props;
       const splits = window.location.pathname.split('/');
       const folderId = splits[3];
       // If folder is IPM_SUBTREE
       if(folderId === IPM_SUBTREE_ID) {
         setState({ ...state, folder: IPM_SUBTREE_OBJECT, readonly: true, loading: false });
-        await fetchOwners(splits[1], IPM_SUBTREE_ID);
+        await fetchOwners(domain.ID, IPM_SUBTREE_ID);
       } else {
-        const folder = await fetch(splits[1], folderId);
+        const folder = await fetch(domain.ID, folderId);
         setState({ ...state, folder: folder, readonly: false, loading: false });
-        await fetchOwners(splits[1], folder.folderid);
+        await fetchOwners(domain.ID, folder.folderid);
       }
     };
 
@@ -108,9 +119,8 @@ const FolderDetails = props => {
   }
 
   const handleEdit = () => {
-    const { domain } = props;
     const { folder } = state;
-    props.edit(domain.ID, {
+    edit(domain.ID, {
       ...folder,
       creationtime: undefined,
     })
@@ -122,11 +132,10 @@ const FolderDetails = props => {
 
   const handlePermissionsSuccess = () => setState({ ...state, snackbar: "Success!" });
 
-  const handlePermissionsError = error => setState({ ...state, snackbar: error });
+  const handlePermissionsError = (error: string) => setState({ ...state, snackbar: error });
 
   const handlePermissionsCancel = () => setState({ ...state, adding: false });
 
-  const { classes, t, domain } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { folder, adding, snackbar, readonly, loading } = state;
 
@@ -191,10 +200,11 @@ const FolderDetails = props => {
           >
             {t('Open permissions')}
           </Button>
+          {folder.folderid !== IPM_SUBTREE_ID &&
           <FormControlLabel
             control={
               <Checkbox
-                checked={folder.syncMobile || false}
+                checked={(folder as Folder).syncMobile || false}
                 onChange={handleCheckbox('syncMobile')}
                 color="primary"
               />
@@ -206,7 +216,7 @@ const FolderDetails = props => {
                 <Info className={classes.infoIcon}/>
               </Tooltip>
             </span>}
-          />
+          />}
         </Grid2>
         <Grid2 container>
           <Button
@@ -239,32 +249,5 @@ const FolderDetails = props => {
   );
 }
 
-FolderDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  add: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchOwners: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (domainID, folderID) => await dispatch(fetchFolderDetails(domainID, folderID))
-      .then(folder => folder)
-      .catch(msg => Promise.reject(msg)),
-    edit: async (domainID, folder) => await dispatch(editFolderData(domainID, folder))
-      .catch(msg => Promise.reject(msg)),
-    add: async (domainID, folder) => {
-      await dispatch(addFolderData(domainID, folder)).catch(msg => Promise.reject(msg));
-    },
-    fetchOwners: async (domainID, folderID) => {
-      await dispatch(fetchOwnersData(domainID, folderID, { limit: 1000000, level: 0 }))
-        .catch(msg => Promise.reject(msg));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(FolderDetails, styles)));
+export default FolderDetails;

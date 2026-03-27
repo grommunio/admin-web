@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -12,16 +11,20 @@ import {
   TextField,
   FormControl,
   Button,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editServerData, fetchServerDetails } from '../actions/servers';
 import { getStringAfterLastSlash } from '../utils';
 import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../store';
+import { Server, UpdateServer } from '@/types/servers';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -37,21 +40,33 @@ const styles = theme => ({
   typo: {
     margin: theme.spacing(0, 0, 2, 0),
   },
-});
+}));
 
-const ServerDetails = props => {
+const ServerDetails = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
-    server: {},
+    server: {
+      ID: 0,
+      hostname: "",
+      extname: "",
+      domains: 0,
+      users: 0,
+    } as Server,
     unsaved: false,
     loading: true,
+    snackbar: "",
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const edit = async (server: UpdateServer) => await dispatch(editServerData(server));
+  const fetch = async (id: number) => await dispatch(fetchServerDetails(id));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch } = props;
-      const server = await fetch(getStringAfterLastSlash())
+      const server = await fetch(parseInt(getStringAfterLastSlash()))
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       setState({
         ...state, 
@@ -63,7 +78,7 @@ const ServerDetails = props => {
     inner();
   }, []);
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof UpdateServer) => (event: ChangeEvent) => {
     setState({
       ...state, 
       server: {
@@ -75,7 +90,6 @@ const ServerDetails = props => {
   }
 
   const handleEdit = () => {
-    const { edit } = props;
     const { server } = state;
     edit({
       ID: server.ID,
@@ -86,12 +100,11 @@ const ServerDetails = props => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const { classes, t } = props;
   const { loading, server, snackbar } = state;
   const { hostname, extname, domains, users } = server;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
@@ -151,21 +164,5 @@ const ServerDetails = props => {
   );
 }
 
-ServerDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    edit: async server => await dispatch(editServerData(server)).catch(message => Promise.reject(message)),
-    fetch: async id => await dispatch(fetchServerDetails(id))
-      .then(server => server)
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(ServerDetails, styles)));
+export default ServerDetails;

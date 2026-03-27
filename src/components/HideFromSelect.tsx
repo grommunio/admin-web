@@ -9,7 +9,7 @@ import { UserProperties } from '@/types/users';
 
 type HideFromSelectProps = {
   attributehidden_gromox: number;
-  setState: (prevState: any) => (_: any) => void; // TODO: Improve typing
+  setState: (_: any) => void; // TODO: Improve typing
 }
 
 const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProps) => {

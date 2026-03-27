@@ -6,6 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
   Slider, SliderTypeMap, TextField, TextFieldVariants, Theme, Typography } from '@mui/material';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -35,9 +36,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
 type SyncPoliciesProps = {
   syncPolicy: any; // TODO Properly type sync policies
   defaultPolicy: any; // TODO Properly type sync policies
-  handleChange: (field: string) => (() => void);
-  handleSlider: (field: string) => (() => void);
-  handleCheckbox: (field: string) => (() => void);
+  handleChange: (field: string) => (e: ChangeEvent) => void;
+  handleSlider: (field: string) => (_: never, newVal: number) => void;
+  handleCheckbox: (field: string) => (_: never, newValue: boolean) => void;
 }
 
 const SyncPolicies = (props: SyncPoliciesProps) => {

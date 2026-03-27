@@ -20,7 +20,7 @@ export function fetchFolderTree(domainID: number, params?: URLParams) {
   return defaultListHandler(folderTree, FOLDERS_TREE_RECEIVED, domainID, params);
 }
 
-export function fetchFolderDetails(domainID: number, folderID: number) {
+export function fetchFolderDetails(domainID: number, folderID: string) {
   return defaultDetailsHandler(folderDetails, domainID, folderID);
 }
 

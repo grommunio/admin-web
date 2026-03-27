@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -13,18 +12,13 @@ import {
   FormControl,
   MenuItem,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Tabs,
   Tab,
   FormControlLabel,
   Checkbox,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { editDomainData, fetchDomainDetails } from '../actions/domains';
-import { changeDomainPassword } from '../api';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SyncPolicies from '../components/SyncPolicies';
@@ -35,8 +29,13 @@ import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import { AppSettingsAlt, Dns } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../store';
+import { ChangeEvent } from '@/types/common';
+import { Org } from '@/types/orgs';
+import { Server } from '@/types/servers';
+import { UpdateDomain } from '@/types/domains';
 
-const styles = theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -55,19 +54,26 @@ const styles = theme => ({
   tabs: {
     marginTop: 16,
   },
-});
+}));
 
-const DomainListDetails = props => {
+const DomainDetails = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const orgs = useAppSelector(state => state.orgs.Orgs);
+  const capabilities = useAppSelector(state => state.auth.capabilities);
+  const servers = useAppSelector(state => state.servers.Servers);
   const [state, setState] = useState({
+    ID: 0,
     domainname: '',
     domainStatus: 0,
-    orgID: '',
-    maxUser: 0,
+    orgID: null,
+    maxUser: "",
     title: '',
     address: '',
     adminName: '',
     tel: '',
-    homeserver: '',
+    homeserver: null,
     syncPolicy: {},
     defaultPolicy: {},
     changingPw: false,
@@ -76,21 +82,27 @@ const DomainListDetails = props => {
     tab: 0,
     chat: false,
     loading: true,
+    snackbar: "",
+    unsaved: false,
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const edit = async (domain: UpdateDomain) => await dispatch(editDomainData(domain));
+  const fetch = async (id: number) => await dispatch(fetchDomainDetails(id));
+  const fetchOrgs = async () =>
+    await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }));
+  const fetchServers = async () =>
+    await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch, fetchOrgs, fetchServers, capabilities } = props;
-
       if(capabilities.includes(SYSTEM_ADMIN_READ)) {
         await fetchServers()
           .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       }
 
-      const domain = await fetch(getStringAfterLastSlash())
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      const domain = await fetch(parseInt(getStringAfterLastSlash()));
       const defaultPolicy = domain.defaultPolicy;
       domain.syncPolicy = domain.syncPolicy || {};
       setState({
@@ -116,21 +128,21 @@ const DomainListDetails = props => {
 
   useEffect(() => {
     const { orgID } = state;
-    const domainOrg = props.orgs.find(o => o.ID === orgID);
+    const domainOrg = orgs.find((o: Org) => o.ID === orgID);
     setState({
       ...state, 
       orgID: domainOrg || "",
     });
-  }, [props.orgs]);
+  }, [orgs]);
 
-  const handleInput = field => event => {
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       [field]: event.target.value,
     });
   }
 
-  const handleCheckbox = field => event => setState({
+  const handleCheckbox = (field: string) => (event: ChangeEvent) => setState({
     ...state, 
     [field]: event.target.checked,
     unsaved: true,
@@ -139,7 +151,7 @@ const DomainListDetails = props => {
   const handleEdit = () => {
     const { ID, domainname, domainStatus, orgID, chat, homeserver,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = state;
-    props.edit({
+    edit({
       ID,
       domainname,
       domainStatus,
@@ -157,25 +169,13 @@ const DomainListDetails = props => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handlePasswordChange = async () => {
-    const { domain, newPw } = state;
-    await changeDomainPassword(domain.ID, newPw);
-    setState({ ...state, changingPw: false });
-  }
-
-  const handleKeyPress = event => {
-    const { newPw, checkPw } = state;
-    if(event.key === 'Enter' && newPw === checkPw) handlePasswordChange();
-  }
-
   const handleBack = () => {
-    const { capabilities } = props;
     navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
   }
 
   const handleTab = (e, tab) => setState({ ...state, tab })
 
-  const handleSyncChange = field => event => {
+  const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -186,7 +186,7 @@ const DomainListDetails = props => {
     });
   }
 
-  const handleSyncCheckboxChange = field => (event, newVal) => {
+  const handleSyncCheckboxChange = (field: string) => (_: never, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -197,7 +197,7 @@ const DomainListDetails = props => {
     });
   }
 
-  const handleSlider = field => (event, newVal) => {
+  const handleSlider = (field: string) => (_: never, newVal: number) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -208,24 +208,23 @@ const DomainListDetails = props => {
     });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: Org) => {
     setState({
       ...state, 
       [field]: newVal || '',
     });
   }
 
-  const handleServer =(e, newVal) => {
+  const handleServer =(_: never, newVal: Server) => {
     setState({
       ...state, 
       homeserver: newVal || '',
     });
   }
 
-  const { classes, t, orgs, capabilities, servers } = props;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
-    tel, syncPolicy, checkPw, newPw, changingPw, snackbar, tab, defaultPolicy,
+    tel, syncPolicy, snackbar, tab, defaultPolicy,
     chat, homeserver, loading } = state;
 
   return (
@@ -271,8 +270,8 @@ const DomainListDetails = props => {
               </MenuItem>
             ))}
           </TextField>
-          {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete
-            value={orgID || ''}
+          {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete<Org>
+            value={orgID || ""}
             filterAttribute={'name'}
             onChange={handleAutocomplete('orgID')}
             className={classes.input} 
@@ -359,83 +358,9 @@ const DomainListDetails = props => {
           {t('Save')}
         </Button>
       </Paper>
-      <Dialog open={!!changingPw} onClose={() => setState({ ...state, changingPw: false })}>
-        <DialogTitle>{t('Change password')}</DialogTitle>
-        <DialogContent>
-          <TextField 
-            className={classes.input} 
-            label={t("New password")} 
-            fullWidth
-            type="password"
-            value={newPw}
-            onChange={event => setState({ ...state, newPw: event.target.value })}
-            autoFocus
-            onKeyPress={handleKeyPress}
-          />
-          <TextField 
-            className={classes.input} 
-            label={t("Repeat new password")} 
-            fullWidth
-            type="password"
-            value={checkPw}
-            onChange={event => setState({ ...state, checkPw: event.target.value })}
-            onKeyPress={handleKeyPress}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            color="secondary"
-            onClick={() => setState({ ...state, changingPw: false })}>
-            {t('Cancel')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePasswordChange}
-            disabled={checkPw !== newPw}
-          >
-            {t('Save')}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </ViewWrapper>
   );
 }
 
-DomainListDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchOrgs: PropTypes.func.isRequired,
-  fetchServers: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  orgs: PropTypes.array.isRequired,
-  capabilities: PropTypes.array.isRequired,
-  servers: PropTypes.array.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    orgs: state.orgs.Orgs,
-    capabilities: state.auth.capabilities,
-    servers: state.servers.Servers,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    edit: async domain => {
-      await dispatch(editDomainData(domain)).catch(message => Promise.reject(message));
-    },
-    fetch: async id => await dispatch(fetchDomainDetails(id))
-      .then(domain => domain)
-      .catch(message => Promise.reject(message)),
-    fetchOrgs: async () => await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-    fetchServers: async () => await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }))
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(DomainListDetails, styles)));
+export default DomainDetails;

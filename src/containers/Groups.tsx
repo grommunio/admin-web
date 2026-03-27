@@ -26,6 +26,8 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { useTable } from '../hooks/useTable';
 import { GroupListItem } from '@/types/groups';
 import { DomainViewProps } from '@/types/common';
+import { URLParams } from '@/actions/types';
+import { SyncLdapParams } from '@/types/ldap';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -59,10 +61,10 @@ const Groups = ({ domain }: DomainViewProps) => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
-  const fetchTableData = async (domainID, params) => await dispatch(fetchGroupsData(domainID, params));
-  const deleteItem = async (domainID, id) => await dispatch(deleteGroupData(domainID, id));
-  const sync = async (params, domainID) => await dispatch(syncLdapUsers(params, domainID));
-  const check = async params => await dispatch(checkLdapUsers(params));
+  const fetchTableData = async (params: URLParams) => await dispatch(fetchGroupsData(domain.ID, params));
+  const deleteItem = async (domainID: number, id: number) => await dispatch(deleteGroupData(domainID, id));
+  const sync = async (params: SyncLdapParams, domainID: number) => await dispatch(syncLdapUsers(params, domainID));
+  const check = async (params: { domain:  number }) => await dispatch(checkLdapUsers(params));
 
   const table = useTable<GroupListItem>({
     fetchTableData,
@@ -99,7 +101,7 @@ const Groups = ({ domain }: DomainViewProps) => {
 
   const handleCheckSuccess = () => {
     const { order, orderBy, match } = tableState;
-    fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+    fetchTableData({ match: match || undefined, sort: orderBy + ',' + order })
       .then(() => setState({ ...state, checking: false }))
       .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
   };
@@ -130,7 +132,7 @@ const Groups = ({ domain }: DomainViewProps) => {
         } else {
           // No task created -> Reload table data
           setState({ ...state, snackbar: 'Success!' });
-          fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
+          fetchTableData({ match: match || undefined, sort: orderBy + ',' + order })
             .catch(msg => setState({ ...state, snackbar: msg }));
         }
       })

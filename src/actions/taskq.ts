@@ -9,8 +9,8 @@ export function fetchTaskqData(params: URLParams) {
   return defaultListHandler(taskq, TASK_DATA_RECEIVED, params);
 }
 
-export function fetchTaskDetails(domainID: number, taskID: number) {
-  return defaultDetailsHandler(taskDetails, domainID, taskID);
+export function fetchTaskDetails(taskID: number) {
+  return defaultDetailsHandler(taskDetails, taskID);
 }
 
 export function deleteTask(taskID: number) {

@@ -1,9 +1,15 @@
+export type TaskParam = {
+  username: string;
+  code: number;
+  message: string;
+}
+
 export type Task = {
   ID: number;
   command: string;
   created: string;
   message: string;
-  params: Record<string, string | number | boolean>;
+  params: Record<string, TaskParam[]>;
   state: number;
   updated: string;
 };

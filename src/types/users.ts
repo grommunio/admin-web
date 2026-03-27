@@ -23,6 +23,11 @@ export type UserProperties = {
   messagesizeextended: number;
   normalmessagesizeextended: number;
   outofofficestate: number;
+
+  // This should probably be removed
+  storagequotalimit: number,
+  prohibitreceivequota: number,
+  prohibitsendquota: number,
 }
 
 export type Altname = {

@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -20,8 +19,8 @@ import {
   List,
   ListItem,
   IconButton,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
 import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
@@ -34,8 +33,13 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
+import { useAppDispatch, useAppSelector } from '../store';
+import { UpdateGroup } from '@/types/groups';
+import { UpdateUser, UserProperties, User as UserType } from '@/types/users';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -60,18 +64,23 @@ const styles = theme => ({
   listTextfield: {
     flex: 1,
   },
-});
+}));
 
 // eslint-disable-next-line react/prop-types
-const GroupTab = ({ icon: Icon, ...props}) => <Tab
+const GroupTab = ({ icon: Icon, ...props }: any) => <Tab
   {...props}
   sx={{ minHeight: 48 }}
   iconPosition='start'
   icon={<Icon fontSize="small"/>}
 />
 
-const GroupDetails = props => {
+const GroupDetails = ({ domain }: DomainViewProps) => {1
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { Users } = useAppSelector(state => state.users);
   const [state, setState] = useState({
+    ID: 0,
     listname: '',
     displayname: '',
     hidden: 0,
@@ -84,15 +93,23 @@ const GroupDetails = props => {
     loading: true,
     user: {
       properties: {},
-    },
+    } as UserType,
     userDirty: false,
+    snackbar: "",
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const edit = async (domainID: number, group: UpdateGroup) => await dispatch(editGroupData(domainID, group));
+  const editUser = async (domainID: number, group: UpdateUser) => await dispatch(editUserData(domainID, group));
+  const fetch = async (domainID: number, id: number) => await dispatch(fetchGroupData(domainID, id));
+  const fetchUsers = async (domainID: number) =>
+    await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }));
+  const fetchOrgUsers = async (orgID: number) =>
+    await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }));
+
   useEffect(() => {
     const inner = async () => {
-      const { domain, fetchUsers, fetchOrgUsers } = props;
       (context.includes(ORG_ADMIN) ? fetchOrgUsers(domain.orgID) : fetchUsers(domain.ID))
         .catch(message => {
           setState({ ...state, snackbar: message || 'Unknown error' });
@@ -104,11 +121,10 @@ const GroupDetails = props => {
 
   useEffect(() => {
     const inner = async () => {
-      const { fetch, Users } = props;
       const table = {};
-      const group = await fetch(domain.ID, getStringAfterLastSlash())
+      const group = await fetch(domain.ID, parseInt(getStringAfterLastSlash()))
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
-      Users.forEach(u => table[u.username] = u);
+      Users.forEach((u: UserType) => table[u.username] = u);
       if(group?.ID) {
         const associations = [];
         group.associations.forEach(groupUsername => {
@@ -131,7 +147,7 @@ const GroupDetails = props => {
     };
 
     inner();
-  }, [props.Users]);
+  }, [Users]);
 
   const listPrivileges = [
     { ID: LIST_PRIVILEGE.ALL, name: "All" },
@@ -141,9 +157,9 @@ const GroupDetails = props => {
     { ID: LIST_PRIVILEGE.OUTGOING, name: "Outgoing (deprecated)" },
   ];
 
-  const handlePrivilegeChange = event => {
+  const handlePrivilegeChange = (event: ChangeEvent) => {
     const { specifieds } = state;
-    const val = event.target.value;
+    const val = parseInt(event.target.value);
     setState({
       ...state, 
       listPrivilege: val,
@@ -151,7 +167,7 @@ const GroupDetails = props => {
     });
   }
 
-  const handleInput = field => event => {
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       [field]: event.target.value,
@@ -159,7 +175,6 @@ const GroupDetails = props => {
   }
 
   const handleEdit = () => {
-    const { edit, domain, editUser } = props;
     const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds,
       user, userDirty } = state;
     edit(domain.ID, {
@@ -185,26 +200,26 @@ const GroupDetails = props => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
 
-  const handleCheckbox = field => (e) => setState({ ...state, [field]: e.target.checked ? 1 : 0 });
+  const handleCheckbox = (field: string) => (e: ChangeEvent) => setState({ ...state, [field]: e.target.checked ? 1 : 0 });
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: UserType) => {
     setState({
       ...state, 
       [field]: newVal || '',
     });
   }
 
-  const handleTabChange = (_, tab) => {
+  const handleTabChange = (_: never, tab: number) => {
     location.hash = '#' + tab;
     setState({ ...state, tab });
   }
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     const { user } = state;
     setState({
       ...state, 
@@ -219,7 +234,8 @@ const GroupDetails = props => {
     });
   }
 
-  const handleAliasEdit = (editType, idx) => event => {
+  // TODO: Fix typing
+  const handleAliasEdit = (editType: 'edit' | 'add' | 'remove', idx?: number) => (event: any) => {
     const { user } = state;
     const copy = [...user.aliases];
     switch(editType) {
@@ -246,10 +262,9 @@ const GroupDetails = props => {
   }
 
   const filteredUserOptions = useMemo(() => {
-    return props.Users.filter(u => u.properties?.displaytypeex !== USER_TYPE.ROOM);
-  }, [props.Users]);
+    return Users.filter((u: UserType) => u.properties?.displaytypeex !== USER_TYPE.ROOM);
+  }, [Users]);
 
-  const { classes, t, domain } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
     loading, user } = state;
@@ -276,9 +291,6 @@ const GroupDetails = props => {
             onChange={handleTabChange}
             variant="scrollable"
             scrollButtons="auto"
-            classes={{
-              scroller: classes.scroller,
-            }}
           >
             <GroupTab label={t("Group")} icon={SwitchAccount}/>
             <GroupTab label={t("Details")} icon={Badge}/>
@@ -405,7 +417,7 @@ const GroupDetails = props => {
         />}
         {tab === 3 && <FormControl className={classes.form}>
           <Typography variant="h6">{t('E-Mail Addresses')}</Typography>
-          <List className={classes.list}>
+          <List>
             {(user?.aliases || []).map((alias, idx) => <ListItem key={idx} className={classes.listItem}>
               <TextField
                 className={classes.listTextfield}
@@ -420,7 +432,9 @@ const GroupDetails = props => {
             )}
           </List>
           <Grid2 container justifyContent="center">
-            <Button variant="contained" onClick={handleAliasEdit("add")}>{t('addHeadline', { item: 'E-Mail' })}</Button>
+            <Button variant="contained" onClick={handleAliasEdit("add")}>
+              {t('addHeadline', { item: 'E-Mail' })}
+            </Button>
           </Grid2>
         </FormControl>}
         <Button
@@ -447,41 +461,5 @@ const GroupDetails = props => {
   );
 }
 
-GroupDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchOrgUsers: PropTypes.func.isRequired,
-  fetchUsers: PropTypes.func.isRequired,
-  edit: PropTypes.func.isRequired,
-  editUser: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  Users: PropTypes.array.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    Users: state.users.Users,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    edit: async (domainID, group) => {
-      await dispatch(editGroupData(domainID, group)).catch(message => Promise.reject(message));
-    },
-    editUser: async (domainID, group) =>
-      await dispatch(editUserData(domainID, group)).catch(message => Promise.reject(message)),
-    fetch: async (domainID, id) => await dispatch(fetchGroupData(domainID, id))
-      .then(group => group)
-      .catch(message => Promise.reject(message)),
-    fetchUsers: async (domainID) =>
-      await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }))
-        .catch(message => Promise.reject(message)),
-    fetchOrgUsers: async orgID => await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }))
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(GroupDetails, styles)));
+export default GroupDetails;

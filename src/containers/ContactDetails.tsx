@@ -2,19 +2,21 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import { Button, Divider, Grid2, Paper, TextField, Typography } from '@mui/material';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
+import { Button, Divider, Grid2, Paper, TextField, Theme, Typography } from '@mui/material';
 import ViewWrapper from '../components/ViewWrapper';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { editUserData, fetchUserData } from '../actions/users';
-import { connect } from 'react-redux';
 import { useNavigate } from 'react-router';
 import HideFromSelect from '../components/HideFromSelect';
+import { useAppDispatch } from '../store';
+import { UpdateUser, UserProperties, User as UserType } from '@/types/users';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -30,23 +32,32 @@ const styles = theme => ({
     display: 'flex',
     margin: theme.spacing(0, 0, 2, 0),
   },
-});
+}));
 
-const ContactDetails = props => {
+
+const ContactDetails = ({ domain }: DomainViewProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     user: {
       properties: {},
-    },
+    } as UserType,
+    snackbar: "",
     loading: true,
+    unsaved: false,
   });
   const navigate = useNavigate();
 
+  const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserData(domainID, userID));
+  const edit = async (domainID: number, user: UpdateUser) => await dispatch(editUserData(domainID, user));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch } = props;
       const splits = window.location.pathname.split('/');
-      const user = await fetch(splits[1], splits[3])
+      const user = await fetch(parseInt(splits[1]), parseInt(splits[3]))
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
+      if(!user) return;
       user.syncPolicy = user.syncPolicy || {};
       setState({ ...state, user, loading: false });
     };
@@ -54,7 +65,7 @@ const ContactDetails = props => {
     inner();
   }, []);
 
-  const handlePropertyChange = field => event => {
+  const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
     const { user } = state;
     setState({
       ...state, 
@@ -70,10 +81,9 @@ const ContactDetails = props => {
   }
 
   const handleEdit = () => {
-    const { edit, domain } = props;
     const { user } = state;
     const { properties } = user;
-    
+
     edit(domain.ID, {
       ID: user.ID,
       properties: {
@@ -87,7 +97,6 @@ const ContactDetails = props => {
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  const { classes, t } = props;
   const { snackbar, user, loading } = state;
   const { properties } = user;
 
@@ -149,23 +158,5 @@ const ContactDetails = props => {
   );
 }
 
-ContactDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  edit: PropTypes.func.isRequired,
-}
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (domainID, userID) => await dispatch(fetchUserData(domainID, userID, true))
-      .then(user => user)
-      .catch(msg => Promise.reject(msg)),
-    edit: async (domainID, user) => 
-      await dispatch(editUserData(domainID, user)).catch(msg => Promise.reject(msg)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(ContactDetails, styles)));
+export default ContactDetails;

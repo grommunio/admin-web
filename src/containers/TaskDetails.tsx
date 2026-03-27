@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -13,8 +12,8 @@ import {
   Divider,
   Tooltip,
   IconButton,
+  Theme,
 } from '@mui/material';
-import { connect, useDispatch } from 'react-redux';
 import { getStringAfterLastSlash, getTaskState, setDateTimeString } from '../utils';
 import Feedback from '../components/Feedback';
 import ViewWrapper from '../components/ViewWrapper';
@@ -22,30 +21,20 @@ import { cancelTask, deleteTask, fetchTaskDetails } from '../actions/taskq';
 import { green, red } from '@mui/material/colors';
 import { CancelOutlined, Delete, Refresh } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../store';
+import { TaskParam } from '@/types/tasks';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
     borderRadius: 6,
   },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(4),
-  },
-  input: {
-    marginBottom: theme.spacing(3),
-  },
-  select: {
-    minWidth: 60,
-  },
   description: {
     display: 'inline-block',
     fontWeight: 500,
     minWidth: 240,
-  },
-  data: {
-    padding: '8px 0',
   },
   params: {
     padding: '16px 0 8px 0',
@@ -56,16 +45,8 @@ const styles = theme => ({
   resultParam: {
     padding: '4px 8px 4px 0px',
   },
-  resultKey: {
-    display: 'inline-block',
-    fontWeight: 500,
-    minWidth: 120,
-  },
   container: {
     margin: theme.spacing(0, 2, 2, 2),
-  },
-  resultObj: {
-    margin: theme.spacing(3, 0),
   },
   flexRow: {
     padding: '4px 0px',
@@ -75,9 +56,12 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-});
+}));
 
-const TaskDetails = props => {
+const TaskDetails = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [task, setTask] = useState({
     ID: -1,
     command: '',
@@ -85,20 +69,19 @@ const TaskDetails = props => {
     created: null,
     updated: null,
     message: '',
-    params: {},
+    params: {} as Record<string, TaskParam[]>,
     loading: false,
+    snackbar: "",
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     refresh();
   }, []);
 
   const refresh = async () => {
-    const { fetch } = props;
     setTask({ ...task, loading: true });
-    const taskData = await fetch(getStringAfterLastSlash())
+    const taskData = await dispatch(fetchTaskDetails(parseInt(getStringAfterLastSlash())))
       .catch(message => setTask({ ...task, snackbar: message || 'Unknown error' }));
     setTask({
       ...task, 
@@ -127,7 +110,6 @@ const TaskDetails = props => {
     navigate(`/${path}`);
   }
 
-  const { classes, t } = props;
   const { loading, snackbar, ID, command, state, created, updated, message, params } = task;
 
   return (
@@ -221,19 +203,5 @@ const TaskDetails = props => {
   );
 }
 
-TaskDetails.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (domainID, id) => await dispatch(fetchTaskDetails(domainID, id))
-      .then(task => task)
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(TaskDetails, styles)));
+export default TaskDetails;

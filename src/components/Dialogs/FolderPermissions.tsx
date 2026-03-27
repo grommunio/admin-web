@@ -60,7 +60,7 @@ type FolderPermissionsProps = {
   folderID: string;
   onCancel: () => void;
   onSuccess: () => void;
-  onError: () => void;
+  onError: (err: string) => void;
 }
 
 const FolderPermissions = (props: FolderPermissionsProps) => {
