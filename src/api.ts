@@ -839,7 +839,7 @@ export function serviceFile(service: string, filename: string) {
   };
 }
 
-export function editFile(service: string, filename: string, file: any) {
+export function editFile(service: string, filename: string, file: { data: Record<string, string> }) {
   return async () => {
     return await put('/system/dbconf/' + service + '/' + filename + '/', file);
   };
@@ -879,11 +879,11 @@ export function mailq() {
   };
 }
 
-export async function flush(params: { queue: number }) {
+export async function flush(params: { queue: string }) {
   return await post(buildQuery('/system/mailq/flush', params));
 }
 
-export function deleteMailq(queue: number) {
+export function deleteMailq(queue: string) {
   return async () => {
     return await post(buildQuery('/system/mailq/delete', { queue }));
   };

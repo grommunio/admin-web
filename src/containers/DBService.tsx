@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
@@ -17,18 +16,20 @@ import {
   Divider,
   IconButton,
   ListItemButton,
+  Theme,
 } from '@mui/material';
-import { connect } from 'react-redux';
-import { fetchServiceFiles, deleteDBFile, renameDBService } from '../actions/dbconf';
+import { fetchServiceFiles, renameDBService } from '../actions/dbconf';
 import { getStringAfterLastSlash } from '../utils';
 import { Delete } from '@mui/icons-material';
-import DomainDataDelete from '../components/Dialogs/DomainDataDelete';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { useNavigate } from 'react-router';
+import { useAppDispatch } from '../store';
+import DeleteServiceFile from '../components/Dialogs/DeleteServiceFile';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -41,22 +42,30 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-});
+}));
 
-const DBService = props => {
+const DBService = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     files: [],
     name: '',
     unsaved: false,
-    deleting: false,
+    deleting: null,
     loading: true,
+    snackbar: "",
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const fetch = async (service: string) =>
+    await dispatch(fetchServiceFiles(service));
+  const rename = async (service: string, file: string) =>
+    await dispatch(renameDBService(service, file));
+
   useEffect(() => {
     const inner = async () => {
-      const { fetch } = props;
       const name = getStringAfterLastSlash();
       const files = await fetch(name)
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
@@ -98,12 +107,11 @@ const DBService = props => {
   }
 
   const handleEdit = () => {
-    props.rename(getStringAfterLastSlash(), state.name)
+    rename(getStringAfterLastSlash(), state.name)
       .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const { classes, t } = props;
   const { name, snackbar, files, deleting, loading } = state;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
@@ -162,40 +170,17 @@ const DBService = props => {
           {t('Save')}
         </Button>
       </Paper>
-      <DomainDataDelete
+      <DeleteServiceFile
         open={!!deleting}
-        delete={props.delete}
         onSuccess={handleDeleteSuccess}
         onError={handleDeleteError}
         onClose={handleDeleteClose}
-        item={deleting}
-        id={deleting}
-        domainID={name}
+        file={deleting}
+        service={name}
       />
     </ViewWrapper>
   );
 }
 
-DBService.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-  rename: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async (service) => await dispatch(fetchServiceFiles(service))
-      .then(files => files)
-      .catch(message => Promise.reject(message)),
-    delete: async (service, file) => await dispatch(deleteDBFile(service, file))
-      .then(msg => msg)
-      .catch(message => Promise.reject(message)),
-    rename: async (service, file) => await dispatch(renameDBService(service, file))
-      .catch(message => Promise.reject(message)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(DBService, styles)));
+export default DBService;

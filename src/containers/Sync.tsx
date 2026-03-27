@@ -2,9 +2,8 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from "react-i18next";
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from "react-i18next";
 import {
   Paper,
   Table,
@@ -19,8 +18,9 @@ import {
   Checkbox,
   MenuItem,
   IconButton,
+  TableCellProps,
+  TableSortLabelProps,
 } from "@mui/material";
-import { connect } from "react-redux";
 import { fetchSyncData } from "../actions/sync";
 import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined } from "@mui/icons-material";
 import { getStringFromCommand, getTimePast } from "../utils";
@@ -29,8 +29,11 @@ import { grey, red } from "@mui/material/colors";
 import TableViewContainer from "../components/TableViewContainer";
 import SearchTextfield from "../components/SearchTextfield";
 import TableActionGrid from "../components/TableActionGrid";
+import { useAppDispatch, useAppSelector } from "../store";
+import { ActiveSyncSessionRow, FetchSyncParams } from "@/types/sync";
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   select: {
     maxWidth: 224,
     marginRight: 8,
@@ -57,9 +60,13 @@ const styles = {
     color: red['500'],
     fontWeight: 400,
   },
-};
+}));
 
-const Sync = props => {
+const Sync = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const sync = useAppSelector(state => state.sync.Sync);
   const [state, setState] = useState({
     snackbar: null,
     order: 'desc',
@@ -72,6 +79,8 @@ const Sync = props => {
     filterUpdated: 120,
   });
   const [sortedDevices, setSortedDevices] = useState([]);
+
+  const fetch = async (params: FetchSyncParams) => await dispatch(fetchSyncData(params));
 
   const columns = [
     { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
@@ -97,23 +106,19 @@ const Sync = props => {
   useEffect(() => {
     const { orderBy, type } = state;
     handleSort(orderBy, type, false)();
-  }, [props.sync]);
+  }, [sync]);
   
   const handleRefresh = () => {
     const { filterEnded, filterUpdated } = state;
-    props.fetch({ filterEnded, filterUpdated })
+    fetch({ filterEnded, filterUpdated })
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
   /**
    * Sorts table rows
-   * @param {string} attribute the table attribute to sort by
-   * @param {string} type either int or string expected
-   * @param {Boolean} switchOrder force a switch of the previous order
-   * @returns 
    */
-  const handleSort = (attribute, type, switchOrder) => () => {
-    const devices = [...props.sync];
+  const handleSort = (attribute: string, type: string, switchOrder: boolean) => () => {
+    const devices = [...sync];
     const { order: stateOrder, orderBy } = state;
     const order = orderBy === attribute && stateOrder === "asc" ? "desc" : "asc";
     if((switchOrder && order === 'asc') || (!switchOrder && stateOrder === 'asc')) {
@@ -129,8 +134,7 @@ const Sync = props => {
     setState({ ...state, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
-  const getRowClass = (row, diff) => {
-    const { classes } = props;
+  const getRowClass = (row: ActiveSyncSessionRow, diff) => {
     if(row.justUpdated) return classes.justUpdated;
     if(row.ended !== 0) return classes.terminated;
     if(row.push && diff > 32) return classes.darkred;
@@ -152,7 +156,6 @@ const Sync = props => {
 
   const handleCheckbox = field => ({ target: t }) => setState({ ...state, [field]: t.checked });
 
-  const { classes, t, sync } = props;
   const { snackbar, order, orderBy, match, showPush, onlyActive,
     filterEnded, filterUpdated } = state;
 
@@ -237,12 +240,11 @@ const Sync = props => {
               {columns.map((column) => (
                 <TableCell
                   key={column.value}
-                  padding={column.padding || 'normal'}
+                  padding={(column.padding || 'normal') as TableCellProps["padding"]}
                 >
                   <TableSortLabel
                     active={orderBy === column.value}
-                    align="left" 
-                    direction={order}
+                    direction={order as TableSortLabelProps["direction"]}
                     onClick={handleSort(column.value, column.type, true)}
                   >
                     {t(column.label)}
@@ -255,7 +257,7 @@ const Sync = props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(sortedDevices || sync).map((obj, idx) => {
+            {(sortedDevices || sync).map((obj: ActiveSyncSessionRow, idx: number) => {
               const timePast = getTimePast(obj.diff);
               const matches = getMatch(obj);
               return matches ? (
@@ -283,28 +285,5 @@ const Sync = props => {
   );
 }
 
-Sync.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  sync: PropTypes.array.isRequired,
-  fetch: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = (state) => {
-  return { sync: state.sync.Sync || [] };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async (params) => {
-      await dispatch(fetchSyncData(params)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(Sync, styles)));
+export default Sync;

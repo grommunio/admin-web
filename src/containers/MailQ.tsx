@@ -2,17 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Theme, Tooltip, Typography } from "@mui/material";
 import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
 import { parseUnixtime } from "../utils";
 import { Delete, Replay, PlayForWork } from "@mui/icons-material";
-import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
-import { withStyles } from 'tss-react/mui';
+import { useTranslation } from "react-i18next";
+import { makeStyles } from 'tss-react/mui';
+import { useAppDispatch } from "../store";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   logViewer: {
     flex: 1,
   },
@@ -38,9 +38,12 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-});
+}));
 
-const MailQ = props => {
+const MailQ = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     selected: [],
     snackbar: '',
@@ -51,6 +54,12 @@ const MailQ = props => {
     gromoxMailq: '',
     postqueue: [],
   });
+  const { gromoxMailq, postqueue } = data;
+
+  const fetch = async () => await dispatch(fetchMailQData());
+  const flush = async (qIDs: string[]) => await dispatch(flushMailQData(qIDs));
+  const deleteQ = async (qID: string) => await dispatch(deleteMailQData(qID));
+  const requeue = async (qID: string) => await dispatch(requeueMailQData(qID));
 
   useEffect(() => {
     fetchData();
@@ -64,7 +73,7 @@ const MailQ = props => {
   }, []);
 
   const fetchData = async () => {
-    const data = await props.fetch()
+    const data = await fetch()
       .catch(snackbar => setState({ ...state, snackbar }));
     if(data) {
       setState({ ...state, loading: false });
@@ -73,23 +82,20 @@ const MailQ = props => {
   }
 
   const handleFlush = () => {
-    const { flush } = props;
     flush(state.selected)
       .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
   const handleDelete = () => {
-    const { selected, postqueue } = state;
-    const { deleteQ } = props;
+    const { selected } = state;
     deleteQ(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
       .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
   const handleRequeue = () => {
-    const { selected, postqueue } = state;
-    const { requeue } = props;
+    const { selected } = state;
     requeue(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
       .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
       .catch(snackbar => setState({ ...state, snackbar }));
@@ -97,7 +103,7 @@ const MailQ = props => {
 
   const handleCheckAll = ({ target: t }) => setState({
     ...state,
-    selected: t.checked ? state.postqueue.map(entry => entry.queue_id) : [],
+    selected: t.checked ? postqueue.map(entry => entry.queue_id) : [],
   });
 
   const handleCheckbox = qID => (e) => {
@@ -110,9 +116,7 @@ const MailQ = props => {
     setState({ ...state, selected: copy });
   };
 
-  const { classes, t } = props;
   const { selected, snackbar, loading } = state;
-  const { gromoxMailq, postqueue } = data;
   const actionsDisabled = selected.length === 0;
   return (
     <TableViewContainer
@@ -205,27 +209,5 @@ const MailQ = props => {
   );
 }
 
-MailQ.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  flush: PropTypes.func.isRequired,
-  deleteQ: PropTypes.func.isRequired,
-  requeue: PropTypes.func.isRequired,
-};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async () => await dispatch(fetchMailQData())
-      .catch((error) => Promise.reject(error)),
-    flush: async qIDs => await dispatch(flushMailQData(qIDs))
-      .catch((error) => Promise.reject(error)),
-    deleteQ: async qID => await dispatch(deleteMailQData(qID))
-      .catch((error) => Promise.reject(error)),
-    requeue: async qID => await dispatch(requeueMailQData(qID))
-      .catch((error) => Promise.reject(error)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(
-  withTranslation()(withStyles(MailQ, styles)));
+export default MailQ;

@@ -36,6 +36,11 @@ export type ActiveSyncSession = {
   asversion: string;
 };
 
+export type ActiveSyncSessionRow = {
+  diff: number;
+  justUpdated: boolean;
+} & ActiveSyncSession;
+
 export type SyncPolicy = {
   allowbluetooth: TriState;
   allowbrowser: BoolNumber;

@@ -2,15 +2,13 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
 import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
-  Paper, TextField, Tooltip, Typography } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+  Paper, TextField, Theme, Tooltip, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
 import ImportDialog from '../components/Dialogs/ImportDialog';
 import { CapabilityContext } from '../CapabilityContext';
@@ -19,8 +17,13 @@ import ViewWrapper from '../components/ViewWrapper';
 import { AccountCircle, ContactMail, Groups } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
+import { useAppDispatch, useAppSelector } from '../store';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
+import { LdapUser } from '@/types/users';
+import { FetchLdapParams } from '@/types/ldap';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   pageTitle: {
     margin: theme.spacing(2, 2, 2, 2),
   },
@@ -37,9 +40,15 @@ const styles = theme => ({
   checkbox: {
     marginLeft: 16,
   },
-});
+}));
 
-const Ldap = props => {
+
+
+const Ldap = ({ domain }: DomainViewProps) => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { ldapUsers } = useAppSelector(state => state.ldap.Users);
   const [state, setState] = useState({
     loading: false,
     confirming: null,
@@ -51,15 +60,17 @@ const Ldap = props => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  const fetch = async (params: FetchLdapParams) => await dispatch(fetchLdapData(params));
+  const clear = () => dispatch(clearLdapSearch());
+
   useEffect(() => {
     return () => {
-      props.clear();
+      clear();
     }
   }, []);
 
-  const handleLdapSearch = ({ target: t }) => {
+  const handleLdapSearch = ({ target: t }: ChangeEvent) => {
     const { searchInOrg, showAll } = state;
-    const { domain } = props;
     const query = t.value;
     setSearch(query);
     if(query.length > 2) {
@@ -73,24 +84,22 @@ const Ldap = props => {
   }
 
   const debounceFetch = useCallback(throttle(params => {
-    const { fetch } = props;
     setState({ ...state, loading: true });
     fetch(params)
       .then(() => setState({ ...state, loading: false }))
       .catch(snackbar => setState({ ...state, snackbar, loading: false }));
   }, 500), []);
 
-  const handleImport = user => () => setState({ ...state,confirming: user });
+  const handleImport = (user: LdapUser) => () => setState({ ...state,confirming: user });
 
   const handleSuccess = () => setState({ ...state,confirming: false, snackbar: 'Success!' });
 
   const handleClose = () => setState({ ...state,confirming: false });
 
-  const handleError = error => setState({ ...state,snackbar: error });
+  const handleError = (error: string) => setState({ ...state,snackbar: error });
 
-  const handleCheckbox = field => e => {
+  const handleCheckbox = (field: keyof typeof state) => (e: ChangeEvent) => {
     const { checked } = e.target;
-    const { domain } = props;
     setState({ ...state, [field]: checked });
     if(search.length > 2) debounceFetch({
       query: search,
@@ -100,7 +109,6 @@ const Ldap = props => {
     });
   }
 
-  const { classes, t, domain, ldapUsers } = props;
   const { loading, snackbar, confirming, searchInOrg, showAll } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
@@ -110,7 +118,7 @@ const Ldap = props => {
     >
       <Typography variant="h2" className={classes.pageTitle}>
         <BackIcon onClick={() => navigate(-1)} className={classes.backIcon} />
-        <span className={classes.pageTitleSecondary}>| </span>
+        <span>| </span>
         {t("LDAP")}
       </Typography>
       <Grid2 container justifyContent="center">
@@ -160,7 +168,7 @@ const Ldap = props => {
       </Grid2>
       {ldapUsers.length > 0 && <Paper elevation={1}>
         <List>
-          {ldapUsers.map((user, idx) => <React.Fragment key={idx}>
+          {ldapUsers.map((user: LdapUser, idx: number) => <React.Fragment key={idx}>
             <ListItem>
               <ListItemAvatar>
                 {user.type === "contact" ?
@@ -208,28 +216,5 @@ const Ldap = props => {
   );
 }
 
-Ldap.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domain: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  ldapUsers: PropTypes.array.isRequired,
-  clear: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    ldapUsers: state.ldap.Users,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    fetch: async params => await dispatch(fetchLdapData(params))
-      .catch(err => Promise.reject(err)),
-    clear: () => dispatch(clearLdapSearch())
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(Ldap, styles)));
+export default Ldap;

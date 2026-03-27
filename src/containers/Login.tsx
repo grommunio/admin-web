@@ -2,10 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import { withStyles } from 'tss-react/mui';
-import { connect } from 'react-redux';
-import { withTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
+import { makeStyles } from 'tss-react/mui';
 import {
   Paper,
   Button,
@@ -17,6 +14,7 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  Theme,
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Key from '@mui/icons-material/VpnKey';
@@ -29,9 +27,12 @@ import { Translate } from '@mui/icons-material';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
+import { useAppDispatch, useAppSelector } from '../store';
+import { ChangeEvent } from '@/types/common';
+import { useTranslation } from 'react-i18next';
 
-const styles = theme => ({
-  /* || General */
+
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     display: 'flex',
@@ -91,57 +92,60 @@ const styles = theme => ({
     right: 8,
     color: 'black',
   },
-});
+}));
 
-
-function Login(props) {
-
+const Login = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { auth, settings, config: serverConfig } = useAppSelector(state => state);
   const [state, setState] = useState({
     user: '',
     pass: '',
     loading: false,
     langsAnchorEl: null,
   });
+
+  const login = async (user: string, pass: string) => await dispatch(authLogin(user, pass));
+  const loginWithToken = async (grommunioAuthJwt: string) => await dispatch(authLoginWithToken(grommunioAuthJwt));
+  const setSettings = async (field: string, value: string) => await dispatch(changeSettings(field, value));
   
   useEffect(() => {
     // Check if JWT is already in local storage
     const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
     if(grommunioAuthJwt) {
       // token found, try to login
-      const { authLoginWithToken } = props;
-      authLoginWithToken(grommunioAuthJwt).catch(err => console.error(err));
+      loginWithToken(grommunioAuthJwt);
     }
   }, []);
 
-  const handleTextinput = field => e => {
+  const handleTextinput = (field: 'user' | 'pass') => (e: ChangeEvent) => {
     setState({
       ...state,
       [field]: e.target.value,
     });
   }
 
-  const handleLogin = event => {
-    const { authLogin } = props;
+  const handleLogin = (event: React.MouseEvent | React.SubmitEvent<HTMLDivElement>) => {
     const { user, pass } = state;
     event.preventDefault();
     setState({ ...state, loading: true });
-    authLogin(user, pass)
-      .catch(err => {
+    login(user, pass)
+      .catch((err: string) => {
         setState({ ...state, loading: false });
         console.error(err);
       });
   }
 
-  const handleMenu = (menu, open) => e => setState({
+  const handleMenu = (open: boolean) => (e: React.MouseEvent) => setState({
     ...state,
-    [menu]: open ? e.currentTarget : null,
+    langsAnchorEl: open ? e.currentTarget : null,
   });
 
   const handleLangChange = lang => () => {
-    const { changeSettings } = props;
     // Set language in i18n, redux store and local storage
     i18n.changeLanguage(lang);
-    changeSettings('language', lang);
+    setSettings('language', lang);
     window.localStorage.setItem('lang', lang);
     setState({
       ...state,
@@ -149,15 +153,14 @@ function Login(props) {
     });
   }
 
-  const { classes, t, auth, settings, serverConfig } = props;
   const { user, pass, loading, langsAnchorEl } = state;
   const config = serverConfig.customImages[window.location.hostname];
 
   return (
     <div className={classes.root}>
-      <Paper elevation={3} className={classes.loginForm} component="form" onSubmit={handleLogin} >
+      <Paper elevation={3} className={classes.loginForm} onSubmit={handleLogin} >
         <Tooltip title="Language">
-          <IconButton className={classes.lang} onClick={handleMenu('langsAnchorEl', true)}>
+          <IconButton className={classes.lang} onClick={handleMenu(true)}>
             <Translate color="inherit"/>
           </IconButton>
         </Tooltip>
@@ -166,7 +169,7 @@ function Login(props) {
           anchorEl={langsAnchorEl}
           keepMounted
           open={Boolean(langsAnchorEl)}
-          onClose={handleMenu('langsAnchorEl', false)}
+          onClose={handleMenu(false)}
         >
           {getLangs().map(({key, value}) =>
             <MenuItem
@@ -237,39 +240,5 @@ function Login(props) {
   );
 }
 
-Login.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  authLogin: PropTypes.func.isRequired,
-  authLoginWithToken: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
-  changeSettings: PropTypes.func.isRequired,
-  serverConfig: PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  const { auth, settings, config } = state;
-  return {
-    auth,
-    settings,
-    serverConfig: config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    authLogin: async (user, pass) => {
-      await dispatch(authLogin(user, pass)).catch(msg => Promise.reject(msg));
-    },
-    authLoginWithToken: async grommunioAuthJwt => {
-      await dispatch(authLoginWithToken(grommunioAuthJwt)).catch(msg => Promise.reject(msg));
-    },
-    changeSettings: async (field, value) => {
-      await dispatch(changeSettings(field, value));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(Login, styles)));
+export default Login;

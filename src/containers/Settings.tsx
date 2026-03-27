@@ -2,17 +2,17 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
-import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2 } from '@mui/material';
-import { connect } from 'react-redux';
-import { changeSettings } from '../actions/settings';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
+import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2, Theme } from '@mui/material';
 import TableViewContainer from '../components/TableViewContainer';
 import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
+import { useAppSelector } from '../store';
+import { ChangeEvent } from '@/types/common';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -23,33 +23,15 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(3),
   },
-  description: {
-    display: 'inline-block',
-    fontWeight: 500,
-    width: 200,
-  },
-  data: {
-    padding: '8px 0',
-  },
-  licenseContainer: {
-    margin: theme.spacing(1, 0, 1, 0),
-  },
-  divider: {
-    margin: theme.spacing(2, 0, 2, 0),
-  },
-  upload: {
-    margin: theme.spacing(0, 0, 0, 1),
-  },
   headline: {
     marginRight: 8,
   },
-  gridItem: {
-    display: 'flex',
-    flex: 1,
-  },
-});
+}));
 
-const Settings = props => {
+const Settings = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const serverConfig = useAppSelector(state => state.config);
   const [state, setState] = useState({
     snackbar: '',
   });
@@ -60,12 +42,11 @@ const Settings = props => {
     context.toggleColorMode();
   }
 
-  const handleThemeSelect = e => {
+  const handleThemeSelect = (e: ChangeEvent) => {
     const { value: colorTheme } = e.target;
     context.setColorTheme(colorTheme);
   }
 
-  const { classes, t, serverConfig } = props;
   const { snackbar } = state;
   const darkModeStorage = window.localStorage.getItem("darkMode");
   const darkMode = darkModeStorage === null ? serverConfig.defaultDarkMode.toString() : darkModeStorage;
@@ -107,7 +88,7 @@ const Settings = props => {
             <MenuItem value="teal">teal</MenuItem>
           </TextField>
         </FormControl>
-        <Grid2 container className={classes.buttonGrid}>
+        <Grid2 container>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -121,29 +102,5 @@ const Settings = props => {
   );
 }
 
-Settings.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
-  changeSettings: PropTypes.func.isRequired,
-  serverConfig: PropTypes.object.isRequired,
-};
 
-const mapStateToProps = state => {
-  const { settings, config } = state;
-  return {
-    settings,
-    serverConfig: config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    changeSettings: async (field, value) => {
-      await dispatch(changeSettings(field, value));
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(withStyles(Settings, styles)));
+export default Settings;

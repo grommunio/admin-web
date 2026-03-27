@@ -2,22 +2,26 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import { withTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, TableSortLabelTypeMap } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import ViewWrapper from '../components/ViewWrapper';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../store';
+import { DomainListItem } from '@/types/domains';
+import { useTranslation } from 'react-i18next';
 
 
-const Menu = props => {
+const Menu = () => {
+  const { t } = useTranslation();
+  const { Domains } = useAppSelector(state => state.drawer);
+  const dispatch = useAppDispatch();
   const [state, setState] = useState({
     orderBy: 'domainname',
     order: 'asc',
     sortedDomains: [],
   });
   const navigate = useNavigate();
+  const selectDomain = (id: number) => dispatch(selectDrawerDomain(id));
 
   const columns = [
     { label: "Domain", value: "domainname" },
@@ -26,16 +30,15 @@ const Menu = props => {
     { label: "Maximum users", value: "maxUser" },
   ];
 
-  const handleNavigation = (path) => (event) => {
-    const { selectDomain } = props;
+  const handleNavigation = (path: number) => (event: React.MouseEvent) => {
     event.preventDefault();
     selectDomain(path);
     navigate(`/${path}`);
   };
 
   // Sorts table rows
-  const handleSort = orderBy => () => {
-    const sortedDomains = [...props.domains];
+  const handleSort = (orderBy: string) => () => {
+    const sortedDomains = [...Domains];
     const { order: stateOrder, orderBy: stateOrderBy } = state;
     const order = stateOrderBy === orderBy && stateOrder === "asc" ? "desc" : "asc";
     if(orderBy === 'maxUser') {
@@ -54,7 +57,6 @@ const Menu = props => {
     setState({ ...state, sortedDomains, order, orderBy });
   }
 
-  const { t, domains } = props;
   const { orderBy, order, sortedDomains } = state;
   return (
     <ViewWrapper>
@@ -66,8 +68,7 @@ const Menu = props => {
                 <TableCell key={column.value}>
                   <TableSortLabel
                     active={orderBy === column.value}
-                    align="left"
-                    direction={orderBy === column.value ? order : "asc"}
+                    direction={orderBy === column.value ? order as TableSortLabelTypeMap["props"]["direction"] : "asc"}
                     onClick={handleSort(column.value)}
                   >
                     {t(column.label)}
@@ -77,7 +78,7 @@ const Menu = props => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(sortedDomains.length > 0 ? sortedDomains : domains).map((obj, idx) => 
+            {(sortedDomains.length > 0 ? sortedDomains : Domains).map((obj: DomainListItem, idx: number) => 
               <TableRow key={idx} hover onClick={handleNavigation(obj.ID)}>
                 <TableCell>
                   {obj.domainname}{" "}
@@ -95,24 +96,5 @@ const Menu = props => {
   );
 }
 
-Menu.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  domains: PropTypes.array.isRequired,
-  selectDomain: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = state => {
-  return {
-    domains: state.drawer.Domains,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    selectDomain: id => dispatch(selectDrawerDomain(id)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(Menu));
+export default Menu;

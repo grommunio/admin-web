@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useState } from "react";
-import { withStyles } from 'tss-react/mui';
-import PropTypes from "prop-types";
+import React, { useEffect, useRef, useState } from "react";
+import { makeStyles } from 'tss-react/mui';
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";
-import { IconButton, Paper, Typography } from "@mui/material";
-import { connect } from "react-redux";
+import { IconButton, Paper, Theme, Typography } from "@mui/material";
 import { fetchDashboardData } from "../actions/dashboard";
 import { fetchAntispamData } from "../actions/antispam";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
 import { HelpOutline } from "@mui/icons-material";
@@ -22,9 +20,10 @@ import MemoryLine from "../components/charts/MemoryLine";
 import MemoryPie from "../components/charts/MemoryPie";
 import Load from "../components/charts/Load";
 import Disks from "../components/charts/Disks";
+import { useAppDispatch, useAppSelector } from "../store";
 
 
-const styles = (theme) => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
     padding: theme.spacing(1),
@@ -130,7 +129,9 @@ const styles = (theme) => ({
       gridColumn: '1 / 4',
     },  
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    ...theme.mixins.toolbar as any,
+  },
   iconButton: {
     color: "black",
   },
@@ -143,16 +144,27 @@ const styles = (theme) => ({
   chartTitle: {
     margin: theme.spacing(1, 0, 0, 2),
   },
-});
+}));
 
-const Dashboard = props => {
+const Dashboard = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { disks, Dashboard, timer } = useAppSelector(state => state.dashboard);
+  const { cpuPie, memory } = Dashboard;
+  const { config, antispam } = useAppSelector(state => state);
+
   const [state, setState] = useState({
     snackbar: null,
   });
-  let fetchInterval = null;
+  const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetch = async () => await dispatch(fetchDashboardData());
+  const fetchServices = async () => await dispatch(fetchServicesData());
+  const fetchAntispam = async () => await dispatch(fetchAntispamData());
+  const fetchAbout = async () => await dispatch(fetchAboutData());
 
   useEffect(() => {
-    const { fetch, fetchServices, fetchAntispam, fetchAbout, config } = props;
     fetch().catch((msg) => setState({ ...state, snackbar: msg }));
     fetchServices().catch((msg) => setState({ ...state, snackbar: msg }));
     if(config?.loadAntispamData) fetchAntispam().catch((msg) => setState({ ...state, snackbar: msg }));
@@ -160,27 +172,18 @@ const Dashboard = props => {
     fetchDashboard();
 
     return () => {
-      clearInterval(fetchInterval);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
     }
   }, []);
 
   const fetchDashboard = () => {
-    fetchInterval = setInterval(() => {
-      props.fetch().catch((msg) => setState({ ...state, snackbar: msg }));
+    fetchInterval.current = setInterval(() => {
+      fetch().catch((msg) => setState({ ...state, snackbar: msg }));
     }, 1000);
   }
 
-  const {
-    classes,
-    t,
-    cpuPie,
-    memory,
-    memoryPie,
-    disks,
-    timer,
-    statistics,
-    config,
-  } = props;
   const { snackbar } = state;
 
   const totalCpuUsage = cpuPie.values.slice(0, 5).reduce((prev, curr) => prev + curr, 0);
@@ -205,7 +208,7 @@ const Dashboard = props => {
       </div>}
       <div className={classes.dashboardLayout}>
         {!!config?.loadAntispamData && <div className={classes.antispam}>
-          <AntispamStatistics data={statistics}/>
+          <AntispamStatistics data={antispam.statistics}/>
         </div>}
         <div className={classes.services}>
           <ServicesChart/>
@@ -246,10 +249,10 @@ const Dashboard = props => {
               <Typography className={classes.chartTitle}>
                 {`${t("Memory")}: ${memory.percent[memory.percent.length - 1] || 0}%`}
               </Typography>
-              <MemoryPie memoryPie={memoryPie}/>
+              <MemoryPie />
             </div>
             <div className={classes.lineChart}>
-              <MemoryLine memory={memory}/>
+              <MemoryLine />
             </div>
           </Paper>
         </div>
@@ -276,54 +279,5 @@ const Dashboard = props => {
   );
 }
 
-Dashboard.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchServices: PropTypes.func.isRequired,
-  fetchAntispam: PropTypes.func.isRequired,
-  fetchAbout: PropTypes.func.isRequired,
-  cpuPercent: PropTypes.object.isRequired,
-  cpuPie: PropTypes.object.isRequired,
-  disks: PropTypes.array.isRequired,
-  memory: PropTypes.object.isRequired,
-  memoryPie: PropTypes.object.isRequired,
-  statistics: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
-  load: PropTypes.array.isRequired,
-  timer: PropTypes.number,
-};
 
-const mapStateToProps = (state) => {
-  const { load, disks, Dashboard, timer } = state.dashboard;
-  const { cpuPercent, cpuPie, memory, memoryPie } = Dashboard;
-  return {
-    cpuPercent, cpuPie, disks, memory, memoryPie, load, timer,
-    ...state.antispam,
-    config: state.config,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async () =>
-      await dispatch(fetchDashboardData()).catch((error) =>
-        Promise.reject(error)
-      ),
-    fetchServices: async () =>
-      await dispatch(fetchServicesData()).catch((error) =>
-        Promise.reject(error)
-      ),
-    fetchAntispam: async () =>
-      await dispatch(fetchAntispamData()).catch((error) =>
-        Promise.reject(error)
-      ),
-    fetchAbout: async () => await dispatch(fetchAboutData())
-      .catch(err => Promise.reject(err)),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(Dashboard, styles)));
+export default Dashboard;

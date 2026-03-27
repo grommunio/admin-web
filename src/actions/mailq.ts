@@ -8,7 +8,7 @@ export function fetchMailQData() {
   return defaultDetailsHandler(mailq);
 }
 
-export function flushMailQData(qIDs: number[]) {
+export function flushMailQData(qIDs: string[]) {
   return async () => {
     try {
       qIDs.forEach(async qID => {
@@ -21,10 +21,10 @@ export function flushMailQData(qIDs: number[]) {
   };
 }
 
-export function deleteMailQData(qID: number) {
+export function deleteMailQData(qID: string) {
   return defaultDetailsHandler(deleteMailq, qID);
 }
 
-export function requeueMailQData(qID: number) {
+export function requeueMailQData(qID: string) {
   return defaultDetailsHandler(requeueMailq, qID);
 }

@@ -2,22 +2,25 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from 'react-i18next';
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from 'react-i18next';
 import {
   Paper,
   TextField,
   FormControl,
   Button,
+  Theme,
 } from '@mui/material';
 import { resetPw } from '../api';
 import TableViewContainer from '../components/TableViewContainer';
-import { useDispatch } from 'react-redux';
 import { fetchUsersList } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
+import { useAppDispatch } from '../store';
+import { ChangeEvent } from '@/types/common';
+import { User } from '@/types/users';
 
-const styles = theme => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
     padding: theme.spacing(2, 2, 2, 2),
@@ -30,19 +33,21 @@ const styles = theme => ({
   input: {
     marginBottom: theme.spacing(2),
   },
-});
+}));
 
-const ResetPasswd = props => {
+const ResetPasswd = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
   const [state, setState] = useState({
-    selectedUser: '',
+    selectedUser: null,
     newPw: '',
     reType: '',
     snackbar: '',
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [users, setUsers] = useState([]);
 
-  const handleInput = field => event => {
+  const handleInput = (field: keyof typeof state) => (event: ChangeEvent) => {
     setState({
       ...state,
       [field]: event.target.value,
@@ -62,14 +67,13 @@ const ResetPasswd = props => {
     .then(() => setState({ ...state, snackbar: 'Success!' }))
     .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
 
-  const handleAutocomplete = (e, newVal) => {
+  const handleAutocomplete = (_: never, newVal: User) => {
     setState({
       ...state,
       selectedUser: newVal,
     });
   }
 
-  const { classes, t } = props;
   const { selectedUser, newPw, reType, snackbar } = state;
 
   return (
@@ -81,7 +85,7 @@ const ResetPasswd = props => {
     >
       <Paper className={classes.paper} elevation={1}>
         <MagnitudeAutocomplete
-          value={selectedUser || []}
+          value={selectedUser || ""}
           filterAttribute={'username'}
           onChange={handleAutocomplete}
           options={users || []}
@@ -119,9 +123,5 @@ const ResetPasswd = props => {
   );
 }
 
-ResetPasswd.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-};
 
-export default withTranslation()(withStyles(ResetPasswd, styles));
+export default ResetPasswd;

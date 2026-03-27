@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from "react-i18next";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from "react-i18next";
 import {
   FormControlLabel,
   Grid2,
@@ -23,17 +22,22 @@ import {
   TextField,
   InputAdornment,
   MenuItem,
+  Theme,
 } from "@mui/material";
-import { connect } from "react-redux";
 import { fetchLogsData, fetchLogData } from "../actions/logs";
-import { ArrowUpward, Clear, Close, CopyAll, Refresh } from "@mui/icons-material";
+import { ArrowUpward, Close, CopyAll, Refresh } from "@mui/icons-material";
 import TableViewContainer from "../components/TableViewContainer";
 import { copyToClipboard, generateFormattedLogLine } from "../utils";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { useAppDispatch, useAppSelector } from "../store";
+import { URLParams } from "@/actions/types";
+import { LogURLParams } from "@/types/logs";
+import { ChangeEvent } from "@/types/common";
+import { Moment } from "moment";
 
 
-const styles = (theme) => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   logViewer: {
     display: 'flex',
     flex: 1,
@@ -82,10 +86,14 @@ const styles = (theme) => ({
     flex: 1,
     overflowY: 'auto',
   }
-});
+}));
 
 
-const Logs = props => {
+const Logs = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { logs } = useAppSelector(state => state);
   const [state, setState] = useState({
     snackbar: null,
     skip: 0,
@@ -99,11 +107,16 @@ const Logs = props => {
   const [search, setSearch] = useState("");
   const [n, setN] = useState(100);
   const [date, setDate] = useState(null);
+  const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nOptions = [100, 500, 1000, 5000];
 
+  const fetch = async (params: URLParams) => await dispatch(fetchLogsData(params));
+  const fetchLog = async (filename: string, params?: LogURLParams) =>
+    await dispatch(fetchLogData(filename, { n: 100, ...params }));
+
   useEffect(() => {
-    props.fetch({ sort: "name,asc" })
+    fetch({ sort: "name,asc" })
       .then(() => setState({ ...state, loading: false }))
       .catch(snackbar => setState({ ...state, snackbar, loading: false }));
   }, []);
@@ -123,8 +136,8 @@ const Logs = props => {
     setScrollDivHeight(newHeight);
   }, [log]);
 
-  const handleLog = filename => async () => {
-    const freshLog = await props.fetchLog(filename)
+  const handleLog = (filename: string) => async () => {
+    const freshLog = await fetchLog(filename)
       .catch(snackbar => setState({ ...state, snackbar }));
     if(freshLog) {
       setLog(freshLog.data);
@@ -136,7 +149,7 @@ const Logs = props => {
   const handleScroll = async () => {
     if (!date && document.getElementById("logsList").scrollTop === 0) {
       const { skip } = state;
-      let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 100 })
+      let newLog = await fetchLog(filename, { skip: (skip + 1) * 100 })
         .catch(snackbar => setState({ ...state, snackbar }));
       if(newLog && newLog.data.length > 0) {
         newLog = newLog.data.concat(log);
@@ -148,7 +161,7 @@ const Logs = props => {
 
   const handleButtonScroll = async () => {
     const { skip } = state;
-    let newLog = await props.fetchLog(filename, { skip: (skip + 1) * 100 })
+    let newLog = await fetchLog(filename, { skip: (skip + 1) * 100 })
       .catch(snackbar => setState({ ...state, snackbar }));
     if(newLog && newLog.data) {
       newLog = newLog.data.concat(log);
@@ -165,7 +178,7 @@ const Logs = props => {
     if(log.length === 0) handleLog(filename)();
     else {
       const lastDate = log[log.length - 1].time;
-      let newLog = await props.fetchLog(filename, { after: lastDate })
+      let newLog = await fetchLog(filename, { after: lastDate })
         .catch(snackbar => setState({ ...state, snackbar }));
       if(newLog && newLog.data?.length > 0) {
         newLog = log.concat(newLog.data);
@@ -182,19 +195,18 @@ const Logs = props => {
 
   useEffect(() => {
     const { autorefresh } = state;
-    let fetchInterval;
 
-    if(autorefresh && !date) fetchInterval = setInterval(() => {
+    if(autorefresh && !date) fetchInterval.current = setInterval(() => {
       handleRefresh();
     }, 5000);
-    else clearInterval(fetchInterval);
+    else clearInterval(fetchInterval.current);
 
     return () => {
-      clearInterval(fetchInterval);
+      clearInterval(fetchInterval.current);
     }
   }, [state.autorefresh, filename, date]);
 
-  const handleCopyToClipboard = msg => async () => {
+  const handleCopyToClipboard = (msg: string) => async () => {
     const success = await copyToClipboard(msg).catch(err => err);
     if(success) {
       setState({ ...state, clipboardMessage: 'copied log line contents into clipboard' });
@@ -207,23 +219,24 @@ const Logs = props => {
     return log.filter(l => l.message.toLowerCase().includes(search.toLowerCase()))
   }, [log, search]);
 
-  const handleDateChange = async newVal => {
+  const handleDateChange = async (newVal: Moment) => {
     setDate(newVal);
     setState({ ...state, skip: 0, autorefresh: false });
     const time = newVal.toISOString().replace("T", " ").replace("Z", "");
-    const freshLog = await props.fetchLog(filename, { n, after: time })
+    const freshLog = await fetchLog(filename, { n, after: time })
       .catch(snackbar => setState({ ...state, snackbar }));
     if(freshLog) {
       setLog(freshLog.data);
     }
   }
 
-  const handleNChange = async e => {
+  const handleNChange = async (e: ChangeEvent) => {
     const { value } = e.target;
-    setN(value);
+    const intValue = parseInt(value);
+    setN(intValue);
     if(date) {
       const time = date.toISOString().replace("T", " ").replace("Z", "");
-      const freshLog = await props.fetchLog(filename, { n: value, after: time })
+      const freshLog = await fetchLog(filename, { n: intValue, after: time })
         .catch(snackbar => setState({ ...state, snackbar }));
       if(freshLog) {
         setLog(freshLog.data);
@@ -236,7 +249,6 @@ const Logs = props => {
     handleLog(filename)();
   }
 
-  const { classes, t, logs } = props;
   const { snackbar, autorefresh, clipboardMessage, loading } = state;
 
   return (
@@ -258,7 +270,7 @@ const Logs = props => {
               }}
             />
           </ListItem>
-          {logs.Logs.map((log, idx) =>
+          {logs.Logs.map((log: string, idx: number) =>
             <ListItemButton
               key={idx}
               onClick={handleLog(log)}
@@ -309,19 +321,6 @@ const Logs = props => {
                 onAccept={handleDateChange}
                 value={date}
                 sx={{ minWidth: 250 }}
-                renderInput={(params) => <TextField
-                  {...params}
-                  size="small"
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Clear color="secondary" />
-                        </InputAdornment>
-                      ),
-                    }
-                  }}
-                />}
               />
               <Tooltip title={t("Clear date")}>
                 <IconButton onClick={handleClear}>
@@ -380,7 +379,7 @@ const Logs = props => {
           open={!!clipboardMessage}
           onClose={handleSnackbarClose}
           autoHideDuration={2000}
-          transitionDuration={{ in: 0, appear: 250, enter: 250, exit: 0 }}
+          transitionDuration={{ appear: 250, enter: 250, exit: 0 }}
         >
           <Alert
             onClose={handleSnackbarClose}
@@ -396,33 +395,5 @@ const Logs = props => {
   );
 }
 
-Logs.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  logs: PropTypes.object.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchLog: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = (state) => {
-  return { logs: state.logs };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async (params) => {
-      await dispatch(fetchLogsData(params)).catch((error) =>
-        Promise.reject(error)
-      );
-    },
-    fetchLog: async (filename, params) =>
-      await dispatch(fetchLogData(filename, { n: 100, ...params }))
-        .then(log => log)
-        .catch(error => Promise.reject(error)),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(Logs, styles)));
+export default Logs;

@@ -24,7 +24,4 @@ const Spam = () => {
   );
 }
 
-Spam.propTypes = {
-};
-
 export default Spam;

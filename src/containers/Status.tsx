@@ -2,25 +2,32 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { withStyles } from 'tss-react/mui';
-import { withTranslation } from "react-i18next";
+import { makeStyles } from 'tss-react/mui';
+import { useTranslation } from "react-i18next";
 import {
   MenuItem,
   Paper,
   TableContainer,
   TextField,
+  Theme,
   Typography,
 } from "@mui/material";
-import { connect } from "react-redux";
 import { fetchVhostsData, fetchVhostStatusData } from '../actions/status';
 import ServerZones from "../components/status/ServerZones";
 import FilterZones from "../components/status/FilterZones";
 import Connections from "../components/status/Connections";
 import Requests from "../components/status/Requests";
 import TableViewContainer from "../components/TableViewContainer";
+import { useAppDispatch, useAppSelector } from "../store";
+import {
+  Connections as ConnectionsType,
+  FilterZones as FilterZonesType,
+  ServerZones as ServerZonesType,
+  SharedZones
+} from "@/types/status";
 
-const styles = (theme) => ({
+
+const useStyles = makeStyles()((theme: Theme) => ({
   pageTitle: {
     margin: theme.spacing(2, 2, 1, 2),
   },
@@ -39,28 +46,37 @@ const styles = (theme) => ({
     margin: theme.spacing(2, 2, 2, 2),
     maxWidth: 200,
   },
-});
+}));
 
-const Status = props => {
+
+const Status = () => {
+  const { classes } = useStyles();
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { vhosts } = useAppSelector(state => state.status);
   const [snackbar, setSnackbar] = useState("");
   const [vhost, setVhost] = useState("");
   const [interval, setFetchInterval] = useState(1000);
   const [data, setData] = useState({
-    connections: {},
-    sharedZones: {},
-    serverZones: {},
-    filterZones: {},
+    hostName: "",
+    connections: {} as ConnectionsType,
+    sharedZones: {} as SharedZones,
+    serverZones: {} as ServerZonesType,
+    filterZones: {} as FilterZonesType,
   });
 
+  const fetch = async () => await dispatch(fetchVhostsData());
+  const fetchVhostStatus = async (name: string) => await dispatch(fetchVhostStatusData(name));
+
   useEffect(() => {
-    props.fetch();
+    fetch();
   }, []);
 
   useEffect(() => {
-    if(props.vhosts.includes('local')) {
+    if(vhosts.includes('local')) {
       setVhost('local');
     }
-  }, [props.vhosts]);
+  }, [vhosts]);
 
   useEffect(() => {
     const fetchInterval = setInterval(() => {
@@ -72,11 +88,11 @@ const Status = props => {
     }
   }, [vhost, interval]);
 
-  const fetchData = async (vh) => {
+  const fetchData = async (vh: string) => {
     if(vh) {
-      const data = await props.fetchVhostStatus(vh)
+      const vhostStatus = await fetchVhostStatus(vh)
         .catch(snackbar => setSnackbar(snackbar));
-      if(data) setData(data);
+      if(vhostStatus) setData({ ...data, ...vhostStatus });
     }
   }
 
@@ -86,7 +102,7 @@ const Status = props => {
   }
 
   // Converts an object to a sorted array
-  const toSortedArray = obj => Object.entries(obj)
+  const toSortedArray = (obj: ServerZonesType) => Object.entries(obj)
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
 
@@ -95,7 +111,6 @@ const Status = props => {
     setVhost(value);
   }
 
-  const { classes, t, vhosts } = props;
   const { connections, serverZones, filterZones } = data;
   return (
     <TableViewContainer
@@ -112,7 +127,7 @@ const Status = props => {
         className={classes.tf}
         onChange={handleVhostChange}
       >
-        {vhosts.map((host, key) =>
+        {vhosts.map((host: string, key: number) =>
           <MenuItem value={host} key={key}>{host}</MenuItem>
         )}
       </TextField>
@@ -135,14 +150,14 @@ const Status = props => {
       <Typography variant="caption" className={classes.subtitle}>
         {t("Current active connections being processed")}
       </Typography>
-      <Connections data={connections || {}} />
+      <Connections data={connections} />
       <Typography variant="h2" className={classes.pageTitle}>
         {t("Requests")}
       </Typography>
       <Typography variant="caption" className={classes.subtitle}>
         {t("All processed requests by the services")}
       </Typography>
-      <Requests data={connections || {}} />
+      <Requests data={connections} />
       <div className={classes.logViewer}>
         <TableContainer component={Paper} className={classes.paper}>
           <div style={{ marginBottom: 8 }}>
@@ -153,38 +168,13 @@ const Status = props => {
               {t("Detailed and summarized overview over all requests")}
             </Typography>
           </div>
-          <ServerZones serverZones={toSortedArray(serverZones || {})} />
-          <FilterZones filterZones={filterZones || {}} />
+          <ServerZones serverZones={toSortedArray(serverZones)} />
+          <FilterZones filterZones={filterZones} />
         </TableContainer>
       </div>
     </TableViewContainer>
   );
 }
 
-Status.propTypes = {
-  classes: PropTypes.object.isRequired,
-  t: PropTypes.func.isRequired,
-  fetch: PropTypes.func.isRequired,
-  fetchVhostStatus: PropTypes.func.isRequired,
-  vhosts: PropTypes.array.isRequired,
-};
 
-const mapStateToProps = (state) => {
-  return { vhosts: state.status.vhosts };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetch: async () => await dispatch(fetchVhostsData())
-      .catch((error) => Promise.reject(error)),
-    fetchVhostStatus: async name => 
-      await dispatch(fetchVhostStatusData(name))
-        .then(data => data)
-        .catch((error) => Promise.reject(error)),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withTranslation()(withStyles(Status, styles)));
+export default Status;

@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import { Typography, Button, Grid2 } from '@mui/material';
 import { useNavigate } from 'react-router';
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   root: {
     display: 'flex',
     flex: 1,
@@ -14,10 +15,10 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-};
+}));
 
-export default withStyles(function NotFound(props) {
-  const { classes } = props;
+export default function NotFound() {
+  const { classes } = useStyles();
   const navigate = useNavigate();
   const handleButton = () => navigate('/');
 
@@ -31,4 +32,4 @@ export default withStyles(function NotFound(props) {
       </Grid2>
     </div>
   );
-}, styles);
+}
