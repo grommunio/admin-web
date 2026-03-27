@@ -2,9 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useEffect } from "react";
-import { withStyles } from 'tss-react/mui';
-import { connect, useDispatch, useSelector } from "react-redux";
-import PropTypes from "prop-types";
+import { makeStyles } from 'tss-react/mui';
 import background from "!file-loader!./res/background_light.svg";
 import backgroundDark from "!file-loader!./res/background_dark.svg";
 import i18n from "./i18n";
@@ -17,8 +15,10 @@ import SilentRefresh from "./components/SilentRefresh";
 import ColorModeContext from "./ColorContext";
 import Feedback from "./components/Feedback";
 import { SERVER_CONFIG_ERROR } from "./actions/types";
+import { useAppDispatch, useAppSelector } from "./store";
 
-const styles = {
+
+const useStyles = makeStyles()(() => ({
   root: {
     display: "flex",
     flex: 1,
@@ -29,21 +29,20 @@ const styles = {
     position: "absolute",
     zIndex: 1,
   },
-  mainView: {
-    display: "flex",
-    flex: 1,
-    overflow: "hidden",
-    zIndex: 100,
-  },
-};
+}));
 
-const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableMainView"));
+const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableMainView")) as React.ComponentType<any>;
 
 // Root class
-const App = ({classes, Domains, serverConfig, loading, authenticated, capabilities, changeSettings, fetchLicense}) => {
-  const dispatch = useDispatch();
+const App = () => {
+  const { classes } = useStyles();
+  const dispatch = useAppDispatch();
   const colorContext = useContext(ColorModeContext);
-  const configError = useSelector(state => state.config.error);
+  const { authenticated, capabilities } = useAppSelector(state => state.auth);
+  const { Domains, loading } = useAppSelector(state => state.drawer);
+  const serverConfig = useAppSelector(state => state.config);
+  const configError = serverConfig.error;
+
   const routesProps = {
     authenticated,
     loading,
@@ -56,12 +55,12 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
     const lang = localStorage.getItem("lang");
     if (lang) {
       i18n.changeLanguage(lang);
-      changeSettings("language", lang);
+      dispatch(changeSettings("language", lang));
     }
   }, []);
 
   useEffect(() => {
-    if(capabilities.includes(SYSTEM_ADMIN_WRITE)) fetchLicense();
+    if(capabilities.includes(SYSTEM_ADMIN_WRITE)) dispatch(fetchLicenseData());
   }, [capabilities])
     
   return (
@@ -76,7 +75,6 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
       {authenticated && <SilentRefresh />}
       <CapabilityContext.Provider value={capabilities}>
         <AsyncMainView
-          classes={classes}
           authenticated={authenticated}
           capabilities={capabilities}
           domains={Domains || []}
@@ -91,36 +89,5 @@ const App = ({classes, Domains, serverConfig, loading, authenticated, capabiliti
   );
 }
 
-App.propTypes = {
-  classes: PropTypes.object.isRequired,
-  changeSettings: PropTypes.func.isRequired,
-  Domains: PropTypes.array.isRequired,
-  authenticated: PropTypes.bool.isRequired,
-  capabilities: PropTypes.array.isRequired,
-  loading: PropTypes.bool,
-  serverConfig: PropTypes.object.isRequired,
-  fetchLicense: PropTypes.func.isRequired,
-};
 
-const mapStateToProps = (state) => {
-  const { authenticated, capabilities } = state.auth;
-  const { Domains, loading } = state.drawer;
-
-  return {
-    authenticated,
-    capabilities,
-    Domains,
-    loading,
-    serverConfig: state.config,
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    changeSettings: (field, value) => dispatch(changeSettings(field, value)),
-    fetchLicense: async () => await dispatch(fetchLicenseData())
-      .catch(err => console.error(err)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(App, styles));
+export default App;

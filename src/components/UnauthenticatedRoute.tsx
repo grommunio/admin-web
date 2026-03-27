@@ -12,7 +12,7 @@ import { parseParams } from '../utils';
  */
 
 type UnauthenticatedRouteProps = {
-  component: keyof JSX.IntrinsicElements;
+  component: React.ComponentType<any>;
   props: any;
 }
 

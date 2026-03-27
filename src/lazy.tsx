@@ -7,14 +7,12 @@ import Loading from "./components/Loading";
 
 /**
  * Creates an async component from an async import
- * 
- * @param {Function} loader Callback function, that imports a container.
  */
 
-export default function makeLoadableComponent(loader, LoaderComponent) {
+export default function makeLoadableComponent(loader: () => Promise<{ default: React.ComponentType }>) {
   const AsyncComponent = lazy(loader);
   const LoadableComponent = (props={}) => (
-    <Suspense fallback={LoaderComponent || <Loading />}>
+    <Suspense fallback={<Loading />}>
       <AsyncComponent {...props}/>
     </Suspense>
   );

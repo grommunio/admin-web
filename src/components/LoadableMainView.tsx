@@ -6,10 +6,20 @@ import Drawer from './Drawer';
 import AppRoutes from '../Routes';
 import TopBar from './TopBar';
 import { Domain } from '@/types/domains';
+import { makeStyles } from 'tss-react/mui';
+
+
+const useStyles = makeStyles()(() => ({
+  mainView: {
+    display: "flex",
+    flex: 1,
+    overflow: "hidden",
+    zIndex: 100,
+  },
+}));
 
 
 type LoadableMainViewProps = {
-  classes: Record<string, string>;
   authenticated: boolean;
   capabilities: string[];
   domains: Domain[];
@@ -17,13 +27,14 @@ type LoadableMainViewProps = {
 }
 
 export default function LoadableMainView(props: LoadableMainViewProps) {
-  const { classes, authenticated, capabilities, domains, routesProps } = props;
+  const { classes } = useStyles();
+  const { authenticated, capabilities, domains, routesProps } = props;
   return (
     <div className={classes.mainView}>
       {authenticated &&
         <Drawer domains={domains}/>}
       {authenticated && <TopBar />}
-      <AppRoutes domains={domains} childProps={routesProps} capabilities={capabilities}/>
+      <AppRoutes domains={domains} routesProps={routesProps} capabilities={capabilities}/>
     </div>
   );
 }

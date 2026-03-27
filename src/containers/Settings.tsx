@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
 import { useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
+import { ColorThemeName } from '@/themes/types';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -44,7 +45,7 @@ const Settings = () => {
 
   const handleThemeSelect = (e: ChangeEvent) => {
     const { value: colorTheme } = e.target;
-    context.setColorTheme(colorTheme);
+    context.setColorTheme(colorTheme as ColorThemeName);
   }
 
   const { snackbar } = state;

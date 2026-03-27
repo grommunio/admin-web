@@ -7,7 +7,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 type AuthenticatedDomainRouteProps = {
-  component: keyof React.JSX.IntrinsicElements;
+  component: React.ComponentType<any>;
   props: any;
   domain: Domain;
 }

@@ -26,7 +26,7 @@ interface ToggleColorModeProps {
 
 export type ColorModeContextType = {
   toggleColorMode: () => void;
-  setColorTheme: (colorTheme: ColorThemeName) => void;
+  setColorTheme: (colorTheme: ColorThemeName) => ColorThemeName;
   mode: Mode;
 }
 
@@ -49,9 +49,10 @@ export default function ToggleColorMode({ children }: ToggleColorModeProps) {
           return nextMode;
         });
       },
-      setColorTheme: (colorTheme: string) => {
+      setColorTheme: (colorTheme: ColorThemeName) => {
         window.localStorage.setItem('colorTheme', colorTheme);
         setColorThemeState(colorTheme);
+        return colorTheme;
       },
       mode,
     }),

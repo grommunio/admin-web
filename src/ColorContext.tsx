@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
+import { ColorThemeName } from './themes/types';
 
 // Context to set MUI theme and darkmode
 const ColorModeContext = React.createContext({
   toggleColorMode: () => null,
-  setColorTheme: (colorTheme) => colorTheme,
+  setColorTheme: (colorTheme: ColorThemeName) => colorTheme,
   mode: 'dark',
 });
 
