@@ -24,7 +24,7 @@ const defaultState: RolesState = {
   count: 0,
 };
 
-function rolesReducer(state: RolesState = defaultState, action) {
+function rolesReducer(state: RolesState = defaultState, action: any) {
   switch (action.type) {
   case ROLES_DATA_RECEIVED:
     return {

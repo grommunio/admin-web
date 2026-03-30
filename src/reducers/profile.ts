@@ -21,7 +21,7 @@ const defaultState: ProfileState = {
   },
 };
 
-function profileReducer(state: ProfileState = defaultState, action) {
+function profileReducer(state: ProfileState = defaultState, action: any) {
   switch (action.type) {
   case PROFILE_DATA_RECEIVED:
     return {

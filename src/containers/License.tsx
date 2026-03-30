@@ -61,7 +61,7 @@ const License = () => {
 
   useEffect(() => {
     const inner = async () => {
-      const counts = {};
+      const counts: Record<string, number> = {};
       // Get user count of domains
       Domains.forEach(async (domain: Domain) => counts[domain.domainname] = await dispatch(fetchUserCount(domain.ID)));
       setState({

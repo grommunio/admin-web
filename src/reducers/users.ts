@@ -52,7 +52,7 @@ function deleteOrphanedUsers(arr: (BaseUser | UserListItem)[], users: BaseUser[]
   return copy;
 }
 
-function usersReducer(state=defaultState, action) {
+function usersReducer(state=defaultState, action: any) {
   switch(action.type) {
   case USERS_DATA_RECEIVED: 
     return {

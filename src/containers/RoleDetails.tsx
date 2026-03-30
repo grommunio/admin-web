@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { Permission, UpdateRole } from '@/types/roles';
 import { ChangeEvent } from '@/types/common';
+import { User } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -105,7 +106,7 @@ const RoleDetails = () => {
     inner();
   }, []);
 
-  const handleRoleInput = field => event => {
+  const handleRoleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state, 
       role: {
@@ -116,7 +117,7 @@ const RoleDetails = () => {
     });
   }
 
-  const handleAutocomplete = (field) => (e, newVal) => {
+  const handleAutocomplete = (field: string) => (_: never, newVal: User) => {
     setState({
       ...state, 
       role: {
@@ -271,7 +272,7 @@ const RoleDetails = () => {
                 fullWidth
                 variant="standard"
               >
-                {Permissions.map((name) => (
+                {Permissions.map((name: Permission) => (
                   <MenuItem key={name} value={name}>
                     {name}
                   </MenuItem>

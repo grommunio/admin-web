@@ -31,6 +31,7 @@ import SearchTextfield from "../components/SearchTextfield";
 import TableActionGrid from "../components/TableActionGrid";
 import { useAppDispatch, useAppSelector } from "../store";
 import { ActiveSyncSessionRow, FetchSyncParams } from "@/types/sync";
+import { ChangeEvent } from "@/types/common";
 
 
 const useStyles = makeStyles()(() => ({
@@ -134,7 +135,7 @@ const Sync = () => {
     setState({ ...state, order: switchOrder ? order : stateOrder, orderBy: attribute, type });
   }
 
-  const getRowClass = (row: ActiveSyncSessionRow, diff) => {
+  const getRowClass = (row: ActiveSyncSessionRow, diff: number) => {
     if(row.justUpdated) return classes.justUpdated;
     if(row.ended !== 0) return classes.terminated;
     if(row.push && diff > 32) return classes.darkred;
@@ -143,7 +144,7 @@ const Sync = () => {
   }
 
   // Handles search input filter
-  const getMatch = (row) => {
+  const getMatch = (row: ActiveSyncSessionRow) => {
     const { match, showPush, onlyActive } = state;
     const lcMatch = match.toLowerCase();
     const { user, devtype, devagent, ip } = row;
@@ -152,9 +153,9 @@ const Sync = () => {
     return stringMatch && (!onlyActive || row.ended === 0) && (showPush || !row.push);
   }
 
-  const handleInput = field => ({ target: t }) => setState({ ...state, [field]: t.value });
+  const handleInput = (field: string) => ({ target: t }: ChangeEvent) => setState({ ...state, [field]: t.value });
 
-  const handleCheckbox = field => ({ target: t }) => setState({ ...state, [field]: t.checked });
+  const handleCheckbox = (field: string) => ({ target: t }: ChangeEvent) => setState({ ...state, [field]: t.checked });
 
   const { snackbar, order, orderBy, match, showPush, onlyActive,
     filterEnded, filterUpdated } = state;

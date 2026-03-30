@@ -2,6 +2,7 @@ import { URLParams } from "@/actions/types";
 import { PartialWithRequired } from "./common";
 import { SyncPolicy } from "./sync";
 
+
 export type BaseUser = {
   ID: number;
   username: string;
@@ -11,6 +12,15 @@ export type UserProperties = {
   displayname: string;
   initials: string;
   nickname: string;
+  title: string;
+  companyname: string;
+  locality: string;
+  departmentname: string
+  stateorprovince: string;
+  officelocation: string;
+  postalcode: string;
+  assistant: string;
+
   smtpaddress: string;
   surname: string;
   assocmessagesizeextended: number;
@@ -26,9 +36,12 @@ export type UserProperties = {
   scheduleinfodisallowrecurringappts: boolean;
   scheduleinfodisallowoverlappingappts: boolean;
   scheduleinfoautoacceptappointments: boolean;
+  streetaddress: string;
+
   country: string;
   hometelephonenumber: string;
   business2telephonenumber: string;
+  primarytelephonenumber: string;
   home2telephonenumber: string;
   primaryfaxnumber: string;
   mobiletelephonenumber: string;
@@ -183,6 +196,7 @@ export type NewFetchmailConfig = Omit<FetchmailConfig, "ID">;
 
 export type FetchUserParams = {
   filterProp?: string;
-  status?: number[];
+  status?: number[] | number;
+  orgID?: number,
 } & URLParams;
 

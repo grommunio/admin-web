@@ -394,7 +394,7 @@ const OrgDetails = () => {
     taskID: null,
   })
 
-  const handleCheckbox = (field: string) => () => setState({
+  const handleCheckbox = (field: keyof typeof state) => () => setState({
     ...state, 
     [field]: !state[field],
   });
@@ -474,7 +474,7 @@ const OrgDetails = () => {
     }
   }
 
-  const handleSaveLdap = e => {
+  const handleSaveLdap = (e: React.MouseEvent | React.SubmitEvent) => {
     const { force } = state;
     e.preventDefault();
     put(parseInt(getStringAfterLastSlash()), formatData(), { force: force })

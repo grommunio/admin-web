@@ -65,26 +65,26 @@ const useStyles = makeStyles()((theme: Theme) => ({
     textAlign: 'center',
     fontSize: 12,
   },
-  activeChip: {
+  active: {
     color: "#fff",
     background: "linear-gradient(150deg, #56ab2f, #a8e063)",
   },
-  errorChip: {
+  error: {
     color: "#fff",
     fontWeight: "bold",
     background: "linear-gradient(150deg, #FF512F, #DD2476)",
   },
-  inactiveChip: {
+  inactive: {
     color: "white",
     background: "linear-gradient(150deg, #000000, #434343)",
   },
-  failedChip: {
+  failed: {
     background: "linear-gradient(150deg, #FF512F, #DD2476)",
   },
-  activatingChip: {
+  activating: {
     background: "linear-gradient(150deg, #FFB75E, #ED8F03)",
   },
-  deactivatingChip: {
+  deactivating: {
     background: "linear-gradient(150deg, #F2F2F2, #EAEAEA)",
   },
   legendContainer: {
@@ -119,9 +119,9 @@ const ServicesChart = () => {
   const { Services } = useAppSelector(state => state.services);
   const [state, setState] = useState({
     snackbar: null,
-    starting: false,
-    restarting: false,
-    stoping: false,
+    starting: "",
+    restarting: "",
+    stopping: "",
     action: '',
   });
   const [service, setService] = useState(null);
@@ -142,8 +142,8 @@ const ServicesChart = () => {
       );
   };
 
-  const getChipColor = (state: string) => {
-    return classes[(state || "inactive") + "Chip"];
+  const getChipColor = (state: keyof typeof classes) => {
+    return classes[(state || "inactive")];
   }
 
   const handleDialog = (service: Service, action: string) => () => {
@@ -153,7 +153,7 @@ const ServicesChart = () => {
 
   const handleCloseDialog = () => setService(null);
 
-  const { starting, restarting, stoping, snackbar, action } = state;
+  const { starting, restarting, stopping, snackbar, action } = state;
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -172,7 +172,7 @@ const ServicesChart = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Services.map((service, idx) => (
+            {Services.map((service: Service, idx: number) => (
               <TableRow key={idx} hover style={{cursor: "default"}}>
                 <TableCell>
                   <Tooltip
@@ -193,7 +193,7 @@ const ServicesChart = () => {
                   <Grid2 container justifyContent="center">
                     <div
                       style={{ marginRight: 4 }}
-                      className={classes.label + " " + getChipColor(service.state)}
+                      className={classes.label + " " + getChipColor(service.state as keyof typeof classes)}
                     >
                       {service.state}
                     </div>
@@ -213,7 +213,7 @@ const ServicesChart = () => {
                       <Enable fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  {stoping !== service.name ? (
+                  {stopping !== service.name ? (
                     <Tooltip title={t("Stop")} placement="top">
                       <IconButton
                         onClick={handleDialog(service, "stop")}

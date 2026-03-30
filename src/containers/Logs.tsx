@@ -188,7 +188,7 @@ const Logs = () => {
     }
   }
 
-  const handleAutoRefresh = ({ target: t }) => {
+  const handleAutoRefresh = ({ target: t }: ChangeEvent) => {
     const checked = t.checked;
     setState({ ...state, autorefresh: checked });
   }

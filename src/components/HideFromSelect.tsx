@@ -34,7 +34,7 @@ const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProp
     const { value } = event.target;
     const mask = (typeof value === 'string' ? value.split(',').map(el => parseInt(el)) : value)
       .reduce((prev, next) => prev | next, 0);  // bitwise OR array elements
-    setState(state => ({
+    setState((state: any) => ({
       ...state,
       user: {
         ...state.user,

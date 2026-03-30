@@ -27,6 +27,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { useNavigate } from 'react-router';
 import { useAppDispatch } from '../store';
 import DeleteServiceFile from '../components/Dialogs/DeleteServiceFile';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -80,28 +81,28 @@ const DBService = () => {
     inner();
   }, []);
 
-  const handleInput = field => e => {
+  const handleInput = (field: string) => (e: ChangeEvent) => {
     setState({
       ...state, 
       [field]: e.target.value,
     });
   }
 
-  const handleDelete = file => event => {
+  const handleDelete = (file: string) => (event: React.MouseEvent) => {
     event.stopPropagation();
     setState({ ...state, deleting: file });
   }
 
-  const handleDeleteSuccess = resp => {
+  const handleDeleteSuccess = (message: string) => {
     const files = [...state.files].filter(f => f !== state.deleting);
-    setState({ ...state, deleting: false, snackbar: 'Success! ' + (resp?.message || ''), files });
+    setState({ ...state, deleting: false, snackbar: 'Success! ' + (message || ''), files });
   }
 
   const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  const handleDeleteError = error => setState({ ...state, snackbar: error });
+  const handleDeleteError = (error: string) => setState({ ...state, snackbar: error });
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }

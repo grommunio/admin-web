@@ -203,8 +203,8 @@ export function getPolicyDiff(defaultPolicy: Partial<SyncPolicy>, syncPolicy: Pa
   };
   const result: Record<string, any> = {};
   for(const [key, value] of Object.entries(defaultPolicy)) {
-    if (formattedPolicy[key] !== value) {
-      result[key] = formattedPolicy[key];
+    if (formattedPolicy[key as keyof SyncPolicy] !== value) {
+      result[key] = formattedPolicy[key as keyof SyncPolicy];
     }
   }
   if (formattedPolicy.approvedapplist?.toString() === defaultPolicy.approvedapplist?.toString()) {

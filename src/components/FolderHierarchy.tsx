@@ -10,7 +10,6 @@ import { IPM_SUBTREE_ID, IPM_SUBTREE_OBJECT } from '../constants';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { TreeItem, SimpleTreeView } from '@mui/x-tree-view';
-import { Folder } from '@/types/folders';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -28,9 +27,16 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+type RenderTreeParams = {
+  folderid: string;
+  container: 'IPF.Note' | 'IPF.Contact' | 'IPF.Appointment' | 'IPF.Stickynote' | 'IPF.Task';
+  name: string;
+  children: React.ReactNode;
+}
+
 type FolderHierarchyProps = {
   writable: boolean;
-  data: Folder;
+  data: RenderTreeParams;
   domainID: number;
   handleAdd: (folderid: string) => (e: React.MouseEvent) => void;
   handleEdit: (redirect: string) => (e: React.MouseEvent) => void;
@@ -49,7 +55,7 @@ const FolderHierarchy = ({ writable, data, domainID, handleAdd, handleEdit, hand
     'IPF.Task': <AssignmentTurnedInOutlined fontSize='small' className={classes.folderTypeIcon}/>
   }
 
-  const renderTree = ({ folderid, container, name, children }) => (
+  const renderTree = ({ folderid, container, name, children }: RenderTreeParams) => (
     <TreeItem
       key={folderid || -1}
       itemId={folderid || "-1"}

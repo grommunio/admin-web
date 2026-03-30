@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { URLParams } from '@/actions/types';
 import { useTable } from '../hooks/useTable';
+import { Folder } from '@/types/folders';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -58,6 +59,13 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+type RenderNodeProps = {
+  nodeDatum: {
+    name: string;
+    folderid: string;
+  },
+  toggleNode: () => void;
+}
 
 const Folders = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
@@ -98,7 +106,7 @@ const Folders = ({ domain }: DomainViewProps) => {
 
   const handleTab = (_: never, tab: number) => setState({ ...state, tab });
 
-  const renderNode = ({ nodeDatum, toggleNode }) => {
+  const renderNode = ({ nodeDatum, toggleNode }: RenderNodeProps) => {
     return <g onClick={handleNodeClicked(nodeDatum?.folderid)}>
       <rect className={classes.treeNode} width="20" height="20" x="-10" onClick={toggleNode} />
       <text className={classes.treeNodeLabel} strokeWidth="1" x="20" y="15">
@@ -141,8 +149,8 @@ const Folders = ({ domain }: DomainViewProps) => {
   }
 
   // Recursive tree filter
-  const prune = (node, text) => {
-    const children = [];
+  const prune = (node: Folder, text: string) => {
+    const children: Folder[] = [];
     node.children?.forEach(child => {
       if(prune(child, text)) {
         children.push(child);
@@ -201,7 +209,7 @@ const Folders = ({ domain }: DomainViewProps) => {
             <Tree
               data={folders.Tree}
               orientation="vertical"
-              renderCustomNodeElement={renderNode}
+              renderCustomNodeElement={renderNode as any}
               depthFactor={50}
               pathFunc="step"
               translate={getOffset()}

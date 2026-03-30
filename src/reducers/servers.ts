@@ -32,7 +32,7 @@ const defaultState: ServersState = {
   count: 0,
 };
 
-function serversReducer(state: ServersState = defaultState, action) {
+function serversReducer(state: ServersState = defaultState, action: any) {
   switch (action.type) {
   case SERVERS_DATA_RECEIVED:
     return {

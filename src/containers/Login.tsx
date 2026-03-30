@@ -142,7 +142,7 @@ const Login = () => {
     langsAnchorEl: open ? e.currentTarget : null,
   });
 
-  const handleLangChange = lang => () => {
+  const handleLangChange = (lang: string) => () => {
     // Set language in i18n, redux store and local storage
     i18n.changeLanguage(lang);
     setSettings('language', lang);

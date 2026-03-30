@@ -2,10 +2,11 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { SERVER_CONFIG_ERROR, SERVER_CONFIG_SET } from './actions/types';
+import { ConfigState } from './reducers/config';
 import store from './store';
 
 // Yeet config into redux store
-const setConfig = (newConfig) => {
+const setConfig = (newConfig: Partial<ConfigState>) => {
   store.dispatch({ type: SERVER_CONFIG_SET, data: newConfig });
 };
 

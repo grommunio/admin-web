@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { refreshToken } from "../actions/auth";
 import { useAppSelector, useAppDispatch } from "../store";
 
 
-const SilentRefresh = (): JSX.Element | null => {
+const SilentRefresh = (): React.JSX.Element | null => {
   const config = useAppSelector((state) => state.config);
   const dispatch = useAppDispatch();
   const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);

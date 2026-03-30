@@ -16,7 +16,7 @@ const defaultState: LdapState = {
   Users: [],
 };
 
-function ldapReducer(state: LdapState = defaultState, action) {
+function ldapReducer(state: LdapState = defaultState, action: any) {
   switch(action.type) { 
   case LDAP_DATA_RECEIVED:
     return {

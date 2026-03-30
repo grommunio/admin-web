@@ -68,13 +68,13 @@ const Sync = ({ domainID, userID }: SyncProps) => {
 
   const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserSync(domainID, userID));
   const deleteStates = async (domainID: number, userID: number) => await dispatch(deleteUserSync(domainID, userID));
-  const wipeItOffTheFaceOfEarth = async (domainID, userID: number, deviceID: string, request: RemoteWipeParams) =>
+  const wipeItOffTheFaceOfEarth = async (domainID: number, userID: number, deviceID: string, request: RemoteWipeParams) =>
     await dispatch(engageRemoteWipe(domainID, userID, deviceID, request));
-  const resync = async (domainID: number, userID: number, deviceID) =>
+  const resync = async (domainID: number, userID: number, deviceID: string) =>
     await dispatch(engageResync(domainID, userID, deviceID));
-  const deleteDevice = async (domainID: number, userID: number, deviceID) =>
+  const deleteDevice = async (domainID: number, userID: number, deviceID: string) =>
     await dispatch(engageRemoteDelete(domainID, userID, deviceID));
-  const panicStopWiping = async (domainID: number, userID: number, deviceID) =>
+  const panicStopWiping = async (domainID: number, userID: number, deviceID: string) =>
     await dispatch(cancelRemoteWipe(domainID, userID, deviceID));
 
   useEffect(() => {

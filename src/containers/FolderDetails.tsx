@@ -25,7 +25,7 @@ import FolderPermissions from '../components/Dialogs/FolderPermissions';
 import { Info } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { useAppDispatch } from '../store';
-import { DomainViewProps } from '@/types/common';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { Folder, UpdateFolder } from '@/types/folders';
 
 
@@ -96,7 +96,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
     inner();
   }, []);
 
-  const handleInput = field => event => {
+  const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
       ...state,
       folder: {
@@ -107,7 +107,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleCheckbox = field => e => {
+  const handleCheckbox = (field: string) => (e: ChangeEvent) => {
     setState({
       ...state, 
       folder: {

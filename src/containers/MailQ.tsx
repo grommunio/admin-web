@@ -10,6 +10,7 @@ import { Delete, Replay, PlayForWork } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from 'tss-react/mui';
 import { useAppDispatch } from "../store";
+import { ChangeEvent } from "@/types/common";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -101,12 +102,12 @@ const MailQ = () => {
       .catch(snackbar => setState({ ...state, snackbar }));
   }
 
-  const handleCheckAll = ({ target: t }) => setState({
+  const handleCheckAll = ({ target: t }: ChangeEvent) => setState({
     ...state,
     selected: t.checked ? postqueue.map(entry => entry.queue_id) : [],
   });
 
-  const handleCheckbox = qID => (e) => {
+  const handleCheckbox = (qID: string) => (e: ChangeEvent) => {
     const copy = [...state.selected];
     if(e.target.checked) {
       copy.push(qID);
@@ -136,7 +137,7 @@ const MailQ = () => {
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={postqueue.length > 0 && postqueue.length === selected.length}
-                    onClick={handleCheckAll}
+                    onChange={handleCheckAll}
                   />
                 </TableCell>
                 <TableCell>{t("Queue ID")}</TableCell>
@@ -177,7 +178,7 @@ const MailQ = () => {
                   <TableRow key={entry.queue_id}>
                     <TableCell padding="checkbox">
                       <Checkbox
-                        onClick={handleCheckbox(id)}
+                        onChange={handleCheckbox(id)}
                         checked={rowSelected}
                         value={rowSelected}
                       />
@@ -187,7 +188,7 @@ const MailQ = () => {
                     <TableCell>{parseUnixtime(entry.arrival_time)}</TableCell>
                     <TableCell>{entry.sender}</TableCell>
                     <TableCell>
-                      {(entry.recipients || []).map(r => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
+                      {(entry.recipients || []).map((r: any) => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
                     </TableCell>
                     <TableCell></TableCell>
                   </TableRow>

@@ -11,6 +11,7 @@ import { copyToClipboard, generateFormattedLogLine } from '../../utils';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { useAppDispatch, useAppSelector } from '../../store';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -120,7 +121,7 @@ const Updater = (props: UpdaterProps) => {
     }
   }
 
-  const handleRepoChange = e => {
+  const handleRepoChange = (e: ChangeEvent) => {
     const { value } = e.target;
     localStorage.setItem("packageRepository", value);
     setRepo(value);

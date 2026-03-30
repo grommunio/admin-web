@@ -121,18 +121,18 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
 
   useEffect(() => {
     const inner = async () => {
-      const table = {};
+      const table: Record<string, UserType> = {};
       const group = await fetch(domain.ID, parseInt(getStringAfterLastSlash()))
         .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       Users.forEach((u: UserType) => table[u.username] = u);
       if(group?.ID) {
-        const associations = [];
-        group.associations.forEach(groupUsername => {
+        const associations: UserType[] = [];
+        group.associations.forEach((groupUsername: string) => {
           if(groupUsername in table) associations.push(table[groupUsername]);
         });
 
-        const specifieds = [];
-        group.specifieds.forEach(groupUsername => {
+        const specifieds: UserType[] = [];
+        group.specifieds.forEach((groupUsername: string) => {
           if(groupUsername in table) specifieds.push(table[groupUsername]);
         });
         

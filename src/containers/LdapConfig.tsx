@@ -314,7 +314,7 @@ const LdapConfig = () => {
     });
   }
 
-  const handleTemplate = ({ target: t }) => {
+  const handleTemplate = ({ target: t }: ChangeEvent) => {
     const templates = t.value;
     if(templates === 'ActiveDirectory') {
       setState({
@@ -409,7 +409,7 @@ const LdapConfig = () => {
     setState({ ...state, attributes: copy });
   }
 
-  const handleCheckbox = (field: string) => () => setState({
+  const handleCheckbox = (field: keyof typeof state) => () => setState({
     ...state, 
     [field]: !state[field],
   });
@@ -470,9 +470,9 @@ const LdapConfig = () => {
 
   const handleDeleteClose = () => setState({ ...state, deleting: false });
 
-  const handleDeleteError = error => setState({ ...state, snackbar: error });
+  const handleDeleteError = (error: string) => setState({ ...state, snackbar: error });
 
-  const handleSync = importUser => () => sync({ import: importUser })
+  const handleSync = (importUser: boolean) => () => sync({ import: importUser })
     .then(response => {
       if(response?.taskID) {
         // Background task created -> Show task dialog

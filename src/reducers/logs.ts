@@ -14,7 +14,7 @@ const defaultState: LogsState = {
   Logs: [],
 };
 
-function membersReducer(state: LogsState = defaultState, action) {
+function membersReducer(state: LogsState = defaultState, action: any) {
   switch (action.type) {
   case LOGS_DATA_RECEIVED:
     return {

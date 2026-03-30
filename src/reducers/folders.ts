@@ -67,7 +67,7 @@ function cutOffSubtree(node: Folder, folderid: string) {
   return false;
 }
 
-function foldersReducer(state: FoldersState = defaultState, action) {
+function foldersReducer(state: FoldersState = defaultState, action: any) {
   switch (action.type) {
 
   case FOLDERS_TREE_RECEIVED:

@@ -25,7 +25,7 @@ const defaultState: LicenseState = {
   product: "",
 };
 
-function licenseReducer(state: LicenseState = defaultState, action) {
+function licenseReducer(state: LicenseState = defaultState, action: any) {
   switch (action.type) {
   case LICENSE_DATA_RECEIVED:
     return {

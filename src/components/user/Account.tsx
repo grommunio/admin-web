@@ -32,7 +32,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     flex: 1,
   },
   quota: {
-    border: `1px solid ${theme.palette.primary['500']}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     margin: theme.spacing(2, 0, 2, 0),
     padding: theme.spacing(0.5),
     borderRadius: '8px',
@@ -99,7 +99,7 @@ const Account = (props: AccountProps) => {
   const { t } = useTranslation();
   const { Servers } = useAppSelector(state => state.servers);
 
-  const formatMSE = (rawMSE) => {
+  const formatMSE = (rawMSE: number) => {
     const exp = Math.log(rawMSE) / Math.log(1024) | 0;
     const res = (rawMSE / Math.pow(1024, exp)).toFixed(1);
 

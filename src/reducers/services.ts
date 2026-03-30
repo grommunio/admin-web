@@ -15,7 +15,7 @@ const defaultState: ServicesState = {
   Services: [],
 };
 
-function domainsReducer(state: ServicesState = defaultState, action) {
+function domainsReducer(state: ServicesState = defaultState, action: any) {
   switch (action.type) {
   case SERVICES_DATA_RECEIVED:
     return {

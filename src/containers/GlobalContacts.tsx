@@ -171,7 +171,7 @@ const GlobalContacts = () => {
             </TableHead>
 
             <TableBody>
-              {userList.map((obj) => {
+              {userList.map((obj: ContactListItem) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow
@@ -217,7 +217,7 @@ const GlobalContacts = () => {
 
         {!lgUpHidden && (
           <List>
-            {userList.map((obj) => (
+            {userList.map((obj: ContactListItem) => (
               <ListItemButton
                 key={obj.ID}
                 onClick={handleEdit(

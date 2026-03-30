@@ -30,6 +30,7 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { makeStyles } from "tss-react/mui";
 import { useTable } from "../hooks/useTable";
 import { TaskListItem } from "@/types/tasks";
+import { URLParams } from "@/actions/types";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -57,7 +58,7 @@ const TasQ = () => {
   const context = useContext(CapabilityContext);
   const taskq = useAppSelector(state => state.taskq);
 
-  const fetchTableData = async (params) =>
+  const fetchTableData = async (params: URLParams) =>
     await dispatch(fetchTaskqData({ limit: 200, ...params }));
 
   const status = async () => await dispatch(fetchTaskqStatus());
@@ -184,7 +185,7 @@ const TasQ = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {taskq.Tasks.map((obj, idx) => 
+            {taskq.Tasks.map((obj: TaskListItem, idx: number) => 
               <TableRow key={idx} hover onClick={handleEdit('/taskq/' + obj.ID)}>
                 <TableCell>{obj.command}</TableCell>
                 <TableCell>{t(getTaskState(obj.state))}</TableCell>

@@ -28,7 +28,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     margin: theme.spacing(2, 2, 2, 2),
   },
   backIcon: {
-    color: theme.palette.primary[500],
+    color: theme.palette.primary.main,
     position: 'relative',
     top: 4,
     right: 4,

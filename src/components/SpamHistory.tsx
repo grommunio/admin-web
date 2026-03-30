@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
 import { Moment } from 'moment';
-import { AntiSpamResponse } from '@/types/antispam';
+import { AntiSpamRow, SpamAction } from '@/types/antispam';
 
 
 const useStyles = makeStyles()(() => ({
@@ -43,7 +43,7 @@ const useStyles = makeStyles()(() => ({
   }
 }));
 
-const getActionColor = (action: "no action" | "add header" | "greylist" | "reject") => {
+const getActionColor = (action: SpamAction) => {
   return {
     "no action": "success",
     "add header": "warning",
@@ -54,14 +54,6 @@ const getActionColor = (action: "no action" | "add header" | "greylist" | "rejec
 
 type SpamHistoryType = {
   setSnackbar: (msg: string) => void;
-}
-
-type SpamHistoryRow = AntiSpamResponse & {
-  action: string;
-  score: number;
-  ip: string;
-  size: number;
-  time_real: number;
 }
 
 const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
@@ -85,7 +77,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
       field: 'action',
       headerName: t('Action'),
       width: 100,
-      renderCell: (params) => (
+      renderCell: (params: { row: AntiSpamRow }) => (
         <Chip size='small' color={getActionColor(params.row.action)} label={params.row.action}/>
       ),
     },
@@ -134,18 +126,18 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     }
   ], []);
 
-  const handleRequestSort = (property: string, explicitOrder?: string) => () => {
+  const handleRequestSort = (property: keyof AntiSpamRow, explicitOrder?: string) => () => {
     const isAsc = explicitOrder === "asc" || (orderBy === property && order === 'asc');
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     
-    const sorted = [...Object.values(selectedMail.symbols)] as SpamHistoryRow[];
+    const sorted = [...Object.values(selectedMail.symbols)] as AntiSpamRow[];
     if(property === 'score') {
       sorted.sort((a, b) => isAsc ? b.score - a.score : a.score - b.score);
     } else {
       sorted.sort((a, b) => isAsc ?
-        (b[property] || "").localeCompare(a[property] || "") :
-        (a[property] || "").localeCompare(b[property] || ""));
+        (b[property] || "").toString().localeCompare(a[property].toString() || "") :
+        (a[property] || "").toString().localeCompare(b[property].toString() || ""));
     }
     setSortedTable(sorted);
   };
@@ -154,7 +146,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     handleRefresh();
   }, []);
 
-  const handleMail = (e: { row: SpamHistoryRow }) => {
+  const handleMail = (e: { row: AntiSpamRow }) => {
     setSelectedMail(e.row);
   }
 
@@ -207,7 +199,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     const s = search.toLowerCase();
     const midnightSince = since?.clone().set({ "hour": 0, "minute": 0 }).unix();
     const midnightUntil = until?.clone().set({ "hour": 23, "minute": 59 }).unix();
-    return history.rows.filter(r => {
+    return history.rows.filter((r: AntiSpamRow) => {
       return (r.subject.toLowerCase().includes(s)
         || r.sender_smtp.toLowerCase().includes(s)
         || r.rcpt_smtp.toLowerCase().includes(s)
@@ -217,7 +209,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     })
   }, [history.rows, search, since, until]);
 
-  const handleAutoRefresh = ({ target: t }) => {
+  const handleAutoRefresh = ({ target: t }: ChangeEvent) => {
     setAutorefresh(t.checked);
   }
 
@@ -332,7 +324,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
                     <TableSortLabel
                       active={orderBy === headCell.id}
                       direction={orderBy === headCell.id ? order as TableSortLabelTypeMap["props"]["direction"] : 'asc'}
-                      onClick={handleRequestSort(headCell.id)}
+                      onClick={handleRequestSort(headCell.id as keyof AntiSpamRow)}
                     >
                       {t(headCell.label)}
                     </TableSortLabel>

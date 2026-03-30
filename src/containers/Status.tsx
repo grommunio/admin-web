@@ -25,6 +25,7 @@ import {
   ServerZones as ServerZonesType,
   SharedZones
 } from "@/types/status";
+import { ChangeEvent } from "@/types/common";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -96,9 +97,8 @@ const Status = () => {
     }
   }
 
-  const handleIntervalChange = ({ target: t }) => {
-    const interval = t.value;
-    setFetchInterval(interval);
+  const handleIntervalChange = ({ target: t }: ChangeEvent) => {
+    setFetchInterval(parseInt(t.value));
   }
 
   // Converts an object to a sorted array
@@ -106,7 +106,7 @@ const Status = () => {
     .map(([server, values]) => ({ server, values }))
     .sort((a, b) => a.server === '_' ? 1 : a.server.localeCompare(b.server));
 
-  const handleVhostChange = e => {
+  const handleVhostChange = (e: ChangeEvent) => {
     const value = e.target.value;
     setVhost(value);
   }

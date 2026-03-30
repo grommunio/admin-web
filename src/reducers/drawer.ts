@@ -38,7 +38,7 @@ function editDomain(arr: DomainListItem[], item: DomainListItem) {
   return domains;
 }
 
-function drawerReducer(state: DrawerState = defaultState, action) {
+function drawerReducer(state: DrawerState = defaultState, action: any) {
   switch (action.type) {
   case DRAWER_OPEN:
     return {

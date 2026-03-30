@@ -8,6 +8,7 @@ import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { Delete, Warning } from '@mui/icons-material';
 import { validateAltname } from '../../utils';
+import { Altname } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -59,7 +60,7 @@ const Altnames = (props: AltnamesProps) => {
         {`${t("Alternative usernames to log into the mail-client with")} (${t("Does not have to include the domainname")})`}
       </Typography>
       <List>
-        {(altnames || []).map((alt, idx) => <ListItem key={idx} className={classes.listItem}>
+        {(altnames || []).map((alt: Altname, idx: number) => <ListItem key={idx} className={classes.listItem}>
           <TextField
             className={classes.listTextfield}
             value={alt.altname || ""}

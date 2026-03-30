@@ -105,7 +105,7 @@ const TaskDetails = () => {
       .catch(message => setTask({ ...task, snackbar: message || 'Unknown error' }));
   }
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }

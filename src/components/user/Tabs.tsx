@@ -4,9 +4,10 @@
 import React from 'react';
 import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key,
   MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
-import { Tab, Tabs } from "@mui/material";
+import { SvgIconTypeMap, Tab, Tabs } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 
 const useStyles = makeStyles()(() => ({
@@ -15,8 +16,14 @@ const useStyles = makeStyles()(() => ({
   },
 }));
 
+type UserTabProps = {
+  label: string;
+  disabled?: boolean;
+  icon:OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };
+}
+
 // eslint-disable-next-line react/prop-types
-const UserTab = ({ icon: Icon, ...props }) => <Tab
+const UserTab = ({ icon: Icon, ...props }: UserTabProps) => <Tab
   {...props} 
   iconPosition='start'
   sx={{ minHeight: 48 }}

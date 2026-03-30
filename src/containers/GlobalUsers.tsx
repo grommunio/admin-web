@@ -30,9 +30,10 @@ import TableActionGrid from '../components/TableActionGrid';
 import { setFilterState } from '../actions/globalUsers';
 import { useAppDispatch, useAppSelector } from '../store';
 import { useTable } from '../hooks/useTable';
-import { UserListItem } from '@/types/users';
+import { FetchUserParams, UserListItem } from '@/types/users';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -82,11 +83,11 @@ const GlobalUsers = () => {
   const { Users, count } = useAppSelector(state => state.users);
   const context = useContext(CapabilityContext);
 
-  const fetchTableData = async params => {
+  const fetchTableData = async (params: FetchUserParams) => {
     await dispatch(fetchAllUsers({ ...params }));
   };
 
-  const fetchUserDetails = async (domainID, userID) =>
+  const fetchUserDetails = async (domainID: number, userID: number) =>
     await dispatch(fetchUserData(domainID, userID));
 
   const table = useTable<UserListItem>({
@@ -139,7 +140,7 @@ const GlobalUsers = () => {
     });
   };
 
-  const handleRedirect = obj => async (e) => {
+  const handleRedirect = (obj: UserListItem) => async (e: React.MouseEvent) => {
     // If user is a group
     if(obj.properties?.displaytypeex === USER_TYPE.GROUP) {
       const userDetails = await fetchUserDetails(obj.domainID, obj.ID);
@@ -149,7 +150,7 @@ const GlobalUsers = () => {
     }
   }
 
-  const handleSort = orderBy => () => {
+  const handleSort = (orderBy: string) => () => {
     table.handleRequestSort(orderBy, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
@@ -157,18 +158,18 @@ const GlobalUsers = () => {
     })();
   }
 
-  const handleSelect = field => (e) => {
+  const handleSelect = (field: string) => (e: ChangeEvent) => {
     dispatch(setFilterState(field, e.target.value));
   };
 
-  const handleMatch = (e) => {
+  const handleMatch = (e: ChangeEvent) => {
     dispatch(setFilterState("match", e.target.value));
   };
 
   const { loading, order, orderBy, snackbar, adding, deleting } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
-  const userCounts = Users.reduce((prev, curr) => {
+  const userCounts = Users.reduce((prev: { normal: number, group: number, shared: number }, curr: UserListItem) => {
     const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
     const shared = curr.status === USER_STATUS.SHARED;
     return {

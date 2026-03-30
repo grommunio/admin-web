@@ -4,7 +4,7 @@
 import { StoredCustomImages } from "@/types/config";
 import { SERVER_CONFIG_ERROR, SERVER_CONFIG_SET } from "../actions/types";
 
-type ConfigState = {
+export type ConfigState = {
   devMode: boolean;
   loadAntispamData: boolean;
   mailWebAddress: string;

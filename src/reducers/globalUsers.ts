@@ -21,7 +21,7 @@ const defaultState: GlobalUsersState = {
 
 
 // Only used for filterstate
-function globalUsersReducer(state: GlobalUsersState = defaultState, action) {
+function globalUsersReducer(state: GlobalUsersState = defaultState, action: any) {
   switch(action.type) {
 
   case GLOBAL_USERS_FILTER_STATE:

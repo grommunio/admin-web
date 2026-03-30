@@ -8,11 +8,13 @@ import { useTranslation } from 'react-i18next';
 import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
 import OofEditor from './OofEditor';
 import { useAppDispatch } from '../../store';
+import { OofSettings } from '@/types/users';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -53,11 +55,18 @@ type OofProps = {
   userID: number;
 }
 
+type OofState = OofSettings & {
+  tab: number;
+  snackbar: string;
+  startTime: Moment | null;
+  endTime: Moment | null;
+}
+
 const Oof = ({ domainID, userID }: OofProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [oof, setOof] = useState({
+  const [oof, setOof] = useState<OofState>({
     state: 0,
     externalAudience: 0,
     startTime: null,
@@ -74,9 +83,9 @@ const Oof = ({ domainID, userID }: OofProps) => {
   const [tinyRef, setRef] = useState(null);
   const [tinyRef2, setRef2] = useState(null);
 
-  const fetchOof = async (domainID, userID) => 
+  const fetchOof = async (domainID: number, userID: number) => 
     await dispatch(fetchUserOof(domainID, userID))
-  const patchOof = async (domainID, userID, oofSettings) => 
+  const patchOof = async (domainID: number, userID: number, oofSettings: OofSettings) => 
     await dispatch(setUserOof(domainID, userID, oofSettings));
 
   useEffect(() => {
@@ -110,20 +119,21 @@ const Oof = ({ domainID, userID }: OofProps) => {
     { value: 2, label: 'All' },
   ]
 
-  const handleInput = field => e => {
+  const handleInput = (field: keyof OofState) => (e: ChangeEvent) => {
     setOof({ ...oof, [field]: e.target.value });
   }
 
-  const handleDateInput = field => newVal => {
+  const handleDateInput = (field: "startTime" | "endTime") => (newVal: Moment) => {
     setOof({ ...oof, [field]: newVal });
   }
 
-  const handleTabChange = (e, tab) => setOof({ ...oof, tab });
+  const handleTabChange = (_: never, tab: number) => setOof({ ...oof, tab });
 
   const handleSave = () => {
     const { state, externalAudience, startTime, endTime, internalSubject, externalSubject, internalReply, externalReply } = oof;
 
     patchOof(domainID, userID, {
+      ...oof,
       state,
       externalAudience,
       // Only send dates when oof is scheduled
@@ -140,11 +150,16 @@ const Oof = ({ domainID, userID }: OofProps) => {
 
   const { tab, startTime, endTime, snackbar, internalReply, externalReply } = oof;
 
-  const tfProps = (label, field) => ({
+  const tfProps = (label: string, field: keyof OofState) => ({
     fullWidth: true,
     label: t(label),
     value: oof[field],
     onChange: handleInput(field),
+  });
+
+  const datepickerProps = (label: string, field: keyof OofState) => ({
+    ...tfProps(label, field),
+    value: moment(oof[field]),
   });
 
   return (<>
@@ -175,7 +190,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
           ))}
         </TextField>
         <CustomDateTimePicker
-          {...tfProps("Start time", "startTime")}
+          {...datepickerProps("Start time", "startTime")}
           onChange={handleDateInput('startTime')}
           sx={{
             margin: theme.spacing(1),
@@ -183,7 +198,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
           }}
         />
         <CustomDateTimePicker
-          {...tfProps("End time", "endTime")}
+          {...datepickerProps("End time", "endTime")}
           onChange={handleDateInput('endTime')}
           sx={{
             margin: theme.spacing(1),

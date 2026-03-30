@@ -13,7 +13,7 @@ const defaultState: SettingsState = {
   language: 'en-US',
 };
 
-function settingsReducer(state: SettingsState = defaultState, action) {
+function settingsReducer(state: SettingsState = defaultState, action: any) {
   switch(action.type) {
   case CHANGE_SETTINGS:
     return {

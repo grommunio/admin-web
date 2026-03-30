@@ -20,7 +20,7 @@ const defaultState: GroupsState = {
   count: 0,
 };
 
-function groupsReducer(state: GroupsState = defaultState, action) {
+function groupsReducer(state: GroupsState = defaultState, action: any) {
   switch (action.type) {
   case GROUPS_DATA_RECEIVED:
     return {

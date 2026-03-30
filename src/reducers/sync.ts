@@ -29,7 +29,7 @@ const defaultState: SyncState = {
   Sync: [],
 };
 
-function syncReducer(state: SyncState = defaultState, action) {
+function syncReducer(state: SyncState = defaultState, action: any) {
   switch (action.type) {
   case SYNC_DATA_RECEIVED:
     return {

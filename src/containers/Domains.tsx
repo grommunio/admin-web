@@ -40,7 +40,7 @@ import TableActionGrid from "../components/TableActionGrid";
 import { makeStyles } from "tss-react/mui";
 import { URLParams } from "@/actions/types";
 import { ChangeEvent } from "@/types/common";
-import { DomainListItem } from "@/types/domains";
+import { Domain, DomainListItem } from "@/types/domains";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -226,7 +226,7 @@ const Domains = () => {
 
         {!lgUpHidden && (
           <List>
-            {filteredDomains.map((obj) => (
+            {filteredDomains.map((obj: Domain) => (
               <ListItemButton
                 key={obj.ID}
                 onClick={handleEdit("/domains/" + obj.ID)}

@@ -106,7 +106,7 @@ export function fetchUserData(domainID: number, userID: number) {
   };
 }
 
-export function fetchAllUsers(params: URLParams & { orgID?: number, status?: number }) {
+export function fetchAllUsers(params: FetchUserParams) {
   return async (dispatch: Dispatch) => {
     try {
       const data = await allUsers(params);
@@ -188,7 +188,7 @@ export function addContactData(domainID: number, user: NewContact) {
   return defaultPostHandler(addUser, USER_DATA_ADD, domainID, user);
 }
 
-export function setPermittedUserData(domainID: number, folderID: number, permittedUsers: string[]) {
+export function setPermittedUserData(domainID: number, folderID: number, permittedUsers: { usernames: string[] }) {
   return defaultPatchHandler(setPermittedUser, domainID, folderID, permittedUsers);
 }
 

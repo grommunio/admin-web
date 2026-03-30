@@ -12,7 +12,8 @@ import { AppBar, Toolbar, Typography, IconButton,
   TextField,
   InputAdornment,
   useMediaQuery,
-  Theme} from '@mui/material';
+  Theme,
+  SvgIconTypeMap} from '@mui/material';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +35,8 @@ import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
 import { useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
+import { ConfigState } from '@/reducers/config';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -133,6 +136,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }));
 
+type Link = {
+  key: keyof ConfigState;
+  title: string;
+  icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };
+}
 
 const TopBar = () => {
   const { classes } = useStyles();
@@ -149,7 +157,7 @@ const TopBar = () => {
   const [toggleClasses, setToggleClasses] = useState(colorContext.mode === "dark" ? ["moon", "tdnn"] : ["moon sun", "tdnn day"]);
   const navigate = useNavigate();
 
-  const links = [
+  const links: Link[] = [
     { key: 'mailWebAddress', title: 'E-Mail', icon: MailOutlineIcon },
     { key: 'chatWebAddress', title: 'Chat', icon: Chat },
     { key: 'videoWebAddress', title: 'Video', icon: Duo },
@@ -230,9 +238,9 @@ const TopBar = () => {
           >
             <span>
               <IconButton
-                href={config[link.key]}
-                disabled={!config[link.key]}
+                href={config[link.key] as string}
                 target="_blank"
+                disabled={!config[link.key]}
                 className={classes.iconButton}
                 size="large">
                 <link.icon />

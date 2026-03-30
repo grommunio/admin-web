@@ -17,6 +17,8 @@ type MxRecords = {
 };
 
 export type DnsCheck = {
+  externalIp: string;
+  localIp: string;
   autoconfig: DnsValue;
   autodiscover: DnsValue;
   autodiscoverSRV: DnsValueWithIp;
@@ -28,10 +30,8 @@ export type DnsCheck = {
   carddavsSRV: DnsValue;
   dkim: DnsValue;
   dmarc: DnsValue;
-  externalIp: string;
   imapSRV: DnsValue;
   imapsSRV: DnsValue;
-  localIp: string;
   mxRecords: MxRecords;
   pop3SRV: DnsValue;
   pop3sSRV: DnsValue;

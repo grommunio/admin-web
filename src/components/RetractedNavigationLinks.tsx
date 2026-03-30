@@ -17,7 +17,7 @@ import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import grey from '../colors/grey';
 import logo from '../res/grommunio_icon_light.svg';
-import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon, Theme } from '@mui/material';
+import { IconButton, Tooltip, Avatar, ListItemButton, ListItemIcon, Theme, SvgIconTypeMap } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, AdminPanelSettings, BackupTable, ContactMail, Dns, Person, QueryBuilder, ReportGmailerrorred, TableChart,
   TaskAlt, Topic } from '@mui/icons-material';
@@ -27,6 +27,7 @@ import AddDomain from './Dialogs/AddDomain';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { Domain } from '@/types/domains';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -130,6 +131,14 @@ type NavigationLinksProps = {
   setTab: (tab: number) => void;
 }
 
+type ListElementProps = {
+  ID?: number;
+  label: string;
+  path: string;
+  Icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };
+  style?: Record<string, string | number>;
+}
+
 const RetractedNavigationLinks = (props: NavigationLinksProps) => {
   const { domains, tab, setTab } = props;
   const { classes } = useStyles();
@@ -170,7 +179,7 @@ const RetractedNavigationLinks = (props: NavigationLinksProps) => {
   }
 
   // eslint-disable-next-line react/prop-types
-  const ListElement = ({ label="", path, Icon, ...rest }) => {
+  const ListElement = ({ label="", path, Icon, ...rest }: ListElementProps) => {
     const selected = location.pathname.endsWith('/' + path);
     return <Tooltip title={t(label)} placement="right">
       <ListItemButton
@@ -187,7 +196,7 @@ const RetractedNavigationLinks = (props: NavigationLinksProps) => {
   }
 
   // eslint-disable-next-line react/prop-types
-  const NestedListElement = ({ ID, label="", path, Icon }) => {
+  const NestedListElement = ({ ID, label="", path, Icon }: ListElementProps) => {
     const selected = expandedDomain === ID &&
       location.pathname.startsWith('/' + ID + path);
     return <Tooltip title={t(label)} placement="right">

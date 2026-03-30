@@ -438,7 +438,7 @@ export function permittedUsers(domainID: number, userID: number, params: URLPara
   };
 }
 
-export function setPermittedUser(domainID: number, userID: number, permittedUsers: string[]) {
+export function setPermittedUser(domainID: number, userID: number, permittedUsers: { usernames: string[] }) {
   return async () => {
     return await put('/domains/' + domainID + '/users/'+ userID + '/storeAccess', permittedUsers);
   };

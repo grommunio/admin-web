@@ -51,6 +51,7 @@ import { SyncPolicy } from '@/types/sync';
 import { Role } from '@/types/roles';
 import { Server } from '@/types/servers';
 import { fetchDomainDetails } from '../actions/domains';
+import { LdapDumpParams } from '@/types/ldap';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -139,7 +140,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   const editRoles = async (domainID: number, userID: number, roles: { roles: number[] }) => await dispatch(editUserRoles(domainID, userID, roles));
   const storeLangs = async () => await dispatch(getStoreLangs());
   const sync = async (domainID: number, userID: number) => await dispatch(syncLdapData(domainID, userID));
-  const dumpLdap = async params => await dispatch(fetchLdapDump(params));
+  const dumpLdap = async (params: LdapDumpParams) => await dispatch(fetchLdapDump(params));
 
   useEffect(() => {
     const inner = async () => {
@@ -194,7 +195,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         if(properties[quotaLimit] === 0) break;
         const r = properties[quotaLimit] % 1024 ** i;
         if(r === 0) {
-          sizeUnits[quotaLimit] = i + 1;
+          sizeUnits[quotaLimit as keyof typeof sizeUnits] = i + 1;
           properties[quotaLimit] = properties[quotaLimit] / 1024 ** i;
           break;
         }
@@ -346,7 +347,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties as any;
 
     // Convert quota (MiB, GiB or TiB) into KiB
-    const storePayload = {
+    const storePayload: { messagesizeextended: number, storagequotalimit: number, prohibitreceivequota: number, prohibitsendquota: number } = {
       messagesizeextended: undefined, // MSE is read-only
       storagequotalimit: [null, undefined, ""].includes(storagequotalimit?.toString()) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
       prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota?.toString()) ? null : prohibitreceivequota * 2
@@ -362,7 +363,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       aliases: aliases.filter(alias => alias !== ''), // Filter empty aliases
       fetchmail: fetchmail.map(e => ({ // Transform fetchmail objects
         ...e,
-        date: undefined,
+        date: undefined as undefined,
         sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
       })),
       properties: {

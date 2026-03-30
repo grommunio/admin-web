@@ -22,7 +22,7 @@ const defaultState: AntispamState = {
   }
 };
 
-function spamReducer(state = defaultState, action) {
+function spamReducer(state = defaultState, action: any) {
   switch (action.type) {
   case SPAM_DATA_RECEIVED:
     return {

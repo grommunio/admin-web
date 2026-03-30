@@ -14,7 +14,7 @@ const defaultState: StatusState = {
   vhosts: [],
 };
 
-function statusReducer(state: StatusState = defaultState, action) {
+function statusReducer(state: StatusState = defaultState, action: any) {
   switch (action.type) {
   case VHOST_DATA_RECEIVED:
     return {

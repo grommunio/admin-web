@@ -33,7 +33,7 @@ import { useTable } from '../hooks/useTable';
 import { FetchUserParams, UserListItem } from '@/types/users';
 import { makeStyles } from 'tss-react/mui';
 import { CheckLdapUsersParams, SyncLdapParams } from '@/types/ldap';
-import { DomainViewProps } from '@/types/common';
+import { ChangeEvent, DomainViewProps } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -220,7 +220,7 @@ const Users = ({ domain }: DomainViewProps) => {
     clearSnackbar();
   }
 
-  const handleSort = orderBy => () => {
+  const handleSort = (orderBy: string) => () => {
     handleRequestSort(orderBy, {
       filterProp: getFilterProp(),
       status: getUserStatuses(),
@@ -228,11 +228,11 @@ const Users = ({ domain }: DomainViewProps) => {
     })();
   }
 
-  const handleSelect = field => (e) => {
+  const handleSelect = (field: string) => (e: ChangeEvent) => {
     dispatch(setFilterState(field, e.target.value));
   };
 
-  const handleMatch = (e) => {
+  const handleMatch = (e: ChangeEvent) => {
     dispatch(setFilterState("match", e.target.value));
   };
 
@@ -240,7 +240,7 @@ const Users = ({ domain }: DomainViewProps) => {
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { checking, taskMessage, taskID } = state;
 
-  const userCounts = Users.reduce((prev, curr) => {
+  const userCounts = Users.reduce((prev: { normal: number, group: number, shared: number }, curr: UserListItem) => {
     const isGroup = curr.properties?.displaytypeex === USER_TYPE.GROUP;
     const shared = curr.status === USER_STATUS.SHARED;
     return {
@@ -391,7 +391,7 @@ const Users = ({ domain }: DomainViewProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {Users.map((obj, idx) => {
+              {Users.map((obj: UserListItem, idx: number) => {
                 const properties = obj.properties || {};
                 return (
                   <TableRow
@@ -427,7 +427,7 @@ const Users = ({ domain }: DomainViewProps) => {
           </Table>}
         {!lgUpHidden &&
           <List>
-            {Users.map((obj, idx) => 
+            {Users.map((obj: UserListItem, idx: number) => 
               <ListItemButton
                 key={idx}
                 onClick={handleEdit('/' + domain.ID + '/users/' + obj.ID)}

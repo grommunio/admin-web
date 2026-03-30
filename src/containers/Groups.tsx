@@ -110,7 +110,7 @@ const Groups = ({ domain }: DomainViewProps) => {
     table.handleScroll(Groups, count);
   };
 
-  const handleNavigation = path => event => {
+  const handleNavigation = (path: string) => (event: React.MouseEvent) => {
     event.preventDefault();
     navigate(`/${path}`);
   }
@@ -119,7 +119,7 @@ const Groups = ({ domain }: DomainViewProps) => {
   *  There is no endpoint to explicitely sync LDAP groups.
   *  However, LDAP groups are just users, so syncing users has the desired effect.
   */
-  const handleGroupSync = importUsers => () => {
+  const handleGroupSync = (importUsers: boolean) => () => {
     sync({ import: importUsers }, domain.ID)
       .then(response => {
         if(response?.taskID) {

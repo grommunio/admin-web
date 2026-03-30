@@ -61,7 +61,7 @@ const User = (props: UserProps) => {
   const { properties, ldapID } = user;
   const { country, streetaddress, locality } = properties;
 
-  const tfProps = (label, field) => ({
+  const tfProps = (label: string, field: keyof UserProperties) => ({
     variant: (ldapID ? "filled" : 'outlined') as TextFieldProps["variant"],
     fullWidth: true,
     onChange: handlePropertyChange(field),

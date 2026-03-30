@@ -35,6 +35,7 @@ import { Org } from '@/types/orgs';
 import { Server } from '@/types/servers';
 import { UpdateDomain } from '@/types/domains';
 
+
 const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     margin: theme.spacing(3, 2, 3, 2),
@@ -173,7 +174,7 @@ const DomainDetails = () => {
     navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
   }
 
-  const handleTab = (e, tab) => setState({ ...state, tab })
+  const handleTab = (_: never, tab: number) => setState({ ...state, tab })
 
   const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;

@@ -23,7 +23,7 @@ const defaultState: TaskQState = {
   workers: 0,
 };
 
-function taskqReducer(state: TaskQState = defaultState, action) {
+function taskqReducer(state: TaskQState = defaultState, action: any) {
   switch (action.type) {
   case TASK_DATA_RECEIVED:
     return {

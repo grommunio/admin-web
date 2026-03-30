@@ -20,7 +20,7 @@ const defaultState: OrgsState = {
   count: 0,
 };
 
-function orgsReducer(state: OrgsState = defaultState, action) {
+function orgsReducer(state: OrgsState = defaultState, action: any) {
   switch (action.type) {
   case ORGS_DATA_RECEIVED:
     return {

@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router';
 import { USER_STATUS } from '../../constants';
 import { ChangeEvent } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../../store';
+import { BaseUser } from '@/types/users';
+import { BaseDomain } from '@/types/domains';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -61,6 +63,13 @@ type LicenseTabProps = {
   setSnackbar: (msg: string) => void;
 }
 
+type LicenseTabState = {
+  domainsExpanded: boolean;
+  dialogOpen: boolean;
+  username: string;
+  password: string;
+  domainUsers: Record<number, BaseUser[]>;
+}
 
 const LicenseTab = (props: LicenseTabProps) => {
   const { counts, setSnackbar } = props;
@@ -69,7 +78,7 @@ const LicenseTab = (props: LicenseTabProps) => {
   const { license } = useAppSelector(state => state);
   const { Domains } = useAppSelector(state => state.domains);
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<LicenseTabState>({
     domainsExpanded: false,
     domainUsers: {},
     dialogOpen: false,
@@ -120,7 +129,7 @@ const LicenseTab = (props: LicenseTabProps) => {
     navigate(`/${domainID}/users`);
   }
 
-  const fetchUsers = async domainID => {
+  const fetchUsers = async (domainID: number) => {
     const { setSnackbar } = props;
     const users = await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }))
       .catch(setSnackbar);
@@ -197,7 +206,7 @@ const LicenseTab = (props: LicenseTabProps) => {
         </Typography>
         <Collapse in={domainsExpanded} unmountOnExit>
           <List>
-            {Domains.map(({ ID, domainname }, idx) => <React.Fragment key={idx}>
+            {Domains.map(({ ID, domainname }: BaseDomain, idx: number) => <React.Fragment key={idx}>
               <ListItemButton onClick={handleExpansion(ID, idx)}>
                 <ListItemText
                   primary={`${domainname} (${counts[domainname] || 0})`}

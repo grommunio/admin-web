@@ -154,7 +154,7 @@ const Roles = () => {
           </TableHead>
 
           <TableBody>
-            {roleList.map((obj) => (
+            {roleList.map((obj: RoleListItem) => (
               <TableRow
                 key={obj.ID}
                 hover

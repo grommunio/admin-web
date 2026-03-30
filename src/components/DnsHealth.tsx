@@ -11,6 +11,7 @@ import { fetchDnsCheckData } from '../actions/domains';
 import { Domain } from '@/types/domains';
 import { useAppDispatch } from '../store';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { DnsCheck } from '@/types/dns';
 
 
 const useStyles = makeStyles()(() => ({
@@ -53,7 +54,7 @@ function getEquationValuesFromRequirementTypes(typeA: RequirementType, typeB: Re
   }[typeA+typeB];
 }
 
-function scoreDNSResult(valueA: boolean, valueB: boolean, reqAType: RequirementType="opt", reqBType: RequirementType="opt") {
+function scoreDNSResult(valueA: boolean | string, valueB: boolean | string, reqAType: RequirementType="opt", reqBType: RequirementType="opt") {
   const equationValues = getEquationValuesFromRequirementTypes(reqAType, reqBType);
   const valueMultiplier = [1, valueA ? 1 : 0, valueB ? 1 : 0];
   const res = equationValues.map((val, idx) => val * valueMultiplier[idx])
@@ -69,24 +70,44 @@ type DnsHealthProps = {
   setSnackbar: (message: string) => void;
 }
 
+type DnsHealthState = {
+  loading: boolean;
+  error: boolean;
+  InfoDialog: React.ComponentType<any>;
+  dnsCheck: DnsCheck;
+}
+
+type DnsCheckRecordKey = Exclude<keyof DnsCheck, "externalIp" | "localIp">;
+
 const DnsHealth = (props: DnsHealthProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { domain, setSnackbar } = props;
-  const [state, setState] = useState({
+  const [state, setState] = useState<DnsHealthState>({
     loading: true,
     error: false,
     dnsCheck: {
       externalIp: "",
       localIp: "",
-      mxRecords: null,
+      autoconfig: null,
       autodiscover: null,
       autodiscoverSRV: null,
-      autoconfig: null,
-      txt: null,
-      dcim: null,
+      caldavSRV: null,
+      caldavTXT: null,
+      caldavsSRV: null,
+      carddavSRV: null,
+      carddavTXT: null,
+      carddavsSRV: null,
       dkim: null,
+      dmarc: null,
+      imapSRV: null,
+      imapsSRV: null,
+      mxRecords: null,
+      pop3SRV: null,
+      pop3sSRV: null,
+      submissionSRV: null,
+      txt: null,
     },
     InfoDialog: null,
   });
@@ -201,7 +222,7 @@ const DnsHealth = (props: DnsHealthProps) => {
     return getChipColorFromScore(score);
   }
 
-  const getOptionalSrvColor = (records: string[]=[]) => {
+  const getOptionalSrvColor = (records: (DnsCheckRecordKey)[]=[]) => {
     const { dnsCheck } = state;
     if(records.some(record => !dnsCheck[record])) return errorColor;
     const scores = records.map(record => {
@@ -210,7 +231,7 @@ const DnsHealth = (props: DnsHealthProps) => {
     return getChipColorFromScore(Math.min(...scores));
   }
 
-  const getDavTxtColor = (record: string) => {
+  const getDavTxtColor = (record: DnsCheckRecordKey) => {
     const { dnsCheck } = state;
     if(!dnsCheck[record]) return errorColor;
 

@@ -65,8 +65,8 @@ const DBFile = () => {
       const file = await fetch(splits[2], splits[3])
         .catch((message: string) => setState({ ...state, snackbar: message || 'Unknown error' }));
       
-      const data = [];
-      Object.entries(file?.data || {}).forEach(([key, value]) => data.push({ key, value }));
+      const data: KeyValuePair<string>[] = [];
+      Object.entries(file?.data || {}).forEach(([key, value]: [string, string]) => data.push({ key, value }));
       setState({
         ...state, 
         loading: false,
@@ -103,7 +103,7 @@ const DBFile = () => {
   }
 
   const formatData = (data: KeyValuePair<string>[]) => {
-    const obj = {};
+    const obj: Record<string, string> = {};
     data.forEach(pair => obj[pair.key] = pair.value);
     return obj;
   }

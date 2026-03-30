@@ -23,6 +23,7 @@ import { makeStyles } from 'tss-react/mui';
 import { useAppDispatch, useAppSelector } from '../store';
 import { URLParams } from '@/actions/types';
 import { ServerListItem, ServerPolicy } from '@/types/servers';
+import { ChangeEvent } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -109,8 +110,8 @@ const Servers = () => {
     { label: "External name", value: "extname" },
   ];
 
-  const handlePolicyChange = e => {
-    setPolicy({ data: { policy: e.target.value }})
+  const handlePolicyChange = (e: ChangeEvent) => {
+    setPolicy({ data: { policy: e.target.value as ServerPolicy }})
       .then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => {
         setState({ ...state, snackbar: msg || 'Unknown error' });
@@ -216,7 +217,7 @@ const Servers = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Servers.map((obj, idx) => {
+            {Servers.map((obj: ServerListItem, idx: number) => {
               const hostnameResolved = !!host[obj.hostname];
               const extResolved = !!ext[obj.extname];
               return <TableRow key={idx} hover onClick={handleEdit('/servers/' + obj.ID)}>
