@@ -59,7 +59,7 @@ async function handleLoginErrors(response: Response) {
 /**
  * Sends GET request to rest api
  */
-async function get(path: string) {
+export async function get(path: string) {
   return await fetch(baseUrl + path)
     .then(handleErrors);
 }
@@ -961,7 +961,7 @@ export function editCreateParams(data: any, domainID: number | null, params: URL
   ABOUT
 */
 
-export function about() {
+export async function about() {
   return async () => {
     return await get('/about');
   };

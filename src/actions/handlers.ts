@@ -3,6 +3,17 @@
 
 import { Dispatch } from "redux";
 import { Endpoint } from "./types";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+export function createApiThunk<T>(type: string, endpoint: (...args: any[]) => Promise<any>) {
+  return createAsyncThunk<T, void, { rejectValue: string}>(type, async (args: any, { rejectWithValue }) => {
+    try {
+      return await endpoint(args);
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  });
+}
 
 export function defaultListHandler(endpoint: Endpoint, receivedActionType: string, ...endpointParams: any[]) {
   return async (dispatch: Dispatch)  => {

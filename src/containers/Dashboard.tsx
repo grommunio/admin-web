@@ -12,7 +12,6 @@ import { useTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
 import { HelpOutline } from "@mui/icons-material";
-import { fetchAboutData } from "../actions/about";
 import About from "../components/About";
 import CPULine from "../components/charts/CPULine";
 import CPUPie from "../components/charts/CPUPie";
@@ -21,6 +20,7 @@ import MemoryPie from "../components/charts/MemoryPie";
 import Load from "../components/charts/Load";
 import Disks from "../components/charts/Disks";
 import { useAppDispatch, useAppSelector } from "../store";
+import { fetchAboutData } from "../slices/about";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({

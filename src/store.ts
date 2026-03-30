@@ -4,7 +4,7 @@
 import { combineReducers } from 'redux';
 
 // Keep alphabetically ordered
-import aboutReducer from './reducers/about';
+import aboutReducer from './slices/about';
 import antispamReducer from './reducers/antispam';
 import authReducer from './reducers/auth';
 import configReducer from './reducers/config';

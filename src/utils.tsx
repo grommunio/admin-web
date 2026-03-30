@@ -62,6 +62,10 @@ export function addItem<T>(arr: T[], item: T): T[] {
   return copy;
 }
 
+export function findById<T extends { ID: number }>(arr: T[], ID: number): T | undefined {
+  return arr.find(item => item.ID === ID)
+}
+
 /**
  * Returns the string after the last '/' in the current URL
  * 
