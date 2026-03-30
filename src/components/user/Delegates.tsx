@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button, FormControl, Grid2, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
@@ -70,11 +70,11 @@ const Delegates = (props: DeletesProps) => {
   const fetchUsers = async (domainID: number) => await dispatch(fetchPlainUsersData(domainID, { status: USER_STATUS.NORMAL }));
   const fetchOrgUsers = async (orgID: number) =>
     await dispatch(fetchAllUsers({orgID, limit: 1000000, sort: 'username,asc', level: 0, status: USER_STATUS.NORMAL }));
-  const setDelegates = async (domainID: number, userID: number, delegates) =>
+  const setDelegates = async (domainID: number, userID: number, delegates: string[]) =>
     await dispatch(setUserDelegates(domainID, userID, delegates));
-  const setSendAs = async (domainID: number, userID: number, sendAsUsers) =>
+  const setSendAs = async (domainID: number, userID: number, sendAsUsers: string[]) =>
     await dispatch(setUserSendAs(domainID, userID, sendAsUsers));
-  const setPermittedUser = async (domainID: number, folderID: number, permittedUsers) => 
+  const setPermittedUser = async (domainID: number, folderID: number, permittedUsers: { usernames: string[] }) => 
     await dispatch(setPermittedUserData(domainID, folderID, permittedUsers));
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const Delegates = (props: DeletesProps) => {
       setState({
         ...state, 
         delegates: delegates?.data?.sort() || [],
-        permittedUsers: permittedUsers?.data?.map(u => u.username).sort() || [],
+        permittedUsers: permittedUsers?.data?.map((u: BaseUser) => u.username).sort() || [],
         sendAsUsers: sendAsUsers?.data?.sort() || [],
       });
     }
@@ -107,10 +107,10 @@ const Delegates = (props: DeletesProps) => {
     });
   }
 
-  const handleAutocomplete = (field: string, editField) => (_: never, newVal: any) => {
+  const handleAutocomplete = (field: string, editField: keyof typeof state) => (_: never, newVal: string[]) => {
     setState({
       ...state, 
-      [field]: newVal.map(r => r.username ? r.username : r).sort(),
+      [field]: newVal.sort(),
       [editField]: true,
       delegatesACInput: '',
       sendAsACInput: '',
@@ -151,15 +151,16 @@ const Delegates = (props: DeletesProps) => {
   }
 
   const { delegates, sendAsUsers, snackbar, delegatesACInput, puACInput, permittedUsers, sendAsACInput } = state;
-  const defaultTfProps = {
+  const defaultTfProps = useMemo(() => ({
     multiple: true,
-    filterAttribute: 'username',
+    //filterAttribute: 'username',
     className: classes.input,
-    options: Users.filter((u: BaseUser) => u.ID !== userID) || [],
-    isOptionEqualToValue: (option: BaseUser, value: string) => option.username === value,
-    getOptionLabel: (sendAsUser) => sendAsUser.username || sendAsUser || '',
+    options: Users.filter((u: BaseUser) => u.ID !== userID).map((u: BaseUser) => u.username) || [],
+    //isOptionEqualToValue: (option: BaseUser, value: string) => option.username === value,
+    //getOptionLabel: (user: BaseUser) => user.username,
     placeholder: t("Search users") + "...",
-  };
+  }), [Users]);
+
   return (
     <>
       <FormControl className={classes.form}>

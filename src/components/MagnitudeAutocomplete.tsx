@@ -12,7 +12,7 @@ import { ChangeEvent } from '@/types/common';
 type MagnitudeAutocompleteProps<T> = {
   className?: string;
   value: T | T[];
-  filterAttribute: string;
+  filterAttribute?: string;
   onChange: (_: never, newVal: T | T[]) => void;
   options?: T[];
   label?: string;
@@ -51,6 +51,7 @@ function MagnitudeAutocomplete<T>(props: MagnitudeAutocompleteProps<T>) {
     onChange={onChange}
     options={options || []}
     getOptionLabel={getOptionLabel || (o => {
+      if(!filterAttribute) return o;
       // Contact
       if(filterAttribute === "username" && o.status === USER_STATUS.CONTACT) {
         const properties = o.properties || {};
