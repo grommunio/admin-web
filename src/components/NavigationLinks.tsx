@@ -40,7 +40,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     padding: theme.spacing(0, 2, 0, 2),
     justifyContent: 'center',
-    height: 64,
+    minHeight: 64,
   },
   nestedIcon: {
     float: 'left',
