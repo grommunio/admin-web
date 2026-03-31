@@ -9,7 +9,7 @@ import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
 import moment, { Moment } from 'moment';
-import * as DOMPurify from 'dompurify';
+import DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
 import OofEditor from './OofEditor';
 import { useAppDispatch } from '../../store';

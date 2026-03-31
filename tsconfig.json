@@ -12,7 +12,7 @@
     },
     "jsx": "react-jsx",
     "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "bundler",
     "strict": false,
     "noImplicitAny": true,
     "noEmit": true,

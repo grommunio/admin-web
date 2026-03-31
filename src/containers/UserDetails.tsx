@@ -752,13 +752,13 @@ const UserDetails = ({ domain }: DomainViewProps) => {
           handleAddAlias={handleAddAlias}
           handleRemoveAlias={handleRemoveAlias}
         />}
-        {tab === 6 && ID && <Delegates
+        {tab === 6 && !!ID && <Delegates
           domainID={domain.ID}
           orgID={domain.orgID}
           userID={user.ID}
           disabled={!writable}
         />}
-        {tab === 7 && ID && <Oof
+        {tab === 7 && !!ID && <Oof
           domainID={domain.ID}
           userID={user.ID}
         />}
@@ -768,11 +768,11 @@ const UserDetails = ({ domain }: DomainViewProps) => {
           handleEdit={handleFetchmailEditDialog}
           handleDelete={handleFetchmailDelete}
         />}
-        {tab === 9 && ID && <SyncTab
+        {tab === 9 && !!ID && <SyncTab
           domainID={domain.ID}
           userID={user.ID}
         />}
-        {tab === 10 && ID && <SyncPolicies
+        {tab === 10 && !!ID && <SyncPolicies
           syncPolicy={syncPolicy}
           defaultPolicy={defaultPolicy}
           handleChange={handleSyncChange}
