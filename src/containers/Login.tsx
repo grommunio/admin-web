@@ -94,12 +94,19 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+interface LoginState {
+  user: string;
+  pass: string;
+  loading: boolean;
+  langsAnchorEl: Element | null;
+}
+
 const Login = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { auth, settings, config: serverConfig } = useAppSelector(state => state);
-  const [state, setState] = useState({
+  const [state, setState] = useState<LoginState>({
     user: '',
     pass: '',
     loading: false,

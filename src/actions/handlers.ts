@@ -4,6 +4,7 @@
 import { Dispatch } from "redux";
 import { Endpoint } from "./types";
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { ApiError } from "@/types/common";
 
 export function createApiThunk<T>(type: string, endpoint: (...args: any[]) => Promise<any>) {
   return createAsyncThunk<T, void, { rejectValue: string}>(type, async (args: any, { rejectWithValue }) => {
@@ -22,7 +23,8 @@ export function defaultListHandler(endpoint: Endpoint, receivedActionType: strin
       dispatch({ type: receivedActionType, data });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -35,7 +37,8 @@ export function defaultListHandler2(endpoint: Endpoint, receivedActionType: stri
       dispatch({ type: receivedActionType, data });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -47,7 +50,8 @@ export function defaultPostHandler(endpoint: Endpoint, addActionType: string, ..
       if(resp) dispatch({ type: addActionType, data: resp });
       return Promise.resolve(resp);
     } catch(error) {
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -59,7 +63,8 @@ export function defaultDetailsHandler(endpoint: Endpoint, ...endpointParams: any
       return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -71,7 +76,8 @@ export function defaultPatchHandler(endpoint: Endpoint, ...endpointParams: any[]
       return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -87,7 +93,8 @@ export function defaultDeleteHandler(endpoint: Endpoint, deleteActionType: strin
       return Promise.resolve(resp);
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

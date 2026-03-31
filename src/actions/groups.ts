@@ -11,6 +11,7 @@ import { groups, addGroup, editGroup, deleteGroup, groupDetails, user } from '..
 import { defaultDeleteHandler, defaultListHandler2, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 import { NewGroup, UpdateGroup } from '@/types/groups';
+import { ApiError } from '@/types/common';
 
 
 export function fetchGroupsData(domainID: number, params: URLParams) {
@@ -25,7 +26,8 @@ export function fetchGroupData(domainID: number, id: number) {
       group.user = groupUser;
       return Promise.resolve(group);
     } catch(error) {
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

@@ -14,6 +14,7 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { NewRole, UpdateRole } from '@/types/roles';
+import { ApiError } from '@/types/common';
 
 
 export function fetchRolesData(params: URLParams) {
@@ -24,7 +25,8 @@ export function fetchRolesData(params: URLParams) {
       else dispatch({ type: ROLES_NEXT_SET, data: response });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

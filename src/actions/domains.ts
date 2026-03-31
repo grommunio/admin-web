@@ -12,6 +12,7 @@ import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy
 import { defaultDeleteHandler, defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CreateDomainParams, DeleteDomainProps, NewDomain, UpdateDomain } from '@/types/domains';
+import { ApiError } from '@/types/common';
 
 
 export function fetchDomainData(params: URLParams) {
@@ -20,9 +21,10 @@ export function fetchDomainData(params: URLParams) {
       const domainData = await domains(params);
       if(!params?.offset) dispatch({ type: DOMAIN_DATA_RECEIVED, data: domainData });
       else dispatch({ type: DOMAIN_NEXT_SET, data: domainData });
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
+    } catch(err) {
+      console.error(err);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -34,9 +36,10 @@ export function fetchDomainDetails(id: number) {
       const defaultPolicy = await defaultSyncPolicy();
       domainData.defaultPolicy = defaultPolicy.data;
       return Promise.resolve(domainData);
-    } catch(error) {
-      console.error(error);
-      return Promise.reject(error.message);
+    } catch(err) {
+      console.error(err);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -58,8 +61,9 @@ export function fetchDnsCheckData(domainID: number) {
     try {
       const resp = await dns(domainID);
       return Promise.resolve(resp);
-    } catch(error) {
-      return Promise.reject(error.message);
+    } catch(err) {
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

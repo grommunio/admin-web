@@ -10,6 +10,7 @@ import store from '../store';
 import { defaultDetailsHandler, defaultPatchHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { ActiveSyncSession, FetchSyncParams, RemoteWipeParams } from '@/types/sync';
+import { ApiError } from '@/types/common';
 
 
 export function fetchSyncData(params: FetchSyncParams) {
@@ -29,7 +30,8 @@ export function fetchSyncData(params: FetchSyncParams) {
       dispatch({ type: SYNC_DATA_RECEIVED, data: syncData });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

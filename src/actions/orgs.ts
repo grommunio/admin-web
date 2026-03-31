@@ -12,6 +12,7 @@ import { defaultDeleteHandler, defaultDetailsHandler,
   defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { NewOrg, UpdateOrg } from '@/types/orgs';
+import { ApiError } from '@/types/common';
 
 export function fetchOrgsData(params: URLParams) {
   return async (dispatch: Dispatch) => {
@@ -20,7 +21,8 @@ export function fetchOrgsData(params: URLParams) {
       dispatch({ type: ORGS_DATA_RECEIVED, data: orgData, offset: params?.offset });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

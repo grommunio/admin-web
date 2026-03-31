@@ -16,3 +16,7 @@ export type TriState = 0 | 1 | 2;
 export type DomainViewProps = {
   domain: Domain;
 }
+
+export type ApiError = {
+  message: string;
+}

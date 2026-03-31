@@ -10,6 +10,7 @@ import { searchLdap, importUser, sync, syncAll, ldapConfig, updateLdap, deleteLd
   authmgr, orgLdapConfig, orgSyncAll, updateOrgLdap, deleteOrgLdap } from '../api';
 import { defaultDetailsHandler, defaultListHandler, defaultPatchHandler } from './handlers';
 import { FetchLdapParams, ImportLdapParams, LdapConfigData, SyncLdapParams } from '@/types/ldap';
+import { ApiError } from '@/types/common';
 
 
 export function fetchLdapConfig() {
@@ -22,7 +23,8 @@ export function updateLdapConfig(config: LdapConfigData, params: {force?: boolea
       const resp = await updateLdap(config, params);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -37,7 +39,8 @@ export function updateAuthMgr(config: { authBackendSelection: string }) {
       const resp = await setAuthmgr(config);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -47,7 +50,8 @@ export function deleteLdapConfig() {
     try {
       await deleteLdap();
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -71,7 +75,8 @@ export function syncLdapUsers(params: SyncLdapParams, domainID?: number) {
       const resp = await syncAll(params, domainID);
       return resp;
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -94,7 +99,8 @@ export function syncOrgLdapUsers(orgID: number, params: SyncLdapParams) {
       const resp = await orgSyncAll(orgID, params);
       return resp;
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -105,7 +111,8 @@ export function updateOrgLdapConfig(orgID: number, config: LdapConfigData, param
       const resp = await updateOrgLdap(orgID, config, params);
       return Promise.resolve(resp?.message); // Can't use default handler here
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -115,7 +122,8 @@ export function deleteOrgLdapConfig(orgID: number) {
     try {
       await deleteOrgLdap(orgID);
     } catch (err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

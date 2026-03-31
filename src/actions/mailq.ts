@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { ApiError } from '@/types/common';
 import { mailq, flush, deleteMailq, requeueMailq } from '../api';
 import { defaultDetailsHandler } from './handlers';
 
@@ -16,7 +17,8 @@ export function flushMailQData(qIDs: string[]) {
       });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

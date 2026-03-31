@@ -29,6 +29,7 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
 import { Dispatch } from 'redux';
 import { CheckLdapUsersParams, LdapDumpParams } from '@/types/ldap';
 import { DeleteOrphanedUsersParams, DeleteUserParams, FetchUserParams, NewContact, NewUser, OofSettings, UpdateUser, User } from '@/types/users';
+import { ApiError } from '@/types/common';
 
 
 export function fetchUsersData(domainID: number, params: FetchUserParams) {
@@ -40,7 +41,8 @@ export function fetchUsersData(domainID: number, params: FetchUserParams) {
       return data;
     } catch(err) {
       console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -54,7 +56,8 @@ export function fetchContactsData(domainID: number, params: URLParams) {
       return data;
     } catch(err) {
       console.error('Failed to fetch contacts');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -67,7 +70,8 @@ export function fetchPlainUsersData(domainID: number, params: { status?: number 
       return data;
     } catch(err) {
       console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -79,7 +83,8 @@ export function fetchUserCount(domainID: number) {
       return data.count;
     } catch(err) {
       console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -91,7 +96,8 @@ export function fetchUserData(domainID: number, userID: number) {
       userData = await user(domainID, userID);
     } catch(err) {
       console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
     try {
       const defaultPolicy = await defaultDomainSyncPolicy(domainID);
@@ -114,7 +120,8 @@ export function fetchAllUsers(params: FetchUserParams) {
       else dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
       console.error('Failed to fetch users');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -127,7 +134,8 @@ export function fetchAllContacts(params: URLParams) {
       else dispatch({ type: USERS_NEXT_SET, data });
     } catch(err) {
       console.error('Failed to fetch contacts');
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -210,7 +218,8 @@ export function deleteOrphanedUsers(params: DeleteOrphanedUsersParams) {
       const res = await deleteOrphans(params);
       dispatch({ type: ORPHANS_DELETED, deletedIDs: res.deleted });
     } catch(err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -221,7 +230,8 @@ export function getStoreLangs() {
       const langs = await storeLangs();
       return Promise.resolve(langs.data);
     } catch(err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

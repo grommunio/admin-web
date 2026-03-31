@@ -14,6 +14,7 @@ import { defaultDetailsHandler, defaultListHandler, defaultListHandler2, default
 import { NewFolder, NewFolderOwner, UpdateFolder } from '@/types/folders';
 import { Dispatch } from 'redux';
 import { BaseUser } from '@/types/users';
+import { ApiError } from '@/types/common';
 
 
 export function fetchFolderTree(domainID: number, params?: URLParams) {
@@ -34,7 +35,8 @@ export function addFolderData(domainID: number, folder: NewFolder, owners: BaseU
       }
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -51,7 +53,8 @@ export function deleteFolderData(domainID: number, folderID: string, params: { c
       dispatch({ type: FOLDER_DATA_DELETE, id: folderID });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -70,7 +73,8 @@ export function addOwnerData(domainID: number, folderID: string, ownersData: New
       dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -84,7 +88,8 @@ export function setFolderPermissions(domainID: number, folderID: string, memberI
       dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -97,7 +102,8 @@ export function deleteOwnerData(domainID: number, folderID: string, memberID: nu
       dispatch({ type: OWNERS_DATA_RECEIVED, data: response });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

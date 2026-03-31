@@ -11,6 +11,7 @@ import { dbconf, commands, uploadFile, serviceFiles, serviceFile, deleteService,
   editFile, renameService } from '../api';
 import { defaultDetailsHandler, defaultPatchHandler } from './handlers';
 import { Dispatch } from 'redux';
+import { ApiError } from '@/types/common';
 
 
 export function fetchDBConfData(params: URLParams) {
@@ -21,7 +22,8 @@ export function fetchDBConfData(params: URLParams) {
       dispatch({ type: DBCONF_DATA_RECEIVED, services: servicesData.data, commands: commandsData });
     } catch(err) {
       console.error('failed to fetch dbconf data', err);
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -32,7 +34,8 @@ export function uploadServiceFile(service: string, filename: string, file: Recor
       await uploadFile(service, filename, file);
       dispatch({ type: DBCONF_SERVICE_ADD, service });
     } catch(err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -61,7 +64,8 @@ export function deleteDBService(service: string) {
       dispatch({ type: DBCONF_SERVICE_DELETE, service });
       return Promise.resolve(resp?.message);
     } catch(err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -72,7 +76,8 @@ export function deleteDBFile(service: string, file: string) {
       const response = await deleteFile(service, file);
       return response?.message;
     } catch(err) {
-      return Promise.reject(err.message);
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

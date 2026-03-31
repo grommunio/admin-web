@@ -14,6 +14,7 @@ import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaul
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { NewServer, ServerPolicy, UpdateServer } from '@/types/servers';
+import { ApiError } from '@/types/common';
 
 
 export function fetchServersData(params: URLParams) {
@@ -23,7 +24,8 @@ export function fetchServersData(params: URLParams) {
       dispatch({ type: SERVERS_DATA_RECEIVED, data: serversData, offset: params?.offset });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }
@@ -59,7 +61,8 @@ export function patchServerPolicy(data: { data: { policy: ServerPolicy } }) {
       dispatch({ type: SERVERS_POLICY_RECEIVED, data: data });
     } catch(error) {
       console.error(error);
-      return Promise.reject(error.message);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
     }
   };
 }

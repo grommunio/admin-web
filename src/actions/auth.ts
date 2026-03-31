@@ -10,6 +10,7 @@ import {
 } from './types';
 import { login, renewToken, profile, drawerDomains } from '../api';
 import { Dispatch } from 'redux';
+import { ApiError } from '@/types/common';
 
 
 export function authLogin(user: string, pass: string) {
@@ -36,9 +37,9 @@ export function authLogin(user: string, pass: string) {
       }
     } catch(err) {
       clearStorage();
-      console.error(err.message);
-      dispatch(authError(err.message));
-      return Promise.reject(err);
+      const message = (err as ApiError).message;
+      dispatch(authError(message));
+      return Promise.reject(message);
     }
   };
 }
@@ -56,7 +57,8 @@ export function refreshToken() {
       return Promise.resolve();
     } catch(err) {
       clearStorage();
-      dispatch(authError(err.message || "Failed to refresh token"));
+      const message = (err as ApiError).message;
+      dispatch(authError(message || "Failed to refresh token"));
       return Promise.reject(err);
     }
   }
@@ -86,7 +88,8 @@ export function authLoginWithToken(token: string) {
       }
     } catch(err) {
       clearStorage();
-      dispatch(authError(err.message || "Session expired. Please login again"));
+      const message = (err as ApiError).message;
+      dispatch(authError(message || "Session expired. Please login again"));
       return Promise.reject(err);
     }
   };
