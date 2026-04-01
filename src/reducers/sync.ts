@@ -1,26 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { ActiveSyncSession } from '@/types/sync';
 import {
   SYNC_DATA_RECEIVED,
 } from '../actions/types';
 
-type Sync = {
-  devtype: string;
-  devagent: string;
-  diff: string;
-  pid: string;
-  ip: string;
-  user: string;
-  command: string;
-  devid: string;
-  asversion: string;
-  addinfo: string;
-  push: boolean;
-}
-
 type SyncState = {
-  Sync: Sync[];
+  Sync: ActiveSyncSession[];
   count: number;
 }
 

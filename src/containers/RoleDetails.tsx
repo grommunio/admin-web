@@ -63,6 +63,23 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
+interface RoleState {
+  role: {
+    ID: number;
+    name: string;
+    description: string;
+    users: User[];
+    permissions: {
+      ID?: string | number;
+      permission: Permission | "";
+      params: any; // The API is a catastrophy.
+    }[];
+  };
+  snackbar: string;
+  loading: boolean;
+  unsaved: boolean;
+}
+
 const RoleDetails = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
@@ -71,7 +88,7 @@ const RoleDetails = () => {
   const { Permissions } = useAppSelector(state => state.roles);
   const { Domains } = useAppSelector(state => state.domains);
   const { Orgs } = useAppSelector(state => state.orgs);
-  const [state, setState] = useState({
+  const [state, setState] = useState<RoleState>({
     role: {
       ID: 0,
       name: "",
@@ -117,7 +134,7 @@ const RoleDetails = () => {
     });
   }
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: User) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: User) => {
     setState({
       ...state, 
       role: {
@@ -158,7 +175,7 @@ const RoleDetails = () => {
   }
 
   // Fix typing
-  const handleSetParams = (idx: number) => (_: never, newVal: any) => {
+  const handleSetParams = (idx: number) => (_: unknown, newVal: any) => {
     const copy = [...state.role.permissions];
     copy[idx].params = newVal;
     setState({
@@ -250,7 +267,7 @@ const RoleDetails = () => {
             value={description || ''}
             onChange={handleRoleInput('description')}
           />
-          <MagnitudeAutocomplete
+          <MagnitudeAutocomplete<User>
             multiple
             value={users || []}
             filterAttribute={'username'}
@@ -295,8 +312,8 @@ const RoleDetails = () => {
               />}
               {permission.permission === ORG_ADMIN && <MagnitudeAutocomplete
                 value={permission.params}
-                getOptionLabel={(orgID) => orgID.name ||
-                    (orgs || []).find(o => o.ID === orgID)?.name || ''} // Because only ID is received
+                getOptionLabel={(org) => org.name ||
+                    (orgs || []).find(o => o.ID === org)?.name || ''} // Because only ID is received
                 filterAttribute={'name'}
                 onChange={handleSetParams(idx)}
                 className={classes.rowTextfield} 
@@ -331,9 +348,9 @@ const RoleDetails = () => {
           color="primary"
           onClick={handleEdit}
           disabled={!writable
-              || !name
-              || permissions.length === 0
-              || !checkProperPermissions()}
+            || !name
+            || permissions.length === 0
+            || !checkProperPermissions()}
         >
           {t('Save')}
         </Button>

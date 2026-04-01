@@ -34,6 +34,7 @@ import { ChangeEvent } from '@/types/common';
 import { Org } from '@/types/orgs';
 import { Server } from '@/types/servers';
 import { UpdateDomain } from '@/types/domains';
+import { SyncPolicy } from '@/types/sync';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -57,6 +58,29 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+type DomainDetailsState = {
+  ID: number;
+  domainname: string;
+  domainStatus: number;
+  org: Org | null;
+  unsaved: boolean;
+  maxUser: string;
+  title: string;
+  address: string;
+  adminName: string;
+  tel: string;
+  homeserver: Server | null,
+  syncPolicy: Partial<SyncPolicy>,
+  defaultPolicy: Partial<SyncPolicy>,
+  changingPw: false,
+  newPw: string;
+  checkPw: string;
+  tab: number,
+  chat: boolean;
+  loading: boolean;
+  snackbar: string;
+}
+
 const DomainDetails = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
@@ -64,11 +88,11 @@ const DomainDetails = () => {
   const orgs = useAppSelector(state => state.orgs.Orgs);
   const capabilities = useAppSelector(state => state.auth.capabilities);
   const servers = useAppSelector(state => state.servers.Servers);
-  const [state, setState] = useState({
+  const [state, setState] = useState<DomainDetailsState>({
     ID: 0,
     domainname: '',
     domainStatus: 0,
-    orgID: null,
+    org: null,
     maxUser: "",
     title: '',
     address: '',
@@ -103,11 +127,19 @@ const DomainDetails = () => {
           .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
       }
 
+      let orgs = [];
+      if(capabilities.includes(SYSTEM_ADMIN_READ)) {
+        orgs = await fetchOrgs()
+          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      }
+
       const domain = await fetch(parseInt(getStringAfterLastSlash()));
+      const domainOrg = orgs.find((o: Org) => o.ID === domain.orgID);
       const defaultPolicy = domain.defaultPolicy;
       domain.syncPolicy = domain.syncPolicy || {};
       setState({
-        ...state, 
+        ...state,
+        org: domainOrg || null,
         loading: false,
         ...(domain || {}),
         syncPolicy: {
@@ -117,24 +149,10 @@ const DomainDetails = () => {
         },
         defaultPolicy,
       });
-
-      if(capabilities.includes(SYSTEM_ADMIN_READ)) {
-        fetchOrgs()
-          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
-      }
     };
 
     inner();
   }, []);
-
-  useEffect(() => {
-    const { orgID } = state;
-    const domainOrg = orgs.find((o: Org) => o.ID === orgID);
-    setState({
-      ...state, 
-      orgID: domainOrg || "",
-    });
-  }, [orgs]);
 
   const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
@@ -150,13 +168,13 @@ const DomainDetails = () => {
   });
 
   const handleEdit = () => {
-    const { ID, domainname, domainStatus, orgID, chat, homeserver,
+    const { ID, domainname, domainStatus, org, chat, homeserver,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = state;
     edit({
       ID,
       domainname,
       domainStatus,
-      orgID: orgID ? orgID.ID : 0,
+      orgID: org ? org.ID : 0,
       maxUser: parseInt(maxUser) || null,
       title,
       address,
@@ -174,7 +192,7 @@ const DomainDetails = () => {
     navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
   }
 
-  const handleTab = (_: never, tab: number) => setState({ ...state, tab })
+  const handleTab = (_: any, tab: number) => setState({ ...state, tab })
 
   const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;
@@ -187,7 +205,7 @@ const DomainDetails = () => {
     });
   }
 
-  const handleSyncCheckboxChange = (field: string) => (_: never, newVal: boolean) => {
+  const handleSyncCheckboxChange = (field: string) => (_: any, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -198,7 +216,7 @@ const DomainDetails = () => {
     });
   }
 
-  const handleSlider = (field: string) => (_: never, newVal: number) => {
+  const handleSlider = (field: string) => (_: any, newVal: number | number[]) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -209,14 +227,14 @@ const DomainDetails = () => {
     });
   }
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: Org) => {
+  const handleAutocomplete = (field: string) => (_: any, newVal: Org) => {
     setState({
       ...state, 
       [field]: newVal || '',
     });
   }
 
-  const handleServer =(_: never, newVal: Server) => {
+  const handleServer =(_: any, newVal: Server) => {
     setState({
       ...state, 
       homeserver: newVal || '',
@@ -224,7 +242,7 @@ const DomainDetails = () => {
   }
 
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
-  const { domainname, domainStatus, orgID, maxUser, title, address, adminName,
+  const { domainname, org, domainStatus, maxUser, title, address, adminName,
     tel, syncPolicy, snackbar, tab, defaultPolicy,
     chat, homeserver, loading } = state;
 
@@ -272,7 +290,7 @@ const DomainDetails = () => {
             ))}
           </TextField>
           {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete<Org>
-            value={orgID || ""}
+            value={org}
             filterAttribute={'name'}
             onChange={handleAutocomplete('orgID')}
             className={classes.input} 
@@ -315,8 +333,8 @@ const DomainDetails = () => {
             value={tel || ''}
             onChange={handleInput('tel')}
           />
-          <MagnitudeAutocomplete
-            value={homeserver || ''}
+          <MagnitudeAutocomplete<Server>
+            value={homeserver}
             filterAttribute={'hostname'}
             onChange={handleServer}
             className={classes.input} 

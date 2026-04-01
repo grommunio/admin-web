@@ -1,7 +1,6 @@
-import { PartialWithRequired } from "./common";
 import { BaseUser } from "./users";
 
-export type Permission =
+export type Permission = "" |
   "SystemAdmin" |
   "ResetPasswd" |
   "DomainAdminRO" |
@@ -12,7 +11,7 @@ export type Permission =
 
 export type RolePermission = {
   ID: number;
-  params: number;
+  params: string | number;
   permission: Permission;
 }
 
@@ -34,4 +33,8 @@ export type NewRole = {
   users: number[];
   permissions: { permission: Permission, params: string | number }[];
 }
-export type UpdateRole = PartialWithRequired<Role, "ID">;
+export type UpdateRole = BaseRole & {
+  description: string;
+  permissions: any[]; // API is terrible
+  users: number[];
+};

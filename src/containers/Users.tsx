@@ -77,7 +77,7 @@ const Users = ({ domain }: DomainViewProps) => {
     snackbar: '',
     checking: false,
     taskMessage: '',
-    taskID: null,
+    taskID: -1,
   });
   const { Users, count, showDeactivated, match, mode, type } = useAppSelector(state => state.users);
   const context = useContext(CapabilityContext);
@@ -151,7 +151,7 @@ const Users = ({ domain }: DomainViewProps) => {
     navigate(`/${path}`);
   }
 
-  const getMaxSizeFormatting = (size: number) => {
+  const getMaxSizeFormatting = (size?: number) => {
     if(!size) return '';
     if(size % 1073741824 === 0) {
       return size / 1073741824 + ' TB';
@@ -193,7 +193,7 @@ const Users = ({ domain }: DomainViewProps) => {
   const handleTaskClose = () => setState({
     ...state,
     taskMessage: "",
-    taskID: null,
+    taskID: -1,
   })
 
   const checkUsers = () => {
@@ -414,7 +414,10 @@ const Users = ({ domain }: DomainViewProps) => {
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
-                    <TableCell>{getMaxSizeFormatting(properties.storagequotalimit)}</TableCell>
+                    <TableCell>
+                      {properties.storagequotalimit && properties.storagequotalimit >= 0 ?
+                        getMaxSizeFormatting(properties.storagequotalimit) : "0 MB"}
+                    </TableCell>
                     <TableCell align="right">
                       {writable && <IconButton onClick={handleDelete(obj)} size="small">
                         <Delete color="error" fontSize="small"/>

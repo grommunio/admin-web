@@ -13,7 +13,7 @@ import { useAppDispatch } from '../../store';
 
 type ImportDialogProps = {
   open: boolean;
-  user: LdapUser;
+  user: LdapUser | null;
   domainID: number;
   onSuccess: () => void;
   onClose: () => void;
@@ -36,6 +36,7 @@ const ImportDialog = (props: ImportDialogProps) => {
     const { onSuccess, onError, user, domainID } = props;
     const { force } = state;
     setState({ ...state, loading: true });
+    if(!user?.ID) return;
     dispatch(importLdapData({ ID: user.ID, force, domain: domainID }))
       .then(() => {
         if(onSuccess) onSuccess();
@@ -57,7 +58,7 @@ const ImportDialog = (props: ImportDialogProps) => {
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Are you sure you want to import {user.name}?</DialogTitle>
+      <DialogTitle>Are you sure you want to import {user?.name || "<user>"}?</DialogTitle>
       <DialogContent>
         <FormControlLabel
           control={

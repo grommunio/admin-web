@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { DOMAIN_PURGE } from '../../constants';
 import { deleteDomainData } from '../../actions/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
+import { ChangeEvent } from '@/types/common';
 
 
 type DeleteDomainProps = {
@@ -46,7 +47,7 @@ const DeleteDomain = (props: DeleteDomainProps) => {
       });
   }
 
-  const handlePurge = (_: never, checked: boolean) => {
+  const handlePurge = (_: ChangeEvent, checked: boolean) => {
     setState({
       ...state,
       purge: checked,

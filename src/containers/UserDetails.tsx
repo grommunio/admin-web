@@ -11,6 +11,7 @@ import {
   Button,
   Tooltip,
   Theme,
+  SelectChangeEvent,
 } from '@mui/material';
 import { fetchUserData, editUserData, editUserRoles, fetchLdapDump, getStoreLangs} from '../actions/users';
 import { fetchRolesData } from '../actions/roles';
@@ -45,10 +46,10 @@ import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch } from '../store';
-import { Altname, FetchmailConfig, Forward, UpdateUser, UserProperties } from '@/types/users';
+import { Altname, FetchmailConfig, Forward, NewFetchmailConfig, UpdateUser, UserProperties } from '@/types/users';
 import { Domain } from '@/types/domains';
 import { SyncPolicy } from '@/types/sync';
-import { Role } from '@/types/roles';
+import { BaseRole } from '@/types/roles';
 import { Server } from '@/types/servers';
 import { fetchDomainDetails } from '../actions/domains';
 import { LdapDumpParams } from '@/types/ldap';
@@ -77,6 +78,48 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+
+interface UserDetailsState {
+  adding: boolean;
+  editing: number;
+  user: {
+    ID: number;
+    username: string;
+    altnames: Altname[];
+    fetchmail: NewFetchmailConfig[];
+    forward: Forward;
+    roles: BaseRole[];
+    properties: Partial<UserProperties>;
+    aliases: string[];
+    ldapID: string | null;
+    status: number;
+    homeserver: Server | null;
+    chat: boolean;
+    chatAdmin: boolean;
+    privChat: boolean;
+    privDav: boolean;
+    privArchive: boolean;
+    privFiles: boolean;
+    pop3_imap: boolean;
+  },
+  syncPolicy: Partial<SyncPolicy>;
+  defaultPolicy: Partial<SyncPolicy>;
+  rawData: any;
+  dump: string;
+  changingPw: boolean;
+  snackbar: string;
+  tab: number;
+  sizeUnits: {
+    storagequotalimit: number;
+    prohibitreceivequota: number;
+    prohibitsendquota: number;
+  },
+  detaching: boolean;
+  detachLoading: boolean;
+  loading: boolean;
+  unsaved: boolean;
+}
+
 /**
  * This is by far the biggest component in the app, tread with caution
  */
@@ -84,9 +127,9 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<UserDetailsState>({
     adding: false,
-    editing: null,
+    editing: -1,
     user: {
       ID: 0,
       username: "",
@@ -96,7 +139,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       roles: [],
       properties: {} as UserProperties,
       aliases: [],
-      ldapID: "",
+      ldapID: null,
       status: USER_STATUS.NORMAL,
       homeserver: null,
       chat: false,
@@ -347,7 +390,12 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties as any;
 
     // Convert quota (MiB, GiB or TiB) into KiB
-    const storePayload: { messagesizeextended: number, storagequotalimit: number, prohibitreceivequota: number, prohibitsendquota: number } = {
+    const storePayload: {
+      messagesizeextended: undefined,
+      storagequotalimit: number | null,
+      prohibitreceivequota: number | null,
+      prohibitsendquota: number | null
+    } = {
       messagesizeextended: undefined, // MSE is read-only
       storagequotalimit: [null, undefined, ""].includes(storagequotalimit?.toString()) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
       prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota?.toString()) ? null : prohibitreceivequota * 2
@@ -396,6 +444,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleDump = () => {
     const { ldapID } = state.user;
+    if(!ldapID) return;
     dumpLdap({ ID: ldapID, organization: domain.orgID || 0 })
       .then(data => setState({ ...state, dump: data.data }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
@@ -408,7 +457,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
-  const handleTabChange = (_: never, tab: number) => {
+  const handleTabChange = (_: unknown, tab: number) => {
     location.hash = '#' + tab;
     setState({ ...state, tab });
   }
@@ -469,7 +518,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     }
   }
 
-  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
+  const handleUnitChange = (unit: string) => (event: SelectChangeEvent<number>) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -504,7 +553,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleError = (msg: string) => setState({ ...state, snackbar: msg || 'Unknown error' });
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: Role[]) => {
+  const handleAutocomplete = (field: string) => (_: any, newVal: BaseRole[]) => {
     setState({
       ...state, 
       user: {
@@ -519,7 +568,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleFetchmailEditDialog = (open: number) => () => setState({ ...state, editing: open })
 
-  const addFetchmail = (entry: FetchmailConfig) => {
+  const addFetchmail = (entry: NewFetchmailConfig) => {
     const { user } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail.push(entry);
@@ -533,7 +582,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const editFetchmail = (entry: FetchmailConfig) => {
+  const editFetchmail = (entry: NewFetchmailConfig) => {
     const { user, editing } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail[editing] = entry;
@@ -543,7 +592,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         ...user,
         fetchmail,
       },
-      editing: null,
+      editing: -1,
     });
   }
 
@@ -572,7 +621,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleSyncCheckboxChange = (field: string) => (_: never, newVal: boolean) => {
+  const handleSyncCheckboxChange = (field: string) => (_: any, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -583,7 +632,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleSlider = (field: string) => (_: never, newVal: number) => {
+  const handleSlider = (field: string) => (_: any, newVal: number | number[]) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -608,7 +657,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleServer =(_: never, newVal: Server) => {
+  const handleServer =(_: any, newVal: Server) => {
     setState({
       ...state, 
       user: {
@@ -648,7 +697,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   const { loading, user, changingPw, snackbar, tab, sizeUnits, detachLoading, defaultPolicy,
     detaching, adding, editing, dump, rawData, syncPolicy } = state;
     const { ID, username, properties, roles, aliases, fetchmail, ldapID, forward } = user; //eslint-disable-line
-  const storageQuotaTooHigh = parseInt(properties.storagequotalimit?.toString()) * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
+  const storageQuotaTooHigh = parseInt(properties.storagequotalimit?.toString() || "") * (1024 ** sizeUnits.storagequotalimit) > 3221225472;
 
   return (
     <ViewWrapper
@@ -810,10 +859,10 @@ const UserDetails = ({ domain }: DomainViewProps) => {
         username={username + '@' + domain.domainname}
       />
       <EditFetchmail
-        open={editing !== null}
-        entry={editing !== null ? fetchmail[editing] : editing}
+        open={editing !== -1}
+        entry={editing !== -1 ? fetchmail[editing] : null}
         edit={editFetchmail}
-        onClose={handleFetchmailEditDialog(null)}
+        onClose={handleFetchmailEditDialog(-1)}
         username={username + '@' + domain.domainname}
       />
       <ChangeUserPassword

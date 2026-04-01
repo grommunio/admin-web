@@ -38,7 +38,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 type DeletesProps = {
   domainID: number
-  orgID: number;
+  orgID?: number | null;
   userID: number;
   disabled: boolean;
 }
@@ -107,7 +107,7 @@ const Delegates = (props: DeletesProps) => {
     });
   }
 
-  const handleAutocomplete = (field: string, editField: keyof typeof state) => (_: never, newVal: string[]) => {
+  const handleAutocomplete = (field: string, editField: keyof typeof state) => (_: any, newVal: string[]) => {
     setState({
       ...state, 
       [field]: newVal.sort(),

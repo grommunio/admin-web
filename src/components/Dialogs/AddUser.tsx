@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Server } from '@/types/servers';
 import { UserProperties } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
+import { Lang } from '@/types/misc';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -49,13 +50,26 @@ type AddUserProps = {
   onSuccess: () => void;
 }
 
+interface AddUserState {
+  username: string;
+  properties: Partial<UserProperties>;
+  status: number;
+  loading: boolean;
+  password: string;
+  repeatPw: string;
+  homeserver: Server |  null;
+  lang: string;
+  chat: boolean;
+  chatAvailable: boolean;
+}
+
 
 const AddUser = (props: AddUserProps) => {
   const { domain, open, onClose, onError, onSuccess } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<AddUserState>({
     username: '',
     properties: {
       displayname: '',
@@ -176,7 +190,7 @@ const AddUser = (props: AddUserProps) => {
           loading: false,
           password: '',
           repeatPw: '',
-          homeserver: '',
+          homeserver: null,
         });
         onSuccess();
       })
@@ -223,7 +237,7 @@ const AddUser = (props: AddUserProps) => {
     });
   }
 
-  const handleAutocomplete = (_: never, newVal: Server) => {
+  const handleAutocomplete = (_: any, newVal: Server) => {
     setState({
       ...state, 
       homeserver: newVal || '',
@@ -241,8 +255,10 @@ const AddUser = (props: AddUserProps) => {
       open={open}
       maxWidth="sm"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}
       component="form"
     >
@@ -320,7 +336,7 @@ const AddUser = (props: AddUserProps) => {
             value={langs.length ? lang : ""}
             onChange={handleInput('lang')}
           >
-            {langs.map((l) => (
+            {langs.map((l: Lang) => (
               <MenuItem key={l.code} value={l.code}>
                 {l.code + ": " + l.name}
               </MenuItem>

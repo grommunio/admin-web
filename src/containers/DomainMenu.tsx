@@ -5,7 +5,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Paper, Typography, Grid2, Button, FormControl, TextField, FormControlLabel,
   Checkbox, Select, MenuItem, Divider, Tooltip, 
-  Theme} from '@mui/material';
+  Theme,
+  SelectChangeEvent} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DeleteDomain from '../components/Dialogs/DeleteDomain';
 import { DOMAIN_ADMIN_WRITE, ORG_ADMIN } from '../constants';
@@ -23,6 +24,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CreateParamProperty, CreateParams } from '@/types/defaults';
+import { Lang } from '@/types/misc';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -132,7 +134,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
   const fetch = async (domainID: number) => await dispatch(fetchDrawerDomain(domainID));
   const edit = async (createParams: { user: CreateParams }, domainID: number) =>
     await dispatch(editCreateParamsData(createParams, domainID));
-  const fetchParams = async (domainID: number, params: { domain: number }) => 
+  const fetchParams = async (domainID: number | null, params: { domain: number }) => 
     await dispatch(fetchCreateParamsData(domainID, params));
   const storeLangs = async () => await dispatch(getStoreLangs());
 
@@ -178,7 +180,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
+  const handleUnitChange = (unit: string) => (event: SelectChangeEvent<number>) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -355,7 +357,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
             value={(langs.length ? lang || 'en_US' : "")}
             onChange={handleInput('lang')}
           >
-            {langs.map((l) => (
+            {langs.map((l: Lang) => (
               <MenuItem key={l.code} value={l.code}>
                 {l.code + ": " + l.name}
               </MenuItem>

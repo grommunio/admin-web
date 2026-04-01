@@ -24,7 +24,7 @@ import {
 import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
-import { DOMAIN_ADMIN_WRITE, LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN, USER_STATUS, USER_TYPE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN, USER_TYPE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editUserData, fetchAllUsers, fetchUsersData } from '../actions/users';
@@ -36,7 +36,7 @@ import { useNavigate } from 'react-router';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { UpdateGroup } from '@/types/groups';
-import { UpdateUser, UserProperties, User as UserType } from '@/types/users';
+import { UpdateUser, UserListItem, UserProperties, User as UserType } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -74,12 +74,28 @@ const GroupTab = ({ icon: Icon, ...props }: any) => <Tab
   icon={<Icon fontSize="small"/>}
 />
 
+interface GroupDetailsState {
+  ID: number;
+  listname: string;
+  displayname: string;
+  hidden: number;
+  listType: number;
+  listPrivilege: number;
+  associations: UserListItem[];
+  specifieds: UserListItem[];
+  tab: number;
+  loading: boolean;
+  user: UserType;
+  userDirty: boolean;
+  snackbar: string;
+}
+
 const GroupDetails = ({ domain }: DomainViewProps) => {1
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { Users } = useAppSelector(state => state.users);
-  const [state, setState] = useState({
+  const [state, setState] = useState<GroupDetailsState>({
     ID: 0,
     listname: '',
     displayname: '',
@@ -105,12 +121,12 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
   const fetch = async (domainID: number, id: number) => await dispatch(fetchGroupData(domainID, id));
   const fetchUsers = async (domainID: number) =>
     await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }));
-  const fetchOrgUsers = async (orgID: number) =>
+  const fetchOrgUsers = async (orgID?: number) =>
     await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }));
 
   useEffect(() => {
     const inner = async () => {
-      (context.includes(ORG_ADMIN) ? fetchOrgUsers(domain.orgID) : fetchUsers(domain.ID))
+      (context.includes(ORG_ADMIN) && domain.orgID ? fetchOrgUsers(domain.orgID) : fetchUsers(domain.ID))
         .catch(message => {
           setState({ ...state, snackbar: message || 'Unknown error' });
         });
@@ -207,14 +223,14 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
 
   const handleCheckbox = (field: string) => (e: ChangeEvent) => setState({ ...state, [field]: e.target.checked ? 1 : 0 });
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: UserType) => {
+  const handleAutocomplete = (field: string) => (_: any, newVal: UserType) => {
     setState({
       ...state, 
       [field]: newVal || '',
     });
   }
 
-  const handleTabChange = (_: never, tab: number) => {
+  const handleTabChange = (_: unknown, tab: number) => {
     location.hash = '#' + tab;
     setState({ ...state, tab });
   }
@@ -235,7 +251,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
   }
 
   // TODO: Fix typing
-  const handleAliasEdit = (editType: 'edit' | 'add' | 'remove', idx?: number) => (event: any) => {
+  const handleAliasEdit = (editType: 'edit' | 'add' | 'remove', idx: number) => (event: any) => {
     const { user } = state;
     const copy = [...user.aliases];
     switch(editType) {
@@ -372,15 +388,6 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
             options={filteredUserOptions || []}
             placeholder={t("Search users") +  "..."}
             label={t('Recipients')}
-            getOptionLabel={user => {
-              // Contact
-              if(user.status === USER_STATUS.CONTACT) {
-                const properties = user.properties || {};
-                return properties["smtpaddress"] || properties["displayname"] || "";
-              } else {
-                return user.username
-              }
-            }}
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
@@ -394,15 +401,6 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
             options={filteredUserOptions || []}
             placeholder={t("Search users") +  "..."}
             label={t('Senders')}
-            getOptionLabel={user => {
-              // Contact
-              if(user.status === USER_STATUS.CONTACT) {
-                const properties = user.properties || {};
-                return properties["smtpaddress"] || properties["displayname"] || "";
-              } else {
-                return user.username
-              }
-            }}
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
@@ -432,7 +430,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
             )}
           </List>
           <Grid2 container justifyContent="center">
-            <Button variant="contained" onClick={handleAliasEdit("add")}>
+            <Button variant="contained" onClick={handleAliasEdit("add", 0)}>
               {t('addHeadline', { item: 'E-Mail' })}
             </Button>
           </Grid2>

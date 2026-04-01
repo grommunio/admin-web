@@ -19,7 +19,7 @@ const useStyles = makeStyles()(() => ({
 }));
 
 
-type LoadableMainViewProps = {
+export type LoadableMainViewProps = {
   authenticated: boolean;
   capabilities: string[];
   domains: Domain[];

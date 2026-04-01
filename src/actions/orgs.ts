@@ -19,6 +19,7 @@ export function fetchOrgsData(params: URLParams) {
     try {
       const orgData = await orgs(params);
       dispatch({ type: ORGS_DATA_RECEIVED, data: orgData, offset: params?.offset });
+      return Promise.resolve(orgData.data);
     } catch(error) {
       console.error(error);
       const message = (error as ApiError).message;

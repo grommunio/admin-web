@@ -13,10 +13,10 @@ export type Domain = BaseDomain & {
   address: string,
   chat: boolean,
   domainStatus: number,
-  homeserver?: number,
+  homeserver: number | null,
   inactiveUsers: number,
-  maxUser: number,
-  orgID: number,
+  maxUser: number | null,
+  orgID: number | null,
   syncPolicy: any, // TODO: Create sync policy type
   tel: string,
   title: string,

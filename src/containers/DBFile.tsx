@@ -40,11 +40,19 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+interface DBFileState {
+  data: KeyValuePair<string>[];
+  unsaved: boolean;
+  loading: boolean;
+  deleting: boolean;
+  snackbar: string;
+}
+
 const DBFile = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<DBFileState>({
     data: [],
     unsaved: false,
     deleting: false,
@@ -65,8 +73,10 @@ const DBFile = () => {
       const file = await fetch(splits[2], splits[3])
         .catch((message: string) => setState({ ...state, snackbar: message || 'Unknown error' }));
       
+      if(!file?.data) return;
       const data: KeyValuePair<string>[] = [];
-      Object.entries(file?.data || {}).forEach(([key, value]: [string, string]) => data.push({ key, value }));
+      Object.entries(file.data)
+        .forEach(([key, value]: [string, unknown]) => data.push({ key, value: value as string }));
       setState({
         ...state, 
         loading: false,
@@ -77,7 +87,7 @@ const DBFile = () => {
     inner();
   }, []);
 
-  const handleDataInput = (field: string, idx: number) => (e: ChangeEvent) => {
+  const handleDataInput = (field: 'key' | 'value', idx: number) => (e: ChangeEvent) => {
     const data = [...state.data];
     data[idx][field] = e.target.value;
     setState({ ...state, data });

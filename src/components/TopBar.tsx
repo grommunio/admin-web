@@ -201,7 +201,7 @@ const TopBar = () => {
     });
   }
 
-  const handleAutocomplete = (_: never, newVal: GlobalSearchOption) => {
+  const handleAutocomplete = (_: any, newVal: GlobalSearchOption | null) => {
     if(newVal?.route) navigate(newVal.route);
   }
 

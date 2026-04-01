@@ -53,7 +53,7 @@ const DBConf = () => {
   const { commands, services } = useAppSelector(state => state.dbconf);
 
   const fetchTableData = async () => await dispatch(fetchDBConfData({}));
-  const deleteItem = async (service: string) => await dispatch(deleteDBService(service));
+  const deleteItem = async (service: string | number) => await dispatch(deleteDBService(service as string));
 
   const table = useTable({
     fetchTableData,
@@ -79,7 +79,7 @@ const DBConf = () => {
     navigate(`/${path}`);
   }
 
-  const handleTab = (_: never, tab: number) => setState({ ...state, tab });
+  const handleTab = (_: any, tab: number) => setState({ ...state, tab });
 
   const { adding, snackbar, match, deleting, loading } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
@@ -139,7 +139,7 @@ const DBConf = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {services.filter(s => s.includes(match)).map((service, idx) =>
+            {(services || []).filter((s) => s.includes(match)).map((service, idx) =>
               <TableRow onClick={handleNavigation('dbconf/' + service)} key={idx} hover>
                 <TableCell>{service}</TableCell>
                 <TableCell align="right">

@@ -80,13 +80,13 @@ export function getChipColorFromScore(score: number): string {
 
 
 export function getStringAfterLastSlash(): string {
-  return /[^/]*$/.exec(window.location.href)[0];
+  return /[^/]*$/.exec(window.location.href)?.[0] || "";
 }
 
 /**
  * Formats a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
  */
-export function setDateTimeString(date: string | Moment) {
+export function setDateTimeString(date: string | Moment | null) {
   return moment(date, "YYYY-MM-DD hh:mm")
     .locale(store.getState().settings.language.slice(0, 2)).format('lll');
 }
@@ -214,7 +214,7 @@ export function getPolicyDiff(defaultPolicy: Partial<SyncPolicy>, syncPolicy: Pa
   if (formattedPolicy.approvedapplist?.toString() === defaultPolicy.approvedapplist?.toString()) {
     result.approvedapplist = undefined;
   }
-  if (formattedPolicy.unapprovedinromapplist.toString() === defaultPolicy.unapprovedinromapplist.toString()) {
+  if (formattedPolicy?.unapprovedinromapplist?.toString() === defaultPolicy?.unapprovedinromapplist?.toString()) {
     result.unapprovedinromapplist = undefined;
   }
   return result;
@@ -234,29 +234,30 @@ export function capitalizeFirstLetter(string: string): string {
  * To prevent that, the necessary input length, before suggestions are shown is calculated
  * in this function (`magnitude`).
  */
-export const getAutocompleteOptions = <T extends Record<string, string>>(
+export function getAutocompleteOptions<T>(
   filterAttribute?: keyof T,
   magnitude?: number
-) =>
-    (options: T[], state: { inputValue: string }): T[] => {
-      const { inputValue } = state;
+) {
+  return (options: T[], state: { inputValue: string }): T[] => {
+    const { inputValue } = state;
 
-      if (magnitude === undefined) {
-        magnitude = Math.round(Math.log10(options.length) - 2);
-      }
+    if (magnitude === undefined) {
+      magnitude = Math.round(Math.log10(options.length) - 2);
+    }
 
-      return inputValue.length < magnitude
-        ? []
-        : options.filter(o => {
-          let compareValue = (filterAttribute ? o[filterAttribute] : o).toString();
+    return inputValue.length < magnitude
+      ? []
+      : options.filter(o => {
+        let compareValue = (filterAttribute ? o[filterAttribute] : o) as string;
 
-          if (typeof compareValue === "string") {
-            compareValue = compareValue.toLowerCase();
-          }
+        if (typeof compareValue === "string") {
+          compareValue = compareValue.toLowerCase();
+        }
 
-          return compareValue?.includes(inputValue.toLowerCase());
-        });
-    };
+        return compareValue?.includes(inputValue.toLowerCase());
+      });
+  };
+}
 
 /**
  * Copies a text into the clipboard
@@ -359,7 +360,8 @@ export function generatePropFilterString(filters: Record<string, string | number
 /**
  * Converts user type enum value to human-readable representation
  */
-export function getUserTypeString(type: number): string {
+export function getUserTypeString(type?: number): string {
+  if(!type) return "Unknown";
   return {
     0: "User",
     1: "Group",
@@ -391,8 +393,7 @@ export function validateAltname(s=""): boolean {
   // eslint-disable-next-line no-control-regex
   const r1 = /^[-A-Za-z0-9.!#$%&'^_`{}~]+$/;
   const r2 = /(^\.|\.$|\.\.)/;
-  return s.match(r1) && !s.match(r2);
-
+  return Boolean(s.match(r1) && !s.match(r2));
 }
 
 export function dayTimeFromUnix(unixT: number): string {

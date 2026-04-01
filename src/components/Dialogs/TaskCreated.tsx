@@ -28,7 +28,7 @@ const TaskCreated = (props: TaskCreatedProps) => {
   return (
     <Dialog
       onClose={onClose}
-      open={!!message}
+      open={taskID !== -1}
       maxWidth="sm"
       fullWidth
     >

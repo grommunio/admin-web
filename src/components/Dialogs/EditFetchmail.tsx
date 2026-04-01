@@ -8,7 +8,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
   Theme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { FetchmailConfig } from '@/types/users';
+import { FetchmailConfig, NewFetchmailConfig } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
 
 
@@ -30,8 +30,8 @@ type EditFetchmailProps = {
   open: boolean;
   onClose: () => void;
   username: string;
-  entry: FetchmailConfig;
-  edit: (config: FetchmailConfig) => void;
+  entry: NewFetchmailConfig | null;
+  edit: (config: NewFetchmailConfig) => void;
 }
 
 const protocols = ["POP3", "IMAP", "POP2", "ETRN", "AUTO"];
@@ -41,8 +41,7 @@ const authTypes = ["password", "kerberos_v5", "kerberos", "kerberos_v4", "gssapi
 const EditFetchmail = (props: EditFetchmailProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const [fetchmail, setFetchmail] = useState<FetchmailConfig>({
-    ID: -1,
+  const [fetchmail, setFetchmail] = useState<NewFetchmailConfig>({
     active: true,
     srcServer: '',
     srcUser: '',
@@ -62,6 +61,7 @@ const EditFetchmail = (props: EditFetchmailProps) => {
 
   const handleEnter = () => {
     const { entry } = props;
+    if(!entry) return;
     setFetchmail({ ...entry });
   }
 
@@ -99,8 +99,10 @@ const EditFetchmail = (props: EditFetchmailProps) => {
       open={open}
       maxWidth="md"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}>
       <DialogTitle>{t('editEntry', { username: username })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>

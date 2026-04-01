@@ -33,7 +33,7 @@ const UserTab = ({ icon: Icon, ...props }: UserTabProps) => <Tab
 type UserTabsProps = {
   ID: number;
   value: number;
-  handleTabChange: (_: never, tab: number) => void;
+  handleTabChange: (_: any, tab: number) => void;
   sysAdminReadPermissions: boolean;
 }
 

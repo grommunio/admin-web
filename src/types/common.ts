@@ -20,3 +20,5 @@ export type DomainViewProps = {
 export type ApiError = {
   message: string;
 }
+
+export type SyntheticEvent = React.SyntheticEvent<Element, Event>;

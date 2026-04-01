@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { Moment } from 'moment';
 
 type CustomDateTimePickerProps = {
-  onChange: (newVal: Moment) => void;
+  onChange: (newVal: Moment | null) => void;
   label: string;
   value: Moment;
   sx?: any;

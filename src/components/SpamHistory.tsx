@@ -56,19 +56,25 @@ type SpamHistoryType = {
   setSnackbar: (msg: string) => void;
 }
 
+interface Mail {
+  "message-id": string;
+  symbols: AntiSpamRow[];
+  score: number;
+}
+
 const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { history } = useAppSelector(state => state.spam);
-  const [selectedMail, setSelectedMail] = useState(null);
-  const [order, setOrder] = useState('desc');
-  const [orderBy, setOrderBy] = useState('');
-  const [sortedTable, setSortedTable] = useState([]);
-  const [search, setSearch] = useState("");
-  const [until, setUntil] = useState(null);
-  const [since, setSince] = useState(null);
-  const [autorefresh, setAutorefresh] = useState(false);
+  const [selectedMail, setSelectedMail] = useState<Mail | null>(null);
+  const [order, setOrder] = useState<string>('desc');
+  const [orderBy, setOrderBy] = useState<string>('');
+  const [sortedTable, setSortedTable] = useState<AntiSpamRow[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [until, setUntil] = useState<Moment | null>(null);
+  const [since, setSince] = useState<Moment | null>(null);
+  const [autorefresh, setAutorefresh] = useState<boolean>(false);
 
   const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -131,6 +137,8 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
     
+    if(!selectedMail) return;
+
     const sorted = [...Object.values(selectedMail.symbols)] as AntiSpamRow[];
     if(property === 'score') {
       sorted.sort((a, b) => isAsc ? b.score - a.score : a.score - b.score);
@@ -146,7 +154,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     handleRefresh();
   }, []);
 
-  const handleMail = (e: { row: AntiSpamRow }) => {
+  const handleMail = (e: { row: Mail }) => {
     setSelectedMail(e.row);
   }
 
@@ -184,12 +192,13 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     setSearch(e.target.value);
   }
 
-  const handleDate = (stateHandler: React.Dispatch<React.SetStateAction<Moment>>) => (newVal: Moment) => {
+  const handleDate = (stateHandler: React.Dispatch<React.SetStateAction<Moment | null>>) => (newVal: Moment | null) => {
     stateHandler(newVal);
   }
 
-  const handleCopy = () => {
-    const success = copyToClipboard(selectedMail["message-id"]);
+  const handleCopy = async () => {
+    if(!selectedMail) return;
+    const success = await copyToClipboard(selectedMail["message-id"]);
     if(success) {
       setSnackbar("Success! Message-ID copied to clipboard");
     }
@@ -204,8 +213,8 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
         || r.sender_smtp.toLowerCase().includes(s)
         || r.rcpt_smtp.toLowerCase().includes(s)
         || r["message-id"].toLowerCase().includes(s)) &&
-        (since ? r.unix_time - midnightSince >= 0 : true) &&
-        (until ? r.unix_time - midnightUntil < 0 : true);
+        (midnightSince ? r.unix_time - midnightSince >= 0 : true) &&
+        (midnightUntil ? r.unix_time - midnightUntil < 0 : true);
     })
   }, [history.rows, search, since, until]);
 
@@ -222,10 +231,14 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
     if(autorefresh) fetchInterval.current = setInterval(() => {
       handleRefresh();
     }, 5000);
-    else clearInterval(fetchInterval.current);
+    else if (fetchInterval.current) {
+      clearInterval(fetchInterval.current);
+    }
 
     return () => {
-      clearInterval(fetchInterval.current);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
     }
   }, [autorefresh]);
 

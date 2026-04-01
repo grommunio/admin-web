@@ -46,13 +46,24 @@ type AddGroupProps = {
 }
 
 
+interface AddGroupState {
+  listname: string;
+  displayname: string;
+  hidden: number;
+  listType: number;
+  listPrivilege: number;
+  associations: User[];
+  specifieds: User[];
+  domainID: number;
+}
+
 const AddGroup = (props: AddGroupProps) => {
   const { open, onClose, domain, onSuccess, onError } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { Users } = useAppSelector(state => state.users);
-  const [group, setGroup] = useState({
+  const [group, setGroup] = useState<AddGroupState>({
     listname: '',
     displayname: '',
     hidden: 0,
@@ -72,7 +83,7 @@ const AddGroup = (props: AddGroupProps) => {
   const handleEnter = () => {
     const { onError, domain } = props;
     (context.includes(ORG_ADMIN) ?
-      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID })) :
+      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID || undefined })) :
       dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" })))
       .catch(error => {
         onError(error);
@@ -142,7 +153,7 @@ const AddGroup = (props: AddGroupProps) => {
     [field]: e.target.checked ? 1 : 0
   });
 
-  const handleAutocomplete = (field: keyof NewGroup) => (_: never, newVal: User) => {
+  const handleAutocomplete = (field: keyof NewGroup) => (_: any, newVal: User) => {
     setGroup({
       ...group,
       [field]: newVal || '',

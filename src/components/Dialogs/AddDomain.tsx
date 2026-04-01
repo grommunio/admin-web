@@ -60,8 +60,8 @@ const AddDomain = (props: AddDomainProps) => {
     tel: '',
     chat: false,
   });
-  const [homeserver, setHomeserver] = useState(null);
-  const [org, setOrg] = useState(null);
+  const [homeserver, setHomeserver] = useState<Server | null>(null);
+  const [org, setOrg] = useState<Org | null>(null);
   const [createRole, setCreateRole] = useState(false);
 
   const { Orgs: orgs } = useAppSelector(state => state.orgs);
@@ -143,7 +143,7 @@ const AddDomain = (props: AddDomainProps) => {
       tel: domain.tel,
       chat: domain.chat,
       domainname: domainname.trim(),
-      orgID: org.ID,
+      orgID: org?.ID || null,
       homeserver: homeserver?.ID || null,
     }, { createRole }))
       .then(() => {
@@ -170,11 +170,11 @@ const AddDomain = (props: AddDomainProps) => {
       });
   }
 
-  const handleOrg = (_: never, newVal: Org) => {
+  const handleOrg = (_: any, newVal: Org) => {
     setOrg(newVal || '');
   } 
 
-  const handleHomeserver = (_: never, newVal: Server) => {
+  const handleHomeserver = (_: any, newVal: Server) => {
     setHomeserver(newVal || '');
   }
 
@@ -184,8 +184,10 @@ const AddDomain = (props: AddDomainProps) => {
       open={open}
       maxWidth="md"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}>
       <DialogTitle>{t('addHeadline', { item: 'Domain' })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
@@ -214,8 +216,8 @@ const AddDomain = (props: AddDomainProps) => {
               </MenuItem>
             ))}
           </TextField>
-          <MagnitudeAutocomplete
-            value={org || ""}
+          <MagnitudeAutocomplete<Org>
+            value={org}
             filterAttribute={'name'}
             onChange={handleOrg}
             className={classes.input} 

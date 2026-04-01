@@ -90,7 +90,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
     snackbar: "",
     checking: false,
     taskMessage: "",
-    taskID: null as number | null,
+    taskID: -1,
     addingContact: false,
   });
 
@@ -134,7 +134,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
   };
 
   const handleTaskClose = () =>
-    setState((prev) => ({ ...prev, taskMessage: "", taskID: null }));
+    setState((prev) => ({ ...prev, taskMessage: "", taskID: -1 }));
 
   const handleSnackbarClose = () => {
     clearSnackbar();

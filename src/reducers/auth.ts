@@ -23,7 +23,7 @@ const defaultState: AuthState = {
 
 export type AuthAction = {
   type: string;
-  authenticated?: false;
+  authenticated: false;
   capabilities?: string[];
   csrf?: string;
   error?: boolean;

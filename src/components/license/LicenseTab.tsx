@@ -85,8 +85,8 @@ const LicenseTab = (props: LicenseTabProps) => {
     username: "",
     password: "",
   });
-  const [expandedDomainIdxs, setExpandedDomainIdxs] = useState([]);
-  const imageInputRef = useRef(null);
+  const [expandedDomainIdxs, setExpandedDomainIdxs] = useState<number[]>([]);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -115,12 +115,14 @@ const LicenseTab = (props: LicenseTabProps) => {
   const toggleDomainExpansion = () => setState({ ...state, domainsExpanded: !state.domainsExpanded });
 
   const handleUpload = () => {
-    imageInputRef.current.click();
+    if(imageInputRef.current) imageInputRef.current.click();
   }
 
   const handleUploadConfirm = (event: ChangeEvent) => {
     const { setSnackbar } = props;
-    dispatch(uploadLicenseData(event.target.files[0]))
+    const file = event.target.files?.[0];
+    if(!file) return;
+    dispatch(uploadLicenseData(file))
       .then(() => setSnackbar("Success!"))
       .catch(setSnackbar);
   }

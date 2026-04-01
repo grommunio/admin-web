@@ -17,6 +17,7 @@ import {
   Checkbox,
   IconButton,
   Theme,
+  SelectChangeEvent,
 } from '@mui/material';
 import { getStoreLangs } from '../actions/users';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
@@ -29,6 +30,7 @@ import { HelpOutline } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CreateParamProperty, CreateParams } from '@/types/defaults';
 import { ChangeEvent } from '@/types/common';
+import { Lang } from '@/types/misc';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -161,7 +163,7 @@ const Defaults = () => {
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 
-  const handleUnitChange = (unit: string) => (event: ChangeEvent) => setState({
+  const handleUnitChange = (unit: string) => (event: SelectChangeEvent<number>) => setState({
     ...state, 
     sizeUnits: {
       ...state.sizeUnits,
@@ -267,7 +269,7 @@ const Defaults = () => {
             value={(langs.length ? lang || 'en_US' : "")}
             onChange={handleInput('lang')}
           >
-            {langs.map((l) => (
+            {langs.map((l: Lang) => (
               <MenuItem key={l.code} value={l.code}>
                 {l.code + ": " + l.name}
               </MenuItem>

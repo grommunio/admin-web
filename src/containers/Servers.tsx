@@ -67,8 +67,8 @@ const Servers = () => {
   const setPolicy = async (data: { data: { policy: ServerPolicy } }) =>
     dispatch(patchServerPolicy(data));
 
-  const deleteItem = async (id: number) =>
-    dispatch(deleteServerData(id));
+  const deleteItem = async (id: number | string) =>
+    dispatch(deleteServerData(id as number));
 
   const table = useTable<ServerListItem>({
     fetchTableData,

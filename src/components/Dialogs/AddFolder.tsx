@@ -99,7 +99,7 @@ const AddFolder = (props: AddFolderProps) => {
       });
   }
 
-  const handleAutocomplete = (_: never, newVal: UserListItem[]) => {
+  const handleAutocomplete = (_: any, newVal: UserListItem[]) => {
     setOwners(newVal);
   }
 
@@ -146,7 +146,7 @@ const AddFolder = (props: AddFolderProps) => {
             variant="outlined"
             onChange={handleInput('comment')}
           />
-          <MagnitudeAutocomplete<BaseUser[]>
+          <MagnitudeAutocomplete<BaseUser>
             multiple
             value={owners || []}
             filterAttribute={'username'}

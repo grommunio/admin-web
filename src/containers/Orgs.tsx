@@ -59,8 +59,8 @@ const Orgs = () => {
   const fetchTableData = async (params: URLParams) =>
     dispatch(fetchOrgsData(params));
 
-  const deleteItem = async (id: number) =>
-    dispatch(deleteOrgData(id));
+  const deleteItem = async (id: number | string) =>
+    dispatch(deleteOrgData(id as number));
 
   const table = useTable<OrgListItem>({
     fetchTableData,

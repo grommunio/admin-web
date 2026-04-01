@@ -3,4 +3,4 @@
 
 import React from 'react';
 // Context to access user globally
-export const CapabilityContext = React.createContext([]);
+export const CapabilityContext = React.createContext<string[]>([]);

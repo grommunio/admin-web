@@ -13,7 +13,7 @@ import { FormControl, Grid2, IconButton,
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { AddCircleOutline, Delete } from '@mui/icons-material';
-import { FetchmailConfig } from '@/types/users';
+import { NewFetchmailConfig } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -33,7 +33,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 type FetchMailProps = {
-  fetchmail: FetchmailConfig[];
+  fetchmail: NewFetchmailConfig[];
   handleAdd: () => void
   handleEdit: (open: number) => () => void
   handleDelete: (idx: number) => (e: React.MouseEvent) => void

@@ -8,7 +8,7 @@ import { CapabilityContext } from '../../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../../constants';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useAppSelector } from '../../store';
-import { Role } from '@/types/roles';
+import { BaseRole } from '@/types/roles';
 import { useTranslation } from 'react-i18next';
 
 
@@ -23,8 +23,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 type RolesTabProps = {
-  roles: Role[];
-  handleAutocomplete: (field: string) => (_: never, newVal: Role[]) => void
+  roles: BaseRole[];
+  handleAutocomplete: (field: string) => (_: any, newVal: BaseRole[]) => void
 }
 
 const RolesTab = (props: RolesTabProps) => {
@@ -38,12 +38,11 @@ const RolesTab = (props: RolesTabProps) => {
     <FormControl className={classes.form}>
       <Typography variant="h6" className={classes.headline}>{t('Roles')}</Typography>
       <FormControl>
-        <MagnitudeAutocomplete<Role>
+        <MagnitudeAutocomplete<BaseRole>
           multiple
           disabled={!context.includes(SYSTEM_ADMIN_WRITE)}
           value={roles || []}
           filterAttribute={'name'}
-          getOptionLabel={(role) => role.name}
           onChange={handleAutocomplete('roles')}
           options={Roles || []}
           label={t('Roles')}

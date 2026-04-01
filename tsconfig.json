@@ -13,7 +13,7 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "strict": false,
+    "strict": true,
     "noImplicitAny": true,
     "noEmit": true,
     "esModuleInterop": true,

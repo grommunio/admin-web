@@ -2,14 +2,14 @@ import { PartialWithRequired } from "./common";
 
 export type Group = {
   ID: number;
-  associations: string[],
+  associations?: string[],
   displayname: string,
   domainID: number,
   hidden: number,
   listPrivilege: number,
   listType: number,
   listname: string,
-  specifieds: string[],
+  specifieds?: string[],
   user: number,
 };
 

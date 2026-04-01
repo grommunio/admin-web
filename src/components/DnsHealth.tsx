@@ -54,8 +54,9 @@ function getEquationValuesFromRequirementTypes(typeA: RequirementType, typeB: Re
   }[typeA+typeB];
 }
 
-function scoreDNSResult(valueA: boolean | string, valueB: boolean | string, reqAType: RequirementType="opt", reqBType: RequirementType="opt") {
+function scoreDNSResult(valueA: boolean | string | null, valueB: boolean | string | null, reqAType: RequirementType="opt", reqBType: RequirementType="opt") {
   const equationValues = getEquationValuesFromRequirementTypes(reqAType, reqBType);
+  if(!equationValues) return 0;
   const valueMultiplier = [1, valueA ? 1 : 0, valueB ? 1 : 0];
   const res = equationValues.map((val, idx) => val * valueMultiplier[idx])
     .reduce((prev, value) => prev + value, 0);
@@ -73,7 +74,7 @@ type DnsHealthProps = {
 type DnsHealthState = {
   loading: boolean;
   error: boolean;
-  InfoDialog: React.ComponentType<any>;
+  InfoDialog: React.ComponentType<any> | null;
   dnsCheck: DnsCheck;
 }
 
@@ -90,24 +91,81 @@ const DnsHealth = (props: DnsHealthProps) => {
     dnsCheck: {
       externalIp: "",
       localIp: "",
-      autoconfig: null,
-      autodiscover: null,
-      autodiscoverSRV: null,
-      caldavSRV: null,
-      caldavTXT: null,
-      caldavsSRV: null,
-      carddavSRV: null,
-      carddavTXT: null,
-      carddavsSRV: null,
-      dkim: null,
-      dmarc: null,
-      imapSRV: null,
-      imapsSRV: null,
-      mxRecords: null,
-      pop3SRV: null,
-      pop3sSRV: null,
-      submissionSRV: null,
-      txt: null,
+      autoconfig: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      autodiscover: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      autodiscoverSRV: {
+        externalDNS: null,
+        internalDNS: null,
+        ip: "",
+      },
+      caldavSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      caldavTXT: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      caldavsSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      carddavSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      carddavTXT: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      carddavsSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      dkim: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      dmarc: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      imapSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      imapsSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      mxRecords: {
+        externalDNS: null,
+        internalDNS: null,
+        mxDomain: "",
+        reverseLookup: null,
+      },
+      pop3SRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      pop3sSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      submissionSRV: {
+        externalDNS: null,
+        internalDNS: null,
+      },
+      txt: {
+        externalDNS: null,
+        internalDNS: null,
+      },
     },
     InfoDialog: null,
   });
@@ -143,9 +201,10 @@ const DnsHealth = (props: DnsHealthProps) => {
 
     const reverseLookupScore = mxDomain === reverseLookup ? score : 70; // Warning, if reverse lookup fails
 
+    const ips: (string | null)[] = [localIp, externalIp];
     const matchScore = scoreDNSResult(
       externalDNS === externalIp,
-      [localIp, externalIp].includes(internalDNS),
+      ips.includes(internalDNS),
       "opt",
       "opt");
     return getChipColorFromScore(Math.min(score, matchScore, reverseLookupScore));
@@ -157,9 +216,11 @@ const DnsHealth = (props: DnsHealthProps) => {
     if(!autodiscover) return errorColor;
 
     const score = scoreDNSResult(autodiscover.internalDNS, autodiscover.externalDNS, "rec", "rec");
+
+    const ips: (string | null)[] = [localIp, externalIp];
     const matchScore = scoreDNSResult(
       autodiscover.externalDNS === externalIp,
-      [localIp, externalIp].includes(autodiscover.internalDNS),
+      ips.includes(autodiscover.internalDNS),
       "opt",
       "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
@@ -187,9 +248,10 @@ const DnsHealth = (props: DnsHealthProps) => {
 
     // TODO: Check for port
     const score = scoreDNSResult(autoconfig.internalDNS, autoconfig.externalDNS, "rec", "opt");
+    const ips: (string | null)[] = [localIp, externalIp];
     const matchScore = scoreDNSResult(
       autoconfig.externalDNS === externalIp,
-      [localIp, externalIp].includes(autoconfig.internalDNS),
+      ips.includes(autoconfig.internalDNS),
       "opt",
       "opt");
     return getChipColorFromScore(Math.min(score, matchScore));
@@ -419,7 +481,7 @@ const DNSChip = ({ loading, label, color, icon: Icon, onInfo, error }: DNSChipPr
     label={label}
     icon={loading ? <CircularProgress size={20} className={classes.cp}/> : <Icon className={classes.chipIcon} />}
     color={"info"}  // Necessary for icon color
-    onClick={loading || error ? null : onInfo}
+    onClick={loading || error ? undefined : onInfo}
   />
 };
 

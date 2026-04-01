@@ -9,9 +9,11 @@ import Loading from "./components/Loading";
  * Creates an async component from an async import
  */
 
-export default function makeLoadableComponent(loader: () => Promise<{ default: React.ComponentType }>) {
+export default function makeLoadableComponent<T extends object>(
+  loader: () => Promise<{ default: React.ComponentType<T> }>
+): React.ComponentType<T> {
   const AsyncComponent = lazy(loader);
-  const LoadableComponent = (props={}) => (
+  const LoadableComponent: React.FC<T> = (props: T) => (
     <Suspense fallback={<Loading />}>
       <AsyncComponent {...props}/>
     </Suspense>

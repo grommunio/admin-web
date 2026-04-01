@@ -9,6 +9,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { addItem, copyToClipboard } from '../../utils';
 import { useAppSelector } from '../../store';
 import { ChangeEvent } from '@/types/common';
+import { CustomImageSet } from '@/types/config';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -48,30 +49,46 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }));
 
+type CustomImages = Partial<
+  Record<'hostname' | 'logo' | 'logoLight' | 'icon' | 'background' | 'backgroundDark', string>
+>[];
+
+interface DesignState {
+  customImages: CustomImages;
+  configOpen: boolean;
+}
 
 const Design = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const { customImages: storedImages } = useAppSelector(state => state.config);
-  const [state, setState] = useState({
+  const [state, setState] = useState<DesignState>({
     customImages: [],
     configOpen: false,
   });
+  const { customImages, configOpen } = state;
 
   useEffect(() => {
     setState({
       ...state,
       customImages: Object.entries(storedImages)
-        .map(([hostname, images]) => ({ hostname, ...images})),
+        .map(([hostname, { logo, logoLight, icon, background, backgroundDark }]) => ({
+          hostname,
+          logo,
+          logoLight,
+          icon,
+          background,
+          backgroundDark
+        })),
     });
   }, []);
 
   const handleAddImageGroup = () => setState({
     ...state,
-    customImages: addItem(state.customImages, {}),
+    customImages: addItem(customImages, {}),
   });
 
-  const handleImgInput = (field: string, idx: number) => (e: ChangeEvent) => {
+  const handleImgInput = (field: keyof CustomImageSet | 'hostname', idx: number) => (e: ChangeEvent) => {
     const copy = [...state.customImages];
     copy[idx][field] = e.target.value;
     setState({ ...state, customImages: copy });
@@ -80,13 +97,16 @@ const Design = () => {
   // Saves stringified config object to clipboard
   const handleCopyToClipboard = () => {
     copyToClipboard('"customImages": ' + JSON.stringify(
-      state.customImages.reduce((prevValue, currentValue) => ({
-        ...prevValue,
-        [currentValue.hostname]: {
-          ...currentValue,
-          hostname: undefined,
-        },
-      }), {}), null, 4)
+      customImages.reduce((prevValue, currentValue) => {
+        const { hostname, ...logos } = currentValue;
+        if(!hostname) return prevValue;
+        return {
+          ...prevValue,
+          [hostname]: {
+            ...logos
+          },
+        };
+      }, {}), null, 4)
     )
   }
 
@@ -94,7 +114,6 @@ const Design = () => {
 
   const handleConfigClose = () => setState({ ...state, configOpen: false });
 
-  const { customImages, configOpen } = state;
   return <>
     <Typography variant="caption" className={classes.subtitle}>
       {t("design_sub")}
@@ -194,13 +213,19 @@ const Design = () => {
       <DialogContent>
         <pre>
           <code className={classes.jsonPreview}>
-              &quot;customImages&quot;: {JSON.stringify(customImages.reduce((prevValue, currentValue) => ({
-              ...prevValue,
-              [currentValue.hostname]: {
-                ...currentValue,
-                hostname: undefined,
-              },
-            }), {}), null, 4)}
+            &quot;customImages&quot;:
+            {JSON.stringify(
+              customImages.reduce((prevValue, currentValue) => {
+                const { hostname, ...logos } = currentValue;
+                if(!hostname) return prevValue;
+                return {
+                  ...prevValue,
+                  [hostname]: {
+                    ...logos
+                  },
+                };
+              }, {}), null, 4)
+            }
           </code>
         </pre>
         <Typography>

@@ -17,7 +17,7 @@ type OofEditorProps = {
 // eslint-disable-next-line react/prop-types
 function OofEditor({ setRef, initialValue, disabled }: OofEditorProps) {
   const { i18n } = useTranslation();
-  const editorRef = useRef(null);
+  const editorRef = useRef<any>(null);
   const context = useContext(ColorModeContext);
   const darkMode = context.mode === "dark";
 

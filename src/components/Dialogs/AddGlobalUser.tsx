@@ -23,6 +23,7 @@ import { Server } from '@/types/servers';
 import { NewUser, UserProperties } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
 import { Domain } from '@/types/domains';
+import { Lang } from '@/types/misc';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -49,13 +50,26 @@ type AddGlobalUserProps = {
   onSuccess: () => void;
 }
  
+interface AddGlobalUserState {
+  username: string;
+  properties: Partial<UserProperties>;
+  status: number;
+  loading: boolean;
+  password: string;
+  repeatPw: string;
+  domain: Domain | null;
+  homeserver: Server |  null;
+  lang: string;
+  chat: boolean;
+  chatAvailable: boolean;
+}
 
 const AddGlobalUser = (props: AddGlobalUserProps) => {
   const { open, onClose, onError, onSuccess } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<AddGlobalUserState>({
     username: '',
     properties: {
       displayname: '',
@@ -227,7 +241,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleAutocomplete = async (_: never, domain: Domain) => {
+  const handleAutocomplete = async (_: any, domain: Domain) => {
     const { username, chat } = state;
     if(!domain) return;
     const domainDetails = await dispatch(fetchDomainDetails(domain.ID));
@@ -240,7 +254,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleServer = (_: never, newVal: Server) => {
+  const handleServer = (_: any, newVal: Server) => {
     setState({
       ...state,
       homeserver: newVal || '',
@@ -259,15 +273,17 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
       open={open}
       maxWidth="sm"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}
       component="form"
     >
       <DialogTitle>{t('addHeadline', { item: 'User' })}</DialogTitle>
       <DialogContent>
         <FormControl className={classes.form}>
-          <MagnitudeAutocomplete
+          <MagnitudeAutocomplete<Domain>
             value={domain}
             filterAttribute={'domainname'}
             onChange={handleAutocomplete}
@@ -351,7 +367,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
             value={langs.length ? lang : ""}
             onChange={handleInput('lang')}
           >
-            {langs.map((l) => (
+            {langs.map((l: Lang) => (
               <MenuItem key={l.code} value={l.code}>
                 {l.code + ": " + l.name}
               </MenuItem>

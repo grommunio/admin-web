@@ -42,14 +42,20 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
-
+interface LdapState {
+  loading: boolean;
+  confirming: LdapUser | null;
+  snackbar: string;
+  searchInOrg: boolean;
+  showAll: boolean;
+}
 
 const Ldap = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { ldapUsers } = useAppSelector(state => state.ldap.Users);
-  const [state, setState] = useState({
+  const [state, setState] = useState<LdapState>({
     loading: false,
     confirming: null,
     snackbar: '',
@@ -90,11 +96,11 @@ const Ldap = ({ domain }: DomainViewProps) => {
       .catch(snackbar => setState({ ...state, snackbar, loading: false }));
   }, 500), []);
 
-  const handleImport = (user: LdapUser) => () => setState({ ...state,confirming: user });
+  const handleImport = (user: LdapUser) => () => setState({ ...state, confirming: user });
 
-  const handleSuccess = () => setState({ ...state,confirming: false, snackbar: 'Success!' });
+  const handleSuccess = () => setState({ ...state, confirming: null, snackbar: 'Success!' });
 
-  const handleClose = () => setState({ ...state,confirming: false });
+  const handleClose = () => setState({ ...state, confirming: null });
 
   const handleError = (error: string) => setState({ ...state,snackbar: error });
 
@@ -207,7 +213,7 @@ const Ldap = ({ domain }: DomainViewProps) => {
       <ImportDialog
         domainID={domain.ID}
         open={!!confirming}
-        user={confirming || {}}
+        user={confirming}
         onSuccess={handleSuccess}
         onClose={handleClose}
         onError={handleError}

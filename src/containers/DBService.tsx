@@ -53,7 +53,7 @@ const DBService = () => {
     files: [],
     name: '',
     unsaved: false,
-    deleting: null,
+    deleting: "",
     loading: true,
     snackbar: "",
   });
@@ -95,10 +95,10 @@ const DBService = () => {
 
   const handleDeleteSuccess = (message: string) => {
     const files = [...state.files].filter(f => f !== state.deleting);
-    setState({ ...state, deleting: false, snackbar: 'Success! ' + (message || ''), files });
+    setState({ ...state, deleting: "", snackbar: 'Success! ' + (message || ''), files });
   }
 
-  const handleDeleteClose = () => setState({ ...state, deleting: false });
+  const handleDeleteClose = () => setState({ ...state, deleting: "" });
 
   const handleDeleteError = (error: string) => setState({ ...state, snackbar: error });
 

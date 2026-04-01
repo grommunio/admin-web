@@ -20,6 +20,8 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { NewRole, Permission } from '@/types/roles';
 import { User } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
+import { BaseDomain, Domain } from '@/types/domains';
+import { Org } from '@/types/orgs';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -54,6 +56,12 @@ type AddRoleProps = {
   onSuccess: () => void;
 }
 
+interface AddRoleState {
+  name: string;
+  description: string;
+  permissions: { permission: string; params: Domain | Org | null }[];
+  users: User[];
+}
 
 const AddRole = (props: AddRoleProps) => {
   const { open, onClose, onSuccess, onError } = props;
@@ -64,7 +72,7 @@ const AddRole = (props: AddRoleProps) => {
   const { Users } = useAppSelector(state => state.users);
   const { Domains } = useAppSelector(state => state.domains);
   const { Orgs } = useAppSelector(state => state.orgs);
-  const [role, setRole] = useState({
+  const [role, setRole] = useState<AddRoleState>({
     name: '',
     description: '',
     permissions: [{ permission: '', params: null }],
@@ -100,7 +108,7 @@ const AddRole = (props: AddRoleProps) => {
         const params = permission.params;
         return {
           permission: permission.permission as Permission,
-          params: params ? params.ID : "",
+          params: params ? (params.ID === -1 ? "*" : params.ID): "",
         };
       }),
     }))
@@ -120,7 +128,7 @@ const AddRole = (props: AddRoleProps) => {
       });
   }
 
-  const handleAutocomplete = (field: keyof NewRole) => (_: never, newVal: User) => {
+  const handleAutocomplete = (field: keyof NewRole) => (_: any, newVal: User) => {
     setRole({
       ...role,
       [field]: newVal,
@@ -132,12 +140,12 @@ const AddRole = (props: AddRoleProps) => {
     const input = event.target.value;
     copy[idx].permission = input;
     if(input === 'SystemAdmin') {
-      copy[idx].params = '';
+      copy[idx].params = null;
     }
     setRole({ ...role, permissions: copy });
   }
 
-  const handleSetParams = (idx: number) => (_: never, newVal: { ID: number, domainname?: string, name?: string }) => {
+  const handleSetParams = (idx: number) => (_: any, newVal: Domain | Org) => {
     const copy = [...role.permissions];
     copy[idx].params = newVal;
     setRole({ ...role, permissions: copy });
@@ -145,7 +153,7 @@ const AddRole = (props: AddRoleProps) => {
 
   const handleNewRow = () => {
     const copy = [...role.permissions];
-    copy.push({ permission: '', params: '' });
+    copy.push({ permission: '', params: null });
     setRole({ ...role, permissions: copy });
   }
 
@@ -169,8 +177,8 @@ const AddRole = (props: AddRoleProps) => {
   }
 
   const { name, permissions, description, users } = role;
-  const orgs = [{ ID: '*', name: 'All'}].concat(Orgs);
-  const domains = [{ ID: '*', domainname: 'All'}].concat(Domains);
+  const orgs = [{ ID: -1, name: 'All'}].concat(Orgs);
+  const domains = [{ ID: -1, domainname: 'All', displayname: '' }].concat(Domains);
 
   return (
     <Dialog
@@ -190,7 +198,7 @@ const AddRole = (props: AddRoleProps) => {
             autoFocus
             required
           />
-          <MagnitudeAutocomplete
+          <MagnitudeAutocomplete<User>
             multiple
             value={users || []}
             filterAttribute={'username'}
@@ -219,8 +227,8 @@ const AddRole = (props: AddRoleProps) => {
                 ))}
               </TextField>
               {permission.permission.includes('DomainAdmin') /*Read and Write*/ && 
-                <MagnitudeAutocomplete
-                  value={permission.params}
+                <MagnitudeAutocomplete<BaseDomain>
+                  value={permission.params as BaseDomain}
                   filterAttribute={'domainname'}
                   onChange={handleSetParams(idx)}
                   className={classes.rowTextfield} 
@@ -234,7 +242,7 @@ const AddRole = (props: AddRoleProps) => {
                 />}
               {permission.permission === ORG_ADMIN /*Read and Write*/ && 
                 <MagnitudeAutocomplete
-                  value={permission.params}
+                  value={permission.params as Org}
                   filterAttribute={'name'}
                   onChange={handleSetParams(idx)}
                   className={classes.rowTextfield} 

@@ -50,9 +50,9 @@ export type UserProperties = {
   comment: string;
 
   // This should probably be removed
-  storagequotalimit: number,
-  prohibitreceivequota: number,
-  prohibitsendquota: number,
+  storagequotalimit: number | null,
+  prohibitreceivequota: number | null,
+  prohibitsendquota: number | null,
 }
 
 export type Altname = {
@@ -73,10 +73,10 @@ export type User = BaseUser & {
   chatAdmin: boolean;
   domainID: number;
   fetchmail: any[]; // TODO: Define fetchmail
-  forward: Forward;
+  forward: Forward | null;
   homeserver: number | null;
   lang: string;
-  ldapID: number | null;
+  ldapID: string | null;
   mlist: any | null; // TODO: Define mlist
   orgID: number;
   pop3_imap: boolean;
@@ -106,7 +106,7 @@ export type NewUser = Pick<User,
   'properties' |
   'status' |
   'username'
-> & { password: string };
+> & { password?: string };
 
 export type UpdateUser = PartialWithRequired<User, "ID">;
 
@@ -153,8 +153,8 @@ export type DeleteOrphanedUsersParams = {
 export type OofSettings = {
   state: 0 | 1;
   externalAudience: 0 | 1 | 2;
-  startTime: string | null;
-  endTime: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
   internalSubject: string;
   internalReply: string;
   externalSubject: string;
@@ -187,9 +187,9 @@ export type FetchmailConfig = {
   protocol: Protocol;
   useSSL: boolean;
   sslCertCheck: boolean;
-  sslCertPath: string;
-  sslFingerprint: string;
-  extraOptions: string;
+  sslCertPath: string | null;
+  sslFingerprint: string | null;
+  extraOptions: string | null;
 };
 
 export type NewFetchmailConfig = Omit<FetchmailConfig, "ID">;

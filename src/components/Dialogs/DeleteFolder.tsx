@@ -26,7 +26,7 @@ const DeleteFolder = (props: DeleteFolderProps) => {
     loading: false,
     clear: false,
     taskMessage: '',
-    taskID: null,
+    taskID: -1,
   });
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -64,7 +64,7 @@ const DeleteFolder = (props: DeleteFolderProps) => {
   }
 
   const handleClose = () => {
-    setState({ ...state, taskMessage: '', taskID: null });
+    setState({ ...state, taskMessage: '', taskID: -1 });
     props.onClose();
   }
 

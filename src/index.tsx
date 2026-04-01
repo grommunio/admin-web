@@ -18,7 +18,7 @@ import makeLoadableComponent from './lazy';
 // Async loading support.
 const LoadableApp = makeLoadableComponent(() => import('./App'));
 
-const container = document.getElementById('root');
+const container = document.getElementById('root') || document.createElement("div");
 const root = ReactDOM.createRoot(container);
 root.render(<Provider store={store}>
   <StyledEngineProvider injectFirst>

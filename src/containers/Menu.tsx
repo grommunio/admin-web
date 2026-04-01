@@ -10,12 +10,17 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { DomainListItem } from '@/types/domains';
 import { useTranslation } from 'react-i18next';
 
+interface MenuState {
+  orderBy: string;
+  order: string;
+  sortedDomains: DomainListItem[];
+}
 
 const Menu = () => {
   const { t } = useTranslation();
   const { Domains } = useAppSelector(state => state.drawer);
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<MenuState>({
     orderBy: 'domainname',
     order: 'asc',
     sortedDomains: [],

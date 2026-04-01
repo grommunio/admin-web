@@ -30,8 +30,8 @@ const defaultState: DBConfState = {
 type DBConfAction = {
   type: string;
   service?: string;
-  services?: string[];
-  commands?: {
+  services: string[];
+  commands: {
     key: string[];
     file: string[];
     service: string[];
@@ -44,21 +44,21 @@ function dbconfReducer(state: DBConfState = defaultState, action: DBConfAction) 
   case DBCONF_DATA_RECEIVED:
     return {
       ...state,
-      services: action.services,
-      commands: action.commands,
+      services: action.services || state.services,
+      commands: action.commands || state.commands,
     };
 
       
   case DBCONF_SERVICE_DELETE:
     return {
       ...state,
-      services: state.services.filter(s => s !== action.service),
+      services: state.services.filter(s => s !== action.service) || [],
     };
 
   case DBCONF_SERVICE_ADD:
     return {
       ...state,
-      services: addItem(state.services, action.service),
+      services: addItem<string>(state.services, action.service as string),
     };
 
   case AUTH_AUTHENTICATED:

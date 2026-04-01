@@ -118,13 +118,13 @@ const ServicesChart = () => {
   const dispatch = useAppDispatch();
   const { Services } = useAppSelector(state => state.services);
   const [state, setState] = useState({
-    snackbar: null,
+    snackbar: "",
     starting: "",
     restarting: "",
     stopping: "",
     action: '',
   });
-  const [service, setService] = useState(null);
+  const [service, setService] = useState<Service | null>(null);
 
   const handleServiceAction = (service: Service, action: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -263,13 +263,14 @@ const ServicesChart = () => {
           </TableBody>
         </Table>
       </Paper>
-      <ConfirmRestartStop
-        open={!!service}
-        handleConfirm={handleServiceAction(service, action)}
-        onClose={handleCloseDialog}
-        service={service}
-        action={action}
-      />
+      {service && 
+        <ConfirmRestartStop
+          open={!!service}
+          handleConfirm={handleServiceAction(service, action)}
+          onClose={handleCloseDialog}
+          service={service}
+          action={action}
+        />}
       <Feedback
         snackbar={snackbar}
         onClose={() => setState({ ...state, snackbar: "" })}

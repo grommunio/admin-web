@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from "react";
+import React, { ReactNode } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -243,7 +243,7 @@ const AppRoutes = ({ routesProps, domains, capabilities }: AppRoutesProps) => (
         component={AsyncTaskDetails}
         props={routesProps}
       />} />
-    {domains.reduce((prev, domain) => {
+    {domains.reduce((prev: ReactNode[], domain: Domain) => {
       prev.push(<Route
         path={`/${domain.ID}`}
         key={domain.ID}

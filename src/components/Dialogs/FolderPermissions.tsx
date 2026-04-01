@@ -5,8 +5,9 @@ import React, { Fragment, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl,
   Button, DialogActions, Grid2, FormLabel, RadioGroup, Radio, FormControlLabel, Checkbox, List,
-  ListItem, ListItemText, ListItemButton, Divider, MenuItem, InputLabel, Select,
+  ListItem, ListItemText, ListItemButton, Divider, MenuItem,
   Theme,
+  TextField,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { setFolderPermissions } from '../../actions/folders';
@@ -54,7 +55,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
-type FolderPermissionsProps = {
+interface FolderPermissionsProps {
   open: boolean;
   domain: Domain;
   folderID: string;
@@ -63,12 +64,20 @@ type FolderPermissionsProps = {
   onError: (err: string) => void;
 }
 
+interface FolderPermissionsState {
+  adding: boolean;
+  deleting: boolean;
+  permissions: number;
+  selected: Owner | null;
+  snackbar: string;
+}
+
 const FolderPermissions = (props: FolderPermissionsProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const owners = useAppSelector(state => state.folders.Owners);
-  const [state, setState] = useState({
+  const [state, setState] = useState<FolderPermissionsState>({
     adding: false,
     deleting: false,
     permissions: 0,
@@ -132,6 +141,7 @@ const FolderPermissions = (props: FolderPermissionsProps) => {
   const handleSave = () => {
     const { domain, folderID, onSuccess, onError } = props;
     const { selected, permissions } = state;
+    if(!selected) return;
     dispatch(setFolderPermissions(domain.ID, folderID, selected.memberID, { permissions }))
       .then(onSuccess)
       .catch(onError);
@@ -156,8 +166,10 @@ const FolderPermissions = (props: FolderPermissionsProps) => {
       open={open}
       maxWidth="sm"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}
     >
       <DialogTitle>{t('Permissions')}</DialogTitle>
@@ -194,20 +206,20 @@ const FolderPermissions = (props: FolderPermissionsProps) => {
             {t('Remove')}
           </Button>
         </div>
-        <FormControl fullWidth style={{ marginBottom: 4 }}>
-          <InputLabel>{t('Profile')}</InputLabel>
-          <Select
-            value={permissionProfiles.findIndex(profile => profile.value === permissions) === -1 ? "" : permissions}
-            label={t('Profile')}
-            onChange={handleProfileSelect}
-          >
-            {permissionProfiles.map((profile, idx) =>
-              <MenuItem key={idx} value={profile.value}>
-                {t(profile.name)}
-              </MenuItem>
-            )}
-          </Select>
-        </FormControl>
+        <TextField
+          fullWidth
+          sx={{ mb: 1 }}
+          label={t('Profile')}
+          value={permissionProfiles.findIndex(profile => profile.value === permissions) === -1 ? "" : permissions}
+          onChange={handleProfileSelect}
+          select
+        >
+          {permissionProfiles.map((profile, idx) =>
+            <MenuItem key={idx} value={profile.value}>
+              {t(profile.name)}
+            </MenuItem>
+          )}
+        </TextField>
         <Grid2 container>
           <Grid2 size={6}>
             <FormControl className={classes.form}>

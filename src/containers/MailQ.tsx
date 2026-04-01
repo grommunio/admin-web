@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { makeStyles } from 'tss-react/mui';
 import { useAppDispatch } from "../store";
 import { ChangeEvent } from "@/types/common";
+import { PostqueueRow } from "@/types/mailq";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -41,16 +42,28 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+interface MailQDataState {
+  postfixMailq: string;
+  gromoxMailq: string;
+  postqueue: PostqueueRow[];
+}
+
+interface MailQState {
+  selected: string[];
+  snackbar: string;
+  loading: boolean;
+}
+
 const MailQ = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<MailQState>({
     selected: [],
     snackbar: '',
     loading: true,
   });
-  const [data, setData] = useState({
+  const [data, setData] = useState<MailQDataState>({
     postfixMailq: '',
     gromoxMailq: '',
     postqueue: [],
@@ -171,7 +184,7 @@ const MailQ = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {postqueue.map(entry => {
+              {postqueue.map((entry: PostqueueRow) => {
                 const id = entry.queue_id;
                 const rowSelected = selected.includes(id)
                 return (

@@ -37,8 +37,8 @@ type SyncPoliciesProps = {
   syncPolicy: any; // TODO Properly type sync policies
   defaultPolicy: any; // TODO Properly type sync policies
   handleChange: (field: string) => (e: ChangeEvent) => void;
-  handleSlider: (field: string) => (_: never, newVal: number) => void;
-  handleCheckbox: (field: string) => (_: never, newValue: boolean) => void;
+  handleSlider: (field: string) => (_: any, newVal: number | number[], activeThumb: number) => void;
+  handleCheckbox: (field: string) => (_: any, newValue: boolean) => void;
 }
 
 const SyncPolicies = (props: SyncPoliciesProps) => {

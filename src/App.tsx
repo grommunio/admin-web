@@ -16,6 +16,7 @@ import ColorModeContext from "./ColorContext";
 import Feedback from "./components/Feedback";
 import { SERVER_CONFIG_ERROR } from "./actions/types";
 import { useAppDispatch, useAppSelector } from "./store";
+import { LoadableMainViewProps } from "./components/LoadableMainView";
 
 
 const useStyles = makeStyles()(() => ({
@@ -31,7 +32,8 @@ const useStyles = makeStyles()(() => ({
   },
 }));
 
-const AsyncMainView = makeLoadableComponent(() => import("./components/LoadableMainView")) as React.ComponentType<any>;
+const AsyncMainView = makeLoadableComponent<LoadableMainViewProps>(
+  () => import("./components/LoadableMainView"));
 
 // Root class
 const App = () => {
@@ -61,7 +63,7 @@ const App = () => {
 
   useEffect(() => {
     if(capabilities.includes(SYSTEM_ADMIN_WRITE)) dispatch(fetchLicenseData());
-  }, [capabilities])
+  }, [capabilities]);
     
   return (
     <div

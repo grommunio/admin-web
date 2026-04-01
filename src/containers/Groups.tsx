@@ -55,7 +55,7 @@ const Groups = ({ domain }: DomainViewProps) => {
     snackbar: '',
     checking: false,
     taskMessage: '',
-    taskID: null,
+    taskID: -1,
   });
   const { Groups, count } = useAppSelector(state => state.groups);
   const context = useContext(CapabilityContext);
@@ -148,7 +148,7 @@ const Groups = ({ domain }: DomainViewProps) => {
   const handleTaskClose = () => setState({
     ...state, 
     taskMessage: "",
-    taskID: null,
+    taskID: -1,
   });
 
 

@@ -73,7 +73,9 @@ const Updater = (props: UpdaterProps) => {
     window.addEventListener('beforeunload', onBeforeUnload);
 
     return () => {
-      clearInterval(fetchInterval.current);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
       window.removeEventListener("beforeunload", onBeforeUnload);
     }
   }, []);
@@ -94,7 +96,9 @@ const Updater = (props: UpdaterProps) => {
       setUpdateLog(response?.data || []);
     }
     if(response?.processRunning === false) {
-      clearInterval(fetchInterval.current);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
       setState({ ...state, checkLoading: false, updateLoading: false, upgradeLoading: false });
       setTabsDisabled(false);
     }

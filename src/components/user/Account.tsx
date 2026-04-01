@@ -4,7 +4,8 @@
 import React, { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
   Select, TextField, Typography, Tooltip, Alert, 
-  Theme} from '@mui/material';
+  Theme,
+  SelectChangeEvent} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
 import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
@@ -84,11 +85,11 @@ type AccountProps = {
   handlePropertyCheckbox: (field: keyof UserProperties) => (event: ChangeEvent) => void
   handleIntPropertyChange: (field: keyof UserProperties) => (event: ChangeEvent) => void
   handleCheckbox: (field: string) => (e: ChangeEvent) => void
-  handleUnitChange: (unit: string) => (event: ChangeEvent) => void
+  handleUnitChange: (unit: string) => (event: SelectChangeEvent<number>) => void
   handlePasswordChange: () => void;
   rawData: any; // TODO: Improve typing
   handleChatUser: (e: ChangeEvent) => void
-  handleServer: (_: never, newVal: Server) => void
+  handleServer: (_: any, newVal: Server) => void
   setState: any; // TODO: Fix typing
   storageQuotaTooHigh: boolean;
 }

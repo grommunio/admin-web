@@ -177,7 +177,7 @@ const NavigationLinks = (props: NavigationLinksProps) => {
         <ListItemText
           primary={t(label)}
           slotProps={{
-            primary: { className: selected ? classes.drawerItemLabel : null }
+            primary: { className: selected ? classes.drawerItemLabel : undefined }
           }}
         />
       </ListItemButton>
@@ -200,7 +200,7 @@ const NavigationLinks = (props: NavigationLinksProps) => {
         <ListItemText
           primary={t(label)}
           slotProps={{
-            primary: { className: selected ? classes.nestedLabel : null }
+            primary: { className: selected ? classes.nestedLabel : undefined }
           }}
         />
       </ListItemButton>
@@ -289,7 +289,7 @@ const NavigationLinks = (props: NavigationLinksProps) => {
                         sx={{ wordWrap: 'break-word' }}
                         primary={name + (domainStatus === 3 ? ` [${t('Deactivated')}]` : '')}
                         slotProps={{
-                          primary: { className: selected ? classes.drawerItemLabel : null }
+                          primary: { className: selected ? classes.drawerItemLabel : undefined }
                         }}
                       />
                     </ListItemButton>

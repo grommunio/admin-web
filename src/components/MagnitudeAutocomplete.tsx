@@ -7,16 +7,17 @@ import { getAutocompleteOptions } from '../utils';
 import { useTranslation } from 'react-i18next';
 import { USER_STATUS } from '../constants';
 import { ChangeEvent } from '@/types/common';
+import { ContactListItem } from '@/types/users';
 
 
 type MagnitudeAutocompleteProps<T> = {
   className?: string;
-  value: T | T[];
-  filterAttribute?: string;
-  onChange: (_: never, newVal: T | T[]) => void;
-  options?: T[];
+  value: T | T[] | null;
+  filterAttribute?: keyof T;
+  onChange: (_: any, newVal: any) => void; // Annoying af typing
+  options: T[];
   label?: string;
-  getOptionLabel?: (option: any) => string;
+  getOptionLabel?: (option: T | string) => string;
   inputValue?: string;
   onInputChange?: (e: ChangeEvent) => void;
   freeSolo?: boolean;
@@ -50,16 +51,19 @@ function MagnitudeAutocomplete<T>(props: MagnitudeAutocompleteProps<T>) {
     value={value || null}
     onChange={onChange}
     options={options || []}
-    getOptionLabel={getOptionLabel || (o => {
-      if(!filterAttribute) return o;
-      // Contact
-      if(filterAttribute === "username" && o.status === USER_STATUS.CONTACT) {
-        const properties = o.properties || {};
-        return properties["smtpaddress"] || properties["displayname"] || "";
+    getOptionLabel={getOptionLabel || ((o: T | string) => {
+      if(o instanceof String || !filterAttribute) {
+        return (o as string) || '';
       }
-      return o[filterAttribute] || '';
+      // Contact
+      if(filterAttribute === "username" && (o as ContactListItem).status === USER_STATUS.CONTACT) {
+        const properties = (o as ContactListItem).properties || {};
+        return properties["smtpaddress"] as string || properties["displayname"] as string || "";
+      }
+      
+      return (o as T)[filterAttribute as keyof T] as string || '';
     })}
-    filterOptions={getAutocompleteOptions(filterAttribute, magnitude)}
+    filterOptions={getAutocompleteOptions<T>(filterAttribute, magnitude)}
     noOptionsText={inputValue && inputValue.length < magnitude ?
       t('Filter more precisely') + '...' : t('No options')}
     renderInput={(params) => (

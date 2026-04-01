@@ -80,8 +80,8 @@ const Oof = ({ domainID, userID }: OofProps) => {
   });
   const navigate = useNavigate();
   const theme = useTheme();
-  const [tinyRef, setRef] = useState(null);
-  const [tinyRef2, setRef2] = useState(null);
+  const [tinyRef, setRef] = useState<any>(null);
+  const [tinyRef2, setRef2] = useState<any>(null);
 
   const fetchOof = async (domainID: number, userID: number) => 
     await dispatch(fetchUserOof(domainID, userID))
@@ -123,11 +123,11 @@ const Oof = ({ domainID, userID }: OofProps) => {
     setOof({ ...oof, [field]: e.target.value });
   }
 
-  const handleDateInput = (field: "startTime" | "endTime") => (newVal: Moment) => {
+  const handleDateInput = (field: "startTime" | "endTime") => (newVal: Moment | null) => {
     setOof({ ...oof, [field]: newVal });
   }
 
-  const handleTabChange = (_: never, tab: number) => setOof({ ...oof, tab });
+  const handleTabChange = (_: any, tab: number) => setOof({ ...oof, tab });
 
   const handleSave = () => {
     const { state, externalAudience, startTime, endTime, internalSubject, externalSubject, internalReply, externalReply } = oof;
@@ -246,7 +246,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
         variant="contained"
         color="primary"
         onClick={handleSave}
-        disabled={startTime && moment(startTime).isAfter(endTime)}
+        disabled={Boolean(startTime && moment(startTime).isAfter(endTime))}
       >
         {t('Save')}
       </Button>

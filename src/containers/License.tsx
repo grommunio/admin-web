@@ -74,7 +74,7 @@ const License = () => {
     inner();
   }, [Domains]);
 
-  const handleTab = (_: never, tab: number) => {
+  const handleTab = (_: unknown, tab: number) => {
     setState({ ...state, tab });
   }
 

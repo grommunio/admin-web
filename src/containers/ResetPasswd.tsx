@@ -35,10 +35,17 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+interface ResetPasswdState {
+  selectedUser: User | null;
+  newPw: string;
+  reType: string;
+  snackbar: string;
+}
+
 const ResetPasswd = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const [state, setState] = useState({
+  const [state, setState] = useState<ResetPasswdState>({
     selectedUser: null,
     newPw: '',
     reType: '',
@@ -63,11 +70,14 @@ const ResetPasswd = () => {
     inner();
   }, []);
 
-  const handleSave = () => resetPw(state.selectedUser.username, state.newPw)
-    .then(() => setState({ ...state, snackbar: 'Success!' }))
-    .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
+  const handleSave = () => {
+    if(!state.selectedUser) return;
+    resetPw(state.selectedUser.username, state.newPw)
+      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
+  }
 
-  const handleAutocomplete = (_: never, newVal: User) => {
+  const handleAutocomplete = (_: any, newVal: User) => {
     setState({
       ...state,
       selectedUser: newVal,
@@ -84,8 +94,8 @@ const ResetPasswd = () => {
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
     >
       <Paper className={classes.paper} elevation={1}>
-        <MagnitudeAutocomplete
-          value={selectedUser || ""}
+        <MagnitudeAutocomplete<User>
+          value={selectedUser}
           filterAttribute={'username'}
           onChange={handleAutocomplete}
           options={users || []}

@@ -67,20 +67,28 @@ type RenderNodeProps = {
   toggleNode: () => void;
 }
 
+interface FoldersState {
+  offset: number;
+  tab: number;
+  root: number;
+  adding: string;
+  filteredTree: Folder | null;
+}
+
 const Folders = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { folders } = useAppSelector(state => state);
-  const [state, setState] = useState({
+  const [state, setState] = useState<FoldersState>({
     offset: 0,
     tab: 0,
     root: -1,
-    adding: null,
+    adding: "",
     filteredTree: null,
   });
   const context = useContext(CapabilityContext);
-  const treeContainer = useRef(null);
+  const treeContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const fetchTableData = async (params: URLParams) => 
@@ -104,7 +112,7 @@ const Folders = ({ domain }: DomainViewProps) => {
     handleEdit,
   } = table;
 
-  const handleTab = (_: never, tab: number) => setState({ ...state, tab });
+  const handleTab = (_: unknown, tab: number) => setState({ ...state, tab });
 
   const renderNode = ({ nodeDatum, toggleNode }: RenderNodeProps) => {
     return <g onClick={handleNodeClicked(nodeDatum?.folderid)}>
@@ -133,12 +141,12 @@ const Folders = ({ domain }: DomainViewProps) => {
   }
 
   const handleAddingClose = () => {
-    setState({ ...state, adding: null });
+    setState({ ...state, adding: "" });
   }
 
   const handleAddingSuccess = () => {
     handleAddingSuccess();
-    setState({ ...state, adding: null });
+    setState({ ...state, adding: "" });
   }
 
   const handleMatch = (e: ChangeEvent) => {

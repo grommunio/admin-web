@@ -88,6 +88,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }));
 
+interface Log {
+  message: string;
+  time: string;
+  level: number;
+}
 
 const Logs = () => {
   const { classes } = useStyles();
@@ -95,18 +100,18 @@ const Logs = () => {
   const dispatch = useAppDispatch();
   const { logs } = useAppSelector(state => state);
   const [state, setState] = useState({
-    snackbar: null,
+    snackbar: "",
     skip: 0,
     autorefresh: false,
     clipboardMessage: '',
     loading: true,
   });
   const [filename, setFilename] = useState("");
-  const [log, setLog] = useState([]);
+  const [log, setLog] = useState<Log[]>([]);
   const [scrollDivHeight, setScrollDivHeight] = useState(0);
   const [search, setSearch] = useState("");
   const [n, setN] = useState(100);
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState<Moment | null>(null);
   const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const nOptions = [100, 500, 1000, 5000];
@@ -123,6 +128,7 @@ const Logs = () => {
 
   useEffect(() => {
     const list = document.getElementById("logsList");
+    if(!list) return;
     const newHeight = list.scrollHeight;
     // First fetch
     if(log.length <= 100) {
@@ -147,7 +153,7 @@ const Logs = () => {
   }
 
   const handleScroll = async () => {
-    if (!date && document.getElementById("logsList").scrollTop === 0) {
+    if (!date && document.getElementById("logsList")?.scrollTop === 0) {
       const { skip } = state;
       let newLog = await fetchLog(filename, { skip: (skip + 1) * 100 })
         .catch(snackbar => setState({ ...state, snackbar }));
@@ -199,10 +205,14 @@ const Logs = () => {
     if(autorefresh && !date) fetchInterval.current = setInterval(() => {
       handleRefresh();
     }, 5000);
-    else clearInterval(fetchInterval.current);
+    else if (fetchInterval.current) {
+      clearInterval(fetchInterval.current);
+    }
 
     return () => {
-      clearInterval(fetchInterval.current);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
     }
   }, [state.autorefresh, filename, date]);
 
@@ -219,9 +229,10 @@ const Logs = () => {
     return log.filter(l => l.message.toLowerCase().includes(search.toLowerCase()))
   }, [log, search]);
 
-  const handleDateChange = async (newVal: Moment) => {
+  const handleDateChange = async (newVal: Moment | null) => {
     setDate(newVal);
     setState({ ...state, skip: 0, autorefresh: false });
+    if(!newVal) return;
     const time = newVal.toISOString().replace("T", " ").replace("Z", "");
     const freshLog = await fetchLog(filename, { n, after: time })
       .catch(snackbar => setState({ ...state, snackbar }));

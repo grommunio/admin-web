@@ -37,8 +37,8 @@ import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { UpdateOrg } from '@/types/orgs';
 import { LdapConfigData, LdapTemplate, SyncLdapParams } from '@/types/ldap';
-import { ChangeEvent } from '@/types/common';
-import { Domain } from '@/types/domains';
+import { ChangeEvent, KeyValuePair } from '@/types/common';
+import { BaseDomain, Domain } from '@/types/domains';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -128,13 +128,56 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+
+interface OrgState {
+  // Org
+  ID: number,
+  name: string,
+  domains: BaseDomain[],
+  description: string,
+  unsaved: boolean;
+  overridingLdap: boolean;
+
+  baseDn: string;
+  objectID: string;
+  disabled: boolean;
+  
+  server: string;
+  bindUser: string;
+  bindPass: string;
+  starttls: boolean;
+
+  groupMemberAttr: string;
+  groupaddr: string;
+  groupfilter: string;
+  groupname: string;
+
+  username: string;
+  displayName: string;
+  defaultQuota: string;
+  filter: string;
+  contactFilter: string;
+  templates: string;
+  attributes: KeyValuePair<string>[];
+  searchAttributes: string[];
+  authBackendSelection: string;
+  aliases: string;
+
+  deleting: boolean;
+  taskMessage: string;
+  taskID: number;
+  force: boolean;
+  snackbar: string;
+  loading: boolean;
+}
+
 const OrgDetails = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const adminConfig = useAppSelector(state => state.config);
   const { Domains } = useAppSelector(state => state.domains);
-  const [state, setState] = useState({
+  const [state, setState] = useState<OrgState>({
     // Org
     ID: -1,
     name: '',
@@ -169,7 +212,7 @@ const OrgDetails = () => {
 
     deleting: false,
     taskMessage: '',
-    taskID: null,
+    taskID: -1,
     force: false,
     snackbar: '',
     overridingLdap: false,
@@ -260,7 +303,7 @@ const OrgDetails = () => {
     navigate(`/${path}`);
   }
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: Domain[] | string[]) => {
+  const handleAutocomplete = (field: string) => (_: any, newVal: Domain[] | string[]) => {
     setState({
       ...state, 
       [field]: newVal,
@@ -310,7 +353,7 @@ const OrgDetails = () => {
     };
   };
 
-  const handleAttributeInput = (objectPart: string, idx: number) => ({ target: t }: ChangeEvent) => {
+  const handleAttributeInput = (objectPart: 'key' | 'value', idx: number) => ({ target: t }: ChangeEvent) => {
     const copy = [...state.attributes];
     copy[idx][objectPart] = t.value;
     setState({
@@ -391,7 +434,7 @@ const OrgDetails = () => {
   const handleTaskClose = () => setState({
     ...state, 
     taskMessage: "",
-    taskID: null,
+    taskID: -1,
   })
 
   const handleCheckbox = (field: keyof typeof state) => () => setState({

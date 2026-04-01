@@ -64,7 +64,7 @@ const defaultState: Partial<UserProperties> = {
 
 const AddGlobalContact = (props: AddGlobalContactProps) => {
   const [contact, setContact] = useState(defaultState);
-  const [domain, setDomain] = useState(null);
+  const [domain, setDomain] = useState<BaseDomain  | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { classes } = useStyles();
@@ -127,7 +127,7 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
   }
 
   const handleAutocomplete = (_: unknown, newVal: BaseDomain) => {
-    setDomain(newVal || '');
+    setDomain(newVal || null);
   }
 
   const { open, onClose } = props;
@@ -139,8 +139,10 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
       open={open}
       maxWidth="lg"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
       }}
     >
       <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
@@ -220,6 +222,7 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
           onClick={handleAddAndEdit}
           variant="contained"
           color="primary"
+          disabled={!domain}
         >
           {loading ? <CircularProgress size={24}/> : t('Add and edit')}
         </Button>
@@ -228,6 +231,7 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
           variant="contained"
           color="primary"
           type="submit"
+          disabled={!domain}
         >
           {loading ? <CircularProgress size={24}/> : t('Add')}
         </Button>

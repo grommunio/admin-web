@@ -21,7 +21,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import { useAppDispatch, useAppSelector } from '../store';
 import { LdapConfigData, LdapGroupsConfig, LdapTemplate, SyncLdapParams } from '@/types/ldap';
-import { ChangeEvent } from '@/types/common';
+import { ChangeEvent, KeyValuePair } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -145,12 +145,46 @@ function getDefaultGroupValuesOfTemplate(template: LdapTemplate, attribute: keyo
   return "";
 }
 
+interface LdapConfigState {
+  baseDn: string;
+  objectID: string;
+  disabled: boolean;
+  
+  server: string;
+  bindUser: string;
+  bindPass: string;
+  starttls: boolean;
+
+  groupMemberAttr: string;
+  groupaddr: string;
+  groupfilter: string;
+  groupname: string;
+
+  username: string;
+  displayName: string;
+  defaultQuota: string;
+  filter: string;
+  contactFilter: string;
+  templates: string;
+  attributes: KeyValuePair<string>[];
+  searchAttributes: string[];
+  authBackendSelection: string;
+  aliases: string;
+
+  deleting: boolean;
+  taskMessage: string;
+  taskID: number;
+  force: boolean;
+  snackbar: string;
+  loading: boolean;
+}
+
 const LdapConfig = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const adminConfig = useAppSelector(state => state.config);
-  const [state, setState] = useState({
+  const [state, setState] = useState<LdapConfigState>({
     baseDn: '',
     objectID: '',
     disabled: true,
@@ -178,7 +212,7 @@ const LdapConfig = () => {
 
     deleting: false,
     taskMessage: '',
-    taskID: null,
+    taskID: -1,
     force: false,
     snackbar: '',
     loading: true,
@@ -220,7 +254,7 @@ const LdapConfig = () => {
       users: {
         username: copy.username,
         displayName: copy.displayName,
-        attributes: arrayToObject([...state.attributes]),
+        attributes: arrayToObject<string>([...state.attributes]),
         defaultQuota: parseInt(copy.defaultQuota) || undefined,
         filter: copy.filter,
         contactFilter: copy.contactFilter,
@@ -257,9 +291,9 @@ const LdapConfig = () => {
       }
       const groups = config.groups;
       if(users.templates && users.templates.length > 0 && !config.disabled) {
-        ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach((att: keyof LdapGroupsConfig) => {
+        ["groupMemberAttr", "groupaddr", "groupfilter", "groupname"].forEach((att: string) => {
           if(!groups[att]) {
-            groups[att] = getDefaultGroupValuesOfTemplate(users.templates[1], att);
+            groups[att] = getDefaultGroupValuesOfTemplate(users.templates[1], att as keyof LdapGroupsConfig);
             requestNecessary = true;
           }
         });
@@ -294,7 +328,7 @@ const LdapConfig = () => {
         contactFilter: users.contactFilter || '',
         templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
         searchAttributes: users.searchAttributes || [],
-        attributes: objectToArray(users.attributes || {}),
+        attributes: objectToArray<string>(users.attributes || {}),
         aliases: users.aliases || '',
       });
     };
@@ -307,7 +341,7 @@ const LdapConfig = () => {
     [field]: t.value,
   });
 
-  const handleAutocomplete = (field: string) => (_: never, newVal: string[]) => {
+  const handleAutocomplete = (field: string) => (_: any, newVal: string[]) => {
     setState({
       ...state, 
       [field]: newVal,
@@ -385,7 +419,7 @@ const LdapConfig = () => {
     }
   }
 
-  const handleAttributeInput = (objectPart: string, idx: number) => ({ target: t }: ChangeEvent) => {
+  const handleAttributeInput = (objectPart: 'key' | 'value', idx: number) => ({ target: t }: ChangeEvent) => {
     const copy = [...state.attributes];
     copy[idx][objectPart] = t.value;
     setState({
@@ -491,7 +525,7 @@ const LdapConfig = () => {
   const handleTaskClose = () => setState({
     ...state, 
     taskMessage: "",
-    taskID: null,
+    taskID: -1,
   })
 
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
@@ -917,6 +951,7 @@ const LdapConfig = () => {
         </div>
       </form>
       <DeleteConfig
+        orgID={-1}
         open={deleting}
         delete={deleteItem}
         onSuccess={handleDeleteSuccess}

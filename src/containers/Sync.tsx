@@ -69,7 +69,7 @@ const Sync = () => {
   const dispatch = useAppDispatch();
   const sync = useAppSelector(state => state.sync.Sync);
   const [state, setState] = useState({
-    snackbar: null,
+    snackbar: "",
     order: 'desc',
     orderBy: 'update',
     type: 'int',
@@ -79,19 +79,19 @@ const Sync = () => {
     filterEnded: 20,
     filterUpdated: 120,
   });
-  const [sortedDevices, setSortedDevices] = useState([]);
+  const [sortedDevices, setSortedDevices] = useState<ActiveSyncSessionRow[]>([]);
 
   const fetch = async (params: FetchSyncParams) => await dispatch(fetchSyncData(params));
 
   const columns = [
     { label: "PID", value: "pid", type: 'int', padding: "checkbox" },
-    { label: "IP", value: "ip", padding: "checkbox" },
-    { label: "User", value: "user" },
+    { label: "IP", value: "ip", padding: "checkbox", type: "string" },
+    { label: "User", value: "user", type: "string" },
     { label: "Command", value: "command", type: 'int' },
     { label: "Time", value: 'update', type: 'int' },
-    { label: "Device ID", value: "devid" },
-    { label: "EAS", value: "asversion" },
-    { label: "Info", value: "addinfo" },
+    { label: "Device ID", value: "devid", type: "string" },
+    { label: "EAS", value: "asversion", type: "string" },
+    { label: "Info", value: "addinfo", type: "string" },
   ];
   
   useEffect(() => {

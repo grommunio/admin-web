@@ -13,8 +13,8 @@ import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { NewOrg } from '@/types/orgs';
-import { ChangeEvent } from '@/types/common';
-import { BaseDomain } from '@/types/domains';
+import { ChangeEvent, SyntheticEvent } from '@/types/common';
+import { BaseDomain, Domain } from '@/types/domains';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -71,7 +71,7 @@ const AddOrg = (props: AddOrgProps) => {
     dispatch(addOrgData({
       name,
       description,
-      domains: domains.map(d => d.ID),
+      domains: domains.map((d: Domain) => d.ID),
     }))
       .then(() => {
         setOrg({
@@ -88,7 +88,7 @@ const AddOrg = (props: AddOrgProps) => {
       });
   }
 
-  const handleAutocomplete = (field: keyof NewOrg) => (_: never, newVal: BaseDomain[]) => {
+  const handleAutocomplete = (field: keyof NewOrg) => (_: SyntheticEvent, newVal: BaseDomain[]) => {
     setOrg({
       ...org,
       [field]: newVal,

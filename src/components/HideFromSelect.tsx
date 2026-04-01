@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { UserProperties } from '@/types/users';
 
 type HideFromSelectProps = {
-  attributehidden_gromox: number;
+  attributehidden_gromox?: number;
   setState: (_: any) => void; // TODO: Improve typing
 }
 

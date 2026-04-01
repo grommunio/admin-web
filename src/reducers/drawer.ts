@@ -30,10 +30,10 @@ const defaultState: DrawerState = {
   open: false,
 };
 
-function editDomain(arr: DomainListItem[], item: DomainListItem) {
+function editDomain(arr: DomainListItem[], item: DomainListItem): DomainListItem[] {
   const domains = [...arr];
   const idx = domains.findIndex(d => d.ID === item.ID);
-  if (idx === -1) return;
+  if (idx === -1) return domains;
   domains[idx] = item;
   return domains;
 }
@@ -62,7 +62,7 @@ function drawerReducer(state: DrawerState = defaultState, action: any) {
   case DOMAIN_DATA_ADD:
     return {
       ...state,
-      Domains: addItem(state.Domains, action.data),
+      Domains: addItem<DomainListItem>(state.Domains, action.data),
     };
 
   case DOMAIN_DATA_EDIT:

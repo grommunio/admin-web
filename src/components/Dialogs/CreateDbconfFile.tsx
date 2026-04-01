@@ -93,9 +93,9 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
       });
   }
 
-  const formatData = (data: KeyValuePair<string>[]): Record<string, any> => {
-    const obj: Record<string, string> = {};
-    data.forEach(pair => obj[pair.key] = pair.value || undefined);
+  const formatData = (data: KeyValuePair<string>[]): Record<string, string | undefined> => {
+    const obj: Record<string, string | undefined> = {};
+    data.forEach((pair: KeyValuePair<string>) => obj[pair.key] = pair.value || undefined);
     return obj;
   }
 

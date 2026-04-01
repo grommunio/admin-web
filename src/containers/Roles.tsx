@@ -59,8 +59,8 @@ const Roles = () => {
   const fetchTableData = async (params: URLParams) =>
     dispatch(fetchRolesData(params));
 
-  const deleteItem = async (id: number) =>
-    dispatch(deleteRolesData(id));
+  const deleteItem = async (id: number | string) =>
+    dispatch(deleteRolesData(id as number));
 
   const table = useTable<RoleListItem>({
     fetchTableData,

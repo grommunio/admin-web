@@ -64,7 +64,7 @@ const Sync = ({ domainID, userID }: SyncProps) => {
     type: 'int',
     wipingID: '',
   });
-  const [sortedDevices, setSortedDevices] = useState([]);
+  const [sortedDevices, setSortedDevices] = useState<DeviceSyncInfo[]>([]);
 
   const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserSync(domainID, userID));
   const deleteStates = async (domainID: number, userID: number) => await dispatch(deleteUserSync(domainID, userID));
@@ -88,12 +88,12 @@ const Sync = ({ domainID, userID }: SyncProps) => {
   }, [sync]);
 
   const columns = [
-    { label: "Device ID", value: "deviceid" },
-    { label: "Device user", value: "deviceuser" },
-    { label: "Device Type / Agent", value: "devicetype" },
+    { label: "Device ID", value: "deviceid", type: "string" },
+    { label: "Device user", value: "deviceuser", type: "string" },
+    { label: "Device Type / Agent", value: "devicetype", type: "string" },
     { label: "First sync", value: "firstsynctime", type: 'int' },
     { label: "Last connection", value: "lastconnecttime", type: 'int' },
-    { label: "AS version", value: "asversion" },
+    { label: "AS version", value: "asversion", type: "string" },
     { label: "Folders", value: "foldersSynced", type: 'int' },
     { label: "Provisioning Status", value: "wipeStatus", type: 'int' },
   ];

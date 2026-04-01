@@ -17,9 +17,9 @@ type FullCreateParams = {
   chatUser: boolean;
   chatTeam: boolean;
   properties: {
-    storagequotalimit: number;
-    prohibitreceivequota: number;
-    prohibitsendquota: number;
+    storagequotalimit?: number;
+    prohibitreceivequota?: number;
+    prohibitsendquota?: number;
   }
 }
 

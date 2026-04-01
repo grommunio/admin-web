@@ -155,7 +155,7 @@ const Dashboard = () => {
   const { config, antispam } = useAppSelector(state => state);
 
   const [state, setState] = useState({
-    snackbar: null,
+    snackbar: "",
   });
   const fetchInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
