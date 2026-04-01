@@ -1,4 +1,6 @@
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { Domain } from "./domains";
+import { SvgIconTypeMap } from "@mui/material";
 
 export type KeyValuePair<T> = {
   key: string;
@@ -22,3 +24,5 @@ export type ApiError = {
 }
 
 export type SyntheticEvent = React.SyntheticEvent<Element, Event>;
+
+export type MuiIcon = OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };

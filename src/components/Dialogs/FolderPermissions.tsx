@@ -142,7 +142,7 @@ const FolderPermissions = (props: FolderPermissionsProps) => {
     const { domain, folderID, onSuccess, onError } = props;
     const { selected, permissions } = state;
     if(!selected) return;
-    dispatch(setFolderPermissions(domain.ID, folderID, selected.memberID, { permissions }))
+    dispatch(setFolderPermissions(domain.ID, folderID, selected.memberID, permissions))
       .then(onSuccess)
       .catch(onError);
   }

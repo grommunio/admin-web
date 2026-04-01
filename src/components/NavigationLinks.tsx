@@ -20,7 +20,7 @@ import Logs from '@mui/icons-material/ViewHeadline';
 import Sync from '@mui/icons-material/Sync';
 import Roles from '@mui/icons-material/VerifiedUser';
 import logo from '../res/grommunio_logo_light.svg';
-import { Grid2, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon, Theme, SvgIconTypeMap } from '@mui/material';
+import { Grid2, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon, Theme } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
 import { SYSTEM_ADMIN_READ } from '../constants';
@@ -30,8 +30,7 @@ import { useNavigate } from 'react-router';
 import SpamIcon from './SpamIcon';
 import { useAppDispatch, useAppSelector } from '../store';
 import { Domain } from '@/types/domains';
-import { ChangeEvent } from '@/types/common';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { ChangeEvent, MuiIcon } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -115,7 +114,7 @@ type ListElementProps = {
   label: string;
   ID?: number;
   path: string;
-  Icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; } | typeof SpamIcon;
+  Icon: MuiIcon | typeof SpamIcon;
 }
 
 type NestedListElementProps = { ID: number } & ListElementProps;

@@ -3,15 +3,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
-import { Alert, Chip, CircularProgress, Portal, Snackbar, SvgIconTypeMap } from '@mui/material';
+import { Alert, Chip, CircularProgress, Portal, Snackbar } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AlternateEmail, CallReceived, EventRepeat, Mail, OnDeviceTraining, Policy, Send, TravelExplore } from '@mui/icons-material';
 import { getChipColorFromScore } from '../utils';
 import { fetchDnsCheckData } from '../actions/domains';
 import { Domain } from '@/types/domains';
 import { useAppDispatch } from '../store';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { DnsCheck } from '@/types/dns';
+import { DNSDialogProps } from './Dialogs/dns/types';
+import { MuiIcon } from '@/types/common';
 
 
 const useStyles = makeStyles()(() => ({
@@ -74,7 +75,7 @@ type DnsHealthProps = {
 type DnsHealthState = {
   loading: boolean;
   error: boolean;
-  InfoDialog: React.ComponentType<any> | null;
+  InfoDialog: React.ComponentType<DNSDialogProps> | null;
   dnsCheck: DnsCheck;
 }
 
@@ -468,7 +469,7 @@ type DNSChipProps = {
   loading: boolean;
   label: string;
   color: string;
-  icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; }
+  icon: MuiIcon;
   onInfo: () => void;
   error: boolean;
 };

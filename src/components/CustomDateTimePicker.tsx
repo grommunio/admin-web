@@ -11,7 +11,7 @@ type CustomDateTimePickerProps = {
   onChange: (newVal: Moment | null) => void;
   label: string;
   value: Moment;
-  sx?: any;
+  sx?: Record<string, string | number>;
 }
 
 const CustomDateTimePicker = (props: CustomDateTimePickerProps) => {

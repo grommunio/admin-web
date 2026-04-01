@@ -3,15 +3,21 @@
 
 import {
   CREATE_PARAMS_DATA_RECEIVED,
+  URLParams,
 } from './types';
 import { createParams, editCreateParams } from '../api';
 import { defaultListHandler, defaultPatchHandler } from './handlers';
+import { CreateParams } from '@/types/defaults';
 
-// TODO: Define defaults
-export function fetchCreateParamsData(...endpointParams: any[]) {
-  return defaultListHandler(createParams, CREATE_PARAMS_DATA_RECEIVED, ...endpointParams);
+
+export function fetchCreateParamsData(domainID?: number | null, params?: { domain: number }) {
+  return defaultListHandler(createParams, CREATE_PARAMS_DATA_RECEIVED, domainID, params);
 }
 
-export function editCreateParamsData(...endpointParams: any[]) {
-  return defaultPatchHandler(editCreateParams, ...endpointParams);
+export function editCreateParamsData(
+  data: { user: CreateParams, domain?: CreateParams },
+  domainID?: number | null,
+  params?: URLParams
+) {
+  return defaultPatchHandler(editCreateParams, data, domainID, params);
 }

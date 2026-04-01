@@ -16,7 +16,7 @@ import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { NewFolder } from '@/types/folders';
 import { ChangeEvent } from '@/types/common';
-import { BaseUser, UserListItem } from '@/types/users';
+import { UserListItem } from '@/types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -53,7 +53,7 @@ const AddFolder = (props: AddFolderProps) => {
     comment: '',
     parentID: parentID,
   });
-  const [ owners, setOwners ] = useState<BaseUser[]>([]);
+  const [ owners, setOwners ] = useState<UserListItem[]>([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
   const { Users } = useAppSelector(state => state.users);
@@ -146,7 +146,7 @@ const AddFolder = (props: AddFolderProps) => {
             variant="outlined"
             onChange={handleInput('comment')}
           />
-          <MagnitudeAutocomplete<BaseUser>
+          <MagnitudeAutocomplete<UserListItem>
             multiple
             value={owners || []}
             filterAttribute={'username'}
@@ -155,7 +155,7 @@ const AddFolder = (props: AddFolderProps) => {
             options={Users || []}
             label={t('Owners')}
             placeholder={t("Search users")  + "..."}
-            getOptionKey={(option) => `${option.ID}_${option.domainID}`}
+            getOptionKey={(option: UserListItem) => `${option.ID}_${option.domainID}`}
           />
         </FormControl>
       </DialogContent>

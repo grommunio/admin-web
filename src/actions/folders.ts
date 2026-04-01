@@ -80,7 +80,7 @@ export function addOwnerData(domainID: number, folderID: string, ownersData: New
 }
 
 // TODO: Create permissions type
-export function setFolderPermissions(domainID: number, folderID: string, memberID: number, permissions: any) {
+export function setFolderPermissions(domainID: number, folderID: string, memberID: number, permissions: number) {
   return async (dispatch: Dispatch) => {
     try {
       await putFolderPermissions(domainID, folderID, memberID, permissions);

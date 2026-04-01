@@ -33,7 +33,7 @@ type LdapTextfieldProps = {
   id?: string;
   name?: string;
   autoComplete?: string;
-  InputLabelProps?: any,
+  InputLabelProps?: Record<string, string | number | boolean>,
   type?: string;
   select?: boolean;
 }

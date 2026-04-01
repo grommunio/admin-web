@@ -1,6 +1,6 @@
 export type CreateParamProperty = 'storagequotalimit' | 'prohibitreceivequota' | 'prohibitsendquota';
 
-type FullCreateParams = {
+export type FullCreateParams = {
   maxUser: number;
   smtp: boolean;
   changePassword: boolean;

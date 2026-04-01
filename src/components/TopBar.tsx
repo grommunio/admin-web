@@ -13,7 +13,7 @@ import { AppBar, Toolbar, Typography, IconButton,
   InputAdornment,
   useMediaQuery,
   Theme,
-  SvgIconTypeMap} from '@mui/material';
+} from '@mui/material';
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,7 @@ import ColorModeContext from '../ColorContext';
 import { useAppSelector } from '../store';
 import { useDispatch } from 'react-redux';
 import { ConfigState } from '@/reducers/config';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { MuiIcon } from '@/types/common';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -139,7 +139,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 type Link = {
   key: keyof ConfigState;
   title: string;
-  icon: OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };
+  icon: MuiIcon;
 }
 
 const TopBar = () => {

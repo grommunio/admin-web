@@ -4,10 +4,10 @@
 import React from 'react';
 import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Key,
   MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
-import { SvgIconTypeMap, Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
+import { MuiIcon } from '@/types/common';
 
 
 const useStyles = makeStyles()(() => ({
@@ -19,7 +19,7 @@ const useStyles = makeStyles()(() => ({
 type UserTabProps = {
   label: string;
   disabled?: boolean;
-  icon:OverridableComponent<SvgIconTypeMap<any, "svg">> & { muiName: string; };
+  icon: MuiIcon;
 }
 
 // eslint-disable-next-line react/prop-types

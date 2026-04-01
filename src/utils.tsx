@@ -51,10 +51,6 @@ export function parseParams(s: string): Record<string, string> {
 
 /**
  * Inserts item at the front of an array
- * 
- * @param {Array} arr array to push into
- * @param {any} item element to push into array
- * @returns {Array} `[...arr, item]`
  */
 export function addItem<T>(arr: T[], item: T): T[] {
   const copy = [...arr];

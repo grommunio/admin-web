@@ -662,8 +662,8 @@ export async function deleteOwner(domainID: number, folderID: string, memberID: 
   return await yeet('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID);
 }
 
-export async function putFolderPermissions(domainID: number, folderID: string, memberID: number, permissions: any) {
-  return await put('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID, permissions);
+export async function putFolderPermissions(domainID: number, folderID: string, memberID: number, permissions: number) {
+  return await put('/domains/' + domainID + '/folders/' + folderID + '/owners/' + memberID, { permissions });
 }
 
 /*
@@ -942,7 +942,6 @@ export function taskCancel(id: number) {
   };
 }
 
-// I must have been drunk when implementing this callstack. TODO: Reimplement.
 export function createParams(domainID: number, params: any) {
   const path = '/defaults/createParams' + (domainID ? '/' + domainID : '');
   return async () => {
@@ -950,7 +949,6 @@ export function createParams(domainID: number, params: any) {
   };
 }
 
-// I must have been drunk when implementing this callstack. TODO: Reimplement.
 export function editCreateParams(data: any, domainID: number | null, params: URLParams) {
   const path = '/defaults/createParams' + (domainID ? '/' + domainID : '');
   return async () => {

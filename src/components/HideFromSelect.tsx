@@ -5,11 +5,11 @@ import React from 'react';
 import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { UserProperties } from '@/types/users';
+import { User, UserProperties } from '@/types/users';
 
 type HideFromSelectProps = {
   attributehidden_gromox?: number;
-  setState: (_: any) => void; // TODO: Improve typing
+  setState: (innerFunc: <T extends { user: User }>(prev: T) => T) => void; // TODO: Improve typing
 }
 
 const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProps) => {
@@ -34,7 +34,7 @@ const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProp
     const { value } = event.target;
     const mask = (typeof value === 'string' ? value.split(',').map(el => parseInt(el)) : value)
       .reduce((prev, next) => prev | next, 0);  // bitwise OR array elements
-    setState((state: any) => ({
+    setState((state) => ({
       ...state,
       user: {
         ...state.user,

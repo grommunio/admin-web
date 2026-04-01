@@ -30,7 +30,7 @@ type MagnitudeAutocompleteProps<T> = {
   variant?: TextFieldVariants;
   fullWidth?: boolean;
   disabled?: boolean;
-  getOptionDisabled?: (option: any) => boolean;
+  getOptionDisabled?: (option: T) => boolean;
   isOptionEqualToValue?: (option: T, value: T) => boolean;
   disableCloseOnSelect?: boolean;
   getOptionKey?: (option: any) => string | number;

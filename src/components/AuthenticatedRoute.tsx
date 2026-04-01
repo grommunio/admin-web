@@ -5,8 +5,11 @@ import React from "react";
 import {Navigate, useLocation } from "react-router-dom";
 
 type AuthenticatedRouteProps = {
-  component: React.ComponentType<any>;
-  props: any;
+  component: React.ComponentType<object>;
+  props: {
+    authenticated: boolean;
+    loading: boolean;
+  };
 }
 
 /**
