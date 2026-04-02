@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from "react";
+import React, { ReactElement } from "react";
 import { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import {
@@ -33,7 +33,13 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
-const IconTab = ({...tabProps}: any) => {
+interface IconTabProps {
+  label: string;
+  icon: string | ReactElement;
+  disabled?: boolean;
+}
+
+const IconTab = ({...tabProps}: IconTabProps) => {
   return <Tab {...tabProps} sx={{ minHeight: 48 }} iconPosition='start' />
 }
 

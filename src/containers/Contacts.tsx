@@ -51,6 +51,8 @@ import { makeStyles } from "tss-react/mui";
 import { URLParams } from "@/actions/types";
 import { ContactListItem } from "@/types/users";
 import { DomainViewProps } from "@/types/common";
+import { SyncLdapParams } from "@/types/ldap";
+import { Domain } from "@/types/domains";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -101,8 +103,8 @@ const Contacts = ({ domain }: DomainViewProps) => {
     dispatch(deleteUserData(domainID, id));
   }
 
-  const sync = async (params: any) =>
-    dispatch(syncLdapUsers(params, domain.ID));
+  const sync = async (params: SyncLdapParams, domain?: Domain) =>
+    dispatch(syncLdapUsers(params, domain ? domain.ID : undefined));
 
   const check = async () =>
     dispatch(checkLdapUsers({ domain: domain.ID }));
@@ -162,7 +164,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
         });
       }
     } catch (msg: any) {
-      setState((prev) => ({ ...prev, snackbar: msg }));
+      setState((prev) => ({ ...prev, snackbar: msg as string }));
     }
   };
 
@@ -171,7 +173,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
       await check();
       setState((prev) => ({ ...prev, checking: true }));
     } catch (msg: any) {
-      setState((prev) => ({ ...prev, snackbar: msg }));
+      setState((prev) => ({ ...prev, snackbar: msg as string }));
     }
   };
 
@@ -191,7 +193,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
     } catch (msg: any) {
       setState((prev) => ({
         ...prev,
-        snackbar: msg,
+        snackbar: msg as string,
         checking: false,
       }));
     }

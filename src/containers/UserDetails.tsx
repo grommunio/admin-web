@@ -46,7 +46,7 @@ import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch } from '../store';
-import { Altname, FetchmailConfig, Forward, NewFetchmailConfig, UpdateUser, UserProperties } from '@/types/users';
+import { Altname, FetchmailConfig, Forward, UpdateUser, UserProperties } from '@/types/users';
 import { Domain } from '@/types/domains';
 import { SyncPolicy } from '@/types/sync';
 import { BaseRole } from '@/types/roles';
@@ -86,7 +86,7 @@ interface UserDetailsState {
     ID: number;
     username: string;
     altnames: Altname[];
-    fetchmail: NewFetchmailConfig[];
+    fetchmail: FetchmailConfig[];
     forward: Forward;
     roles: BaseRole[];
     properties: Partial<UserProperties>;
@@ -134,7 +134,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       ID: 0,
       username: "",
       altnames: [],
-      fetchmail: [] as FetchmailConfig[],
+      fetchmail: [],
       forward: {} as Forward,
       roles: [],
       properties: {} as UserProperties,
@@ -387,7 +387,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   const handleEdit = () => {
     const { user, sizeUnits, defaultPolicy, syncPolicy } = state;
     const { username, aliases, fetchmail, forward, properties, homeserver, altnames } = user;
-    const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties as any;
+    const { storagequotalimit, prohibitreceivequota, prohibitsendquota } = properties;
 
     // Convert quota (MiB, GiB or TiB) into KiB
     const storePayload: {
@@ -397,10 +397,12 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       prohibitsendquota: number | null
     } = {
       messagesizeextended: undefined, // MSE is read-only
-      storagequotalimit: [null, undefined, ""].includes(storagequotalimit?.toString()) ? null : storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
-      prohibitreceivequota: [null, undefined, ""].includes(prohibitreceivequota?.toString()) ? null : prohibitreceivequota * 2
-        ** (10 * sizeUnits.prohibitreceivequota),
-      prohibitsendquota: [null, undefined, ""].includes(prohibitsendquota?.toString()) ? null : prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
+      storagequotalimit: storagequotalimit == null || storagequotalimit.toString() === "" ? null :
+        storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit),
+      prohibitreceivequota: prohibitreceivequota == null || prohibitreceivequota.toString() === "" ? null :
+        prohibitreceivequota * 2 ** (10 * sizeUnits.prohibitreceivequota),
+      prohibitsendquota: prohibitsendquota == null || prohibitsendquota.toString() === "" ? null :
+        prohibitsendquota * 2 ** (10 * sizeUnits.prohibitsendquota),
     };
 
     edit(domain.ID, {
@@ -409,7 +411,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       domainID: undefined,
       homeserver: homeserver?.ID || null,
       aliases: aliases.filter(alias => alias !== ''), // Filter empty aliases
-      fetchmail: fetchmail.map(e => ({ // Transform fetchmail objects
+      fetchmail: fetchmail.map((e: FetchmailConfig) => ({ // Transform fetchmail objects
         ...e,
         date: undefined as undefined,
         sslFingerprint: e.sslFingerprint ? e.sslFingerprint.toUpperCase() : undefined,
@@ -568,7 +570,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleFetchmailEditDialog = (open: number) => () => setState({ ...state, editing: open })
 
-  const addFetchmail = (entry: NewFetchmailConfig) => {
+  const addFetchmail = (entry: FetchmailConfig) => {
     const { user } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail.push(entry);
@@ -582,7 +584,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const editFetchmail = (entry: NewFetchmailConfig) => {
+  const editFetchmail = (entry: FetchmailConfig) => {
     const { user, editing } = state;
     const fetchmail = [...user.fetchmail];
     fetchmail[editing] = entry;

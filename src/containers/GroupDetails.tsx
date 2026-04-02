@@ -33,7 +33,7 @@ import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
-import { ChangeEvent, DomainViewProps } from '@/types/common';
+import { ChangeEvent, DomainViewProps, MuiIcon } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { UpdateGroup } from '@/types/groups';
 import { UpdateUser, UserListItem, UserProperties, User as UserType } from '@/types/users';
@@ -66,8 +66,13 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+interface GroupTabProps {
+  icon: MuiIcon;
+  label: string;
+}
+
 // eslint-disable-next-line react/prop-types
-const GroupTab = ({ icon: Icon, ...props }: any) => <Tab
+const GroupTab = ({ icon: Icon, ...props }: GroupTabProps) => <Tab
   {...props}
   sx={{ minHeight: 48 }}
   iconPosition='start'

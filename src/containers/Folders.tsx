@@ -131,7 +131,7 @@ const Folders = ({ domain }: DomainViewProps) => {
     };
   }
 
-  const handleNodeClicked = (id: any) => () => {
+  const handleNodeClicked = (id: string) => () => {
     navigate('/' + domain.ID + '/folders/' + id);
   }
 
@@ -229,7 +229,6 @@ const Folders = ({ domain }: DomainViewProps) => {
                 siblings: 2,
                 nonSiblings: 2,
               }}
-              onNodeClick={handleNodeClicked}
               collapsible={false}
             />
           </Paper>

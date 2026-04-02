@@ -12,7 +12,7 @@ import { editUserData, fetchUserData } from '../actions/users';
 import { useNavigate } from 'react-router';
 import HideFromSelect from '../components/HideFromSelect';
 import { useAppDispatch } from '../store';
-import { UpdateUser, UserProperties, User as UserType } from '@/types/users';
+import { UpdateUser, UserProperties } from '@/types/users';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 
 
@@ -35,14 +35,25 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
+interface ContactDetailsState {
+  user: {
+    ID: number;
+    properties: Partial<UserProperties>;
+  }
+  snackbar: string;
+  loading: boolean;
+  unsaved: boolean;
+}
+
 const ContactDetails = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [state, setState] = useState({
+  const [state, setState] = useState<ContactDetailsState>({
     user: {
+      ID: -1,
       properties: {},
-    } as UserType,
+    },
     snackbar: "",
     loading: true,
     unsaved: false,

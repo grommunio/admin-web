@@ -31,6 +31,8 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { Permission, UpdateRole } from '@/types/roles';
 import { ChangeEvent } from '@/types/common';
 import { User } from '@/types/users';
+import { Domain } from 'node:domain';
+import { Org } from '@/types/orgs';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -175,7 +177,7 @@ const RoleDetails = () => {
   }
 
   // Fix typing
-  const handleSetParams = (idx: number) => (_: unknown, newVal: any) => {
+  const handleSetParams = (idx: number) => (_: unknown, newVal: Domain | Org) => {
     const copy = [...state.role.permissions];
     copy[idx].params = newVal;
     setState({

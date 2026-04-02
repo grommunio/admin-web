@@ -1,4 +1,5 @@
 import { PartialWithRequired } from "./common";
+import { SyncPolicy } from "./sync";
 
 export type BaseDomain = {
   ID: number;
@@ -10,16 +11,16 @@ export type Domain = BaseDomain & {
   name: string;
   activeUsers: number;
   adminName: string;
-  address: string,
-  chat: boolean,
-  domainStatus: number,
-  homeserver: number | null,
-  inactiveUsers: number,
-  maxUser: number | null,
-  orgID: number | null,
-  syncPolicy: any, // TODO: Create sync policy type
-  tel: string,
-  title: string,
+  address: string;
+  chat: boolean;
+  domainStatus: number;
+  homeserver: number | null;
+  inactiveUsers: number;
+  maxUser: number | null;
+  orgID: number | null;
+  syncPolicy: Partial<SyncPolicy>;
+  tel: string;
+  title: string;
   virtualUsers: number
 };
 

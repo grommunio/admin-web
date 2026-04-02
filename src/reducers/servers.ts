@@ -15,8 +15,8 @@ import { addItem, append } from '../utils';
 type ServersState = {
   Servers: ServerListItem[];
   DnsCheck: {
-    host: any; // Define properly
-    ext: any; // Define properly
+    host: Record<string, boolean>;
+    ext: Record<string, boolean>;
   }
   policy: ServerPolicy;
   count: number;

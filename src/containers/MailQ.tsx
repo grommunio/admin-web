@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { makeStyles } from 'tss-react/mui';
 import { useAppDispatch } from "../store";
 import { ChangeEvent } from "@/types/common";
-import { PostqueueRow } from "@/types/mailq";
+import { PostqueueRow, Recipient } from "@/types/mailq";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -201,7 +201,7 @@ const MailQ = () => {
                     <TableCell>{parseUnixtime(entry.arrival_time)}</TableCell>
                     <TableCell>{entry.sender}</TableCell>
                     <TableCell>
-                      {(entry.recipients || []).map((r: any) => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
+                      {(entry.recipients || []).map((r: Recipient) => <p key={r.address}>{r.address + ' (' + r.delay_reason + ')'}</p>)}
                     </TableCell>
                     <TableCell></TableCell>
                   </TableRow>

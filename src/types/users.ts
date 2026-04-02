@@ -72,7 +72,7 @@ export type User = BaseUser & {
   chat: boolean;
   chatAdmin: boolean;
   domainID: number;
-  fetchmail: any[]; // TODO: Define fetchmail
+  fetchmail: FetchmailConfig[]; // TODO: Define fetchmail
   forward: Forward | null;
   homeserver: number | null;
   lang: string;
@@ -175,7 +175,7 @@ type AuthType = "password" | "kerberos_v5" | "kerberos" | "kerberos_v4" | "gssap
     "cram-md5" | "otp" | "ntlm" | "msn" | "ssh" | "any";
 
 export type FetchmailConfig = {
-  ID: number;
+  ID?: number;
   active: boolean;
   srcServer: string;
   srcUser: string;
@@ -188,7 +188,7 @@ export type FetchmailConfig = {
   useSSL: boolean;
   sslCertCheck: boolean;
   sslCertPath: string | null;
-  sslFingerprint: string | null;
+  sslFingerprint?: string | null;
   extraOptions: string | null;
 };
 

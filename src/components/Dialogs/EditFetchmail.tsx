@@ -8,7 +8,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
   Theme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { FetchmailConfig, NewFetchmailConfig } from '@/types/users';
+import { FetchmailConfig } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
 
 
@@ -30,8 +30,8 @@ type EditFetchmailProps = {
   open: boolean;
   onClose: () => void;
   username: string;
-  entry: NewFetchmailConfig | null;
-  edit: (config: NewFetchmailConfig) => void;
+  entry: FetchmailConfig | null;
+  edit: (config: FetchmailConfig) => void;
 }
 
 const protocols = ["POP3", "IMAP", "POP2", "ETRN", "AUTO"];
@@ -41,7 +41,8 @@ const authTypes = ["password", "kerberos_v5", "kerberos", "kerberos_v4", "gssapi
 const EditFetchmail = (props: EditFetchmailProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const [fetchmail, setFetchmail] = useState<NewFetchmailConfig>({
+  const [fetchmail, setFetchmail] = useState<FetchmailConfig>({
+    ID: -1,
     active: true,
     srcServer: '',
     srcUser: '',

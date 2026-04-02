@@ -306,7 +306,7 @@ const DnsHealth = (props: DnsHealthProps) => {
   const asyncDialogImport = (path: string) => async () => {
     const InfoDialog = await import("./Dialogs/dns/" + path)
       .then(component => component.default)
-      .catch(() => console.log("Failed to import dialog"));
+      .catch(() => console.info("Failed to import dialog"));
     setState({ ...state, InfoDialog: InfoDialog || null });
   }
 
