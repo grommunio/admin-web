@@ -241,7 +241,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleAutocomplete = async (_: any, domain: Domain) => {
+  const handleAutocomplete = async (_: unknown, domain: Domain) => {
     const { username, chat } = state;
     if(!domain) return;
     const domainDetails = await dispatch(fetchDomainDetails(domain.ID));
@@ -254,7 +254,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
     });
   }
 
-  const handleServer = (_: any, newVal: Server) => {
+  const handleServer = (_: unknown, newVal: Server) => {
     setState({
       ...state,
       homeserver: newVal || '',

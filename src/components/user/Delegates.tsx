@@ -107,7 +107,7 @@ const Delegates = (props: DeletesProps) => {
     });
   }
 
-  const handleAutocomplete = (field: string, editField: keyof typeof state) => (_: any, newVal: string[]) => {
+  const handleAutocomplete = (field: string, editField: keyof typeof state) => (_: unknown, newVal: string[]) => {
     setState({
       ...state, 
       [field]: newVal.sort(),

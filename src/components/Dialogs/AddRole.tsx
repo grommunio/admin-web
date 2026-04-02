@@ -128,7 +128,7 @@ const AddRole = (props: AddRoleProps) => {
       });
   }
 
-  const handleAutocomplete = (field: keyof NewRole) => (_: any, newVal: User) => {
+  const handleAutocomplete = (field: keyof NewRole) => (_: unknown, newVal: User) => {
     setRole({
       ...role,
       [field]: newVal,
@@ -145,7 +145,7 @@ const AddRole = (props: AddRoleProps) => {
     setRole({ ...role, permissions: copy });
   }
 
-  const handleSetParams = (idx: number) => (_: any, newVal: Domain | Org) => {
+  const handleSetParams = (idx: number) => (_: unknown, newVal: Domain | Org) => {
     const copy = [...role.permissions];
     copy[idx].params = newVal;
     setRole({ ...role, permissions: copy });

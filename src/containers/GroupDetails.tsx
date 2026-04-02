@@ -223,7 +223,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
 
   const handleCheckbox = (field: string) => (e: ChangeEvent) => setState({ ...state, [field]: e.target.checked ? 1 : 0 });
 
-  const handleAutocomplete = (field: string) => (_: any, newVal: UserType) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: UserType) => {
     setState({
       ...state, 
       [field]: newVal || '',

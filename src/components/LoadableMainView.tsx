@@ -7,6 +7,7 @@ import AppRoutes from '../Routes';
 import TopBar from './TopBar';
 import { Domain } from '@/types/domains';
 import { makeStyles } from 'tss-react/mui';
+import { RoutesProps } from '@/types/misc';
 
 
 const useStyles = makeStyles()(() => ({
@@ -23,7 +24,7 @@ export type LoadableMainViewProps = {
   authenticated: boolean;
   capabilities: string[];
   domains: Domain[];
-  routesProps: any;
+  routesProps: RoutesProps;
 }
 
 export default function LoadableMainView(props: LoadableMainViewProps) {

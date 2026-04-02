@@ -553,7 +553,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handleError = (msg: string) => setState({ ...state, snackbar: msg || 'Unknown error' });
 
-  const handleAutocomplete = (field: string) => (_: any, newVal: BaseRole[]) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: BaseRole[]) => {
     setState({
       ...state, 
       user: {
@@ -621,7 +621,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleSyncCheckboxChange = (field: string) => (_: any, newVal: boolean) => {
+  const handleSyncCheckboxChange = (field: string) => (_: unknown, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -632,7 +632,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleSlider = (field: string) => (_: any, newVal: number | number[]) => {
+  const handleSlider = (field: string) => (_: unknown, newVal: number | number[]) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -657,7 +657,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     });
   }
 
-  const handleServer =(_: any, newVal: Server) => {
+  const handleServer =(_: unknown, newVal: Server) => {
     setState({
       ...state, 
       user: {

@@ -79,7 +79,7 @@ const DBConf = () => {
     navigate(`/${path}`);
   }
 
-  const handleTab = (_: any, tab: number) => setState({ ...state, tab });
+  const handleTab = (_: unknown, tab: number) => setState({ ...state, tab });
 
   const { adding, snackbar, match, deleting, loading } = tableState;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);

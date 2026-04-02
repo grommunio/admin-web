@@ -303,7 +303,7 @@ const OrgDetails = () => {
     navigate(`/${path}`);
   }
 
-  const handleAutocomplete = (field: string) => (_: any, newVal: Domain[] | string[]) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: Domain[] | string[]) => {
     setState({
       ...state, 
       [field]: newVal,

@@ -77,7 +77,7 @@ const ResetPasswd = () => {
       .catch(msg => setState({ ...state, snackbar: msg.message || 'Unknown error' }));
   }
 
-  const handleAutocomplete = (_: any, newVal: User) => {
+  const handleAutocomplete = (_: unknown, newVal: User) => {
     setState({
       ...state,
       selectedUser: newVal,

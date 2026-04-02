@@ -127,7 +127,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
     setOof({ ...oof, [field]: newVal });
   }
 
-  const handleTabChange = (_: any, tab: number) => setOof({ ...oof, tab });
+  const handleTabChange = (_: unknown, tab: number) => setOof({ ...oof, tab });
 
   const handleSave = () => {
     const { state, externalAudience, startTime, endTime, internalSubject, externalSubject, internalReply, externalReply } = oof;

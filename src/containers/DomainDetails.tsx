@@ -192,7 +192,7 @@ const DomainDetails = () => {
     navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
   }
 
-  const handleTab = (_: any, tab: number) => setState({ ...state, tab })
+  const handleTab = (_: unknown, tab: number) => setState({ ...state, tab })
 
   const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;
@@ -205,7 +205,7 @@ const DomainDetails = () => {
     });
   }
 
-  const handleSyncCheckboxChange = (field: string) => (_: any, newVal: boolean) => {
+  const handleSyncCheckboxChange = (field: string) => (_: unknown, newVal: boolean) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -216,7 +216,7 @@ const DomainDetails = () => {
     });
   }
 
-  const handleSlider = (field: string) => (_: any, newVal: number | number[]) => {
+  const handleSlider = (field: string) => (_: unknown, newVal: number | number[]) => {
     const { syncPolicy } = state;
     setState({
       ...state, 
@@ -227,14 +227,14 @@ const DomainDetails = () => {
     });
   }
 
-  const handleAutocomplete = (field: string) => (_: any, newVal: Org) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: Org) => {
     setState({
       ...state, 
       [field]: newVal || '',
     });
   }
 
-  const handleServer =(_: any, newVal: Server) => {
+  const handleServer =(_: unknown, newVal: Server) => {
     setState({
       ...state, 
       homeserver: newVal || '',

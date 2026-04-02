@@ -22,6 +22,7 @@ import TaskCreated from '../components/Dialogs/TaskCreated';
 import { useAppDispatch, useAppSelector } from '../store';
 import { LdapConfigData, LdapGroupsConfig, LdapTemplate, SyncLdapParams } from '@/types/ldap';
 import { ChangeEvent, KeyValuePair } from '@/types/common';
+import { CSSObject } from 'tss-react';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -36,7 +37,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     overflowX: 'hidden',
   }, 
   toolbar: {
-    ...theme.mixins.toolbar as any,
+    ...theme.mixins.toolbar as CSSObject,
   },
   pageTitle: {
     margin: theme.spacing(2, 2, 1, 2),
@@ -341,7 +342,7 @@ const LdapConfig = () => {
     [field]: t.value,
   });
 
-  const handleAutocomplete = (field: string) => (_: any, newVal: string[]) => {
+  const handleAutocomplete = (field: string) => (_: unknown, newVal: string[]) => {
     setState({
       ...state, 
       [field]: newVal,

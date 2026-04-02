@@ -71,7 +71,7 @@ const AddOwner = (props: AddOwnerProps) => {
       });
   }
 
-  const handleAutocomplete = (_: any, newVal: User[]) => {
+  const handleAutocomplete = (_: unknown, newVal: User[]) => {
     setOwners(newVal);
   }
 

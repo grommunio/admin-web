@@ -5,6 +5,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 import { parseParams } from '../utils';
+import { RoutesProps } from "@/types/misc";
 
 /**
  * react-router <Route> which can be accessed if not authenticated
@@ -12,8 +13,8 @@ import { parseParams } from '../utils';
  */
 
 type UnauthenticatedRouteProps = {
-  component: React.ComponentType<any>;
-  props: any;
+  component: React.ComponentType<object>;
+  props: RoutesProps;
 }
 
 const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }: UnauthenticatedRouteProps) => {

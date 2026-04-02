@@ -5,6 +5,7 @@ import React, { ReactNode } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
 import { Fade, LinearProgress, Theme } from '@mui/material';
+import { CSSObject } from 'tss-react';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -28,7 +29,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
   },
   toolbar: {
-    ...(theme.mixins.toolbar as any),
+    ...(theme.mixins.toolbar as CSSObject),
   }
 }));
 

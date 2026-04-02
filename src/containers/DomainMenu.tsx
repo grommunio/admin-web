@@ -25,6 +25,7 @@ import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CreateParamProperty, CreateParams } from '@/types/defaults';
 import { Lang } from '@/types/misc';
+import { CSSObject } from 'tss-react';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -41,7 +42,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     overflow: 'auto',
   }, 
   toolbar: {
-    ...theme.mixins.toolbar as any,
+    ...theme.mixins.toolbar as CSSObject,
   },
   paper: {
     margin: theme.spacing(3, 2, 3, 2),

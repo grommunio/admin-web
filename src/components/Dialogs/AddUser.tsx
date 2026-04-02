@@ -237,7 +237,7 @@ const AddUser = (props: AddUserProps) => {
     });
   }
 
-  const handleAutocomplete = (_: any, newVal: Server) => {
+  const handleAutocomplete = (_: unknown, newVal: Server) => {
     setState({
       ...state, 
       homeserver: newVal || '',

@@ -24,7 +24,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 type RolesTabProps = {
   roles: BaseRole[];
-  handleAutocomplete: (field: string) => (_: any, newVal: BaseRole[]) => void
+  handleAutocomplete: (field: string) => (_: unknown, newVal: BaseRole[]) => void
 }
 
 const RolesTab = (props: RolesTabProps) => {

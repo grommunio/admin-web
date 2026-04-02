@@ -17,6 +17,7 @@ import Feedback from "./components/Feedback";
 import { SERVER_CONFIG_ERROR } from "./actions/types";
 import { useAppDispatch, useAppSelector } from "./store";
 import { LoadableMainViewProps } from "./components/LoadableMainView";
+import { RoutesProps } from "./types/misc";
 
 
 const useStyles = makeStyles()(() => ({
@@ -45,7 +46,7 @@ const App = () => {
   const serverConfig = useAppSelector(state => state.config);
   const configError = serverConfig.error;
 
-  const routesProps = {
+  const routesProps: RoutesProps = {
     authenticated,
     loading,
   };

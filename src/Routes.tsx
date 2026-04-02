@@ -13,6 +13,7 @@ import DefaultRedirect from "./components/DefaultRedirect";
 import { DOMAIN_ADMIN_READ, ORG_ADMIN, SYSTEM_ADMIN_READ } from "./constants";
 import makeLoadableComponent from "./lazy";
 import { Domain } from "./types/domains";
+import { RoutesProps } from "./types/misc";
 
 
 // Create async components
@@ -64,10 +65,7 @@ const AsyncSpam = makeLoadableComponent(() => import("./containers/Spam"));
 
 
 type AppRoutesProps = {
-  routesProps: {
-    authenticated: boolean;
-    loading: boolean;
-  };
+  routesProps: RoutesProps;
   domains: Domain[];
   capabilities: string[];
 }

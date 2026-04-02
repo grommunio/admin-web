@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Checkbox, FormControl, FormControlLabel,
   Slider, SliderTypeMap, TextField, TextFieldVariants, Theme, Typography } from '@mui/material';
 import { ChangeEvent } from '@/types/common';
+import { SyncPolicy } from '@/types/sync';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -34,11 +35,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 
 type SyncPoliciesProps = {
-  syncPolicy: any; // TODO Properly type sync policies
-  defaultPolicy: any; // TODO Properly type sync policies
+  syncPolicy: Partial<SyncPolicy>; // TODO Properly type sync policies
+  defaultPolicy: Partial<SyncPolicy>; // TODO Properly type sync policies
   handleChange: (field: string) => (e: ChangeEvent) => void;
-  handleSlider: (field: string) => (_: any, newVal: number | number[], activeThumb: number) => void;
-  handleCheckbox: (field: string) => (_: any, newValue: boolean) => void;
+  handleSlider: (field: string) => (_: unknown, newVal: number | number[], activeThumb: number) => void;
+  handleCheckbox: (field: string) => (_: unknown, newValue: boolean) => void;
 }
 
 const SyncPolicies = (props: SyncPoliciesProps) => {
@@ -48,7 +49,7 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
 
   const { maxdevpwfailedattempts, mindevpwlenngth, mindevcomplexchars } = syncPolicy;
 
-  const defaultCheckboxProps = (label: string, field: string) => {
+  const defaultCheckboxProps = (label: string, field: keyof SyncPolicy) => {
     const valueIsDefault = syncPolicy[field] === defaultPolicy[field];
     return {
       control: <Checkbox
@@ -61,7 +62,7 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
     }
   };
 
-  const defaultTfProps = (label: string, field: string) => ({
+  const defaultTfProps = (label: string, field: keyof SyncPolicy) => ({
     className: classes.slider,
     style: { marginBottom: 8 },
     label: t(label),
@@ -73,7 +74,7 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
     variant: "standard" as TextFieldVariants
   });
 
-  const defaultSliderProps = (field: string) => ({
+  const defaultSliderProps = (field: keyof SyncPolicy) => ({
     color: (syncPolicy[field] === defaultPolicy[field] ? "secondary" : "primary") as SliderTypeMap["props"]["color"],
     marks: true,
     className: classes.slider,

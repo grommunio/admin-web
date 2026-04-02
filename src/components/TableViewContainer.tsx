@@ -7,6 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
 import { HelpOutline } from '@mui/icons-material';
 import { throttle } from 'lodash';
+import { CSSObject } from 'tss-react';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -39,7 +40,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
   },
   toolbar: {
-    ...(theme.mixins.toolbar as any),
+    ...(theme.mixins.toolbar as CSSObject),
   }
 }));
 

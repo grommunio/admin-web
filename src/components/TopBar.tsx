@@ -171,7 +171,7 @@ const TopBar = () => {
   }
 
   const handleMenuOpen = (menu: 'menuAnchorEl' | 'langsAnchorEl') =>
-    (e: React.MouseEvent<any>) => setState({
+    (e: React.MouseEvent) => setState({
       ...state, 
       [menu]: e.currentTarget,
     });
@@ -201,7 +201,7 @@ const TopBar = () => {
     });
   }
 
-  const handleAutocomplete = (_: any, newVal: GlobalSearchOption | null) => {
+  const handleAutocomplete = (_: unknown, newVal: GlobalSearchOption | null) => {
     if(newVal?.route) navigate(newVal.route);
   }
 

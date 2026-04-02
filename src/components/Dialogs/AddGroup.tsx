@@ -153,7 +153,7 @@ const AddGroup = (props: AddGroupProps) => {
     [field]: e.target.checked ? 1 : 0
   });
 
-  const handleAutocomplete = (field: keyof NewGroup) => (_: any, newVal: User) => {
+  const handleAutocomplete = (field: keyof NewGroup) => (_: unknown, newVal: User) => {
     setGroup({
       ...group,
       [field]: newVal || '',

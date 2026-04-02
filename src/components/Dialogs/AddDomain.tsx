@@ -170,11 +170,11 @@ const AddDomain = (props: AddDomainProps) => {
       });
   }
 
-  const handleOrg = (_: any, newVal: Org) => {
+  const handleOrg = (_: unknown, newVal: Org) => {
     setOrg(newVal || '');
   } 
 
-  const handleHomeserver = (_: any, newVal: Server) => {
+  const handleHomeserver = (_: unknown, newVal: Server) => {
     setHomeserver(newVal || '');
   }
 

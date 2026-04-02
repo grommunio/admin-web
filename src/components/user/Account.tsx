@@ -89,7 +89,7 @@ type AccountProps = {
   handlePasswordChange: () => void;
   rawData: any; // TODO: Improve typing
   handleChatUser: (e: ChangeEvent) => void
-  handleServer: (_: any, newVal: Server) => void
+  handleServer: (_: unknown, newVal: Server) => void
   setState: any; // TODO: Fix typing
   storageQuotaTooHigh: boolean;
 }

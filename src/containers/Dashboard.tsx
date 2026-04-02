@@ -21,6 +21,7 @@ import Load from "../components/charts/Load";
 import Disks from "../components/charts/Disks";
 import { useAppDispatch, useAppSelector } from "../store";
 import { fetchAboutData } from "../slices/about";
+import { CSSObject } from "tss-react";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -130,7 +131,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     },  
   },
   toolbar: {
-    ...theme.mixins.toolbar as any,
+    ...theme.mixins.toolbar as CSSObject,
   },
   iconButton: {
     color: "black",
