@@ -357,7 +357,7 @@ export function generatePropFilterString(filters: Record<string, string | number
  * Converts user type enum value to human-readable representation
  */
 export function getUserTypeString(type?: number): string {
-  if(!type) return "Unknown";
+  if(type == null) return "Unknown";
   return {
     0: "User",
     1: "Group",
