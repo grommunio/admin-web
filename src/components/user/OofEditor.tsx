@@ -1,32 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect } from "react";
-import { useRef } from 'react';
+import React, { RefObject, useContext } from "react";
 import { Editor } from '@tinymce/tinymce-react';
 import { useTranslation } from 'react-i18next';
 import ColorModeContext from "../../ColorContext";
+import { Editor as EditorType } from 'tinymce';
 
 
 type OofEditorProps = {
-  setRef: React.Dispatch<any>;
   initialValue: string;
   disabled?: boolean;
+  editorRef: RefObject<EditorType | null>;
 }
 
 // eslint-disable-next-line react/prop-types
-function OofEditor({ setRef, initialValue, disabled }: OofEditorProps) {
+function OofEditor({ editorRef, initialValue, disabled }: OofEditorProps) {
   const { i18n } = useTranslation();
-  const editorRef = useRef<any>(null);
   const context = useContext(ColorModeContext);
   const darkMode = context.mode === "dark";
 
-  useEffect(() => {
-    setRef(editorRef);
-    return () => {
-      setRef(null);
-    }
-  }, [editorRef]);
+  if(!editorRef) return null;
 
   return (
     <Editor

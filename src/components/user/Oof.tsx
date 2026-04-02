@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, FormControl, Grid2, MenuItem, Tab, Tabs, TextField, Theme, useTheme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import OofEditor from './OofEditor';
 import { useAppDispatch } from '../../store';
 import { OofSettings } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
+import { Editor } from 'tinymce';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -80,8 +81,8 @@ const Oof = ({ domainID, userID }: OofProps) => {
   });
   const navigate = useNavigate();
   const theme = useTheme();
-  const [tinyRef, setRef] = useState<any>(null);
-  const [tinyRef2, setRef2] = useState<any>(null);
+  const tinyRef = useRef<Editor | null>(null);
+  const tinyRef2 = useRef<Editor | null>(null);
 
   const fetchOof = async (domainID: number, userID: number) => 
     await dispatch(fetchUserOof(domainID, userID))
@@ -221,7 +222,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
           className={classes.mail}
         />
         <div className={classes.mail}>
-          <OofEditor setRef={setRef} initialValue={internalReply}/>
+          <OofEditor editorRef={tinyRef} initialValue={internalReply}/>
         </div>
       </div>
       <div className={classes.tabs} style={{ display: tab === 1 ? "block" : "none"}}>
@@ -230,7 +231,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
           className={classes.mail}
         />
         <div className={classes.mail}>
-          <OofEditor setRef={setRef2} initialValue={externalReply}/>
+          <OofEditor editorRef={tinyRef2} initialValue={externalReply}/>
         </div>
       </div>
     </FormControl>
