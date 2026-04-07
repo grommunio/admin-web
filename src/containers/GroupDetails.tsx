@@ -37,6 +37,7 @@ import { ChangeEvent, DomainViewProps, MuiIcon } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
 import { UpdateGroup } from '@/types/groups';
 import { UpdateUser, UserListItem, UserProperties, User as UserType } from '@/types/users';
+import { useUpdateEffect } from 'react-use';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -140,7 +141,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
     inner();
   }, []);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     const inner = async () => {
       const table: Record<string, UserType> = {};
       const group = await fetch(domain.ID, parseInt(getStringAfterLastSlash()))
