@@ -54,7 +54,7 @@ const Ldap = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { ldapUsers } = useAppSelector(state => state.ldap.Users);
+  const ldapUsers = useAppSelector(state => state.ldap.Users);
   const [state, setState] = useState<LdapState>({
     loading: false,
     confirming: null,
