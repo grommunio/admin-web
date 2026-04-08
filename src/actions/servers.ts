@@ -9,7 +9,7 @@ import {
   SERVER_DNS_CHECK,
   URLParams,
 } from './types';
-import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy, serverDnsCheck } from '../api';
+import { servers, serverDetails, addServer, editServer, deleteServer, serversPolicy, editServerPolicy, serverDnsCheck, serverUsers, serverDomains } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
@@ -32,6 +32,14 @@ export function fetchServersData(params: URLParams) {
 
 export function fetchServerDetails(serverID: number) {
   return defaultDetailsHandler(serverDetails, serverID);
+}
+
+export function fetchServerUsers(serverID: number) {
+  return defaultDetailsHandler(serverUsers, serverID);
+}
+
+export function fetchServerDomains(serverID: number) {
+  return defaultDetailsHandler(serverDomains, serverID);
 }
 
 export function addServerData(server: NewServer) {

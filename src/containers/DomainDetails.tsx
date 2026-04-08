@@ -189,7 +189,7 @@ const DomainDetails = () => {
   }
 
   const handleBack = () => {
-    navigate(capabilities.includes(SYSTEM_ADMIN_READ) ? '/domains' : '/' + getStringAfterLastSlash());
+    navigate(-1);
   }
 
   const handleTab = (_: unknown, tab: number) => setState({ ...state, tab })

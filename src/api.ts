@@ -712,6 +712,18 @@ export function serverDetails(id: number) {
   };
 }
 
+export function serverUsers(id: number) {
+  return async () => {
+    return await get('/system/users?homeserver=' + id);
+  };
+}
+
+export function serverDomains(id: number) {
+  return async () => {
+    return await get('/system/domains?homeserver=' + id);
+  };
+}
+
 export function addServer(server: NewServer) {
   return async () => {
     return await post('/system/servers', server);
