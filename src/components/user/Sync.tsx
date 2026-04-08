@@ -56,7 +56,7 @@ const Sync = ({ domainID, userID }: SyncProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const sync = useAppSelector(state => state.sync.Sync);
+  const sync = useAppSelector(state => state.users.Sync);
   const [state, setState] = useState({
     snackbar: '',
     order: 'asc',
