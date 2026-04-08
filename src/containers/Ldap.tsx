@@ -46,8 +46,6 @@ interface LdapState {
   loading: boolean;
   confirming: LdapUser | null;
   snackbar: string;
-  searchInOrg: boolean;
-  showAll: boolean;
 }
 
 const Ldap = ({ domain }: DomainViewProps) => {
@@ -59,10 +57,10 @@ const Ldap = ({ domain }: DomainViewProps) => {
     loading: false,
     confirming: null,
     snackbar: '',
-    searchInOrg: false,
-    showAll: false,
   });
   const [search, setSearch] = useState("");
+  const [searchInOrg, setSearchInOrg] = useState<boolean>(false);
+  const [showAll, setShowAll] = useState<boolean>(false);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
@@ -76,7 +74,6 @@ const Ldap = ({ domain }: DomainViewProps) => {
   }, []);
 
   const handleLdapSearch = ({ target: t }: ChangeEvent) => {
-    const { searchInOrg, showAll } = state;
     const query = t.value;
     setSearch(query);
     if(query.length > 2) {
@@ -104,18 +101,29 @@ const Ldap = ({ domain }: DomainViewProps) => {
 
   const handleError = (error: string) => setState({ ...state,snackbar: error });
 
-  const handleCheckbox = (field: keyof typeof state) => (e: ChangeEvent) => {
+  const handleCheckbox = (field: string) => (e: ChangeEvent) => {
     const { checked } = e.target;
-    setState({ ...state, [field]: checked });
-    if(search.length > 2) debounceFetch({
-      query: search,
-      domain: checked ? undefined : domain.ID,
-      organization: checked ? domain.orgID : undefined,
-      showAll: checked,
-    });
+    if(field === "showAll") {
+      setShowAll(checked);
+      debounceFetch({
+        query: search,
+        domain: searchInOrg ? undefined : domain.ID,
+        organization: searchInOrg ? domain.orgID : undefined,
+        showAll: checked,
+      });
+    }
+    else if (field === "searchInOrg") {
+      setSearchInOrg(checked);
+      debounceFetch({
+        query: search,
+        domain: checked ? undefined : domain.ID,
+        organization: checked ? domain.orgID : undefined,
+        showAll,
+      });
+    }
   }
 
-  const { loading, snackbar, confirming, searchInOrg, showAll } = state;
+  const { loading, snackbar, confirming } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
     (<ViewWrapper
