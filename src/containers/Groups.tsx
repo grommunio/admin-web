@@ -68,6 +68,7 @@ const Groups = ({ domain }: DomainViewProps) => {
 
   const table = useTable<GroupListItem>({
     fetchTableData,
+    domain,
     defaultState: { orderBy: 'listname' },
   });
 

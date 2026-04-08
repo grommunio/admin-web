@@ -111,6 +111,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
 
   const table = useTable<ContactListItem>({
     fetchTableData,
+    domain,
     defaultState: { orderBy: "username" },
   });
 

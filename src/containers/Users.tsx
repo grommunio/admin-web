@@ -90,6 +90,7 @@ const Users = ({ domain }: DomainViewProps) => {
 
   const table = useTable<UserListItem>({
     fetchTableData,
+    domain,
     defaultState: { orderBy: 'username', suppressFetch: true },
   });
 
