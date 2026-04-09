@@ -96,8 +96,8 @@ const Contacts = ({ domain }: DomainViewProps) => {
     addingContact: false,
   });
 
-  const fetchTableData = async (params: URLParams) =>
-    dispatch(fetchContactsData(domain.ID, params));
+  const fetchTableData = async (domainID: number, params: URLParams) =>
+    dispatch(fetchContactsData(domainID, params));
 
   const deleteItem = async (domainID: number, id: number) => {
     dispatch(deleteUserData(domainID, id));
@@ -159,7 +159,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
 
         setState((prev) => ({ ...prev, snackbar: "Success!" }));
 
-        await fetchTableData({
+        await fetchTableData(domain.ID, {
           match: match || undefined,
           sort: `${orderBy},${order}`,
         });
@@ -185,7 +185,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
     try {
       const { order, orderBy, match } = tableState;
 
-      await fetchTableData({
+      await fetchTableData(domain.ID, {
         match: match || undefined,
         sort: `${orderBy},${order}`,
       });

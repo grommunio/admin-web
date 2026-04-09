@@ -61,7 +61,7 @@ const Groups = ({ domain }: DomainViewProps) => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
-  const fetchTableData = async (params: URLParams) => await dispatch(fetchGroupsData(domain.ID, params));
+  const fetchTableData = async (domainID: number, params: URLParams) => await dispatch(fetchGroupsData(domainID, params));
   const deleteItem = async (domainID: number, id: number) => await dispatch(deleteGroupData(domainID, id));
   const sync = async (params: SyncLdapParams, domainID: number) => await dispatch(syncLdapUsers(params, domainID));
   const check = async (params: { domain:  number }) => await dispatch(checkLdapUsers(params));
@@ -102,7 +102,7 @@ const Groups = ({ domain }: DomainViewProps) => {
 
   const handleCheckSuccess = () => {
     const { order, orderBy, match } = tableState;
-    fetchTableData({ match: match || undefined, sort: orderBy + ',' + order })
+    fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
       .then(() => setState({ ...state, checking: false }))
       .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
   };
@@ -133,7 +133,7 @@ const Groups = ({ domain }: DomainViewProps) => {
         } else {
           // No task created -> Reload table data
           setState({ ...state, snackbar: 'Success!' });
-          fetchTableData({ match: match || undefined, sort: orderBy + ',' + order })
+          fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
             .catch(msg => setState({ ...state, snackbar: msg }));
         }
       })

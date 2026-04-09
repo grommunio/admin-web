@@ -91,13 +91,14 @@ const Folders = ({ domain }: DomainViewProps) => {
   const treeContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const fetchTableData = async (params: URLParams) => 
-    await dispatch(fetchFolderTree(domain.ID, params));
+  const fetchTableData = async (domainID: number, params: URLParams) => 
+    await dispatch(fetchFolderTree(domainID, params));
   const deleteItem = async (domainID: number, id: string, params: { clear: boolean }) =>
     await dispatch(deleteFolderData(domainID, id, params));
 
   const table = useTable({
     fetchTableData,
+    domain,
     defaultState: { orderBy: 'displayname' },
   });
 

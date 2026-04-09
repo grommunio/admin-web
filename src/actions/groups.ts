@@ -8,14 +8,24 @@ import {
   URLParams,
 } from './types';
 import { groups, addGroup, editGroup, deleteGroup, groupDetails, user } from '../api';
-import { defaultDeleteHandler, defaultListHandler2, defaultPatchHandler,
+import { defaultDeleteHandler, defaultPatchHandler,
   defaultPostHandler } from './handlers';
 import { NewGroup, UpdateGroup } from '@/types/groups';
 import { ApiError } from '@/types/common';
+import { Dispatch } from 'redux';
 
 
 export function fetchGroupsData(domainID: number, params: URLParams) {
-  return defaultListHandler2(groups, GROUPS_DATA_RECEIVED, domainID, params);
+  return async (dispatch: Dispatch) => {
+    try {
+      const serversData = await groups(domainID, params);
+      dispatch({ type: GROUPS_DATA_RECEIVED, data: serversData, offset: params?.offset });
+    } catch(error) {
+      console.error(error);
+      const message = (error as ApiError).message;
+      return Promise.reject(message);
+    }
+  };
 }
 
 export function fetchGroupData(domainID: number, id: number) {
