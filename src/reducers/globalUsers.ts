@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
+import { USER_TYPE } from '../constants';
 import {
   GLOBAL_USERS_FILTER_STATE
 } from '../actions/types';
@@ -16,7 +17,7 @@ const defaultState: GlobalUsersState = {
   match: "",
   showDeactivated: false,
   mode: 0,
-  type: 0,
+  type: USER_TYPE.ALL,
 };
 
 

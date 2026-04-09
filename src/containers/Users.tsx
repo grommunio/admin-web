@@ -19,7 +19,7 @@ import AddUser from '../components/Dialogs/AddUser';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import CheckLdapDialog from '../components/Dialogs/CheckLdapDialog';
 import { CapabilityContext } from '../CapabilityContext';
-import { DOMAIN_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import SearchTextfield from '../components/SearchTextfield';
@@ -127,7 +127,11 @@ const Users = ({ domain }: DomainViewProps) => {
     return statuses;
   }
 
-  const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
+  const getFilterProp = () => (
+    generatePropFilterString({
+      displaytypeex: type === USER_TYPE.ALL ? userTypes.map(t => t.ID) : type,
+    })
+  );
 
   const handleScroll = () => {
     table.handleScroll(Users, count, {
@@ -349,9 +353,10 @@ const Users = ({ domain }: DomainViewProps) => {
           size='small'
           sx={{ width: 100, mr: 1 }}
         >
-          <MenuItem value={0}>Normal</MenuItem>
-          <MenuItem value={7}>Room</MenuItem>
-          <MenuItem value={8}>Equipment</MenuItem>
+          <MenuItem value={USER_TYPE.ALL}>All</MenuItem>
+          <MenuItem value={USER_TYPE.USER}>Normal</MenuItem>
+          <MenuItem value={USER_TYPE.ROOM}>Room</MenuItem>
+          <MenuItem value={USER_TYPE.EQUIPMENT}>Equipment</MenuItem>
         </TextField>
         <FormControlLabel
           control={<Checkbox

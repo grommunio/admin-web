@@ -14,6 +14,7 @@ import {
   USERS_FILTER_STATE
 } from '../actions/types';
 import { addItem, append } from '../utils';
+import { USER_TYPE } from '../constants';
 
 type UsersState = {
   count: number;
@@ -35,7 +36,7 @@ const defaultState: UsersState = {
   match: "",
   showDeactivated: false,
   mode: 0,
-  type: 0,
+  type: USER_TYPE.ALL,
 };
 
 function deleteUser(arr: UserListItem[], id: number) {

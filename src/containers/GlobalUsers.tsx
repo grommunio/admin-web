@@ -20,7 +20,7 @@ import Delete from '@mui/icons-material/Delete';
 import { fetchAllUsers, fetchUserData } from '../actions/users';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
-import { SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE } from '../constants';
+import { SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import SearchTextfield from '../components/SearchTextfield';
@@ -120,7 +120,11 @@ const GlobalUsers = () => {
     return statuses;
   }
 
-  const getFilterProp = () => (generatePropFilterString({ displaytypeex: type }));
+  const getFilterProp = () => (
+    generatePropFilterString({
+      displaytypeex: type === USER_TYPE.ALL ? userTypes.map(t => t.ID) : type,
+    })
+  );
 
   useEffect(() => {
     fetchTableData({
@@ -230,9 +234,10 @@ const GlobalUsers = () => {
           size='small'
           sx={{ width: 100, mr: 1 }}
         >
-          <MenuItem value={0}>Normal</MenuItem>
-          <MenuItem value={7}>Room</MenuItem>
-          <MenuItem value={8}>Equipment</MenuItem>
+          <MenuItem value={USER_TYPE.ALL}>All</MenuItem>
+          <MenuItem value={USER_TYPE.USER}>Normal</MenuItem>
+          <MenuItem value={USER_TYPE.ROOM}>Room</MenuItem>
+          <MenuItem value={USER_TYPE.EQUIPMENT}>Equipment</MenuItem>
         </TextField>
         <FormControlLabel
           control={<Checkbox

@@ -40,6 +40,7 @@ export const selectableUserStatuses = [
 ];
 
 export const USER_TYPE = {
+  "ALL": -1,
   "USER": 0,
   "GROUP": 1,  // Deprecated
   "ROOM": 7,
