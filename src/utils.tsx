@@ -191,7 +191,6 @@ export function getStringFromCommand(command: number): string {
   }
 }
 
-// TODO: Properly type
 /**
  * Compares 2 sync policies and returns the different key-value pairs
  */

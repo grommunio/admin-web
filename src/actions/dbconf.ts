@@ -48,7 +48,6 @@ export function fetchServiceFile(service: string, filename: string) {
   return defaultDetailsHandler(serviceFile, service, filename);
 }
 
-// TODO: Find definition for file
 export function editServiceFile(service: string, filename: string, file: { data: Record<string, string> }) {
   return defaultPatchHandler(editFile, service, filename, file);
 }

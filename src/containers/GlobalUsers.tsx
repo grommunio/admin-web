@@ -17,7 +17,7 @@ import { Paper, Table, TableHead, TableRow, TableCell,
   Theme} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Delete from '@mui/icons-material/Delete';
-import { fetchAllUsers, fetchUserData } from '../actions/users';
+import { fetchAllUsers } from '../actions/users';
 import DeleteUser from '../components/Dialogs/DeleteUser';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE, userTypes } from '../constants';
@@ -87,9 +87,6 @@ const GlobalUsers = () => {
     await dispatch(fetchAllUsers({ ...params }));
   };
 
-  const fetchUserDetails = async (domainID: number, userID: number) =>
-    await dispatch(fetchUserData(domainID, userID));
-
   const table = useTable<UserListItem>({
     fetchTableData,
     defaultState: { orderBy: 'username', suppressFetch: true },
@@ -144,14 +141,10 @@ const GlobalUsers = () => {
     });
   };
 
+  // Note: Code to redirect to a group has been removed because
+  // groups are no longer part of the list view
   const handleRedirect = (obj: UserListItem) => async (e: React.MouseEvent) => {
-    // If user is a group
-    if(obj.properties?.displaytypeex === USER_TYPE.GROUP) {
-      const userDetails = await fetchUserDetails(obj.domainID, obj.ID);
-      handleEdit('/' + obj.domainID +'/groups/' + userDetails.mlist)(e);
-    } else {
-      handleEdit('/' + obj.domainID +'/users/' + obj.ID)(e);
-    }
+    handleEdit('/' + obj.domainID +'/users/' + obj.ID)(e);
   }
 
   const handleSort = (orderBy: string) => () => {

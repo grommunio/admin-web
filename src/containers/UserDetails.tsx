@@ -425,7 +425,6 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       altnames: altnames.map(({ altname }: Altname) => ({ altname })),
       roles: undefined,
       ldapID: undefined,
-      mlist: undefined,
     }).then(() => setState({ ...state, snackbar: 'Success!' }))
       .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }

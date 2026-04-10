@@ -79,7 +79,6 @@ export function addOwnerData(domainID: number, folderID: string, ownersData: New
   };
 }
 
-// TODO: Create permissions type
 export function setFolderPermissions(domainID: number, folderID: string, memberID: number, permissions: number) {
   return async (dispatch: Dispatch) => {
     try {

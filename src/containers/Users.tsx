@@ -403,7 +403,7 @@ const Users = ({ domain }: DomainViewProps) => {
                   <TableRow
                     key={idx}
                     hover
-                    onClick={handleEdit('/' + domain.ID + '/users/' +  obj.ID)} /* TODO: Redundant */
+                    onClick={handleEdit('/' + domain.ID + '/users/' +  obj.ID)}
                   >
                     <TableCell>
                       <div className={classes.flexRow}>

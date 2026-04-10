@@ -35,8 +35,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
 
 
 type SyncPoliciesProps = {
-  syncPolicy: Partial<SyncPolicy>; // TODO Properly type sync policies
-  defaultPolicy: Partial<SyncPolicy>; // TODO Properly type sync policies
+  syncPolicy: Partial<SyncPolicy>;
+  defaultPolicy: Partial<SyncPolicy>;
   handleChange: (field: string) => (e: ChangeEvent) => void;
   handleSlider: (field: string) => (_: unknown, newVal: number | number[], activeThumb: number) => void;
   handleCheckbox: (field: string) => (_: unknown, newValue: boolean) => void;

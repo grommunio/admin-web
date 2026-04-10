@@ -171,7 +171,6 @@ const Defaults = () => {
     },
   });
 
-  // TODO: Not perfect
   const handleCheckbox = (field: keyof CreateParams) => (e: ChangeEvent) => {
     const checked = e.target.checked;
     if(field === "privArchive") {

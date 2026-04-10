@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { BaseUser, USER_TYPE, UserListItem } from '../types/users';
+import { BaseUser, OrphanedUser, USER_TYPE, UserListItem } from '../types/users';
 import {
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
@@ -18,7 +18,7 @@ import { addItem, append } from '../utils';
 type UsersState = {
   count: number;
   Users: UserListItem[];
-  Orphaned: BaseUser[]; // TODO: Might require new type
+  Orphaned: OrphanedUser[];
   Sync: string[];
   match: string;
   showDeactivated: boolean;

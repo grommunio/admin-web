@@ -17,24 +17,7 @@ export function authLogin(user: string, pass: string) {
   return async (dispatch: Dispatch) => {
     try {
       const { grommunioAuthJwt: token, csrf } = await login(user, pass);
-      if(token) {
-        document.cookie = "grommunioAuthJwt=" + token + ';path=/'
-          + (window.location.protocol === 'https:' ? ';secure' : '');
-        window.localStorage.setItem('grommunioAuthJwt', token);
-        const profileData = await profile();
-        dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
-        if(profileData) {
-          const domains = await drawerDomains();
-          dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-          dispatch(authAuthenticated(true, profileData.capabilities, csrf));
-        } else {
-          clearStorage();
-          dispatch(authError("No profile data received"));
-        }
-      } else {
-        clearStorage();
-        dispatch(authError("No token received"));
-      }
+      authenticate(dispatch, token, csrf);
     } catch(err) {
       clearStorage();
       const message = (err as ApiError).message;
@@ -47,11 +30,10 @@ export function authLogin(user: string, pass: string) {
 export function refreshToken() {
   return async (dispatch: Dispatch) => {
     try {
-      const { grommunioAuthJwt: newToken, csrf } = await renewToken();
-      if(newToken && csrf) {
-        document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
-          + (window.location.protocol === 'https:' ? ';secure' : '');
-        window.localStorage.setItem('grommunioAuthJwt', newToken);
+      const { grommunioAuthJwt: token, csrf } = await renewToken();
+      if(token && csrf) {
+        setCookie(token);
+        window.localStorage.setItem('grommunioAuthJwt', token);
         dispatch({ type: TOKEN_REFRESH, csrf });
       }
       return Promise.resolve();
@@ -64,28 +46,12 @@ export function refreshToken() {
   }
 }
 
-// TODO: Deduplicate
-export function authLoginWithToken(token: string) {
+export function authLoginWithToken(storedToken: string) {
   return async (dispatch: Dispatch) => {
-    document.cookie = "grommunioAuthJwt=" + token + ';path=/'
-      + (window.location.protocol === 'https:' ? ';secure' : '');
+    setCookie(storedToken);
     try {
-      const { grommunioAuthJwt: newToken, csrf } = await renewToken();
-      if(newToken) {
-        document.cookie = "grommunioAuthJwt=" + newToken + ';path=/'
-          + (window.location.protocol === 'https:' ? ';secure' : '');
-        window.localStorage.setItem('grommunioAuthJwt', newToken);
-      }
-      const profileData = await profile();
-      dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
-      if(profileData) {
-        const domains = await drawerDomains();
-        dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
-        dispatch(authAuthenticated(true, profileData.capabilities, csrf));
-      } else {
-        clearStorage();
-        dispatch(authError("No profile data received"));
-      }
+      const { grommunioAuthJwt: token, csrf } = await renewToken();
+      authenticate(dispatch, token, csrf);
     } catch(err) {
       clearStorage();
       const message = (err as ApiError).message;
@@ -93,6 +59,31 @@ export function authLoginWithToken(token: string) {
       return Promise.reject(err);
     }
   };
+}
+
+async function authenticate(dispatch: Dispatch, token?: string, csrf?: string) {
+  if(token) {
+    setCookie(token);
+    window.localStorage.setItem('grommunioAuthJwt', token);
+    const profileData = await profile();
+    dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
+    if(profileData) {
+      const domains = await drawerDomains();
+      dispatch({ type: DRAWER_DOMAINS_REVEICED, data: domains });
+      dispatch(authAuthenticated(true, profileData.capabilities, csrf));
+    } else {
+      clearStorage();
+      dispatch(authError("No profile data received"));
+    }
+  } else {
+    clearStorage();
+    dispatch(authError("No token received"));
+  }
+}
+
+function setCookie(token: string) {
+  document.cookie = "grommunioAuthJwt=" + token + ';path=/'
+    + (window.location.protocol === 'https:' ? ';secure' : '');
 }
 
 export function authLogout() {

@@ -95,7 +95,6 @@ export type User = BaseUser & {
   homeserver: number | null;
   lang: string;
   ldapID: string | null;
-  mlist: any | null; // TODO: Define mlist
   orgID: number;
   pop3_imap: boolean;
   privArchive: boolean;
