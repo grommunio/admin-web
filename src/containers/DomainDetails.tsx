@@ -33,7 +33,7 @@ import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
 import { Org } from '@/types/orgs';
 import { Server } from '@/types/servers';
-import { UpdateDomain } from '@/types/domains';
+import { DOMAIN_STATUS, UpdateDomain } from '../types/domains';
 import { SyncPolicy } from '@/types/sync';
 
 
@@ -91,7 +91,7 @@ const DomainDetails = () => {
   const [state, setState] = useState<DomainDetailsState>({
     ID: 0,
     domainname: '',
-    domainStatus: 0,
+    domainStatus: DOMAIN_STATUS.ACTIVATED,
     org: null,
     maxUser: "",
     title: '',
@@ -280,7 +280,7 @@ const DomainDetails = () => {
             className={classes.input}
             label={t("Status")}
             fullWidth
-            value={domainStatus || 0}
+            value={domainStatus}
             onChange={handleInput('domainStatus')}
           >
             {domainStatuses.map((status, key) => (

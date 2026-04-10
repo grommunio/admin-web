@@ -8,6 +8,7 @@ import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 
 import { KeyValuePair } from "@/types/common";
 import { SyncPolicy } from './types/sync';
+import { USER_TYPE } from './types/users';
 
 /**
  * Converts object to array of { key, value } objects
@@ -359,12 +360,12 @@ export function generatePropFilterString(filters: Record<string, string | number
 export function getUserTypeString(type?: number): string {
   if(type == null) return "Unknown";
   return {
-    0: "User",
-    1: "Group",
-    6: "Contact",
-    7: "Room",
-    8: "Equipment",
-    1073741824: "Shared",
+    [USER_TYPE.USER]: "User",
+    [USER_TYPE.GROUP]: "Group",
+    6: "Contact", // Deprecated
+    [USER_TYPE.ROOM]: "Room",
+    [USER_TYPE.EQUIPMENT]: "Equipment",
+    1073741824: "Shared", // Deprecated
   }[type] || "Unknown";
 }
 

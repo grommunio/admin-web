@@ -11,10 +11,9 @@ import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { addContactData } from '../../actions/users';
 import { useNavigate } from 'react-router';
-import { USER_STATUS } from '../../constants';
 import { BaseDomain } from '@/types/domains';
 import { useAppDispatch } from '../../store';
-import { UserProperties } from '@/types/users';
+import { USER_STATUS, UserProperties } from '../../types/users';
 import { ChangeEvent } from '@/types/common';
 
 

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 import { URLParams } from './actions/types';
-import { USER_STATUS } from './constants';
 import store from './store';
 import { NewDomain, UpdateDomain } from './types/domains';
 import { NewFolder, UpdateFolder } from './types/folders';
@@ -12,7 +11,7 @@ import { NewOrg, UpdateOrg } from './types/orgs';
 import { NewRole, UpdateRole } from './types/roles';
 import { NewServer, ServerPolicy, UpdateServer } from './types/servers';
 import { FetchSyncParams, RemoteWipeParams } from './types/sync';
-import { DeleteOrphanedUsersParams, NewUser, OofSettings, UpdateUser } from './types/users';
+import { DeleteOrphanedUsersParams, NewUser, OofSettings, UpdateUser, USER_STATUS } from './types/users';
 
 const baseUrl = '//' + window.location.host + '/api/v1';
 
@@ -1023,10 +1022,6 @@ export async function storeLangs() {
 
 export function spam() {
   return async () => await get("/system/antispam/stat");
-}
-
-export function spamThroughput() {
-  return async () => await get("/system/antispam/graph?type=week"); // TODO: Change to day
 }
 
 export function spamHistory() {

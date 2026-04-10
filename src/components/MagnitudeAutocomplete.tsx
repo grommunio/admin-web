@@ -5,9 +5,8 @@ import React, { ReactNode } from 'react';
 import { Autocomplete, TextField, TextFieldVariants } from '@mui/material';
 import { getAutocompleteOptions } from '../utils';
 import { useTranslation } from 'react-i18next';
-import { USER_STATUS } from '../constants';
 import { ChangeEvent } from '@/types/common';
-import { ContactListItem } from '@/types/users';
+import { ContactListItem, USER_STATUS } from '../types/users';
 
 
 type MagnitudeAutocompleteProps<T> = {

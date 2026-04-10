@@ -16,10 +16,9 @@ import { Dialog, DialogTitle, DialogContent,Button,
 import { useTranslation } from 'react-i18next';
 import { red } from '@mui/material/colors';
 import { AccountCircle, ContactMail, Delete, DeleteForever } from '@mui/icons-material';
-import { USER_STATUS } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { deleteOrphanedUsers } from '../../actions/users';
-import { OrphanedUser } from '@/types/users';
+import { OrphanedUser, USER_STATUS } from '../../types/users';
 
 
 const useStyles = makeStyles()(() => ({

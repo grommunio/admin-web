@@ -1,5 +1,7 @@
 import { PartialWithRequired } from "./common"
 
+export type FolderContainer = 'IPF.Note' | 'IPF.Contact' | 'IPF.Appointment' | 'IPF.Stickynote' | 'IPF.Task';
+
 export type FolderOwner = {
   username: string;
   permissions: number;
@@ -14,7 +16,7 @@ export type Folder = {
   children: Folder[],
   parentID: string,
   displayname: string,
-  container: string, // TODO: Make enum
+  container: FolderContainer,
   comment: string,
   syncMobile: boolean,
   creationtime?: string | null;

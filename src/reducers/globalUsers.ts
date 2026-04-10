@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { USER_TYPE } from '../constants';
+import { USER_TYPE } from '../types/users';
 import {
   GLOBAL_USERS_FILTER_STATE
 } from '../actions/types';

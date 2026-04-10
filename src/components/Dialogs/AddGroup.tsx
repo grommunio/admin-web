@@ -15,10 +15,10 @@ import { addGroupData } from '../../actions/groups';
 import { fetchAllUsers, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
-import { LIST_PRIVILEGE, LIST_TYPE, listPrivileges, listTypes, ORG_ADMIN } from '../../constants';
+import { listTypes, ORG_ADMIN } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Domain } from '@/types/domains';
-import { NewGroup } from '@/types/groups';
+import { NewGroup, LIST_PRIVILEGE, LIST_TYPE } from '../../types/groups';
 import { ChangeEvent } from '@/types/common';
 import { User } from '@/types/users';
 
@@ -35,6 +35,14 @@ const useStyles = makeStyles()((theme: Theme) => ({
     minWidth: 60,
   },
 }));
+
+
+export const listPrivileges = [
+  { ID: LIST_PRIVILEGE.ALL, name: "All" },
+  { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
+  { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
+  { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
+];
 
 
 type AddGroupProps = {

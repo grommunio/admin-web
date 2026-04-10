@@ -3,6 +3,24 @@ import { PartialWithRequired } from "./common";
 import { SyncPolicy } from "./sync";
 
 
+// User status and type have become entangled.
+// Naming of the variable does not even apply to the enum name anymore.
+// TODO: Reassess and rename
+export enum USER_STATUS {
+  NORMAL = 0,
+  DEACTIVATED = 1,
+  DELETED = 3,
+  SHARED = 4,
+  CONTACT = 5,
+}
+export enum USER_TYPE {
+  ALL = -1,
+  USER = 0,
+  GROUP = 1,
+  ROOM = 7,
+  EQUIPMENT = 8,
+}
+
 export type BaseUser = {
   ID: number;
   username: string;
@@ -72,7 +90,7 @@ export type User = BaseUser & {
   chat: boolean;
   chatAdmin: boolean;
   domainID: number;
-  fetchmail: FetchmailConfig[]; // TODO: Define fetchmail
+  fetchmail: FetchmailConfig[];
   forward: Forward | null;
   homeserver: number | null;
   lang: string;

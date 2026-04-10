@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { BaseUser, UserListItem } from '@/types/users';
+import { BaseUser, USER_TYPE, UserListItem } from '../types/users';
 import {
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
@@ -14,7 +14,6 @@ import {
   USERS_FILTER_STATE
 } from '../actions/types';
 import { addItem, append } from '../utils';
-import { USER_TYPE } from '../constants';
 
 type UsersState = {
   count: number;

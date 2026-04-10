@@ -8,14 +8,14 @@ import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
   SelectChangeEvent} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { red, yellow } from '@mui/material/colors';
-import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
+import { DOMAIN_ADMIN_WRITE, selectableUserStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE, userTypes } from '../../constants';
 import { CapabilityContext } from '../../CapabilityContext';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import HideFromSelect from '../HideFromSelect';
 import { useAppSelector } from '../../store';
 import { makeStyles } from 'tss-react/mui';
 import { Domain } from '@/types/domains';
-import { UserProperties } from '@/types/users';
+import { USER_TYPE, USER_STATUS, UserProperties } from '../../types/users';
 import { ChangeEvent } from '@/types/common';
 import { Server } from '@/types/servers';
 

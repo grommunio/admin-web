@@ -2,6 +2,10 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { Moment } from "moment";
+import { FolderContainer } from "./types/folders";
+import { USER_STATUS, USER_TYPE } from "./types/users";
+import { DOMAIN_STATUS } from "./types/domains";
+import { LIST_TYPE } from "./types/groups";
 
 export const DOMAIN_ADMIN_WRITE = 'DomainAdminWrite';
 export const DOMAIN_ADMIN_READ = 'DomainAdminRead';
@@ -14,24 +18,17 @@ export type IPM_SUBTREE_OBJECT_TYPE = {
   folderid: string;
   displayname: string;
   comment: string;
-  container: string;
+  container: FolderContainer;
   creationtime: Moment | null;
 }
 export const IPM_SUBTREE_OBJECT: IPM_SUBTREE_OBJECT_TYPE = {
   folderid: IPM_SUBTREE_ID,
   displayname: 'Public Folders',
   comment: 'All Public Folders (root)',
-  container: '',
+  container: 'IPF.Note',
   creationtime: null,
 };
-export const defaultFetchLimit = 50;
-export const USER_STATUS = {  // TODO: Make proper enum with ts
-  "NORMAL": 0,
-  "DEACTIVATED": 1,
-  "DELETED": 3,
-  "SHARED": 4,
-  "CONTACT": 5,
-}
+export const DEFAULT_FETCH_LIMIT = 50;
 
 export const selectableUserStatuses = [
   { name: 'Normal', ID: USER_STATUS.NORMAL },
@@ -39,56 +36,23 @@ export const selectableUserStatuses = [
   { name: 'Shared', ID: USER_STATUS.SHARED },
 ];
 
-export const USER_TYPE = {
-  "ALL": -1,
-  "USER": 0,
-  "GROUP": 1,  // Deprecated
-  "ROOM": 7,
-  "EQUIPMENT": 8,
-}
-
 export const userTypes = [
   { name: 'User', ID: USER_TYPE.USER },
   { name: 'Room', ID: USER_TYPE.ROOM },
   { name: 'Equipment', ID: USER_TYPE.EQUIPMENT },
 ];
 
-export const DOMAIN_STATUS = {  // pseudo enum
-  "ACTIVATED": 0,
-  "DEACTIVATED": 3,
-}
-
 export const domainStatuses = [
   { name: 'Activated', ID: DOMAIN_STATUS.ACTIVATED },
   { name: 'Deactivated', ID: DOMAIN_STATUS.DEACTIVATED },
 ];
-
-export const LIST_PRIVILEGE = {
-  "ALL": 0,
-  "INTERNAL": 1,
-  "DOMAIN": 2,
-  "SPECIFIC": 3,
-  "OUTGOING": 4,
-}
-
-export const listPrivileges = [
-  { ID: LIST_PRIVILEGE.ALL, name: "All" },
-  { ID: LIST_PRIVILEGE.INTERNAL, name: "Internal" },
-  { ID: LIST_PRIVILEGE.DOMAIN, name: "Domain" },
-  { ID: LIST_PRIVILEGE.SPECIFIC, name: "Specific" },
-];
-
-export const LIST_TYPE = {
-  "NORMAL": 0,
-  "DOMAIN": 2,
-}
 
 export const listTypes = [
   { ID: LIST_TYPE.NORMAL, name: "Normal" },
   { ID: LIST_TYPE.DOMAIN, name: "Domain" },
 ]
 
-export const folderTypes = [
+export const folderTypes: {name: string, ID: FolderContainer }[] = [
   { name: 'Mail and post items', ID: 'IPF.Note' },
   { name: 'Contact', ID: 'IPF.Contact' },
   { name: 'Appointment', ID: 'IPF.Appointment' },

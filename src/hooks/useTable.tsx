@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
-import { defaultFetchLimit } from '../constants';
+import { DEFAULT_FETCH_LIMIT } from '../constants';
 
 type Order = 'asc' | 'desc';
 
@@ -92,7 +92,7 @@ export function useTable<T>({
       el.offsetHeight + 100
     ) {
       const { orderBy, order } = state;
-      const newOffset = offset + defaultFetchLimit;
+      const newOffset = offset + DEFAULT_FETCH_LIMIT;
 
       setOffset(newOffset);
 

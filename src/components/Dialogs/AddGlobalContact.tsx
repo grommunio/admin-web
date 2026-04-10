@@ -13,9 +13,8 @@ import { addContactData } from '../../actions/users';
 import { fetchDomainData } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
-import { USER_STATUS } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { UserProperties } from '@/types/users';
+import { USER_STATUS, UserProperties } from '../../types/users';
 import { ChangeEvent } from '@/types/common';
 import { BaseDomain } from '@/types/domains';
 

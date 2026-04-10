@@ -22,7 +22,7 @@ import { fetchPermissionsData, editRoleData, fetchRoleData } from '../actions/ro
 import { getStringAfterLastSlash } from '../utils';
 import { fetchDomainData } from '../actions/domains';
 import { fetchOrgsData } from '../actions/orgs';
-import { ORG_ADMIN, SYSTEM_ADMIN_WRITE, USER_STATUS } from '../constants';
+import { ORG_ADMIN, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
@@ -30,9 +30,9 @@ import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { Permission, UpdateRole } from '@/types/roles';
 import { ChangeEvent } from '@/types/common';
-import { User } from '@/types/users';
-import { Domain } from 'node:domain';
+import { User, USER_STATUS } from '../types/users';
 import { Org } from '@/types/orgs';
+import { Domain } from '@/types/domains';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({

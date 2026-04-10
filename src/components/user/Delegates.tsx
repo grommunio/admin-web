@@ -13,11 +13,11 @@ import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDe
 import Feedback from '../Feedback';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
-import { SYSTEM_ADMIN_WRITE, USER_STATUS } from '../../constants';
+import { SYSTEM_ADMIN_WRITE } from '../../constants';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { ChangeEvent } from '@/types/common';
-import { BaseUser } from '@/types/users';
+import { BaseUser, USER_STATUS } from '../../types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({

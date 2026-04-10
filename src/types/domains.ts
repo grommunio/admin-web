@@ -1,6 +1,11 @@
 import { PartialWithRequired } from "./common";
 import { SyncPolicy } from "./sync";
 
+export enum DOMAIN_STATUS {
+  ACTIVATED = 0,
+  DEACTIVATED = 3,
+}
+
 export type BaseDomain = {
   ID: number;
   displayname: string;
@@ -13,7 +18,7 @@ export type Domain = BaseDomain & {
   adminName: string;
   address: string;
   chat: boolean;
-  domainStatus: number;
+  domainStatus: DOMAIN_STATUS;
   homeserver: number | null;
   inactiveUsers: number;
   maxUser: number | null;

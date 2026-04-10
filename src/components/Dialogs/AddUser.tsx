@@ -19,11 +19,11 @@ import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useNavigate } from 'react-router';
 import { throttle } from 'lodash';
 import { CapabilityContext } from '../../CapabilityContext';
-import { selectableUserStatuses, SYSTEM_ADMIN_WRITE, USER_STATUS, USER_TYPE, userTypes } from '../../constants';
+import { selectableUserStatuses, SYSTEM_ADMIN_WRITE, userTypes } from '../../constants';
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Server } from '@/types/servers';
-import { UserProperties } from '@/types/users';
+import { USER_TYPE, USER_STATUS, UserProperties } from '../../types/users';
 import { ChangeEvent } from '@/types/common';
 import { Lang } from '@/types/misc';
 

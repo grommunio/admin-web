@@ -18,7 +18,7 @@ import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { throttle } from 'lodash';
 import { domainStatuses } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { NewDomain } from '@/types/domains';
+import { DOMAIN_STATUS, NewDomain } from '../../types/domains';
 import { Server } from '@/types/servers';
 import { Org } from '@/types/orgs';
 import { ChangeEvent } from '@/types/common';
@@ -207,7 +207,7 @@ const AddDomain = (props: AddDomainProps) => {
             className={classes.input}
             label={t("Status")}
             fullWidth
-            value={domainStatus || 0}
+            value={domainStatus || DOMAIN_STATUS.ACTIVATED}
             onChange={handleInput('domainStatus')}
           >
             {domainStatuses.map((status, key) => (

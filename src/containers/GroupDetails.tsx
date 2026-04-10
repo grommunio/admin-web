@@ -24,7 +24,7 @@ import {
 import { editGroupData, fetchGroupData } from '../actions/groups';
 import { getStringAfterLastSlash } from '../utils';
 import Feedback from '../components/Feedback';
-import { DOMAIN_ADMIN_WRITE, LIST_PRIVILEGE, LIST_TYPE, listTypes, ORG_ADMIN, USER_TYPE } from '../constants';
+import { DOMAIN_ADMIN_WRITE, listTypes, ORG_ADMIN } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { editUserData, fetchAllUsers, fetchUsersData } from '../actions/users';
@@ -35,8 +35,8 @@ import { Badge, ContactMail, ContactPhone, Delete, SwitchAccount } from '@mui/ic
 import { useNavigate } from 'react-router';
 import { ChangeEvent, DomainViewProps, MuiIcon } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../store';
-import { UpdateGroup } from '@/types/groups';
-import { UpdateUser, UserListItem, UserProperties, User as UserType } from '@/types/users';
+import { UpdateGroup, LIST_PRIVILEGE, LIST_TYPE } from '../types/groups';
+import { UpdateUser, USER_TYPE, UserListItem, UserProperties, User as UserType } from '../types/users';
 import { useUpdateEffect } from 'react-use';
 
 

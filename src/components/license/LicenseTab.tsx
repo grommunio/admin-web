@@ -11,10 +11,9 @@ import { useTranslation } from 'react-i18next';
 import { fetchPlainUsersData } from '../../actions/users';
 import { getLicenseCreds, submitLicenseCreds, uploadLicenseData } from '../../actions/license';
 import { useNavigate } from 'react-router';
-import { USER_STATUS } from '../../constants';
 import { ChangeEvent } from '@/types/common';
 import { useAppDispatch, useAppSelector } from '../../store';
-import { BaseUser } from '@/types/users';
+import { BaseUser, USER_STATUS } from '../../types/users';
 import { BaseDomain } from '@/types/domains';
 
 
@@ -112,6 +111,7 @@ const LicenseTab = (props: LicenseTabProps) => {
     setExpandedDomainIdxs(copy);
   }
 
+  // 領域展開
   const toggleDomainExpansion = () => setState({ ...state, domainsExpanded: !state.domainsExpanded });
 
   const handleUpload = () => {
