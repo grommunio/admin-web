@@ -133,7 +133,7 @@ const Login = () => {
     });
   }
 
-  const handleLogin = (event: React.MouseEvent | React.SubmitEvent<HTMLDivElement>) => {
+  const handleLogin = (event: React.MouseEvent | React.SyntheticEvent<HTMLFormElement>) => {
     const { user, pass } = state;
     event.preventDefault();
     setState({ ...state, loading: true });
@@ -165,7 +165,12 @@ const Login = () => {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={3} className={classes.loginForm} onSubmit={handleLogin} >
+      <Paper
+        elevation={3}
+        className={classes.loginForm}
+        onSubmit={handleLogin}
+        component={"form"}
+      >
         <Tooltip title="Language">
           <IconButton className={classes.lang} onClick={handleMenu(true)}>
             <Translate color="inherit"/>
