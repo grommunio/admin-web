@@ -292,7 +292,7 @@ const DomainDetails = () => {
           {capabilities.includes(SYSTEM_ADMIN_READ) && <MagnitudeAutocomplete<Org>
             value={org}
             filterAttribute={'name'}
-            onChange={handleAutocomplete('orgID')}
+            onChange={handleAutocomplete('org')}
             className={classes.input} 
             options={orgs}
             label={t('Organization')}

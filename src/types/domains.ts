@@ -22,7 +22,7 @@ export type Domain = BaseDomain & {
   homeserver: number | null;
   inactiveUsers: number;
   maxUser: number | null;
-  orgID: number | null;
+  orgID: number;
   syncPolicy: Partial<SyncPolicy>;
   tel: string;
   title: string;

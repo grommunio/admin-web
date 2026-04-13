@@ -143,7 +143,7 @@ const AddDomain = (props: AddDomainProps) => {
       tel: domain.tel,
       chat: domain.chat,
       domainname: domainname.trim(),
-      orgID: org?.ID || null,
+      orgID: org?.ID || 0,
       homeserver: homeserver?.ID || null,
     }, { createRole }))
       .then(() => {
