@@ -57,7 +57,7 @@ function UserTabs({ ID, value, handleTabChange, sysAdminReadPermissions }: UserT
     <UserTab label={t("Roles")} disabled={!ID || !sysAdminReadPermissions} icon={SupervisorAccount}/>
     <UserTab label={t("SMTP")} disabled={!ID} icon={ContactMail}/>
     <UserTab label={t("Permissions")} disabled={!ID} icon={Key}/>
-    <UserTab label={t("OOF")} disabled={!ID} icon={Quickreply}/>
+    <UserTab label={t("Out-of-Office")} disabled={!ID} icon={Quickreply}/>
     <UserTab label={t("Fetchmail")} disabled={!ID} icon={MoveToInbox}/>
     <UserTab label={t("Mobile devices")} disabled={!ID} icon={MobileFriendly}/>
     <UserTab label={t("Sync policy")} disabled={!ID} icon={AppSettingsAlt}/>

@@ -227,7 +227,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
 
   const columns = [
     { label: 'Display name', value: 'displayname' },
-    { label: 'E-Mail address', value: 'smtpaddress' }
+    { label: 'E-Mail Address', value: 'smtpaddress' }
   ];
 
   return (

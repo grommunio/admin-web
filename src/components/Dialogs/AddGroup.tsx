@@ -197,7 +197,7 @@ const AddGroup = (props: AddGroupProps) => {
           />
           <TextField 
             className={classes.input} 
-            label={t("Displayname")} 
+            label={t("Display name")}
             fullWidth 
             value={displayname}
             onChange={handleInput('displayname')}

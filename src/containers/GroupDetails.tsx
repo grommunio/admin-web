@@ -336,7 +336,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
           />
           <TextField 
             className={classes.input} 
-            label={t("Displayname")} 
+            label={t("Display name")}
             fullWidth 
             value={displayname}
             onChange={handleInput('displayname')}
