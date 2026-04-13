@@ -55,7 +55,7 @@ export function authLoginWithToken(storedToken: string) {
     } catch(err) {
       clearStorage();
       const message = (err as ApiError).message;
-      dispatch(authError(message || "Session expired. Please login again"));
+      dispatch(authError(message || "Session expired. Please re-login"));
       return Promise.reject(err);
     }
   };
@@ -77,7 +77,7 @@ async function authenticate(dispatch: Dispatch, token?: string, csrf?: string) {
     }
   } else {
     clearStorage();
-    dispatch(authError("No token received"));
+    dispatch(authError("No token received. Please re-login"));
   }
 }
 
