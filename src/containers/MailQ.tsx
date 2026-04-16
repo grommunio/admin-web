@@ -35,11 +35,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
   header: {
     marginBottom: 8,
   },
-  flexRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
 }));
 
 interface MailQDataState {
@@ -169,7 +164,7 @@ const MailQ = () => {
                 <TableCell>{t("Arrival time")}</TableCell>
                 <TableCell>{t("Sender")}</TableCell>
                 <TableCell>{t("Recipients")}</TableCell>
-                <TableCell className={classes.flexRow}>
+                <TableCell sx={{ minWidth: 120 }}>
                   <Tooltip title={t("Flush mail queue")}>
                     <span>
                       <IconButton disabled={actionsDisabled} onClick={handleFlush}>
