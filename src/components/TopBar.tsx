@@ -33,8 +33,7 @@ import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Set
 import { globalSearchOptions } from '../constants';
 import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
-import { useAppSelector } from '../store';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../store';
 import { ConfigState } from '@/reducers/config';
 import { MuiIcon } from '@/types/common';
 
@@ -145,7 +144,7 @@ type Link = {
 const TopBar = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const context = useContext(CapabilityContext);
   const colorContext = useContext(ColorModeContext);
   const { profile, settings, drawer, config } = useAppSelector(state => state);
@@ -168,6 +167,10 @@ const TopBar = () => {
 
   const handleMenuToggle = () => {
     dispatch(setDrawerOpen());
+  }
+
+  const handleDrawerExpansion = () => {
+    dispatch(setDrawerExpansion());
   }
 
   const handleMenuOpen = (menu: 'menuAnchorEl' | 'langsAnchorEl') =>
@@ -226,7 +229,7 @@ const TopBar = () => {
             <Burger className={classes.burger}/>
           </IconButton>}
         {!lgDownHidden &&
-          <IconButton color="inherit" onClick={setDrawerExpansion} size="large">
+          <IconButton color="inherit" onClick={handleDrawerExpansion} size="large">
             {drawer.expanded ?
               <KeyboardArrowLeft className={classes.burger} /> :
               <KeyboardArrowRight className={classes.burger} />}

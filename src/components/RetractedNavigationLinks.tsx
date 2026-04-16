@@ -37,6 +37,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     padding: theme.spacing(0, 2, 0, 2),
     justifyContent: 'center',
     height: 64,
+    marginTop: 8,
   },
   dashboard: {
     '&:hover': {
