@@ -49,7 +49,6 @@ interface MailQDataState {
 }
 
 interface MailQState {
-  selected: string[];
   snackbar: string;
   loading: boolean;
 }
@@ -59,10 +58,10 @@ const MailQ = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [state, setState] = useState<MailQState>({
-    selected: [],
     snackbar: '',
     loading: true,
   });
+  const [selectedMails, setSelectedMails] = useState<string[]>([]);
   const [data, setData] = useState<MailQDataState>({
     postfixMailq: '',
     gromoxMailq: '',
@@ -88,50 +87,62 @@ const MailQ = () => {
 
   const fetchData = async () => {
     const data = await fetch()
-      .catch(snackbar => setState({ ...state, snackbar }));
+      .catch(snackbar => setState(state => ({ ...state, snackbar })));
     if(data) {
-      setState({ ...state, loading: false });
-      setData(data);
+      setState(state => ({ ...state, loading: false }));
+      setData({
+        postfixMailq: data.postfixMailq || "",
+        gromoxMailq: data.gromoxMailq || "",
+        postqueue: data.postqueue || [],
+      });
     }
   }
 
   const handleFlush = () => {
-    flush(state.selected)
-      .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
-      .catch(snackbar => setState({ ...state, snackbar }));
+    flush(selectedMails)
+      .then(() => {
+        setState({ loading: false, snackbar: 'Success!'});
+        setSelectedMails([]);
+        fetchData();
+      })
+      .catch(snackbar => setState({ loading: false, snackbar }));
   }
 
   const handleDelete = () => {
-    const { selected } = state;
-    deleteQ(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
-      .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
-      .catch(snackbar => setState({ ...state, snackbar }));
+    deleteQ(selectedMails?.length === postqueue?.length  ? 'ALL' : selectedMails.join(','))
+      .then(() => {
+        setState({ loading: false, snackbar: 'Success!'});
+        setSelectedMails([]);
+        fetchData();
+      })
+      .catch(snackbar => setState({ loading: false, snackbar }));
   }
 
   const handleRequeue = () => {
-    const { selected } = state;
-    requeue(selected.length === postqueue.length  ? 'ALL' : selected.join(','))
-      .then(() => setState({ ...state, snackbar: 'Success!', selected: [] }))
-      .catch(snackbar => setState({ ...state, snackbar }));
+    requeue(selectedMails?.length === postqueue?.length  ? 'ALL' : selectedMails.join(','))
+      .then(() => {
+        setState({ loading: false, snackbar: 'Success!'});
+        setSelectedMails([]);
+        fetchData();
+      })
+      .catch(snackbar => setState({ loading: false, snackbar }));
   }
 
-  const handleCheckAll = ({ target: t }: ChangeEvent) => setState({
-    ...state,
-    selected: t.checked ? postqueue.map(entry => entry.queue_id) : [],
-  });
+  const handleCheckAll = ({ target: t }: ChangeEvent) =>
+    setSelectedMails(t.checked ? postqueue.map(entry => entry.queue_id) : []);
 
   const handleCheckbox = (qID: string) => (e: ChangeEvent) => {
-    const copy = [...state.selected];
+    const copy = [...selectedMails];
     if(e.target.checked) {
       copy.push(qID);
     } else {
       copy.splice(copy.findIndex(el => el === qID), 1);
     }
-    setState({ ...state, selected: copy });
+    setSelectedMails(copy);
   };
 
-  const { selected, snackbar, loading } = state;
-  const actionsDisabled = selected.length === 0;
+  const { snackbar, loading } = state;
+  const actionsDisabled = selectedMails?.length === 0;
   return (
     <TableViewContainer
       headline={t("Mail queue")}
@@ -149,7 +160,7 @@ const MailQ = () => {
               <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox
-                    checked={postqueue.length > 0 && postqueue.length === selected.length}
+                    checked={postqueue?.length > 0 && postqueue?.length === selectedMails?.length}
                     onChange={handleCheckAll}
                   />
                 </TableCell>
@@ -186,7 +197,7 @@ const MailQ = () => {
             <TableBody>
               {postqueue.map((entry: PostqueueRow) => {
                 const id = entry.queue_id;
-                const rowSelected = selected.includes(id)
+                const rowSelected = selectedMails.includes(id)
                 return (
                   <TableRow key={entry.queue_id}>
                     <TableCell padding="checkbox">
