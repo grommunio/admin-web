@@ -94,6 +94,7 @@ const Orgs = () => {
 
   const columns = [
     { label: "Name", value: "name" },
+    { label: "Count", value: "domainCount" },
     { label: "Description", value: "description" },
   ];
 
@@ -158,6 +159,7 @@ const Orgs = () => {
                 onClick={handleEdit("/orgs/" + obj.ID)}
               >
                 <TableCell>{obj.name}</TableCell>
+                <TableCell>{obj.domainCount}</TableCell>
                 <TableCell>{obj.description}</TableCell>
                 <TableCell align="right">
                   {writable && (
