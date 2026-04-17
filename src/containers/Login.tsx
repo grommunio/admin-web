@@ -122,7 +122,11 @@ const Login = () => {
     const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
     if(grommunioAuthJwt) {
       // token found, try to login
-      loginWithToken(grommunioAuthJwt);
+      loginWithToken(grommunioAuthJwt)
+        .catch((err: string) => {
+          setState({ ...state, loading: false });
+          console.error(err);
+        });
     }
   }, []);
 
