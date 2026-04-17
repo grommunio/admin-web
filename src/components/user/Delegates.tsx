@@ -64,6 +64,8 @@ const Delegates = (props: DeletesProps) => {
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
+  console.log(userID, domainID, orgID);
+
   const fetchDelegates = async (domainID: number, userID: number) => await dispatch(fetchUserDelegates(domainID, userID));
   const fetchSendAs = async (domainID: number, userID: number) => await dispatch(fetchUserSendAs(domainID, userID));
   const fetchPermitted = async (domainID: number, userID: number) => await dispatch(fetchPermittedUsers(domainID, userID));

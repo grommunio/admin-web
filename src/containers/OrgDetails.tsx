@@ -25,7 +25,7 @@ import { editOrgData, fetchOrgsDetails } from '../actions/orgs';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { fetchDomainData } from '../actions/domains';
+import { fetchDomainData, fetchDrawerDomains } from '../actions/domains';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import { Add, Delete, Help } from '@mui/icons-material';
 import { green, red } from '@mui/material/colors';
@@ -294,7 +294,13 @@ const OrgDetails = () => {
       description,
       domains: domains.map(d => d.ID),
     })
-      .then(() => setState({ ...state, snackbar: 'Success!' }))
+      .then(() => {
+
+        // Refetch drawer domains so the routes have knowledge about org updates
+        dispatch(fetchDrawerDomains());
+
+        setState({ ...state, snackbar: 'Success!' });
+      })
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
 

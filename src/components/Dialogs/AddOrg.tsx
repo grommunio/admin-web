@@ -9,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { addOrgData } from '../../actions/orgs';
-import { fetchDomainData } from '../../actions/domains';
+import { fetchDomainData, fetchDrawerDomains } from '../../actions/domains';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { NewOrg } from '@/types/orgs';
@@ -74,6 +74,10 @@ const AddOrg = (props: AddOrgProps) => {
       domains: domains.map((d: Domain) => d.ID),
     }))
       .then(() => {
+
+        // Refetch drawer domains so the routes have knowledge about org updates
+        dispatch(fetchDrawerDomains());
+
         setOrg({
           name: '',
           description: '',
