@@ -200,7 +200,7 @@ const Domains = () => {
                     {obj.domainname !== obj.displayname &&
                       ` (${obj.displayname}) `}
                     {obj.domainStatus === 3 &&
-                      `[${t("Deactivated")}]`}
+                      ` [${t("Deactivated")}]`}
                   </TableCell>
                   <TableCell>{obj.address || ""}</TableCell>
                   <TableCell>{obj.title || ""}</TableCell>
