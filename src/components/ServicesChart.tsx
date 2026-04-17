@@ -160,7 +160,7 @@ const ServicesChart = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell sx={{ width: 160 }}>
                 {t("Service")}
               </TableCell>
               <TableCell align="center" style={{ width: 124 }}>
