@@ -8,7 +8,7 @@ import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 
 import { KeyValuePair } from "@/types/common";
 import { SyncPolicy } from './types/sync';
-import { USER_TYPE } from './types/users';
+import { ContactListItem, USER_STATUS, USER_TYPE } from './types/users';
 
 /**
  * Converts object to array of { key, value } objects
@@ -244,7 +244,17 @@ export function getAutocompleteOptions<T>(
     return inputValue.length < magnitude
       ? []
       : options.filter(o => {
-        let compareValue = (filterAttribute ? o[filterAttribute] : o) as string;
+
+        let compareValue = "";
+
+        // Special treatment for contact users
+        if(filterAttribute === "username" && (o as ContactListItem).status === USER_STATUS.CONTACT) {
+          const properties = (o as ContactListItem).properties || {};
+          compareValue = properties["smtpaddress"] as string || properties["displayname"] as string || "";
+          if (compareValue === "") compareValue = properties["displayname"] as string;
+        } else {
+          compareValue = (filterAttribute ? o[filterAttribute] : o) as string;
+        }
 
         if (typeof compareValue === "string") {
           compareValue = compareValue.toLowerCase();

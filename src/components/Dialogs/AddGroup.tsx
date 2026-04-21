@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Domain } from '@/types/domains';
 import { NewGroup, LIST_PRIVILEGE, LIST_TYPE } from '../../types/groups';
 import { ChangeEvent } from '@/types/common';
-import { User } from '@/types/users';
+import { User } from '../../types/users';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -91,7 +91,11 @@ const AddGroup = (props: AddGroupProps) => {
   const handleEnter = () => {
     const { onError, domain } = props;
     (context.includes(ORG_ADMIN) ?
-      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID || undefined })) :
+      dispatch(fetchAllUsers({
+        limit: 100000,
+        sort: "username,asc",
+        orgID: domain.orgID || undefined,
+      })) :
       dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" })))
       .catch(error => {
         onError(error);
@@ -175,9 +179,12 @@ const AddGroup = (props: AddGroupProps) => {
       open={open}
       maxWidth="md"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
-      }}>
+      slotProps={{
+        transition: {
+          onEnter: handleEnter
+        }
+      }}
+    >
       <DialogTitle>{t('addHeadline', { item: 'Group' })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl className={classes.form}>
@@ -246,7 +253,7 @@ const AddGroup = (props: AddGroupProps) => {
             value={associations || []}
             filterAttribute={'username'}
             onChange={handleAutocomplete('associations')}
-            className={classes.input} 
+            className={classes.input}
             options={Users || []}
             placeholder={t("Search users") +  "..."}
             label={t('Recipients')}

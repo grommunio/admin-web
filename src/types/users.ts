@@ -215,5 +215,6 @@ export type FetchUserParams = {
   filterProp?: string;
   status?: number[] | number;
   orgID?: number,
+  [x: string]: unknown;
 } & URLParams;
 

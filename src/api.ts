@@ -281,19 +281,19 @@ export async function dns(domainId: number) {
 
 export async function allUsers(params: URLParams={}) {
   return await get(buildQuery('/system/users', {
-    ...params,
     addressType: 0,
-    matchProps: 'displayname',
-    properties: 'displayname,displaytypeex',
+    matchProps: 'displayname,smtpaddress',
+    properties: 'displayname,displaytypeex,smtpaddress',
+    ...params,
   }));
 }
 
 export async function allContacts(params: URLParams={}) {
   return await get(buildQuery('/system/users', {
-    ...params,
     status: USER_STATUS.CONTACT,
     matchProps: 'displayname,smtpaddress',
     properties: 'displayname,smtpaddress',
+    ...params,
   }));
 }
 
