@@ -71,6 +71,7 @@ const ChangeUserPassword = (props: ChangeUserPasswordProps) => {
           label={t("New password")} 
           fullWidth
           type="password"
+          autoComplete="new-password"
           value={newPw}
           onChange={handleInput("newPw")}
           autoFocus
@@ -80,6 +81,7 @@ const ChangeUserPassword = (props: ChangeUserPasswordProps) => {
           label={t("Repeat new password")} 
           fullWidth
           type="password"
+          autoComplete="new-password"
           value={checkPw}
           onChange={handleInput("checkPw")}
         />

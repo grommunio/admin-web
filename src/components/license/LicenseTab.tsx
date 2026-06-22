@@ -273,6 +273,7 @@ const LicenseTab = (props: LicenseTabProps) => {
               value={password}
               onChange={handleInput("password")}
               type="password"
+              autoComplete="new-password"
               className={classes.tf}
             />
           </div>

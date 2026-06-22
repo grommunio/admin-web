@@ -315,6 +315,7 @@ const AddUser = (props: AddUserProps) => {
             className={classes.input}
             type="password"
             required
+            autoComplete="new-password"
             helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
             slotProps={{
               formHelperText: {

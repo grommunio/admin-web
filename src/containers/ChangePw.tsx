@@ -82,6 +82,7 @@ const ChangePw = () => {
             value={newPw || ''}
             onChange={handleInput('newPw')}
             type="password"
+            autoComplete="new-password"
           />
         </FormControl>
         <FormControl className={classes.form}>
@@ -92,6 +93,7 @@ const ChangePw = () => {
             value={reType || ''}
             onChange={handleInput('reType')}
             type="password"
+            autoComplete="new-password"
           />
         </FormControl>
         <Button

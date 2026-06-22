@@ -669,7 +669,7 @@ const LdapConfig = () => {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
               <FormControlLabel
                 control={

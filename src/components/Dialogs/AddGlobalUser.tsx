@@ -345,7 +345,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
             className={classes.input}
             type="password"
             required
-            autoComplete="off"
+            autoComplete="new-password"
             helperText={(repeatPw && password !== repeatPw) ? t("Passwords don't match") : ''}
             slotProps={{
               formHelperText: {
