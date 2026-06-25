@@ -29,10 +29,10 @@ import { Lang } from '@/types/misc';
 const useStyles = makeStyles()((theme: Theme) => ({
   form: {
     width: '100%',
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(2),
   },
   input: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
   },
   select: {
     minWidth: 60,
@@ -263,7 +263,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
 
   const { username, loading, properties, password, repeatPw,
     domain, status, homeserver, lang, chat, chatAvailable } = state;
-  const { displayname, displaytypeex } = properties;
+  const { displayname, givenname, surname, displaytypeex } = properties;
   const addDisabled = !domain || usernameError || !username || loading ||
       ((password !== repeatPw || (password.length < 6 && !config.devMode)) && status !== USER_STATUS.SHARED);
     
@@ -358,6 +358,20 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
             value={displayname || ''}
             onChange={handlePropertyChange('displayname')}
             className={classes.input}
+          />
+          <TextField 
+            label={t("First name")}
+            value={givenname || ''}
+            onChange={handlePropertyChange('givenname')}
+            className={classes.input}
+            helperText={t("Required for grommunio-auth")}
+          />
+          <TextField 
+            label={t("Surname")}
+            value={surname || ''}
+            onChange={handlePropertyChange('surname')}
+            className={classes.input}
+            helperText={t("Required for grommunio-auth")}
           />
           <TextField
             select
