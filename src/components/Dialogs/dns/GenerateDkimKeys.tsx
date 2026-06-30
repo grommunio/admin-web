@@ -110,7 +110,7 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
         </Button>}
         {pubKey && <Typography sx={{ mt: 1 }}>
           The private key has been generated on the server at
-          <pre>/var/lib/grommunio-admin-api/{domain.domainname}-dkim.key</pre>
+          <pre>/var/lib/grommunio-admin-api/{domain.domainname}.dkim.key</pre>
         </Typography>}
       </DialogContent>
     </Dialog>
