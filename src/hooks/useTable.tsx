@@ -171,6 +171,7 @@ export function useTable<T>({
 
   return {
     tableState: { ...state, match },
+    setTableState: setState,
     handleRequestSort,
     handleMatch,
     handleScroll,

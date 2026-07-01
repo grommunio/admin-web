@@ -111,6 +111,7 @@ const Folders = ({ domain }: DomainViewProps) => {
     handleDeleteError,
     handleDeleteSuccess,
     handleEdit,
+    setTableState,
   } = table;
 
   const handleTab = (_: unknown, tab: number) => setState({ ...state, tab });
@@ -146,8 +147,8 @@ const Folders = ({ domain }: DomainViewProps) => {
   }
 
   const handleAddingSuccess = () => {
-    handleAddingSuccess();
     setState({ ...state, adding: "" });
+    setTableState({ ...tableState, snackbar: "Success!" });
   }
 
   const handleMatch = (e: ChangeEvent) => {
