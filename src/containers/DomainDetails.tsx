@@ -17,17 +17,22 @@ import {
   FormControlLabel,
   Checkbox,
   Theme,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
-import { editDomainData, fetchDomainDetails } from '../actions/domains';
+import { editDomainData, editDomainPluginData, fetchDomainDetails, fetchDomainPlugins } from '../actions/domains';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SyncPolicies from '../components/SyncPolicies';
-import { domainStatuses, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
+import { domainStatuses, GWEB_PLUGIN_LIST, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
-import { AppSettingsAlt, Dns } from '@mui/icons-material';
+import { AppSettingsAlt, Dns, Extension } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
@@ -56,6 +61,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
   tabs: {
     marginTop: 16,
   },
+  disabledPlugins: {
+    margin: theme.spacing(1),
+  }
 }));
 
 type DomainDetailsState = {
@@ -77,8 +85,6 @@ type DomainDetailsState = {
   checkPw: string;
   tab: number,
   chat: boolean;
-  loading: boolean;
-  snackbar: string;
 }
 
 const DomainDetails = () => {
@@ -106,31 +112,34 @@ const DomainDetails = () => {
     checkPw: '',
     tab: 0,
     chat: false,
-    loading: true,
-    snackbar: "",
     unsaved: false,
   });
+  const [disabledPlugins, setDisabledPlugins] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState("");
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
   const edit = async (domain: UpdateDomain) => await dispatch(editDomainData(domain));
+  const putPlugins = async (domainID: number) => await dispatch(editDomainPluginData(domainID, disabledPlugins));
   const fetch = async (id: number) => await dispatch(fetchDomainDetails(id));
+  const fetchPlugins = async (id: number) => await dispatch(fetchDomainPlugins(id));
   const fetchOrgs = async () =>
     await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }));
   const fetchServers = async () =>
     await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
 
   useEffect(() => {
-    const inner = async () => {
+    (async () => {
       if(capabilities.includes(SYSTEM_ADMIN_READ)) {
         await fetchServers()
-          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+          .catch(message => setSnackbar(message || 'Unknown error'));
       }
 
       let orgs = [];
       if(capabilities.includes(SYSTEM_ADMIN_READ)) {
         orgs = await fetchOrgs()
-          .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+          .catch(message => setSnackbar(message || 'Unknown error'));
       }
 
       const domain = await fetch(parseInt(getStringAfterLastSlash()));
@@ -140,7 +149,6 @@ const DomainDetails = () => {
       setState({
         ...state,
         org: domainOrg || null,
-        loading: false,
         ...(domain || {}),
         syncPolicy: {
           ...defaultPolicy,
@@ -149,9 +157,9 @@ const DomainDetails = () => {
         },
         defaultPolicy,
       });
-    };
 
-    inner();
+      setLoading(false);
+    })();
   }, []);
 
   const handleInput = (field: string) => (event: ChangeEvent) => {
@@ -170,6 +178,16 @@ const DomainDetails = () => {
   const handleEdit = () => {
     const { ID, domainname, domainStatus, org, chat, homeserver,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = state;
+
+    // Save plugins
+    if(tab === 2) {
+      putPlugins(ID)
+        .then(() => setSnackbar('Success!'))
+        .catch(message => setSnackbar(message || 'Unknown error'));
+      return;
+    }
+
+    // Save domain
     edit({
       ID,
       domainname,
@@ -184,15 +202,30 @@ const DomainDetails = () => {
       syncPolicy: getPolicyDiff(defaultPolicy, syncPolicy),
       chat,
     })
-      .then(() => setState({ ...state, snackbar: 'Success!' }))
-      .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+      .then(() => setSnackbar('Success!'))
+      .catch(message => setSnackbar(message || 'Unknown error'));
   }
 
   const handleBack = () => {
     navigate(-1);
   }
 
-  const handleTab = (_: unknown, tab: number) => setState({ ...state, tab })
+  const handleTab = (_: unknown, tab: number) => {
+    setState({ ...state, tab });
+
+    // Plugins tab
+    if(tab === 2) {
+      (async () => {
+        setLoading(true);
+        const plugins = await fetchPlugins(parseInt(getStringAfterLastSlash()))
+          .catch(message => setSnackbar(message || 'Unknown error'));
+        if(plugins?.data) {
+          setDisabledPlugins(plugins.data || [])
+        }
+        setLoading(false);
+      })();
+    }
+  }
 
   const handleSyncChange = (field: string) => (event: ChangeEvent) => {
     const { syncPolicy } = state;
@@ -241,15 +274,28 @@ const DomainDetails = () => {
     });
   }
 
+  const handlePlugin = (plugin: string) => () => {
+    const currentIndex = disabledPlugins.indexOf(plugin);
+    const newChecked = [...disabledPlugins];
+
+    if (currentIndex === -1) {
+      newChecked.push(plugin);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setDisabledPlugins(newChecked);
+  };
+
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const { domainname, org, domainStatus, maxUser, title, address, adminName,
-    tel, syncPolicy, snackbar, tab, defaultPolicy,
-    chat, homeserver, loading } = state;
+    tel, syncPolicy, tab, defaultPolicy,
+    chat, homeserver } = state;
 
   return (
     <ViewWrapper
       snackbar={snackbar}
-      onSnackbarClose={() => setState({ ...state, snackbar: '' })}
+      onSnackbarClose={() => setSnackbar("")}
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
@@ -264,6 +310,7 @@ const DomainDetails = () => {
         <Tabs className={classes.tabs} indicatorColor="primary" onChange={handleTab} value={tab}>
           <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
           <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
+          <Tab label={t("Disabled plugins")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Extension />}/>
         </Tabs>
         {tab === 0 && <FormControl className={classes.form}>
           <Grid2 container className={classes.input}>
@@ -361,6 +408,37 @@ const DomainDetails = () => {
           handleCheckbox={handleSyncCheckboxChange}
           handleSlider={handleSlider}
         />}
+        {tab === 2 &&
+          <div className={classes.disabledPlugins}>
+            <Typography variant='h6'>
+              {t("List of disabled plugins in grommunio-web")}
+            </Typography>
+            <List>
+              {GWEB_PLUGIN_LIST.map(plugin =>
+                <ListItem
+                  key={plugin}
+                  disablePadding
+                >
+                  <ListItemButton
+                    role={undefined}
+                    onClick={handlePlugin(plugin)} dense
+                  >
+                    <ListItemIcon>
+                      <Checkbox
+                        edge="start"
+                        checked={disabledPlugins.includes(plugin)}
+                        tabIndex={-1}
+                        disableRipple
+                        slotProps={{ input: { 'aria-labelledby': plugin } }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText id={plugin} primary={plugin} />
+                  </ListItemButton>
+                </ListItem>
+              )}
+            </List>
+          </div>
+        }
         <Button
           color="secondary"
           onClick={handleBack}

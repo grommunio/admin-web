@@ -95,6 +95,11 @@ export const FOLDER_PERMISSIONS = [
 ];
 export const ALL_FOLDER_PERMISSIONS = 0x3fff;
 
+export const GWEB_PLUGIN_LIST = [
+  "archive", "chat", "desktopnotifications", "files", "filesbackendDefault", "filesbackendSeafile",
+  "intranet", "kendox", "maps", "mdm", "meet", "passwd", "smime", "templatesnippets",
+];
+
 export const ANSI_CODE_TO_JSS_CLASS = {
   "0;30": {},
   "0;31": { color: "red" },

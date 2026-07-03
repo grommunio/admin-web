@@ -9,8 +9,8 @@ import {
   URLParams,
   DRAWER_DOMAINS_REVEICED,
 } from './types';
-import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains } from '../api';
-import { defaultDeleteHandler, defaultListHandler2, defaultPatchHandler, defaultPostHandler } from './handlers';
+import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains, disabledPlugins, editDomainPlugins } from '../api';
+import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler2, defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CreateDomainParams, DeleteDomainProps, NewDomain, UpdateDomain } from '@/types/domains';
 import { ApiError } from '@/types/common';
@@ -45,6 +45,10 @@ export function fetchDomainDetails(id: number) {
   };
 }
 
+export function fetchDomainPlugins(id: number) {
+  return defaultDetailsHandler(disabledPlugins, id);
+}
+
 export function fetchDrawerDomains() {
   return defaultListHandler2(drawerDomains, DRAWER_DOMAINS_REVEICED);
 }
@@ -55,6 +59,10 @@ export function addDomainData(domain: NewDomain, params: CreateDomainParams) {
 
 export function editDomainData(domain: UpdateDomain) {
   return defaultPatchHandler(editDomain, domain);
+}
+
+export function editDomainPluginData(domainID: number, pluginList: string[]) {
+  return defaultPatchHandler(editDomainPlugins, domainID, pluginList);
 }
 
 export function deleteDomainData(id: number, params: DeleteDomainProps) {

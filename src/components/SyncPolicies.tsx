@@ -85,7 +85,7 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
 
   return (
     <FormControl className={classes.form}>
-      <Typography variant="h6" className={classes.header}>{t('General')}</Typography>
+      <Typography variant="h6" marginBottom={1}>{t('General')}</Typography>
       <FormControlLabel
         {...defaultCheckboxProps("Allow storage card", "allowstoragecard")}
       />

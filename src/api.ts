@@ -267,6 +267,18 @@ export function deleteDomain(id: number, params: URLParams={}) {
   };
 }
 
+export function disabledPlugins(id: number) {
+  return async () => {
+    return await get(`/domains/${id}/disabledPlugins`);
+  }
+}
+
+export function editDomainPlugins(id: number, pluginList: string[]) {
+  return async () => {
+    return await put(`/domains/${id}/disabledPlugins`, pluginList)
+  }
+}
+
 export async function changeDomainPassword(id: number, newPw: string) {
   try {
     return await put('/system/domains/' + id + '/password', { new: newPw });
