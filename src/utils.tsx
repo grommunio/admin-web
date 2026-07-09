@@ -83,7 +83,8 @@ export function getStringAfterLastSlash(): string {
 /**
  * Formats a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
  */
-export function setDateTimeString(date: string | Moment | null) {
+export function setDateTimeString(date?: string | Moment | null) {
+  if(!date) return "";
   return moment(date, "YYYY-MM-DD hh:mm")
     .locale(store.getState().settings.language.slice(0, 2)).format('lll');
 }
@@ -91,7 +92,8 @@ export function setDateTimeString(date: string | Moment | null) {
 /**
  * Formats a date of format `YYYY-MM-DD` into the date format of the selected language (in settings)
  */
-export function setDateString(date: string | Moment) {
+export function setDateString(date?: string | Moment | null) {
+  if(!date) return "";
   return moment(date, "YYYY-MM-DD")
     .locale(store.getState().settings.language.slice(0, 2)).format('ll');
 }

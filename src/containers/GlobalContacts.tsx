@@ -19,6 +19,7 @@ import {
   ListItemText,
   useMediaQuery,
   Theme,
+  TableSortLabel,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
@@ -39,6 +40,7 @@ import DomainDataDelete from "../components/Dialogs/DomainDataDelete";
 import { makeStyles } from "tss-react/mui";
 import { URLParams } from "@/actions/types";
 import { ContactListItem } from "@/types/users";
+import { setDateTimeString } from "../utils";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -65,6 +67,13 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 
+const columns = [
+  { label: 'Display name', value: 'displayname', sortable: true },
+  { label: 'E-Mail Address', value: 'smtpaddress', sortable: true },
+  { label: 'Creation time', value: "creationtime", sortable: true },
+];
+
+
 const GlobalContacts = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
@@ -85,7 +94,7 @@ const GlobalContacts = () => {
 
   const table = useTable<ContactListItem>({
     fetchTableData,
-    defaultState: { orderBy: "username" },
+    defaultState: { orderBy: "displayname" },
   });
 
   const {
@@ -100,7 +109,7 @@ const GlobalContacts = () => {
     handleScroll,
   } = table;
 
-  const { loading, match, snackbar, deleting } = tableState;
+  const { loading, match, snackbar, deleting, order, orderBy } = tableState;
 
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 
@@ -108,14 +117,15 @@ const GlobalContacts = () => {
     handleScroll(userList, count);
   };
 
+  const handleSort = (orderBy: string) => () => {
+    table.handleRequestSort(orderBy, {
+      match: match || undefined,
+    })();
+  }
+
   const handleAddContact = () => setAddingContact(true);
   const handleContactClose = () => setAddingContact(false);
   const handleContactSuccess = () => setAddingContact(false);
-
-  const columns = [
-    { label: "Display name", value: "displayname" },
-    { label: "E-Mail Address", value: "smtpaddress" },
-  ];
 
   const lgUpHidden = useMediaQuery((theme: Theme) =>
     theme.breakpoints.up("lg")
@@ -161,12 +171,19 @@ const GlobalContacts = () => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                {columns.map((column) => (
-                  <TableCell key={column.value}>
-                    {t(column.label)}
+                {columns.map(({ label, value, sortable }) =>
+                  <TableCell key={value}>
+                    <TableSortLabel
+                      disabled={!sortable}
+                      active={orderBy === value}
+                      direction={orderBy === value ? order : 'asc'}
+                      onClick={handleSort(value)}
+                    >
+                      {t(label)}
+                    </TableSortLabel>
                   </TableCell>
-                ))}
-                <TableCell padding="checkbox" />
+                )}
+                <TableCell padding="checkbox"></TableCell>
               </TableRow>
             </TableHead>
 
@@ -194,6 +211,8 @@ const GlobalContacts = () => {
                     <TableCell>
                       {properties.smtpaddress || ""}
                     </TableCell>
+
+                    <TableCell>{setDateTimeString(properties.creationtime)}</TableCell>
 
                     <TableCell align="right">
                       {writable && (

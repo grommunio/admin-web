@@ -289,7 +289,7 @@ export async function allUsers(params: URLParams={}) {
   return await get(buildQuery('/system/users', {
     addressType: 0,
     matchProps: 'displayname,smtpaddress',
-    properties: 'displayname,displaytypeex,smtpaddress',
+    properties: 'displayname,displaytypeex,smtpaddress,creationtime',
     ...params,
   }));
 }
@@ -298,7 +298,7 @@ export async function allContacts(params: URLParams={}) {
   return await get(buildQuery('/system/users', {
     status: USER_STATUS.CONTACT,
     matchProps: 'displayname,smtpaddress',
-    properties: 'displayname,smtpaddress',
+    properties: 'displayname,smtpaddress,creationtime',
     ...params,
   }));
 }
@@ -308,7 +308,7 @@ export async function users(domainID: number, params: URLParams={}) {
     '/domains/' + domainID + '/users', {
       ...params,
       matchProps: 'displayname',
-      properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex',
+      properties: 'displayname,storagequotalimit,receivequotalimit,messagesizeextended,displaytypeex,creationtime',
       addressType: 0,
     }));
 }
@@ -335,7 +335,7 @@ export async function contacts(domainID: number, params: URLParams={}) {
       ...params,
       status: USER_STATUS.CONTACT,
       matchProps: 'displayname,smtpaddress',
-      properties: 'displayname,smtpaddress',
+      properties: 'displayname,smtpaddress,creationtime',
     }));
 }
 

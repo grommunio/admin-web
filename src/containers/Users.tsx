@@ -23,7 +23,7 @@ import { DOMAIN_ADMIN_WRITE, userTypes } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import TaskCreated from '../components/Dialogs/TaskCreated';
 import SearchTextfield from '../components/SearchTextfield';
-import { generatePropFilterString, getUserTypeString } from '../utils';
+import { generatePropFilterString, getUserTypeString, setDateTimeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { useNavigate } from 'react-router';
@@ -110,10 +110,12 @@ const Users = ({ domain }: DomainViewProps) => {
   } = table;
 
   const columns = [
-    { label: 'Type', value: 'type' },
-    { label: 'Display name', value: 'displayname' },
-    { label: 'LDAP ID', value: 'ldapID' },
-    { label: 'Storage quota limit', value: 'storagequotalimit' },
+    { label: 'Username', value: 'username', sortable: true },
+    { label: 'Type', value: 'displaytypeex', sortable: true },
+    { label: 'Display name', value: 'displayname', sortable: true },
+    { label: 'LDAP ID', value: 'ldapID', sortable: false },
+    { label: 'Storage quota limit', value: 'storagequotalimit', sortable: true },
+    { label: 'Creation time', value: "creationtime", sortable: true },
   ];
 
   const getUserStatuses = (): number[] => {
@@ -375,22 +377,16 @@ const Users = ({ domain }: DomainViewProps) => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active={orderBy === 'username'}
-                    direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={handleSort('username')}
-                    color="primary"
-                    sx={{
-                      color: 'text.primary',
-                    }}
-                  >
-                    {t('Username')}
-                  </TableSortLabel>
-                </TableCell>
-                {columns.map(column =>
-                  <TableCell key={column.value}>
-                    {t(column.label)}
+                {columns.map(({ label, value, sortable }) =>
+                  <TableCell key={value}>
+                    <TableSortLabel
+                      disabled={!sortable}
+                      active={orderBy === value}
+                      direction={orderBy === value ? order : 'asc'}
+                      onClick={handleSort(value)}
+                    >
+                      {t(label)}
+                    </TableSortLabel>
                   </TableCell>
                 )}
                 <TableCell padding="checkbox"></TableCell>
@@ -417,6 +413,7 @@ const Users = ({ domain }: DomainViewProps) => {
                     <TableCell>
                       {t(getUserTypeString(properties.displaytypeex))}
                       {obj.status === USER_STATUS.SHARED && ` (${t("Shared")})`}
+                      {obj.status === USER_STATUS.DEACTIVATED && ` (${t("Deactivated")})`}
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
@@ -424,6 +421,7 @@ const Users = ({ domain }: DomainViewProps) => {
                       {properties.storagequotalimit && properties.storagequotalimit >= 0 ?
                         getMaxSizeFormatting(properties.storagequotalimit) : "0 MB"}
                     </TableCell>
+                    <TableCell>{setDateTimeString(properties.creationtime)}</TableCell>
                     <TableCell align="right">
                       {writable && <IconButton onClick={handleDelete(obj)} size="small">
                         <Delete color="error" fontSize="small"/>

@@ -19,6 +19,7 @@ import {
   Tooltip,
   useMediaQuery,
   Theme,
+  TableSortLabel,
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Delete from "@mui/icons-material/Delete";
@@ -53,6 +54,7 @@ import { ContactListItem } from "@/types/users";
 import { DomainViewProps } from "@/types/common";
 import { SyncLdapParams } from "@/types/ldap";
 import { Domain } from "@/types/domains";
+import { setDateTimeString } from "../utils";
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -78,6 +80,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 }));
 
+const columns = [
+  { label: 'Display name', value: 'displayname', sortable: true },
+  { label: 'E-Mail Address', value: 'smtpaddress', sortable: true },
+  { label: 'Creation time', value: "creationtime", sortable: true },
+];
 
 const Contacts = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
@@ -112,7 +119,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
   const table = useTable<ContactListItem>({
     fetchTableData,
     domain,
-    defaultState: { orderBy: "username" },
+    defaultState: { orderBy: "displayname" },
   });
 
   const {
@@ -127,7 +134,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
     handleScroll,
   } = table;
 
-  const { loading, match, snackbar, deleting } = tableState;
+  const { loading, match, snackbar, deleting, order, orderBy } = tableState;
 
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
 
@@ -225,10 +232,11 @@ const Contacts = ({ domain }: DomainViewProps) => {
     theme.breakpoints.down("lg")
   );
 
-  const columns = [
-    { label: 'Display name', value: 'displayname' },
-    { label: 'E-Mail Address', value: 'smtpaddress' }
-  ];
+  const handleSort = (orderBy: string) => () => {
+    table.handleRequestSort(orderBy, {
+      match: match || undefined,
+    })();
+  }
 
   return (
     <TableViewContainer
@@ -309,12 +317,19 @@ const Contacts = ({ domain }: DomainViewProps) => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                {columns.map(column =>
-                  <TableCell key={column.value}>
-                    {t(column.label)}
+                {columns.map(({ label, value, sortable }) =>
+                  <TableCell key={value}>
+                    <TableSortLabel
+                      disabled={!sortable}
+                      active={orderBy === value}
+                      direction={orderBy === value ? order : 'asc'}
+                      onClick={handleSort(value)}
+                    >
+                      {t(label)}
+                    </TableSortLabel>
                   </TableCell>
                 )}
-                <TableCell padding="checkbox" />
+                <TableCell padding="checkbox"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -338,6 +353,7 @@ const Contacts = ({ domain }: DomainViewProps) => {
                     <TableCell>
                       {properties.smtpaddress || ""}
                     </TableCell>
+                    <TableCell>{setDateTimeString(properties.creationtime)}</TableCell>
                     <TableCell align="right">
                       {writable && (
                         <IconButton

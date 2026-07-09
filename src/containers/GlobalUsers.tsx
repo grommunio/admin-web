@@ -24,7 +24,7 @@ import { SYSTEM_ADMIN_WRITE, userTypes } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
 import AddGlobalUser from '../components/Dialogs/AddGlobalUser';
 import SearchTextfield from '../components/SearchTextfield';
-import { generatePropFilterString, getUserTypeString } from '../utils';
+import { generatePropFilterString, getUserTypeString, setDateTimeString } from '../utils';
 import { AccountCircle, Groups } from '@mui/icons-material';
 import TableActionGrid from '../components/TableActionGrid';
 import { setFilterState } from '../actions/globalUsers';
@@ -69,9 +69,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 const columns = [
-  { label: 'Type', value: 'type' },
-  { label: 'Display name', value: 'displayname' },
-  { label: 'LDAP ID', value: 'ldapID' },
+  { label: 'Username', value: 'username', sortable: true },
+  { label: 'Type', value: 'displaytypeex', sortable: true },
+  { label: 'Display name', value: 'displayname', sortable: true },
+  { label: 'LDAP ID', value: 'ldapID', sortable: false },
+  { label: 'Creation time', value: "creationtime", sortable: true },
 ];
 
 
@@ -249,18 +251,16 @@ const GlobalUsers = () => {
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <TableSortLabel
-                    active={orderBy === 'username'}
-                    direction={orderBy === 'username' ? order : 'asc'}
-                    onClick={handleSort('username')}
-                  >
-                    {t('Username')}
-                  </TableSortLabel>
-                </TableCell>
-                {columns.map(column =>
-                  <TableCell key={column.value}>
-                    {t(column.label)}
+                {columns.map(({ label, value, sortable }) =>
+                  <TableCell key={value}>
+                    <TableSortLabel
+                      disabled={!sortable}
+                      active={orderBy === value}
+                      direction={orderBy === value ? order : 'asc'}
+                      onClick={handleSort(value)}
+                    >
+                      {t(label)}
+                    </TableSortLabel>
                   </TableCell>
                 )}
                 <TableCell padding="checkbox"></TableCell>
@@ -287,6 +287,7 @@ const GlobalUsers = () => {
                     </TableCell>
                     <TableCell>{properties.displayname}</TableCell>
                     <TableCell>{obj.ldapID || ''}</TableCell>
+                    <TableCell>{setDateTimeString(properties.creationtime)}</TableCell>
                     <TableCell align="right">
                       {writable && <IconButton onClick={handleDelete(obj)} size="small">
                         <Delete color="error" fontSize='small'/>
