@@ -286,7 +286,7 @@ const GlobalContacts = () => {
         onClose={handleDeleteClose}
         onError={handleDeleteError}
         domainID={deleting?.domainID ?? -1}
-        item={deleting}
+        item={deleting ? deleting.properties.displayname || deleting.properties.smtpaddress : ""}
         delete={deleteItem}
         id={deleting?.ID}
       />
