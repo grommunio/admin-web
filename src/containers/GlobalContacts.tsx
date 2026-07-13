@@ -70,6 +70,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 const columns = [
   { label: 'Display name', value: 'displayname', sortable: true },
   { label: 'E-Mail Address', value: 'smtpaddress', sortable: true },
+  { label: 'LDAP ID', value: 'ldapID', sortable: false },
   { label: 'Creation time', value: "creationtime", sortable: true },
 ];
 
@@ -211,6 +212,8 @@ const GlobalContacts = () => {
                     <TableCell>
                       {properties.smtpaddress || ""}
                     </TableCell>
+
+                    <TableCell>{obj.ldapID || ''}</TableCell>
 
                     <TableCell>{setDateTimeString(properties.creationtime)}</TableCell>
 
