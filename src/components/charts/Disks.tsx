@@ -23,6 +23,9 @@ function Disks({ disks }: DisksProps) {
   const theme = useTheme();
 
   const formatYAxis = (value: number) => {
+    return value.toString();
+  };
+  const formatXAxis = (value: string) => {
     return value + '%';
   };
   
@@ -40,12 +43,10 @@ function Disks({ disks }: DisksProps) {
           },
           plotOptions: {
             bar: {
-              borderRadius: 8,
-              columnWidth: '60%',
+              borderRadius: 4,
+              horizontal: true,
+              barHeight: '60%',
               distributed: true,
-              dataLabels: {
-                orientation: "vertical",
-              },
             },
           },
           dataLabels: {
@@ -64,30 +65,22 @@ function Disks({ disks }: DisksProps) {
                 colors: theme.palette.text.primary,
               },
             },
-            tickAmount: 4,
-            max: 100,
-            min: 0,
           },
           xaxis: {
             axisBorder: {
               show: false
             },
-            axisTicks: {
-              show: false
-            },
             labels: {
               rotate: 0,
-              hideOverlappingLabels: true,
-              trim: true,
               style: {
                 colors: theme.palette.text.primary,
-                fontSize: '10px',
-                fontFamily: 'Helvetica, Arial, sans-serif',
-                fontWeight: 400,
-                cssClass: 'apexcharts-xaxis-label',
               },
+              formatter: formatXAxis,
             },
-            categories: disks.map(d => d.mountpoint)
+            categories: disks.map(d => d.mountpoint),
+            tickAmount: 4,
+            max: 100,
+            min: 0,
           },
           tooltip: {
             y: {
@@ -107,6 +100,8 @@ function Disks({ disks }: DisksProps) {
         }]}
         type="bar"
         height={200}
+        width="95%"
+        align="right"
       />
     </div>
   );
