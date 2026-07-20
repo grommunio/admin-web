@@ -1,14 +1,11 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-License-Identifier: AGPL-3.0-or-later 
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
-
 import React, { useCallback } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Paper, Theme, Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../../store';
-
-
 const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
@@ -22,20 +19,20 @@ const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
   },
 }));
-
-
 function Load() {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const { load } = useAppSelector(state => state.dashboard);
   const theme = useTheme();
-
-  const formatYAxis = useCallback((value: number) => {
-    if(value === 0) return '0%';
-    if(value < 0.1) return value.toFixed(2) + '%';
+  const formatValue = useCallback((value: number) => {
     return value.toFixed(1) + '%';
   }, []);
-
+  const formatAxisLabel = useCallback((value: string) => {
+    return formatValue(Number(value));
+  }, [formatValue]);
+  const formatTotalLabel = useCallback((value?: string) => {
+    return formatValue(Number(value));
+  }, [formatValue]);
   return (
     <Paper className={classes.paper}>
       <div className={classes.root}>
@@ -52,18 +49,18 @@ function Load() {
             plotOptions: {
               bar: {
                 borderRadius: 8,
-                columnWidth: '60%',
+                horizontal: true,
+                barHeight: '60%',
                 distributed: true,
                 dataLabels: {
                   total: {
-                    formatter: (v) => v + "%",
+                    formatter: formatTotalLabel,
                   },
-                  orientation: "vertical",
                 },
               }
             },
             dataLabels: {
-              formatter: (v) => v + "%",
+              formatter: formatValue,
             },
             legend: {
               labels: {
@@ -72,33 +69,23 @@ function Load() {
             },
             xaxis: {
               labels: {
-                rotate: 0,
                 style: {
                   colors: theme.palette.text.primary,
                 },
+                formatter: formatAxisLabel,
               },
               categories: [t("1 Min"), t("5 Mins"), t("15 Mins")],
+              tickAmount: 4,
+              max: 100,
+              min: 0,
             },
             tooltip: {
               y: {
-                formatter: function(value) {
-                  return value + '%';
-                },
+                formatter: formatValue,
                 title: {
                   formatter: () => "",
                 }
               },
-            },
-            yaxis: {
-              labels: {
-                style: {
-                  colors: theme.palette.text.primary,
-                },
-                formatter: formatYAxis,
-              },
-              tickAmount: 4,
-              max: 100,
-              min: 0,
             },
             colors: ['#2E93fA', '#546E7A', '#E91E63', '#FF9800', '#8e9eab', '#66DA26'],
           }}
@@ -112,6 +99,4 @@ function Load() {
     </Paper>
   );
 }
-
-
 export default Load;
