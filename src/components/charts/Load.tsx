@@ -27,8 +27,10 @@ function Load() {
   const formatValue = useCallback((value: number) => {
     return value.toFixed(1) + '%';
   }, []);
-  const formatAxisLabel = useCallback((value: string) => {
-    return formatValue(Number(value));
+
+  const formatXAxis = useCallback((value: string) => {
+    return value + '%';
+  //formatValue(Number(value));
   }, [formatValue]);
   const formatTotalLabel = useCallback((value?: string) => {
     return formatValue(Number(value));
@@ -48,7 +50,7 @@ function Load() {
             },
             plotOptions: {
               bar: {
-                borderRadius: 8,
+                borderRadius: 4,
                 horizontal: true,
                 barHeight: '60%',
                 distributed: true,
@@ -63,21 +65,29 @@ function Load() {
               formatter: formatValue,
             },
             legend: {
-              labels: {
-                colors: theme.palette.text.primary,
-              },
+              show: false,
             },
             xaxis: {
+              axisBorder: {
+                show: false
+              },
               labels: {
                 style: {
                   colors: theme.palette.text.primary,
                 },
-                formatter: formatAxisLabel,
+                formatter: formatXAxis,
               },
               categories: [t("1 Min"), t("5 Mins"), t("15 Mins")],
               tickAmount: 4,
               max: 100,
               min: 0,
+            },
+            yaxis: {
+              labels: {
+                style: {
+                  colors: theme.palette.text.primary,
+                },
+              },
             },
             tooltip: {
               y: {
@@ -94,6 +104,8 @@ function Load() {
           }]}
           type="bar"
           height={200}
+          width="95%"
+          align="right"
         />
       </div>
     </Paper>
