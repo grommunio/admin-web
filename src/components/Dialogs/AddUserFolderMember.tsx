@@ -20,7 +20,7 @@ import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { USER_STATUS, UserListItem } from '../../types/users';
-import { ALL_FOLDER_PERMISSIONS, FOLDER_PERMISSIONS } from '../../constants';
+import { ALL_FOLDER_PERMISSIONS, MAIL_FOLDER_PERMISSIONS, CAL_FOLDER_PERMISSIONS } from '../../constants';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -29,7 +29,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: theme.spacing(1),
   },
   input: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
   },
   select: {
     minWidth: 60,
@@ -42,13 +42,14 @@ type AddUserFolderMemberProps = {
   domain: Domain;
   username: string;
   folderID: number;
+  folderContainer: string;
   onError: (err: string) => void;
   onSuccess: () => void;
   onClose: () => void;
 }
 
 const AddUserFolderMember = (props: AddUserFolderMemberProps) => {
-  const { open, onClose, onSuccess, onError, domain, username, folderID } = props;
+  const { open, onClose, onSuccess, onError, domain, username, folderID, folderContainer } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
   const [ member, setMember ] = useState<UserListItem | null>(null);
@@ -113,6 +114,8 @@ const AddUserFolderMember = (props: AddUserFolderMemberProps) => {
     ...Users
   ]), [Users]);
 
+  const permissionOptions = folderContainer === "IPF.Appointment" ? CAL_FOLDER_PERMISSIONS : MAIL_FOLDER_PERMISSIONS;
+
   return (
     <Dialog
       onClose={onClose}
@@ -143,12 +146,12 @@ const AddUserFolderMember = (props: AddUserFolderMemberProps) => {
               <InputLabel>{t("Permissions")}</InputLabel>
               <Select
                 multiple
-                value={all ? FOLDER_PERMISSIONS.map(p => p.value) : permissions}
+                value={all ? permissionOptions.map(p => p.value) : permissions}
                 onChange={handleMultiselectChange}
                 label={t("Permissions")}
                 disabled={all}
               >
-                {FOLDER_PERMISSIONS.map(({ name, value }) => (
+                {permissionOptions.map(({ name, value }) => (
                   <MenuItem
                     key={value}
                     value={value}

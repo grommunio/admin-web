@@ -53,6 +53,7 @@ type Folder = {
   name: string;
   parentID: number;
   subfolders: Folder[];
+  container: string;
 }
 
 
@@ -87,11 +88,11 @@ const Folders = ({ username, domain }: FoldersProps) => {
     if(folderData) setSelectedFolderPermissions(folderData.members);
   }
 
-  const renderTree = ({ ID, name, subfolders, parentID }: Folder) => (
+  const renderTree = ({ ID, name, subfolders, parentID, container }: Folder) => (
     <TreeItem
       key={ID || -1}
       itemId={ID.toString() || "-1"}
-      onClick={handleFolderClicked({ ID, name, subfolders, parentID })}
+      onClick={handleFolderClicked({ ID, name, subfolders, parentID, container })}
       label={<div className={classes.treeItemLabel}>
         <Typography>{name}</Typography>
       </div>}
@@ -173,6 +174,7 @@ const Folders = ({ username, domain }: FoldersProps) => {
         domain={domain}
         username={username}
         folderID={selectedFolder?.ID || 0}
+        folderContainer={selectedFolder?.container || ""}
       />
       <DeleteUserFolderPermissionDialog
         deleting={deleting}

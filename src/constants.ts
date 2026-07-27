@@ -77,7 +77,23 @@ export const FOLDER_PERMISSION_TYPES = {
   "storeowner": 0x2000
 }
 
-export const FOLDER_PERMISSIONS = [
+export const MAIL_FOLDER_PERMISSIONS = [
+  { name: "Read any", value: 0x1 },
+  { name: "Create", value: 0x2 },
+  { name: "Send as", value: 0x4 },
+  { name: "Edit owned", value: 0x8 },
+  { name: "Delete owned", value: 0x10 },
+  { name: "Edit any", value: 0x20 },
+  { name: "Delete any", value: 0x40 },
+  { name: "Create sub folder", value: 0x80 },
+  { name: "Folder owner", value: 0x100 },
+  { name: "Folder contact", value: 0x200 },
+  { name: "Folder visible", value: 0x400 },
+  { name: "Store owner", value: 0x2000 },
+];
+
+// Not dynamically generated with MAIL_FOLDER_PERMISSIONS to prevent rerenders
+export const CAL_FOLDER_PERMISSIONS = [
   { name: "Read any", value: 0x1 },
   { name: "Create", value: 0x2 },
   { name: "Send as", value: 0x4 },
