@@ -163,9 +163,9 @@ const Roles = () => {
                 <TableCell>{obj.name}</TableCell>
                 <TableCell>{obj.description}</TableCell>
                 <TableCell>
-                  {obj.permissions
+                  {(obj.permissions || [])
                     .map((perm: RolePermission) => perm.permission)
-                    .toString()}
+                    .join(", ")}
                 </TableCell>
                 <TableCell align="right">
                   {writable && (

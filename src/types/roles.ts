@@ -22,7 +22,7 @@ export type BaseRole = {
 
 export type Role = BaseRole & {
   description: string;
-  permissions: RolePermission[];
+  permissions?: RolePermission[];
   users: BaseUser[];
 }
 
