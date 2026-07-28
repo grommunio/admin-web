@@ -6,6 +6,7 @@ import { Paper, Theme, Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../../store';
+
 const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     flex: 1,
@@ -19,22 +20,17 @@ const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
   },
 }));
+
 function Load() {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const { load } = useAppSelector(state => state.dashboard);
   const theme = useTheme();
+
   const formatValue = useCallback((value: number) => {
-    return value.toFixed(1) + '%';
+    return Number(value).toFixed(2);
   }, []);
 
-  const formatXAxis = useCallback((value: string) => {
-    return value + '%';
-  //formatValue(Number(value));
-  }, [formatValue]);
-  const formatTotalLabel = useCallback((value?: string) => {
-    return formatValue(Number(value));
-  }, [formatValue]);
   return (
     <Paper className={classes.paper}>
       <div className={classes.root}>
@@ -54,11 +50,6 @@ function Load() {
                 horizontal: true,
                 barHeight: '60%',
                 distributed: true,
-                dataLabels: {
-                  total: {
-                    formatter: formatTotalLabel,
-                  },
-                },
               }
             },
             dataLabels: {
@@ -75,11 +66,9 @@ function Load() {
                 style: {
                   colors: theme.palette.text.primary,
                 },
-                formatter: formatXAxis,
               },
               categories: [t("1 Min"), t("5 Mins"), t("15 Mins")],
               tickAmount: 4,
-              max: 100,
               min: 0,
             },
             yaxis: {
