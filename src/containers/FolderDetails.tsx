@@ -23,7 +23,7 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import FolderPermissions from '../components/Dialogs/FolderPermissions';
 import { Info } from '@mui/icons-material';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useAppDispatch } from '../store';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { Folder, UpdateFolder } from '@/types/folders';
@@ -72,6 +72,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+  const { folderID: folderIDParam } = useParams<{ folderID: string }>();
 
   const fetch = async (domainID: number, folderID: string) => await dispatch(fetchFolderDetails(domainID, folderID));
   const edit = async (domainID: number, folder: UpdateFolder) => await dispatch(editFolderData(domainID, folder));
@@ -80,8 +81,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
 
   useEffect(() => {
     const inner = async () => {
-      const splits = window.location.pathname.split('/');
-      const folderId = splits[3];
+      const folderId = folderIDParam as string;
       // If folder is IPM_SUBTREE
       if(folderId === IPM_SUBTREE_ID) {
         setState({ ...state, folder: IPM_SUBTREE_OBJECT, readonly: true, loading: false });

@@ -19,7 +19,7 @@ import { Add, Delete } from '@mui/icons-material';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { ChangeEvent, KeyValuePair } from '@/types/common';
 import { useAppDispatch } from '../store';
 
@@ -61,6 +61,7 @@ const DBFile = () => {
   });
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+  const { serviceName, fileName } = useParams<{ serviceName: string; fileName: string }>();
 
   const fetch = async (service: string, filename: string) =>
     await dispatch(fetchServiceFile(service, filename));
@@ -69,8 +70,7 @@ const DBFile = () => {
 
   useEffect(() => {
     const inner = async () => {
-      const splits = window.location.pathname.split('/');
-      const file = await fetch(splits[2], splits[3])
+      const file = await fetch(serviceName as string, fileName as string)
         .catch((message: string) => setState({ ...state, snackbar: message || 'Unknown error' }));
       
       if(!file?.data) return;
@@ -106,8 +106,7 @@ const DBFile = () => {
   }
 
   const handleEdit = () => {
-    const splits = window.location.pathname.split('/');
-    edit(splits[2], splits[3], { data: formatData(state.data) })
+    edit(serviceName as string, fileName as string, { data: formatData(state.data) })
       .then(resp => setState({ ...state, snackbar: 'Success! ' + (resp?.message || '')}))
       .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
   }
