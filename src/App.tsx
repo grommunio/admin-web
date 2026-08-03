@@ -45,6 +45,7 @@ const App = () => {
   const { Domains, loading } = useAppSelector(state => state.drawer);
   const serverConfig = useAppSelector(state => state.config);
   const configError = serverConfig.error;
+  const customImages = serverConfig.customImages[window.location.hostname] || serverConfig.customImages["*"];
 
   const routesProps: RoutesProps = {
     authenticated,
@@ -71,8 +72,8 @@ const App = () => {
       className={classes.root}
       style={{
         backgroundImage: darkMode ?
-          `url(${serverConfig.customImages[window.location.hostname]?.backgroundDark || backgroundDark})` : 
-          `url(${serverConfig.customImages[window.location.hostname]?.background || background})`
+          `url(${customImages?.backgroundDark || backgroundDark})` :
+          `url(${customImages?.background || background})`
       }}
     >
       {authenticated && <SilentRefresh />}
