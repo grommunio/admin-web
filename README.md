@@ -82,7 +82,12 @@ Run this command to create files for distribution.
 
 Result will be created in `/dist`
 
+## Deploying under a subpath
 
+By default the app assumes it is served at the root of its domain
+(`https://mail.example.com/`). To run it under a subpath instead
+(`https://mail.example.com/admin/`), only the `<base href="/">` tag
+in `public/index.html` needs to be adapted.
 
 # Server-side configuration
 

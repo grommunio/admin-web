@@ -5,7 +5,7 @@ import { DomainViewProps } from "@/types/common";
 import { Domain } from "@/types/domains";
 import React from "react";
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 type AuthenticatedDomainRouteProps = {
   component: React.ComponentType<DomainViewProps>;
@@ -17,9 +17,10 @@ type AuthenticatedDomainRouteProps = {
 }
 
 const AuthenticatedDomainRoute = ({ component: DomainRoute, props: childProps, domain, ...rest }: AuthenticatedDomainRouteProps) => {
+  const location = useLocation();
   if(!childProps.authenticated) {
-    return <Navigate to={`/login?redirect=${window.location.pathname}${window.location
-      .search}${window.location.hash}`}/>
+    return <Navigate to={`/login?redirect=${location.pathname}${location
+      .search}${location.hash}`}/>
   }
 
   return <DomainRoute domain={domain} {...rest} {...childProps} />

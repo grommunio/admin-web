@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
 import { editUserData, fetchUserData } from '../actions/users';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import HideFromSelect from '../components/HideFromSelect';
 import { useAppDispatch } from '../store';
 import { UpdateUser, UserProperties } from '@/types/users';
@@ -59,14 +59,14 @@ const ContactDetails = ({ domain }: DomainViewProps) => {
     unsaved: false,
   });
   const navigate = useNavigate();
+  const { userID: userIDParam } = useParams<{ userID: string }>();
 
   const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserData(domainID, userID));
   const edit = async (domainID: number, user: UpdateUser) => await dispatch(editUserData(domainID, user));
 
   useEffect(() => {
     const inner = async () => {
-      const splits = window.location.pathname.split('/');
-      const user = await fetch(parseInt(splits[1]), parseInt(splits[3]))
+      const user = await fetch(domain.ID, parseInt(userIDParam as string))
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
       if(!user) return;
       user.syncPolicy = user.syncPolicy || {};

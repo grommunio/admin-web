@@ -15,7 +15,7 @@ const error = () => {
 }
 
 // Fetch config.js on server and merge with default config
-fetch('//' + window.location.host + '/config.json')
+fetch('config.json')
   .then(async response => {
     if (response.ok) {
       try {
