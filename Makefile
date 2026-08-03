@@ -2,7 +2,7 @@ PACKAGE_NAME = grommunio-admin-web
 
 # Tools
 
-YARN ?= yarn
+YARN ?= $(shell command -v yarn >/dev/null 2>&1 && echo yarn || echo yarnpkg)
 
 # Variables
 
