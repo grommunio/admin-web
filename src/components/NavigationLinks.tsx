@@ -209,11 +209,13 @@ const NavigationLinks = (props: NavigationLinksProps) => {
   const { filter, adding, snackbar } = state;
   const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
   const pathname = location.pathname;
+  const customImages = config.customImages[window.location.hostname] || config.customImages["*"];
+
   return (
     (<React.Fragment>
       <div className={classes.drawerHeader}>
         <img
-          src={config.customImages[window.location.hostname]?.logoLight || logo}
+          src={customImages?.logoLight || logo}
           height="32"
           alt="grommunio"
           onClick={handleNavigation('')}

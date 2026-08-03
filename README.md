@@ -126,6 +126,7 @@ Each hostname is the key of an object, which has following keys:
   * `background`: The background image in light mode
   * `backgroundDark`: The background image in dark mode
   Each of these keys must be an URL to an image file.
+If none of the hostnames matches, the special hostname `*` will be used as a fallback.
 
   An example `customImages` object looks like this:
 
@@ -143,6 +144,11 @@ Each hostname is the key of an object, which has following keys:
       "logoLight": "anotherUrl.to/light/logo.png",
       "icon": "anotherUrl.to/light/icon.svg"
     },
+    "*": {
+      "logo": "defaultUrl.to/logo.png",
+      "logoLight": "defaultUrl.to/light/logo.png",
+      "icon": "defaultUrl.to/light/icon.svg"
+    }
   }
   ```
 As you can see, it is not necessary to overwrite every image, but the hostnames need to be accurate.

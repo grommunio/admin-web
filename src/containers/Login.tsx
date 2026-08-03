@@ -165,7 +165,7 @@ const Login = () => {
   }
 
   const { user, pass, loading, langsAnchorEl } = state;
-  const config = serverConfig.customImages[window.location.hostname];
+  const config = serverConfig.customImages[window.location.hostname] || serverConfig.customImages["*"];
 
   return (
     <div className={classes.root}>
