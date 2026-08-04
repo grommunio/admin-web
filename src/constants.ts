@@ -112,7 +112,7 @@ export const CAL_FOLDER_PERMISSIONS = [
 export const ALL_FOLDER_PERMISSIONS = 0x3fff;
 
 export const GWEB_PLUGIN_LIST = [
-  "archive", "chat", "desktopnotifications", "files", "filesbackendDefault", "filesbackendSeafile",
+  "ai", "archive", "chat", "desktopnotifications", "files", "filesbackendDefault", "filesbackendSeafile",
   "intranet", "kendox", "maps", "mdm", "meet", "passwd", "smime", "templatesnippets",
 ];
 
