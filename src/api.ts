@@ -13,7 +13,7 @@ import { NewServer, ServerPolicy, UpdateServer } from './types/servers';
 import { FetchSyncParams, RemoteWipeParams } from './types/sync';
 import { AddUserFolderPermission, DeleteOrphanedUsersParams, DeleteUserFolderPermission, NewUser, OofSettings, UpdateUser, USER_STATUS } from './types/users';
 
-const baseUrl = '//' + window.location.host + '/api/v1';
+const baseUrl = 'api/v1';
 
 /**
  * Handles fetch api errors

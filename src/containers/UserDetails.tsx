@@ -43,7 +43,7 @@ import { fetchServersData } from '../actions/servers';
 import Oof from '../components/user/Oof';
 import Tabs from '../components/user/Tabs';
 import Altnames from '../components/user/Altnames';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { throttle } from 'lodash';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 import { useAppDispatch } from '../store';
@@ -174,6 +174,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
   const [forwardError, setForwardError] = useState(false);
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
+  const { userID: userIDParam } = useParams<{ userID: string }>();
 
   const fetch = async (domainID: number, userID: number) => await dispatch(fetchUserData(domainID, userID));
   const fetchRoles = async () => await dispatch(fetchRolesData({ sort: 'name,asc', level: 0, limit: 100000 }))
@@ -188,8 +189,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   useEffect(() => {
     const inner = async () => {
-      const splits = window.location.pathname.split('/');
-      const user = await fetch(parseInt(splits[1]), parseInt(splits[3]))
+      const user = await fetch(domain.ID, parseInt(userIDParam as string))
         .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
       if(!user) return;
       const defaultPolicy = user.defaultPolicy || {};

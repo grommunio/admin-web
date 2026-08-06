@@ -18,12 +18,18 @@ import makeLoadableComponent from './lazy';
 // Async loading support.
 const LoadableApp = makeLoadableComponent(() => import('./App'));
 
+// Derive the router basename from the document's <base href>, so the app
+// works correctly no matter which subpath it is deployed under.
+// Falls back to "/" if no <base> tag is present.
+const basePathname = new URL(document.baseURI).pathname;
+const basename = basePathname.endsWith('/') ? basePathname.slice(0, -1) : basePathname;
+
 const container = document.getElementById('root') || document.createElement("div");
 const root = ReactDOM.createRoot(container);
 root.render(<Provider store={store}>
   <StyledEngineProvider injectFirst>
     <ToggleColorMode>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <LoadableApp />
       </BrowserRouter>
     </ToggleColorMode>
