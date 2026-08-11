@@ -41,7 +41,7 @@ function Dkim({ onClose, dnsCheck, domain }: DNSDialogProps) {
           size='small'
           sx={{ ml: 1 }}
         >
-          Generate DKIM keypair
+          {t("Generate DKIM keypair")}
         </Button>
       </DialogTitle>
       <DialogContent>
