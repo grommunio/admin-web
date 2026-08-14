@@ -154,13 +154,13 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
               postconf -e &apos;non_smtpd_milters = $smtpd_milters&apos;
             </pre>
             <pre>
-              mkdir /var/lib/grommunio-antispam/dkim
+              mkdir -m 0700 /var/lib/grommunio-antispam/dkim
             </pre>
             <pre>
               cp /var/lib/grommunio-admin-api/{domain.domainname}.dkim.key /var/lib/grommunio-antispam/dkim/
             </pre>
             <pre>
-              chown groas:grommunio /var/lib/grommunio-antispam/dkim/{domain.domainname}.dkim.key
+              chown -Rf groas:grommunio /var/lib/grommunio-antispam/dkim
             </pre>
             <pre>
               chmod 600 /var/lib/grommunio-antispam/dkim/{domain.domainname}.dkim.key
