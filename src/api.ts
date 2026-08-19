@@ -11,7 +11,7 @@ import { NewOrg, UpdateOrg } from './types/orgs';
 import { NewRole, UpdateRole } from './types/roles';
 import { NewServer, ServerPolicy, UpdateServer } from './types/servers';
 import { FetchSyncParams, RemoteWipeParams } from './types/sync';
-import { AddUserFolderPermission, DeleteOrphanedUsersParams, DeleteUserFolderPermission, NewUser, OofSettings, UpdateUser, USER_STATUS } from './types/users';
+import { AddUserFolderPermission, DeleteOrphanedUsersParams, DeleteUserFolderPermission, EditUserFolderPermission, NewUser, OofSettings, UpdateUser, USER_STATUS } from './types/users';
 
 const baseUrl = 'api/v1';
 
@@ -492,13 +492,19 @@ export function userFolder(username: string, folderID: string) {
   };
 }
 
-export function addUserFolderPermission(username: string, folderID: string, permission: AddUserFolderPermission) {  // TODO: Define
+export function addUserFolderPermission(username: string, folderID: string, permission: AddUserFolderPermission) {
   return async () => {
     return await post('/system/exmdb/' + username + '/folders/' + folderID + '/permissions', permission);
   };
 }
 
-export function deleteUserFolderPermission(username: string, folderID: string, permission: DeleteUserFolderPermission) {  // TODO: Define
+export function editUserFolderPermission(username: string, folderID: string, permittedUser: string, permission: EditUserFolderPermission) {
+  return async () => {
+    return await patch('/system/exmdb/' + username + '/folders/' + folderID + '/permissions/' + permittedUser, permission);
+  };
+}
+
+export function deleteUserFolderPermission(username: string, folderID: string, permission: DeleteUserFolderPermission) {
   return async () => {
     return await yeet('/system/exmdb/' + username + '/folders/' + folderID + '/permissions', permission);
   };

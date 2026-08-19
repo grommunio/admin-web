@@ -14,11 +14,12 @@ import { fetchUserFolder, fetchUserFolders, removeUserFolderPermissions } from '
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { Domain } from '@/types/domains';
 import Feedback from '../Feedback';
-import { AddCircle, Delete } from '@mui/icons-material';
+import { AddCircle, Delete, Edit } from '@mui/icons-material';
 import AddUserFolderMember from '../Dialogs/AddUserFolderMember';
 import { UserFolderPermission } from '@/types/users';
 import DeleteUserFolderPermissionDialog from '../Dialogs/DeleteUserFolderPermission';
 import { useTranslation } from 'react-i18next';
+import EditUserFolderMember from '../Dialogs/EditUserFolderMember';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -68,6 +69,7 @@ const Folders = ({ username, domain }: FoldersProps) => {
   const [selectedFolderPermissions, setSelectedFolderPermissions] = useState<UserFolderPermission[]>([]);
   const [adding, setAdding] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<string>("");
+  const [editing, setEditing] = useState<UserFolderPermission | null>(null);
   const userEmail = username + '@' + domain.domainname;
 
   useEffect(() => {
@@ -84,7 +86,6 @@ const Folders = ({ username, domain }: FoldersProps) => {
   }, [username]);
 
   const handleFolderClicked = (folder: Folder) => async (e: any) => {
-    console.log(e.target);
     const folderStringID = folder.ID.toString();
     setSelectedFolder(folder);
 
@@ -164,10 +165,14 @@ const Folders = ({ username, domain }: FoldersProps) => {
               <ListItem
                 divider
                 key={idx}
-                secondaryAction={
+                secondaryAction={<>
+                  <IconButton edge="end" onClick={() => setEditing(perm)}>
+                    <Edit color='info' />
+                  </IconButton>
                   <IconButton edge="end" onClick={() => setDeleting(perm.name)}>
                     <Delete color='error' />
                   </IconButton>
+                </>
                 }
               >
                 <ListItemText
@@ -190,6 +195,17 @@ const Folders = ({ username, domain }: FoldersProps) => {
         onError={snackbar => setSnackbar(snackbar)}
         domain={domain}
         username={username}
+        folderID={selectedFolder?.ID || 0}
+        folderContainer={selectedFolder?.container || ""}
+      />
+      <EditUserFolderMember
+        open={!!editing}
+        onClose={() => setEditing(null)}
+        onSuccess={handleAddSuccess}
+        onError={snackbar => setSnackbar(snackbar)}
+        domain={domain}
+        username={username}
+        permittedUser={editing}
         folderID={selectedFolder?.ID || 0}
         folderContainer={selectedFolder?.container || ""}
       />
