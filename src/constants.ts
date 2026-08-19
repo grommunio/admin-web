@@ -110,6 +110,7 @@ export const CAL_FOLDER_PERMISSIONS = [
   { name: "Store owner", value: 0x2000 },
 ];
 export const ALL_FOLDER_PERMISSIONS = 0x3fff;
+export const ALL_MAIL_FOLDER_PERMISSIONS = 0x27FF;
 
 export const GWEB_PLUGIN_LIST = [
   "ai", "archive", "chat", "desktopnotifications", "files", "filesbackendDefault", "filesbackendSeafile",

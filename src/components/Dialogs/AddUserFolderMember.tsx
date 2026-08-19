@@ -20,7 +20,7 @@ import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { USER_STATUS, UserListItem } from '../../types/users';
-import { ALL_FOLDER_PERMISSIONS, MAIL_FOLDER_PERMISSIONS, CAL_FOLDER_PERMISSIONS } from '../../constants';
+import { ALL_FOLDER_PERMISSIONS, MAIL_FOLDER_PERMISSIONS, CAL_FOLDER_PERMISSIONS, ALL_MAIL_FOLDER_PERMISSIONS } from '../../constants';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -79,7 +79,7 @@ const AddUserFolderMember = (props: AddUserFolderMemberProps) => {
   const handleAdd = () => {
     dispatch(setUserFolderPermissions(userEmail, folderID, {
       username: member?.username || "",
-      permissions: all ? [ALL_FOLDER_PERMISSIONS] : permissions,
+      permissions: all ? [folderContainer === "IPF.Appointment" ? ALL_FOLDER_PERMISSIONS : ALL_MAIL_FOLDER_PERMISSIONS] : permissions,
       recursive: recursive,
     }))
       .then(() => {
