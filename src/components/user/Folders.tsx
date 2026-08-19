@@ -64,6 +64,7 @@ const Folders = ({ username, domain }: FoldersProps) => {
   const [snackbar, setSnackbar] = useState("");
   const [folder, setFolder] = useState<Folder | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([]);
   const [selectedFolderPermissions, setSelectedFolderPermissions] = useState<UserFolderPermission[]>([]);
   const [adding, setAdding] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<string>("");
@@ -74,13 +75,29 @@ const Folders = ({ username, domain }: FoldersProps) => {
       (async () => {
         const folder = await dispatch(fetchUserFolders(userEmail))
           .catch((snackbar) => setSnackbar(snackbar));
-        setFolder(folder);
+        if (folder) {
+          setFolder(folder);
+          setExpandedFolders([folder.ID.toString()]);
+        }
       })();
     }
   }, [username]);
 
-  const handleFolderClicked = (folder: Folder) => async () => {
-    setSelectedFolder(folder)
+  const handleFolderClicked = (folder: Folder) => async (e: any) => {
+    console.log(e.target);
+    const folderStringID = folder.ID.toString();
+    setSelectedFolder(folder);
+
+    const folderIdx = expandedFolders.findIndex(id => id === folderStringID);
+    if(folderIdx === -1 ) {
+      setExpandedFolders([...expandedFolders, folderStringID]);
+    } else if(e.target.tagName === "svg" || e.target.tagName === "path") {
+      setExpandedFolders(curr => {
+        const c = [...curr];
+        c.splice(folderIdx, 1);
+        return c;
+      });
+    }
 
     const folderData = await dispatch(fetchUserFolder(userEmail, folder.ID))
       .catch((snackbar) => setSnackbar(snackbar));
@@ -130,7 +147,7 @@ const Folders = ({ username, domain }: FoldersProps) => {
       <div style={{ display: "flex" }}>
         {folder && <SimpleTreeView
           className={classes.richTree}
-          defaultExpandedItems={[folder.ID.toString()]}
+          expandedItems={expandedFolders}
         >
           {Object.keys(folder.subfolders).length > 0 && renderTree(folder)}
         </SimpleTreeView>}
