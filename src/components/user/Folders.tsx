@@ -156,7 +156,14 @@ const Folders = ({ username, domain }: FoldersProps) => {
         </SimpleTreeView>}
         {selectedFolder && <div style={{ flex: 1 }}>
           <Typography variant='h4'>{selectedFolder.name}</Typography>
-          <div style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: 8,
+              paddingTop: selectedFolder.ID !== folder?.ID ? 0 : 4, 
+              paddingBottom: selectedFolder.ID !== folder?.ID ? 0 : 4,
+            }}>
             <Typography variant='h6'>{t("Permissions")}</Typography>
             {selectedFolder.ID !== folder?.ID && <IconButton onClick={() => setAdding(true)}>
               <AddCircle color="primary" />

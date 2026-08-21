@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Grid2, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import { t } from "i18next";
 import { ChangeEvent } from "@/types/common";
@@ -54,7 +54,7 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
     setPermissions(mask);
   }
 
-  const readPermissionRadioValue = useMemo(() => {
+  const readPermissionRadioValue = () => {
     if(!isCalendarFolder) {
       if(permissions & FOLDER_PERMISSION_TYPES.readany) return FOLDER_PERMISSION_TYPES.readany;
       return 0; 
@@ -64,7 +64,7 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
     if(permissions & FOLDER_PERMISSION_TYPES.freebusydetailed) return FOLDER_PERMISSION_TYPES.freebusydetailed;
     if(permissions & FOLDER_PERMISSION_TYPES.freebusysimple) return FOLDER_PERMISSION_TYPES.freebusysimple;
     return 0;
-  }, [permissions]);
+  };
 
   const handleReadPermissions = (e: ChangeEvent) => {
     const { value } = e.target;
@@ -81,10 +81,9 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
     <Grid2 container>
       <Grid2 size={6}>
         <FormControl className={classes.form}>
-          <FormLabel>{t("Read")}</FormLabel>
+          <FormLabel focused={false}>{t("Read")}</FormLabel>
           <RadioGroup
-            defaultValue={0}
-            value={readPermissionRadioValue}
+            value={readPermissionRadioValue() || 0}
             onChange={handleReadPermissions}>
             <FormControlLabel
               value={0x0}
@@ -166,7 +165,7 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
     <Grid2 container style={{ marginTop: 16 }}>
       <Grid2 size={6}>
         <FormControl className={classes.form}>
-          <FormLabel>{t("Delete items")}</FormLabel>
+          <FormLabel focused={false}>{t("Delete items")}</FormLabel>
           <RadioGroup
             value={(permissions & (FOLDER_PERMISSION_TYPES.deleteowned | FOLDER_PERMISSION_TYPES.deleteany)) || true /* This is a bit janky */}
             defaultValue={true}

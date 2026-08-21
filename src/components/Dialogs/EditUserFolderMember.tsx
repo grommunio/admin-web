@@ -70,6 +70,7 @@ const EditUserFolderMember = (props: AddUserFolderMemberProps) => {
       .then(() => {
         setLoading(false);
         onSuccess();
+        onClose();
       })
       .catch((snackbar) => {
         setLoading(false);
