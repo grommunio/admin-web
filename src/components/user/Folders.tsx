@@ -85,14 +85,14 @@ const Folders = ({ username, domain }: FoldersProps) => {
     }
   }, [username]);
 
-  const handleFolderClicked = (folder: Folder) => async (e: any) => {
-    const folderStringID = folder.ID.toString();
-    setSelectedFolder(folder);
+  const handleFolderClicked = (clickedFolder: Folder) => async (e: any) => {
+    const folderStringID = clickedFolder.ID.toString();
+    setSelectedFolder(clickedFolder);
 
     const folderIdx = expandedFolders.findIndex(id => id === folderStringID);
-    if(folderIdx === -1 ) {
+    if(folderIdx === -1) {
       setExpandedFolders([...expandedFolders, folderStringID]);
-    } else if(e.target.tagName === "svg" || e.target.tagName === "path") {
+    } else if((e.target.tagName === "svg" || e.target.tagName === "path") && clickedFolder?.ID !== folder?.ID) {
       setExpandedFolders(curr => {
         const c = [...curr];
         c.splice(folderIdx, 1);
@@ -100,10 +100,12 @@ const Folders = ({ username, domain }: FoldersProps) => {
       });
     }
 
-    const folderData = await dispatch(fetchUserFolder(userEmail, folder.ID))
-      .catch((snackbar) => setSnackbar(snackbar));
+    if (clickedFolder.ID !== selectedFolder?.ID) {
+      const folderData = await dispatch(fetchUserFolder(userEmail, clickedFolder.ID))
+        .catch((snackbar) => setSnackbar(snackbar));
+      if(folderData) setSelectedFolderPermissions(folderData.members);
+    }
 
-    if(folderData) setSelectedFolderPermissions(folderData.members);
   }
 
   const renderTree = ({ ID, name, subfolders, parentID, container }: Folder) => (
@@ -156,16 +158,16 @@ const Folders = ({ username, domain }: FoldersProps) => {
           <Typography variant='h4'>{selectedFolder.name}</Typography>
           <div style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
             <Typography variant='h6'>{t("Permissions")}</Typography>
-            <IconButton onClick={() => setAdding(true)}>
+            {selectedFolder.ID !== folder?.ID && <IconButton onClick={() => setAdding(true)}>
               <AddCircle color="primary" />
-            </IconButton>
+            </IconButton>}
           </div>
           <List dense>
             {selectedFolderPermissions.map((perm, idx) =>
               <ListItem
                 divider
                 key={idx}
-                secondaryAction={<>
+                secondaryAction={selectedFolder.ID !== folder?.ID && <>
                   <IconButton edge="end" onClick={() => setEditing(perm)}>
                     <Edit color='info' />
                   </IconButton>

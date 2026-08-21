@@ -6,20 +6,16 @@ import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, 
   Button, DialogActions, CircularProgress,
   Theme,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
   FormControlLabel,
   Checkbox,
-  InputLabel,
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { updateUserFolderPermissions } from '../../actions/users';
 import { Domain } from '@/types/domains';
 import { useAppDispatch } from '../../store';
-import { ALL_FOLDER_PERMISSIONS, MAIL_FOLDER_PERMISSIONS, CAL_FOLDER_PERMISSIONS, ALL_MAIL_FOLDER_PERMISSIONS } from '../../constants';
 import { UserFolderPermission } from '@/types/users';
+import PermissionsGrid from '../PermissionsGrid';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -49,39 +45,29 @@ type AddUserFolderMemberProps = {
 }
 
 
-function getInitialSelection(rights: number, isCalFolder: boolean) {
-  return (isCalFolder ? CAL_FOLDER_PERMISSIONS : MAIL_FOLDER_PERMISSIONS)
-    .filter(p => p.value & rights)
-    .map(p => p.value);
-}
-
-
 const EditUserFolderMember = (props: AddUserFolderMemberProps) => {
   const { open, onClose, onSuccess, onError, domain, username, folderID, folderContainer, permittedUser } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const [ permissions, setPermissions ] = useState<number[]>([]);
+  const [ permissions, setPermissions ] = useState<number>(0);
   const [ recursive, setRecursive ] = useState<boolean>(false);
-  const [ all, setAll ] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
   const userEmail = username + '@' + domain.domainname;
 
   const handleEnter = () => {
     if(permittedUser) {
-      setPermissions(getInitialSelection(permittedUser.rights, folderContainer === "IPF.Appointment"))
+      setPermissions(permittedUser.rights)
     }
   };
 
   const handleAdd = () => {
     if(!permittedUser) return;
     dispatch(updateUserFolderPermissions(userEmail, folderID, permittedUser.name, {
-      permissions: all ? [folderContainer === "IPF.Appointment" ? ALL_FOLDER_PERMISSIONS : ALL_MAIL_FOLDER_PERMISSIONS] : permissions,
+      permissions: permissions,
       recursive: recursive,
     }))
       .then(() => {
-        setRecursive(false);
-        setPermissions([]);
         setLoading(false);
         onSuccess();
       })
@@ -91,16 +77,7 @@ const EditUserFolderMember = (props: AddUserFolderMemberProps) => {
       });
   }
 
-  const handleMultiselectChange = (event: SelectChangeEvent<number[]>)=> {
-    const { value } = event.target;
-    setPermissions(value as number[]);
-  };
-
   const handleRecursive = () => setRecursive(!recursive);
-
-  const handleAll = () => setAll(!all);
-
-  const permissionOptions = folderContainer === "IPF.Appointment" ? CAL_FOLDER_PERMISSIONS : MAIL_FOLDER_PERMISSIONS;
 
   return (
     <Dialog
@@ -122,39 +99,11 @@ const EditUserFolderMember = (props: AddUserFolderMemberProps) => {
       </DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>
         <FormControl className={classes.form}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <FormControl fullWidth>
-              <InputLabel>{t("Permissions")}</InputLabel>
-              <Select
-                multiple
-                value={all ? permissionOptions.map(p => p.value) : permissions}
-                onChange={handleMultiselectChange}
-                label={t("Permissions")}
-                disabled={all}
-              >
-                {permissionOptions.map(({ name, value }) => (
-                  <MenuItem
-                    key={value}
-                    value={value}
-                  >
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={all}
-                  onChange={handleAll}
-                  name="all"
-                  color="primary"
-                  sx={{ ml: 2 }}
-                />
-              }
-              label={t("All")}
-            />
-          </div>
+          <PermissionsGrid
+            permissions={permissions}
+            setPermissions={setPermissions}
+            isCalendarFolder={folderContainer === "IPF.Appointment"}
+          />
           <FormControlLabel
             control={
               <Checkbox
@@ -180,10 +129,10 @@ const EditUserFolderMember = (props: AddUserFolderMemberProps) => {
           onClick={handleAdd}
           variant="contained"
           color="primary"
-          disabled={loading || (!all && permissions.length === 0)}
+          disabled={loading}
           type="submit"
         >
-          {loading ? <CircularProgress size={24}/> : 'Add'}
+          {loading ? <CircularProgress size={24}/> : 'Edit'}
         </Button>
       </DialogActions>
     </Dialog>

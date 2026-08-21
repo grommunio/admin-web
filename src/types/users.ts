@@ -226,13 +226,10 @@ export type UserFolderPermission = {
 
 export type AddUserFolderPermission = {
   username: string;
-  permissions: number[];
+  permissions: number;
   recursive: boolean;
 }
 
-export type EditUserFolderPermission = {
-  permissions: number[];
-  recursive: boolean;
-}
+export type EditUserFolderPermission = Omit<AddUserFolderPermission, "username">;
 
 export type DeleteUserFolderPermission = Omit<AddUserFolderPermission, "permissions">;

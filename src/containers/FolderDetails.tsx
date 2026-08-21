@@ -244,6 +244,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
         onCancel={handlePermissionsCancel}
         domain={domain}
         folderID={folder.folderid}
+        folderContainer={folder.container}
       />}
     </ViewWrapper>
   );
