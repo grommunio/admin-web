@@ -9,10 +9,10 @@ import {
   URLParams,
   DRAWER_DOMAINS_REVEICED,
 } from './types';
-import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains, disabledPlugins, editDomainPlugins, dkimKeygen } from '../api';
+import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains, disabledPlugins, editDomainPlugins, dkimKeygen, editSmtpGateway,  smtpGateway } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler2, defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
-import { CreateDomainParams, DeleteDomainProps, NewDomain, UpdateDomain } from '@/types/domains';
+import { CreateDomainParams, DeleteDomainProps, NewDomain, SmtpGatewayData, UpdateDomain } from '@/types/domains';
 import { ApiError } from '@/types/common';
 
 
@@ -63,6 +63,14 @@ export function editDomainData(domain: UpdateDomain) {
 
 export function editDomainPluginData(domainID: number, pluginList: string[]) {
   return defaultPatchHandler(editDomainPlugins, domainID, pluginList);
+}
+
+export function fetchDomainSmtpGateway(id: number) {
+  return defaultDetailsHandler(smtpGateway, id);
+}
+
+export function editDomainSmtpGateway(domainID: number, gateway: SmtpGatewayData) {
+  return defaultPatchHandler(editSmtpGateway, domainID, gateway);
 }
 
 export function deleteDomainData(id: number, params: DeleteDomainProps) {
