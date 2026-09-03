@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import {
@@ -32,7 +32,8 @@ import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
-import { AppSettingsAlt, Dns, Extension } from '@mui/icons-material';
+import { AppSettingsAlt, Dns, Extension, Send } from '@mui/icons-material';
+import SmtpGateway, { SmtpGatewayHandle } from './SmtpGateway';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
@@ -128,6 +129,37 @@ const DomainDetails = () => {
     await dispatch(fetchOrgsData({ sort: 'name,asc', limit: 1000000, level: 0 }));
   const fetchServers = async () =>
     await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
+
+  // SMTP-gateway tab is rendered with a "controlled" component that
+  // exposes its data buffer through a ref. The parent's Save button
+  // drives the persistence, exactly like the Disabled plugins tab.
+  const smtpRef = useRef<SmtpGatewayHandle>(null);
+  const csrf = useAppSelector((state) => state.auth.csrf);
+  const saveSmtpGateway = async () => {
+    const gw = smtpRef.current?.getData();
+    if (!gw) return;
+    const { ID } = state;
+    try {
+      const csrfHeader = csrf || '';
+      const r = await window.fetch(`/api/v1/domains/${ID}/smtpGateway`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfHeader,
+        },
+        body: JSON.stringify(gw),
+      });
+      if (!r.ok) {
+        const body = await r.json().catch(() => ({}));
+        setSnackbar(body.message || `HTTP ${r.status}`);
+        return;
+      }
+      setSnackbar('SMTP gateway saved Success!');
+    } catch (e: any) {
+      setSnackbar(String(e) || 'Unknown error');
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -311,7 +343,9 @@ const DomainDetails = () => {
           <Tab label={t("Domain")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Dns />}/>
           <Tab label={t("Sync policy")} sx={{ minHeight: 48 }} iconPosition='start' icon={<AppSettingsAlt />}/>
           <Tab label={t("Disabled plugins")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Extension />}/>
+          <Tab label={t("SMTP gateway")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Send />}/>
         </Tabs>
+        {tab === 3 && <SmtpGateway ref={smtpRef} />}
         {tab === 0 && <FormControl className={classes.form}>
           <Grid2 container className={classes.input}>
             <TextField
@@ -449,7 +483,7 @@ const DomainDetails = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleEdit}
+          onClick={tab === 3 ? saveSmtpGateway : handleEdit}
           disabled={!writable}
         >
           {t('Save')}
