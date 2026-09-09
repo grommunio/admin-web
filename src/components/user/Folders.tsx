@@ -165,16 +165,16 @@ const Folders = ({ username, domain }: FoldersProps) => {
               paddingBottom: selectedFolder.ID !== folder?.ID ? 0 : 4,
             }}>
             <Typography variant='h6'>{t("Permissions")}</Typography>
-            {selectedFolder.ID !== folder?.ID && <IconButton onClick={() => setAdding(true)}>
+            <IconButton onClick={() => setAdding(true)}>
               <AddCircle color="primary" />
-            </IconButton>}
+            </IconButton>
           </div>
           <List dense>
             {selectedFolderPermissions.map((perm, idx) =>
               <ListItem
                 divider
                 key={idx}
-                secondaryAction={selectedFolder.ID !== folder?.ID && <>
+                secondaryAction={<>
                   <IconButton edge="end" onClick={() => setEditing(perm)}>
                     <Edit color='info' />
                   </IconButton>
