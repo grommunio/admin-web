@@ -199,9 +199,9 @@ export function getStringFromCommand(command: number): string {
 export function getPolicyDiff(defaultPolicy: Partial<SyncPolicy>, syncPolicy: Partial<SyncPolicy>): Partial<SyncPolicy> {
   const formattedPolicy: Partial<SyncPolicy> = {
     ...syncPolicy,
-    devpwhistory: syncPolicy.devpwhistory || 0,
-    devpwexpiration: syncPolicy.devpwexpiration || 0,
-    maxinacttimedevlock: syncPolicy.maxinacttimedevlock || 0,
+    devpwhistory: Number(syncPolicy.devpwhistory) || 0,
+    devpwexpiration: Number(syncPolicy.devpwexpiration) || 0,
+    maxinacttimedevlock: Number(syncPolicy.maxinacttimedevlock) || 0,
   };
   const result: Record<string, any> = {};
   for(const [key, value] of Object.entries(defaultPolicy)) {

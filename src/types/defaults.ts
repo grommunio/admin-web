@@ -7,6 +7,7 @@ export type FullCreateParams = {
   pop3_imap: boolean;
   lang: string;
   chat: boolean;
+  keycloak: boolean;
   privChat: boolean;
   privWeb: boolean;
   privVideo: boolean;
