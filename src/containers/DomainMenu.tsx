@@ -231,12 +231,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
   };
 
   const handleEdit = () => {
-    const { createParams, sizeUnits } = state;
-    // eslint-disable-next-line camelcase
-    const { storagequotalimit, prohibitreceivequota, prohibitsendquota,
-      lang, privChat, privArchive, privFiles, privVideo, privWeb,
-      privEas, privDav, smtp, changePassword, pop3_imap } = createParams;
-
+    const { sizeUnits } = state;
     // Convert quotas from selected size unit to KiB
     const quotas = {
       storagequotalimit: storagequotalimit * 2 ** (10 * sizeUnits.storagequotalimit) || undefined,
@@ -250,7 +245,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
           ...quotas,
         },
         lang, privChat, privArchive, privFiles, privVideo, privWeb,
-        privEas, privDav, smtp, changePassword, pop3_imap
+        privEas, privDav, smtp, changePassword, pop3_imap, keycloak
       },
     }, domain.ID)
       .then(() => setSnackbar('Success!'))
@@ -262,7 +257,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
     lang, privChat, privArchive, privFiles, privVideo, privWeb,
     privEas, privDav,
     // eslint-disable-next-line camelcase
-    smtp, changePassword, pop3_imap } = createParams;
+    keycloak, smtp, changePassword, pop3_imap } = createParams;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const editable = capabilities.includes(ORG_ADMIN);
 
@@ -493,6 +488,16 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
                 />
               }
               label={t('Allow Chat')}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={keycloak || false}
+                  onChange={handleCheckbox('keycloak')}
+                  color="primary"
+                />
+              }
+              label={t('Keycloak chat auth')}
             />
             <FormControlLabel
               control={
