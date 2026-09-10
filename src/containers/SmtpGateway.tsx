@@ -54,7 +54,6 @@ export type SmtpGatewayData = {
   username: string;
   password: string;
   passwordSet: boolean;
-  fromAddress: string;
   enabled: boolean;
   description: string;
 };
@@ -66,7 +65,6 @@ const EMPTY: SmtpGatewayData = {
   username: '',
   password: '',
   passwordSet: false,
-  fromAddress: '',
   enabled: true,
   description: '',
 };
@@ -181,15 +179,6 @@ const SmtpGateway = forwardRef<SmtpGatewayHandle>((_props, ref) => {
           <MenuItem value="tls">{t("TLS (implicit, port 465)")}</MenuItem>
         </Select>
       </FormControl>
-
-      <TextField
-        fullWidth
-        label={t("From address (envelope sender override)")}
-        value={data.fromAddress}
-        onChange={(e) => update('fromAddress', e.target.value)}
-        placeholder="noreply@example.com"
-        className={classes.row}
-      />
 
       <TextField
         fullWidth
