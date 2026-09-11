@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { Button, CircularProgress, Dialog, DialogContent, DialogTitle, Divider, MenuItem, TextField, Theme, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { copyToClipboard } from '../../../utils';
-import { Check, CopyAll, WarningAmber } from '@mui/icons-material';
+import { Check, CopyAll, TaskAlt, WarningAmber } from '@mui/icons-material';
 import { BaseDomain } from '../../../types/domains';
 import { createDkimKeypair } from '../../../actions/domains';
 import { useAppDispatch } from '../../../store';
@@ -64,6 +64,7 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
   const [mode, setMode] = useState("dns");
   const [selector, setSelector] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redisStored, setRedisStored] = useState(true);
   const [keyCopied, setKeyCopied] = useState(false);
   const [commandsCopied, setCommandsCopied] = useState(false);
   const [snackbar, setSnackbar] = useState("");
@@ -71,9 +72,12 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
   const handleKeygen = async () => {
     setKeyCopied(false);
     setLoading(true);
-    const key = await dispatch(createDkimKeypair(domain.ID, { type, mode, selector: selector || undefined }))
+    const response = await dispatch(createDkimKeypair(domain.ID, { type, mode, selector: selector || undefined }))
       .catch((err) => setSnackbar(err));
-    setPubkey(key);
+    // Newer backends return {pubKey, redisStored, redisError}; older ones
+    // return the bare public key and always require manual installation.
+    setPubkey(typeof response === "string" ? response : (response?.pubKey ?? ""));
+    setRedisStored(typeof response === "object" && response !== null ? Boolean(response.redisStored) : false);
     setLoading(false);
   }
 
@@ -158,7 +162,18 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
         >
           {t(keyCopied ? "Copied" : "Copy key")}
         </Button>}
-        {!!pubKey && <div className={classes.manual}>
+        {!!pubKey && redisStored && <div className={classes.manual}>
+          <div className={classes.flexRow}>
+            <TaskAlt color='success' sx={{ mr: 2 }}/>
+            <Typography variant='h6'>
+              {t("The key has been installed on the server")}
+            </Typography>
+          </div>
+          <Typography sx={{ mb: 1 }}>
+            {t("The private key was pushed to the DKIM keystore and is used for signing automatically")}.
+          </Typography>
+        </div>}
+        {!!pubKey && !redisStored && <div className={classes.manual}>
           <div className={classes.flexRow}>
             <WarningAmber color='warning' sx={{ mr: 2 }}/>
             <Typography variant='h6' color='warning'>
@@ -167,7 +182,7 @@ function GenerateDkimKeys({ open, onClose, domain }: GenerateDkimKeysProps) {
           </div>
           <Typography sx={{ mb: 1, fontWeight: "bold" }}>
             {t("The private key has been generated on the server")}.{" "}
-            {t("Because the API cannot write to the grommunio-antispam directory, you need to make additional changes on the server manually")}:
+            {t("Because the API could not store it in the DKIM keystore, you need to make additional changes on the server manually")}:
           </Typography>
           <div className={classes.commands}>
             <pre>
