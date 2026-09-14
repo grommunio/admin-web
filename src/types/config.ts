@@ -4,5 +4,6 @@ export type CustomImageSet = {
   icon?: string;
   background?: string;
   backgroundDark?: string;
+  favicon?: string;
 }
 export type StoredCustomImages = Record<string, CustomImageSet>;
