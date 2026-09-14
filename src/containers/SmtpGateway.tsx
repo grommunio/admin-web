@@ -10,10 +10,10 @@
 // URL per sender domain.
 //
 // The component is "controlled" — it only renders the form fields
-// and the data buffer, and exposes that buffer to the parent
-// (DomainDetails) via an imperative handle (forwardRef/
-// useImperativeHandle). The parent's existing Save button drives
-// persistence, exactly like the Disabled plugins tab.
+// and the data buffer, and delegates the actual save action to
+// the parent (DomainDetails) via the `onSave` prop.  The parent's
+// existing Save button drives persistence, exactly like the
+// Disabled plugins tab does.
 
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
@@ -77,6 +77,9 @@ export type SmtpGatewayHandle = {
    *  the latest typed values, even if the user did not click
    *  "Save" inside the tab first. */
   getData: () => SmtpGatewayData;
+  /** True if all required fields are filled. The parent disables
+   *  its Save button while this is false. */
+  isValid: () => boolean;
 };
 
 const SmtpGateway = forwardRef<SmtpGatewayHandle>((_props, ref) => {
@@ -129,6 +132,7 @@ const SmtpGateway = forwardRef<SmtpGatewayHandle>((_props, ref) => {
       if (!data.password) delete payload.password;
       return payload;
     },
+    isValid: () => Boolean(data.host),
   }), [data]);
 
   if (loading) {
