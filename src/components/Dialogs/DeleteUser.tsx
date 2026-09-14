@@ -68,7 +68,7 @@ const DeleteUser = (props: DeleteUserProps) => {
               color="primary"
             />
           }
-          label={t("Delete files?")}
+          label={t("Delete mail directory?")}
         />
         <FormControlLabel
           control={
