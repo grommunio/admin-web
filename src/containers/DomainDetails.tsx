@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,7 +10,9 @@ import {
   Grid2,
   TextField,
   FormControl,
+  InputLabel,
   MenuItem,
+  Select,
   Button,
   Tabs,
   Tab,
@@ -33,13 +35,12 @@ import ViewWrapper from '../components/ViewWrapper';
 import { fetchServersData } from '../actions/servers';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import { AppSettingsAlt, Dns, Extension, Send } from '@mui/icons-material';
-import SmtpGateway, { SmtpGatewayHandle } from './SmtpGateway';
 import { useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
 import { Org } from '@/types/orgs';
 import { Server } from '@/types/servers';
-import { DOMAIN_STATUS, UpdateDomain } from '../types/domains';
+import { DOMAIN_STATUS, SmtpGatewayData, UpdateDomain } from '../types/domains';
 import { SyncPolicy } from '@/types/sync';
 
 
@@ -66,6 +67,17 @@ const useStyles = makeStyles()((theme: Theme) => ({
     margin: theme.spacing(1),
   }
 }));
+
+const EMPTY_SMTP_GATEWAY: SmtpGatewayData = {
+  host: '',
+  port: 25,
+  encryption: 'none',
+  username: '',
+  password: '',
+  passwordSet: false,
+  enabled: true,
+  description: '',
+};
 
 type DomainDetailsState = {
   ID: number;
@@ -116,6 +128,7 @@ const DomainDetails = () => {
     unsaved: false,
   });
   const [disabledPlugins, setDisabledPlugins] = useState<string[]>([]);
+  const [smtpGateway, setSmtpGateway] = useState<SmtpGatewayData>(EMPTY_SMTP_GATEWAY);
   const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState("");
   const context = useContext(CapabilityContext);
@@ -130,33 +143,32 @@ const DomainDetails = () => {
   const fetchServers = async () =>
     await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
 
-  // SMTP-gateway tab is rendered with a "controlled" component that
-  // exposes its data buffer through a ref. The parent's Save button
-  // drives the persistence, exactly like the Disabled plugins tab.
-  const smtpRef = useRef<SmtpGatewayHandle>(null);
+  // The backend stores the SMTP gateway config in the `domain_smtp_gateway`
+  // MySQL table; gromox reads the same table at SMTP delivery time and
+  // selects the outgoing relay per sender domain.
   const csrf = useAppSelector((state) => state.auth.csrf);
   const saveSmtpGateway = async () => {
-    const gw = smtpRef.current?.getData();
-    if (!gw) return;
-    const { ID } = state;
+    // Don't send the password back unless it was edited.
+    const payload: any = { ...smtpGateway };
+    if(!smtpGateway.password)
+      delete payload.password;
     try {
-      const csrfHeader = csrf || '';
-      const r = await window.fetch(`/api/v1/domains/${ID}/smtpGateway`, {
+      const r = await window.fetch(`/api/v1/domains/${state.ID}/smtpGateway`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'X-CSRF-TOKEN': csrfHeader,
+          'X-CSRF-TOKEN': csrf || '',
         },
-        body: JSON.stringify(gw),
+        body: JSON.stringify(payload),
       });
-      if (!r.ok) {
+      if(!r.ok) {
         const body = await r.json().catch(() => ({}));
         setSnackbar(body.message || `HTTP ${r.status}`);
         return;
       }
-      setSnackbar('SMTP gateway saved Success!');
-    } catch (e: any) {
+      setSnackbar('Success!');
+    } catch(e: any) {
       setSnackbar(String(e) || 'Unknown error');
     }
   };
@@ -196,10 +208,16 @@ const DomainDetails = () => {
 
   const handleInput = (field: string) => (event: ChangeEvent) => {
     setState({
-      ...state, 
+      ...state,
       [field]: event.target.value,
     });
   }
+
+  const updateSmtp = <K extends keyof SmtpGatewayData>(field: K, value: SmtpGatewayData[K]) =>
+    setSmtpGateway(gw => ({
+      ...gw,
+      [field]: value,
+    }));
 
   const handleCheckbox = (field: string) => (event: ChangeEvent) => setState({
     ...state, 
@@ -255,6 +273,31 @@ const DomainDetails = () => {
           setDisabledPlugins(plugins.data || [])
         }
         setLoading(false);
+      })();
+    }
+
+    // SMTP gateway tab
+    if(tab === 3) {
+      (async () => {
+        setLoading(true);
+        try {
+          // window.fetch, not the component-scoped fetch (domain details action)
+          const r = await window.fetch(`/api/v1/domains/${parseInt(getStringAfterLastSlash())}/smtpGateway`, {
+            headers: { 'Accept': 'application/json' },
+          });
+          if(r.status === 404)
+            setSmtpGateway(EMPTY_SMTP_GATEWAY);
+          else if(!r.ok)
+            setSnackbar(`${t("Failed to load")} (${r.status})`);
+          else {
+            const body = await r.json();
+            setSmtpGateway(body.data ? { ...EMPTY_SMTP_GATEWAY, ...body.data } : EMPTY_SMTP_GATEWAY);
+          }
+        } catch(e: any) {
+          setSnackbar(String(e) || 'Unknown error');
+        } finally {
+          setLoading(false);
+        }
       })();
     }
   }
@@ -345,7 +388,67 @@ const DomainDetails = () => {
           <Tab label={t("Disabled plugins")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Extension />}/>
           <Tab label={t("SMTP gateway")} sx={{ minHeight: 48 }} iconPosition='start' icon={<Send />}/>
         </Tabs>
-        {tab === 3 && <SmtpGateway ref={smtpRef} />}
+        {tab === 3 && <div className={classes.form}>
+          <Typography variant="body2" color="textSecondary" style={{ marginBottom: 8 }}>
+            {t("Route outgoing mail from this domain through a specific SMTP server. "
+              + "Leave empty to use the global default.")}
+          </Typography>
+          <TextField
+            fullWidth
+            className={classes.input}
+            label={t("Host")}
+            value={smtpGateway.host}
+            onChange={e => updateSmtp('host', e.target.value)}
+            placeholder="smtp.example.com"
+            required
+          />
+          <TextField
+            fullWidth
+            type="number"
+            className={classes.input}
+            label={t("Port")}
+            value={smtpGateway.port}
+            onChange={e => updateSmtp('port', Number(e.target.value) || 25)}
+          />
+          <FormControl fullWidth className={classes.input}>
+            <InputLabel id="smtp-encryption-label">{t("Encryption")}</InputLabel>
+            <Select
+              labelId="smtp-encryption-label"
+              label={t("Encryption")}
+              value={smtpGateway.encryption}
+              onChange={e => updateSmtp('encryption', e.target.value as SmtpGatewayData['encryption'])}
+            >
+              <MenuItem value="none">{t("None (plain SMTP)")}</MenuItem>
+              <MenuItem value="starttls">{t("STARTTLS (verify certificate)")}</MenuItem>
+              <MenuItem value="starttls_unverified">{t("STARTTLS (do not verify certificate)")}</MenuItem>
+              <MenuItem value="tls">{t("TLS (implicit, port 465)")}</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            className={classes.input}
+            label={t("Username")}
+            value={smtpGateway.username}
+            onChange={e => updateSmtp('username', e.target.value)}
+            autoComplete="off"
+          />
+          <TextField
+            fullWidth
+            type="password"
+            className={classes.input}
+            label={t("Password") + (smtpGateway.passwordSet ? ` (${t("set — leave empty to keep")})` : '')}
+            value={smtpGateway.password}
+            onChange={e => updateSmtp('password', e.target.value)}
+            autoComplete="new-password"
+          />
+          <TextField
+            fullWidth
+            className={classes.input}
+            label={t("Description")}
+            value={smtpGateway.description}
+            onChange={e => updateSmtp('description', e.target.value)}
+          />
+        </div>}
         {tab === 0 && <FormControl className={classes.form}>
           <Grid2 container className={classes.input}>
             <TextField
