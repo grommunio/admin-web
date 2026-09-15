@@ -129,38 +129,40 @@ const Account = (props: AccountProps) => {
         }}
       >
         <Typography align="center">
-          {rawMSE !== undefined ? `${readableMSE} (${usedSpace})` : t('Store size indeterminate')}
+          {rawMSE !== undefined ? readableMSE + (!rawSTQ ? "" : ` (${usedSpace})`) : t('Store size indeterminate')}
         </Typography>
       </div>
-      <div
-        style={{
-          width: usedSpace,
-          height: 24,
-          background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}
-      ></div>
-      <div
-        style={{
-          position: 'absolute',
-          zIndex: 5,
-          width: sqPosition,
-          height: 24,
-          borderRight: `4px solid ${yellow['500']}`,
-          top: 0,
-        }}
-      ></div>
-      <div
-        style={{
-          position: 'absolute',
-          zIndex: 5,
-          width: rqPosition,
-          height: 24,
-          borderRight: `4px solid ${red['500']}`,
-          top: 0,
-        }}
-      ></div>
+      {rawSTQ && <>
+        <div
+          style={{
+            width: usedSpace,
+            height: 24,
+            background: 'linear-gradient(150deg, #56CCF2, #2F80ED)',
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        ></div>
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 5,
+            width: sqPosition,
+            height: 24,
+            borderRight: `4px solid ${yellow['500']}`,
+            top: 0,
+          }}
+        ></div>
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 5,
+            width: rqPosition,
+            height: 24,
+            borderRight: `4px solid ${red['500']}`,
+            top: 0,
+          }}
+        ></div>
+      </>}
     </div>;
   }
 

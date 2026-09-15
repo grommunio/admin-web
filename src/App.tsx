@@ -53,6 +53,21 @@ const App = () => {
   };
   const darkMode = colorContext.mode === "dark";
 
+  // Set configured favicon
+  useEffect(() => {
+    if(customImages) {
+      const href = customImages.favicon;
+      if(!href) return;
+      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = href;
+    }
+  }, [customImages]);
+
   // componentDidMount()
   useEffect(() => {
     // Get the selected language from local store and apply to i18-next

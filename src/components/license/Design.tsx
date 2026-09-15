@@ -50,7 +50,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 type CustomImages = Partial<
-  Record<'hostname' | 'logo' | 'logoLight' | 'icon' | 'background' | 'backgroundDark', string>
+  Record<'hostname' | 'logo' | 'logoLight' | 'icon' | 'background' | 'backgroundDark' | 'favicon', string>
 >[];
 
 interface DesignState {
@@ -72,13 +72,14 @@ const Design = () => {
     setState({
       ...state,
       customImages: Object.entries(storedImages)
-        .map(([hostname, { logo, logoLight, icon, background, backgroundDark }]) => ({
+        .map(([hostname, { logo, logoLight, icon, background, backgroundDark, favicon }]) => ({
           hostname,
           logo,
           logoLight,
           icon,
           background,
-          backgroundDark
+          backgroundDark,
+          favicon
         })),
     });
   }, []);
@@ -119,7 +120,7 @@ const Design = () => {
       {t("design_sub")}
     </Typography>
     <Paper className={classes.paper} elevation={1}>
-      {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark}, idx) =>
+      {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark, favicon }, idx) =>
         <div className={classes.imageGroup} key={idx}>
           <TextField
             label={t("Hostname")}
@@ -179,6 +180,16 @@ const Design = () => {
                 fullWidth
               />
               <img src={backgroundDark || ''} alt="" className={classes.imgPreview}/>
+            </Grid2>
+            <Grid2 container direction="column" alignItems="center" className={classes.grid}>
+              <TextField
+                label={t("Favicon")}
+                value={favicon || ''}
+                variant="standard"
+                onChange={handleImgInput("favicon", idx)}
+                fullWidth
+              />
+              <img src={favicon || ''} alt="" className={classes.imgPreview}/>
             </Grid2>
           </div>
         </div>

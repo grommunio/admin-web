@@ -362,6 +362,22 @@ const DomainDetails = () => {
     setDisabledPlugins(newChecked);
   };
 
+  const handleMaxUser = (event: ChangeEvent) => {
+    const input: string = event.target.value;
+    if(input === "") {
+      setState({
+        ...state,
+        maxUser: "",
+      });
+    }
+    if(input && input.match("^\\d*?$")) {
+      setState({
+        ...state,
+        maxUser: input,
+      });
+    }
+  }
+
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
   const { domainname, org, domainStatus, maxUser, title, address, adminName,
     tel, syncPolicy, tab, defaultPolicy,
@@ -487,7 +503,7 @@ const DomainDetails = () => {
             label={t("Maximum users")} 
             fullWidth 
             value={maxUser || ''}
-            onChange={handleInput('maxUser')}
+            onChange={handleMaxUser}
           />
           <TextField 
             className={classes.input} 
