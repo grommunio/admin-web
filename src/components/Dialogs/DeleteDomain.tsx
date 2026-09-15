@@ -88,7 +88,7 @@ const DeleteDomain = (props: DeleteDomainProps) => {
               disabled={!purge}
             />
           }
-          label={t("Delete files?")}
+          label={t("Delete mail directories?")}
         />
       </DialogContent>}
       <DialogActions>

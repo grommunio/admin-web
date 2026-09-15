@@ -278,10 +278,10 @@ const DnsHealth = (props: DnsHealthProps) => {
 
   const getDmarcColor = () => {
     const { dnsCheck } = state;
-    const { dkim } = dnsCheck;
-    if(!dkim) return errorColor;
+    const { dmarc } = dnsCheck;
+    if(!dmarc) return errorColor;
 
-    const score = scoreDNSResult(dkim.externalDNS, true, "rec", "opt");
+    const score = scoreDNSResult(dmarc.externalDNS, true, "rec", "opt");
     return getChipColorFromScore(score);
   }
 

@@ -131,6 +131,8 @@ Each hostname is the key of an object, which has following keys:
   * `icon`: The icon in the collapsed drawer
   * `background`: The background image in light mode
   * `backgroundDark`: The background image in dark mode
+  * `favicon`: The site's favicon
+
   Each of these keys must be an URL to an image file.
 If none of the hostnames matches, the special hostname `*` will be used as a fallback.
 
@@ -143,7 +145,8 @@ If none of the hostnames matches, the special hostname `*` will be used as a fal
       "logoLight": "url.to/light/logo.png",
       "icon": "url.to/light/icon.svg",
       "background": "url.to/background.svg",
-      "backgroundDark": "url.to/dark/background.svg"
+      "backgroundDark": "url.to/dark/background.svg",
+      "favicon": "url.to/fancy/favicon.png"
     },
     "example.com": {
       "logo": "anotherUrl.to/logo.png",

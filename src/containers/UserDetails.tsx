@@ -319,17 +319,16 @@ const UserDetails = ({ domain }: DomainViewProps) => {
     await edit(domain.ID, {
       ID: user.ID,
       status: intValue,
-    }).then(() => setState({ ...state, snackbar: 'Success!' }))
-      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
-    setState({
-      ...state, 
+    }).then(() => setState({
+      ...state,
       user: {
         ...user,
         status: intValue,
       },
-      unsaved: true,
-      changingPw: intValue === 0 && user.status === USER_STATUS.SHARED && !user.ldapID,
-    });
+      changingPw: intValue !== USER_STATUS.SHARED && user.status === USER_STATUS.SHARED && !user.ldapID,
+      snackbar: 'Success!'
+    }))
+      .catch(msg => setState({ ...state, snackbar: msg || 'Unknown error' }));
   }
 
   const handlePropertyChange = (field: keyof UserProperties) => (event: ChangeEvent) => {
