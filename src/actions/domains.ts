@@ -9,7 +9,7 @@ import {
   URLParams,
   DRAWER_DOMAINS_REVEICED,
 } from './types';
-import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains, disabledPlugins, editDomainPlugins, editSmtpGateway, dkimKeygen, smtpGateway } from '../api';
+import { domains, addDomain, editDomain, deleteDomain, domain, defaultSyncPolicy, dns, drawerDomains, disabledPlugins, editDomainPlugins, dkimKeygen, editSmtpGateway,  smtpGateway } from '../api';
 import { defaultDeleteHandler, defaultDetailsHandler, defaultListHandler2, defaultPatchHandler, defaultPostHandler } from './handlers';
 import { Dispatch } from 'redux';
 import { CreateDomainParams, DeleteDomainProps, NewDomain, SmtpGatewayData, UpdateDomain } from '@/types/domains';
