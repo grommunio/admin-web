@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 import { URLParams } from './actions/types';
 import store from './store';
-import { NewDomain, UpdateDomain } from './types/domains';
+import { NewDomain, SmtpGatewayData, UpdateDomain } from './types/domains';
 import { NewFolder, UpdateFolder } from './types/folders';
 import { NewGroup, UpdateGroup } from './types/groups';
 import { CheckLdapUsersParams, FetchLdapParams, ImportLdapParams, LdapConfigData, LdapDumpParams, SyncLdapParams } from './types/ldap';
@@ -276,6 +276,21 @@ export function disabledPlugins(id: number) {
 export function editDomainPlugins(id: number, pluginList: string[]) {
   return async () => {
     return await put(`/domains/${id}/disabledPlugins`, pluginList)
+  }
+}
+
+export function smtpGateway(id: number) {
+  return async () => {
+    const resp = await fetch(`${baseUrl}/domains/${id}/smtpGateway`);
+    // 404 means no gateway has been configured for this domain yet
+    if(resp.status === 404) return { data: null };
+    return await handleErrors(resp);
+  }
+}
+
+export function editSmtpGateway(id: number, gateway: SmtpGatewayData) {
+  return async () => {
+    return await put(`/domains/${id}/smtpGateway`, gateway)
   }
 }
 
