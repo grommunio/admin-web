@@ -25,7 +25,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import { editDomainData, editDomainPluginData, fetchDomainDetails, fetchDomainPlugins } from '../actions/domains';
+import { editDomainData, editDomainPluginData, editDomainSmtpGateway, fetchDomainDetails, fetchDomainPlugins, fetchDomainSmtpGateway } from '../actions/domains';
 import { getStringAfterLastSlash, getPolicyDiff } from '../utils';
 import { fetchOrgsData } from '../actions/orgs';
 import SyncPolicies from '../components/SyncPolicies';
@@ -144,34 +144,10 @@ const DomainDetails = () => {
     await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
 
   // The backend stores the SMTP gateway config in the `domain_smtp_gateway`
-  // MySQL table; gromox reads the same table at SMTP delivery time and
-  // selects the outgoing relay per sender domain.
-  const csrf = useAppSelector((state) => state.auth.csrf);
-  const saveSmtpGateway = async () => {
-    // Don't send the password back unless it was edited.
-    const payload: any = { ...smtpGateway };
-    if(!smtpGateway.password)
-      delete payload.password;
-    try {
-      const r = await window.fetch(`/api/v1/domains/${state.ID}/smtpGateway`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-CSRF-TOKEN': csrf || '',
-        },
-        body: JSON.stringify(payload),
-      });
-      if(!r.ok) {
-        const body = await r.json().catch(() => ({}));
-        setSnackbar(body.message || `HTTP ${r.status}`);
-        return;
-      }
-      setSnackbar('Success!');
-    } catch(e: any) {
-      setSnackbar(String(e) || 'Unknown error');
-    }
-  };
+  // MySQL table; gromox reads the same table at SMTP delivery time.
+  const putSmtpGateway = async (domainID: number, gateway: SmtpGatewayData) =>
+    await dispatch(editDomainSmtpGateway(domainID, gateway));
+  const fetchSmtpGateway = async (domainID: number) => await dispatch(fetchDomainSmtpGateway(domainID));
 
   useEffect(() => {
     (async () => {
@@ -237,6 +213,18 @@ const DomainDetails = () => {
       return;
     }
 
+    // Save smtp gateway
+    if(tab === 3) {
+      // Don't send the password back unless it was edited.
+      const payload: any = { ...smtpGateway };
+      if(!smtpGateway.password)
+        delete payload.password;
+      putSmtpGateway(ID, payload)
+        .then(() => setSnackbar('Success!'))
+        .catch(message => setSnackbar(message || 'Unknown error'));
+      return;
+    }
+
     // Save domain
     edit({
       ID,
@@ -280,24 +268,10 @@ const DomainDetails = () => {
     if(tab === 3) {
       (async () => {
         setLoading(true);
-        try {
-          // window.fetch, not the component-scoped fetch (domain details action)
-          const r = await window.fetch(`/api/v1/domains/${parseInt(getStringAfterLastSlash())}/smtpGateway`, {
-            headers: { 'Accept': 'application/json' },
-          });
-          if(r.status === 404)
-            setSmtpGateway(EMPTY_SMTP_GATEWAY);
-          else if(!r.ok)
-            setSnackbar(`${t("Failed to load")} (${r.status})`);
-          else {
-            const body = await r.json();
-            setSmtpGateway(body.data ? { ...EMPTY_SMTP_GATEWAY, ...body.data } : EMPTY_SMTP_GATEWAY);
-          }
-        } catch(e: any) {
-          setSnackbar(String(e) || 'Unknown error');
-        } finally {
-          setLoading(false);
-        }
+        const gw = await fetchSmtpGateway(parseInt(getStringAfterLastSlash()))
+          .catch(message => setSnackbar(message || 'Unknown error'));
+        setSmtpGateway(gw?.data ? { ...EMPTY_SMTP_GATEWAY, ...gw.data } : EMPTY_SMTP_GATEWAY);
+        setLoading(false);
       })();
     }
   }
@@ -586,7 +560,7 @@ const DomainDetails = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={tab === 3 ? saveSmtpGateway : handleEdit}
+          onClick={handleEdit}
           disabled={!writable}
         >
           {t('Save')}
