@@ -38,6 +38,7 @@ export type UserProperties = {
   officelocation: string;
   postalcode: string;
   assistant: string;
+  displaynameprefix: string;
 
   smtpaddress: string;
   surname: string;

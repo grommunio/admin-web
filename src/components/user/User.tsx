@@ -84,6 +84,12 @@ const User = (props: UserProps) => {
       <Grid2 container>
         <Grid2 className={classes.gridItem} size={12}>
           <div className={classes.grid}>
+            <TextField
+              {...tfProps("Titel", "title")}
+              className={undefined}
+              fullWidth={false}
+              sx={{ maxWidth: 100, mr: 1 }}
+            />
             <TextField 
               {...tfProps("First name", "givenname")}
               className={classes.flexTextfield}
@@ -113,7 +119,7 @@ const User = (props: UserProps) => {
       <Divider className={classes.divider} />
       <Grid2 container>
         <Grid2 style={{ display: 'flex' }} size={mapLocation ? 3 : 6}>
-          <TextField 
+          <TextField
             {...tfProps("Address", "streetaddress")}
             fullWidth={false}
             multiline
@@ -132,7 +138,7 @@ const User = (props: UserProps) => {
         </Grid2>}
         <Grid2 style={{ paddingRight: 16 }} size={6}>
           <TextField
-            {...tfProps("Position", "title")}
+            {...tfProps("Position", "displaynameprefix")}
             className={classes.input}
           />
           <TextField
