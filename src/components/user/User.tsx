@@ -85,7 +85,7 @@ const User = (props: UserProps) => {
         <Grid2 className={classes.gridItem} size={12}>
           <div className={classes.grid}>
             <TextField
-              {...tfProps("Titel", "title")}
+              {...tfProps("Titel", "displaynameprefix")}
               className={undefined}
               fullWidth={false}
               sx={{ maxWidth: 100, mr: 1 }}
@@ -138,7 +138,7 @@ const User = (props: UserProps) => {
         </Grid2>}
         <Grid2 style={{ paddingRight: 16 }} size={6}>
           <TextField
-            {...tfProps("Position", "displaynameprefix")}
+            {...tfProps("Position", "title")}
             className={classes.input}
           />
           <TextField
