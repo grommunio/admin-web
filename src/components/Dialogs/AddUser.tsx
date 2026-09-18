@@ -156,7 +156,7 @@ const AddUser = (props: AddUserProps) => {
   const handleCheckbox = (field: keyof typeof state) => (event: ChangeEvent) =>
     setState({ ...state, [field]: event.target.checked });
 
-  const handleAdd = () => {
+  const handleAdd = (edit: boolean) => () => {
     const { username, password, properties, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
     const { smtp, pop3_imap, changePassword,
@@ -179,7 +179,8 @@ const AddUser = (props: AddUserProps) => {
       lang,
       chat,
     }))
-      .then(() => {
+      .then((user) => {
+        if(edit) navigate('/' + domain.ID + '/users/' + user.ID);
         setState({
           ...state,
           username: '',
@@ -193,33 +194,6 @@ const AddUser = (props: AddUserProps) => {
           homeserver: null,
         });
         onSuccess();
-      })
-      .catch(error => {
-        onError(error);
-        setState({ ...state, loading: false });
-      });
-  }
-
-  const handleAddAndEdit = () => {
-    const { username, password, properties, status, homeserver, chat, lang } = state;
-    // eslint-disable-next-line camelcase
-    const checkboxes = status !== USER_STATUS.SHARED ? CreateParams.user : {};
-    setState({ ...state, loading: true });
-    dispatch(addUserData(domain.ID, {
-      username,
-      password: status === USER_STATUS.SHARED ? undefined : password,
-      status,
-      homeserver: homeserver?.ID || null,
-      properties: {
-        ...properties,
-        creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-      },
-      ...checkboxes,
-      lang,
-      chat,
-    }))
-      .then(user => {
-        navigate('/' + domain.ID + '/users/' + user.ID);
       })
       .catch(error => {
         onError(error);
@@ -401,7 +375,7 @@ const AddUser = (props: AddUserProps) => {
           {t('Cancel')}
         </Button>
         <Button
-          onClick={handleAddAndEdit}
+          onClick={handleAdd(true)}
           variant="contained"
           color="primary"
           disabled={addDisabled}
@@ -410,7 +384,7 @@ const AddUser = (props: AddUserProps) => {
         </Button>
         <Button
           type='submit'
-          onClick={handleAdd}
+          onClick={handleAdd(false)}
           variant="contained"
           color="primary"
           disabled={addDisabled}

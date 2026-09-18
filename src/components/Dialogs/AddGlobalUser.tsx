@@ -152,7 +152,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
   const handleCheckbox = (field: keyof NewUser) => (event: ChangeEvent) =>
     setState({ ...state, [field]: event.target.checked });
 
-  const handleAdd = (e: React.MouseEvent) => {
+  const handleAdd = (edit: boolean) => (e: React.MouseEvent) => {
     e.preventDefault();
     const { username, password, properties, domain, status, homeserver, chat, lang } = state;
     // eslint-disable-next-line camelcase
@@ -177,7 +177,8 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
       // Chat user only available for normal users, if domain has a chat team
       chat,
     }))
-      .then(() => {
+      .then((user) => {
+        if(edit) navigate('/' + domain?.ID + '/users/' + user.ID);
         setState({
           ...state,
           username: '',
@@ -192,38 +193,6 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
         });
         setUsernameError(false);
         onSuccess();
-      })
-      .catch(error => {
-        onError(error);
-        setState({ ...state, loading: false });
-      });
-  }
-
-  const handleAddAndEdit = () => {
-    const { username, password, properties, domain, status, homeserver, chat, lang } = state;
-    // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword,
-      privChat, privVideo, privFiles, privArchive } = CreateParams.user;
-    const checkboxes = status !== USER_STATUS.SHARED ?
-    // eslint-disable-next-line camelcase
-      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
-      : {};
-    setState({ ...state, loading: true });
-    dispatch(addUserData(domain?.ID || -1, {
-      username,
-      password: status === USER_STATUS.SHARED ? undefined : password,
-      homeserver: homeserver?.ID || null,
-      status,
-      properties: {
-        ...properties,
-        creationtime: moment().format('YYYY-MM-DD HH:mm:ss').toString(),
-      },
-      ...checkboxes,
-      lang,
-      chat,
-    }))
-      .then(user => {
-        navigate('/' + domain?.ID + '/users/' + user.ID);
       })
       .catch(error => {
         onError(error);
@@ -431,7 +400,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
           {t('Cancel')}
         </Button>
         <Button
-          onClick={handleAddAndEdit}
+          onClick={handleAdd(true)}
           variant="contained"
           color="primary"
           disabled={addDisabled}
@@ -439,7 +408,7 @@ const AddGlobalUser = (props: AddGlobalUserProps) => {
           {loading ? <CircularProgress size={24}/> : t('Add and edit')}
         </Button>
         <Button
-          onClick={handleAdd}
+          onClick={handleAdd(false)}
           variant="contained"
           color="primary"
           disabled={addDisabled}
