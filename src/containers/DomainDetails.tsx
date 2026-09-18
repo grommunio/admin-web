@@ -143,8 +143,6 @@ const DomainDetails = () => {
   const fetchServers = async () =>
     await dispatch(fetchServersData({ sort: 'hostname,asc', limit: 1000000, level: 0 }));
 
-  // The backend stores the SMTP gateway config in the `domain_smtp_gateway`
-  // MySQL table; gromox reads the same table at SMTP delivery time.
   const putSmtpGateway = async (domainID: number, gateway: SmtpGatewayData) =>
     await dispatch(editDomainSmtpGateway(domainID, gateway));
   const fetchSmtpGateway = async (domainID: number) => await dispatch(fetchDomainSmtpGateway(domainID));
@@ -205,7 +203,6 @@ const DomainDetails = () => {
     const { ID, domainname, domainStatus, org, chat, homeserver,
       maxUser, title, address, adminName, tel, defaultPolicy, syncPolicy } = state;
 
-    // Save plugins
     if(tab === 2) {
       putPlugins(ID)
         .then(() => setSnackbar('Success!'))
@@ -213,9 +210,7 @@ const DomainDetails = () => {
       return;
     }
 
-    // Save smtp gateway
     if(tab === 3) {
-      // Don't send the password back unless it was edited.
       const payload: any = { ...smtpGateway };
       if(!smtpGateway.password)
         delete payload.password;
@@ -225,7 +220,6 @@ const DomainDetails = () => {
       return;
     }
 
-    // Save domain
     edit({
       ID,
       domainname,
@@ -251,7 +245,6 @@ const DomainDetails = () => {
   const handleTab = (_: unknown, tab: number) => {
     setState({ ...state, tab });
 
-    // Plugins tab
     if(tab === 2) {
       (async () => {
         setLoading(true);
@@ -264,7 +257,6 @@ const DomainDetails = () => {
       })();
     }
 
-    // SMTP gateway tab
     if(tab === 3) {
       (async () => {
         setLoading(true);
