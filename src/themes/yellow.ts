@@ -70,13 +70,10 @@ const yellowTheme = (mode: ThemeMode): ThemeOptions => ({
         text: {
           primary: mode === 'light' ? '#000' : '#fff',
         },
-        background: {
-          paper: "#f3f3f3a5",
-        }
       } :
       {
         background: {
-          paper: "#121315aa",
+          paper: "#121315",
         }
       }),
   },

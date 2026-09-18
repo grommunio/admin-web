@@ -89,9 +89,6 @@ const grommunioTheme = (mode: ThemeMode): ThemeOptions => ({
         text: {
           primary: mode === 'light' ? '#000' : '#fff',
         },
-        background: {
-          paper: "#f3f3f3",
-        }
       } :
       {
         background: {
