@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { Divider, FormControl, Grid2, IconButton, InputLabel, NativeSelect, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControl, Grid2, IconButton, MenuItem, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import world from '../../res/world.json';
@@ -173,20 +173,16 @@ const User = (props: UserProps) => {
           />
         </Grid2>
         <Grid2 className={classes.gridItem} size={12}>
-          <FormControl className={classes.countrySelect}>
-            <InputLabel variant="standard">{t("Country")}</InputLabel>
-            <NativeSelect
-              value={country || "Germany"}
-              onChange={handlePropertyChange('country')}
-              fullWidth
-            >
-              {world.map(country =>
-                <option key={country.id} value={country.name}>
-                  {country.name}
-                </option>  
-              )}
-            </NativeSelect>
-          </FormControl>
+          <TextField
+            {...tfProps("Country", "country")}
+            select
+          >
+            {world.map(country =>
+              <MenuItem key={country.id} value={country.name}>
+                {country.name}
+              </MenuItem>  
+            )}
+          </TextField>
           <TextField
             {...tfProps("Telephone", "primarytelephonenumber")}
             slotProps={{
