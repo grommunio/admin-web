@@ -3,27 +3,23 @@
 
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
+import { keyframes } from 'tss-react';
 import {
-  Paper,
-  Button,
-  InputBase,
-  Typography,
   CircularProgress,
-  Alert,
   IconButton,
   Menu,
   MenuItem,
   Tooltip,
   Theme,
 } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Key from '@mui/icons-material/VpnKey';
+import { useTheme } from '@mui/material/styles';
+import { Translate } from '@mui/icons-material';
 import {
   authLogin,
   authLoginWithToken,
 } from '../actions/auth';
 import logo from '../res/grommunio_logo_default.svg';
-import { Translate } from '@mui/icons-material';
+import logoLight from '../res/grommunio_logo_light.svg';
 import { getLangs } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
@@ -32,81 +28,297 @@ import { ChangeEvent } from '@/types/common';
 import { useTranslation } from 'react-i18next';
 
 
-const useStyles = makeStyles()((theme: Theme) => ({
-  root: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'auto',
-    zIndex: 10,
-  },
-  /* || Login Form */
-  loginForm: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    maxWidth: 450,
-    minHeight: 350,
-    background: 'rgba(250, 250, 250, 0.84)',
-    borderRadius: 25,
-    zIndex: 1,
-    padding: theme.spacing(1, 0),
-    position: 'relative',
-    justifyContent: 'center',
+// Default background pattern (chevrons, white at 7% opacity)
+const overlay = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIwIDEwODAiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA3Ij48cGF0aCBkPSJNMCAyNjUuMTZzMi41Ny0yLjkzIDIxLjYxIDE1LjkzbDM2NC44NCAzNjEuNTcgMzY0Ljg0IDM2MS41N2MzMC43MSAzMC40MyAyOC4zOCA3NS43NCAyOC4zOCA3NS43NEgwVjI2NS4xNloiLz48cGF0aCBkPSJNMCAwdjYyNGwxMzQuMzkgMTMzLjA3YzE5LjAzIDE4Ljg2IDQzLjk4IDI4LjMgNjguOTMgMjguM3M0OS45LTkuNDMgNjguOTMtMjguM0w2MzcuMDkgMzk1LjVsMzY0Ljg0LTM2MS41OEMxMDI4LjI5IDExLjY2IDEwMjQgMCAxMDI0IDBIMFpNMTkyMCAxMDgwaC0zNzdsLTE0NS43MS0xNDYuMWMtMTguOTQtMTkuMTItMjguNDItNDQuMTctMjguNDItNjkuMjIgMC0yNS4wNSA5LjQ3LTUwLjExIDI4LjQyLTY5LjIyTDE5MjAgMjY4djgxMloiLz48L2c+PC9zdmc+)';
 
-  },
-  logoContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    margin: theme.spacing(2, 2, 4, 2),
-  },
-  button: {
-    width: '100%',
-    backgroundImage: 'none',
-    backgroundColor: '#0f70bd',
-    '&:hover': {
-      backgroundColor: '#0d5ea0', // slightly darker on hover
+// Product mark (Material Icons "tune", Apache-2.0)
+const mark = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z'/%3E%3C/svg%3E")`;
+
+const appear = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+`;
+
+const useStyles = makeStyles()((theme: Theme) => {
+  const dark = theme.palette.mode === 'dark';
+  // Brand variables come from the host stylesheet; the second value is the product default
+  const brand = (name: string, light: string, darkValue: string = light) =>
+    `var(--brand-${name}, ${dark ? darkValue : light})`;
+  const primary = brand('primary', '#009FFD');
+  const surface = brand('surface', '#ffffff', '#23262b');
+  const text = brand('text', '#1d2939', '#e6e6e6');
+  const muted = brand('muted', '#667085', '#98a2b3');
+  const field = brand('field', '#eef0f3', '#2b2f36');
+  const fieldHover = brand('field-hover', '#e6e9ee', '#323740');
+  const error = brand('error', '#b42318', '#fda29b');
+  const errorBg = brand('error-bg', '#fef3f2', '#3a2320');
+  const errorBorder = brand('error-border', '#fecdca', '#5c2e2a');
+  const radius = 'var(--brand-radius, 20px)';
+  const radiusSm = 'var(--brand-radius-sm, 10px)';
+  // color-mix() values are applied under @supports; the plain value before them is the product default
+  const supportsMix = '@supports (color: color-mix(in srgb, red, blue))';
+  const focusRingPlain = '0 0 0 3px rgba(0, 159, 253, 0.18)';
+  const focusRing = `0 0 0 3px color-mix(in srgb, ${primary} 18%, transparent)`;
+  const gradientStart = 'var(--brand-gradient-start, #009FFD)';
+  const gradientEnd = 'var(--brand-gradient-end, #2a2a72)';
+  const gradientAngle = 'var(--brand-gradient-angle, 150deg)';
+  const gradientPlain = dark ?
+    `linear-gradient(${gradientAngle}, #055e94, #1c1e48)` :
+    `linear-gradient(${gradientAngle}, ${gradientStart}, ${gradientEnd})`;
+  const gradient = dark ?
+    `linear-gradient(${gradientAngle}, color-mix(in srgb, ${gradientStart} 55%, #0b0f14), color-mix(in srgb, ${gradientEnd} 55%, #0b0f14))` :
+    gradientPlain;
+  const layers = [
+    `var(--brand-bg-overlay, ${overlay})`,
+    'var(--brand-bg-image, none)',
+    ...(dark ? [] : ['radial-gradient(120% 90% at 100% 100%, rgba(255, 255, 255, 0.14), transparent 55%)']),
+  ];
+  const sizes = ['cover', 'var(--brand-bg-size, cover)', ...layers.slice(2).map(() => 'auto'), 'auto'];
+  const positions = ['center', 'var(--brand-bg-position, center)', ...layers.slice(2).map(() => 'center'), 'center'];
+  const glyph = {
+    maskImage: mark,
+    maskSize: 'contain',
+    maskRepeat: 'no-repeat',
+  };
+
+  return {
+    root: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 10,
+      display: 'flex',
+      overflow: 'auto',
+      boxSizing: 'border-box',
+      padding: '16px 16px calc(16px + 12.5vh)',
+      fontFamily: 'var(--brand-font, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif)',
+      fontSize: 13,
+      color: text,
+      backgroundColor: dark ? '#0b0f14' : '#2a2a72',
+      backgroundImage: [...layers, gradientPlain].join(', '),
+      backgroundSize: sizes.join(', '),
+      backgroundPosition: positions.join(', '),
+      backgroundRepeat: 'no-repeat',
+      ...(dark ? {
+        [supportsMix]: {
+          backgroundImage: [...layers, gradient].join(', '),
+        },
+      } : {}),
     },
-  },
-  inputContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '80%',
-    borderRadius: 25,
-    margin: `${theme.spacing(1)} auto`,
-    backgroundColor: [theme.palette.mode === 'light' ? '#ffffff' : '#37393e'],
-    //backgroundColor: '#37393e',
-    boxShadow: 'none',
-  },
-  input: {
-    margin: theme.spacing(1, 1, 1, 0),
-  },
-  inputAdornment: {
-    margin: theme.spacing(1, 1, 1, 1),
-  },
-  errorMessage: {
-    width: '80%',
-    margin: `${theme.spacing(1)} auto`,
-    borderRadius: 25,
-    boxShadow: 'none',
-    boxSizing: 'border-box',
-  },
-  logo: {
-    padding: 12,
-    backgroundColor: 'black',
-    borderRadius: 12,
-  },
-  loader: {
-    color: 'white',
-  },
-  lang: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    color: 'black',
-  },
-}));
+    card: {
+      position: 'relative',
+      overflow: 'hidden',
+      width: 400,
+      maxWidth: '100%',
+      margin: 'auto',
+      boxSizing: 'border-box',
+      padding: '40px 40px 36px',
+      background: surface,
+      color: text,
+      borderRadius: radius,
+      boxShadow: '0 24px 64px rgba(16, 24, 40, 0.28), 0 2px 8px rgba(16, 24, 40, 0.12)',
+      animation: `${appear} 0.35s ease-out both`,
+      '@media (prefers-reduced-motion: reduce)': {
+        animation: 'none',
+      },
+      '@media (max-width: 480px)': {
+        padding: '28px 20px 24px',
+      },
+    },
+    logoContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 61,
+    },
+    logo: {
+      width: 'var(--brand-logo-width, 220px)',
+      height: 'var(--brand-logo-height, 52px)',
+      maxWidth: '100%',
+      backgroundSize: 'contain',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      ...(dark ? { filter: 'var(--brand-logo-filter, none)' } : {}),
+    },
+    chip: {
+      display: 'flex',
+      width: 'fit-content',
+      alignItems: 'center',
+      gap: 6,
+      margin: '12px auto 22px',
+      padding: '4px 10px',
+      borderRadius: 999,
+      background: 'rgba(0, 159, 253, 0.12)',
+      color: primary,
+      fontSize: 12,
+      lineHeight: 1,
+      fontWeight: 600,
+      letterSpacing: '0.02em',
+      [supportsMix]: {
+        background: `color-mix(in srgb, ${primary} 12%, transparent)`,
+      },
+    },
+    chipIcon: {
+      width: 14,
+      height: 14,
+      backgroundColor: 'currentColor',
+      ...glyph,
+    },
+    badge: {
+      position: 'absolute',
+      top: 16,
+      right: 16,
+      zIndex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 44,
+      height: 44,
+      borderRadius: '50%',
+      background: 'rgba(0, 159, 253, 0.12)',
+      pointerEvents: 'none',
+      [supportsMix]: {
+        background: `color-mix(in srgb, ${primary} 12%, transparent)`,
+      },
+      '&::before': {
+        content: '""',
+        width: 22,
+        height: 22,
+        backgroundColor: primary,
+        ...glyph,
+      },
+      '@media (max-width: 480px)': {
+        top: 12,
+        right: 12,
+      },
+    },
+    input: {
+      display: 'block',
+      boxSizing: 'border-box',
+      width: '100%',
+      height: 44,
+      margin: '0 0 12px',
+      padding: '0 16px',
+      fontFamily: 'inherit',
+      fontSize: 15,
+      lineHeight: 1.5,
+      color: text,
+      background: field,
+      border: '1px solid transparent',
+      borderRadius: radiusSm,
+      transition: 'border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease',
+      '&::placeholder': {
+        color: muted,
+        opacity: 1,
+      },
+      '&:hover': {
+        background: fieldHover,
+      },
+      '&:focus': {
+        outline: 0,
+        background: surface,
+        borderColor: primary,
+        boxShadow: focusRingPlain,
+        [supportsMix]: {
+          boxShadow: focusRing,
+        },
+      },
+      // Inset shadow hides the browser's own autofill colours
+      '&:-webkit-autofill, &:-webkit-autofill:hover': {
+        WebkitBoxShadow: `0 0 0 1000px ${field} inset`,
+        boxShadow: `0 0 0 1000px ${field} inset`,
+        WebkitTextFillColor: text,
+        caretColor: text,
+      },
+      '&:-webkit-autofill:focus': {
+        WebkitBoxShadow: `0 0 0 1000px ${surface} inset, ${focusRingPlain}`,
+        boxShadow: `0 0 0 1000px ${surface} inset, ${focusRingPlain}`,
+        [supportsMix]: {
+          WebkitBoxShadow: `0 0 0 1000px ${surface} inset, ${focusRing}`,
+          boxShadow: `0 0 0 1000px ${surface} inset, ${focusRing}`,
+        },
+      },
+      '&:autofill, &:autofill:hover': {
+        boxShadow: `0 0 0 1000px ${field} inset`,
+        WebkitTextFillColor: text,
+        color: text,
+        caretColor: text,
+      },
+      '&:autofill:focus': {
+        boxShadow: `0 0 0 1000px ${surface} inset, ${focusRingPlain}`,
+        [supportsMix]: {
+          boxShadow: `0 0 0 1000px ${surface} inset, ${focusRing}`,
+        },
+      },
+      '@media (max-width: 480px)': {
+        fontSize: 16,
+      },
+    },
+    error: {
+      margin: '0 0 12px',
+      padding: '10px 12px',
+      borderRadius: radiusSm,
+      border: `1px solid ${errorBorder}`,
+      borderLeftWidth: 4,
+      background: errorBg,
+      color: error,
+      fontSize: 13,
+      lineHeight: 1.4,
+      textAlign: 'left',
+    },
+    button: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxSizing: 'border-box',
+      width: '100%',
+      height: 44,
+      margin: '12px 0 0',
+      padding: '0 9px',
+      border: '1px solid transparent',
+      borderRadius: radiusSm,
+      background: primary,
+      color: 'var(--brand-on-primary, #ffffff)',
+      fontFamily: 'inherit',
+      fontSize: 15,
+      fontWeight: 600,
+      lineHeight: 1.5,
+      cursor: 'pointer',
+      boxShadow: '0 1px 2px rgba(16, 24, 40, 0.16)',
+      transition: 'filter 0.15s ease, box-shadow 0.15s ease',
+      '&:hover': {
+        filter: 'brightness(0.92)',
+      },
+      '&:active': {
+        filter: 'brightness(0.86)',
+      },
+      '&:focus-visible': {
+        outline: 'none',
+        boxShadow: `0 0 0 2px ${surface}, 0 0 0 4px ${primary}`,
+      },
+      '&:disabled': {
+        opacity: 0.6,
+        cursor: 'default',
+        filter: 'none',
+      },
+    },
+    lang: {
+      position: 'absolute',
+      top: 16,
+      left: 16,
+      padding: 12,
+      color: muted,
+      '& svg': {
+        fontSize: 20,
+      },
+      '@media (max-width: 480px)': {
+        top: 12,
+        left: 12,
+      },
+    },
+  };
+});
 
 interface LoginState {
   user: string;
@@ -118,6 +330,7 @@ interface LoginState {
 const Login = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
+  const theme = useTheme();
   const dispatch = useAppDispatch();
   const { auth, settings, config: serverConfig } = useAppSelector(state => state);
   const [state, setState] = useState<LoginState>({
@@ -180,17 +393,15 @@ const Login = () => {
 
   const { user, pass, loading, langsAnchorEl } = state;
   const config = serverConfig.customImages[window.location.hostname] || serverConfig.customImages["*"];
+  const fallbackLogo = theme.palette.mode === 'dark' ?
+    (config?.logoLight || logoLight) :
+    (config?.logo || logo);
 
   return (
     <div className={classes.root}>
-      <Paper
-        elevation={3}
-        className={classes.loginForm}
-        onSubmit={handleLogin}
-        component={"form"}
-      >
+      <form className={classes.card} onSubmit={handleLogin}>
         <Tooltip title="Language">
-          <IconButton className={classes.lang} onClick={handleMenu(true)}>
+          <IconButton size="small" className={classes.lang} onClick={handleMenu(true)}>
             <Translate color="inherit"/>
           </IconButton>
         </Tooltip>
@@ -212,60 +423,53 @@ const Login = () => {
             </MenuItem>  
           )}
         </Menu>
+        <span className={classes.badge} aria-hidden="true"/>
         <div className={classes.logoContainer}>
-          <img
-            src={config?.logo || logo}
-            height={52}
-            alt="grommunio"
+          <div
+            role="img"
+            aria-label="grommunio"
+            className={classes.logo}
+            style={{ backgroundImage: `var(--brand-logo, url("${fallbackLogo}"))` }}
           />
         </div>
-        <Paper className={classes.inputContainer}>
-          <AccountCircle className={classes.inputAdornment}/>
-          <InputBase
-            fullWidth
-            autoFocus
-            error={!!auth.error}
-            className={classes.input}
-            placeholder={t("Username")}
-            value={user}
-            onChange={handleTextinput('user')}
-            name="username"
-            id="username"
-            autoComplete="username"
-          />
-        </Paper>
-        <Paper className={classes.inputContainer}>
-          <Key className={classes.inputAdornment}/>
-          <InputBase
-            fullWidth
-            type="password"
-            className={classes.input}
-            error={!!auth.error}
-            placeholder={t("Password")}
-            value={pass}
-            onChange={handleTextinput('pass')}
-            name="password"
-            id="password"
-            autoComplete="currect-password"
-          />
-        </Paper>
-        {auth.error && <Alert elevation={0} variant="filled" severity="error" className={classes.errorMessage}>
+        <div className={classes.chip}>
+          <span className={classes.chipIcon} aria-hidden="true"/>
+          Admin
+        </div>
+        <input
+          className={classes.input}
+          autoFocus
+          aria-invalid={!!auth.error}
+          placeholder={t("Username")}
+          value={user}
+          onChange={handleTextinput('user')}
+          name="username"
+          id="username"
+          autoComplete="username"
+        />
+        <input
+          className={classes.input}
+          type="password"
+          aria-invalid={!!auth.error}
+          placeholder={t("Password")}
+          value={pass}
+          onChange={handleTextinput('pass')}
+          name="password"
+          id="password"
+          autoComplete="current-password"
+        />
+        {auth.error && <div role="alert" className={classes.error}>
           {auth.error || t("Failed to login. Incorrect password or username")}
-        </Alert>}
-        <Paper className={classes.inputContainer}>
-          <Button
-            className={classes.button}
-            type="submit"
-            variant="contained"
-            color="primary"
-            onClick={handleLogin}
-            disabled={!user || !pass}
-          >
-            {loading ? <CircularProgress size={24}  color="inherit" className={classes.loader}/> :
-              <Typography>{t('Login')}</Typography>}
-          </Button>
-        </Paper>
-      </Paper>
+        </div>}
+        <button
+          className={classes.button}
+          type="submit"
+          onClick={handleLogin}
+          disabled={!user || !pass}
+        >
+          {loading ? <CircularProgress size={20} color="inherit"/> : t('Login')}
+        </button>
+      </form>
     </div>
   );
 }
