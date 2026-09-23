@@ -65,6 +65,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
     color: '#ccc',
   },
   logo: {
+    width: '100%',
+    height: 32,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     cursor: 'pointer',
   },
   input: {
@@ -214,12 +219,12 @@ const NavigationLinks = (props: NavigationLinksProps) => {
   return (
     (<React.Fragment>
       <div className={classes.drawerHeader}>
-        <img
-          src={customImages?.logoLight || logo}
-          height="32"
-          alt="grommunio"
-          onClick={handleNavigation('')}
+        <div
+          role="img"
+          aria-label="grommunio"
           className={classes.logo}
+          style={{ backgroundImage: `var(--brand-logo-dark, var(--brand-logo, url("${customImages?.logoLight || logo}")))` }}
+          onClick={handleNavigation('')}
         />
       </div>
       {isSysAdmin && <Tabs

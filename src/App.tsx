@@ -36,6 +36,16 @@ const useStyles = makeStyles()(() => ({
 const AsyncMainView = makeLoadableComponent<LoadableMainViewProps>(
   () => import("./components/LoadableMainView"));
 
+const brandValue = (name: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+const unquote = (value: string) => value.replace(/^(["'])(.*)\1$/s, '$2');
+
+const stripUrl = (value: string) => {
+  const match = value.match(/^url\((.*)\)$/s);
+  return unquote((match ? match[1] : value).trim());
+};
+
 // Root class
 const App = () => {
   const { classes } = useStyles();
@@ -53,18 +63,26 @@ const App = () => {
   };
   const darkMode = colorContext.mode === "dark";
 
-  // Set configured favicon
+  // Set favicon and title: brand values from the host stylesheet first, then the configured images
   useEffect(() => {
-    if(customImages) {
-      const href = customImages.favicon;
-      if(!href) return;
-      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
+    const apply = () => {
+      const href = stripUrl(brandValue('--brand-favicon')) || customImages?.favicon;
+      if (href) {
+        let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = href;
       }
-      link.href = href;
+      const title = unquote(brandValue('--brand-title'));
+      if (title) document.title = title;
+    };
+    apply();
+    if (document.readyState !== 'complete') {
+      window.addEventListener('load', apply, { once: true });
+      return () => window.removeEventListener('load', apply);
     }
   }, [customImages]);
 
@@ -85,11 +103,11 @@ const App = () => {
   return (
     <div
       className={classes.root}
-      style={{
+      style={authenticated ? {
         backgroundImage: darkMode ?
           `url(${customImages?.backgroundDark || backgroundDark})` :
           `url(${customImages?.background || background})`
-      }}
+      } : { backgroundColor: darkMode ? '#0b0f14' : '#2a2a72' }}
     >
       {authenticated && <SilentRefresh />}
       <CapabilityContext.Provider value={capabilities}>

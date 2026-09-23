@@ -91,6 +91,11 @@ const useStyles = makeStyles()((theme: Theme) => ({
     color: '#ccc',
   },
   logo: {
+    width: 32,
+    height: 32,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     cursor: 'pointer',
   },
   input: {
@@ -219,12 +224,12 @@ const RetractedNavigationLinks = (props: NavigationLinksProps) => {
   return(
     <React.Fragment>
       <div className={classes.drawerHeader}>
-        <img
-          src={config.customImages[window.location.hostname]?.icon || logo}
-          height="32"
-          alt="g"
-          onClick={handleNavigation('')}
+        <div
+          role="img"
+          aria-label="grommunio"
           className={classes.logo}
+          style={{ backgroundImage: `var(--brand-icon-dark, var(--brand-icon, url("${config.customImages[window.location.hostname]?.icon || logo}")))` }}
+          onClick={handleNavigation('')}
         />
       </div>
       {isSysAdmin && <div className={classes.flexCenter}>

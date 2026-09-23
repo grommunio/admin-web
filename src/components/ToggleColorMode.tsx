@@ -82,6 +82,16 @@ export default function ToggleColorMode({ children }: ToggleColorModeProps) {
     setMode(darkMode ? 'dark' : 'light');
   }, [config]);
 
+  // Expose an explicit choice (stored or server default) on <html data-theme>
+  useEffect(() => {
+    const explicit = window.localStorage.getItem('darkMode') !== null || config.defaultDarkMode;
+    if (explicit) {
+      document.documentElement.dataset.theme = mode;
+    } else {
+      delete document.documentElement.dataset.theme;
+    }
+  }, [mode, config.defaultDarkMode]);
+
   const theme = React.useMemo(() => {
     return createCustomTheme(mode, colorTheme as ColorThemeName);
   }, [mode, colorTheme]);
