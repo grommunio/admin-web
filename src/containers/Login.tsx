@@ -14,10 +14,14 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Translate } from '@mui/icons-material';
+import { useSearchParams } from 'react-router-dom';
 import {
+  authError,
   authLogin,
+  authLoginWithSession,
   authLoginWithToken,
 } from '../actions/auth';
+import { oidcLoginUrl, status } from '../api';
 import logo from '../res/grommunio_logo_default.svg';
 import logoLight from '../res/grommunio_logo_light.svg';
 import { getLangs } from '../utils';
@@ -303,6 +307,42 @@ const useStyles = makeStyles()((theme: Theme) => {
         filter: 'none',
       },
     },
+    ssoButton: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxSizing: 'border-box',
+      width: '100%',
+      height: 44,
+      margin: '12px 0 0',
+      padding: '0 9px',
+      border: `1px solid ${primary}`,
+      borderRadius: radiusSm,
+      background: 'transparent',
+      color: primary,
+      fontFamily: 'inherit',
+      fontSize: 15,
+      fontWeight: 600,
+      lineHeight: 1.5,
+      cursor: 'pointer',
+      transition: 'background-color 0.15s ease, box-shadow 0.15s ease',
+      '&:hover': {
+        background: 'rgba(0, 159, 253, 0.08)',
+        [supportsMix]: {
+          background: `color-mix(in srgb, ${primary} 8%, transparent)`,
+        },
+      },
+      '&:active': {
+        background: 'rgba(0, 159, 253, 0.14)',
+        [supportsMix]: {
+          background: `color-mix(in srgb, ${primary} 14%, transparent)`,
+        },
+      },
+      '&:focus-visible': {
+        outline: 'none',
+        boxShadow: `0 0 0 2px ${surface}, 0 0 0 4px ${primary}`,
+      },
+    },
     lang: {
       position: 'absolute',
       top: 16,
@@ -324,6 +364,7 @@ interface LoginState {
   user: string;
   pass: string;
   loading: boolean;
+  sso: boolean;
   langsAnchorEl: Element | null;
 }
 
@@ -333,28 +374,50 @@ const Login = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { auth, settings, config: serverConfig } = useAppSelector(state => state);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [state, setState] = useState<LoginState>({
     user: '',
     pass: '',
     loading: false,
+    sso: false,
     langsAnchorEl: null,
   });
 
   const login = async (user: string, pass: string) => await dispatch(authLogin(user, pass));
   const loginWithToken = async (grommunioAuthJwt: string) => await dispatch(authLoginWithToken(grommunioAuthJwt));
+  const loginWithSession = async () => await dispatch(authLoginWithSession());
   const setSettings = async (field: string, value: string) => await dispatch(changeSettings(field, value));
   
   useEffect(() => {
-    // Check if JWT is already in local storage
-    const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
-    if(grommunioAuthJwt) {
-      // token found, try to login
-      loginWithToken(grommunioAuthJwt)
-        .catch((err: string) => {
-          setState({ ...state, loading: false });
-          console.error(err);
-        });
+    const sso = searchParams.get('sso');
+    const ssoError = searchParams.get('sso_error');
+    if(sso || ssoError) {
+      // Returning from single sign-on, drop the parameters so a reload does not repeat it
+      setSearchParams({}, { replace: true });
     }
+    if(ssoError) {
+      console.error("Single sign-on failed: " + ssoError);
+      dispatch(authError(t("Single sign-on failed")));
+    } else if(sso) {
+      // The API has set the session cookie, exchange it for a token
+      loginWithSession()
+        .catch((err: string) => console.error(err));
+    } else {
+      // Check if JWT is already in local storage
+      const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
+      if(grommunioAuthJwt) {
+        // token found, try to login
+        loginWithToken(grommunioAuthJwt)
+          .catch((err: string) => {
+            setState({ ...state, loading: false });
+            console.error(err);
+          });
+      }
+    }
+    // Offer single sign-on if the API has a provider configured
+    status()
+      .then(res => setState(s => ({ ...s, sso: !!res?.oidc })))
+      .catch(() => null);
   }, []);
 
   const handleTextinput = (field: 'user' | 'pass') => (e: ChangeEvent) => {
@@ -375,6 +438,10 @@ const Login = () => {
       });
   }
 
+  const handleSso = () => {
+    window.location.href = oidcLoginUrl();
+  }
+
   const handleMenu = (open: boolean) => (e: React.MouseEvent) => setState({
     ...state,
     langsAnchorEl: open ? e.currentTarget : null,
@@ -391,7 +458,7 @@ const Login = () => {
     });
   }
 
-  const { user, pass, loading, langsAnchorEl } = state;
+  const { user, pass, loading, sso, langsAnchorEl } = state;
   const config = serverConfig.customImages[window.location.hostname] || serverConfig.customImages["*"];
   const fallbackLogo = theme.palette.mode === 'dark' ?
     (config?.logoLight || logoLight) :
@@ -469,6 +536,13 @@ const Login = () => {
         >
           {loading ? <CircularProgress size={20} color="inherit"/> : t('Login')}
         </button>
+        {sso && <button
+          className={classes.ssoButton}
+          type="button"
+          onClick={handleSso}
+        >
+          {t("Sign in with single sign-on")}
+        </button>}
       </form>
     </div>
   );

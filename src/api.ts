@@ -195,6 +195,17 @@ export async function profile() {
   return await get('/profile');
 }
 
+export async function status() {
+  return await get('/status');
+}
+
+/**
+ * URL starting the single sign-on login, handled by the API
+ */
+export function oidcLoginUrl() {
+  return baseUrl + '/login/oidc';
+}
+
 /*
   DASHBOARD
 */
