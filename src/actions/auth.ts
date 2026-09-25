@@ -71,7 +71,6 @@ export function authLoginWithSession() {
       authenticate(dispatch, token, csrf);
     } catch(err) {
       clearStorage();
-      dispatch(authError("Single sign-on failed"));
       return Promise.reject(err);
     }
   };

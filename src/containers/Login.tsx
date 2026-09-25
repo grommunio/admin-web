@@ -401,7 +401,10 @@ const Login = () => {
     } else if(sso) {
       // The API has set the session cookie, exchange it for a token
       loginWithSession()
-        .catch((err: string) => console.error(err));
+        .catch((err: string) => {
+          console.error(err);
+          dispatch(authError(t("Single sign-on failed")));
+        });
     } else {
       // Check if JWT is already in local storage
       const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
@@ -414,9 +417,9 @@ const Login = () => {
           });
       }
     }
-    // Offer single sign-on if the API has a provider configured
+    // Offer single sign-on if the API has a provider configured; the login cookies need TLS
     status()
-      .then(res => setState(s => ({ ...s, sso: !!res?.oidc })))
+      .then(res => setState(s => ({ ...s, sso: !!res?.oidc && window.location.protocol === 'https:' })))
       .catch(() => null);
   }, []);
 
