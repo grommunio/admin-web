@@ -327,7 +327,7 @@ const LdapConfig = () => {
         defaultQuota: users.defaultQuota || '',
         filter: users.filter || '',
         contactFilter: users.contactFilter || '',
-        templates: users.templates && users.templates.length > 0 ? users.templates[1] : 'none',
+        templates: users.templates && users.templates.length > 1 ? users.templates[1] : 'none',
         searchAttributes: users.searchAttributes || [],
         attributes: objectToArray<string>(users.attributes || {}),
         aliases: users.aliases || '',

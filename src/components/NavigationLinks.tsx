@@ -23,7 +23,7 @@ import logo from '../res/grommunio_logo_light.svg';
 import { Grid2, Tabs, Tab, TextField, InputAdornment, Typography, Button, ListItemButton, ListItemIcon, Theme } from '@mui/material';
 import { selectDrawerDomain } from '../actions/drawer';
 import { Add, BackupTable, ContactMail, Dns, QueryBuilder, TableChart, TaskAlt } from '@mui/icons-material';
-import { SYSTEM_ADMIN_READ } from '../constants';
+import { ORG_ADMIN, SYSTEM_ADMIN_READ } from '../constants';
 import Feedback from './Feedback';
 import AddDomain from './Dialogs/AddDomain';
 import { useNavigate } from 'react-router';
@@ -213,6 +213,7 @@ const NavigationLinks = (props: NavigationLinksProps) => {
 
   const { filter, adding, snackbar } = state;
   const isSysAdmin = capabilities.includes(SYSTEM_ADMIN_READ);
+  const isOrgAdmin = capabilities.includes(ORG_ADMIN);
   const pathname = location.pathname;
   const customImages = config.customImages[window.location.hostname] || config.customImages["*"];
 
@@ -238,32 +239,32 @@ const NavigationLinks = (props: NavigationLinksProps) => {
         <Tab className={classes.tab} label={t('Domains')} />
       </Tabs>}
       {(tab === 1 || !isSysAdmin) &&
-            <Grid2 container component="form" autoComplete="off">
-              <TextField
-                variant="outlined"
-                label={t('Search')}
-                value={filter}
-                onChange={handleTextInput}
-                color="primary"
-                className={classes.textfield}
-                slotProps={{
-                  input: {
-                    classes: { root: classes.input },
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search color="secondary" />
-                      </InputAdornment>
-                    ),
-                  },
+        <Grid2 container component="form" autoComplete="off">
+          <TextField
+            variant="outlined"
+            label={t('Search')}
+            value={filter}
+            onChange={handleTextInput}
+            color="primary"
+            className={classes.textfield}
+            slotProps={{
+              input: {
+                classes: { root: classes.input },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search color="secondary" />
+                  </InputAdornment>
+                ),
+              },
 
-                  inputLabel: {
-                    classes: {
-                      root: classes.input,
-                    },
-                    shrink: true,
-                  }
-                }} />
-            </Grid2>}
+              inputLabel: {
+                classes: {
+                  root: classes.input,
+                },
+                shrink: true,
+              }
+            }} />
+        </Grid2>}
       <List>
         {tab === 1 && isSysAdmin && <div className={classes.flexCenter}>
           <Button
@@ -334,6 +335,11 @@ const NavigationLinks = (props: NavigationLinksProps) => {
           label={"Task queue"}
           path="taskq"
           Icon={TaskAlt}
+        />}
+        {(tab === 0 && !isSysAdmin && isOrgAdmin) && <ListElement
+          label={"LDAP"}
+          path="orgLdap"
+          Icon={Ldap}
         />}
         {tab === 0 && isSysAdmin && <React.Fragment>
           <Typography variant="inherit" className={classes.subheader}>{t('Overview')}</Typography>

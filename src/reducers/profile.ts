@@ -6,11 +6,13 @@ import {
   PROFILE_DATA_RECEIVED,
   AUTH_AUTHENTICATED,
 } from '../actions/types';
+import { Org } from '@/types/orgs';
 
 type ProfileState = {
   Profile: {
     capabilities: string[];
     user: User;
+    permittedOrgs: Org[];
   }
 }
 
@@ -18,6 +20,7 @@ const defaultState: ProfileState = {
   Profile: {
     capabilities: [],
     user: {} as User,
+    permittedOrgs: []
   },
 };
 
@@ -26,7 +29,10 @@ function profileReducer(state: ProfileState = defaultState, action: any) {
   case PROFILE_DATA_RECEIVED:
     return {
       ...state,
-      Profile: action.data,
+      Profile: {
+        ...state.Profile,
+        ...action.data,
+      },
     };
 
   case AUTH_AUTHENTICATED:

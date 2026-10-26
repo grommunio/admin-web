@@ -34,7 +34,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
 }));
 
 type ViewWrapperProps = {
-  children: ReactNode;
+  children?: ReactNode;
   snackbar?: string;
   onSnackbarClose?: () => void;
   loading?: boolean;

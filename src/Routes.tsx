@@ -36,6 +36,7 @@ const AsyncUserDetails = makeLoadableComponent(() => import("./containers/UserDe
 const AsyncContacts = makeLoadableComponent(() => import("./containers/Contacts"));
 const AsyncContactDetails = makeLoadableComponent(() => import("./containers/ContactDetails"));
 const AsyncLdap = makeLoadableComponent(() => import("./containers/Ldap"));
+const AsyncOrgLdap = makeLoadableComponent(() => import("./containers/OrgLdap"));
 const AsyncLdapConfig = makeLoadableComponent(() => import("./containers/LdapConfig"));
 const AsyncFolders = makeLoadableComponent(() => import("./containers/Folders"));
 const AsyncFolderDetails = makeLoadableComponent(() => import("./containers/FolderDetails"));
@@ -151,6 +152,13 @@ const AppRoutes = ({ routesProps, domains, capabilities }: AppRoutesProps) => (
         component={AsyncLdapConfig}
         props={routesProps}
       />} />}
+    {capabilities.includes(ORG_ADMIN) && <Route
+      path="/orgLdap"
+      element={<AuthenticatedRoute
+        component={AsyncOrgLdap}
+        props={routesProps}
+      />}
+    />}
     {capabilities.includes(SYSTEM_ADMIN_READ) && <Route
       path="/logs"
       element={<AuthenticatedRoute

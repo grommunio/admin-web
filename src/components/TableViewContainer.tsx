@@ -52,7 +52,7 @@ type TableViewContainerProps = {
   headline: string | ReactNode;
   subtitle?: string;
   snackbar?: string;
-  onSnackbarClose: () => void;
+  onSnackbarClose?: () => void;
   href?: string;
   loading?: boolean;
 }
