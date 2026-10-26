@@ -491,7 +491,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
           variant="contained"
           color="primary"
           onClick={handleEdit}
-          disabled={!writable}
+          disabled={!writable || externalAssociationsError || externalSpecifiedsError}
         >
           {t('Save')}
         </Button>
