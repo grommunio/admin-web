@@ -119,6 +119,8 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
     userDirty: false,
     snackbar: "",
   });
+  const [externalAssociations, setExternalAssociations] = useState<string>("");
+  const [externalSpecifieds, setExternalSpecifieds] = useState<string>("");
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
@@ -149,13 +151,17 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
       Users.forEach((u: UserType) => table[u.username] = u);
       if(group?.ID) {
         const associations: UserType[] = [];
-        group.associations.forEach((groupUsername: string) => {
-          if(groupUsername in table) associations.push(table[groupUsername]);
+        const externalAssociations: string[] = [];
+        group.associations.forEach((associate: string) => {
+          if(associate in table) associations.push(table[associate]);
+          else externalAssociations.push(associate);
         });
 
         const specifieds: UserType[] = [];
-        group.specifieds.forEach((groupUsername: string) => {
-          if(groupUsername in table) specifieds.push(table[groupUsername]);
+        const externalSpecifieds: string[] = [];
+        group.specifieds.forEach((specified: string) => {
+          if(specified in table) specifieds.push(table[specified]);
+          else externalSpecifieds.push(specified);
         });
         
         setState({
@@ -165,6 +171,8 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
           associations: associations,
           specifieds: specifieds,
         });
+        setExternalAssociations(externalAssociations.join(", "));
+        setExternalSpecifieds(externalSpecifieds.join(", "));
       }
     };
 
@@ -199,6 +207,16 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
   const handleEdit = () => {
     const { ID, listname, hidden, displayname, listType, listPrivilege, associations, specifieds,
       user, userDirty } = state;
+
+    const allAss = listType === LIST_TYPE.NORMAL ?
+      associations.map(user => user.username)
+        .concat(externalAssociations ? externalAssociations.split(",").map(a => a.trim()) : [])
+      : [];
+    const allSpec = LIST_PRIVILEGE.SPECIFIC ?
+      specifieds.map(user => user.username)
+        .concat(externalSpecifieds ? externalSpecifieds.split(",").map(s => s.trim()) : [])
+      : [];
+
     edit(domain.ID, {
       ID,
       listname,
@@ -206,8 +224,8 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
       listPrivilege,
       displayname,
       hidden,
-      associations: associations.map(user => user.username),
-      specifieds: specifieds.map(user => user.username),
+      associations: allAss,
+      specifieds: allSpec,
     })
       .then(() => {
         if(userDirty) editUser(domain.ID, {
@@ -287,10 +305,13 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
     return Users.filter((u: UserType) => u.properties?.displaytypeex !== USER_TYPE.ROOM);
   }, [Users]);
 
+  
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const { tab, snackbar, listname, listType, displayname, hidden, listPrivilege, associations, specifieds,
     loading, user } = state;
-
+    
+  const externalAssociationsError = externalAssociations.split(",").some(externalAss => associations.map(a => a.username).some(a => a.trim() === externalAss.trim()));
+  const externalSpecifiedsError = externalSpecifieds.split(",").some(externalSpec => specifieds.map(s => s.username).some(s => s.trim() === externalSpec.trim()));
   return (
     (<ViewWrapper
       snackbar={snackbar}
@@ -397,6 +418,15 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
           />}
+          {listType === LIST_TYPE.NORMAL && <TextField 
+            className={classes.input} 
+            label={t("External recipients")}
+            fullWidth 
+            value={externalAssociations}
+            onChange={e => setExternalAssociations(e.target.value)}
+            helperText={externalAssociationsError ? t("External address matches interal address") : t("Comma-separated list of email adresses")}
+            error={externalAssociationsError}
+          />}
           {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <MagnitudeAutocomplete
             getOptionDisabled={option => option.username === listname}
             multiple
@@ -409,6 +439,15 @@ const GroupDetails = ({ domain }: DomainViewProps) => {1
             label={t('Senders')}
             getOptionKey={(option) => `${option.ID}_${option.domainID}`}
             isOptionEqualToValue={(option, value) => option.ID === value.ID && option.domainID === value.domainID}
+          />}
+          {listPrivilege === LIST_PRIVILEGE.SPECIFIC && <TextField 
+            className={classes.input} 
+            label={t("External senders")}
+            fullWidth 
+            value={externalSpecifieds}
+            onChange={e => setExternalSpecifieds(e.target.value)}
+            helperText={externalSpecifiedsError ? t("External address matches interal address") : t("Comma-separated list of email adresses")}
+            error={externalSpecifiedsError}
           />}
         </FormControl>}
         {tab === 1 && <User
