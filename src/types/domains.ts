@@ -53,3 +53,14 @@ export type DeleteDomainProps = {
 export type CreateDomainParams = {
   createRole?: boolean;
 }
+
+export type SmtpGatewayData = {
+  host: string;
+  port: number;
+  encryption: 'none' | 'starttls' | 'starttls_unverified' | 'tls';
+  username: string;
+  password: string;
+  passwordSet: boolean;
+  enabled: boolean;
+  description: string;
+}
