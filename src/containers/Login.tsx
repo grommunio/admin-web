@@ -24,13 +24,12 @@ import {
 import { oidcLoginUrl, status } from '../api';
 import logo from '../res/grommunio_logo_default.svg';
 import logoLight from '../res/grommunio_logo_light.svg';
-import { getLangs } from '../utils';
+import { getLangs, setMomentLocale } from '../utils';
 import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { useAppDispatch, useAppSelector } from '../store';
 import { ChangeEvent } from '@/types/common';
 import { useTranslation } from 'react-i18next';
-
 
 // Default background pattern (chevrons, white at 7% opacity)
 const overlay = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIwIDEwODAiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA3Ij48cGF0aCBkPSJNMCAyNjUuMTZzMi41Ny0yLjkzIDIxLjYxIDE1LjkzbDM2NC44NCAzNjEuNTcgMzY0Ljg0IDM2MS41N2MzMC43MSAzMC40MyAyOC4zOCA3NS43NCAyOC4zOCA3NS43NEgwVjI2NS4xNloiLz48cGF0aCBkPSJNMCAwdjYyNGwxMzQuMzkgMTMzLjA3YzE5LjAzIDE4Ljg2IDQzLjk4IDI4LjMgNjguOTMgMjguM3M0OS45LTkuNDMgNjguOTMtMjguM0w2MzcuMDkgMzk1LjVsMzY0Ljg0LTM2MS41OEMxMDI4LjI5IDExLjY2IDEwMjQgMCAxMDI0IDBIMFpNMTkyMCAxMDgwaC0zNzdsLTE0NS43MS0xNDYuMWMtMTguOTQtMTkuMTItMjguNDItNDQuMTctMjguNDItNjkuMjIgMC0yNS4wNSA5LjQ3LTUwLjExIDI4LjQyLTY5LjIyTDE5MjAgMjY4djgxMloiLz48L2c+PC9zdmc+)';
@@ -450,9 +449,10 @@ const Login = () => {
     langsAnchorEl: open ? e.currentTarget : null,
   });
 
-  const handleLangChange = (lang: string) => () => {
+  const handleLangChange = (lang: string) => async () => {
     // Set language in i18n, redux store and local storage
     i18n.changeLanguage(lang);
+    await setMomentLocale(lang);
     setSettings('language', lang);
     window.localStorage.setItem('lang', lang);
     setState({

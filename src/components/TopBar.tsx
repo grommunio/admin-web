@@ -28,7 +28,7 @@ import i18n from 'i18next';
 import { changeSettings } from '../actions/settings';
 import { GlobalSearchOption, SYSTEM_ADMIN_READ, SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
-import { getLangs } from '../utils';
+import { getLangs, setMomentLocale } from '../utils';
 import { FilterAlt as Filter, KeyboardArrowLeft, KeyboardArrowRight, Search, Settings, Translate } from '@mui/icons-material';
 import { globalSearchOptions } from '../constants';
 import { useNavigate } from 'react-router';
@@ -194,8 +194,9 @@ const TopBar = () => {
     dispatch(authLogout());
   }
 
-  const handleLangChange = (lang: string) => () => {
+  const handleLangChange = (lang: string) => async () => {
     i18n.changeLanguage(lang);
+    await setMomentLocale(lang);
     dispatch(changeSettings('language', lang));
     window.localStorage.setItem('lang', lang);
     setState({

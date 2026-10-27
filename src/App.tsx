@@ -18,6 +18,7 @@ import { SERVER_CONFIG_ERROR } from "./actions/types";
 import { useAppDispatch, useAppSelector } from "./store";
 import { LoadableMainViewProps } from "./components/LoadableMainView";
 import { RoutesProps } from "./types/misc";
+import { setMomentLocale } from "./utils";
 
 
 const useStyles = makeStyles()(() => ({
@@ -92,6 +93,7 @@ const App = () => {
     const lang = localStorage.getItem("lang");
     if (lang) {
       i18n.changeLanguage(lang);
+      (async () => await setMomentLocale(lang))();
       dispatch(changeSettings("language", lang));
     }
   }, []);

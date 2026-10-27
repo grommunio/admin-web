@@ -2,10 +2,9 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import moment, { Moment } from "moment";
-import store from './store';
+import { Moment } from "moment";
 import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
-
+import moment from 'moment';
 import { KeyValuePair } from "@/types/common";
 import { SyncPolicy } from './types/sync';
 import { ContactListItem, USER_STATUS, USER_TYPE } from './types/users';
@@ -80,13 +79,20 @@ export function getStringAfterLastSlash(): string {
   return /[^/]*$/.exec(window.location.href)?.[0] || "";
 }
 
+export async function setMomentLocale(lang: string) {
+  const trimmedLang = lang.slice(0, 2);
+  if (trimmedLang !== 'en') {
+    await import(`moment/locale/${trimmedLang}`);
+  }
+  moment.locale(trimmedLang);
+}
+
 /**
  * Formats a date of format `YYYY-MM-DD hh:mm` into the date-time format of the selected language (in settings)
  */
 export function setDateTimeString(date?: string | Moment | null) {
   if(!date) return "";
-  return moment(date, "YYYY-MM-DD hh:mm")
-    .locale(store.getState().settings.language.slice(0, 2)).format('lll');
+  return moment(date, "YYYY-MM-DD hh:mm").format('lll');
 }
 
 /**
@@ -94,8 +100,7 @@ export function setDateTimeString(date?: string | Moment | null) {
  */
 export function setDateString(date?: string | Moment | null) {
   if(!date) return "";
-  return moment(date, "YYYY-MM-DD")
-    .locale(store.getState().settings.language.slice(0, 2)).format('ll');
+  return moment(date, "YYYY-MM-DD").format('ll');
 }
 
 
@@ -104,9 +109,7 @@ export function setDateString(date?: string | Moment | null) {
  */
 export function parseUnixtime(time: number): string {
   const parsedTime = moment.unix(time);
-  return store.getState().settings.language === 'de-DE' ?
-    parsedTime.format('DD.MM.YYYY HH:mm:ss') :
-    parsedTime.format('MM-DD-YYYY h:mm:ss a');
+  return parsedTime.format('lll');
 }
 
 /**

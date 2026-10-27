@@ -18,6 +18,7 @@ import { Domain } from '@/types/domains';
 import { USER_TYPE, USER_STATUS, UserProperties } from '../../types/users';
 import { ChangeEvent } from '@/types/common';
 import { Server } from '@/types/servers';
+import { setDateTimeString } from '../../utils';
 
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -386,7 +387,7 @@ const Account = (props: AccountProps) => {
         className={classes.input}
         label={t("Creation time")}
         fullWidth
-        value={creationtime || ''}
+        value={setDateTimeString(creationtime || '')}
         onChange={handlePropertyChange('creationtime')}
         disabled
       />
