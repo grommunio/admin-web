@@ -158,13 +158,21 @@ const AddUser = (props: AddUserProps) => {
 
   const handleAdd = (edit: boolean) => () => {
     const { username, password, properties, status, homeserver, chat, lang } = state;
-    // eslint-disable-next-line camelcase
-    const { smtp, pop3_imap, changePassword,
+    const { smtp, pop3_imap, changePassword, privWeb, privEas, privDav,
       privChat, privVideo, privFiles, privArchive } = CreateParams.user;
     const checkboxes = status !== USER_STATUS.SHARED ?
-    // eslint-disable-next-line camelcase
-      { smtp, pop3_imap, changePassword, privChat, privVideo, privFiles, privArchive }
-      : {};
+      {
+        smtp,
+        pop3_imap,
+        changePassword,
+        privChat,
+        privWeb,
+        privVideo,
+        privFiles,
+        privArchive,
+        privEas,
+        privDav,
+      } : {};
     setState({ ...state, loading: true });
     dispatch(addUserData(domain.ID, {
       username,
