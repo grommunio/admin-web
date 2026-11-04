@@ -3,7 +3,7 @@
 
 import React, { ReactNode } from "react";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router";
 
 import AuthenticatedRoute from './components/AuthenticatedRoute';
 import AuthenticatedDomainRoute from './components/AuthenticatedDomainRoute';

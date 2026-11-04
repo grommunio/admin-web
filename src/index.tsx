@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router";
 import { StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
 import './switch.css';

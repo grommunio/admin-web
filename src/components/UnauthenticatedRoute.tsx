@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
 import { parseParams } from '../utils';
 import { RoutesProps } from "@/types/misc";
