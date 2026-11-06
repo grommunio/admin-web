@@ -79,12 +79,17 @@ export function getStringAfterLastSlash(): string {
   return /[^/]*$/.exec(window.location.href)?.[0] || "";
 }
 
+// See the moment alias in vite.config.ts
+const momentLocales = import.meta.glob('/node_modules/moment/dist/locale/*.js');
+
 export async function setMomentLocale(lang: string) {
-  const trimmedLang = lang.slice(0, 2);
-  if (trimmedLang !== 'en') {
-    await import(`moment/locale/${trimmedLang}`);
+  // e.g. zh-cn, then zh
+  const candidates = [lang.toLowerCase(), lang.slice(0, 2).toLowerCase()];
+  const locale = candidates.find(l => `/node_modules/moment/dist/locale/${l}.js` in momentLocales);
+  if (locale) {
+    await momentLocales[`/node_modules/moment/dist/locale/${locale}.js`]();
   }
-  moment.locale(trimmedLang);
+  moment.locale(locale || 'en');
 }
 
 /**

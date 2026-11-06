@@ -31,7 +31,7 @@ import syncReducer from './reducers/sync';
 import taskqReducer from './reducers/taskq';
 import usersReducer from './reducers/users';
 import { configureStore } from '@reduxjs/toolkit';
-import logger from 'redux-logger';
+import { logger } from 'redux-logger';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useStore } from 'react-redux';
@@ -69,7 +69,7 @@ export const store = configureStore({
   }),
   middleware: (getDefaultMiddleware) => {
     const defaultMiddleware = getDefaultMiddleware();
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       defaultMiddleware.push(logger);
     }
     return defaultMiddleware;

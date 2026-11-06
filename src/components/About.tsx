@@ -66,7 +66,7 @@ const About = () => {
         <Paper className={classes.paper}>
           <Dashboard className={classes.icon}/>
           <div className={classes.labeledData}>
-            <Typography className={classes.data}>{process.env.REACT_APP_BUILD_VERSION}</Typography>
+            <Typography className={classes.data}>{import.meta.env.VITE_BUILD_VERSION}</Typography>
             <Typography className={classes.label}>{t("Web UI")}</Typography>
           </div>
         </Paper>

@@ -3,8 +3,8 @@
 
 import React, { useContext, useEffect } from "react";
 import { makeStyles } from 'tss-react/mui';
-import background from "!file-loader!./res/background_light.svg";
-import backgroundDark from "!file-loader!./res/background_dark.svg";
+import background from "./res/background_light.svg";
+import backgroundDark from "./res/background_dark.svg";
 import i18n from "./i18n";
 import { changeSettings } from "./actions/settings";
 import { CapabilityContext } from "./CapabilityContext";
@@ -107,8 +107,8 @@ const App = () => {
       className={classes.root}
       style={authenticated ? {
         backgroundImage: darkMode ?
-          `url(${customImages?.backgroundDark || backgroundDark})` :
-          `url(${customImages?.background || background})`
+          `url("${customImages?.backgroundDark || backgroundDark}")` :
+          `url("${customImages?.background || background}")`
       } : { backgroundColor: darkMode ? '#0b0f14' : '#2a2a72' }}
     >
       {authenticated && <SilentRefresh />}

@@ -1,79 +1,34 @@
 # Set up for development
- 
-This webapp uses [yarn](https://yarnpkg.com/) and [caddy](https://caddyserver.com/) for development.
-You need 2 separate terminals to run this app. One to run `yarn` and one to setup a `caddy` reverse proxy to access the backend server.
+
+This webapp uses [yarn](https://yarnpkg.com/) and [Vite](https://vite.dev/) for development
+and requires Node.js 20.19+ or 22.13+.
 To build for production, this webapp uses a `Makefile` with [GNU Make](https://www.gnu.org/software/make/)
 
-## yarn
-
-### Install packages
+## Install packages
 ```
 yarn
 ```
-or
-```
-make
-```
 
-### Run app
+## Run app
 ```
 yarn start
 ```
 
-## caddy
-
-### Installation
-According to https://caddyserver.com/docs/install#debian-ubuntu-raspbian
-```
-sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/cfg/gpg/gpg.155B6D79CA56EA34.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/cfg/setup/config.deb.txt?distro=debian&version=any-version' | sudo tee -a /etc/apt/sources.list.d/caddy-stable.list
-sudo apt update
-sudo apt install caddy
-```
-### Using caddy
-
-#### Caddyfile
-
-You will find a file `Caddyfile.example` in root directory of this repository.
-Copy this file to `./Caddyfile`.
+The development server runs on `http://localhost:3000` and proxies `/api/v1` and
+`/config.json` to a running `grommunio-admin-api` (default `http://localhost:8080`).
+To use a different backend, set `ADMIN_API_URL`:
 
 ```
-cp Caddyfile.example Caddyfile
+ADMIN_API_URL=http://192.168.1.10:8080 yarn start
 ```
 
-Using a grommunio-VM, with `grommunio-admin-api.service` running, the configuration should work out of the box.
+`HOST` and `PORT` change the address the development server listens on.
 
-The Caddyfile includes these necessary lines
+## Checks
 ```
-:4000 # port to run caddy on
-reverse_proxy /api/v1/* localhost:8080 # Address of backend
-reverse_proxy /config.json localhost:8080 # Address of config.json
-reverse_proxy http://127.0.0.1:3000 # Address of webapp (default yarn port)
+yarn typecheck
+yarn lint
 ```
-* `:4000`: Specifies the port the Caddyserver will run on and can be accessed with your browser.
-* `reverse_proxy /api/v1/* localhost:8080`: Specifies the address http requests to `/api/v1/*` will be redirected to. This has to be the location `grommunio-admin-api.service` runs on.
-* `reverse_proxy /config.json localhost:8080`: Specifies the location of `config.json`.
-* `reverse_proxy http://127.0.0.1:3000`: Specifies the address the webapp is running on with yarn. Per default, yarn runs on port 3000, so this should only be changed if changes to `./.env` are made.
-
-Further details are commented in `Caddyfile.example` or can be researched at https://caddyserver.com/docs/quick-starts/reverse-proxy
-
-### Running caddy
-In separate terminal:
-
-```
-caddy run
-```
-
-If you get an error with `caddy administration endpoint: listen tcp 127.0.0.1:2019: bind: address already in use`, try
-```
-caddy stop && caddy run
-```
-
-### Accessing website
-
-If you followed above steps, you should now be able to access the running webapp in your browser on `localhost:4000`
 
 ## Build for production
 
@@ -81,14 +36,15 @@ If you followed above steps, you should now be able to access the running webapp
 
 Run this command to create files for distribution.
 
-Result will be created in `/dist`
+The app is built into `/build`, the distribution tarball is created in `/dist`.
+The version shown in the app is taken from `VITE_BUILD_VERSION` (set by the `Makefile`).
 
 ## Deploying under a subpath
 
 By default the app assumes it is served at the root of its domain
 (`https://mail.example.com/`). To run it under a subpath instead
 (`https://mail.example.com/admin/`), only the `<base href="/">` tag
-in `public/index.html` needs to be adapted.
+in `index.html` needs to be adapted.
 
 # Server-side configuration
 

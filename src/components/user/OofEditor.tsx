@@ -25,8 +25,7 @@ function OofEditor({ editorRef, initialValue, disabled }: OofEditorProps) {
 
   return (
     <Editor
-      // eslint-disable-next-line no-undef
-      tinymceScriptSrc={process.env.PUBLIC_URL + '/tinymce/tinymce.min.js'}
+      tinymceScriptSrc={import.meta.env.BASE_URL + 'tinymce/tinymce.min.js'}
       licenseKey="gpl"
       onInit={(evt, editor) => editorRef.current = editor}
       initialValue={initialValue || ""}

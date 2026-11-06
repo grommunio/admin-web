@@ -1,9 +1,0 @@
-# This assumes this project runs webpack-dev-server on 127.0.0.1:3000
-# To access the proxy server, open localhost:4000
-# Copy this file to ./Caddyfile to start development
-
-:4000 # port to run caddy on
-
-reverse_proxy /api/v1/* localhost:8080 # Address of backend
-reverse_proxy /config.json localhost:8080 # Address of config.json
-reverse_proxy http://127.0.0.1:3000 # Address of webapp (default yarn port)

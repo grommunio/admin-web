@@ -24,7 +24,7 @@ all: build
 build:  vendor | src ; $(info building ...)	@
 	@rm -rf build
 
-	REACT_APP_BUILD_VERSION="${VERSION}" $(YARN) run build
+	VITE_BUILD_VERSION="${VERSION}" $(YARN) run build
 
 .PHONY: src
 src:
@@ -39,8 +39,8 @@ lint: vendor ; $(info running eslint ...) @
 # Tests
 
 .PHONY: test
-test: vendor ; $(info running jest tests ...) @
-	REACT_APP_BUILD_VERSION="${VERSION}" CI=true $(YARN) test -- --verbose
+test: vendor ; $(info running type checks ...) @
+	$(YARN) run typecheck
 
 # Yarn
 

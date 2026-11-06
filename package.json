@@ -2,7 +2,7 @@
   "name": "grommunio-admin-web",
   "version": "3.0.0",
   "private": true,
-  "homepage": ".",
+  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -46,47 +46,28 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "lint": "eslint src",
     "translate": "python3 scripts/fillTranslations.py 'src/i18n/'",
-    "postinstall": "node ./postinstall.js"
+    "postinstall": "node ./postinstall.cjs"
   },
-  "resolutions": {
-    "postcss": "^8.4.38",
-    "nth-check": "^2.1.1",
-    "svgo": "^2.8.4",
-    "serialize-javascript": "^7.0.5",
-    "underscore": "^1.13.8",
-    "node-forge": "^1.4.3",
-    "uuid": "^11.1.1",
-    "@tootallnate/once": "^2.0.1"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "resolutions": {},
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@svgr/webpack": "^8.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.73.0",
+    "@typescript-eslint/parser": "^8.73.0",
+    "@vitejs/plugin-react": "^6.3.0",
     "eslint": "^8.0.1",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^17.6.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.30.0",
-    "react-scripts": "^5.0.1"
+    "vite": "^8.3.8"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.13.0"
   }
 }

@@ -6,9 +6,10 @@
       "dom",
       "dom.iterable"
     ],
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "jsx": "react-jsx",
     "module": "ESNext",
@@ -18,7 +19,14 @@
     "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "vite/client"
+    ],
+    "isolatedModules": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ]
 }
