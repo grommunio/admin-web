@@ -21,7 +21,7 @@ fetch('config.json')
       try {
         const res = await response.json();
         setConfig({ ...res });
-      } catch (err) {
+      } catch {
         error();
       }
     } else {

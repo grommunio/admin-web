@@ -27,7 +27,7 @@ async function handleErrors(response: Response) {
     await response.json().then(json => {
       resp = json.message;
     });
-  } catch (err) {
+  } catch {
     resp = response.statusText;
   }
   return Promise.reject(new Error(resp));
@@ -49,7 +49,7 @@ async function handleLoginErrors(response: Response) {
     await response.json().then(json => {
       message = json.message;
     });
-  } catch (err) {
+  } catch {
     message = response.statusText;
   }
   throw new Error(message);

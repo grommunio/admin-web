@@ -96,7 +96,7 @@ interface GroupDetailsState {
   snackbar: string;
 }
 
-const GroupDetails = ({ domain }: DomainViewProps) => {1
+const GroupDetails = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();

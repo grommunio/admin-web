@@ -110,7 +110,7 @@ export function fetchUserData(domainID: number, userID: number) {
         ...userData,
         defaultPolicy: defaultPolicy?.data || {},
       };
-    } catch(err) {
+    } catch {
       // ignore error
     }
     return Promise.resolve(userData as User);
