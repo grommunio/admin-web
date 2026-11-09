@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { RefObject, useContext } from "react";
+import { RefObject, useContext } from "react";
 import { Editor } from '@tinymce/tinymce-react';
 import { useTranslation } from 'react-i18next';
 import ColorModeContext from "../../ColorContext";
@@ -15,7 +15,6 @@ type OofEditorProps = {
   editorRef: RefObject<EditorType | null>;
 }
 
-// eslint-disable-next-line react/prop-types
 function OofEditor({ editorRef, initialValue, disabled }: OofEditorProps) {
   const { i18n } = useTranslation();
   const context = useContext(ColorModeContext);

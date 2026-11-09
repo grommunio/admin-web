@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
 import { Button, FormControl, Grid2, IconButton, List, ListItem,
   MenuItem,
   TextField, Theme, Tooltip, Typography } from '@mui/material';

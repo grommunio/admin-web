@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { ReactNode, Ref, useCallback } from 'react';
+import { ReactNode, Ref, useCallback } from 'react';
 import { Fade, IconButton, LinearProgress, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import Feedback from './Feedback';

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Table, TableBody, TableHead, TableRow } from '@mui/material';
 import StyledTableCell from './StyledTableCell';
 import AlternatingTableRow from '../AlternatingTableRow';

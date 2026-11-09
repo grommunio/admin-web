@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
 import { Portal, Snackbar, Alert } from '@mui/material';
 import PANIK from '../res/panik.png';
 import { useTranslation, withTranslation } from 'react-i18next';

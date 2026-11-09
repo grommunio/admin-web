@@ -9,8 +9,7 @@
     "types": [
       "node"
     ],
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "resolveJsonModule": true
   },
   "include": [
     "vite.config.ts"

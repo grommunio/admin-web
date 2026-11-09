@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
   Select, TextField, Typography, Tooltip, Alert, 
   Theme,
@@ -193,7 +193,7 @@ const Account = (props: AccountProps) => {
     handlePasswordChange, handleChatUser, handleServer, handlePropertyCheckbox,
     handleInput, storageQuotaTooHigh, setState } = props;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
-  const { username, status, properties, smtp, pop3_imap, changePassword, lang, //eslint-disable-line
+  const { username, status, properties, smtp, pop3_imap, changePassword, lang,  
     ldapID, chat, chatAdmin, privChat, privVideo, privFiles, privArchive, privWeb,
     privEas, privDav, homeserver } = user;
   const { creationtime, displaytypeex, storagequotalimit, prohibitreceivequota,

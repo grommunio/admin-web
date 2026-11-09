@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
 import { Moment } from "moment";
 import { ANSI_CODE_TO_JSS_CLASS } from "./constants";
 import moment from 'moment';
@@ -255,7 +254,7 @@ export function getAutocompleteOptions<T>(
       ? []
       : options.filter(o => {
 
-        let compareValue = "";
+        let compareValue: string;
 
         // Special treatment for contact users
         if(filterAttribute === "username" && (o as ContactListItem).status === USER_STATUS.CONTACT) {
@@ -406,7 +405,6 @@ export function validateAltname(s=""): boolean {
   if(!s) return true;
   if (s.length > 64)
     return false;
-  // eslint-disable-next-line no-control-regex
   const r1 = /^[-A-Za-z0-9.!#$%&'^_`{}~]+$/;
   const r2 = /(^\.|\.$|\.\.)/;
   return Boolean(s.match(r1) && !s.match(r2));

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { makeStyles } from 'tss-react/mui';
 import background from "./res/background_light.svg";
 import backgroundDark from "./res/background_dark.svg";

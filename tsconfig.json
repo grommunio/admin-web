@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": [
-      "es2022",
-      "dom",
-      "dom.iterable"
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
     ],
     "paths": {
       "@/*": [
@@ -17,9 +17,7 @@
     "strict": true,
     "noImplicitAny": true,
     "noEmit": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
     "types": [
       "vite/client"
     ],

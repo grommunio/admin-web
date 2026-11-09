@@ -256,7 +256,6 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
   const { prohibitsendquota, prohibitreceivequota, storagequotalimit,
     lang, privChat, privArchive, privFiles, privVideo, privWeb,
     privEas, privDav,
-    // eslint-disable-next-line camelcase
     keycloak, smtp, changePassword, pop3_imap } = createParams;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   const editable = capabilities.includes(ORG_ADMIN);
@@ -469,7 +468,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={pop3_imap || false /*eslint-disable-line*/}
+                  checked={pop3_imap || false  }
                   onChange={handleCheckbox('pop3_imap')}
                   color="primary"
                   disabled={privArchive}

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import {
@@ -130,7 +130,6 @@ const Defaults = () => {
 
   const handleEdit = () => {
     const { createParams, sizeUnits } = state;
-    // eslint-disable-next-line camelcase
     const { maxUser, smtp, changePassword, pop3_imap, lang,
       privChat, privVideo, privFiles, privArchive, privWeb,
       privEas, privDav, storagequotalimit, prohibitreceivequota,
@@ -152,7 +151,6 @@ const Defaults = () => {
         properties: {
           ...quotas,
         },
-        // eslint-disable-next-line camelcase
         smtp, changePassword, lang, pop3_imap,
         privChat, privVideo, privFiles, privArchive,
         privWeb, privEas, privDav,
@@ -199,7 +197,6 @@ const Defaults = () => {
   const { maxUser, prohibitsendquota, prohibitreceivequota, storagequotalimit,
     lang, privChat, privArchive, privFiles, privVideo, privWeb,
     privEas, privDav,
-    // eslint-disable-next-line camelcase
     smtp, changePassword, pop3_imap, chatTeam, chatUser } = createParams;
   const writable = context.includes(SYSTEM_ADMIN_WRITE);
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { makeStyles } from 'tss-react/mui';
 import ServicesChart from "../components/ServicesChart";
 import AntispamStatistics from "../components/AntispamStatistics";

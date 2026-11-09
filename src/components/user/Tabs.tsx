@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
 import { AccountBalance, AltRoute, AppSettingsAlt, Badge, ContactMail, ContactPhone, Folder, Key,
   MobileFriendly, MoveToInbox, Quickreply, SupervisorAccount } from "@mui/icons-material";
 import { Tab, Tabs } from "@mui/material";
@@ -22,7 +21,6 @@ type UserTabProps = {
   icon: MuiIcon;
 }
 
-// eslint-disable-next-line react/prop-types
 const UserTab = ({ icon: Icon, ...props }: UserTabProps) => <Tab
   {...props} 
   iconPosition='start'

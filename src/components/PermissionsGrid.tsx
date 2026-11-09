@@ -1,4 +1,3 @@
-import React from "react";
 import { Grid2, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import { t } from "i18next";
 import { ChangeEvent } from "@/types/common";

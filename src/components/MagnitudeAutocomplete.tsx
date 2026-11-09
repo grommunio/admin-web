@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Autocomplete, TextField, TextFieldVariants } from '@mui/material';
 import { getAutocompleteOptions } from '../utils';
 import { useTranslation } from 'react-i18next';

@@ -72,7 +72,6 @@ interface GroupTabProps {
   label: string;
 }
 
-// eslint-disable-next-line react/prop-types
 const GroupTab = ({ icon: Icon, ...props }: GroupTabProps) => <Tab
   {...props}
   sx={{ minHeight: 48 }}

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
 import { useTranslation, withTranslation } from 'react-i18next';

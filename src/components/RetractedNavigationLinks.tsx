@@ -184,7 +184,6 @@ const RetractedNavigationLinks = (props: NavigationLinksProps) => {
     setTab(tab === 0 ? 1 : 0);
   }
 
-  // eslint-disable-next-line react/prop-types
   const ListElement = ({ label="", path, Icon, ...rest }: ListElementProps) => {
     const selected = location.pathname.endsWith('/' + path);
     return <Tooltip title={t(label)} placement="right">
@@ -201,7 +200,6 @@ const RetractedNavigationLinks = (props: NavigationLinksProps) => {
     </Tooltip>;
   }
 
-  // eslint-disable-next-line react/prop-types
   const NestedListElement = ({ ID, label="", path, Icon }: ListElementProps) => {
     const selected = expandedDomain === ID &&
       location.pathname.startsWith('/' + ID + path);

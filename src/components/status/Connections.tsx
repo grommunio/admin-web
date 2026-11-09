@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React from 'react';
 import { Paper, Theme, Typography} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Create, HourglassEmpty, Router, Scanner } from '@mui/icons-material';

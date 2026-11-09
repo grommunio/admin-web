@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Button, Divider, Grid2, Paper, TextField, Theme, Typography } from '@mui/material';
 import ViewWrapper from '../components/ViewWrapper';

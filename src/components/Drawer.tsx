@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import {
   Drawer,
@@ -35,7 +35,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: theme.palette.mode === 'light' ? '#121315c4' : '#121315aa',
-    // eslint-disable-next-line max-len
     boxShadow: 'rgba(0, 0, 0, 0.06) 0px 5px 5px -3px, rgba(0, 0, 0, 0.043) 0px 8px 10px 1px, rgba(0, 0, 0, 0.035) 0px 3px 14px 2px',
     color: '#e6e6e6',
 
@@ -51,7 +50,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
   smallDrawerPaper: {
     width: smallDrawerWidth,
     backgroundColor: '#121315',
-    // eslint-disable-next-line max-len
     boxShadow: 'rgba(0, 0, 0, 0.06) 0px 5px 5px -3px, rgba(0, 0, 0, 0.043) 0px 8px 10px 1px, rgba(0, 0, 0, 0.035) 0px 3px 14px 2px',
     color: '#e6e6e6',
     overflowX: 'hidden',

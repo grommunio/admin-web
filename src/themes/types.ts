@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { ThemeOptions } from "@mui/material/styles";
 
 export type ThemeMode = "light" | "dark";

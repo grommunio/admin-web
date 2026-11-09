@@ -96,7 +96,7 @@ export function fetchUserCount(domainID: number) {
 
 export function fetchUserData(domainID: number, userID: number) {
   return async () => {
-    let userData = {};
+    let userData: Record<string, unknown>;
     try {
       userData = await user(domainID, userID);
     } catch(err) {

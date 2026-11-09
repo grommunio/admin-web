@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
-/* eslint-disable react/prop-types */
 import { DomainViewProps } from "@/types/common";
 import { Domain } from "@/types/domains";
 import React from "react";

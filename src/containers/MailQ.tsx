@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Theme, Tooltip, Typography } from "@mui/material";
 import { deleteMailQData, fetchMailQData, flushMailQData, requeueMailQData } from "../actions/mailq";
 import TableViewContainer from "../components/TableViewContainer";
