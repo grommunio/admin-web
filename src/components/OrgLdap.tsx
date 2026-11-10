@@ -17,7 +17,6 @@ import { deleteOrgLdapConfig, fetchOrgLdapConfig, syncOrgLdapUsers, updateOrgLda
 import TaskCreated from "./Dialogs/TaskCreated";
 import LdapTextfield from "./LdapTextfield";
 import { CapabilityContext } from "../CapabilityContext";
-import PropTypes from "prop-types";
 import { ORG_ADMIN } from "../constants";
 import Feedback from "./Feedback";
 
@@ -852,9 +851,5 @@ const OrgLdap = ({ orgID, noHeader, resolveLoading }: IOrgLdap) => {
   </>
 };
 
-OrgLdap.propTypes = {
-  orgID: PropTypes.number.isRequired,
-  noHeader: PropTypes.bool,
-}
 
 export default OrgLdap;

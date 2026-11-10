@@ -3,7 +3,6 @@
 
 import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import PropTypes from 'prop-types';
 import { UserProperties } from '@/types/users';
 
 type HideFromSelectProps = {
@@ -67,9 +66,5 @@ const HideFromSelect = ({ attributehidden_gromox, setState }: HideFromSelectProp
   </FormControl>
 };
 
-HideFromSelect.propTypes = {
-  attributehidden_gromox: PropTypes.number,
-  setState: PropTypes.func.isRequired,
-}
 
 export default HideFromSelect;

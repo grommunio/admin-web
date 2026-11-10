@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
 import { useTranslation, withTranslation } from 'react-i18next';
@@ -108,16 +107,5 @@ const DeleteFolder = (props: DeleteFolderProps) => {
   );
 }
 
-DeleteFolder.propTypes = {
-  t: PropTypes.func.isRequired,
-  item: PropTypes.string,
-  id: PropTypes.string,
-  domainID: PropTypes.number,
-  open: PropTypes.bool,
-  onSuccess: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
-  delete: PropTypes.func.isRequired,
-};
 
 export default withTranslation()(DeleteFolder);
