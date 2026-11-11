@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Dialog, DialogTitle, Button, DialogActions, CircularProgress, DialogContent, FormControlLabel, Checkbox, 
 } from '@mui/material';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { ChangeEvent } from '@/types/common';
 
@@ -108,4 +108,4 @@ const DeleteFolder = (props: DeleteFolderProps) => {
 }
 
 
-export default withTranslation()(DeleteFolder);
+export default DeleteFolder;

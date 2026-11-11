@@ -103,6 +103,8 @@ i18n
     resources,
     lng: 'en-US',
     fallbackLng: 'en-US',
+    // Codes come from localStorage
+    supportedLngs: Object.keys(resources),
     debug: false,
     returnEmptyString: false,
     interpolation: {

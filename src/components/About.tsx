@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui';
 import { Paper, Theme, Typography} from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
 import { Dashboard, Outlet, Power } from '@mui/icons-material';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store';
 
 
@@ -101,4 +101,4 @@ const About = () => {
 }
 
 
-export default withTranslation()(About);
+export default About;

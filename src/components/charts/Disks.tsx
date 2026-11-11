@@ -4,7 +4,7 @@
 import { memo } from 'react';
 import { Typography, useTheme } from '@mui/material';
 import Chart from "react-apexcharts";
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { withTheme } from '@emotion/react';
 import { Disk } from '@/types/dashboard';
 
@@ -113,4 +113,4 @@ function Disks({ disks }: DisksProps) {
 
 const MemorizedDisk = memo(Disks, shouldComponentUpdate);
 
-export default withTheme(withTranslation()(MemorizedDisk));
+export default withTheme(MemorizedDisk);

@@ -3,13 +3,13 @@
 
 import { Portal, Snackbar, Alert } from '@mui/material';
 import PANIK from '../res/panik.png';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '../store';
 
 
 type FeedbackProps = {
   snackbar?: string;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const Feedback = ({ snackbar, onClose }: FeedbackProps) => {
@@ -44,4 +44,4 @@ const Feedback = ({ snackbar, onClose }: FeedbackProps) => {
 }
 
 
-export default withTranslation()(Feedback);
+export default Feedback;

@@ -3,7 +3,7 @@
 
 import { makeStyles } from 'tss-react/mui';
 import { Paper, Theme, Typography} from '@mui/material';
-import { useTranslation, withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotInterestedIcon from '@mui/icons-material/NotInterested';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
@@ -127,4 +127,4 @@ const AntispamStatistics = (props: AntispamStatisticsType) => {
   );
 }
 
-export default withTranslation()(AntispamStatistics);
+export default AntispamStatistics;
