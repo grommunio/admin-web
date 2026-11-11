@@ -103,7 +103,6 @@ function Load() {
           type="bar"
           height={200}
           width="95%"
-          align="right"
         />
       </div>
     </Paper>

@@ -55,8 +55,9 @@ function Disks({ disks }: DisksProps) {
             style: {
               colors: [theme.palette.mode === 'light' ? '#000000' : '#ffffff']
             },
-            formatter: function(_, { dataPointIndex: i }) {
-              return (disks[i].used / 1000000000).toFixed(1) + "GB";
+            formatter: function(_, opts) {
+              const disk = disks[opts?.dataPointIndex ?? -1];
+              return disk ? (disk.used / 1000000000).toFixed(1) + "GB" : "";
             },
           },
           legend: {
@@ -88,8 +89,10 @@ function Disks({ disks }: DisksProps) {
           },
           tooltip: {
             y: {
-              formatter: function(_, { dataPointIndex: i }) {
-                const { percent, filesystem, device } = disks[i];
+              formatter: function(_, opts) {
+                const disk = disks[opts?.dataPointIndex ?? -1];
+                if (!disk) return "";
+                const { percent, filesystem, device } = disk;
                 return percent + '% on ' + device + " (" + filesystem + ")"
               },
               title: {
@@ -105,7 +108,6 @@ function Disks({ disks }: DisksProps) {
         type="bar"
         height={200}
         width="95%"
-        align="right"
       />
     </div>
   );

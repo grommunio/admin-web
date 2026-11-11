@@ -46,7 +46,7 @@ function MemoryPie() {
             type: 'pie',
             animations: {
               enabled: true,
-              easing: 'easeinout',
+              easing: 'easeInOutSine',
               speed: 100,
               dynamicAnimation: {
                 enabled: false
