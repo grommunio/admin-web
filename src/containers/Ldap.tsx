@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import Search from '@mui/icons-material/Search';
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Import from '@mui/icons-material/ImportContacts';
-import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid2, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
+import { Checkbox, CircularProgress, Divider, FormControlLabel, Grid, IconButton, InputAdornment, List, ListItem, ListItemAvatar, ListItemText,
   Paper, TextField, Theme, Tooltip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { clearLdapSearch, fetchLdapData } from '../actions/ldap';
@@ -126,7 +126,7 @@ const Ldap = ({ domain }: DomainViewProps) => {
   const { loading, snackbar, confirming } = state;
   const writable = context.includes(DOMAIN_ADMIN_WRITE);
   return (
-    (<ViewWrapper
+    <ViewWrapper
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state,snackbar: '' })}
     >
@@ -135,7 +135,9 @@ const Ldap = ({ domain }: DomainViewProps) => {
         <span>| </span>
         {t("LDAP")}
       </Typography>
-      <Grid2 container justifyContent="center">
+      <Grid container sx={{
+        justifyContent: "center"
+      }}>
         <TextField
           autoFocus
           placeholder={t("Search LDAP")}
@@ -179,7 +181,7 @@ const Ldap = ({ domain }: DomainViewProps) => {
           label={t('Search in entire organisation')}
           className={classes.checkbox}
         />}
-      </Grid2>
+      </Grid>
       {ldapUsers.length > 0 && <Paper elevation={1}>
         <List>
           {ldapUsers.map((user: LdapUser, idx: number) => <React.Fragment key={idx}>
@@ -215,9 +217,11 @@ const Ldap = ({ domain }: DomainViewProps) => {
           )}
         </List>
       </Paper>}
-      {loading && <Grid2 container justifyContent="center">
+      {loading && <Grid container sx={{
+        justifyContent: "center"
+      }}>
         <CircularProgress color="primary" size={40}/>
-      </Grid2>}
+      </Grid>}
       <ImportDialog
         domainID={domain.ID}
         open={!!confirming}
@@ -226,7 +230,7 @@ const Ldap = ({ domain }: DomainViewProps) => {
         onClose={handleClose}
         onError={handleError}
       />
-    </ViewWrapper>)
+    </ViewWrapper>
   );
 }
 

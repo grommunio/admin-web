@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Button, CircularProgress, IconButton, MenuItem, Paper, TextField, Theme, Tooltip, Typography } from '@mui/material';
-import { Check, CheckCircleOutline, CopyAll, Update, Upgrade } from '@mui/icons-material';
+import { Check, CheckCircleOutlined, CopyAll, Update, Upgrade } from '@mui/icons-material';
 import { systemUpdate } from '../../actions/misc';
 import { fetchUpdateLogData } from '../../actions/logs';
 import { copyToClipboard, generateFormattedLogLine } from '../../utils';
@@ -186,7 +186,7 @@ const Updater = (props: UpdaterProps) => {
     <Paper elevation={0} className={classes.logs}>
       <Tooltip placement="top" title={t('Copy all')}>
         <IconButton onClick={handleCopyLogs(updateLog.join('\n'))} size="large">
-          {copied ? <CheckCircleOutline /> : <CopyAll />}
+          {copied ? <CheckCircleOutlined /> : <CopyAll />}
         </IconButton>
       </Tooltip>
       {updateLog.length > 0 ? updateLog.map((log, idx) =>

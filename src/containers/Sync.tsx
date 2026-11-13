@@ -22,7 +22,7 @@ import {
   TableSortLabelProps,
 } from "@mui/material";
 import { fetchSyncData } from "../actions/sync";
-import { CheckCircleOutlined, HelpOutline, HighlightOffOutlined } from "@mui/icons-material";
+import { CheckCircleOutlined, HelpOutlined, HighlightOffOutlined } from "@mui/icons-material";
 import { getStringFromCommand, getTimePast } from "../utils";
 import SyncStatistics from "../components/SyncStatistics";
 import { grey, red } from "@mui/material/colors";
@@ -169,7 +169,7 @@ const Sync = () => {
           href="https://docs.grommunio.com/admin/administration.html#mobile-devices"
           target="_blank"
         >
-          <HelpOutline fontSize="small"/>
+          <HelpOutlined fontSize="small"/>
         </IconButton>
       </>
       }

@@ -10,7 +10,7 @@ import {
   TableBody,
   Typography,
   Button,
-  Grid2,
+  Grid,
   CircularProgress,
   List,
   ListItemButton,
@@ -396,9 +396,11 @@ const Contacts = ({ domain }: DomainViewProps) => {
         )}
 
         {Users.length < count && (
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <CircularProgress className={classes.circularProgress} />
-          </Grid2>
+          </Grid>
         )}
       </Paper>
 

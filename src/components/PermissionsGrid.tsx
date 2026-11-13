@@ -1,4 +1,4 @@
-import { Grid2, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
+import { Grid, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import { t } from "i18next";
 import { ChangeEvent } from "@/types/common";
 import { makeStyles } from "tss-react/mui";
@@ -77,8 +77,8 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
   }
 
   return <>
-    <Grid2 container>
-      <Grid2 size={6}>
+    <Grid container>
+      <Grid size={6}>
         <FormControl className={classes.form}>
           <FormLabel focused={false}>{t("Read")}</FormLabel>
           <RadioGroup
@@ -106,8 +106,8 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
             />
           </RadioGroup>
         </FormControl>
-      </Grid2>
-      <Grid2 size={6}>
+      </Grid>
+      <Grid size={6}>
         <FormControl className={classes.form}>
           <FormLabel>{t("Write")}</FormLabel>
           <FormControlLabel
@@ -159,10 +159,10 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
             label={t('Edit all')}
           />
         </FormControl>
-      </Grid2>
-    </Grid2>
-    <Grid2 container style={{ marginTop: 16 }}>
-      <Grid2 size={6}>
+      </Grid>
+    </Grid>
+    <Grid container style={{ marginTop: 16 }}>
+      <Grid size={6}>
         <FormControl className={classes.form}>
           <FormLabel focused={false}>{t("Delete items")}</FormLabel>
           <RadioGroup
@@ -186,8 +186,8 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
             />
           </RadioGroup>
         </FormControl>
-      </Grid2>
-      <Grid2 size={6}>
+      </Grid>
+      <Grid size={6}>
         <FormControl className={classes.form}>
           <FormLabel>{t("Other")}</FormLabel>
           <FormControlLabel
@@ -227,8 +227,8 @@ const PermissionsGrid = ({ permissions, setPermissions, isCalendarFolder }: IPer
             label={t('Folder visible')}
           />
         </FormControl>
-      </Grid2>
-    </Grid2></>;
+      </Grid>
+    </Grid></>;
 }
 
 

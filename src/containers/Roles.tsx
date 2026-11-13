@@ -12,13 +12,13 @@ import {
   IconButton,
   Typography,
   Button,
-  Grid2,
+  Grid,
   TableSortLabel,
   CircularProgress,
   Theme,
 } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
-import { HelpOutline } from '@mui/icons-material';
+import { HelpOutlined } from '@mui/icons-material';
 
 import { useTranslation } from 'react-i18next';
 import { useTable } from '../hooks/useTable';
@@ -103,7 +103,7 @@ const Roles = () => {
             href="https://docs.grommunio.com/admin/administration.html#id1"
             target="_blank"
           >
-            <HelpOutline fontSize="small" />
+            <HelpOutlined fontSize="small" />
           </IconButton>
         </span>
       }
@@ -183,12 +183,14 @@ const Roles = () => {
         </Table>
 
         {roleList.length < count && (
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid2>
+          </Grid>
         )}
       </Paper>
 

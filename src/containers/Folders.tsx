@@ -79,7 +79,7 @@ const Folders = ({ domain }: DomainViewProps) => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { folders } = useAppSelector(state => state);
+  const folders = useAppSelector(state => state.folders);
   const [state, setState] = useState<FoldersState>({
     offset: 0,
     tab: 0,

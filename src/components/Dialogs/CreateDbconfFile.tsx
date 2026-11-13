@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  Grid2,
+  Grid,
   Typography,
   MenuItem,
   Theme, 
@@ -147,7 +147,9 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
             required
           />
           <Typography variant="h6">Data</Typography>
-          {data.map((pair: KeyValuePair<string>, idx: number) => <Grid2 key={idx} container alignItems="center">
+          {data.map((pair: KeyValuePair<string>, idx: number) => <Grid key={idx} container sx={{
+            alignItems: "center"
+          }}>
             <Typography className={classes.gridTypo}>
               {pair.key}
             </Typography>
@@ -165,7 +167,7 @@ const CreateDbconfFile = (props: CreateDbconfFileProps) => {
                 </MenuItem>
               )}
             </TextField>
-          </Grid2>
+          </Grid>
           )}
         </FormControl>
       </DialogContent>

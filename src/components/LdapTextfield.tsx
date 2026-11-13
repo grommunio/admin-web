@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { ReactNode } from 'react';
-import { TextField, Theme } from '@mui/material';
+import { TextField, TextFieldProps, Theme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { ChangeEvent } from '@/types/common';
 
@@ -33,7 +33,7 @@ type LdapTextfieldProps = {
   id?: string;
   name?: string;
   autoComplete?: string;
-  InputLabelProps?: Record<string, string | number | boolean>,
+  slotProps?: TextFieldProps['slotProps'];
   type?: string;
   select?: boolean;
 }

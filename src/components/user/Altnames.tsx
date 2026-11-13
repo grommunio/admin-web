@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { Button, FormControl, Grid2, IconButton, List, ListItem,
+import { Button, FormControl, Grid, IconButton, List, ListItem,
   TextField, Theme, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
@@ -73,9 +73,11 @@ const Altnames = (props: AltnamesProps) => {
         </ListItem>
         )}
       </List>
-      <Grid2 container justifyContent="center">
+      <Grid container sx={{
+        justifyContent: "center"
+      }}>
         <Button variant="contained" onClick={handleAltnameEdit("add")}>{t('addHeadline', { item: 'Alternative name' })}</Button>
-      </Grid2>
+      </Grid>
     </FormControl>
   );
 }

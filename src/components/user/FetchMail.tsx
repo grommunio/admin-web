@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React from 'react';
-import { FormControl, Grid2, IconButton,
+import { FormControl, Grid, IconButton,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +12,7 @@ import { FormControl, Grid2, IconButton,
   Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
-import { AddCircleOutline, Delete } from '@mui/icons-material';
+import { AddCircleOutlined, Delete } from '@mui/icons-material';
 import { NewFetchmailConfig } from '@/types/users';
 
 
@@ -51,12 +51,14 @@ const FetchMail = (props: FetchMailProps) => {
 
   return (
     <FormControl className={classes.form}>
-      <Grid2 container alignItems="center"  className={classes.headline}>
+      <Grid container className={classes.headline}  sx={{
+        alignItems: "center"
+      }}>
         <Typography variant="h6">{t('Fetchmail')}</Typography>
         <IconButton onClick={handleAdd} size="large">
-          <AddCircleOutline color="primary" fontSize="small"/>
+          <AddCircleOutlined color="primary" fontSize="small"/>
         </IconButton>
-      </Grid2>
+      </Grid>
       <Table size="small">
         <TableHead>
           <TableRow>

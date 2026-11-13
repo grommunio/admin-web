@@ -6,7 +6,7 @@ import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from "react-i18next";
 import {
   FormControlLabel,
-  Grid2,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -98,7 +98,7 @@ const Logs = () => {
   const { classes } = useStyles();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { logs } = useAppSelector(state => state);
+  const logs = useAppSelector(state => state.logs);
   const [state, setState] = useState({
     snackbar: "",
     skip: 0,
@@ -348,7 +348,9 @@ const Logs = () => {
             >
               {nOptions.map(c => <MenuItem value={c} key={c}>{c}</MenuItem>)}
             </TextField>}
-            {filename && <Grid2 container justifyContent="flex-end">
+            {filename && <Grid container sx={{
+              justifyContent: "flex-end"
+            }}>
               <IconButton disabled={!!date} onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
                 <Refresh />
               </IconButton>
@@ -364,7 +366,7 @@ const Logs = () => {
                 }
                 label={t("Autorefresh")}
               />
-            </Grid2>}
+            </Grid>}
           </div>
           {filename && filteredlogs.length ===  0 && <Typography>&lt;no logs&gt;</Typography>}
           <List className={classes.list} id="logsList" onScroll={handleScroll}>

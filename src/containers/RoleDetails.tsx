@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -242,14 +242,14 @@ const RoleDetails = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Role' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -332,11 +332,13 @@ const RoleDetails = () => {
               </IconButton>
             </div>
           )}
-          <Grid2 container justifyContent="center" className={classes.addButton}>
+          <Grid container className={classes.addButton} sx={{
+            justifyContent: "center"
+          }}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid2>
+          </Grid>
         </FormControl>
         <Button
           color="secondary"

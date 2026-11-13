@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useContext, useMemo } from 'react';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid2, MenuItem,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, MenuItem,
   Select, TextField, Typography, Tooltip, Alert, 
   Theme,
   SelectChangeEvent} from '@mui/material';
@@ -202,7 +202,7 @@ const Account = (props: AccountProps) => {
 
   return (
     (<FormControl className={classes.form}>
-      <Grid2 container className={classes.input}>
+      <Grid container className={classes.input}>
         <TextField
           label={t("Username")}
           value={username || ''}
@@ -222,7 +222,7 @@ const Account = (props: AccountProps) => {
         >
           {t('Change password')}
         </Button>}
-      </Grid2>
+      </Grid>
       {ldapID && <TextField 
         label={t("LDAP ID")}
         className={classes.input}
@@ -285,7 +285,7 @@ const Account = (props: AccountProps) => {
       </TextField>
       <div className={classes.quota}>
         <Typography color="textPrimary" className={classes.quotaHeadline}>{t('Used space')}</Typography>
-        <Grid2 container style={{ marginTop: 8 }}>
+        <Grid container style={{ marginTop: 8 }}>
           <TextField 
             className={classes.flexInput}
             label={
@@ -375,12 +375,12 @@ const Account = (props: AccountProps) => {
           <div className={classes.graphContainer}>
             {calculateGraph()}
           </div>
-        </Grid2>
-        <Grid2 container>
+        </Grid>
+        <Grid container>
           {quotaWarning && <Alert style={{ flex: 1, margin: 8 }} severity="warning">
             {quotaWarning}
           </Alert>}
-        </Grid2>
+        </Grid>
       </div>
       <HideFromSelect attributehidden_gromox={attributehidden_gromox} setState={setState} />
       <TextField
@@ -394,7 +394,7 @@ const Account = (props: AccountProps) => {
       <Typography sx={{ mt: 1 }}>
         {t("Automatic processing of meeting requests")}
       </Typography>
-      <Grid2 container direction="column" sx={{ py: 1, px: 2 }}>
+      <Grid container sx={{ flexDirection: "column", py: 1, px: 2 }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -425,17 +425,17 @@ const Account = (props: AccountProps) => {
           }
           label={`${t('Accept conflict-free meeting requests')}. (${t("If unchecked, requests will be added to the calendar as tenative only, with no response towards the organizer")})`}
         />
-      </Grid2>
+      </Grid>
       <Typography sx={{ mt: 1 }}>
         {t("Features")}
       </Typography>
-      <Grid2 container direction="column" sx={{ py: 1, px: 2 }}>
+      <Grid container sx={{ flexDirection: "column", py: 1, px: 2 }}>
 
         {status !== USER_STATUS.SHARED && <Tooltip
           placement="top-start"
           title={!domain.chat ? "This domain doesn't have a grommunio-chat team" : ''}
         >
-          <Grid2 container>
+          <Grid container>
             <FormControlLabel
               control={
                 <Checkbox
@@ -458,9 +458,9 @@ const Account = (props: AccountProps) => {
               disabled={!chat || !domain.chat}
               label={t('grommunio-chat admin permissions')}
             />
-          </Grid2>
+          </Grid>
         </Tooltip>}
-        <Grid2 container>
+        <Grid container>
           {status !== USER_STATUS.SHARED && <FormControlLabel
             control={
               <Checkbox
@@ -492,8 +492,8 @@ const Account = (props: AccountProps) => {
             }
             label={t('Allow POP3/IMAP logins')}
           />}
-        </Grid2>
-        {status !== USER_STATUS.SHARED && <Grid2 container>
+        </Grid>
+        {status !== USER_STATUS.SHARED && <Grid container>
           <FormControlLabel
             control={
               <Checkbox
@@ -566,8 +566,8 @@ const Account = (props: AccountProps) => {
             }
             label={t('Allow DAV')}
           />
-        </Grid2>}
-      </Grid2>
+        </Grid>}
+      </Grid>
     </FormControl>)
   );
 }

@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, TextField,
-  Button, DialogActions, CircularProgress, Grid2, FormControl,
+  Button, DialogActions, CircularProgress, Grid, FormControl,
   Theme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -146,7 +146,7 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
     >
       <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
       <DialogContent>
-        <Grid2 container>
+        <Grid container>
           <FormControl className={classes.form}>
             <MagnitudeAutocomplete<BaseDomain>
               value={domain}
@@ -160,7 +160,7 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
               isOptionEqualToValue={(option, value) => option.ID === value.ID}
             />
           </FormControl>
-          <Grid2 className={classes.gridItem} size={12}>
+          <Grid className={classes.gridItem} size={12}>
             <TextField
               className={classes.propertyInput}
               fullWidth
@@ -168,8 +168,8 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
               value={smtpaddress || ''}
               onChange={handleInput('smtpaddress')}
             />
-          </Grid2>
-          <Grid2 className={classes.gridItem} size={12}>
+          </Grid>
+          <Grid className={classes.gridItem} size={12}>
             <div className={classes.grid}>
               <TextField 
                 className={classes.flexTextfield}
@@ -191,8 +191,8 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
               value={surname || ''}
               onChange={handleInput('surname')}
             />
-          </Grid2>
-          <Grid2 className={classes.gridItem} size={12}>
+          </Grid>
+          <Grid className={classes.gridItem} size={12}>
             <TextField 
               className={classes.propertyInput}
               label={t("Display name")}
@@ -207,8 +207,8 @@ const AddGlobalContact = (props: AddGlobalContactProps) => {
               value={nickname || ''}
               onChange={handleInput('nickname')}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button

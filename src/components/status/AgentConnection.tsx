@@ -11,7 +11,7 @@ import linux from '../../res/linux.svg';
 import bsd from '../../res/bsd.svg';
 import android from '../../res/android.svg';
 import { capitalizeFirstLetter } from '../../utils';
-import { HelpOutline } from '@mui/icons-material';
+import { HelpOutlined } from '@mui/icons-material';
 import { ServerZones as ServerZonesType } from '@/types/status';
 
 
@@ -30,7 +30,7 @@ function AgentConnection(props: AgentConnectionProps) {
     case 'linux': return <img src={linux} width="16" height="16" alt=""/>;
     case 'bsd': return <img src={bsd} width="16" height="16" alt=""/>;
     case 'android': return <img src={android} width="16" height="16" alt=""/>;
-    case 'unknown': return <HelpOutline fontSize="small"/>;
+    case 'unknown': return <HelpOutlined fontSize="small"/>;
     default: return null;
     }
   };

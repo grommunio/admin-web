@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { Button, FormControl, Grid2, IconButton, List, ListItem,
+import { Button, FormControl, Grid, IconButton, List, ListItem,
   MenuItem,
   TextField, Theme, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
@@ -77,11 +77,13 @@ const Smtp = ({ user, aliases, forward, forwardError, handleForwardInput, handle
         </ListItem>
         )}
       </List>
-      <Grid2 container justifyContent="center">
+      <Grid container sx={{
+        justifyContent: "center"
+      }}>
         <Button variant="contained" onClick={handleAddAlias}>{t('addHeadline', { item: 'E-Mail' })}</Button>
-      </Grid2>
+      </Grid>
       <Typography variant="h6" className={classes.headline}>{t('E-Mail forward')}</Typography>
-      <Grid2 container className={classes.bottom} >
+      <Grid container className={classes.bottom} >
         <TextField
           className={classes.select}
           value={forward?.forwardType === undefined ? '' : forward.forwardType}
@@ -100,7 +102,7 @@ const Smtp = ({ user, aliases, forward, forwardError, handleForwardInput, handle
           label={t('Destination')}
           onChange={handleForwardInput('destination')}
         />
-      </Grid2>
+      </Grid>
     </FormControl>
   );
 }

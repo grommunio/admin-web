@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Typography, Button, Grid2, TableSortLabel,
+  TableBody, Typography, Button, Grid, TableSortLabel,
   CircularProgress, Tooltip, List, ListItemButton, ListItemText, ListItemIcon, 
   TextField,
   MenuItem,
@@ -453,9 +453,11 @@ const Users = ({ domain }: DomainViewProps) => {
               </ListItemButton>
             )}
           </List>}
-        {(Users.length < count) && <Grid2 container justifyContent="center">
+        {(Users.length < count) && <Grid container sx={{
+          justifyContent: "center"
+        }}>
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid2>}
+        </Grid>}
       </Paper>
       <AddUser
         open={adding}

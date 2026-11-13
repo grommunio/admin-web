@@ -5,7 +5,7 @@ import React, { useContext, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  Typography, Button, Grid2, Tabs, Tab, IconButton, 
+  Typography, Button, Grid, Tabs, Tab, IconButton, 
   Theme} from '@mui/material';
 import { fetchDBConfData, deleteDBService } from '../actions/dbconf';
 import UploadServiceFile from '../components/Dialogs/UploadServiceFile';
@@ -117,7 +117,9 @@ const DBConf = () => {
           {t("Configure grommunio-dbconf")}
         </Button>
       </TableActionGrid>
-      <Grid2 container alignItems="flex-end" className={classes.tabs}>
+      <Grid container className={classes.tabs} sx={{
+        alignItems: "flex-end"
+      }}>
         <Tabs
           textColor="primary" 
           indicatorColor="primary"
@@ -127,7 +129,7 @@ const DBConf = () => {
           <Tab label={t("Services")} sx={{ minHeight: 48 }} iconPosition='start' icon={<MiscellaneousServices />}/>
           <Tab label={t("Commands")} sx={{ minHeight: 48 }} iconPosition='start' icon={<SmartButton />}/>
         </Tabs>
-      </Grid2>
+      </Grid>
       {state.tab === 0 ? <Paper elevation={1}>
         <Table size="small">
           <TableHead>

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   MenuItem,
@@ -146,14 +146,14 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('Folder details')}
           </Typography>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 
@@ -191,7 +191,9 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
             disabled={readonly}
           />
         </FormControl>
-        <Grid2 container className={classes.grid} alignItems="center">
+        <Grid container className={classes.grid} sx={{
+          alignItems: "center"
+        }}>
           <Button
             onClick={handleAdd}
             disabled={!writable}
@@ -217,8 +219,8 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
               </Tooltip>
             </span>}
           />}
-        </Grid2>
-        <Grid2 container>
+        </Grid>
+        <Grid container>
           <Button
             color="secondary"
             onClick={() => navigate(-1)}
@@ -235,7 +237,7 @@ const FolderDetails = ({ domain }: DomainViewProps) => {
           >
             {t('Save')}
           </Button>
-        </Grid2>
+        </Grid>
       </Paper>
       {folder.folderid && <FolderPermissions
         open={adding}

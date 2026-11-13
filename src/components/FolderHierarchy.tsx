@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import * as React from 'react';
-import { AddCircleOutline, AssignmentTurnedInOutlined,
+import { AddCircleOutlined, AssignmentTurnedInOutlined,
   ContactsOutlined as Contacts, Delete, StickyNote2Outlined as StickyNote, Edit,
   EmailOutlined as Email, EventOutlined as Event } from '@mui/icons-material';
 import { IconButton, Theme, Tooltip, Typography } from '@mui/material';
@@ -67,7 +67,7 @@ const FolderHierarchy = ({ writable, data, domainID, handleAdd, handleEdit, hand
           onClick={handleAdd(folderid)}
         >
           <Tooltip title={t("Add new folder within this folder")} placement="right" arrow>
-            <AddCircleOutline color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
+            <AddCircleOutlined color="primary" fontSize='inherit' style={{ fontSize: 16 }}/>
           </Tooltip>
         </IconButton>
         <div className={classes.treeItemActionsContainer}>

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, FormControl, Grid2, Theme, Typography } from '@mui/material';
+import { Button, FormControl, Grid, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
@@ -195,7 +195,7 @@ const Delegates = (props: DeletesProps) => {
           />
         </FormControl>
       </FormControl>
-      <Grid2 container className={classes.buttonGrid}>
+      <Grid container className={classes.buttonGrid}>
         <Button
           onClick={() => navigate(-1)}
           style={{ marginRight: 8 }}
@@ -211,7 +211,7 @@ const Delegates = (props: DeletesProps) => {
         >
           {t('Save')}
         </Button>
-      </Grid2>
+      </Grid>
       <Feedback
         snackbar={snackbar}
         onClose={() => setState({ ...state, snackbar: '' })}

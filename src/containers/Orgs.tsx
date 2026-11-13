@@ -11,7 +11,7 @@ import {
   TableBody,
   Typography,
   Button,
-  Grid2,
+  Grid,
   TableSortLabel,
   CircularProgress,
   Theme
@@ -177,12 +177,14 @@ const Orgs = () => {
         </Table>
 
         {orgList.length < count && (
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid2>
+          </Grid>
         )}
       </Paper>
 

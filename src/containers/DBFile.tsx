@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -126,16 +126,16 @@ const DBFile = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'File' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
-          {data.map((pair, idx) => <Grid2 container key={idx}>
+          {data.map((pair, idx) => <Grid container key={idx}>
             <TextField
               label="key"
               value={pair.key}
@@ -153,13 +153,15 @@ const DBFile = () => {
             {writable && <IconButton onClick={handleRemoveRow(idx)} size="large">
               <Delete color="error"/>
             </IconButton>}
-          </Grid2>
+          </Grid>
           )}
-          {writable && <Grid2 container justifyContent="center">
+          {writable && <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <IconButton onClick={handleAddRow} size="large">
               <Add color="primary"/>
             </IconButton>
-          </Grid2>}
+          </Grid>}
         </FormControl>
         <Button
           color="secondary"

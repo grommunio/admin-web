@@ -372,7 +372,9 @@ const Login = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const { auth, settings, config: serverConfig } = useAppSelector(state => state);
+  const auth = useAppSelector(state => state.auth);
+  const settings = useAppSelector(state => state.settings);
+  const serverConfig = useAppSelector(state => state.config);
   const [searchParams, setSearchParams] = useSearchParams();
   const [state, setState] = useState<LoginState>({
     user: '',

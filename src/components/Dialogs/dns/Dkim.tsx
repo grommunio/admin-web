@@ -33,7 +33,7 @@ function Dkim({ onClose, dnsCheck, domain }: DNSDialogProps) {
 
   return (<>
     <Dialog open maxWidth="md" fullWidth onClose={onClose}>
-      <DialogTitle display="flex" justifyContent="space-between">
+      <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
         {t("DKIM")}
         <Button
           onClick={handleKeygen(true)}

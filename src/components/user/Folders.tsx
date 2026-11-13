@@ -86,6 +86,8 @@ const Folders = ({ username, domain }: FoldersProps) => {
   }, [username]);
 
   const handleFolderClicked = (clickedFolder: Folder) => async (e: any) => {
+    // onClick is on the item root, ignore clicks from child items
+    e.stopPropagation();
     const folderStringID = clickedFolder.ID.toString();
     setSelectedFolder(clickedFolder);
 

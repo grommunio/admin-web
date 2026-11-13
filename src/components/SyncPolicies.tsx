@@ -66,8 +66,10 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
     style: { marginBottom: 8 },
     label: t(label),
     value: syncPolicy[field],
-    InputLabelProps: {
-      className: syncPolicy[field] === defaultPolicy[field] ? "" : classes.blueCheckbox,
+    slotProps: {
+      inputLabel: {
+        className: syncPolicy[field] === defaultPolicy[field] ? "" : classes.blueCheckbox,
+      },
     },
     onChange: handleChange(field),
     variant: "standard" as TextFieldVariants
@@ -84,7 +86,9 @@ const SyncPolicies = (props: SyncPoliciesProps) => {
 
   return (
     <FormControl className={classes.form}>
-      <Typography variant="h6" marginBottom={1}>{t('General')}</Typography>
+      <Typography variant="h6" sx={{
+        marginBottom: 1
+      }}>{t('General')}</Typography>
       <FormControlLabel
         {...defaultCheckboxProps("Allow storage card", "allowstoragecard")}
       />

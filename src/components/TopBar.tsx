@@ -17,7 +17,7 @@ import { AppBar, Toolbar, Typography, IconButton,
 import Burger from '@mui/icons-material/Menu';
 import { setDrawerExpansion, setDrawerOpen } from '../actions/drawer';
 import { useTranslation } from 'react-i18next';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutlined';
 import Duo from '@mui/icons-material/Duo';
 import Chat from '@mui/icons-material/Chat';
 import Files from '@mui/icons-material/Description';
@@ -147,7 +147,10 @@ const TopBar = () => {
   const dispatch = useAppDispatch();
   const context = useContext(CapabilityContext);
   const colorContext = useContext(ColorModeContext);
-  const { profile, settings, drawer, config } = useAppSelector(state => state);
+  const profile = useAppSelector(state => state.profile);
+  const settings = useAppSelector(state => state.settings);
+  const drawer = useAppSelector(state => state.drawer);
+  const config = useAppSelector(state => state.config);
   const [state, setState] = useState({
     menuAnchorEl: null,
     langsAnchorEl: null,
@@ -223,7 +226,7 @@ const TopBar = () => {
   const mdDownHidden = useMediaQuery(theme => theme.breakpoints.down('md'));
   
   return (
-    (<AppBar color='inherit' position="fixed" className={classes.appbar}>
+    <AppBar color='inherit' position="fixed" className={classes.appbar}>
       <Toolbar className={drawer.expanded ? classes.toolbarExpanded : classes.toolbarCollapsed}>
         {!lgUpHidden &&
           <IconButton sx={{ display: { lg: 'none', md: 'block' } }}  color="inherit" onClick={handleMenuToggle} size="large">
@@ -241,14 +244,18 @@ const TopBar = () => {
             title={t(link.title) + (!config[link.key] ? ` (${t("Not configured")})` : '')} key={idx}
           >
             <span>
-              <IconButton
+              {config[link.key] ? <IconButton
                 href={config[link.key] as string}
                 target="_blank"
-                disabled={!config[link.key]}
                 className={classes.iconButton}
                 size="large">
                 <link.icon />
-              </IconButton>
+              </IconButton> : <IconButton
+                disabled
+                className={classes.iconButton}
+                size="large">
+                <link.icon />
+              </IconButton>}
             </span>
           </Tooltip>
         )}
@@ -272,15 +279,17 @@ const TopBar = () => {
                 placeholder={t("Search")}
                 variant="standard"
                 slotProps={{
+                  ...params.slotProps,
+
                   input: {
-                    ...params.InputProps,
+                    ...params.slotProps.input,
                     style: { color: 'white' },
                     startAdornment: (
                       <>
                         <InputAdornment position="start">
                           <Search htmlColor='white' />
                         </InputAdornment>
-                        {params.InputProps.startAdornment}
+                        {params.slotProps.input.startAdornment}
                       </>
                     ),
                   }
@@ -348,7 +357,7 @@ const TopBar = () => {
           </Menu>
         </div>
       </Toolbar>
-    </AppBar>)
+    </AppBar>
   );
 }
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useEffect, useState } from 'react';
-import { Button, FormControl, Grid2,
+import { Button, FormControl, Grid,
   IconButton,
   Table,
   TableBody,
@@ -189,7 +189,9 @@ const Sync = ({ domainID, userID }: SyncProps) => {
 
   return (
     <FormControl className={classes.form}>
-      <Grid2 container alignItems="center"  className={classes.headline}>
+      <Grid container className={classes.headline}  sx={{
+        alignItems: "center"
+      }}>
         <Typography variant="h6">{t('Mobile devices')}</Typography>
         <div className={classes.flexEndContainer}>
           <Button
@@ -202,7 +204,7 @@ const Sync = ({ domainID, userID }: SyncProps) => {
             Delete sync states
           </Button>
         </div>
-      </Grid2>
+      </Grid>
       <Table size="small">
         <TableHead>
           <TableRow>

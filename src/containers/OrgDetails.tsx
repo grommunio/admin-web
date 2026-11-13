@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -188,14 +188,14 @@ const OrgDetails = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Organization' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
           <TextField 
             className={classes.input} 

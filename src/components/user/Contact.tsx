@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { Divider, FormControl, Grid2, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { Warning } from '@mui/icons-material';
@@ -59,40 +59,40 @@ const Contact = (props: ContactProps) => {
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
-      <Grid2 container>
-        <Grid2 className={classes.gridItem} size={12}>
+      <Grid container>
+        <Grid className={classes.gridItem} size={12}>
           <TextField 
             {...tfProps("Business 1", 'businesstelephonenumber')}
           />
           <TextField
             {...tfProps("Privat 1", 'hometelephonenumber')}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Business 2", 'business2telephonenumber')}
           />
           <TextField
             {...tfProps("Privat 2", 'home2telephonenumber')}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Fax", 'primaryfaxnumber')}
           />
           <TextField
             {...tfProps("Mobile", 'mobiletelephonenumber')}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Assistant", 'assistanttelephonenumber')}
           />
           <TextField
             {...tfProps("Pager", 'pagertelephonenumber')}
           />
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
       <Divider className={classes.divider}/>
       <div className={classes.flexRow}>
         <Typography variant="h6">{t('Annotation')}</Typography>

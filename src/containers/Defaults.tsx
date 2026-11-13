@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -26,7 +26,7 @@ import ViewWrapper from '../components/ViewWrapper';
 import { editCreateParamsData, fetchCreateParamsData } from '../actions/defaults';
 import { red, yellow } from '@mui/material/colors';
 import { formatCreateParams } from '../utils';
-import { HelpOutline } from '@mui/icons-material';
+import { HelpOutlined } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store';
 import { CreateParamProperty, CreateParams } from '@/types/defaults';
 import { ChangeEvent } from '@/types/common';
@@ -207,7 +207,7 @@ const Defaults = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
@@ -219,9 +219,9 @@ const Defaults = () => {
             href="https://docs.grommunio.com/admin/administration.html#defaults"
             target="_blank"
           >
-            <HelpOutline fontSize="small"/>
+            <HelpOutlined fontSize="small"/>
           </IconButton>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
           <Typography
             color="primary"
@@ -238,7 +238,7 @@ const Defaults = () => {
             value={maxUser || ''}
             autoFocus
           />
-          <Grid2 container className={classes.input}>
+          <Grid container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -249,7 +249,7 @@ const Defaults = () => {
               }
               label={t('Create chat team')}
             />
-          </Grid2>
+          </Grid>
           <Typography
             color="primary"
             variant="h6"
@@ -271,7 +271,7 @@ const Defaults = () => {
               </MenuItem>
             ))}
           </TextField>
-          <Grid2 container style={{ marginTop: 8 }}>
+          <Grid container style={{ marginTop: 8 }}>
             <TextField 
               className={classes.flexInput}
               label={
@@ -357,8 +357,8 @@ const Defaults = () => {
                 }
               }}
             />
-          </Grid2>
-          <Grid2 container className={classes.checkboxes}>
+          </Grid>
+          <Grid container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -390,8 +390,8 @@ const Defaults = () => {
               }
               label={t('Allow POP3/IMAP logins')}
             />
-          </Grid2>
-          <Grid2 container className={classes.checkboxes}>
+          </Grid>
+          <Grid container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -462,8 +462,8 @@ const Defaults = () => {
               }
               label={t('Allow DAV')}
             />
-          </Grid2>
-          <Grid2 container className={classes.checkboxes}>
+          </Grid>
+          <Grid container className={classes.checkboxes}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -474,9 +474,9 @@ const Defaults = () => {
               }
               label={t('Create chat user')}
             />
-          </Grid2>
+          </Grid>
         </FormControl>
-        <Grid2 container className={classes.buttonGrid}>
+        <Grid container className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
@@ -485,7 +485,7 @@ const Defaults = () => {
           >
             {t('Save')}
           </Button>
-        </Grid2>
+        </Grid>
       </Paper>
     </ViewWrapper>)
   );

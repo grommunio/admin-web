@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import React, { useContext, useState } from 'react';
-import { Paper, Typography, Button, Grid2,
+import { Paper, Typography, Button, Grid,
   CircularProgress, Table, TableHead, TableRow, TableCell,
   TableSortLabel, TableBody, IconButton, Tooltip, 
   Theme} from '@mui/material';
@@ -267,9 +267,11 @@ const Groups = ({ domain }: DomainViewProps) => {
             )}
           </TableBody>
         </Table>
-        {(Groups.length < count) && <Grid2 container justifyContent="center">
+        {(Groups.length < count) && <Grid container sx={{
+          justifyContent: "center"
+        }}>
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid2>}
+        </Grid>}
       </Paper>
       <AddGroup
         open={adding}

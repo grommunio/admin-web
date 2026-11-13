@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
-import { Button, Divider, Grid2, Paper, TextField, Theme, Typography } from '@mui/material';
+import { Button, Divider, Grid, Paper, TextField, Theme, Typography } from '@mui/material';
 import ViewWrapper from '../components/ViewWrapper';
 import { useTranslation } from 'react-i18next';
 import User from '../components/user/User';
@@ -120,14 +120,14 @@ const ContactDetails = ({ domain }: DomainViewProps) => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container className={classes.header}>
+        <Grid container className={classes.header}>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Contact' })} {displayname ? ` - ${displayname}` : ''}
           </Typography>
-        </Grid2>
+        </Grid>
         <div className={classes.flexRow}>
           <Typography variant="h6">{t('E-Mail')}</Typography>
         </div>
@@ -148,7 +148,7 @@ const ContactDetails = ({ domain }: DomainViewProps) => {
           user={user}
           handlePropertyChange={handlePropertyChange}
         />
-        <Grid2 container className={classes.buttonGrid}>
+        <Grid container className={classes.buttonGrid}>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -163,7 +163,7 @@ const ContactDetails = ({ domain }: DomainViewProps) => {
           >
             {t('Save')}
           </Button>
-        </Grid2>
+        </Grid>
       </Paper>
     </ViewWrapper>
   );

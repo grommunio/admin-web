@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect } from 'react';
 import { Paper, Table, TableHead, TableRow, TableCell,
-  TableBody, Typography, Button, Grid2, TableSortLabel,
+  TableBody, Typography, Button, Grid, TableSortLabel,
   CircularProgress,
   List,
   ListItemButton,
@@ -190,7 +190,7 @@ const GlobalUsers = () => {
       snackbar={snackbar}
       onSnackbarClose={clearSnackbar}
       loading={loading}
-    > 
+    >
       <TableActionGrid
         tf={<SearchTextfield
           value={match}
@@ -319,7 +319,9 @@ const GlobalUsers = () => {
               </ListItemButton>
             )}
           </List>}
-        {(Users.length < count) && <Grid2 container justifyContent="center">
+        {(Users.length < count) && <Grid container sx={{
+          justifyContent: "center"
+        }}>
           <Button
             variant='outlined'
             size='small'
@@ -329,7 +331,7 @@ const GlobalUsers = () => {
             Load more
           </Button>
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid2>}
+        </Grid>}
       </Paper>
       <AddGlobalUser
         open={adding}

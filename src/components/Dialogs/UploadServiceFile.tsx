@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, DialogActions,
   CircularProgress,
-  Grid2,
+  Grid,
   Typography,
   IconButton,
   Theme, 
@@ -139,7 +139,7 @@ const UploadServiceFile = (props: UploadServiceFileProps) => {
             required
           />
           <Typography>{t("Data")}</Typography>
-          {data.map((pair, idx) => <Grid2 container key={idx}>
+          {data.map((pair, idx) => <Grid container key={idx}>
             <TextField
               label={t("Key")}
               value={pair.key}
@@ -155,13 +155,15 @@ const UploadServiceFile = (props: UploadServiceFileProps) => {
             <IconButton onClick={handleRemoveRow(idx)} size="large">
               <Delete color="error"/>
             </IconButton>
-          </Grid2>
+          </Grid>
           )}
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <IconButton onClick={handleAddRow} size="large">
               <Add color="primary"/>
             </IconButton>
-          </Grid2>
+          </Grid>
         </FormControl>
       </DialogContent>
       <DialogActions>

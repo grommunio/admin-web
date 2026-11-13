@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -312,20 +312,20 @@ const GroupDetails = ({ domain }: DomainViewProps) => {
   const externalAssociationsError = externalAssociations.split(",").some(externalAss => associations.map(a => a.username).some(a => a.trim() === externalAss.trim()));
   const externalSpecifiedsError = externalSpecifieds.split(",").some(externalSpec => specifieds.map(s => s.username).some(s => s.trim() === externalSpec.trim()));
   return (
-    (<ViewWrapper
+    <ViewWrapper
       snackbar={snackbar}
       onSnackbarClose={() => setState({ ...state, snackbar: '' })}
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Group' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <div className={classes.tabContainer}>
           <Tabs
             indicatorColor="primary"
@@ -473,11 +473,13 @@ const GroupDetails = ({ domain }: DomainViewProps) => {
             </ListItem>
             )}
           </List>
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <Button variant="contained" onClick={handleAliasEdit("add", 0)}>
               {t('addHeadline', { item: 'E-Mail' })}
             </Button>
-          </Grid2>
+          </Grid>
         </FormControl>}
         <Button
           color="secondary"
@@ -499,7 +501,7 @@ const GroupDetails = ({ domain }: DomainViewProps) => {
         snackbar={snackbar}
         onClose={() => setState({ ...state, snackbar: '' })}
       />
-    </ViewWrapper>)
+    </ViewWrapper>
   );
 }
 

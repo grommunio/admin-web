@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -123,14 +123,14 @@ const DBService = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Service' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <FormControl className={classes.form}>
           <TextField
             label={t("Service")} 

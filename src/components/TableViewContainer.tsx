@@ -5,7 +5,7 @@ import { ReactNode, Ref, useCallback } from 'react';
 import { Fade, IconButton, LinearProgress, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import Feedback from './Feedback';
-import { HelpOutline } from '@mui/icons-material';
+import { HelpOutlined } from '@mui/icons-material';
 import { throttle } from 'lodash';
 import { CSSObject } from 'tss-react';
 
@@ -88,7 +88,7 @@ const TableViewContainer = ({ children, baseRef, handleScroll, headline, subtitl
             href={href}
             target="_blank"
           >
-            <HelpOutline fontSize="small"/>
+            <HelpOutlined fontSize="small"/>
           </IconButton>}
         </Typography>
         {subtitle && <Typography variant="caption" className={classes.subtitle}>

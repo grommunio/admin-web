@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { Dialog, DialogTitle, DialogContent, TextField,
-  Button, DialogActions, CircularProgress, Grid2,
+  Button, DialogActions, CircularProgress, Grid,
   Theme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -126,8 +126,8 @@ const AddContact = (props: AddContactProps) => {
     >
       <DialogTitle>{t('addHeadline', { item: 'Contact' })}</DialogTitle>
       <DialogContent>
-        <Grid2 container>
-          <Grid2 className={classes.gridItem} size={12}>
+        <Grid container>
+          <Grid className={classes.gridItem} size={12}>
             <TextField
               className={classes.propertyInput}
               fullWidth
@@ -135,8 +135,8 @@ const AddContact = (props: AddContactProps) => {
               value={smtpaddress || ''}
               onChange={handlePropertyChange('smtpaddress')}
             />
-          </Grid2>
-          <Grid2 className={classes.gridItem} size={12}>
+          </Grid>
+          <Grid className={classes.gridItem} size={12}>
             <div className={classes.grid}>
               <TextField 
                 className={classes.flexTextfield}
@@ -157,8 +157,8 @@ const AddContact = (props: AddContactProps) => {
               value={surname || ''}
               onChange={handlePropertyChange('surname')}
             />
-          </Grid2>
-          <Grid2 className={classes.gridItem} size={12}>
+          </Grid>
+          <Grid className={classes.gridItem} size={12}>
             <TextField 
               className={classes.propertyInput}
               label={t("Display name")}
@@ -173,8 +173,8 @@ const AddContact = (props: AddContactProps) => {
               value={nickname || ''}
               onChange={handlePropertyChange('nickname')}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button

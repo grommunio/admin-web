@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { Divider, FormControl, Grid2, IconButton, MenuItem, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
+import { Divider, FormControl, Grid, IconButton, MenuItem, TextField, TextFieldProps, Theme, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import world from '../../res/world.json';
@@ -72,16 +72,18 @@ const User = (props: UserProps) => {
   const mapLocation = streetaddress || locality || country ? `${streetaddress || ""} ${locality || ""} ${country || ""}` : "";
     
   return (
-    (<FormControl className={classes.form}>
+    <FormControl className={classes.form}>
       <div className={classes.flexRow}>
         <Typography variant="h6">{t('Name')}</Typography>
         {ldapID && <Tooltip title={t("Warning") + ": " + t("Changes will be overwritten with next LDAP sync")}>
           <Warning color="warning" fontSize="inherit" style={{ fontSize: 32 }}/>  
         </Tooltip>}
       </div>
-      <Typography alignSelf="flex-end" variant='caption'>*{t("Required for grommunio-auth")}</Typography>
-      <Grid2 container>
-        <Grid2 className={classes.gridItem} size={12}>
+      <Typography variant='caption' sx={{
+        alignSelf: "flex-end"
+      }}>*{t("Required for grommunio-auth")}</Typography>
+      <Grid container>
+        <Grid className={classes.gridItem} size={12}>
           <div className={classes.grid}>
             <TextField
               {...tfProps("Titel", "displaynameprefix")}
@@ -105,19 +107,19 @@ const User = (props: UserProps) => {
             {...tfProps("Surname", "surname")}
             required
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField 
             {...tfProps("Display name", "displayname")}
           />
           <TextField
             {...tfProps("Nickname", "nickname")}
           />
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
       <Divider className={classes.divider} />
-      <Grid2 container>
-        <Grid2 style={{ display: 'flex' }} size={mapLocation ? 3 : 6}>
+      <Grid container>
+        <Grid style={{ display: 'flex' }} size={mapLocation ? 3 : 6}>
           <TextField
             {...tfProps("Address", "streetaddress")}
             fullWidth={false}
@@ -131,11 +133,11 @@ const User = (props: UserProps) => {
               }
             }}
           />
-        </Grid2>
-        {mapLocation && <Grid2 size={3}>
+        </Grid>
+        {mapLocation && <Grid size={3}>
           <Map address={mapLocation}/>
-        </Grid2>}
-        <Grid2 style={{ paddingRight: 16 }} size={6}>
+        </Grid>}
+        <Grid style={{ paddingRight: 16 }} size={6}>
           <TextField
             {...tfProps("Position", "title")}
             className={classes.input}
@@ -144,34 +146,34 @@ const User = (props: UserProps) => {
             {...tfProps("Company", "companyname")}
             className={classes.input}
           />
-        </Grid2>
-      </Grid2>
-      <Grid2 container>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Locality", "locality")}
           />
           <TextField
             {...tfProps("Department", "departmentname")}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("State", "stateorprovince")}
           />
           <TextField
             {...tfProps("Office", "officelocation")}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Postal Code", "postalcode")}
           />
           <TextField
             {...tfProps("Assistant", "assistant")}
           />
-        </Grid2>
-        <Grid2 className={classes.gridItem} size={12}>
+        </Grid>
+        <Grid className={classes.gridItem} size={12}>
           <TextField
             {...tfProps("Country", "country")}
             select
@@ -194,9 +196,9 @@ const User = (props: UserProps) => {
               }
             }}
           />
-        </Grid2>
-      </Grid2>
-    </FormControl>)
+        </Grid>
+      </Grid>
+    </FormControl>
   );
 }
 

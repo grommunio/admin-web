@@ -3,7 +3,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle,
-  Grid2, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Theme, Typography } from '@mui/material';
+  Grid, IconButton, List, ListItem, ListItemButton, ListItemText, Paper, TextField, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { setDateTimeString } from '../../utils';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
@@ -74,7 +74,7 @@ const LicenseTab = (props: LicenseTabProps) => {
   const { counts, setSnackbar } = props;
   const { classes } = useStyles();
   const { t } = useTranslation();
-  const { license } = useAppSelector(state => state);
+  const license = useAppSelector(state => state.license);
   const { Domains } = useAppSelector(state => state.domains);
   const dispatch = useAppDispatch();
   const [state, setState] = useState<LicenseTabState>({
@@ -161,144 +161,148 @@ const LicenseTab = (props: LicenseTabProps) => {
 
   const { domainsExpanded, domainUsers, dialogOpen, username, password } = state;
   
-  return <>
-    <Typography variant="caption" className={classes.subtitle}>
-      {t("license_sub")}
-    </Typography>
-    <Paper className={classes.paper} elevation={1}>
-      <Grid2 container alignItems="center">
-        <Grid2 className={classes.gridItem}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleDialog(true)}
-            size="small"
-          >
-            {t(license?.certificate ?'Reactivate license' : 'Reactivate license')}
-          </Button>
-        </Grid2>
-        {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
-          <Button
-            className={classes.buyNow}
-            variant="contained"
-            color="primary"
-            href="https://grommunio.com/product/"
-            target="_blank"
-            size="small"
-          >
-            {t('Buy now')}
-          </Button></>}
-      </Grid2>
-      <Grid2 container direction="column" className={classes.licenseContainer}>
-        <Typography className={classes.data}>
-          <span className={classes.description}>{t('Product')}:</span>
-          {license.product}
-        </Typography>
-        <Typography className={classes.data}>
-          <span className={classes.description}>{t('Created')}:</span>
-          {setDateTimeString(license.notBefore)}
-        </Typography>
-        <Typography className={classes.data}>
-          <span className={classes.description}>{t('Expires')}:</span>
-          {setDateTimeString(license.notAfter)}
-        </Typography>
-        <Typography className={classes.data}>
-          <span className={classes.description}>{t('Users')}:</span>
-          {license.currentUsers}
-          <IconButton onClick={toggleDomainExpansion} size="small">
-            {domainsExpanded ? <ExpandLess /> : <ExpandMore />}
-          </IconButton>
-        </Typography>
-        <Collapse in={domainsExpanded} unmountOnExit>
-          <List>
-            {Domains.map(({ ID, domainname }: BaseDomain, idx: number) => <React.Fragment key={idx}>
-              <ListItemButton onClick={handleExpansion(ID, idx)}>
-                <ListItemText
-                  primary={`${domainname} (${counts[domainname] || 0})`}
-                />
-                {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={expandedDomainIdxs.includes(idx)}>
-                <List component="div" disablePadding>
-                  {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
-                    <ListItem key={idx} sx={{ pl: 4 }}>
-                      <ListItemText primary={user.username}/>
-                    </ListItem> 
-                  ) : <div className={classes.progressContainer}>
-                    <CircularProgress/>
-                  </div>}
-                  <ListItemButton onClick={handleNavigation(ID)} sx={{ pl: 4 }}>
-                    <ListItemText primary={t('View all') + "..."}/>
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            </React.Fragment>)}
-          </List>
-        </Collapse>
-        <Typography className={classes.data}>
-          <span className={classes.description}>{t('Max users')}:</span>
-          {license.maxUsers}
-        </Typography>
-      </Grid2>
-      <input
-        accept=".crt,.pem"
-        style={{ display: 'none' }}
-        id="license-upload-input"
-        type="file"
-        ref={imageInputRef}
-        onChange={handleUploadConfirm}
-      />
-      <Dialog
-        maxWidth="md"
-        fullWidth
-        onClose={handleDialog(false)}
-        open={dialogOpen}
-      >
-        <DialogTitle>
-          {t("License activation")}
-        </DialogTitle>
-        <DialogContent>
-          <Typography>Input your license credentials to automatically fetch a certificate or upload it manually</Typography>
-          <div style={{ marginTop: 16 }}>
-            <TextField
-              fullWidth
-              label={t("Username")}
-              value={username}
-              onChange={handleInput("username")}
-              className={classes.tf}
-            />
-            <TextField
-              fullWidth
-              label={t("Password")}
-              value={password}
-              onChange={handleInput("password")}
-              type="password"
-              autoComplete="new-password"
-              className={classes.tf}
-            />
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpload}
-            size="small"
-          >
-            {t('Upload license')}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            size="small"
-          >
-            {t('Submit')}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
-  </>;
+  return (
+    <>
+      <Typography variant="caption" className={classes.subtitle}>
+        {t("license_sub")}
+      </Typography>
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container sx={{
+          alignItems: "center"
+        }}>
+          <Grid className={classes.gridItem}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDialog(true)}
+              size="small"
+            >
+              {t(license?.certificate ?'Reactivate license' : 'Reactivate license')}
+            </Button>
+          </Grid>
+          {license.maxUsers < 6 && <><Typography variant="body2">{t("Don't have a license?")}</Typography>
+            <Button
+              className={classes.buyNow}
+              variant="contained"
+              color="primary"
+              href="https://grommunio.com/product/"
+              target="_blank"
+              size="small"
+            >
+              {t('Buy now')}
+            </Button></>}
+        </Grid>
+        <Grid sx={{ flexDirection: "column" }} container className={classes.licenseContainer}>
+          <Typography className={classes.data}>
+            <span className={classes.description}>{t('Product')}:</span>
+            {license.product}
+          </Typography>
+          <Typography className={classes.data}>
+            <span className={classes.description}>{t('Created')}:</span>
+            {setDateTimeString(license.notBefore)}
+          </Typography>
+          <Typography className={classes.data}>
+            <span className={classes.description}>{t('Expires')}:</span>
+            {setDateTimeString(license.notAfter)}
+          </Typography>
+          <Typography className={classes.data}>
+            <span className={classes.description}>{t('Users')}:</span>
+            {license.currentUsers}
+            <IconButton onClick={toggleDomainExpansion} size="small">
+              {domainsExpanded ? <ExpandLess /> : <ExpandMore />}
+            </IconButton>
+          </Typography>
+          <Collapse in={domainsExpanded} unmountOnExit>
+            <List>
+              {Domains.map(({ ID, domainname }: BaseDomain, idx: number) => <React.Fragment key={idx}>
+                <ListItemButton onClick={handleExpansion(ID, idx)}>
+                  <ListItemText
+                    primary={`${domainname} (${counts[domainname] || 0})`}
+                  />
+                  {expandedDomainIdxs.includes(idx) ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={expandedDomainIdxs.includes(idx)}>
+                  <List component="div" disablePadding>
+                    {domainUsers[ID] ? domainUsers[ID].map((user, idx) => 
+                      <ListItem key={idx} sx={{ pl: 4 }}>
+                        <ListItemText primary={user.username}/>
+                      </ListItem> 
+                    ) : <div className={classes.progressContainer}>
+                      <CircularProgress/>
+                    </div>}
+                    <ListItemButton onClick={handleNavigation(ID)} sx={{ pl: 4 }}>
+                      <ListItemText primary={t('View all') + "..."}/>
+                    </ListItemButton>
+                  </List>
+                </Collapse>
+              </React.Fragment>)}
+            </List>
+          </Collapse>
+          <Typography className={classes.data}>
+            <span className={classes.description}>{t('Max users')}:</span>
+            {license.maxUsers}
+          </Typography>
+        </Grid>
+        <input
+          accept=".crt,.pem"
+          style={{ display: 'none' }}
+          id="license-upload-input"
+          type="file"
+          ref={imageInputRef}
+          onChange={handleUploadConfirm}
+        />
+        <Dialog
+          maxWidth="md"
+          fullWidth
+          onClose={handleDialog(false)}
+          open={dialogOpen}
+        >
+          <DialogTitle>
+            {t("License activation")}
+          </DialogTitle>
+          <DialogContent>
+            <Typography>Input your license credentials to automatically fetch a certificate or upload it manually</Typography>
+            <div style={{ marginTop: 16 }}>
+              <TextField
+                fullWidth
+                label={t("Username")}
+                value={username}
+                onChange={handleInput("username")}
+                className={classes.tf}
+              />
+              <TextField
+                fullWidth
+                label={t("Password")}
+                value={password}
+                onChange={handleInput("password")}
+                type="password"
+                autoComplete="new-password"
+                className={classes.tf}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpload}
+              size="small"
+            >
+              {t('Upload license')}
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+              size="small"
+            >
+              {t('Submit')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </>
+  );
 }
 
 

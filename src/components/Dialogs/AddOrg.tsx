@@ -108,8 +108,10 @@ const AddOrg = (props: AddOrgProps) => {
       open={open}
       maxWidth="md"
       fullWidth
-      TransitionProps={{
-        onEnter: handleEnter,
+      slotProps={{
+        transition: {
+          onEnter: handleEnter,
+        }
       }}>
       <DialogTitle>{t('addHeadline', { item: 'Organization' })}</DialogTitle>
       <DialogContent style={{ minWidth: 400 }}>

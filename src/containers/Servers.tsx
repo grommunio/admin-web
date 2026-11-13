@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useTable } from '../hooks/useTable';
 import { useContext, useEffect, useState } from 'react';
 import { Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton,
-  Typography, Button, Grid2, TableSortLabel, CircularProgress,
+  Typography, Button, Grid, TableSortLabel, CircularProgress,
   TextField, MenuItem, Chip, Tooltip, Alert, 
   Theme,
   TableSortLabelTypeMap} from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import GeneralDelete from '../components/Dialogs/GeneralDelete';
-import { Dns, HelpOutline, Warning } from '@mui/icons-material';
+import { Dns, HelpOutlined, Warning } from '@mui/icons-material';
 import { CapabilityContext } from '../CapabilityContext';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import TableViewContainer from '../components/TableViewContainer';
@@ -145,7 +145,7 @@ const Servers = () => {
           href="https://docs.grommunio.com/admin/administration.html#servers"
           target="_blank"
         >
-          <HelpOutline fontSize="small"/>
+          <HelpOutlined fontSize="small"/>
         </IconButton>
       </span>
       }
@@ -258,9 +258,11 @@ const Servers = () => {
             })}
           </TableBody>
         </Table>
-        {(Servers.length < count) && <Grid2 container justifyContent="center">
+        {(Servers.length < count) && <Grid container sx={{
+          justifyContent: "center"
+        }}>
           <CircularProgress color="primary" className={classes.circularProgress}/>
-        </Grid2>}
+        </Grid>}
       </Paper>
       <AddServer
         open={adding}

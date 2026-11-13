@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchSpamHistory } from '../actions/spam';
-import { Chip, ChipTypeMap, Divider, FormControlLabel, Grid2, IconButton, Paper, SortDirection, Switch, Table, TableBody, TableCell, TableHead,
+import { Chip, ChipTypeMap, Divider, FormControlLabel, Grid, IconButton, Paper, SortDirection, Switch, Table, TableBody, TableCell, TableHead,
   TableRow, TableSortLabel, TableSortLabelTypeMap, Tooltip, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { copyToClipboard, parseUnixtime } from '../utils';
@@ -272,7 +272,9 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
             }}
           />
         </LocalizationProvider>
-        {<Grid2 container justifyContent="flex-end">
+        {<Grid container sx={{
+          justifyContent: "flex-end"
+        }}>
           <IconButton onClick={handleRefresh} style={{ marginRight: 8 }} size="large">
             <Refresh />
           </IconButton>
@@ -287,7 +289,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
             }
             label={t("Autorefresh")}
           />
-        </Grid2>}
+        </Grid>}
       </div>
       <div className={classes.flexContainer}>
         <DataGrid
@@ -370,7 +372,7 @@ const SpamHistory = ({ setSnackbar }: SpamHistoryType) => {
         </div>}
       </div>
     </Paper>
-  )
+  );
 };
 
 

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   TextField,
   FormControl,
   Button,
@@ -145,14 +145,14 @@ const ServerDetails = () => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container>
+        <Grid container>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'Server' })}
           </Typography>
-        </Grid2>
+        </Grid>
         <Typography>{domains} {t('Domains')} - {users} {t('Users')}</Typography>
         <Tabs onChange={handleTab} value={tab} sx={{ mt: 1 }}>
           <Tab label={t("Server")} />

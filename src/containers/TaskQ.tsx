@@ -11,7 +11,7 @@ import {
   TableBody,
   Typography,
   Button,
-  Grid2,
+  Grid,
   TableSortLabel,
   CircularProgress,
   Chip,
@@ -122,7 +122,9 @@ const TasQ = () => {
       onSnackbarClose={handleSnackbarClose}
       loading={loading}
     >
-      <Grid2 container alignItems="flex-end" className={classes.chipGrid}>
+      <Grid container className={classes.chipGrid} sx={{
+        alignItems: "flex-end"
+      }}>
         <Chip
           className={classes.chip}
           label={t(taskq.running ? "Running" : "Not running")}
@@ -138,7 +140,7 @@ const TasQ = () => {
           label={t("Workers") + ": " + taskq.workers}
           color={"primary"}
         />
-      </Grid2>
+      </Grid>
       <TableActionGrid
         tf={<SearchTextfield
           value={match}
@@ -197,12 +199,14 @@ const TasQ = () => {
           </TableBody>
         </Table>
         {taskq.Tasks.length < taskq.count && (
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid2>
+          </Grid>
         )}
       </Paper>
     </TableViewContainer>

@@ -4,7 +4,7 @@
 import { useContext, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
-import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid2, Theme } from '@mui/material';
+import { Paper, FormControl, Switch, FormLabel, TextField, MenuItem, Button, Grid, Theme } from '@mui/material';
 import TableViewContainer from '../components/TableViewContainer';
 import { useNavigate } from 'react-router';
 import ColorModeContext from '../ColorContext';
@@ -90,7 +90,7 @@ const Settings = () => {
 
           </TextField>
         </FormControl>
-        <Grid2 container>
+        <Grid container>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -98,7 +98,7 @@ const Settings = () => {
           >
             {t('Back')}
           </Button>
-        </Grid2>
+        </Grid>
       </Paper>
     </TableViewContainer>
   );

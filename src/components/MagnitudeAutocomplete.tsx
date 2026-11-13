@@ -85,7 +85,8 @@ function MagnitudeAutocomplete<T>(props: MagnitudeAutocompleteProps<T>) {
     autoHighlight
     disabled={disabled || false}
     getOptionDisabled={getOptionDisabled}
-    isOptionEqualToValue={isOptionEqualToValue}
+    // value is a string with freeSolo
+    isOptionEqualToValue={isOptionEqualToValue && ((option, value) => isOptionEqualToValue(option, value as T))}
     disableCloseOnSelect={disableCloseOnSelect || multiple || false}
   />;
 }

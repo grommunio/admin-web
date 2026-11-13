@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
-import { Button, Checkbox, FormControl, FormControlLabel, Grid2, IconButton, MenuItem, Paper,
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, IconButton, MenuItem, Paper,
   Typography, Switch, Tooltip, TextField, RadioGroup, Radio, Autocomplete, Fade, LinearProgress, 
   Theme} from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,7 @@ import Add from '@mui/icons-material/Add';
 import Delete from '@mui/icons-material/Close';
 import { green, red } from '@mui/material/colors';
 import LdapTextfield from '../components/LdapTextfield';
-import Help from '@mui/icons-material/HelpOutline';
+import Help from '@mui/icons-material/HelpOutlined';
 import Feedback from '../components/Feedback';
 import { SYSTEM_ADMIN_WRITE } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
@@ -572,7 +572,7 @@ const LdapConfig = () => {
         <Typography variant="caption" className={classes.subtitle}>
           {t('ldap_sub')}
         </Typography>
-        <Grid2 container className={classes.category}>
+        <Grid container className={classes.category}>
           <FormControlLabel
             control={
               <Switch
@@ -620,13 +620,15 @@ const LdapConfig = () => {
               </Button>
             </Tooltip>
           </div>
-        </Grid2>
+        </Grid>
         <Typography
-          color="inherit"
           variant="caption"
           style={{
             marginLeft: 16,
             color: available ? green['500'] : red['500'],
+          }}
+          sx={{
+            color: "inherit"
           }}
         >
           {!disabled && (available ? t('LDAP connectivity check passed') : t('LDAP connectivity check failed'))}
@@ -646,8 +648,8 @@ const LdapConfig = () => {
                 id="url"
                 name="url"
                 autoComplete="url"
-                InputLabelProps={{
-                  shrink: true,
+                slotProps={{
+                  inputLabel: { shrink: true },
                 }}
               />
               <LdapTextfield
@@ -677,12 +679,14 @@ const LdapConfig = () => {
                     checked={starttls || false}
                     onChange={handleCheckbox('starttls')}
                     name="starttls"
-                    inputProps={{
-                      autoComplete: 'starttls',
-                      name: 'starttls',
-                      id: 'starttls',
-                    }}
                     color="primary"
+                    slotProps={{
+                      input: {
+                        autoComplete: 'starttls',
+                        name: 'starttls',
+                        id: 'starttls',
+                      }
+                    }}
                   />
                 }
                 label={<span>
@@ -885,7 +889,9 @@ const LdapConfig = () => {
             </Tooltip>
           </Typography>
           {attributes.map((mapping, idx) =>
-            <Grid2 className={classes.attribute} container alignItems="center" key={idx}>
+            <Grid className={classes.attribute} container key={idx} sx={{
+              alignItems: "center"
+            }}>
               <LdapTextfield
                 label={t('Name')}
                 flex
@@ -907,13 +913,15 @@ const LdapConfig = () => {
                 size="large">
                 <Delete color="error" />
               </IconButton>
-            </Grid2>
+            </Grid>
           )}
-          <Grid2 container justifyContent="center" className={classes.addButton}>
+          <Grid container className={classes.addButton} sx={{
+            justifyContent: "center"
+          }}>
             <Button size="small" onClick={handleNewRow}>
               <Add color="primary" />
             </Button>
-          </Grid2>
+          </Grid>
         </Paper>
         <div className={classes.bottomRow}>
           <Button

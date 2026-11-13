@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^6.0.0",
-    "@mui/material": "^6.0.0",
-    "@mui/x-data-grid": "^7.3.1",
-    "@mui/x-date-pickers": "^7.3.2",
-    "@mui/x-tree-view": "^7.3.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.5.0",
+    "@mui/material": "^9.5.0",
+    "@mui/system": "^9.5.0",
+    "@mui/x-data-grid": "^9.18.0",
+    "@mui/x-date-pickers": "^9.18.0",
+    "@mui/x-tree-view": "^9.18.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@tinymce/tinymce-react": "^6.3.1",
     "@types/node": "^26.6.6",
@@ -34,7 +35,7 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^3.1.0",
     "tinymce": "^8.10.2",
-    "tss-react": "^4.9.10"
+    "tss-react": "^4.9.21"
   },
   "scripts": {
     "start": "vite",

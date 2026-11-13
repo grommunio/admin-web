@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Typography,
   Paper,
-  Grid2,
+  Grid,
   Button,
   Tooltip,
   Theme,
@@ -707,15 +707,15 @@ const UserDetails = ({ domain }: DomainViewProps) => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container className={classes.header}>
+        <Grid container className={classes.header}>
           <Typography
             color="primary"
             variant="h5"
           >
             {t('editHeadline', { item: 'User' })} {properties.displayname ? ` - ${properties.displayname}` : ''}
           </Typography>
-        </Grid2>
-        {ldapID && <Grid2 container className={classes.syncButtons}>
+        </Grid>
+        {ldapID && <Grid container className={classes.syncButtons}>
           <Tooltip title={t("Detach user from LDAP object")} placement="top">
             <Button
               variant="contained"
@@ -748,7 +748,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
               <Dump fontSize="small" className={classes.leftIcon}/> {t("LDAP Dump")}
             </Button>
           </Tooltip>
-        </Grid2>}
+        </Grid>}
         <div className={classes.tabsContainer}>
           <Tabs
             value={tab}
@@ -833,7 +833,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
           handleCheckbox={handleSyncCheckboxChange}
           handleSlider={handleSlider}
         />}
-        {tab !== 7 && tab !== 8 && <Grid2 container className={classes.buttonGrid}>
+        {tab !== 7 && tab !== 8 && <Grid container className={classes.buttonGrid}>
           <Button
             onClick={() => navigate(-1)}
             style={{ marginRight: 8 }}
@@ -849,7 +849,7 @@ const UserDetails = ({ domain }: DomainViewProps) => {
           >
             {t('Save')}
           </Button>
-        </Grid2>}
+        </Grid>}
       </Paper>
       <DetachDialog
         open={detaching}

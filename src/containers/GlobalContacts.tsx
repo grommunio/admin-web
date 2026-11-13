@@ -11,7 +11,7 @@ import {
   TableBody,
   Typography,
   Button,
-  Grid2,
+  Grid,
   CircularProgress,
   List,
   ListItemButton,
@@ -264,12 +264,14 @@ const GlobalContacts = () => {
         )}
 
         {userList.length < count && (
-          <Grid2 container justifyContent="center">
+          <Grid container sx={{
+            justifyContent: "center"
+          }}>
             <CircularProgress
               color="primary"
               className={classes.circularProgress}
             />
-          </Grid2>
+          </Grid>
         )}
       </Paper>
 

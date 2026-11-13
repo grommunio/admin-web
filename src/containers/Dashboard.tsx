@@ -11,7 +11,7 @@ import { fetchAntispamData } from "../actions/antispam";
 import { useTranslation } from "react-i18next";
 import { fetchServicesData } from "../actions/services";
 import Feedback from "../components/Feedback";
-import { HelpOutline } from "@mui/icons-material";
+import { HelpOutlined } from "@mui/icons-material";
 import About from "../components/About";
 import CPULine from "../components/charts/CPULine";
 import CPUPie from "../components/charts/CPUPie";
@@ -158,7 +158,8 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const { disks, Dashboard, timer } = useAppSelector(state => state.dashboard);
   const { cpuPie, memory } = Dashboard;
-  const { config, antispam } = useAppSelector(state => state);
+  const config = useAppSelector(state => state.config);
+  const antispam = useAppSelector(state => state.antispam);
 
   const [state, setState] = useState({
     snackbar: "",
@@ -204,7 +205,7 @@ const Dashboard = () => {
           href="https://docs.grommunio.com/admin/administration.html#antispam"
           target="_blank"
         >
-          <HelpOutline fontSize="small"/>
+          <HelpOutlined fontSize="small"/>
         </IconButton>
       </Typography>}
       {!!config?.loadAntispamData && <div className={classes.subtitle}>
@@ -227,7 +228,7 @@ const Dashboard = () => {
               href="https://docs.grommunio.com/admin/administration.html#services"
               target="_blank"
             >
-              <HelpOutline fontSize="small"/>
+              <HelpOutlined fontSize="small"/>
             </IconButton>
           </Typography>
           <div className={classes.subtitle}>

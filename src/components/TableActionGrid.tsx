@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { ReactNode } from 'react';
-import { Grid2, Theme } from '@mui/material';
+import { Grid, Theme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 
 
@@ -25,12 +25,16 @@ type TableActionGridProps = {
 
 function TableActionGrid({ tf, children }: TableActionGridProps) {
   const { classes } = useStyles();
-  return <Grid2 container alignItems="flex-end" className={classes.buttonGrid}>
-    {children || null}
-    <div className={classes.actions}>
-      {tf || null}
-    </div>
-  </Grid2>
+  return (
+    <Grid container className={classes.buttonGrid} sx={{
+      alignItems: "flex-end"
+    }}>
+      {children || null}
+      <div className={classes.actions}>
+        {tf || null}
+      </div>
+    </Grid>
+  );
 }
 
 

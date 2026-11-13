@@ -3,7 +3,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from 'tss-react/mui';
-import { Paper, Typography, Grid2, Button, FormControl, TextField, FormControlLabel,
+import { Paper, Typography, Grid, Button, FormControl, TextField, FormControlLabel,
   Checkbox, Select, MenuItem, Divider, Tooltip, 
   Theme,
   SelectChangeEvent} from '@mui/material';
@@ -268,8 +268,8 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
       loading={loading}
     >
       <Paper className={classes.paper} elevation={1}>
-        <Grid2 container direction="column" className={classes.container}>
-          <Grid2 className={classes.firstRow}>
+        <Grid sx={{ flexDirection: "column" }} container className={classes.container}>
+          <Grid className={classes.firstRow}>
             <div className={classes.flexRow}>
               <Typography variant='h6' className={classes.description}>{t('Domain name')}:</Typography>
               {domain.domainname}
@@ -291,7 +291,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
                 {t('Delete domain')}
               </Button>
             </div>}
-          </Grid2>
+          </Grid>
           <div className={classes.flexRow}>
             <Typography variant='h6' className={classes.description}>{t('Title')}:</Typography>
             {domain.title}
@@ -334,7 +334,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
             <DNSLegend />
           </div>
           <Divider className={classes.divider}/>
-        </Grid2>
+        </Grid>
         <div className={classes.defaultsContainer}>
           <Typography
             color="primary"
@@ -357,7 +357,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
               </MenuItem>
             ))}
           </TextField>
-          <Grid2 container className={classes.input}>
+          <Grid container className={classes.input}>
             <TextField 
               className={classes.flexInput}
               label={
@@ -443,8 +443,8 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
                 }
               }}
             />
-          </Grid2>
-          <Grid2 container className={classes.input}>
+          </Grid>
+          <Grid container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -476,8 +476,8 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
               }
               label={t('Allow POP3/IMAP logins')}
             />
-          </Grid2>
-          <Grid2 container className={classes.input}>
+          </Grid>
+          <Grid container className={classes.input}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -558,9 +558,9 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
               }
               label={t('Allow DAV')}
             />
-          </Grid2>
+          </Grid>
         </div>
-        <Grid2 container className={classes.buttonGrid}>
+        <Grid container className={classes.buttonGrid}>
           <Button
             variant="contained"
             color="primary"
@@ -569,7 +569,7 @@ const DomainMenu = ({ domain }: DomainViewProps) => {
           >
             {t('Save')}
           </Button>
-        </Grid2>
+        </Grid>
       </Paper>
       <DeleteDomain
         open={deleting}

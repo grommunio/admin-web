@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { makeStyles } from 'tss-react/mui';
 import { Typography, IconButton, CircularProgress, Paper, Table, TableHead, 
-  TableRow, TableCell, TableBody, Tooltip, Grid2, 
+  TableRow, TableCell, TableBody, Tooltip, Grid, 
   Theme} from "@mui/material";
 import Stop from "@mui/icons-material/HighlightOff";
 import Restart from "@mui/icons-material/Replay";
@@ -198,7 +198,9 @@ const ServicesChart = () => {
                   </Tooltip>
                 </TableCell>
                 <TableCell>
-                  <Grid2 container justifyContent="center">
+                  <Grid container sx={{
+                    justifyContent: "center"
+                  }}>
                     <div
                       style={{ marginRight: 4 }}
                       className={classes.label + " " + getChipColor(service.state as keyof typeof classes)}
@@ -209,7 +211,7 @@ const ServicesChart = () => {
                         getChipColor(service.autostart === "enabled" ? "active" : "error")}>
                       {service.autostart || 'error'}
                     </div>
-                  </Grid2>
+                  </Grid>
                 </TableCell>
                 <TableCell align="right">
                   <Tooltip title={t("Enable/Disable")} placement="top">
