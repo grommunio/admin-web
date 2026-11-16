@@ -193,6 +193,7 @@
     "External IP": "Külső IP",
     "External name": "Külső név",
     "Extra options": "Extra opciók",
+    "Failed to load the mailbox permissions": "",
     "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Sikertelen bejelentkezés. Helytelen jelszó vagy felhasználónév",
     "Failed to set default groups configuration": "Nem sikerült beállítani az alapértelmezett csoportok konfigurációját",

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, FormControl, Grid, Theme, Typography } from '@mui/material';
+import { Alert, Button, FormControl, Grid, Theme, Typography } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { fetchPermittedUsers, fetchUserDelegates, fetchPlainUsersData, setUserDelegates,
@@ -61,6 +61,8 @@ const Delegates = (props: DeletesProps) => {
     sEdited: false,
     puEdited: false,
   });
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const context = useContext(CapabilityContext);
   const navigate = useNavigate();
 
@@ -82,19 +84,20 @@ const Delegates = (props: DeletesProps) => {
       const sysAdminPermissions = context.includes(SYSTEM_ADMIN_WRITE);
   
       (sysAdminPermissions && orgID ? fetchOrgUsers(orgID) : fetchUsers(domainID))
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        .catch(message => setState(prev => ({ ...prev, snackbar: message || 'Unknown error' })));
       const delegates = await fetchDelegates(domainID, userID)
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        .catch(message => setLoadError(message || 'Unknown error'));
       const sendAsUsers = await fetchSendAs(domainID, userID)
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        .catch(message => setLoadError(message || 'Unknown error'));
       const permittedUsers = await fetchPermitted(domainID, userID)
-        .catch(message => setState({ ...state, snackbar: message || 'Unknown error' }));
+        .catch(message => setLoadError(message || 'Unknown error'));
       setState({
         ...state, 
         delegates: delegates?.data?.sort() || [],
         permittedUsers: permittedUsers?.data?.map((u: BaseUser) => u.username).sort() || [],
         sendAsUsers: sendAsUsers?.data?.sort() || [],
       });
+      setLoaded(Boolean(delegates && sendAsUsers && permittedUsers));
     }
 
     fetchData();
@@ -165,6 +168,9 @@ const Delegates = (props: DeletesProps) => {
     <>
       <FormControl className={classes.form}>
         <Typography variant="h6" className={classes.headline}>{t('Mailbox permissions')}</Typography>
+        {loadError && <Alert severity="error" className={classes.input}>
+          {t("Failed to load the mailbox permissions")}: {loadError}
+        </Alert>}
         <FormControl className={classes.input}>
           <MagnitudeAutocomplete
             {...defaultTfProps}
@@ -207,7 +213,7 @@ const Delegates = (props: DeletesProps) => {
           variant="contained"
           color="primary"
           onClick={handleSave}
-          disabled={disabled}
+          disabled={disabled || !loaded}
         >
           {t('Save')}
         </Button>
