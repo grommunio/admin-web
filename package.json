@@ -29,7 +29,7 @@
     "react-i18next": "^18.0.2",
     "react-leaflet": "^5.0.0",
     "react-redux": "^9.1.0",
-    "react-router": "^7.18.5",
+    "react-router": "^8.5.1",
     "react-use": "^17.6.0",
     "redux": "^5.0.1",
     "redux-logger": "^3.0.6",
@@ -65,6 +65,6 @@
     "vite": "^8.3.8"
   },
   "engines": {
-    "node": "^20.19.0 || >=22.13.0"
+    "node": ">=22.22.0"
   }
 }

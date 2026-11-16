@@ -1,7 +1,7 @@
 # Set up for development
 
 This webapp uses [yarn](https://yarnpkg.com/) and [Vite](https://vite.dev/) for development
-and requires Node.js 20.19+ or 22.13+.
+and requires Node.js 22.22 or newer.
 To build for production, this webapp uses a `Makefile` with [GNU Make](https://www.gnu.org/software/make/)
 
 ## Install packages
