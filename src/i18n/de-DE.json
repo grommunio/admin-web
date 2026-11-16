@@ -196,6 +196,7 @@
     "External IP": "Externe IP",
     "External name": "Externer Name",
     "Extra options": "Zusatzoptionen",
+    "Failed to load the out-of-office settings": "Die Abwesenheitseinstellungen konnten nicht geladen werden",
     "Failed to login. Incorrect password or username": "Anmeldung fehlgeschlagen. Falsches Passwort oder falscher Benutzername.",
     "Failed to set default groups configuration": "Anwendung der Standard LDAP-Gruppen Einstellungen fehlgeschlagen",
     "Fax": "Fax",
