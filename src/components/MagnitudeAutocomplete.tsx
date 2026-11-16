@@ -81,7 +81,8 @@ function MagnitudeAutocomplete<T>(props: MagnitudeAutocompleteProps<T>) {
     freeSolo={freeSolo || false}
     multiple={multiple || false}
     autoSelect={autoSelect}
-    fullWidth={fullWidth || false}
+    // undefined: full width input
+    fullWidth={fullWidth}
     autoHighlight
     disabled={disabled || false}
     getOptionDisabled={getOptionDisabled}
