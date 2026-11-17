@@ -34,8 +34,8 @@ export function refreshToken() {
   return async (dispatch: Dispatch) => {
     try {
       const { grommunioAuthJwt: token, csrf } = await renewToken();
-      if(token && csrf) {
-        setCookie(token);
+      if(csrf) {
+        if(token) setCookie(token);
         dispatch({ type: TOKEN_REFRESH, csrf });
       }
       return Promise.resolve();
@@ -78,9 +78,10 @@ export function authLoginWithSession() {
   };
 }
 
+// admin-api >= 1.22 returns no token on renewal
 async function authenticate(dispatch: Dispatch, token?: string, csrf?: string) {
-  if(token) {
-    setCookie(token);
+  if(csrf) {
+    if(token) setCookie(token);
     window.localStorage.removeItem('grommunioAuthJwt');
     window.localStorage.setItem(SESSION_KEY, '1');
     const profileData = await profile();

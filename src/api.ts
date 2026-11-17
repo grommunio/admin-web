@@ -195,7 +195,10 @@ export async function renewToken() {
  * Revokes the token and clears the session cookie (APIs >= 1.22)
  */
 export async function logout() {
-  return await fetch(baseUrl + '/logout', { method: 'POST' });
+  return await fetch(baseUrl + '/logout', {
+    method: 'POST',
+    headers: { 'X-CSRF-TOKEN': store.getState().auth.csrf || '' },
+  });
 }
 
 export async function profile() {
