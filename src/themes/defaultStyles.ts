@@ -71,6 +71,14 @@ const defaultStyles = (mode: ThemeMode) => ({
       },
     },
   },
+  // MUI 9 lowered the default to 36px
+  MuiListItemIcon: {
+    styleOverrides: {
+      root: {
+        minWidth: 56,
+      },
+    },
+  },
   MuiGridListTile: {
     styleOverrides: {
       tile: {
