@@ -14,6 +14,7 @@ import { DnsCheck } from '@/types/dns';
 import { DNSDialogProps } from './Dialogs/dns/types';
 import { MuiIcon } from '@/types/common';
 
+const dnsDialogs = import.meta.glob<{ default: React.ComponentType<DNSDialogProps> }>('./Dialogs/dns/*.tsx');
 
 const useStyles = makeStyles()(() => ({
   dnsChips: {
@@ -304,7 +305,7 @@ const DnsHealth = (props: DnsHealthProps) => {
   }
 
   const asyncDialogImport = (path: string) => async () => {
-    const InfoDialog = await import("./Dialogs/dns/" + path)
+    const InfoDialog = await dnsDialogs[`./Dialogs/dns/${path}.tsx`]?.()
       .then(component => component.default)
       .catch(() => console.info("Failed to import dialog"));
     setState({ ...state, InfoDialog: InfoDialog || null });
