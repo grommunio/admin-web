@@ -25,7 +25,7 @@ function Map({ address="" }: { address: string }) {
     const osmResult = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address)).then(r => r.json());
 
     if(osmResult?.length) setCoords([osmResult[0].lat, osmResult[0].lon]);
-  }, 500), []);
+  }, 1000), []); // Nominatim allows 1 request/s
 
   useEffect(() => {
     debounceFetch(address);
