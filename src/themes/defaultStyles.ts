@@ -38,7 +38,7 @@ const defaultStyles = (mode: ThemeMode) => ({
   MuiButton: {
     styleOverrides: {
       contained: {
-        '&.MuiButton-colorSecondary': {
+        '&.MuiButton-colorSecondary:not(.Mui-disabled)': {
           background: 'linear-gradient(150deg, #FF512F, #DD2476)',
           color: '#fff',
         },
