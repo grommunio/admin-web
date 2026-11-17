@@ -90,7 +90,12 @@ const App = () => {
   // componentDidMount()
   useEffect(() => {
     // Get the selected language from local store and apply to i18-next
-    const lang = localStorage.getItem("lang");
+    let lang = localStorage.getItem("lang");
+    // Stored by versions before 6.0
+    if (lang === "ua-UA") {
+      lang = "uk-UA";
+      localStorage.setItem("lang", lang);
+    }
     if (lang) {
       i18n.changeLanguage(lang);
       (async () => await setMomentLocale(lang))();
