@@ -44,6 +44,7 @@ function Load() {
               options: {}
             }],
             chart: {
+              toolbar: { show: false },
               type: 'bar'
             },
             plotOptions: {
@@ -72,6 +73,7 @@ function Load() {
                 show: false
               },
               labels: {
+                formatter: (value: string) => Number(value).toFixed(2),
                 style: {
                   colors: theme.palette.text.primary,
                 },
@@ -102,7 +104,7 @@ function Load() {
           }]}
           type="bar"
           height={200}
-          width="95%"
+          width="100%"
         />
       </div>
     </Paper>

@@ -39,6 +39,7 @@ function Disks({ disks }: DisksProps) {
             options: {}
           }],
           chart: {
+            toolbar: { show: false },
             type: 'bar'
           },
           plotOptions: {
@@ -107,7 +108,7 @@ function Disks({ disks }: DisksProps) {
         }]}
         type="bar"
         height={200}
-        width="95%"
+        width="100%"
       />
     </div>
   );

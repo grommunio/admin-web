@@ -42,6 +42,7 @@ function MemoryPie() {
             }
           }],
           chart: {
+            toolbar: { show: false },
             width: 268,
             type: 'pie',
             animations: {

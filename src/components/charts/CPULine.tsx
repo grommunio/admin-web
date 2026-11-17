@@ -38,6 +38,7 @@ function CPULine() {
             options: {}
           }],
           chart: {
+            toolbar: { show: false },
             zoom: {
               enabled: false,
             },
