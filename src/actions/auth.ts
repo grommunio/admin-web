@@ -8,9 +8,12 @@ import {
   DRAWER_DOMAINS_REVEICED,
   TOKEN_REFRESH,
 } from './types';
-import { login, renewToken, profile, drawerDomains } from '../api';
+import { login, logout, renewToken, profile, drawerDomains } from '../api';
 import { Dispatch } from 'redux';
 import { ApiError } from '@/types/common';
+
+// Login marker, the token is kept in the cookie only
+const SESSION_KEY = 'grommunioSession';
 
 
 export function authLogin(user: string, pass: string) {
@@ -33,7 +36,6 @@ export function refreshToken() {
       const { grommunioAuthJwt: token, csrf } = await renewToken();
       if(token && csrf) {
         setCookie(token);
-        window.localStorage.setItem('grommunioAuthJwt', token);
         dispatch({ type: TOKEN_REFRESH, csrf });
       }
       return Promise.resolve();
@@ -62,7 +64,7 @@ export function authLoginWithToken(storedToken: string) {
 }
 
 /**
- * Login with the session cookie set by the API after single sign-on
+ * Login with the session cookie (after single sign-on or a reload)
  */
 export function authLoginWithSession() {
   return async (dispatch: Dispatch) => {
@@ -79,7 +81,8 @@ export function authLoginWithSession() {
 async function authenticate(dispatch: Dispatch, token?: string, csrf?: string) {
   if(token) {
     setCookie(token);
-    window.localStorage.setItem('grommunioAuthJwt', token);
+    window.localStorage.removeItem('grommunioAuthJwt');
+    window.localStorage.setItem(SESSION_KEY, '1');
     const profileData = await profile();
     dispatch({ type: PROFILE_DATA_RECEIVED, data: profileData });
     if(profileData) {
@@ -96,14 +99,18 @@ async function authenticate(dispatch: Dispatch, token?: string, csrf?: string) {
   }
 }
 
+// For admin-api < 1.22, newer versions set an HttpOnly cookie
 function setCookie(token: string) {
   document.cookie = "grommunioAuthJwt=" + token + ';path=/'
     + (window.location.protocol === 'https:' ? ';secure' : '');
 }
 
 export function authLogout() {
-  clearStorage();
-  return authAuthenticated(false);
+  return async (dispatch: Dispatch) => {
+    await logout().catch(() => null);
+    clearStorage();
+    dispatch(authAuthenticated(false));
+  };
 }
 
 export function authAuthenticated(authenticated = true, capabilities: string[]=[], csrf='') {
@@ -122,7 +129,12 @@ export function authError(error: string) {
   };
 }
 
+export function hasSession() {
+  return window.localStorage.getItem(SESSION_KEY) !== null;
+}
+
 function clearStorage() {
+  window.localStorage.removeItem(SESSION_KEY);
   window.localStorage.removeItem('grommunioAuthJwt');
   document.cookie = "grommunioAuthJwt=;path=/" + (window.location.protocol === 'https:' ? ';secure' : '');
 }

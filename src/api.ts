@@ -191,6 +191,13 @@ export async function renewToken() {
   return await renew();
 }
 
+/**
+ * Revokes the token and clears the session cookie (APIs >= 1.22)
+ */
+export async function logout() {
+  return await fetch(baseUrl + '/logout', { method: 'POST' });
+}
+
 export async function profile() {
   return await get('/profile');
 }

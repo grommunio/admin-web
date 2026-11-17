@@ -19,6 +19,7 @@ import {
   authError,
   authLogin,
   authLoginWithSession,
+  hasSession,
   authLoginWithToken,
 } from '../actions/auth';
 import { oidcLoginUrl, status } from '../api';
@@ -406,11 +407,16 @@ const Login = () => {
           console.error(err);
           dispatch(authError(t("Single sign-on failed")));
         });
+    } else if(hasSession()) {
+      loginWithSession()
+        .catch((err: string) => {
+          setState({ ...state, loading: false });
+          console.error(err);
+        });
     } else {
-      // Check if JWT is already in local storage
+      // Token stored by versions before 6.0
       const grommunioAuthJwt = window.localStorage.getItem("grommunioAuthJwt");
       if(grommunioAuthJwt) {
-        // token found, try to login
         loginWithToken(grommunioAuthJwt)
           .catch((err: string) => {
             setState({ ...state, loading: false });
