@@ -20,7 +20,8 @@ type UnauthenticatedRouteProps = {
 const UnauthenticatedRoute = ({ component: C, props: childProps, ...rest }: UnauthenticatedRouteProps) => {
   // Get redirect url parameter
   const query = parseParams(window.location.search.slice(1));
-  const redirect = query.redirect;
+  // Only same-origin paths
+  const redirect = /^\/(?![/\\])/.test(query.redirect || "") ? query.redirect : "";
   const hash = window.location.hash;
 
   if(childProps.authenticated) {
