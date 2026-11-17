@@ -259,6 +259,7 @@ export function deleteOrphanedUsers(params: DeleteOrphanedUsersParams) {
     try {
       const res = await deleteOrphans(params);
       dispatch({ type: ORPHANS_DELETED, deletedIDs: res.deleted });
+      return res;
     } catch(err) {
       const message = (err as ApiError).message;
       return Promise.reject(message);
