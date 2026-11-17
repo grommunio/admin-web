@@ -22,7 +22,7 @@ function Map({ address="" }: { address: string }) {
 
   const debounceFetch = useCallback(throttle(async (address) => {
 
-    const osmResult = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + address).then(r => r.json());
+    const osmResult = await fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address)).then(r => r.json());
 
     if(osmResult?.length) setCoords([osmResult[0].lat, osmResult[0].lon]);
   }, 500), []);

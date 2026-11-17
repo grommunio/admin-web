@@ -48,7 +48,7 @@ test: vendor ; $(info running type checks ...) @
 vendor: .yarninstall
 
 .yarninstall: package.json ; $(info getting dependencies with yarn ...) @
-	@$(YARN) install
+	@$(YARN) install --frozen-lockfile
 	@touch $@
 
 # Dist

@@ -14,6 +14,19 @@ import ReactDOM from "react-dom/client";
 import makeLoadableComponent from './lazy';
 
 
+// Chunks of the previous version are gone after an update
+window.addEventListener('vite:preloadError', (event) => {
+  try {
+    const last = Number(sessionStorage.getItem('chunkReloadAt') || 0);
+    if (Date.now() - last < 10000) return;
+    sessionStorage.setItem('chunkReloadAt', String(Date.now()));
+  } catch {
+    return;
+  }
+  event.preventDefault();
+  window.location.reload();
+});
+
 // Async loading support.
 const LoadableApp = makeLoadableComponent(() => import('./App'));
 

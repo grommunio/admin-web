@@ -35,11 +35,12 @@ export default defineConfig(({ mode }) => {
       // Layout expected by packaging and nginx
       outDir: 'build',
       assetsDir: 'static',
-      chunkSizeWarningLimit: 2048,
+      license: { fileName: 'third-party-licenses.md' },
     },
     server: {
-      host: env.HOST || '127.0.0.1',
-      port: Number(env.PORT) || 3000,
+      // HOST/PORT are often set for other purposes
+      host: env.DEV_HOST || '127.0.0.1',
+      port: Number(env.DEV_PORT) || 3000,
       strictPort: true,
       proxy: {
         '/api/v1': { target: apiTarget, changeOrigin: true, ws: true },

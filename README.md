@@ -22,7 +22,8 @@ To use a different backend, set `ADMIN_API_URL`:
 ADMIN_API_URL=http://192.168.1.10:8080 yarn start
 ```
 
-`HOST` and `PORT` change the address the development server listens on.
+`DEV_HOST` and `DEV_PORT` change the address the development server listens on
+(default `127.0.0.1:3000`).
 
 ## Checks
 ```
