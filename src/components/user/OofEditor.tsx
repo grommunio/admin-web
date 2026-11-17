@@ -6,8 +6,11 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useTranslation } from 'react-i18next';
 import ColorModeContext from "../../ColorContext";
 import { Editor as EditorType } from 'tinymce';
-import DOMPurify from 'dompurify';
+import DOMPurify, { type Config } from 'dompurify';
 
+// Keep link targets and leading <style> blocks
+const purifyConfig: Config = { ADD_ATTR: ['target'], FORCE_BODY: true };
+export const sanitizeHtml = (html: string): string => DOMPurify.sanitize(html, purifyConfig);
 
 type OofEditorProps = {
   initialValue: string;
@@ -32,8 +35,8 @@ function OofEditor({ editorRef, initialValue, disabled }: OofEditorProps) {
       init={{
         // valid_elements allows any attribute, sanitize all content entering the editor
         setup: (editor: EditorType) => {
-          editor.on('BeforeSetContent', e => { e.content = DOMPurify.sanitize(e.content); });
-          editor.on('PastePreProcess', e => { e.content = DOMPurify.sanitize(e.content); });
+          editor.on('BeforeSetContent', e => { e.content = sanitizeHtml(e.content); });
+          editor.on('PastePreProcess', e => { e.content = sanitizeHtml(e.content); });
         },
         plugins: "autolink directionality image link emoticons media charmap anchor lists advlist quickbars searchreplace visualchars table",
         language: i18n.language,

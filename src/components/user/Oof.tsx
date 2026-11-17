@@ -9,9 +9,8 @@ import { fetchUserOof, setUserOof } from '../../actions/users';
 import CustomDateTimePicker from '../CustomDateTimePicker';
 import Feedback from '../Feedback';
 import moment, { Moment } from 'moment';
-import DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router';
-import OofEditor from './OofEditor';
+import OofEditor, { sanitizeHtml } from './OofEditor';
 import { useAppDispatch } from '../../store';
 import { OofSettings } from '@/types/users';
 import { ChangeEvent } from '@/types/common';
@@ -141,9 +140,9 @@ const Oof = ({ domainID, userID }: OofProps) => {
       startTime: [0, 1].includes(state) || !startTime ? undefined : startTime.format('YYYY-MM-DD HH:mm') + ':00',
       endTime: [0, 1].includes(state) || !endTime ? undefined : endTime.format('YYYY-MM-DD HH:mm') + ':00',
       internalSubject: internalSubject,
-      internalReply: tinyRef?.current ? DOMPurify.sanitize(tinyRef?.current.getContent()) : internalReply,
+      internalReply: tinyRef?.current ? sanitizeHtml(tinyRef?.current.getContent()) : internalReply,
       externalSubject: externalSubject,
-      externalReply: tinyRef2?.current ? DOMPurify.sanitize(tinyRef2?.current.getContent()) : externalReply,
+      externalReply: tinyRef2?.current ? sanitizeHtml(tinyRef2?.current.getContent()) : externalReply,
     })
       .then(() => setOof({ ...oof, snackbar: 'Success!' }))
       .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
