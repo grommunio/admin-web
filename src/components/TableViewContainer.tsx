@@ -96,10 +96,10 @@ const TableViewContainer = ({ children, baseRef, handleScroll, headline, subtitl
         </Typography>}
         {children}
       </div>
-      <Feedback
+      {onSnackbarClose && <Feedback
         snackbar={snackbar || ''}
         onClose={onSnackbarClose}
-      />
+      />}
     </div>
   );
 }

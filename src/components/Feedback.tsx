@@ -8,8 +8,8 @@ import { useAppSelector } from '../store';
 
 
 type FeedbackProps = {
-  snackbar?: string;
-  onClose?: () => void;
+  snackbar: string;
+  onClose: () => void;
 }
 
 const Feedback = ({ snackbar, onClose }: FeedbackProps) => {

@@ -59,10 +59,10 @@ function ViewWrapper ({ children, snackbar, onSnackbarClose, loading }: ViewWrap
       <div className={classes.base}>
         {children}
       </div>
-      <Feedback
+      {onSnackbarClose && <Feedback
         snackbar={snackbar || ''}
         onClose={onSnackbarClose}
-      />
+      />}
     </div>
   );
 }
