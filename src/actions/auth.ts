@@ -11,9 +11,7 @@ import {
 import { login, logout, renewToken, profile, drawerDomains } from '../api';
 import { Dispatch } from 'redux';
 import { ApiError } from '@/types/common';
-
-// Login marker, the token is kept in the cookie only
-const SESSION_KEY = 'grommunioSession';
+import { SESSION_KEY } from '@/constants';
 
 
 export function authLogin(user: string, pass: string) {

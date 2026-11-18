@@ -7,6 +7,9 @@ import { USER_STATUS, USER_TYPE } from "./types/users";
 import { DOMAIN_STATUS } from "./types/domains";
 import { LIST_TYPE } from "./types/groups";
 
+// Login marker, the token is kept in the cookie only
+export const SESSION_KEY = 'grommunioSession';
+
 export const DOMAIN_ADMIN_WRITE = 'DomainAdminWrite';
 export const DOMAIN_ADMIN_READ = 'DomainAdminRead';
 export const SYSTEM_ADMIN_READ = 'SystemAdminRead';
