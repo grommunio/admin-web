@@ -115,162 +115,160 @@ const Design = () => {
 
   const handleConfigClose = () => setState({ ...state, configOpen: false });
 
-  return (
-    <>
-      <Typography variant="caption" className={classes.subtitle}>
-        {t("design_sub")}
-      </Typography>
-      <Paper className={classes.paper} elevation={1}>
-        {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark, favicon }, idx) =>
-          <div className={classes.imageGroup} key={idx}>
-            <TextField
-              label={t("Hostname")}
-              value={hostname || ''}
-              className={classes.input}
-              required
-              fullWidth
-              onChange={handleImgInput("hostname", idx)}
-            />
-            <div className={classes.flexBox}>
-              <Grid container className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Logo")}
-                  value={logo || ''}
-                  variant="standard"
-                  onChange={handleImgInput("logo", idx)}
-                  fullWidth
-                />
-                <img src={logo || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-              <Grid container  className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Logo light")}
-                  value={logoLight || ''}
-                  variant="standard"
-                  onChange={handleImgInput("logoLight", idx)}
-                  fullWidth
-                />
-                <img src={logoLight || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-              <Grid container  className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Icon")}
-                  value={icon || ''}
-                  variant="standard"
-                  onChange={handleImgInput("icon", idx)}
-                  fullWidth
-                />
-                <img src={icon || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-              <Grid container className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Background")}
-                  value={background || ''}
-                  variant="standard"
-                  onChange={handleImgInput("background", idx)}
-                  fullWidth
-                />
-                <img src={background || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-              <Grid container className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Background dark")}
-                  value={backgroundDark || ''}
-                  variant="standard"
-                  onChange={handleImgInput("backgroundDark", idx)}
-                  fullWidth
-                />
-                <img src={backgroundDark || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-              <Grid container className={classes.grid} sx={{ flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <TextField
-                  label={t("Favicon")}
-                  value={favicon || ''}
-                  variant="standard"
-                  onChange={handleImgInput("favicon", idx)}
-                  fullWidth
-                />
-                <img src={favicon || ''} alt="" className={classes.imgPreview}/>
-              </Grid>
-            </div>
+  return <>
+    <Typography variant="caption" className={classes.subtitle}>
+      {t("design_sub")}
+    </Typography>
+    <Paper className={classes.paper} elevation={1}>
+      {customImages.map(({ hostname, logo, logoLight, icon, background, backgroundDark, favicon }, idx) =>
+        <div className={classes.imageGroup} key={idx}>
+          <TextField
+            label={t("Hostname")}
+            value={hostname || ''}
+            className={classes.input}
+            required
+            fullWidth
+            onChange={handleImgInput("hostname", idx)}
+          />
+          <div className={classes.flexBox}>
+            <Grid container className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Logo")}
+                value={logo || ''}
+                variant="standard"
+                onChange={handleImgInput("logo", idx)}
+                fullWidth
+              />
+              <img src={logo || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
+            <Grid container  className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Logo light")}
+                value={logoLight || ''}
+                variant="standard"
+                onChange={handleImgInput("logoLight", idx)}
+                fullWidth
+              />
+              <img src={logoLight || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
+            <Grid container  className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Icon")}
+                value={icon || ''}
+                variant="standard"
+                onChange={handleImgInput("icon", idx)}
+                fullWidth
+              />
+              <img src={icon || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
+            <Grid container className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Background")}
+                value={background || ''}
+                variant="standard"
+                onChange={handleImgInput("background", idx)}
+                fullWidth
+              />
+              <img src={background || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
+            <Grid container className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Background dark")}
+                value={backgroundDark || ''}
+                variant="standard"
+                onChange={handleImgInput("backgroundDark", idx)}
+                fullWidth
+              />
+              <img src={backgroundDark || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
+            <Grid container className={classes.grid} sx={{ flexDirection: "column",
+              alignItems: "center"
+            }}>
+              <TextField
+                label={t("Favicon")}
+                value={favicon || ''}
+                variant="standard"
+                onChange={handleImgInput("favicon", idx)}
+                fullWidth
+              />
+              <img src={favicon || undefined} alt="" className={classes.imgPreview}/>
+            </Grid>
           </div>
-        )}
-        <div className={classes.progressContainer}>
-          <Tooltip title={t("Add new set of icons for explicit hostname")}>
-            <IconButton onClick={handleAddImageGroup}>
-              <AddCircle color="primary"/>
-            </IconButton>
-          </Tooltip>
         </div>
-        <Grid container>
-          <Button variant='contained' onClick={handleShowConfig}>
-            {t("Show config")}
-          </Button>
-        </Grid>
-      </Paper>
-      <Dialog
-        maxWidth="lg"
-        fullWidth
-        onClose={handleConfigClose}
-        open={configOpen}
-      >
-        <DialogTitle>
-          {t("Serverconfig")}
-          <Tooltip placement="top" title={t('Copy config')}>
-            <IconButton onClick={handleCopyToClipboard} size="large">
-              <CopyAll />
-            </IconButton>
-          </Tooltip>
-        </DialogTitle>
-        <DialogContent>
-          <pre>
-            <code className={classes.jsonPreview}>
-              &quot;customImages&quot;:
-              {JSON.stringify(
-                customImages.reduce((prevValue, currentValue) => {
-                  const { hostname, ...logos } = currentValue;
-                  if(!hostname) return prevValue;
-                  return {
-                    ...prevValue,
-                    [hostname]: {
-                      ...logos
-                    },
-                  };
-                }, {}), null, 4)
-              }
-            </code>
-          </pre>
-          <Typography>
-            <Trans i18nKey="configInstructions1">
-                Copy these lines into
-              <pre className={classes.pre}>
-                  /etc/grommunio-admin-common/config.json
-              </pre>
-            </Trans>.
-            <Trans i18nKey="configInstructions2">
-                Be careful not to duplicate the
-              <pre className={classes.pre}>
-                  &quot;customImages&quot;
-              </pre>
-                key
-            </Trans>.
-          </Typography>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+      )}
+      <div className={classes.progressContainer}>
+        <Tooltip title={t("Add new set of icons for explicit hostname")}>
+          <IconButton onClick={handleAddImageGroup}>
+            <AddCircle color="primary"/>
+          </IconButton>
+        </Tooltip>
+      </div>
+      <Grid container>
+        <Button variant='contained' onClick={handleShowConfig}>
+          {t("Show config")}
+        </Button>
+      </Grid>
+    </Paper>
+    <Dialog
+      maxWidth="lg"
+      fullWidth
+      onClose={handleConfigClose}
+      open={configOpen}
+    >
+      <DialogTitle>
+        {t("Serverconfig")}
+        <Tooltip placement="top" title={t('Copy config')}>
+          <IconButton onClick={handleCopyToClipboard} size="large">
+            <CopyAll />
+          </IconButton>
+        </Tooltip>
+      </DialogTitle>
+      <DialogContent>
+        <pre>
+          <code className={classes.jsonPreview}>
+            &quot;customImages&quot;:
+            {JSON.stringify(
+              customImages.reduce((prevValue, currentValue) => {
+                const { hostname, ...logos } = currentValue;
+                if(!hostname) return prevValue;
+                return {
+                  ...prevValue,
+                  [hostname]: {
+                    ...logos
+                  },
+                };
+              }, {}), null, 4)
+            }
+          </code>
+        </pre>
+        <Typography component={'span'}>
+          <Trans i18nKey="configInstructions1">
+            Copy these lines into
+            <pre className={classes.pre}>
+              /etc/grommunio-admin-common/config.json
+            </pre>
+          </Trans>.
+          <Trans i18nKey="configInstructions2">
+            Be careful not to duplicate the
+            <pre className={classes.pre}>
+              &quot;customImages&quot;
+            </pre>
+            key
+          </Trans>.
+        </Typography>
+      </DialogContent>
+    </Dialog>
+  </>;
 }
 
 
