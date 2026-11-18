@@ -627,9 +627,6 @@ const LdapConfig = () => {
             marginLeft: 16,
             color: available ? green['500'] : red['500'],
           }}
-          sx={{
-            color: "inherit"
-          }}
         >
           {!disabled && (available ? t('LDAP connectivity check passed') : t('LDAP connectivity check failed'))}
         </Typography>
