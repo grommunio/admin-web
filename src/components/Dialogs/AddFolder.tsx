@@ -9,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { addFolderData } from '../../actions/folders';
-import { fetchAllUsers, fetchUsersData } from '../../actions/users';
+import { fetchOrgUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { folderTypes } from '../../constants';
 import { Domain } from '@/types/domains';
@@ -59,22 +59,12 @@ const AddFolder = (props: AddFolderProps) => {
   const { Users } = useAppSelector(state => state.users);
 
   useEffect(() => {
-    if(domain.orgID) {
-      dispatch(fetchAllUsers({
-        limit: 100000,
-        sort: "username,asc",
-        orgID: domain.orgID,
-        status: USER_STATUS.NORMAL,
-      }))
-        .catch();
-    } else {
-      dispatch(fetchUsersData(domain.ID, {
-        limit: 100000,
-        sort: "username,asc",
-        status: USER_STATUS.NORMAL,
-      }))
-        .catch();
-    }
+    dispatch(fetchOrgUsersData(domain, {
+      limit: 100000,
+      sort: "username,asc",
+      status: USER_STATUS.NORMAL,
+    }))
+      .catch();
   }, []);
 
   useEffect(() => {

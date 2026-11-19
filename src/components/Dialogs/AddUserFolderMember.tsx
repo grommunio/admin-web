@@ -11,7 +11,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { fetchAllUsers, fetchUsersData, setUserFolderPermissions } from '../../actions/users';
+import { fetchOrgUsersData, setUserFolderPermissions } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
@@ -57,18 +57,8 @@ const AddUserFolderMember = (props: AddUserFolderMemberProps) => {
   const userEmail = username + '@' + domain.domainname;
 
   useEffect(() => {
-    if(domain.orgID) {
-      dispatch(fetchAllUsers({
-        limit: 100000,
-        sort: "username,asc",
-        orgID: domain.orgID,
-        status: USER_STATUS.NORMAL,
-      }))
-        .catch();
-    } else {
-      dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc", status: USER_STATUS.NORMAL }))
-        .catch();
-    }
+    dispatch(fetchOrgUsersData(domain, { limit: 100000, sort: "username,asc", status: USER_STATUS.NORMAL }))
+      .catch();
   }, [domain]);
 
   const handleAdd = () => {

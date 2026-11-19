@@ -35,6 +35,7 @@ import { Dispatch } from 'redux';
 import { CheckLdapUsersParams, LdapDumpParams } from '@/types/ldap';
 import { AddUserFolderPermission, DeleteOrphanedUsersParams, DeleteUserFolderPermission, DeleteUserParams, EditUserFolderPermission, FetchUserParams, NewContact, NewUser, OofSettings, UpdateUser, User } from '@/types/users';
 import { ApiError } from '@/types/common';
+import { Domain } from '@/types/domains';
 
 
 export function fetchUsersData(domainID: number, params: FetchUserParams) {
@@ -123,6 +124,22 @@ export function fetchAllUsers(params: FetchUserParams) {
       const data = await allUsers(params);
       if(!params?.offset) dispatch({ type: USERS_DATA_RECEIVED, data });
       else dispatch({ type: USERS_NEXT_SET, data });
+    } catch(err) {
+      console.error('Failed to fetch users');
+      const message = (err as ApiError).message;
+      return Promise.reject(message);
+    }
+  };
+}
+
+// Users of the organization of the domain, or of the domain if these are not available
+export function fetchOrgUsersData(domain: Domain, params: FetchUserParams) {
+  return async (dispatch: Dispatch) => {
+    try {
+      const orgParams: FetchUserParams = { ...params, orgID: domain.orgID };
+      const data = await (domain.orgID ? allUsers(orgParams).catch(() => users(domain.ID, params)) :
+        users(domain.ID, params));
+      dispatch({ type: USERS_DATA_RECEIVED, data });
     } catch(err) {
       console.error('Failed to fetch users');
       const message = (err as ApiError).message;

@@ -9,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { addOwnerData } from '../../actions/folders';
-import { fetchAllUsers, fetchUsersData } from '../../actions/users';
+import { fetchOrgUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { Domain } from '@/types/domains';
 import { useAppDispatch, useAppSelector } from '../../store';
@@ -48,13 +48,8 @@ const AddOwner = (props: AddOwnerProps) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(domain.orgID) {
-      dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID: domain.orgID }))
-        .catch();
-    } else {
-      dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" }))
-        .catch();
-    }
+    dispatch(fetchOrgUsersData(domain, { limit: 100000, sort: "username,asc" }))
+      .catch();
   }, []);
 
   const handleAdd = () => {

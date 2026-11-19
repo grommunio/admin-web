@@ -27,7 +27,7 @@ import Feedback from '../components/Feedback';
 import { DOMAIN_ADMIN_WRITE, listTypes, ORG_ADMIN } from '../constants';
 import { CapabilityContext } from '../CapabilityContext';
 import ViewWrapper from '../components/ViewWrapper';
-import { editUserData, fetchAllUsers, fetchUsersData } from '../actions/users';
+import { editUserData, fetchOrgUsersData, fetchUsersData } from '../actions/users';
 import MagnitudeAutocomplete from '../components/MagnitudeAutocomplete';
 import User from '../components/user/User';
 import Contact from '../components/user/Contact';
@@ -128,12 +128,12 @@ const GroupDetails = ({ domain }: DomainViewProps) => {
   const fetch = async (domainID: number, id: number) => await dispatch(fetchGroupData(domainID, id));
   const fetchUsers = async (domainID: number) =>
     await dispatch(fetchUsersData(domainID, { limit: 100000, sort: "username,asc" }));
-  const fetchOrgUsers = async (orgID?: number) =>
-    await dispatch(fetchAllUsers({ limit: 100000, sort: "username,asc", orgID }));
+  const fetchOrgUsers = async () =>
+    await dispatch(fetchOrgUsersData(domain, { limit: 100000, sort: "username,asc" }));
 
   useEffect(() => {
     const inner = async () => {
-      (context.includes(ORG_ADMIN) && domain.orgID ? fetchOrgUsers(domain.orgID) : fetchUsers(domain.ID))
+      (context.includes(ORG_ADMIN) ? fetchOrgUsers() : fetchUsers(domain.ID))
         .catch(message => {
           setState({ ...state, snackbar: message || 'Unknown error' });
         });

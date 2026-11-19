@@ -12,7 +12,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Dia
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { addGroupData } from '../../actions/groups';
-import { fetchAllUsers, fetchUsersData } from '../../actions/users';
+import { fetchOrgUsersData, fetchUsersData } from '../../actions/users';
 import MagnitudeAutocomplete from '../MagnitudeAutocomplete';
 import { CapabilityContext } from '../../CapabilityContext';
 import { listTypes, ORG_ADMIN } from '../../constants';
@@ -91,11 +91,7 @@ const AddGroup = (props: AddGroupProps) => {
   const handleEnter = () => {
     const { onError, domain } = props;
     (context.includes(ORG_ADMIN) ?
-      dispatch(fetchAllUsers({
-        limit: 100000,
-        sort: "username,asc",
-        orgID: domain.orgID || undefined,
-      })) :
+      dispatch(fetchOrgUsersData(domain, { limit: 100000, sort: "username,asc" })) :
       dispatch(fetchUsersData(domain.ID, { limit: 100000, sort: "username,asc" })))
       .catch(error => {
         onError(error);
