@@ -447,7 +447,7 @@ const Account = (props: AccountProps) => {
               label={t('Create grommunio-chat User')}
               disabled={!domain.chat}
             />
-            <FormControlLabel
+            {context.includes(SYSTEM_ADMIN_READ) && <FormControlLabel
               control={
                 <Checkbox
                   checked={chatAdmin || false}
@@ -455,9 +455,9 @@ const Account = (props: AccountProps) => {
                   color="primary"
                 />
               }
-              disabled={!chat || !domain.chat}
+              disabled={!chat || !domain.chat || !context.includes(SYSTEM_ADMIN_WRITE)}
               label={t('grommunio-chat admin permissions')}
-            />
+            />}
           </Grid>
         </Tooltip>}
         <Grid container>
