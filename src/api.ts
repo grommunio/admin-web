@@ -402,9 +402,10 @@ export function deleteUser(domainID: number, id: number, params: URLParams={}) {
 
 export async function changeUserPassword(domainID: number, id: number, newPw: string) {
   try {
-    return await put('/domains/' + domainID + '/users/' + id + '/password',
-      { new: newPw });
-  } catch(err) { return Promise.reject(err); }
+    return await put('/domains/' + domainID + '/users/' + id + '/password', { new: newPw });
+  } catch(err: any) {
+    return Promise.reject(err.message);
+  }
 }
 
 export function editUserRole(domainID: number, userID: number, roles: { roles: number[] }) {

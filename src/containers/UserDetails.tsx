@@ -550,7 +550,9 @@ const UserDetails = ({ domain }: DomainViewProps) => {
 
   const handlePasswordDialogToggle = (changingPw: boolean) => () => setState({ ...state, changingPw });
 
-  const handleSuccess = () => setState({ ...state, snackbar: 'Success!' });
+  const handleSuccess = () => {
+    setState({ ...state, snackbar: 'Success!', changingPw: false });
+  }
 
   const handleError = (msg: string) => setState({ ...state, snackbar: msg || 'Unknown error' });
 

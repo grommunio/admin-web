@@ -45,7 +45,7 @@ const ChangeUserPassword = (props: ChangeUserPasswordProps) => {
 
   const handlePasswordChange = async (e: React.MouseEvent) => {
     e.preventDefault();
-    const { domain, onClose, onSuccess, onError, user } = props;
+    const { domain, onSuccess, onError, user } = props;
     const { newPw } = state;
     await changeUserPassword(domain.ID, user.ID, newPw)
       .then(() => {
@@ -53,7 +53,6 @@ const ChangeUserPassword = (props: ChangeUserPasswordProps) => {
         setState({ ...state, newPw: '', checkPw: '' });
       })
       .catch(onError);
-    onClose();
   }
 
   const handleInput = (field: keyof typeof state) => (e: ChangeEvent) => {
