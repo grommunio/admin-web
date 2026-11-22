@@ -193,6 +193,8 @@
     "External IP": "IP externo",
     "External name": "Nome externo",
     "Extra options": "Opções extras",
+    "Failed to load the mailbox permissions": "",
+    "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Falha ao iniciar sessão. Senha ou nome de usuário incorreto",
     "Failed to set default groups configuration": "Falha ao definir a configuração de grupos padrão",
     "Fax": "Fax",

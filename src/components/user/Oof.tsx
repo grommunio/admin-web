@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
 import { useEffect, useRef, useState } from 'react';
-import { Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField, Theme, useTheme } from '@mui/material';
+import { Alert, Button, FormControl, Grid, MenuItem, Tab, Tabs, TextField, Theme, useTheme } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from 'react-i18next';
 import { fetchUserOof, setUserOof } from '../../actions/users';
@@ -78,6 +78,8 @@ const Oof = ({ domainID, userID }: OofProps) => {
     tab: 0,
     snackbar: '',
   });
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const navigate = useNavigate();
   const theme = useTheme();
   const tinyRef = useRef<Editor | null>(null);
@@ -91,7 +93,8 @@ const Oof = ({ domainID, userID }: OofProps) => {
   useEffect(() => {
     const fetchData = async () => {
       const oofData = await fetchOof(domainID, userID)
-        .catch(message => setOof({ ...oof, snackbar: message || 'Unknown error' }));
+        .catch(message => setLoadError(message || 'Unknown error'));
+      if(!oofData) return;
       if(oofData.startTime) {
         oofData.startTime = moment(oofData.startTime);
       }
@@ -100,8 +103,9 @@ const Oof = ({ domainID, userID }: OofProps) => {
       }
       setOof({
         ...oof,
-        ...(oofData || {}),
+        ...oofData,
       })
+      setLoaded(true);
     }
 
     fetchData();
@@ -164,6 +168,9 @@ const Oof = ({ domainID, userID }: OofProps) => {
 
   return (<>
     <FormControl className={classes.form}>
+      {loadError && <Alert severity="error" className={classes.input}>
+        {t("Failed to load the out-of-office settings")}: {loadError}
+      </Alert>}
       <div className={classes.flexRow}>
         <TextField
           {...tfProps("State ", "state")}
@@ -246,7 +253,7 @@ const Oof = ({ domainID, userID }: OofProps) => {
         variant="contained"
         color="primary"
         onClick={handleSave}
-        disabled={Boolean(startTime && moment(startTime).isAfter(endTime))}
+        disabled={!loaded || Boolean(startTime && moment(startTime).isAfter(endTime))}
       >
         {t('Save')}
       </Button>

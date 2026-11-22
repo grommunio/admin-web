@@ -193,6 +193,8 @@
     "External IP": "Ekstern IP",
     "External name": "Eksternt navn",
     "Extra options": "Ekstra alternativer",
+    "Failed to load the mailbox permissions": "",
+    "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Kunne ikke logge inn. Feil passord eller brukernavn",
     "Failed to set default groups configuration": "Kunne ikke angi standard gruppekonfigurasjon",
     "Fax": "Faks",

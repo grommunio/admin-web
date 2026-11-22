@@ -193,6 +193,8 @@
     "External IP": "Ytri IP",
     "External name": "Ytra nafn",
     "Extra options": "Viðbótarvalkostir",
+    "Failed to load the mailbox permissions": "",
+    "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Innskráning mistókst. Rangt lykilorð eða notandanafn.",
     "Failed to set default groups configuration": "Ekki tókst að stilla sjálfgefna hópastillingu",
     "Fax": "Faksi",

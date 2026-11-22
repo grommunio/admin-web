@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions, FormControlLabel, Checkbox, CircularProgress, 
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { deleteUserData } from '../../actions/users';
 import { User } from '@/types/users';
 import { useAppDispatch } from '../../store';
@@ -26,20 +27,34 @@ const DeleteUser = (props: DeleteUserProps) => {
     deleteFiles: false,
     deleteChatUser: false,
     loading: false,
+    taskMessage: '',
+    taskID: -1,
   });
+  const closed = useRef(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { open, user, onClose, domainID, onSuccess, onError } = props;
-  const { deleteFiles, deleteChatUser, loading } = state;
+  const { deleteFiles, deleteChatUser, loading, taskMessage, taskID } = state;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     const { deleteFiles, deleteChatUser } = state;
+    closed.current = false;
     setState({ ...state, loading: true });
     dispatch(deleteUserData(domainID, user.ID, { deleteFiles, deleteChatUser }))
-      .then(() => {
-        if(onSuccess) onSuccess();
-        setState({ ...state, loading: false });
+      .then(response => {
+        if(response?.taskID && !closed.current) {
+          setState({
+            ...state,
+            taskMessage: response.message || 'Task created',
+            loading: false,
+            taskID: response.taskID,
+          });
+        } else {
+          if(onSuccess) onSuccess();
+          setState({ ...state, loading: false });
+        }
       })
       .catch((err: string) => {
         if(onError) onError(err);
@@ -50,15 +65,25 @@ const DeleteUser = (props: DeleteUserProps) => {
   const handleCheckbox = (field: keyof typeof state) => () =>
     setState({ ...state, [field]: !state[field] });
 
+  const handleViewTask = () => {
+    navigate('/taskq/' + taskID);
+  }
+
+  const handleClose = () => {
+    closed.current = true;
+    setState({ ...state, taskMessage: '', taskID: -1 });
+    onClose();
+  }
+
   return (
     <Dialog
-      onClose={onClose}
+      onClose={handleClose}
       open={open}
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Are you sure you want to delete {user.username}?</DialogTitle>
-      <DialogContent style={{ minWidth: 400 }}>
+      <DialogTitle>{taskMessage ? taskMessage : `Are you sure you want to delete ${user.username}?`}</DialogTitle>
+      {!taskMessage && <DialogContent style={{ minWidth: 400 }}>
         <FormControlLabel
           control={
             <Checkbox
@@ -81,15 +106,15 @@ const DeleteUser = (props: DeleteUserProps) => {
           }
           label={t("Delete grommunio-chat user")}
         />
-      </DialogContent>
+      </DialogContent>}
       <DialogActions>
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           color="secondary"
         >
-          {t('Cancel')}
+          {t(taskMessage ? 'Close' : 'Cancel')}
         </Button>
-        <Button
+        {!taskMessage && <Button
           onClick={handleDelete}
           variant="contained"
           color="secondary"
@@ -97,7 +122,11 @@ const DeleteUser = (props: DeleteUserProps) => {
           autoFocus
         >
           {loading ? <CircularProgress size={24}/> : t('Confirm')}
+        </Button>}
+        {taskMessage && taskID > 0 && <Button variant="contained" onClick={handleViewTask}>
+          {t('View task')}
         </Button>
+        }
       </DialogActions>
     </Dialog>
   );

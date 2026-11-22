@@ -47,13 +47,19 @@ const CheckLdapDialog = (props: CheckLdapDialogProps) => {
   const handleDelete = (deleteFiles: boolean) => () => {
     const { onSuccess, onError } = props;
     dispatch(deleteOrphanedUsers({ deleteFiles }))
-      .then(() => onSuccess && onSuccess()).catch(onError);
+      .then(resp => {
+        if(resp?.failed?.length) onError(resp.failed[0].message);
+        if(onSuccess) onSuccess();
+      }).catch(onError);
   }
 
   const handleSingleDelete = (userID: number, deleteFiles: boolean) => () => {
     const { checkUsers, onError } = props;
     dispatch(deleteOrphanedUsers({ userID, deleteFiles }))
-      .then(checkUsers)
+      .then(resp => {
+        if(resp?.failed?.length) onError(resp.failed[0].message);
+        checkUsers();
+      })
       .catch(onError);
   }
 

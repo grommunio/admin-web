@@ -193,6 +193,8 @@
     "External IP": "Εξωτερική IP",
     "External name": "Εξωτερικό όνομα",
     "Extra options": "Πρόσθετες επιλογές",
+    "Failed to load the mailbox permissions": "",
+    "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Απέτυχε η σύνδεση. Λανθασμένος κωδικός πρόσβασης ή όνομα χρήστη",
     "Failed to set default groups configuration": "Απέτυχε να οριστεί η προεπιλεγμένη διαμόρφωση ομάδων",
     "Fax": "Φαξ",

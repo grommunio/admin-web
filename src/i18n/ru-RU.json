@@ -193,6 +193,8 @@
     "External IP": "Внешний IP-адрес",
     "External name": "Внешнее имя",
     "Extra options": "Дополнительные опции",
+    "Failed to load the mailbox permissions": "",
+    "Failed to load the out-of-office settings": "",
     "Failed to login. Incorrect password or username": "Не удалось войти в систему. Неверный пароль или имя пользователя",
     "Failed to set default groups configuration": "Не удалось установить конфигурацию групп по умолчанию",
     "Fax": "Факс",
