@@ -6,7 +6,6 @@ import {
   USER_DATA_ADD,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
-  ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
   USERS_SYNC_RECEIVED,
   USERS_FILTER_STATE,
@@ -227,7 +226,7 @@ export function setUserSendAs(domainID: number, userID: number, sendAss: string[
 }
 
 export function checkLdapUsers(params: CheckLdapUsersParams) {
-  return defaultListHandler(checkLdap, ORPHANED_USERS_RECEIVED, params);
+  return defaultDetailsHandler(checkLdap, params);
 }
 
 export function addUserData(domainID: number, user: NewUser) {

@@ -32,7 +32,7 @@ import { useTranslation } from 'react-i18next';
 import { useTable } from '../hooks/useTable';
 import { FetchUserParams, USER_TYPE, USER_STATUS, UserListItem } from '../types/users';
 import { makeStyles } from 'tss-react/mui';
-import { CheckLdapUsersParams, SyncLdapParams } from '@/types/ldap';
+import { SyncLdapParams } from '@/types/ldap';
 import { ChangeEvent, DomainViewProps } from '@/types/common';
 
 
@@ -85,7 +85,7 @@ const Users = ({ domain }: DomainViewProps) => {
 
   const fetchTableData = async (domainID: number, params: FetchUserParams) =>
     await dispatch(fetchUsersData(domainID, {...params }));
-  const check = async (params: CheckLdapUsersParams) => await dispatch(checkLdapUsers(params));
+  const check = async () => await dispatch(checkLdapUsers({ domain: domain.ID }));
   const sync = async (params: SyncLdapParams, domainID: number) => await dispatch(syncLdapUsers(params, domainID));
 
   const table = useTable<UserListItem>({
@@ -203,24 +203,11 @@ const Users = ({ domain }: DomainViewProps) => {
     taskID: -1,
   })
 
-  const checkUsers = () => {
-    check({ domain: domain.ID })
-      .catch(msg => setState({ ...state, snackbar: msg }));
+  const checkUsers = async () => {
     setState({ ...state, checking: true });
   }
 
   const handleCheckClose = () => setState({ ...state, checking: false });
-
-  const handleCheckSuccess = () => {
-    fetchTableData(domain.ID, {
-      sort: orderBy + ',' + order,
-      filterProp: getFilterProp(),
-      status: getUserStatuses(),
-      match: match || undefined,
-    })
-      .then(() => setState({ ...state, checking: false }))
-      .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
-  };
 
   const handleSnackbarClose = () => {
     setState({ ...state, snackbar: '' });
@@ -477,9 +464,9 @@ const Users = ({ domain }: DomainViewProps) => {
       <CheckLdapDialog
         open={checking}
         onClose={handleCheckClose}
-        onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
-        checkUsers={checkUsers}
+        checkAction={check}
+        domain={domain}
       />
       <TaskCreated
         message={taskMessage}
