@@ -177,36 +177,8 @@ const Contacts = ({ domain }: DomainViewProps) => {
     }
   };
 
-  const checkUsers = async () => {
-    try {
-      await check();
-      setState((prev) => ({ ...prev, checking: true }));
-    } catch (msg: any) {
-      setState((prev) => ({ ...prev, snackbar: msg as string }));
-    }
-  };
-
   const handleCheckClose = () =>
     setState((prev) => ({ ...prev, checking: false }));
-
-  const handleCheckSuccess = async () => {
-    try {
-      const { order, orderBy, match } = tableState;
-
-      await fetchTableData(domain.ID, {
-        match: match || undefined,
-        sort: `${orderBy},${order}`,
-      });
-
-      setState((prev) => ({ ...prev, checking: false }));
-    } catch (msg: any) {
-      setState((prev) => ({
-        ...prev,
-        snackbar: msg as string,
-        checking: false,
-      }));
-    }
-  };
 
   const handleAddContact = () =>
     setState((prev) => ({ ...prev, addingContact: true }));
@@ -237,6 +209,10 @@ const Contacts = ({ domain }: DomainViewProps) => {
     table.handleRequestSort(orderBy, {
       match: match || undefined,
     })();
+  }
+
+  const checkUsers = async () => {
+    setState({ ...state, checking: true });
   }
 
   return (
@@ -432,9 +408,9 @@ const Contacts = ({ domain }: DomainViewProps) => {
       <CheckLdapDialog
         open={state.checking}
         onClose={handleCheckClose}
-        onSuccess={handleCheckSuccess}
         onError={handleDeleteError}
-        checkUsers={checkUsers}
+        checkAction={check}
+        domain={domain}
       />
     </TableViewContainer>
   );

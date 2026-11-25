@@ -64,7 +64,7 @@ const Groups = ({ domain }: DomainViewProps) => {
   const fetchTableData = async (domainID: number, params: URLParams) => await dispatch(fetchGroupsData(domainID, params));
   const deleteItem = async (domainID: number, id: number) => await dispatch(deleteGroupData(domainID, id));
   const sync = async (params: SyncLdapParams, domainID: number) => await dispatch(syncLdapUsers(params, domainID));
-  const check = async (params: { domain:  number }) => await dispatch(checkLdapUsers(params));
+  const check = async () => await dispatch(checkLdapUsers({ domain: domain.ID }));
 
   const table = useTable<GroupListItem>({
     fetchTableData,
@@ -98,14 +98,9 @@ const Groups = ({ domain }: DomainViewProps) => {
 
   const listPrivileges = ['All', 'Internal', 'Domain', 'Specific', 'Outgoing (deprecated)']
 
-  const handleCheckClose = () => setState({ ...state, checking: false });
-
-  const handleCheckSuccess = () => {
-    const { order, orderBy, match } = tableState;
-    fetchTableData(domain.ID, { match: match || undefined, sort: orderBy + ',' + order })
-      .then(() => setState({ ...state, checking: false }))
-      .catch(msg => setState({ ...state, snackbar: msg, checking: false }));
-  };
+  const handleCheckClose = () => {
+    setState({ ...state, checking: false });
+  }
 
   const handleScroll = () => {
     table.handleScroll(Groups, count);
@@ -141,8 +136,6 @@ const Groups = ({ domain }: DomainViewProps) => {
   }
 
   const checkUsers = async () => {
-    await check({ domain: domain.ID })
-      .catch(msg => setState({ ...state, snackbar: msg }));
     setState({ ...state, checking: true });
   }
 
@@ -294,8 +287,8 @@ const Groups = ({ domain }: DomainViewProps) => {
         open={checking}
         onClose={handleCheckClose}
         onError={handleDeleteError}
-        onSuccess={handleCheckSuccess}
-        checkUsers={checkUsers}
+        checkAction={check}
+        domain={domain}
       />
       <TaskCreated
         message={taskMessage}

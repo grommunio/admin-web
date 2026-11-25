@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent,Button,
   DialogActions, FormControlLabel, Checkbox, CircularProgress, 
 } from '@mui/material';
@@ -30,7 +30,6 @@ const DeleteUser = (props: DeleteUserProps) => {
     taskMessage: '',
     taskID: -1,
   });
-  const closed = useRef(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -40,11 +39,10 @@ const DeleteUser = (props: DeleteUserProps) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     const { deleteFiles, deleteChatUser } = state;
-    closed.current = false;
     setState({ ...state, loading: true });
     dispatch(deleteUserData(domainID, user.ID, { deleteFiles, deleteChatUser }))
       .then(response => {
-        if(response?.taskID && !closed.current) {
+        if(response?.taskID && open) {
           setState({
             ...state,
             taskMessage: response.message || 'Task created',
@@ -70,7 +68,6 @@ const DeleteUser = (props: DeleteUserProps) => {
   }
 
   const handleClose = () => {
-    closed.current = true;
     setState({ ...state, taskMessage: '', taskID: -1 });
     onClose();
   }

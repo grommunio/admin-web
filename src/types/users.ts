@@ -166,6 +166,7 @@ export type DeleteUserParams = {
 export type DeleteOrphanedUsersParams = {
   userID?: number;
   deleteFiles: boolean;
+  domain: number;
 }
 
 export type OofSettings = {

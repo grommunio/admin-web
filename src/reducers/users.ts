@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2020-2026 grommunio GmbH
 
-import { BaseUser, OrphanedUser, USER_TYPE, UserListItem } from '../types/users';
+import { BaseUser, USER_TYPE, UserListItem } from '../types/users';
 import {
   USERS_DATA_RECEIVED,
   USER_DATA_ADD,
   USER_DATA_DELETE,
   USERS_NEXT_SET,
-  ORPHANED_USERS_RECEIVED,
   ORPHANS_DELETED,
   AUTH_AUTHENTICATED,
   USERS_SYNC_RECEIVED,
@@ -18,7 +17,6 @@ import { addItem, append } from '../utils';
 type UsersState = {
   count: number;
   Users: UserListItem[];
-  Orphaned: OrphanedUser[];
   Sync: string[];
   match: string;
   showDeactivated: boolean;
@@ -29,7 +27,6 @@ type UsersState = {
 const defaultState: UsersState = {
   count: 0,
   Users: [],
-  Orphaned: [],
   Sync: [],
 
   match: "",
@@ -82,16 +79,9 @@ function usersReducer(state=defaultState, action: any) {
       count: state.count - 1,
     };
 
-  case ORPHANED_USERS_RECEIVED:
-    return {
-      ...state,
-      Orphaned: action.data.orphaned,
-    };
-
   case ORPHANS_DELETED:
     return {
       ...state,
-      Orphaned: deleteOrphanedUsers(state.Orphaned, action.deletedIDs),
       Users: deleteOrphanedUsers(state.Users, action.deletedIDs),
       count: state.count - action.deletedIDs.length
     };
